@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jan 14 17:33:24 2000
-// written: Thu May 10 12:04:36 2001
+// written: Tue Jun 19 15:04:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,43 +34,46 @@ namespace Util {
 class Util::Pipe {
 public:
   Pipe(const char* command, const char* mode) :
-	 itsFile(popen(command, mode)),
-#ifdef PRESTANDARD_IOSTREAMS
-	 itsStream(),
+    itsFile(popen(command, mode)),
+#if defined(PRESTANDARD_IOSTREAMS)
+    itsStream(),
+#elif defined(GCC_COMPILER) && GCC_COMPILER >= 3
+    itsFilebuf(file(),std::ios::in|std::ios::out),
+    itsStream(&itsFilebuf),
 #else
-	 itsStream(&itsFilebuf),
+    itsStream(&itsFilebuf),
 #endif
-	 itsClosed(false),
-	 itsExitStatus(0)
-	 {
-		if ( itsFile != 0 ) {
-#ifdef PRESTANDARD_IOSTREAMS
-		  itsStream.attach(filedes());
-#else
-		  itsFilebuf.open(filedes());
+    itsClosed(false),
+    itsExitStatus(0)
+    {
+      if ( itsFile != 0 ) {
+#if defined(PRESTANDARD_IOSTREAMS)
+        itsStream.attach(filedes());
+#elif !defined(GCC_COMPILER) || GCC_COMPILER < 3
+        itsFilebuf.open(filedes());
 #endif
-		}
-		else {
-		  itsClosed = true;
-		}
-	 }
+      }
+      else {
+        itsClosed = true;
+      }
+    }
 
   ~Pipe()
-	 { close(); }
+    { close(); }
 
   STD_IO::iostream& stream() { return itsStream; }
 
   int close()
-	 {
-		if ( !itsClosed ) {
+    {
+      if ( !itsClosed ) {
 #ifdef PRESTANDARD_IOSTREAMS
-		  itsStream.close();
+        itsStream.close();
 #endif
-		  itsExitStatus = pclose(itsFile);
-		  itsClosed = true;
-		}
-		return itsExitStatus;
-	 }
+        itsExitStatus = pclose(itsFile);
+        itsClosed = true;
+      }
+      return itsExitStatus;
+    }
 
   bool isClosed() const { return itsClosed; }
 
@@ -87,8 +90,8 @@ private:
 #ifdef PRESTANDARD_IOSTREAMS
   fstream itsStream;
 #else
-  STD_IO::iostream itsStream;
   std::filebuf itsFilebuf;
+  STD_IO::iostream itsStream;
 #endif
   bool itsClosed;
   int itsExitStatus;
