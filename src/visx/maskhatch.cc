@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Mon Oct  4 13:30:47 1999
+// written: Tue Oct  5 09:50:06 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include <GL/gl.h>
 #include <iostream.h>
 
+#define NO_TRACE
 #include "trace.h"
 #include "debug.h"
 
@@ -25,7 +26,9 @@ MaskHatch::MaskHatch () :
   lineWidth(1)
 {
 DOTRACE("MaskHatch::MaskHatch ");
+
   GrObj::setAlignmentMode(GrObj::CENTER_ON_CENTER);
+  DebugEval(getAlignmentMode());
 }
 
 MaskHatch::~MaskHatch () {
