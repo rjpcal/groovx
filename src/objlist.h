@@ -2,7 +2,7 @@
 // objlist.h 
 // Rob Peters
 // Created: Nov-98
-// written: Sat Mar 13 13:14:09 1999
+// written: Mon Mar 15 13:07:08 1999
 //
 // The ObjList class implements a list of GrObj pointers. The
 // interface allows for management of a collection of GrObj's (i.e.,
@@ -28,7 +28,7 @@
 // ObjList class
 ///////////////////////////////////////////////////////////////////////
 
-class ObjList {
+class ObjList : public virtual IO {
 public:
   //////////////
   // creators //
@@ -37,44 +37,18 @@ public:
   ObjList (int size);
   // construct a list of 'size' GrObj*'s, initialized to NULL
 
-  ObjList (istream &is, const char* type, int num_objs, int grp_size, 
-			  double obj_spacing, double t_jitter, double r_jitter);
-  // constructs multiple sets of objects from an istream containing
-  // descriptions of GrObj's suitable for passing to the virtual
-  // constructor GrobjMgr::newGrobj. The istream is read in one pass
-  // to an array of c-strings, which in turn is read 'grp_size' # of
-  // times to create the obj's in each of 'grp_size' positions
-
-
   ~ObjList ();
 
-  IOResult writeRangeObjs(ostream &os, int first, int count) const;
-  // calls serialize(os) on a range of GrObj's from the ObjList,
-  // starting with 'first', and writing 'count' objects total
-
-  IOResult readRangeObjs(istream &is, int first, int count);
-  IOResult readRangeObjs(const char* type, istream &is, int first, int count);
-  // constructs 'count' GrObj's into the ObjList, starting with first,
-  // by calling a virtual constructor GrobjMgr::newGrobj. When the
-  // string argument 'type' is provided, it is assumed that the
-  // istream describes objects all of that type, and contains no
-  // internal type strings
-
-  void readRangeObjs(char **line_array, int first, int count);
-  void readRangeObjs(const char* type, char **line_array, int first, int count);
-  // constructs 'count' GrObj's into the ObjList, starting with first,
-  // by calling a virtual constructor GrobjMgr::newGrobj. Each line of
-  // the char** array is first used to initialize a strstream, which
-  // is then passed to the virtual constructor. If the string argument
-  // 'type' is provided, it is assumed that the istream describes
-  // objects all of that type, and contains no internal type strings
+  // write/read the object's state from/to an output/input stream
+  virtual IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const;
+  virtual IOResult deserialize(istream &is, IOFlag flag = NO_FLAGS);
 
   ///////////////
   // accessors //
   ///////////////
 
   int nobjs() const;
-  // returns the number of (both filled and unfilled) sites in the ObjList
+  // returns the number of filled sites in the ObjList
 
   bool isValidObjid(int id) const;
   // returns true if 'id' is a valid index into a non-NULL GrObj* in
@@ -122,5 +96,5 @@ private:
   ObjVec itsObjVec;				  // associative array from objid's to GrObj*'s
 };
 
-static const char vcid_objlist_h[] = "$Id$";
+static const char vcid_objlist_h[] = "$Header$";
 #endif // !OBJLIST_H_DEFINED
