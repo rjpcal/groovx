@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Sat Aug 18 08:13:28 2001
+// written: Tue Aug 21 13:30:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ DOTRACE("Position::make");
 }
 
 Position::Position() :
-  FieldContainer(this),
+  FieldContainer(&sigNodeChanged),
   translation(0.0, 0.0, 0.0),
   scaling(1.0, 1.0, 1.0),
   rotationAxis(0.0, 0.0, 1.0),

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Tue Aug 21 11:44:26 2001
+// written: Tue Aug 21 13:18:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ namespace Util
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class GxNode : public IO::IoObject, public Util::Signal
+class GxNode : public IO::IoObject
 {
 private:
   GxNode(const GxNode&);
@@ -57,6 +57,8 @@ protected:
 public:
   /// Virtual destructor.
   virtual ~GxNode();
+
+  Util::Signal sigNodeChanged;
 
   /// Get the value of the user-defined category. Default returns -1.
   virtual int category() const;

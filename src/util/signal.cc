@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Tue Aug 21 11:49:45 2001
+// written: Tue Aug 21 13:32:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,6 +39,8 @@ namespace
 
 struct Util::Signal::SigImpl
 {
+  SigImpl() : itsObservers() {}
+
   ListType itsObservers;
 };
 
@@ -60,20 +62,34 @@ DOTRACE("Util::Signal::~Signal");
   delete itsImpl;
 }
 
-void Util::Signal::connect(Util::Observer* sig)
+Util::UID Util::Signal::connect(Util::Observer* obs)
 {
 DOTRACE("Util::Signal::connect");
-  if (!sig) return;
-  itsImpl->itsObservers.push_back(ObsRef(sig, Util::WEAK));
+  return doConnect(ObsRef(obs, Util::WEAK));
+}
+
+void Util::Signal::disconnect(Util::UID obs)
+{
+DOTRACE("Util::Signal::disconnect");
+  if (obs == 0) return;
+
+  ObsRef ref(obs, Util::WEAK);
+
+  itsImpl->itsObservers.remove(ref);
+
   DebugEvalNL(itsImpl->itsObservers.size());
 }
 
-void Util::Signal::disconnect(Util::Observer* sig)
+Util::UID Util::Signal::doConnect(Util::WeakRef<Util::Observer> obs)
 {
-DOTRACE("Util::Signal::disconnect");
-  if (!sig) return;
-  itsImpl->itsObservers.remove(ObsRef(sig, Util::WEAK));
+DOTRACE("Util::Signal::doConnect");
+  if (!obs.isValid()) return 0;
+
+  itsImpl->itsObservers.push_back(obs);
+
   DebugEvalNL(itsImpl->itsObservers.size());
+
+  return obs.id();
 }
 
 void Util::Signal::emitSignal() const

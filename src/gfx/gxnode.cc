@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:27:15 2000
-// written: Fri Aug 17 10:26:39 2001
+// written: Tue Aug 21 13:18:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ public:
   virtual void      next()        { isItValid = false; }
 };
 
-GxNode::GxNode()
+GxNode::GxNode() : sigNodeChanged()
 {
 DOTRACE("GxNode::GxNode");
 }

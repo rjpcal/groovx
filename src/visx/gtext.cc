@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Tue Aug 21 11:48:58 2001
+// written: Tue Aug 21 13:29:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -716,7 +716,7 @@ void Gtext::setText(const fstring& text)
 {
 DOTRACE("Gtext::setText");
   itsText = text;
-  emitSignal();
+  this->sigNodeChanged.emitSignal();
 }
 
 const fstring& Gtext::getText() const
@@ -732,7 +732,7 @@ DOTRACE("Gtext::setStrokeWidth");
     {
       itsStrokeWidth = width;
       setPixelBorder(itsStrokeWidth+2);
-      emitSignal();
+      this->sigNodeChanged.emitSignal();
     }
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Tue Aug 21 11:49:45 2001
+// written: Tue Aug 21 13:28:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,8 +72,10 @@ public:
   // properties //
   ////////////////
 
-  virtual int category() const { return itsFishCategory; }
-  virtual void setCategory(int val) { itsFishCategory = val; emitSignal(); }
+  virtual int category() const
+    { return itsFishCategory; }
+  virtual void setCategory(int val)
+    { itsFishCategory = val; this->sigNodeChanged.emitSignal(); }
 
 private:
   /** The category of the fish. The semantics of \a category are

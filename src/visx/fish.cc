@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue Aug 21 11:49:46 2001
+// written: Tue Aug 21 13:27:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,15 +149,17 @@ DOTRACE("Fish::Fish");
 
   setFieldMap(Fish::classFields());
 
-  if (splinefile != 0 && coordfile != 0) {
-    readSplineFile(splinefile);
-    readCoordFile(coordfile, index);
-  }
-  else {
-    restoreToDefault();
-  }
+  if (splinefile != 0 && coordfile != 0)
+    {
+      readSplineFile(splinefile);
+      readCoordFile(coordfile, index);
+    }
+  else
+    {
+      restoreToDefault();
+    }
 
-  emitSignal();
+  this->sigNodeChanged.emitSignal();
 }
 
 void Fish::restoreToDefault()

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:17 1999
-// written: Tue Aug 21 11:48:58 2001
+// written: Tue Aug 21 13:29:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ DOTRACE("GLBitmap::setUsingGlBitmap");
       setUsingZoom(false);
     }
 
-  emitSignal();
+  this->sigNodeChanged.emitSignal();
 }
 
 static const char vcid_glbitmap_cc[] = "$Header$";

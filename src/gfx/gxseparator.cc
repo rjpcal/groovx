@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Tue Aug 21 11:49:46 2001
+// written: Tue Aug 21 13:29:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ public:
   virtual void receiveSignal()
   {
     DOTRACE("GxSeparator::Impl::receiveSignal");
-    itsOwner->emitSignal();
+    itsOwner->sigNodeChanged.emitSignal();
   }
 
   virtual bool isVolatile() const { return true; }
@@ -120,9 +120,9 @@ DOTRACE("GxSeparator::addChild");
 
   itsImpl->itsChildren.push_back(item);
 
-  item->connect(itsImpl);
+  item->sigNodeChanged.connect(itsImpl);
 
-  emitSignal();
+  this->sigNodeChanged.emitSignal();
 
   return (itsImpl->itsChildren.size() - 1);
 }
@@ -139,9 +139,9 @@ DOTRACE("GxSeparator::insertChild");
   itsImpl->itsChildren.insert(itsImpl->itsChildren.begin()+at_index,
                               item);
 
-  item->connect(itsImpl);
+  item->sigNodeChanged.connect(itsImpl);
 
-  emitSignal();
+  this->sigNodeChanged.emitSignal();
 }
 
 void GxSeparator::removeChildAt(ChildId index)
@@ -149,10 +149,10 @@ void GxSeparator::removeChildAt(ChildId index)
 DOTRACE("GxSeparator::removeChildAt");
   if (index < itsImpl->itsChildren.size())
     {
-      itsImpl->itsChildren[index]->disconnect(itsImpl);
+      itsImpl->itsChildren[index]->sigNodeChanged.disconnect(itsImpl->id());
       itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
 
-      emitSignal();
+      this->sigNodeChanged.emitSignal();
     }
 }
 
@@ -170,9 +170,9 @@ DOTRACE("GxSeparator::removeChild");
     {
       if ( (*itr)->id() == target )
         {
-          (*itr)->disconnect(itsImpl);
+          (*itr)->sigNodeChanged.disconnect(itsImpl->id());
           itsImpl->itsChildren.erase(itr);
-          emitSignal();
+          this->sigNodeChanged.emitSignal();
           break;
         }
     }

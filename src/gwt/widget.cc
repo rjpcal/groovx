@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Tue Aug 21 11:49:45 2001
+// written: Tue Aug 21 13:24:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,11 +95,11 @@ public:
 
   void setDrawable(const Ref<GxNode>& node)
   {
-    itsDrawNode->disconnect(this);
+    itsDrawNode->sigNodeChanged.disconnect(this->id());
 
     itsDrawNode = node;
 
-    itsDrawNode->connect(this);
+    itsDrawNode->sigNodeChanged.connect(this);
   }
 
   void flushChanges()
