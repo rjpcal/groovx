@@ -47,6 +47,26 @@
 
 #include "util/trace.h"
 
+namespace
+{
+  fstring gsubst(const fstring& in, char match, const char* replace)
+  {
+    fstring result;
+    for (const char* p = in.c_str(); *p != '\0'; ++p)
+      {
+        if (*p == match)
+          {
+            result.append(replace);
+          }
+        else
+          {
+            result.append(*p);
+          }
+      }
+    return result;
+  }
+}
+
 void TlistUtils::writeResponses(const char* filename)
 {
 DOTRACE("TlistUtils::writeResponses");
@@ -73,7 +93,7 @@ DOTRACE("TlistUtils::writeResponses");
       ofs << std::setw(wid) << itr->numResponses() << " ";
       ofs << std::setw(wid) << itr->avgResponse() << " ";
       ofs << std::setw(wid) << itr->avgRespTime() << " ";
-      ofs << "% " << itr->vxInfo()  << std::endl;
+      ofs << "% " << gsubst(itr->vxInfo(), '\n', "\\n") << std::endl;
     }
 
   if (ofs.fail())
