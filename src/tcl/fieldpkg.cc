@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Wed Jul 18 10:14:58 2001
+// written: Mon Aug  6 18:01:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ namespace Tcl
     {
       Ref<FieldContainer> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
       TclValue val = ctx.getValFromArg(2, TypeCue<TclValue>());
-      item->field(itsFinfo).setValue(val);
+      item->field(itsFinfo).setValue(val, *item);
     }
   };
 
@@ -74,7 +74,7 @@ namespace Tcl
       isItInited(false)
     {}
 
-	 void operator()(Tcl::Context& ctx);
+    void operator()(Tcl::Context& ctx);
   };
 
 } // end namespace Tcl
@@ -128,9 +128,9 @@ void Tcl::defField(Tcl::Pkg* pkg, const FieldInfo& finfo)
 DOTRACE("Tcl::defField");
 
   pkg->defVecRaw( finfo.name().c_str(), 1, "item_id(s)",
-						FieldGetter(finfo) );
+                  FieldGetter(finfo) );
   pkg->defVecRaw( finfo.name().c_str(), 2, "item_id(s) new_val(s)",
-						FieldSetter(finfo) );
+                  FieldSetter(finfo) );
 }
 
 void Tcl::defAllFields(Tcl::Pkg* pkg, const FieldMap& fmap)

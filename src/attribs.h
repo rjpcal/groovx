@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 11 13:21:57 2001
-// written: Mon Jun 11 13:52:53 2001
+// written: Mon Aug  6 18:07:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,31 +41,31 @@ class ReadWriteAttrib : public Field {
 protected:
   virtual void doSetValue(const Value& new_val)
   {
-	 T temp;
-	 new_val.get(temp);
-	 (itsC->*itsSetter)(temp);
+    T temp;
+    new_val.get(temp);
+    (itsC->*itsSetter)(temp);
   }
 
 public:
   ReadWriteAttrib(C* t, Getter g, Setter s) :
-	 Field(t), itsC(t), itsGetter(g), itsSetter(s) {}
+    Field(), itsC(t), itsGetter(g), itsSetter(s) {}
 
   virtual void readValueFrom(IO::Reader* reader, const fixed_string& name)
   {
-	 T temp;
-	 reader->readValue(name, temp);
-	 (itsC->*itsSetter)(temp);
+    T temp;
+    reader->readValue(name, temp);
+    (itsC->*itsSetter)(temp);
   }
 
   virtual void writeValueTo(IO::Writer* writer,
-									 const fixed_string& name) const
+                            const fixed_string& name) const
   {
-	 writer->writeValue(name.c_str(), (itsC->*itsGetter)());
+    writer->writeValue(name.c_str(), (itsC->*itsGetter)());
   }
 
   virtual shared_ptr<Value> value() const
   {
-	 return shared_ptr<Value>(new TValue<T>((itsC->*itsGetter)()));
+    return shared_ptr<Value>(new TValue<T>((itsC->*itsGetter)()));
   }
 };
 

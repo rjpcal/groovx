@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Sun Jul 22 18:01:22 2001
+// written: Mon Aug  6 18:06:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -141,17 +141,15 @@ public:
 
 class Field {
 private:
-  FieldContainer* const itsOwner;
-
   Field& operator=(const Field& other);
 
 protected:
   virtual void doSetValue(const Value& new_val) = 0;
 
 public:
-  Field(FieldContainer* owner);
+  Field();
 
-  Field(const Field& other) : itsOwner(other.itsOwner) {}
+  Field(const Field& other) {}
 
   virtual ~Field();
 
@@ -159,7 +157,7 @@ public:
   virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const = 0;
 
   virtual shared_ptr<Value> value() const = 0;
-  void setValue(const Value& new_val);
+  void setValue(const Value& new_val, FieldContainer& owner);
 };
 
 ///////////////////////////////////////////////////////////////////////

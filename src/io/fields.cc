@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Mon Jun 11 12:26:37 2001
+// written: Mon Aug  6 18:08:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,12 +28,13 @@
 
 FieldMemberPtr::~FieldMemberPtr() {}
 
-Field::Field(FieldContainer* owner) : itsOwner(owner) {}
+Field::Field() {}
 Field::~Field() {}
 
-void Field::setValue(const Value& new_val) {
+void Field::setValue(const Value& new_val, FieldContainer& owner)
+{
   doSetValue(new_val);
-  itsOwner->sendStateChangeMsg();
+  owner.sendStateChangeMsg();
 }
 
 
@@ -45,7 +46,7 @@ void Field::setValue(const Value& new_val) {
 
 template <class T>
 TField<T>::TField(FieldContainer* owner, const T& val) :
-  Field(owner), itsVal(val) {}
+  Field(), itsVal(val) {}
 
 template <class T>
 TField<T>::~TField() {}
@@ -80,11 +81,11 @@ template class TField<double>;
 
 template <class T>
 TBoundedField<T>::TBoundedField(FieldContainer* owner, const T& val,
-										  const T& min, const T& max) :
-	 Field(owner),
-	 itsVal(val),
-	 itsMin(min),
-	 itsMax(max)
+                                const T& min, const T& max) :
+    Field(),
+    itsVal(val),
+    itsMin(min),
+    itsMax(max)
 {}
 
 template <class T>
@@ -92,12 +93,12 @@ TBoundedField<T>::~TBoundedField() {}
 
 template <class T>
 void TBoundedField<T>::readValueFrom(IO::Reader* reader,
-												 const fixed_string& name)
+                                     const fixed_string& name)
 { reader->readValue(name, itsVal); }
 
 template <class T>
 void TBoundedField<T>::writeValueTo(IO::Writer* writer,
-												const fixed_string& name) const
+                                    const fixed_string& name) const
 { writer->writeValue(name.c_str(), itsVal); }
 
 template <class T>
@@ -108,7 +109,7 @@ template <class T>
 void TBoundedField<T>::doSetValue(const Value& new_val) {
   T temp; new_val.get(temp);
   if (temp >= itsMin && temp <= itsMax)
-	 itsVal = temp;
+    itsVal = temp;
 }
 
 template class TBoundedField<int>;
@@ -125,7 +126,7 @@ template class TBoundedField<double>;
 
 template <class T>
 TPtrField<T>::TPtrField(FieldContainer* owner, T& valRef) :
-  Field(owner),
+  Field(),
   itsVal(valRef)
 {}
 
@@ -174,22 +175,22 @@ public:
   const FieldMap* itsParent;
 
   Impl(const FieldInfo* begin, const FieldInfo* end,
-		 const FieldMap* parent) :
-	 itsNameMap(),
-	 itsIoBegin(begin),
-	 itsIoEnd(end),
-	 itsParent(parent)
-	 {
-		while (begin != end)
-		  {
- 			 itsNameMap.insert(MapType::value_type(begin->name(), begin));
-			 ++begin;
-		  }
-	 }
+       const FieldMap* parent) :
+    itsNameMap(),
+    itsIoBegin(begin),
+    itsIoEnd(end),
+    itsParent(parent)
+    {
+      while (begin != end)
+        {
+          itsNameMap.insert(MapType::value_type(begin->name(), begin));
+          ++begin;
+        }
+    }
 };
 
 FieldMap::FieldMap(const FieldInfo* begin, const FieldInfo* end,
-						 const FieldMap* parent) :
+                   const FieldMap* parent) :
   itsImpl(new Impl(begin,end,parent))
 {}
 
@@ -198,7 +199,7 @@ FieldMap::~FieldMap() { delete itsImpl; }
 const FieldMap* FieldMap::emptyFieldMap() {
   static const FieldMap* emptyMap = 0;
   if (emptyMap == 0)
-	 emptyMap = new FieldMap((FieldInfo*)0, (FieldInfo*)0, (FieldMap*)0);
+    emptyMap = new FieldMap((FieldInfo*)0, (FieldInfo*)0, (FieldMap*)0);
   return emptyMap;
 }
 
@@ -212,18 +213,18 @@ const FieldInfo& FieldMap::info(const fixed_string& name) const {
   Impl::MapType::const_iterator itr = itsImpl->itsNameMap.find(name);
 
   if (itr != itsImpl->itsNameMap.end())
-	 return *((*itr).second);
+    return *((*itr).second);
 
   if (hasParent())
-	 {
-		return parent()->info(name);
-	 }
+    {
+      return parent()->info(name);
+    }
   else
-	 {
-		ErrorWithMsg err("no such field: '");
-		err.appendMsg(name.c_str(), "'");
-		throw err;
-	 }
+    {
+      ErrorWithMsg err("no such field: '");
+      err.appendMsg(name.c_str(), "'");
+      throw err;
+    }
 }
 
 class FieldMap::ItrImpl {
@@ -299,31 +300,31 @@ const Field& FieldContainer::field(const FieldInfo& pinfo) const
 { return pinfo.dereference(const_cast<FieldContainer*>(this)); }
 
 void FieldContainer::readFieldsFrom(IO::Reader* reader,
-												const FieldMap& fields) {
+                                    const FieldMap& fields) {
 DOTRACE("FieldContainer::readFieldsFrom");
   for (FieldMap::IoIterator
-			itr = fields.ioBegin(),
-			end = fields.ioEnd();
-		 itr != end;
-		 ++itr)
-	 {
-		field(*itr).readValueFrom(reader, itr->name());
-	 }
+         itr = fields.ioBegin(),
+         end = fields.ioEnd();
+       itr != end;
+       ++itr)
+    {
+      field(*itr).readValueFrom(reader, itr->name());
+    }
 
   sendStateChangeMsg();
 }
 
 void FieldContainer::writeFieldsTo(IO::Writer* writer,
-											  const FieldMap& fields) const {
+                                   const FieldMap& fields) const {
 DOTRACE("FieldContainer::writeFieldsTo");
   for (FieldMap::IoIterator
-			itr = fields.ioBegin(),
-			end = fields.ioEnd();
-		 itr != end;
-		 ++itr)
-	 {
-		field(*itr).writeValueTo(writer, itr->name());
-	 }
+         itr = fields.ioBegin(),
+         end = fields.ioEnd();
+       itr != end;
+       ++itr)
+    {
+      field(*itr).writeValueTo(writer, itr->name());
+    }
 }
 
 static const char vcid_fields_cc[] = "$Header$";

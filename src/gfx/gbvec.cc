@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:11:19 2000
-// written: Mon Jun 11 12:11:50 2001
+// written: Mon Aug  6 18:07:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ void GbVecLocal::raiseScanError() {
 
 template <class T>
 GbVec3<T>::GbVec3(FieldContainer* owner, double x_, double y_, double z_) :
-  Field(owner),
+  Field(),
   itsData(x_, y_, z_)
 {}
 
@@ -99,7 +99,7 @@ void GbVec3<T>::readValueFrom(IO::Reader* reader, const fixed_string& name)
 
 template <class T>
 void GbVec3<T>::writeValueTo(IO::Writer* writer,
-									 const fixed_string& name) const
+                            const fixed_string& name) const
 { writer->writeValueObj(name.c_str(), *this); }
 
 template <class T>

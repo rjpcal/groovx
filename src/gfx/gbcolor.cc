@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:10:25 2000
-// written: Mon Jun 11 12:11:31 2001
+// written: Mon Aug  6 18:06:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,17 +22,19 @@
 
 #include "util/debug.h"
 
-namespace GbColorLocal {
+namespace GbColorLocal
+{
   void raiseScanError();
 }
 
-void GbColorLocal::raiseScanError() {
+void GbColorLocal::raiseScanError()
+{
   throw ValueError("couldn't scan data for GbColor");
 }
 
 GbColor::GbColor(FieldContainer* owner, double v) :
   RgbaColor(v),
-  Field(owner)
+  Field()
 {}
 
 GbColor::~GbColor() {}
