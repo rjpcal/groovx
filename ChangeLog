@@ -122,3 +122,23 @@ take place actually with 3-D bounding cubes... that allows us to properly
 account for the effects of arbitrary coordinate transformations. Only at
 the final stage do we extract a 2-D screen-aligned bounding "box" from the
 cube.
+
+* (21-Jun-1999, done 26-Sep-2002) GL coordinates <--> visual angle
+This is basically already in place with Togl::setViewingDistance
+and Togl::setUnitAngle.
+
+* (May-1999, nix 26-Sep-2002) Implement GLenums without STL maps
+Probably best to use Tcl_Index API's, to search for matching string in
+array, and retrieve its index. [Later] This issue is mostly moot now, since
+the problems with STL maps was just an issue of long compiles on old HP
+machines, but is not a significant problem now with linux/gcc.
+
+* (5-Oct-1999, ok 26-Sep-2002) TimingHdlr response behavior?
+Maybe TimingHdlr should have a toggle switch to indicate
+what the behavior should be when a response is seen. (Whether to
+cancel StartEvents, etc.). [Later] I think we have a decent heuristic in
+place here now: namely, if the response-queue is non-empty, then we cancel
+the start events and schedule the response events, otherwise we do nothing.
+
+* (14-Dec-1999, ok 26-Sep-2002) Need Canvas& argument to GrObj::grGetBoundingBox
+OK, this stuff has been in place for a while now.

@@ -335,7 +335,7 @@ factor in order to adjust for past errors.
 and give feedback to their TimingHdlr's so that the TimingHdlr's can do a
 multiplicative scaling to compensate.
 
-* (16-May-2000) GOAL #7 Make bitmap caching a more fluent part of the software.
+* (16-May-2000) GOAL #7 Make bitmap caching a more fluent part of the software
 
 Need to have a way to explicitly represent GrObj's with cached-bitmap-file
 representations... this way we can have access both to a GrObj's semantic
@@ -444,31 +444,18 @@ the entire duration).
 to make sure that autosave file is writable by rjp_subject, and if not, use
 a different filename. (Maybe use temp filename generating facility of OS?).
 
-* (14-Dec-1999) Need Canvas& argument to GrObj::grGetBoundingBox
-
 * (14-Dec-1999) Need Canvas& argument to Bitmap::grabScreenRect/grabWorldRect
 
 * (17-Nov-1999) matlab automation for data analysis?
 by opening a pipe to a Matlab process from within Tcl?
-
-* (5-Oct-1999) TimingHdlr response behavior?
-Maybe TimingHdlr should have a toggle switch to indicate
-what the behavior should be when a response is seen. (Whether to
-cancel StartEvents, etc.).
 
 * (29-Sep-1999) Avoid unnecessary sendChangeMsg()'s
 It would be nice, in the Value/Property scheme, to be able to avoid
 triggering sendChangeMsg() when the value doesn't actually change (e.g if
 the new value was the same as the current value, or was out of bounds).
 
-* (21-Jun-1999) arrange GL coordinates to correspond to visual angle
-
 * (15-Jun-1999) Bitmaps need to have attribs for glPixelZoom()
 and other operations that can affect pixel rendering... should these be
 placed in a separate Position subclass?
 
 * (May-1999) extract experiment+trial statistics 
-
-* (May-1999) Implement GLenums with something other than STL maps
-Probably best to use Tcl_Index API's, to search for matching string in
-array, and retrieve its index.
