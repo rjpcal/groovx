@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Wed Nov 10 11:50:33 1999
+// written: Mon Nov 15 16:28:59 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,18 +62,18 @@ namespace {
 }
 ///////////////////////////////////////////////////////////////////////
 //
-// GrObjImpl class
+// GrObj::Impl class
 //
 ///////////////////////////////////////////////////////////////////////
 
-class GrObjImpl {
+class GrObj::Impl {
 public:
   //////////////
   // creators //
   //////////////
 
-  GrObjImpl(GrObj* obj);
-  ~GrObjImpl();
+  Impl(GrObj* obj);
+  ~Impl();
 
   virtual void serialize(ostream &os, IO::IOFlag flag) const;
   virtual void deserialize(istream &is, IO::IOFlag flag);
@@ -193,8 +193,7 @@ private:
 
 public:
 
-  bool getBoundingBox(double& left, double& top,
-							 double& right, double& bottom) const;
+  bool getBoundingBox(Rect<double>& bbox) const;
 
   bool getBBVisibility() const { return itsBB.itsIsVisible; }
 
@@ -313,11 +312,11 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// GrObjImpl creator definitions
+// GrObj::Impl creator definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-GrObjImpl::GrObjImpl(GrObj* obj) :
+GrObj::Impl::Impl(GrObj* obj) :
   self(obj),
   itsCategory(-1),
   itsScaler(),
@@ -327,12 +326,12 @@ GrObjImpl::GrObjImpl(GrObj* obj) :
   itsUnRenderer()
 {};
 
-GrObjImpl::~GrObjImpl() {
-DOTRACE("GrObjImpl::~GrObjImpl");
+GrObj::Impl::~Impl() {
+DOTRACE("GrObj::Impl::~Impl");
 }
 
-void GrObjImpl::serialize(ostream &os, IO::IOFlag flag) const {
-DOTRACE("GrObjImpl::serialize");
+void GrObj::Impl::serialize(ostream &os, IO::IOFlag flag) const {
+DOTRACE("GrObj::Impl::serialize");
 
   DebugEvalNL(flag & IO::TYPENAME); 
 
@@ -358,8 +357,8 @@ DOTRACE("GrObjImpl::serialize");
   if (flag & IO::BASES) { /* no bases to serialize */ }
 }
 
-void GrObjImpl::deserialize(istream &is, IO::IOFlag flag) {
-DOTRACE("GrObjImpl::deserialize");
+void GrObj::Impl::deserialize(istream &is, IO::IOFlag flag) {
+DOTRACE("GrObj::Impl::deserialize");
 
   DebugEvalNL(flag & IO::TYPENAME); 
 
@@ -388,8 +387,8 @@ DOTRACE("GrObjImpl::deserialize");
   if (flag & IO::BASES) { /* no bases to deserialize */ }
 }
 
-int GrObjImpl::charCount() const {
-DOTRACE("GrObjImpl::charCount");
+int GrObj::Impl::charCount() const {
+DOTRACE("GrObj::Impl::charCount");
   int count = 
 	 gCharCount("GrObj") + 1
 	 + gCharCount(itsCategory) + 1
@@ -411,93 +410,92 @@ DOTRACE("GrObjImpl::charCount");
   return count;
 }
 
-void GrObjImpl::readFrom(Reader* reader) {
-DOTRACE("GrObjImpl::readFrom");
+void GrObj::Impl::readFrom(Reader* reader) {
+DOTRACE("GrObj::Impl::readFrom");
 }
 
-void GrObjImpl::writeTo(Writer* writer) const {
-DOTRACE("GrObjImpl::writeTo");
+void GrObj::Impl::writeTo(Writer* writer) const {
+DOTRACE("GrObj::Impl::writeTo");
 }
 
 
 ///////////////////////////////////////////////////////////////////////
 //
-// GrObjImpl accessor definitions
+// GrObj::Impl accessor definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-inline const Rect<double>& GrObjImpl::getRawBB() const {
+inline const Rect<double>& GrObj::Impl::getRawBB() const {
   updateBB();
   return itsBB.itsCachedRawBB;
 }
 
-inline int GrObjImpl::getBBPixelBorder() const {
+inline int GrObj::Impl::getBBPixelBorder() const {
   updateBB();
   return itsBB.itsCachedPixelBorder;
 }
 
-inline bool GrObjImpl::hasBB() const {
+inline bool GrObj::Impl::hasBB() const {
   updateBB();
   return itsBB.itsHasBB;
 }
 
-inline double GrObjImpl::aspectRatio() const {
+inline double GrObj::Impl::aspectRatio() const {
   if ( !hasBB() ) return 1.0;
   return (itsScaler.itsHeightFactor != 0.0 ? itsScaler.itsWidthFactor/itsScaler.itsHeightFactor : 0.0);
 }
 
-inline double GrObjImpl::finalWidth() const {
+inline double GrObj::Impl::finalWidth() const {
   return nativeWidth()*itsScaler.itsWidthFactor;
 }
 
-inline double GrObjImpl::finalHeight() const {
+inline double GrObj::Impl::finalHeight() const {
   return nativeHeight()*itsScaler.itsHeightFactor;
 }
 
-inline double GrObjImpl::nativeWidth() const {
+inline double GrObj::Impl::nativeWidth() const {
   updateBB();
   return itsBB.itsCachedRawBB.width();
 }
 
-inline double GrObjImpl::nativeHeight() const {
+inline double GrObj::Impl::nativeHeight() const {
   updateBB();
   return itsBB.itsCachedRawBB.height();;
 }
 
-inline double GrObjImpl::nativeCenterX() const {
+inline double GrObj::Impl::nativeCenterX() const {
   updateBB();
   return itsBB.itsCachedRawBB.centerX();
 }
 
-inline double GrObjImpl::nativeCenterY() const {
+inline double GrObj::Impl::nativeCenterY() const {
   updateBB();
   return itsBB.itsCachedRawBB.centerY();
 }
 
-bool GrObjImpl::getBoundingBox(double& left, double& top,
-										 double& right, double& bottom) const {
-DOTRACE("GrObjImpl::getBoundingBox");
+bool GrObj::Impl::getBoundingBox(Rect<double>& bbox) const {
+DOTRACE("GrObj::Impl::getBoundingBox");
 
   if ( !hasBB() ) return false;
 
   updateCachedFinalBB();
-  itsBB.itsCachedFinalBB.getRectLTRB(left, top, right, bottom);
+  bbox = itsBB.itsCachedFinalBB;
   return true;
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// GrObjImpl manipulator definitions
+// GrObj::Impl manipulator definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-inline void GrObjImpl::setBBVisibility(bool visibility) {
-DOTRACE("GrObjImpl::setBBVisibility");
+inline void GrObj::Impl::setBBVisibility(bool visibility) {
+DOTRACE("GrObj::Impl::setBBVisibility");
   itsBB.itsIsVisible = visibility;
 }
 
-void GrObjImpl::setScalingMode(GrObj::ScalingMode new_mode) {
-DOTRACE("GrObjImpl::setScalingMode");
+void GrObj::Impl::setScalingMode(GrObj::ScalingMode new_mode) {
+DOTRACE("GrObj::Impl::setScalingMode");
   if (itsScaler.itsMode == new_mode) return;
 
   switch (new_mode) {
@@ -519,8 +517,8 @@ DOTRACE("GrObjImpl::setScalingMode");
   } // end switch
 }
 
-void GrObjImpl::setWidth(double new_width) {
-DOTRACE("GrObjImpl::setWidth");
+void GrObj::Impl::setWidth(double new_width) {
+DOTRACE("GrObj::Impl::setWidth");
   if (new_width == 0.0 || new_width == finalWidth()) return; 
   if (itsScaler.itsMode == GrObj::NATIVE_SCALING) return;
   if ( !hasBB() ) return;
@@ -536,8 +534,8 @@ DOTRACE("GrObjImpl::setWidth");
   }
 }
 
-void GrObjImpl::setHeight(double new_height) {
-DOTRACE("GrObjImpl::setHeight");
+void GrObj::Impl::setHeight(double new_height) {
+DOTRACE("GrObj::Impl::setHeight");
   if (new_height == 0.0 || new_height == finalHeight()) return; 
   if (itsScaler.itsMode == GrObj::NATIVE_SCALING) return;
   if ( !hasBB() ) return;
@@ -553,8 +551,8 @@ DOTRACE("GrObjImpl::setHeight");
   }
 }
 
-void GrObjImpl::setAspectRatio(double new_aspect_ratio) {
-DOTRACE("GrObjImpl::setAspectRatio");
+void GrObj::Impl::setAspectRatio(double new_aspect_ratio) {
+DOTRACE("GrObj::Impl::setAspectRatio");
   if (new_aspect_ratio == 0.0 || new_aspect_ratio == aspectRatio()) return; 
   if (itsScaler.itsMode == GrObj::NATIVE_SCALING) return;
   if ( !hasBB() ) return;
@@ -567,8 +565,8 @@ DOTRACE("GrObjImpl::setAspectRatio");
   itsScaler.itsWidthFactor *= change_factor;
 }
 
-void GrObjImpl::setMaxDimension(double new_max_dimension) {
-DOTRACE("GrObjImpl::setMaxDimension");
+void GrObj::Impl::setMaxDimension(double new_max_dimension) {
+DOTRACE("GrObj::Impl::setMaxDimension");
   if (itsScaler.itsMode == GrObj::NATIVE_SCALING) return;
   if ( !hasBB() ) return;
 
@@ -578,8 +576,8 @@ DOTRACE("GrObjImpl::setMaxDimension");
   itsScaler.itsHeightFactor *= scaling_factor;
 }
 
-void GrObjImpl::setAlignmentMode(GrObj::AlignmentMode new_mode) {
-DOTRACE("GrObjImpl::setAlignmentMode");
+void GrObj::Impl::setAlignmentMode(GrObj::AlignmentMode new_mode) {
+DOTRACE("GrObj::Impl::setAlignmentMode");
   DebugEval(new_mode); 
   DebugEvalNL(itsAligner.itsMode); 
 
@@ -607,8 +605,8 @@ DOTRACE("GrObjImpl::setAlignmentMode");
   DebugEvalNL(itsAligner.itsMode); 
 }
 
-void GrObjImpl::setRenderMode(GrObj::GrObjRenderMode new_mode) {
-DOTRACE("GrObjImpl::setRenderMode");
+void GrObj::Impl::setRenderMode(GrObj::GrObjRenderMode new_mode) {
+DOTRACE("GrObj::Impl::setRenderMode");
   // If new_mode is the same as the current render mode, then return
   // immediately (and don't send a state change message)
   if (new_mode == itsRenderer.itsMode) return; 
@@ -639,8 +637,8 @@ DOTRACE("GrObjImpl::setRenderMode");
   } // end switch
 }
 
-void GrObjImpl::setUnRenderMode(GrObj::GrObjRenderMode new_mode) {
-DOTRACE("GrObjImpl::setUnRenderMode");
+void GrObj::Impl::setUnRenderMode(GrObj::GrObjRenderMode new_mode) {
+DOTRACE("GrObj::Impl::setUnRenderMode");
   // If new_mode is the same as the current unrender mode, then return
   // immediately (and don't send a state change message)
   if (new_mode == itsUnRenderer.itsMode) return; 
@@ -663,19 +661,16 @@ DOTRACE("GrObjImpl::setUnRenderMode");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// GrObjImpl action definitions
+// GrObj::Impl action definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GrObjImpl::updateBB() const {
-DOTRACE("GrObjImpl::updateBB");
+void GrObj::Impl::updateBB() const {
+DOTRACE("GrObj::Impl::updateBB");
   DebugEval(itsBB.itsRawBBIsCurrent);
   if (!itsBB.itsRawBBIsCurrent) {
-	 itsBB.itsHasBB = self->grGetBoundingBox(itsBB.itsCachedRawBB.l,
-												  itsBB.itsCachedRawBB.t,
-												  itsBB.itsCachedRawBB.r,
-												  itsBB.itsCachedRawBB.b,
-												  itsBB.itsCachedPixelBorder);
+	 itsBB.itsHasBB = self->grGetBoundingBox(itsBB.itsCachedRawBB,
+														  itsBB.itsCachedPixelBorder);
 	 if (!itsBB.itsHasBB) {
 		itsBB.itsCachedRawBB.setRectLTRB(0.0, 0.0, 0.0, 0.0);
 		itsBB.itsCachedPixelBorder = 0;
@@ -685,8 +680,8 @@ DOTRACE("GrObjImpl::updateBB");
   DebugEvalNL(itsBB.itsHasBB);
 }
 
-void GrObjImpl::update() const {
-DOTRACE("GrObjImpl::update");
+void GrObj::Impl::update() const {
+DOTRACE("GrObj::Impl::update");
   checkForGlError("before GrObj::update");
   if ( !isCurrent() ) {
 
@@ -704,8 +699,8 @@ DOTRACE("GrObjImpl::update");
   checkForGlError("during GrObj::update");
 }
 
-void GrObjImpl::draw() const {
-DOTRACE("GrObjImpl::draw");
+void GrObj::Impl::draw() const {
+DOTRACE("GrObj::Impl::draw");
   checkForGlError("before GrObj::draw");
 
   if ( itsBB.itsIsVisible ) {
@@ -726,8 +721,8 @@ DOTRACE("GrObjImpl::draw");
   checkForGlError("during GrObj::draw"); 
 }
 
-void GrObjImpl::undraw() const {
-DOTRACE("GrObjImpl::undraw");
+void GrObj::Impl::undraw() const {
+DOTRACE("GrObj::Impl::undraw");
   checkForGlError("before GrObj::undraw");
 
   switch (itsUnRenderer.itsMode) {
@@ -744,10 +739,10 @@ DOTRACE("GrObjImpl::undraw");
   checkForGlError("during GrObj::undraw");
 }
 
-void GrObjImpl::grDrawBoundingBox() const {
-DOTRACE("GrObjImpl::grDrawBoundingBox");
-  double left, top, right, bottom;
-  if ( getBoundingBox(left, top, right, bottom) ) {
+void GrObj::Impl::grDrawBoundingBox() const {
+DOTRACE("GrObj::Impl::grDrawBoundingBox");
+  Rect<double> bbox;
+  if ( getBoundingBox(bbox) ) {
 	 DebugPrintNL("drawing bounding box");
 	 glPushAttrib(GL_LINE_BIT);
 	 {
@@ -756,25 +751,25 @@ DOTRACE("GrObjImpl::grDrawBoundingBox");
  		glLineStipple(1, 0x0F0F);
 
 		glBegin(GL_LINE_LOOP);
-		  glVertex2d(left, bottom);
-		  glVertex2d(right, bottom);
-		  glVertex2d(right, top);
-		  glVertex2d(left, top);
+		  glVertex2d(bbox.left(), bbox.bottom());
+		  glVertex2d(bbox.right(), bbox.bottom());
+		  glVertex2d(bbox.right(), bbox.top());
+		  glVertex2d(bbox.left(), bbox.top());
 		glEnd();
 	 }
 	 glPopAttrib();
   }
 }
 
-void GrObjImpl::invalidateCaches() {
-DOTRACE("GrObjImpl::invalidateCaches");
+void GrObj::Impl::invalidateCaches() {
+DOTRACE("GrObj::Impl::invalidateCaches");
   itsRenderer.itsIsCurrent = false;
   itsBB.itsRawBBIsCurrent = false;
   itsBB.itsFinalBBIsCurrent = false;
 }
 
-void GrObjImpl::newList() const {
-DOTRACE("GrObjImpl::newList");
+void GrObj::Impl::newList() const {
+DOTRACE("GrObj::Impl::newList");
   glDeleteLists(itsRenderer.itsDisplayList, 1);
   itsRenderer.itsDisplayList = glGenLists(1); 
   if (itsRenderer.itsDisplayList == 0) {     
@@ -783,8 +778,8 @@ DOTRACE("GrObjImpl::newList");
   }
 }
 
-void GrObjImpl::recompile() const {
-DOTRACE("GrObjImpl::recompile");
+void GrObj::Impl::recompile() const {
+DOTRACE("GrObj::Impl::recompile");
   newList();
   
   glNewList(getDisplayList(), GL_COMPILE);
@@ -794,8 +789,8 @@ DOTRACE("GrObjImpl::recompile");
   postUpdated();
 }
 
-void GrObjImpl::recacheBitmap() const {
-DOTRACE("GrObjImpl::recacheBitmap");
+void GrObj::Impl::recacheBitmap() const {
+DOTRACE("GrObj::Impl::recacheBitmap");
   Assert(itsRenderer.itsBitmapCache != 0);
   
   undraw();
@@ -815,10 +810,12 @@ DOTRACE("GrObjImpl::recacheBitmap");
 		
 		Assert(hasBB());
 		
-		itsRenderer.itsBitmapCache->grabWorldRect(getRawBB().l, getRawBB().t,
-												getRawBB().r, getRawBB().b);
-		itsRenderer.itsBitmapCache->setRasterX(getRawBB().l);
-		itsRenderer.itsBitmapCache->setRasterY(getRawBB().b);
+		itsRenderer.itsBitmapCache->grabWorldRect(getRawBB().left(),
+																getRawBB().top(),
+																getRawBB().right(),
+																getRawBB().bottom());
+		itsRenderer.itsBitmapCache->setRasterX(getRawBB().left());
+		itsRenderer.itsBitmapCache->setRasterY(getRawBB().bottom());
 	 }
 	 glPopAttrib;
   }
@@ -832,8 +829,8 @@ DOTRACE("GrObjImpl::recacheBitmap");
   postUpdated();
 }
 
-void GrObjImpl::doAlignment() const {
-DOTRACE("GrObjImpl::doAlignment");
+void GrObj::Impl::doAlignment() const {
+DOTRACE("GrObj::Impl::doAlignment");
   if (GrObj::NATIVE_ALIGNMENT == itsAligner.itsMode) return;
 	 
   Assert(hasBB());
@@ -870,8 +867,8 @@ DOTRACE("GrObjImpl::doAlignment");
 					0.0);
 }
 
-void GrObjImpl::doScaling() const {
-DOTRACE("GrObjImpl::doScaling");
+void GrObj::Impl::doScaling() const {
+DOTRACE("GrObj::Impl::doScaling");
   if (GrObj::NATIVE_SCALING == itsScaler.itsMode) return;
 	 
   switch (itsScaler.itsMode) {
@@ -882,40 +879,32 @@ DOTRACE("GrObjImpl::doScaling");
   }
 }
 
-void GrObjImpl::updateCachedFinalBB() const {
-DOTRACE("GrObjImpl::updateCachedFinalBB");
+void GrObj::Impl::updateCachedFinalBB() const {
+DOTRACE("GrObj::Impl::updateCachedFinalBB");
+
   if ( !itsBB.itsFinalBBIsCurrent ) {
-	 itsBB.itsCachedFinalBB = getRawBB();
-	 
-	 int bp = getBBPixelBorder();  // border pixels
-	 
+
 	 // Do the object's internal scaling and alignment, and find the
 	 // bounding box in screen coordinates
 	 
-	 Rect<int> screen_pos;
-	 
 	 glMatrixMode(GL_MODELVIEW);
 	 glPushMatrix();
-	 {
+
 		doScaling();
 		doAlignment();
 		
-		GrObj::getScreenFromWorld(itsBB.itsCachedFinalBB.l, itsBB.itsCachedFinalBB.b,
-										  screen_pos.l, screen_pos.b);
-		GrObj::getScreenFromWorld(itsBB.itsCachedFinalBB.r, itsBB.itsCachedFinalBB.t,
-										  screen_pos.r, screen_pos.t, false);
-	 }
+		Rect<int> screen_pos = GrObj::getScreenFromWorld(getRawBB());
+
 	 glPopMatrix();
 	 
-	 // Add a border of 'bp' pixels around the edges of the image...
+	 // Add a pixel border around the edges of the image...
+	 int bp = getBBPixelBorder();
+	 
 	 screen_pos.widenByStep(bp);
 	 screen_pos.heightenByStep(bp);
 
 	 // ... and project back to world coordinates
-	 GrObj::getWorldFromScreen(screen_pos.l, screen_pos.b,
-										itsBB.itsCachedFinalBB.l, itsBB.itsCachedFinalBB.b);
-	 GrObj::getWorldFromScreen(screen_pos.r, screen_pos.t,
-										itsBB.itsCachedFinalBB.r, itsBB.itsCachedFinalBB.t, false);
+	 itsBB.itsCachedFinalBB = GrObj::getWorldFromScreen(screen_pos);
 	 
 	 // This next line is commented out to disable the caching scheme
 	 // because I don't think it really works, since changes to the
@@ -926,8 +915,8 @@ DOTRACE("GrObjImpl::updateCachedFinalBB");
   }
 }
 
-void GrObjImpl::drawDirectRender() const {
-DOTRACE("GrObjImpl::drawDirectRender");
+void GrObj::Impl::drawDirectRender() const {
+DOTRACE("GrObj::Impl::drawDirectRender");
   glMatrixMode(GL_MODELVIEW);
 
   glPushMatrix();
@@ -938,8 +927,8 @@ DOTRACE("GrObjImpl::drawDirectRender");
   glPopMatrix();
 }
 
-void GrObjImpl::drawGLCompile() const {
-DOTRACE("GrObjImpl::drawGLCompile");
+void GrObj::Impl::drawGLCompile() const {
+DOTRACE("GrObj::Impl::drawGLCompile");
   glMatrixMode(GL_MODELVIEW);
 
   if ( !isCurrent() ) {
@@ -952,8 +941,8 @@ DOTRACE("GrObjImpl::drawGLCompile");
   glPopMatrix();
 }
 
-void GrObjImpl::drawBitmapCache() const {
-DOTRACE("GrObjImpl::drawBitmapCache");
+void GrObj::Impl::drawBitmapCache() const {
+DOTRACE("GrObj::Impl::drawBitmapCache");
   glMatrixMode(GL_MODELVIEW);
 
   if ( !isCurrent() ) {
@@ -972,8 +961,8 @@ DOTRACE("GrObjImpl::drawBitmapCache");
   }
 }
 
-void GrObjImpl::undrawDirectRender() const {
-DOTRACE("GrObjImpl::undrawDirectRender");
+void GrObj::Impl::undrawDirectRender() const {
+DOTRACE("GrObj::Impl::undrawDirectRender");
   glMatrixMode(GL_MODELVIEW);
 
   glPushMatrix();
@@ -986,8 +975,8 @@ DOTRACE("GrObjImpl::undrawDirectRender");
   glPopMatrix();
 }
 
-void GrObjImpl::undrawSwapForeBack() const {
-DOTRACE("GrObjImpl::undrawSwapForeBack");
+void GrObj::Impl::undrawSwapForeBack() const {
+DOTRACE("GrObj::Impl::undrawSwapForeBack");
   glMatrixMode(GL_MODELVIEW);
 
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
@@ -1018,28 +1007,23 @@ DOTRACE("GrObjImpl::undrawSwapForeBack");
   glPopAttrib();
 }
 
-void GrObjImpl::undrawClearBoundingBox() const {
-DOTRACE("GrObjImpl::undrawClearBoundingBox");
+void GrObj::Impl::undrawClearBoundingBox() const {
+DOTRACE("GrObj::Impl::undrawClearBoundingBox");
   glMatrixMode(GL_MODELVIEW);
 
   Rect<double> world_pos;
-  if (getBoundingBox(world_pos.l, world_pos.t, world_pos.r, world_pos.b)) {
+  if ( getBoundingBox(world_pos) ) {
 	 glPushAttrib(GL_SCISSOR_BIT);
 	 {
 		glEnable(GL_SCISSOR_TEST);
 
-		Rect<int> screen_pos;
-
-		GrObj::getScreenFromWorld(world_pos.l, world_pos.t,
-										  screen_pos.l, screen_pos.t);
-		GrObj::getScreenFromWorld(world_pos.r, world_pos.b,
-										  screen_pos.r, screen_pos.b, false);
+		Rect<int> screen_pos = GrObj::getScreenFromWorld(world_pos);
 
 		// Add an extra one-pixel border around the rect
 		screen_pos.widenByStep(1);
 		screen_pos.heightenByStep(1);
 
-		glScissor(screen_pos.l, screen_pos.b,
+		glScissor(screen_pos.left(), screen_pos.bottom(),
 					 screen_pos.width(), screen_pos.height());
 
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -1049,8 +1033,8 @@ DOTRACE("GrObjImpl::undrawClearBoundingBox");
   }
 }
 
-void GrObjImpl::undrawBoundingBox() const {
-DOTRACE("GrObjImpl::undrawBoundingBox");
+void GrObj::Impl::undrawBoundingBox() const {
+DOTRACE("GrObj::Impl::undrawBoundingBox");
   glMatrixMode(GL_MODELVIEW);
 
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
@@ -1108,7 +1092,7 @@ const int GrObj::ARBITRARY_ON_CENTER;
 // GrObj default constructor
 GrObj::GrObj(GrObjRenderMode render_mode,
 				 GrObjRenderMode unrender_mode) :
-  itsImpl(new GrObjImpl(this))
+  itsImpl(new Impl(this))
 {
 DOTRACE("GrObj::GrObj");
   // The GrObj needs to observe itself in order to update its display
@@ -1127,7 +1111,7 @@ DOTRACE("GrObj::GrObj");
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
 GrObj::GrObj(istream& is, IOFlag flag) :
-  itsImpl(new GrObjImpl(this))
+  itsImpl(new Impl(this))
 {
 DOTRACE("GrObj::GrObj(istream&)");
   deserialize(is, flag);
@@ -1161,11 +1145,14 @@ DOTRACE("GrObj::deserialize");
 
 void GrObj::readFrom(Reader* reader) {
 DOTRACE("GrObj::readFrom");
+
+  itsImpl->readFrom(reader);
   sendStateChangeMsg();
 }
 
 void GrObj::writeTo(Writer* writer) const {
 DOTRACE("GrObj::writeTo");
+  itsImpl->writeTo(writer);
 }
 
 int GrObj::charCount() const {
@@ -1182,15 +1169,13 @@ DOTRACE("GrObj::getBBVisibility");
   return itsImpl->getBBVisibility();
 }
 
-bool GrObj::getBoundingBox(double& left, double& top,
-									double& right, double& bottom) const {
+bool GrObj::getBoundingBox(Rect<double>& bbox) const {
 DOTRACE("GrObj::getBoundingBox");
 
-  return itsImpl->getBoundingBox(left, top, right, bottom); 
+  return itsImpl->getBoundingBox(bbox);
 }
 
-bool GrObj::grGetBoundingBox(double& /*left*/, double& /*top*/,
-									  double& /*right*/, double& /*bottom*/,
+bool GrObj::grGetBoundingBox(Rect<double>& /*bounding_box*/,
 									  int& /* border_pixels */) const {
 DOTRACE("GrObj::grGetBoundingBox");
   return false;
@@ -1308,6 +1293,41 @@ DOTRACE("GrObj::getWorldFromScreen");
 	 throw ErrorWithMsg("GrObj::getWorldFromScreen(): gluUnProject error");
 }
 
+Point<int> GrObj::getScreenFromWorld(const Point<double>& world_pos,
+												 bool recalculate_state) {
+DOTRACE("GrObj::getScreenFromWorld(Point)");
+  Point<int> screen_pos;
+  getScreenFromWorld(world_pos.x(), world_pos.y(),
+							screen_pos.x(), screen_pos.y(),
+							recalculate_state);
+  return screen_pos;
+}
+
+Point<double> GrObj::getWorldFromScreen(const Point<int>& screen_pos,
+													 bool recalculate_state) {
+DOTRACE("GrObj::getWorldFromScreen(Point)");
+  Point<double> world_pos;
+  getWorldFromScreen(screen_pos.x(), screen_pos.y(),
+							world_pos.x(), world_pos.y(),
+							recalculate_state);
+  return world_pos;
+}
+
+Rect<int> GrObj::getScreenFromWorld(const Rect<double>& world_pos) {
+DOTRACE("GrObj::getScreenFromWorld(Rect)");
+  Rect<int> screen_rect;
+  screen_rect.setBottomLeft( getScreenFromWorld(world_pos.bottomLeft())      );
+  screen_rect.setTopRight  ( getScreenFromWorld(world_pos.topRight(), false) );
+  return screen_rect;
+}
+
+Rect<double> GrObj::getWorldFromScreen(const Rect<int>& screen_pos) {
+DOTRACE("GrObj::getWorldFromScreen(Rect)");
+  Rect<double> world_rect;
+  world_rect.setBottomLeft( getWorldFromScreen(screen_pos.bottomLeft())      );
+  world_rect.setTopRight  ( getWorldFromScreen(screen_pos.topRight(), false) );
+  return world_rect;
+}
 
 //////////////////
 // manipulators //
