@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Tue Jun 12 07:22:39 2001
+// written: Tue Jun 12 16:40:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -123,6 +123,13 @@ public:
 
   /// Returns true if the reference count is one or less.
   bool isUnshared() const;
+
+  /** Returns true if the object should not be acquired by any strong
+      references, because it's lifespan is volatile (such as objects
+      representing on-screen windows that can be dismissed by the
+      user). The default implementation provided by RefCounted returns
+      false. */
+  virtual bool isVolatile() const;
 
   /// Returns the object's (strong) reference count.
   RefCounts::Count refCount() const;
