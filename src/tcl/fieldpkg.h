@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 12 17:45:52 2000
-// written: Wed Jun  6 19:44:51 2001
+// written: Wed Jun 13 15:16:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,8 +21,8 @@
 #include "util/objfactory.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOITEMPKG_H_DEFINED)
-#include "tcl/ioitempkg.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GENERICOBJPKG_H_DEFINED)
+#include "tcl/genericobjpkg.h"
 #endif
 
 class FieldInfo;
@@ -45,13 +45,13 @@ void declareAllFields(TclItemPkg* pkg, const FieldMap& fmap);
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
-class FieldCntrPkg : public IoItemPkg<C> {
+class FieldCntrPkg : public GenericObjPkg<C> {
 public:
   FieldCntrPkg(Tcl_Interp* interp, const char* name, const char* version) :
-	 IoItemPkg<C>(interp, name, version)
+    GenericObjPkg<C>(interp, name, version)
   {
-	 declareAllFields(this, C::classFields());
-	 Util::ObjFactory::theOne().registerCreatorFunc(&C::make);
+    declareAllFields(this, C::classFields());
+    Util::ObjFactory::theOne().registerCreatorFunc(&C::make);
   }
 };
 

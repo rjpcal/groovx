@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jun 13 13:15:55 2001
+// written: Wed Jun 13 15:16:02 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -23,7 +23,7 @@
 
 #include "gx/gxnode.h"
 
-#include "tcl/ioitempkg.h"
+#include "tcl/genericobjpkg.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclevalcmd.h"
 #include "tcl/tclitempkg.h"
@@ -393,10 +393,10 @@ public:
 };
 
 
-class ObjTogl::TogletPkg : public Tcl::IoItemPkg<Toglet> {
+class ObjTogl::TogletPkg : public Tcl::GenericObjPkg<Toglet> {
 public:
   TogletPkg(Tcl_Interp* interp) :
-    Tcl::IoItemPkg<Toglet>(interp, "Toglet", "$Revision$")
+    Tcl::GenericObjPkg<Toglet>(interp, "Toglet", "$Revision$")
   {
     addCommand( new BindCmd       (this, "Toglet::bind") );
     addCommand( new CurrentTogletCmd (interp, "Toglet::currentToglet") );

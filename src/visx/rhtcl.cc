@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Jun 11 15:08:17 2001
+// written: Wed Jun 13 15:16:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "kbdresponsehdlr.h"
 #include "nullresponsehdlr.h"
 
-#include "tcl/ioitempkg.h"
+#include "tcl/genericobjpkg.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
@@ -47,88 +47,88 @@ namespace SerialRhTcl {
 class SerialRhTcl::SerialEventSource {
 public:
   SerialEventSource(Tcl_Interp* interp, const char* serial_device) :
-	 itsInterp(interp),
-	 itsPort(serial_device)
-	 {
-		Tcl_CreateEventSource(setupProc, checkProc, static_cast<void*>(this));
-	 }
+    itsInterp(interp),
+    itsPort(serial_device)
+    {
+      Tcl_CreateEventSource(setupProc, checkProc, static_cast<void*>(this));
+    }
 
   ~SerialEventSource()
-	 {
-		Tcl_DeleteEventSource(setupProc, checkProc, static_cast<void*>(this));
-	 }
+    {
+      Tcl_DeleteEventSource(setupProc, checkProc, static_cast<void*>(this));
+    }
 
 private:
   Tcl_Interp* itsInterp;
   Util::SerialPort itsPort;
 
   static void setupProc(ClientData /*clientData*/, int flags) {
-	 if ( !(flags & TCL_FILE_EVENTS) ) return;
+    if ( !(flags & TCL_FILE_EVENTS) ) return;
 
-	 Tcl_Time block_time;
-	 block_time.sec = 0;
-	 block_time.usec = 1000;
+    Tcl_Time block_time;
+    block_time.sec = 0;
+    block_time.usec = 1000;
 
-	 Tcl_SetMaxBlockTime(&block_time);
+    Tcl_SetMaxBlockTime(&block_time);
   }
 
   static void checkProc(ClientData clientData, int flags) {
-	 if ( !(flags & TCL_FILE_EVENTS) ) return;
+    if ( !(flags & TCL_FILE_EVENTS) ) return;
 
-	 SerialEventSource* source = static_cast<SerialEventSource*>(clientData);
+    SerialEventSource* source = static_cast<SerialEventSource*>(clientData);
 
-	 if ( !source->itsPort.isClosed() )
-		{
-		  int n;
-		  while ( (n = source->itsPort.get()) != EOF)
-			 {
-				if ( n >= 'A' && n <= 'H' )
-				  {
-					 DebugEvalNL((n-'A'));
+    if ( !source->itsPort.isClosed() )
+      {
+        int n;
+        while ( (n = source->itsPort.get()) != EOF)
+          {
+            if ( n >= 'A' && n <= 'H' )
+              {
+                DebugEvalNL((n-'A'));
 
-					 Tk_FakeWin* tkwin = reinterpret_cast<Tk_FakeWin*>(
+                Tk_FakeWin* tkwin = reinterpret_cast<Tk_FakeWin*>(
                                         Tk_MainWindow(source->itsInterp));
-					 Display* display = Tk_Display(tkwin);
+                Display* display = Tk_Display(tkwin);
 
-					 char keystring[2] = { char(n), '\0' };
-					 KeySym keysym = XStringToKeysym(keystring);
-					 KeyCode keycode = XKeysymToKeycode(display, keysym);
+                char keystring[2] = { char(n), '\0' };
+                KeySym keysym = XStringToKeysym(keystring);
+                KeyCode keycode = XKeysymToKeycode(display, keysym);
 
-					 XEvent ev;
-					 ev.xkey.type = KeyPress;
-					 ev.xkey.send_event = True;
-					 ev.xkey.display = display;
-					 ev.xkey.window = Tk_WindowId(tkwin);
-					 ev.xkey.keycode = keycode;
-					 ev.xkey.state = 0;
-					 Tk_QueueWindowEvent(&ev, TCL_QUEUE_TAIL);
-				  }
-			 }
-		}
+                XEvent ev;
+                ev.xkey.type = KeyPress;
+                ev.xkey.send_event = True;
+                ev.xkey.display = display;
+                ev.xkey.window = Tk_WindowId(tkwin);
+                ev.xkey.keycode = keycode;
+                ev.xkey.state = 0;
+                Tk_QueueWindowEvent(&ev, TCL_QUEUE_TAIL);
+              }
+          }
+      }
   }
 
 private:
   SerialEventSource(const SerialEventSource&);
-  SerialEventSource& operator=(const SerialEventSource&);  
+  SerialEventSource& operator=(const SerialEventSource&);
 };
 
 class SerialRhTcl::SerialRhCmd : public Tcl::TclCmd {
 public:
   SerialRhCmd(Tcl::TclPkg* pkg) :
-	 Tcl::TclCmd(pkg->interp(), pkg->makePkgCmdName("SerialRh"),
-			  "?serial_device = /dev/tty0p0", 1, 2),
-	 itsEventSource(0)
-	 {}
+    Tcl::TclCmd(pkg->interp(), pkg->makePkgCmdName("SerialRh"),
+           "?serial_device = /dev/tty0p0", 1, 2),
+    itsEventSource(0)
+    {}
   virtual ~SerialRhCmd()
-	 { delete itsEventSource; }
+    { delete itsEventSource; }
 
 protected:
-  virtual void invoke() 
-	 {
-		const char* device = objc() >= 2 ? getCstringFromArg(1) : "/dev/tty0p0";
+  virtual void invoke()
+    {
+      const char* device = objc() >= 2 ? getCstringFromArg(1) : "/dev/tty0p0";
 
-		itsEventSource = new SerialEventSource(interp(), device);
-	 }
+      itsEventSource = new SerialEventSource(interp(), device);
+    }
 
 private:
   SerialRhCmd(const SerialRhCmd&);
@@ -140,10 +140,10 @@ private:
 class SerialRhTcl::SerialRhPkg : public Tcl::TclPkg {
 public:
   SerialRhPkg(Tcl_Interp* interp) :
-	 Tcl::TclPkg(interp, "SerialRh", "$Revision$")
-	 {
-		addCommand( new SerialRhCmd(this) );
-	 }
+    Tcl::TclPkg(interp, "SerialRh", "$Revision$")
+    {
+      addCommand( new SerialRhCmd(this) );
+    }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -157,32 +157,32 @@ namespace EventRhTcl {
 }
 
 class EventRhTcl::EventRhPkg :
-  public Tcl::IoItemPkg<EventResponseHdlr> {
+  public Tcl::GenericObjPkg<EventResponseHdlr> {
 public:
   EventRhPkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<EventResponseHdlr>(interp, "EventRh", "$Revision$")
+    Tcl::GenericObjPkg<EventResponseHdlr>(interp, "EventRh", "$Revision$")
   {
-	 Tcl::addTracing(this, EventResponseHdlr::tracer);
+    Tcl::addTracing(this, EventResponseHdlr::tracer);
 
-	 declareCAction("abortInvalidResponses",
-						 &EventResponseHdlr::abortInvalidResponses);
-	 declareCAction("ignoreInvalidResponses",
-						 &EventResponseHdlr::ignoreInvalidResponses);
-	 declareCAttrib("useFeedback",
-						 &EventResponseHdlr::getUseFeedback,
-						 &EventResponseHdlr::setUseFeedback);
-	 declareCAttrib("inputResponseMap",
-						 &EventResponseHdlr::getInputResponseMap,
-						 &EventResponseHdlr::setInputResponseMap);
-	 declareCAttrib("feedbackMap",
-						 &EventResponseHdlr::getFeedbackMap,
-						 &EventResponseHdlr::setFeedbackMap);
-	 declareCAttrib("eventSequence",
-						 &EventResponseHdlr::getEventSequence,
-						 &EventResponseHdlr::setEventSequence);
-	 declareCAttrib("bindingSubstitution",
-						 &EventResponseHdlr::getBindingSubstitution,
-						 &EventResponseHdlr::setBindingSubstitution);
+    declareCAction("abortInvalidResponses",
+                   &EventResponseHdlr::abortInvalidResponses);
+    declareCAction("ignoreInvalidResponses",
+                   &EventResponseHdlr::ignoreInvalidResponses);
+    declareCAttrib("useFeedback",
+                   &EventResponseHdlr::getUseFeedback,
+                   &EventResponseHdlr::setUseFeedback);
+    declareCAttrib("inputResponseMap",
+                   &EventResponseHdlr::getInputResponseMap,
+                   &EventResponseHdlr::setInputResponseMap);
+    declareCAttrib("feedbackMap",
+                   &EventResponseHdlr::getFeedbackMap,
+                   &EventResponseHdlr::setFeedbackMap);
+    declareCAttrib("eventSequence",
+                   &EventResponseHdlr::getEventSequence,
+                   &EventResponseHdlr::setEventSequence);
+    declareCAttrib("bindingSubstitution",
+                   &EventResponseHdlr::getBindingSubstitution,
+                   &EventResponseHdlr::setBindingSubstitution);
 
   }
 };
@@ -199,23 +199,23 @@ namespace KbdRhTcl {
 }
 
 class KbdRhTcl::KbdRhPkg :
-  public Tcl::IoItemPkg<KbdResponseHdlr> {
+  public Tcl::GenericObjPkg<KbdResponseHdlr> {
 public:
   KbdRhPkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<KbdResponseHdlr>(interp, "KbdRh", "$Revision$")
+    Tcl::GenericObjPkg<KbdResponseHdlr>(interp, "KbdRh", "$Revision$")
   {
-	 Tcl_Eval(interp,
-				 "namespace eval KbdRh {\n"
-				 "  proc useFeedback args {\n"
-				 "    return [eval EventRh::useFeedback $args]\n"
-				 "  }\n"
-				 "  proc keyRespPairs args {\n"
-				 "    return [eval EventRh::inputResponseMap $args]\n"
-				 "  }\n"
-				 "  proc feedbackPairs args {\n"
-				 "    return [eval EventRh::feedbackMap $args]\n"
-				 "  }\n"
-				 "}\n");
+    Tcl_Eval(interp,
+             "namespace eval KbdRh {\n"
+             "  proc useFeedback args {\n"
+             "    return [eval EventRh::useFeedback $args]\n"
+             "  }\n"
+             "  proc keyRespPairs args {\n"
+             "    return [eval EventRh::inputResponseMap $args]\n"
+             "  }\n"
+             "  proc feedbackPairs args {\n"
+             "    return [eval EventRh::feedbackMap $args]\n"
+             "  }\n"
+             "}\n");
   }
 };
 
@@ -230,11 +230,11 @@ extern "C"
 int Rh_Init(Tcl_Interp* interp) {
 DOTRACE("Rh_Init");
 
-  new Tcl::IoItemPkg<ResponseHandler>(interp, "Rh", "$Revision$");
+  new Tcl::GenericObjPkg<ResponseHandler>(interp, "Rh", "$Revision$");
 
   new EventRhTcl::EventRhPkg(interp);
   new KbdRhTcl::KbdRhPkg(interp);
-  new Tcl::IoItemPkg<NullResponseHdlr>(interp, "NullRh", "$Revision$");
+  new Tcl::GenericObjPkg<NullResponseHdlr>(interp, "NullRh", "$Revision$");
 
   new SerialRhTcl::SerialRhPkg(interp);
 

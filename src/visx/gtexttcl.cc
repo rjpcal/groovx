@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 12:30:38 1999
-// written: Wed Jun  6 19:45:43 2001
+// written: Wed Jun 13 15:16:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "gtext.h"
 
-#include "tcl/ioitempkg.h"
+#include "tcl/genericobjpkg.h"
 
 #include "util/objfactory.h"
 
@@ -34,14 +34,14 @@ namespace GtextTcl {
 //
 //---------------------------------------------------------------------
 
-class GtextTcl::GtextPkg : public Tcl::IoItemPkg<Gtext> {
+class GtextTcl::GtextPkg : public Tcl::GenericObjPkg<Gtext> {
 public:
   GtextPkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<Gtext>(interp, "Gtext", "$Revision$")
+    Tcl::GenericObjPkg<Gtext>(interp, "Gtext", "$Revision$")
   {
-	 declareCAttrib("text", &Gtext::getText, &Gtext::setText);
-	 declareCAttrib("strokeWidth",
-						 &Gtext::getStrokeWidth, &Gtext::setStrokeWidth);
+    declareCAttrib("text", &Gtext::getText, &Gtext::setText);
+    declareCAttrib("strokeWidth",
+                   &Gtext::getStrokeWidth, &Gtext::setStrokeWidth);
   }
 };
 
@@ -55,7 +55,7 @@ extern "C"
 int Gtext_Init(Tcl_Interp* interp) {
 DOTRACE("Gtext_Init");
 
-  Tcl::TclPkg* pkg = new GtextTcl::GtextPkg(interp); 
+  Tcl::TclPkg* pkg = new GtextTcl::GtextPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Gtext::make);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Mon Jun 11 14:49:18 2001
+// written: Wed Jun 13 15:16:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "application.h"
 #include "sound.h"
 
-#include "tcl/ioitempkg.h"
+#include "tcl/genericobjpkg.h"
 #include "tcl/tcllink.h"
 
 #include "util/objfactory.h"
@@ -52,7 +52,7 @@ namespace SoundTcl {
 class SoundTcl::HaveAudioCmd : public Tcl::TclCmd {
 public:
   HaveAudioCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, NULL, 1, 1) {}
+    Tcl::TclCmd(interp, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() { returnBool( Sound::haveSound() ); }
 };
@@ -63,58 +63,57 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class SoundTcl::SoundPkg :
-  public Tcl::IoItemPkg<Sound> {
+class SoundTcl::SoundPkg : public Tcl::GenericObjPkg<Sound> {
 public:
   SoundPkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<Sound>(interp, "Sound", "$Revision$")
+    Tcl::GenericObjPkg<Sound>(interp, "Sound", "$Revision$")
   {
-	 bool haveSound = Sound::initSound();
+    bool haveSound = Sound::initSound();
 
-	 if (!haveSound) {
-		Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-									  "SoundPkg: couldn't initialize sound system",
-									  NULL);
-	 }
-	 else {
-		dynamic_string lib_dir(Application::theApp().getLibraryDirectory());
-		DebugEvalNL(lib_dir);
+    if (!haveSound) {
+      Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
+                             "SoundPkg: couldn't initialize sound system",
+                             NULL);
+    }
+    else {
+      dynamic_string lib_dir(Application::theApp().getLibraryDirectory());
+      DebugEvalNL(lib_dir);
 
-		dynamic_string full_ok_file(lib_dir);
-		full_ok_file.append(ok_sound_file);     DebugEvalNL(full_ok_file);
+      dynamic_string full_ok_file(lib_dir);
+      full_ok_file.append(ok_sound_file);     DebugEvalNL(full_ok_file);
 
-		dynamic_string full_err_file(lib_dir);
-		full_err_file.append(err_sound_file);     DebugEvalNL(full_err_file);
+      dynamic_string full_err_file(lib_dir);
+      full_err_file.append(err_sound_file);     DebugEvalNL(full_err_file);
 
-		static int OK = -1;
-		static int ERR = -1;
+      static int OK = -1;
+      static int ERR = -1;
 
-		try {
-		  Ref<Sound> ok_sound(Sound::newPlatformSound(full_ok_file.c_str()));
-		  Sound::setOkSound(ok_sound);
-		  OK = ok_sound.id();
-		  linkConstVar("Sound::ok", OK);
+      try {
+        Ref<Sound> ok_sound(Sound::newPlatformSound(full_ok_file.c_str()));
+        Sound::setOkSound(ok_sound);
+        OK = ok_sound.id();
+        linkConstVar("Sound::ok", OK);
 
-		  Ref<Sound> err_sound(Sound::newPlatformSound(full_err_file.c_str()));
-		  Sound::setErrSound(err_sound);
-		  ERR = err_sound.id();		  
-		  linkConstVar("Sound::err", ERR);
-		}
-		catch (SoundError& err) {
-		  DebugPrintNL("error creating sounds during startup");
-		  Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-										 "SoundPkg: ", err.msg_cstr(), NULL);
-		  setInitStatusError();
-		}
-	 }
+        Ref<Sound> err_sound(Sound::newPlatformSound(full_err_file.c_str()));
+        Sound::setErrSound(err_sound);
+        ERR = err_sound.id();
+        linkConstVar("Sound::err", ERR);
+      }
+      catch (SoundError& err) {
+        DebugPrintNL("error creating sounds during startup");
+        Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
+                               "SoundPkg: ", err.msg_cstr(), NULL);
+        setInitStatusError();
+      }
+    }
 
-	 addCommand( new HaveAudioCmd(interp, "Sound::haveAudio") );
-	 declareCAction("play", &Sound::play);
-	 declareCAttrib("file", &Sound::getFile, &Sound::setFile);
+    addCommand( new HaveAudioCmd(interp, "Sound::haveAudio") );
+    declareCAction("play", &Sound::play);
+    declareCAttrib("file", &Sound::getFile, &Sound::setFile);
   }
 
   ~SoundPkg() {
-	 Sound::closeSound();
+    Sound::closeSound();
   }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Mon Jun 11 14:49:19 2001
+// written: Wed Jun 13 15:16:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "fish.h"
 
 #include "tcl/fieldpkg.h"
-#include "tcl/ioitempkg.h"
+#include "tcl/genericobjpkg.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
@@ -29,33 +29,33 @@ namespace FishTcl {
 class FishTcl::FishCmd : public Tcl::TclCmd {
 public:
   FishCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "spline_file coord_file index", 1, 4) {}
+    Tcl::TclCmd(interp, cmd_name, "spline_file coord_file index", 1, 4) {}
 protected:
   virtual void invoke() {
-	 if (objc() == 1) {
-		Ref<Fish> obj(Fish::make());
-		returnInt(obj.id());
-	 }
-	 else if (objc() == 4) {
-		const char* spline_file = arg(1).getCstring();
-		const char* coord_file = arg(2).getCstring();
-		int index = arg(3).getInt();
+    if (objc() == 1) {
+      Ref<Fish> obj(Fish::make());
+      returnInt(obj.id());
+    }
+    else if (objc() == 4) {
+      const char* spline_file = arg(1).getCstring();
+      const char* coord_file = arg(2).getCstring();
+      int index = arg(3).getInt();
 
-		Ref<Fish> obj(Fish::makeFromFiles(spline_file, coord_file, index));
-		returnInt(obj.id());
-	 }
+      Ref<Fish> obj(Fish::makeFromFiles(spline_file, coord_file, index));
+      returnInt(obj.id());
+    }
   }
 };
 
-class FishTcl::FishPkg : public Tcl::IoItemPkg<Fish> {
+class FishTcl::FishPkg : public Tcl::GenericObjPkg<Fish> {
 public:
   FishPkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<Fish>(interp, "Fish", "$Revision$")
+    Tcl::GenericObjPkg<Fish>(interp, "Fish", "$Revision$")
   {
-	 Tcl::addTracing(this, Fish::tracer);
+    Tcl::addTracing(this, Fish::tracer);
 
-	 addCommand( new FishCmd(interp, "Fish::Fish") );
-	 Tcl::declareAllFields(this, Fish::classFields());
+    addCommand( new FishCmd(interp, "Fish::Fish") );
+    Tcl::declareAllFields(this, Fish::classFields());
   }
 };
 

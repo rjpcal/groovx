@@ -1,24 +1,24 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// ioitempkg.h
+// genericobjpkg.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  7 13:17:04 1999
-// written: Tue Jun 12 11:17:10 2001
+// written: Wed Jun 13 15:16:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IOITEMPKG_H_DEFINED
-#define IOITEMPKG_H_DEFINED
+#ifndef GENERICOBJPKG_H_DEFINED
+#define GENERICOBJPKG_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
+#include "util/object.h"
+#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
 #include "util/ref.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io/io.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLITEMPKG_H_DEFINED)
@@ -27,14 +27,14 @@
 
 namespace Tcl {
 
-/** IoCaster **/
+/** ObjCaster **/
 
-class IoCaster {
+class ObjCaster {
 protected:
-  IoCaster();
+  ObjCaster();
 
 public:
-  virtual ~IoCaster();
+  virtual ~ObjCaster();
 
   virtual bool isMyType(const Util::Object* obj) = 0;
 
@@ -45,7 +45,7 @@ public:
 
 class CountAllCmd : public TclCmd {
 public:
-  CountAllCmd(Tcl_Interp* interp, IoCaster* caster, const char* cmd_name);
+  CountAllCmd(Tcl_Interp* interp, ObjCaster* caster, const char* cmd_name);
   virtual ~CountAllCmd();
 
 protected:
@@ -55,14 +55,14 @@ private:
   CountAllCmd(const CountAllCmd&);
   CountAllCmd& operator=(const CountAllCmd&);
 
-  IoCaster* itsCaster;
+  ObjCaster* itsCaster;
 };
 
 /** FindAllCmd **/
 
 class FindAllCmd : public TclCmd {
 public:
-  FindAllCmd(Tcl_Interp* interp, IoCaster* caster, const char* cmd_name);
+  FindAllCmd(Tcl_Interp* interp, ObjCaster* caster, const char* cmd_name);
   virtual ~FindAllCmd();
 
 protected:
@@ -72,14 +72,14 @@ private:
   FindAllCmd(const FindAllCmd&);
   FindAllCmd& operator=(const FindAllCmd&);
 
-  IoCaster* itsCaster;
+  ObjCaster* itsCaster;
 };
 
 /** RemoveAllCmd **/
 
 class RemoveAllCmd : public TclCmd {
 public:
-  RemoveAllCmd(Tcl_Interp* interp, IoCaster* caster, const char* cmd_name);
+  RemoveAllCmd(Tcl_Interp* interp, ObjCaster* caster, const char* cmd_name);
   virtual ~RemoveAllCmd();
 
 protected:
@@ -89,14 +89,14 @@ private:
   RemoveAllCmd(const RemoveAllCmd&);
   RemoveAllCmd& operator=(const RemoveAllCmd&);
 
-  IoCaster* itsCaster;
+  ObjCaster* itsCaster;
 };
 
 /** IsCmd **/
 
 class IsCmd : public TclCmd {
 public:
-  IsCmd(Tcl_Interp* interp, IoCaster* caster, const char* cmd_name);
+  IsCmd(Tcl_Interp* interp, ObjCaster* caster, const char* cmd_name);
   virtual ~IsCmd();
 
 protected:
@@ -106,21 +106,21 @@ private:
   IsCmd(const IsCmd&);
   IsCmd& operator=(const IsCmd&);
 
-  IoCaster* itsCaster;
+  ObjCaster* itsCaster;
 };
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * IoItemPkg
+ * GenericObjPkg
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
-class IoItemPkg : public CTclItemPkg<C>, public IoCaster {
+class GenericObjPkg : public CTclItemPkg<C>, public ObjCaster {
 public:
-  IoItemPkg(Tcl_Interp* interp, const char* name, const char* version) :
+  GenericObjPkg(Tcl_Interp* interp, const char* name, const char* version) :
     CTclItemPkg<C>(interp, name, version, 1)
   {
     addCommand( new IsCmd(interp, this, TclPkg::makePkgCmdName("is")));
@@ -144,5 +144,5 @@ public:
 
 } // end namespace Tcl
 
-static const char vcid_ioitempkg_h[] = "$Header$";
-#endif // !IOITEMPKG_H_DEFINED
+static const char vcid_genericobjpkg_h[] = "$Header$";
+#endif // !GENERICOBJPKG_H_DEFINED

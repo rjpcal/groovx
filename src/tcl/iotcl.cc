@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jun 13 11:15:42 2001
+// written: Wed Jun 13 15:16:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef IOTCL_CC_DEFINED
 #define IOTCL_CC_DEFINED
 
-#include "tcl/ioitempkg.h"
+#include "tcl/genericobjpkg.h"
 
 #include "io/io.h"
 #include "io/iolegacy.h"
@@ -205,12 +205,12 @@ protected:
   }
 };
 
-class IoObjectPkg : public IoItemPkg<IO::IoObject>,
+class IoObjectPkg : public GenericObjPkg<IO::IoObject>,
                     public IoFetcher
 {
 public:
   IoObjectPkg(Tcl_Interp* interp) :
-    IoItemPkg<IO::IoObject>(interp, "IO", "$Revision$")
+    GenericObjPkg<IO::IoObject>(interp, "IO", "$Revision$")
   {
     TclItemPkg::addIoCommands(this);
 
@@ -222,11 +222,11 @@ public:
   }
 };
 
-class ObjectPkg : public IoItemPkg<Util::Object>
+class ObjectPkg : public GenericObjPkg<Util::Object>
 {
 public:
   ObjectPkg(Tcl_Interp* interp) :
-    IoItemPkg<Util::Object>(interp, "Obj", "$Revision$")
+    GenericObjPkg<Util::Object>(interp, "Obj", "$Revision$")
   {
     declareCGetter("refCount", &Util::Object::refCount);
     declareCAction("incrRefCount", &Util::Object::incrRefCount);

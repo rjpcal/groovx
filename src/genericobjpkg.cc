@@ -1,34 +1,34 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// ioitempkg.cc
+// genericobjpkg.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec 11 14:38:13 2000
-// written: Wed Jun 13 13:15:55 2001
+// written: Wed Jun 13 15:16:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IOITEMPKG_CC_DEFINED
-#define IOITEMPKG_CC_DEFINED
+#ifndef GENERICOBJPKG_CC_DEFINED
+#define GENERICOBJPKG_CC_DEFINED
 
-#include "tcl/ioitempkg.h"
+#include "tcl/genericobjpkg.h"
 
 #include "util/objdb.h"
 #include "util/object.h"
 
 //---------------------------------------------------------------------
 //
-// IoCaster
+// ObjCaster
 //
 //---------------------------------------------------------------------
 
-Tcl::IoCaster::IoCaster() {}
+Tcl::ObjCaster::ObjCaster() {}
 
-Tcl::IoCaster::~IoCaster() {}
+Tcl::ObjCaster::~ObjCaster() {}
 
-bool Tcl::IoCaster::isMyType(int id) {
+bool Tcl::ObjCaster::isMyType(int id) {
   WeakRef<Util::Object> item(id);
   return (item.isValid() && isMyType(item.get()));
 }
@@ -39,7 +39,7 @@ bool Tcl::IoCaster::isMyType(int id) {
 //
 //---------------------------------------------------------------------
 
-Tcl::IsCmd::IsCmd(Tcl_Interp* interp, IoCaster* caster, const char* cmd_name) :
+Tcl::IsCmd::IsCmd(Tcl_Interp* interp, ObjCaster* caster, const char* cmd_name) :
   Tcl::TclCmd(interp, cmd_name, "item_id", 2, 2),
   itsCaster(caster)
 {}
@@ -57,7 +57,7 @@ void Tcl::IsCmd::invoke() {
 //
 //---------------------------------------------------------------------
 
-Tcl::CountAllCmd::CountAllCmd(Tcl_Interp* interp, IoCaster* caster,
+Tcl::CountAllCmd::CountAllCmd(Tcl_Interp* interp, ObjCaster* caster,
                               const char* cmd_name) :
   Tcl::TclCmd(interp, cmd_name, (char*) 0, 1, 1),
   itsCaster(caster)
@@ -86,7 +86,7 @@ void Tcl::CountAllCmd::invoke() {
 //
 //---------------------------------------------------------------------
 
-Tcl::FindAllCmd::FindAllCmd(Tcl_Interp* interp, IoCaster* caster,
+Tcl::FindAllCmd::FindAllCmd(Tcl_Interp* interp, ObjCaster* caster,
                             const char* cmd_name) :
   Tcl::TclCmd(interp, cmd_name, (char*) 0, 1, 1),
   itsCaster(caster)
@@ -113,7 +113,7 @@ void Tcl::FindAllCmd::invoke() {
 //
 //---------------------------------------------------------------------
 
-Tcl::RemoveAllCmd::RemoveAllCmd(Tcl_Interp* interp, IoCaster* caster,
+Tcl::RemoveAllCmd::RemoveAllCmd(Tcl_Interp* interp, ObjCaster* caster,
                             const char* cmd_name) :
   Tcl::TclCmd(interp, cmd_name, (char*) 0, 1, 1),
   itsCaster(caster)
@@ -143,5 +143,5 @@ void Tcl::RemoveAllCmd::invoke() {
     }
 }
 
-static const char vcid_ioitempkg_cc[] = "$Header$";
-#endif // !IOITEMPKG_CC_DEFINED
+static const char vcid_genericobjpkg_cc[] = "$Header$";
+#endif // !GENERICOBJPKG_CC_DEFINED

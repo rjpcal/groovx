@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Mon Jun 11 14:49:18 2001
+// written: Wed Jun 13 15:16:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "gx/gxnode.h"
 #include "gx/gxseparator.h"
 
-#include "tcl/ioitempkg.h"
+#include "tcl/genericobjpkg.h"
 
 #include "util/objfactory.h"
 
@@ -36,23 +36,23 @@ namespace GxTcl {
 class GxTcl::ContainsCmd : public Tcl::TclItemCmd<GxNode> {
 public:
   ContainsCmd(Tcl::CTclItemPkg<GxNode>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<GxNode>(pkg, cmd_name, "item_id other_id", 3, 3) {}
+    Tcl::TclItemCmd<GxNode>(pkg, cmd_name, "item_id other_id", 3, 3) {}
 
 protected:
   virtual void invoke() {
-	 Ref<GxNode> other(getIntFromArg(2));
-	 GxNode* sep = getItem();
-	 returnBool(sep->contains(other.get()));
+    Ref<GxNode> other(getIntFromArg(2));
+    GxNode* sep = getItem();
+    returnBool(sep->contains(other.get()));
   }
 };
 
-class GxTcl::GxNodePkg : public Tcl::IoItemPkg<GxNode> {
+class GxTcl::GxNodePkg : public Tcl::GenericObjPkg<GxNode> {
 public:
   GxNodePkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<GxNode>(interp, "GxNode", "$Revision$")
-	 {
-		addCommand( new ContainsCmd(this, makePkgCmdName("contains")) );
-	 }
+    Tcl::GenericObjPkg<GxNode>(interp, "GxNode", "$Revision$")
+    {
+      addCommand( new ContainsCmd(this, makePkgCmdName("contains")) );
+    }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -69,29 +69,29 @@ namespace GxTcl {
 class GxTcl::AddChildCmd : public Tcl::TclItemCmd<GxSeparator> {
 public:
   AddChildCmd(Tcl::CTclItemPkg<GxSeparator>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<GxSeparator>(pkg, cmd_name,
-											"item_id child_item_id", 3, 3) {}
+    Tcl::TclItemCmd<GxSeparator>(pkg, cmd_name,
+                                 "item_id child_item_id", 3, 3) {}
 
 protected:
   virtual void invoke() {
-	 int child = getIntFromArg(2);
-	 GxSeparator* sep = getItem();
-	 int child_id = sep->addChild(child);
-	 returnInt(child_id);
+    int child = getIntFromArg(2);
+    GxSeparator* sep = getItem();
+    int child_id = sep->addChild(child);
+    returnInt(child_id);
   }
 };
 
-class GxTcl::GxSeparatorPkg : public Tcl::IoItemPkg<GxSeparator> {
+class GxTcl::GxSeparatorPkg : public Tcl::GenericObjPkg<GxSeparator> {
 public:
   GxSeparatorPkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<GxSeparator>(interp, "GxSeparator", "$Revision$")
-	 {
-		addCommand( new AddChildCmd(this, makePkgCmdName("addChild")) );
-		declareCGetter("numChildren", &GxSeparator::numChildren);
-		declareCSetter("removeChildId", &GxSeparator::removeChildId);
-		declareCSetter("removeChildUid", &GxSeparator::removeChildUid);
-		Util::ObjFactory::theOne().registerCreatorFunc(&GxSeparator::make);
-	 }
+    Tcl::GenericObjPkg<GxSeparator>(interp, "GxSeparator", "$Revision$")
+    {
+      addCommand( new AddChildCmd(this, makePkgCmdName("addChild")) );
+      declareCGetter("numChildren", &GxSeparator::numChildren);
+      declareCSetter("removeChildId", &GxSeparator::removeChildId);
+      declareCSetter("removeChildUid", &GxSeparator::removeChildUid);
+      Util::ObjFactory::theOne().registerCreatorFunc(&GxSeparator::make);
+    }
 };
 
 extern "C"

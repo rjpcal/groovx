@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 14:58:40 1999
-// written: Wed Jun  6 19:45:43 2001
+// written: Wed Jun 13 15:16:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "jitter.h"
 
-#include "tcl/ioitempkg.h"
+#include "tcl/genericobjpkg.h"
 
 #include "util/objfactory.h"
 
@@ -37,15 +37,15 @@ namespace JitterTcl {
 class JitterTcl::SetJitterCmd : public Tcl::TclItemCmd<Jitter> {
 public:
   SetJitterCmd(Tcl::CTclItemPkg<Jitter>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Jitter>(pkg, cmd_name,
-							  "posid x_jitter y_jitter r_jitter", 5, 5) {}
+    Tcl::TclItemCmd<Jitter>(pkg, cmd_name,
+                       "posid x_jitter y_jitter r_jitter", 5, 5) {}
 protected:
   virtual void invoke() {
-	 Jitter* p = getItem();
-	 double xj = getDoubleFromArg(2); p->setXJitter(xj);
-	 double yj = getDoubleFromArg(3); p->setYJitter(yj);
-	 double rj = getDoubleFromArg(4); p->setRJitter(rj);
-	 returnVoid();
+    Jitter* p = getItem();
+    double xj = getDoubleFromArg(2); p->setXJitter(xj);
+    double yj = getDoubleFromArg(3); p->setYJitter(yj);
+    double rj = getDoubleFromArg(4); p->setRJitter(rj);
+    returnVoid();
   }
 };
 
@@ -55,12 +55,12 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class JitterTcl::JitterPkg : public Tcl::IoItemPkg<Jitter> {
+class JitterTcl::JitterPkg : public Tcl::GenericObjPkg<Jitter> {
 public:
-  JitterPkg(Tcl_Interp* interp) : 
-	 Tcl::IoItemPkg<Jitter>(interp, "Jitter", "$Revision$")
+  JitterPkg(Tcl_Interp* interp) :
+    Tcl::GenericObjPkg<Jitter>(interp, "Jitter", "$Revision$")
   {
-	 addCommand( new SetJitterCmd(this, "Jitter::setJitter") );
+    addCommand( new SetJitterCmd(this, "Jitter::setJitter") );
   }
 };
 

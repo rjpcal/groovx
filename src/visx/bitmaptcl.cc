@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Jun  6 19:45:00 2001
+// written: Wed Jun 13 15:16:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 #include "util/objfactory.h"
 #include "util/strings.h"
 
-#include "tcl/ioitempkg.h"
+#include "tcl/genericobjpkg.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclobjlock.h"
 
@@ -48,12 +48,12 @@ namespace BitmapTcl {
 class BitmapTcl::LoadPbmCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
   LoadPbmCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
+    Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
 protected:
   virtual void invoke() {
-	 Bitmap* bm = getItem();
-	 const char* filename = getCstringFromArg(2);
-	 bm->loadPbmFile(filename);
+    Bitmap* bm = getItem();
+    const char* filename = getCstringFromArg(2);
+    bm->loadPbmFile(filename);
   }
 };
 
@@ -66,18 +66,18 @@ protected:
 class BitmapTcl::LoadPbmGzCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
   LoadPbmGzCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
-							  "bitmap_id filename(without .gz extension)",
-							  3, 3)
-	 {}
+    Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
+                       "bitmap_id filename(without .gz extension)",
+                       3, 3)
+    {}
 protected:
   virtual void invoke() {
-	 Bitmap* bm = getItem();
-	 const char* filename = getCstringFromArg(2);
+    Bitmap* bm = getItem();
+    const char* filename = getCstringFromArg(2);
 
-	 dynamic_string gzname(filename); gzname += ".gz";
+    dynamic_string gzname(filename); gzname += ".gz";
 
-	 bm->loadPbmFile(gzname.c_str());
+    bm->loadPbmFile(gzname.c_str());
   }
 };
 
@@ -90,12 +90,12 @@ protected:
 class BitmapTcl::WritePbmCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
   WritePbmCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
+    Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
 protected:
   virtual void invoke() {
-	 Bitmap* bm = getItem();
-	 const char* filename = getCstringFromArg(2);
-	 bm->writePbmFile(filename);
+    Bitmap* bm = getItem();
+    const char* filename = getCstringFromArg(2);
+    bm->writePbmFile(filename);
   }
 };
 
@@ -108,17 +108,17 @@ protected:
 class BitmapTcl::WritePbmGzCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
   WritePbmGzCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
-							  "bitmap_id filename(without .gz extension)", 3, 3)
-	 {}
+    Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
+                       "bitmap_id filename(without .gz extension)", 3, 3)
+    {}
 protected:
   virtual void invoke() {
-	 Bitmap* bm = getItem();
-	 const char* filename = getCstringFromArg(2);
+    Bitmap* bm = getItem();
+    const char* filename = getCstringFromArg(2);
 
-	 dynamic_string gzname(filename); gzname += ".gz";
+    dynamic_string gzname(filename); gzname += ".gz";
 
-	 bm->writePbmFile(gzname.c_str());
+    bm->writePbmFile(gzname.c_str());
   }
 };
 
@@ -131,17 +131,17 @@ protected:
 class BitmapTcl::GrabScreenRectCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
   GrabScreenRectCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
-									 "bitmap_id left top right bottom", 6, 6) {}
+    Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
+                            "bitmap_id left top right bottom", 6, 6) {}
 protected:
   virtual void invoke() {
-	 int l = getIntFromArg(2);
-	 int t = getIntFromArg(3);
-	 int r = getIntFromArg(4);
-	 int b = getIntFromArg(5);
+    int l = getIntFromArg(2);
+    int t = getIntFromArg(3);
+    int r = getIntFromArg(4);
+    int b = getIntFromArg(5);
 
-	 Bitmap* bm = getItem();
-	 bm->grabScreenRect(l, t, r, b);
+    Bitmap* bm = getItem();
+    bm->grabScreenRect(l, t, r, b);
   }
 };
 
@@ -154,17 +154,17 @@ protected:
 class BitmapTcl::GrabWorldRectCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
   GrabWorldRectCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
-									 "bitmap_id left top right bottom", 6, 6) {}
+    Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
+                            "bitmap_id left top right bottom", 6, 6) {}
 protected:
   virtual void invoke() {
-	 double l = getDoubleFromArg(2);
-	 double t = getDoubleFromArg(3);
-	 double r = getDoubleFromArg(4);
-	 double b = getDoubleFromArg(5);
+    double l = getDoubleFromArg(2);
+    double t = getDoubleFromArg(3);
+    double r = getDoubleFromArg(4);
+    double b = getDoubleFromArg(5);
 
-	 Bitmap* bm = getItem();
-	 bm->grabWorldRect(l, t, r, b);
+    Bitmap* bm = getItem();
+    bm->grabWorldRect(l, t, r, b);
   }
 };
 
@@ -174,26 +174,26 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class BitmapTcl::BitmapPkg : public Tcl::IoItemPkg<Bitmap> {
+class BitmapTcl::BitmapPkg : public Tcl::GenericObjPkg<Bitmap> {
 public:
   BitmapPkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<Bitmap>(interp, "Bitmap", "$Revision$")
+    Tcl::GenericObjPkg<Bitmap>(interp, "Bitmap", "$Revision$")
   {
-	 addCommand( new LoadPbmCmd(this, "Bitmap::loadPbm") );
-	 addCommand( new LoadPbmGzCmd(this, "Bitmap::loadPbmGz") );
-	 addCommand( new WritePbmCmd(this, "Bitmap::writePbm") );
-	 addCommand( new WritePbmGzCmd(this, "Bitmap::writePbmGz") );
-	 addCommand( new GrabScreenRectCmd(this, "Bitmap::grabScreenRect") );
-	 addCommand( new GrabWorldRectCmd(this, "Bitmap::grabWorldRect") );
-	 declareCAction("flipContrast", &Bitmap::flipContrast);
-	 declareCAction("flipVertical", &Bitmap::flipVertical);
-	 declareCAction("center", &Bitmap::center);
-	 declareCGetter("width", &Bitmap::width);
-	 declareCGetter("height", &Bitmap::height);
-	 declareCAttrib("rasterX", &Bitmap::getRasterX, &Bitmap::setRasterX);
-	 declareCAttrib("rasterY", &Bitmap::getRasterY, &Bitmap::setRasterY);
-	 declareCAttrib("zoomX", &Bitmap::getZoomX, &Bitmap::setZoomX);
-	 declareCAttrib("zoomY", &Bitmap::getZoomY, &Bitmap::setZoomY);
+    addCommand( new LoadPbmCmd(this, "Bitmap::loadPbm") );
+    addCommand( new LoadPbmGzCmd(this, "Bitmap::loadPbmGz") );
+    addCommand( new WritePbmCmd(this, "Bitmap::writePbm") );
+    addCommand( new WritePbmGzCmd(this, "Bitmap::writePbmGz") );
+    addCommand( new GrabScreenRectCmd(this, "Bitmap::grabScreenRect") );
+    addCommand( new GrabWorldRectCmd(this, "Bitmap::grabWorldRect") );
+    declareCAction("flipContrast", &Bitmap::flipContrast);
+    declareCAction("flipVertical", &Bitmap::flipVertical);
+    declareCAction("center", &Bitmap::center);
+    declareCGetter("width", &Bitmap::width);
+    declareCGetter("height", &Bitmap::height);
+    declareCAttrib("rasterX", &Bitmap::getRasterX, &Bitmap::setRasterX);
+    declareCAttrib("rasterY", &Bitmap::getRasterY, &Bitmap::setRasterY);
+    declareCAttrib("zoomX", &Bitmap::getZoomX, &Bitmap::setZoomX);
+    declareCAttrib("zoomY", &Bitmap::getZoomY, &Bitmap::setZoomY);
   }
 };
 
@@ -207,13 +207,13 @@ namespace GLBitmapTcl {
   class GLBitmapPkg;
 }
 
-class GLBitmapTcl::GLBitmapPkg : public Tcl::IoItemPkg<GLBitmap> {
+class GLBitmapTcl::GLBitmapPkg : public Tcl::GenericObjPkg<GLBitmap> {
 public:
   GLBitmapPkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<GLBitmap>(interp, "GLBitmap", "$Revision$")
+    Tcl::GenericObjPkg<GLBitmap>(interp, "GLBitmap", "$Revision$")
   {
-	 declareCAttrib("usingGlBitmap",
-						 &GLBitmap::getUsingGlBitmap, &GLBitmap::setUsingGlBitmap);
+    declareCAttrib("usingGlBitmap",
+                   &GLBitmap::getUsingGlBitmap, &GLBitmap::setUsingGlBitmap);
   }
 };
 
@@ -227,11 +227,11 @@ namespace XBitmapTcl {
   class XBitmapPkg;
 }
 
-class XBitmapTcl::XBitmapPkg : public Tcl::IoItemPkg<XBitmap> {
+class XBitmapTcl::XBitmapPkg : public Tcl::GenericObjPkg<XBitmap> {
 public:
   XBitmapPkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<XBitmap>(interp, "XBitmap", "$Revision$")
-	 {}
+    Tcl::GenericObjPkg<XBitmap>(interp, "XBitmap", "$Revision$")
+    {}
 };
 
 //---------------------------------------------------------------------

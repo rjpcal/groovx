@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jun  6 19:45:43 2001
+// written: Wed Jun 13 15:16:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #include "timinghdlr.h"
 #include "trialevent.h"
 
-#include "tcl/ioitempkg.h"
+#include "tcl/genericobjpkg.h"
 #include "tcl/tclcmd.h"
 
 #include "util/objfactory.h"
@@ -41,18 +41,18 @@ namespace ThTcl {
 class ThTcl::AddEventCmd : public Tcl::TclItemCmd<TimingHdlr> {
 public:
   AddEventCmd(Tcl::CTclItemPkg<TimingHdlr>* pkg, const char* cmd_name,
-				  TimingHdlr::TimePoint time_point) :
-	 Tcl::TclItemCmd<TimingHdlr>(pkg, cmd_name, 
-									"th_id event_type msec_delay", 4, 4),
-	 itsTimePoint(time_point) {}
+              TimingHdlr::TimePoint time_point) :
+    Tcl::TclItemCmd<TimingHdlr>(pkg, cmd_name,
+                           "th_id event_type msec_delay", 4, 4),
+    itsTimePoint(time_point) {}
 protected:
   virtual void invoke() {
-	 TimingHdlr* th = getItem();
-	 const char* event_type = getCstringFromArg(2);
-	 int msec = getIntFromArg(3);
+    TimingHdlr* th = getItem();
+    const char* event_type = getCstringFromArg(2);
+    int msec = getIntFromArg(3);
 
-	 int eventid = th->addEventByName(event_type, itsTimePoint, msec);
-	 returnInt(eventid);
+    int eventid = th->addEventByName(event_type, itsTimePoint, msec);
+    returnInt(eventid);
   }
 private:
   TimingHdlr::TimePoint itsTimePoint;
@@ -64,23 +64,23 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ThTcl::ThPkg: public Tcl::IoItemPkg<TimingHdlr> {
+class ThTcl::ThPkg: public Tcl::GenericObjPkg<TimingHdlr> {
 public:
   ThPkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<TimingHdlr>(interp, "Th", "$Revision$")
+    Tcl::GenericObjPkg<TimingHdlr>(interp, "Th", "$Revision$")
   {
-	 addCommand( new AddEventCmd(this, "Th::addImmediateEvent",
-										  TimingHdlr::IMMEDIATE));
-	 addCommand( new AddEventCmd(this, "Th::addStartEvent",
-										  TimingHdlr::FROM_START));
-	 addCommand( new AddEventCmd(this, "Th::addResponseEvent",
-										  TimingHdlr::FROM_RESPONSE));
-	 addCommand( new AddEventCmd(this, "Th::addAbortEvent",
-										  TimingHdlr::FROM_ABORT));
+    addCommand( new AddEventCmd(this, "Th::addImmediateEvent",
+                                TimingHdlr::IMMEDIATE));
+    addCommand( new AddEventCmd(this, "Th::addStartEvent",
+                                TimingHdlr::FROM_START));
+    addCommand( new AddEventCmd(this, "Th::addResponseEvent",
+                                TimingHdlr::FROM_RESPONSE));
+    addCommand( new AddEventCmd(this, "Th::addAbortEvent",
+                                TimingHdlr::FROM_ABORT));
 
-	 Tcl::TclPkg::eval("namespace eval Th { "
-							 "    proc autosavePeriod {id args} { "
-							 "        return [eval Expt::autosavePeriod $args] } }");
+    Tcl::TclPkg::eval("namespace eval Th { "
+                      "    proc autosavePeriod {id args} { "
+                      "        return [eval Expt::autosavePeriod $args] } }");
   }
 };
 
@@ -95,23 +95,23 @@ namespace SimpleThTcl {
 }
 
 class SimpleThTcl::SimpleThPkg :
-  public Tcl::IoItemPkg<TimingHandler> {
+  public Tcl::GenericObjPkg<TimingHandler> {
 public:
   SimpleThPkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<TimingHandler>(interp, "SimpleTh", "$Revision$")
+    Tcl::GenericObjPkg<TimingHandler>(interp, "SimpleTh", "$Revision$")
   {
-	 declareCAttrib("abortWait",  
-						 &TimingHandler::getAbortWait,
-						 &TimingHandler::setAbortWait);
-	 declareCAttrib("interTrialInterval",
-						 &TimingHandler::getInterTrialInterval,
-						 &TimingHandler::setInterTrialInterval);
-	 declareCAttrib("stimDur",
-						 &TimingHandler::getStimDur,
-						 &TimingHandler::setStimDur);
-	 declareCAttrib("timeout",
-						 &TimingHandler::getTimeout,
-						 &TimingHandler::setTimeout);
+    declareCAttrib("abortWait",
+                   &TimingHandler::getAbortWait,
+                   &TimingHandler::setAbortWait);
+    declareCAttrib("interTrialInterval",
+                   &TimingHandler::getInterTrialInterval,
+                   &TimingHandler::setInterTrialInterval);
+    declareCAttrib("stimDur",
+                   &TimingHandler::getStimDur,
+                   &TimingHandler::setStimDur);
+    declareCAttrib("timeout",
+                   &TimingHandler::getTimeout,
+                   &TimingHandler::setTimeout);
   }
 };
 
