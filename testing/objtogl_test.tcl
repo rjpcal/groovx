@@ -13,17 +13,17 @@ package require Tlist
 
 ### Togl::undrawCmd ###
 test "Toglet-Togl::undraw" "too many args" {
-	 Togl::undraw junk
+    Togl::undraw junk
 } {wrong \# args: should be}
 test "Toglet-Togl::undraw" "normal use" {
-	 set f [Obj::new Face]
-	 glIndexi 1; glColor 1.0 1.0 1.0 1.0
-	 glClearIndex 0; glClearColor 0.0 0.0 0.0 1.0
-	 clearscreen
-	 Togl::see $f
-	 Togl::undraw
-	 set sum [pixelCheckSum]
-	 return "[expr $sum == 0] $sum"
+    set f [Obj::new Face]
+    glIndexi 1; glColor 1.0 1.0 1.0 1.0
+    glClearIndex 0; glClearColor 0.0 0.0 0.0 1.0
+    clearscreen
+    Togl::see $f
+    Togl::undraw
+    set sum [pixelCheckSum]
+    return "[expr $sum == 0] $sum"
 } {^1 }
 test "Toglet-Togl::undraw" "no error" {} $BLANK $no_test
 
@@ -32,10 +32,10 @@ test "Toglet-Togl::clearscreen" "too many args" {
     Togl::clearscreen junk
 } {wrong \# args: should be}
 test "Toglet-Togl::clearscreen" "normal use" {
-	 glClearIndex 0; glClearColor 0.0 0.0 0.0 1.0
-	 Togl::clearscreen
-	 set p [pixelCheckSum]
-	 return "[expr $p == 0] $p"
+    glClearIndex 0; glClearColor 0.0 0.0 0.0 1.0
+    Togl::clearscreen
+    set p [pixelCheckSum]
+    return "[expr $p == 0] $p"
 } {^1}
 
 ### Togl::setVisibleCmd ###
@@ -46,13 +46,13 @@ test "Toglet-Togl::setVisible" "too many args" {
     Togl::setVisible j u
 } {wrong \# args: should be}
 test "Toglet-Togl::setVisible" "normal set off" {
-	 catch {Togl::setVisible 0}
+    catch {Togl::setVisible 0}
 } {^0$}
 test "Toglet-Togl::setVisible" "normal set on" {
-	 catch {Togl::setVisible 1}
+    catch {Togl::setVisible 1}
 } {^0$}
 test "Toglet-Togl::setVisible" "unusual set on" {
-	 catch {Togl::setVisible -1}
+    catch {Togl::setVisible -1}
 } {^0$}
 test "Toglet-Togl::setVisible" "error on non-numeric input" {
     Togl::setVisible junk
