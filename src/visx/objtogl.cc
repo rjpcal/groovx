@@ -2,11 +2,11 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar 12 12:55:39 1999
+// written: Sat Mar 13 13:25:26 1999
 static const char vcid_objtogl_cc[] = "$Id$";
 //
 // This package provides functionality that allows a Togl widget to
-// work with a Glist, controlling its display, reshaping, etc.
+// work with a Tlist, controlling its display, reshaping, etc.
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef OBJTOGL_CC_DEFINED
@@ -21,8 +21,8 @@ static const char vcid_objtogl_cc[] = "$Id$";
 #include <X11/Xlib.h>
 
 #include "gfxattribs.h"
-#include "glist.h"
-#include "glisttcl.h"
+#include "tlist.h"
+#include "tlisttcl.h"
 #include "toglconfig.h"
 
 #define NO_TRACE
@@ -324,7 +324,7 @@ DOTRACE("ObjTogl::scaleRectCmd");
 void ObjTogl::toglCreateCallback(struct Togl *togl) {
 DOTRACE("ObjTogl::toglCreateCallback");
   // viewing distance = 30 inches, one GL unit == 2.05 degrees visual angle
-  ToglConfig *config = new ToglConfig(GlistTcl::getGlistHandle(), 30, 2.05);
+  ToglConfig *config = new ToglConfig(TlistTcl::getTlistHandle(), 30, 2.05);
   Togl_SetClientData(togl, (ClientData) config);
 
   // check if rgba
@@ -373,18 +373,18 @@ DOTRACE("ObjTogl::toglDestroyCallback");
 void ObjTogl::toglDisplayCallback(struct Togl *togl) {
 DOTRACE("ObjTogl::toglDisplayCallback");
   ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
-  Glist **glist_h = config->getGlist();
+  Tlist **tlist_h = config->getTlist();
 
   glClear(GL_COLOR_BUFFER_BIT);
-  if (*glist_h != NULL)
-    (*glist_h)->drawCurGroup();
+  if (*tlist_h != NULL)
+    (*tlist_h)->drawCurTrial();
   Togl_SwapBuffers(togl);
 }
 
 void ObjTogl::toglEpsCallback(const struct Togl *togl) {
 DOTRACE("ObjTogl::toglEpsCallback");
   ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
-  Glist **glist_h = config->getGlist();
+  Tlist **tlist_h = config->getTlist();
 
   // save the old color indices for foreground and background
   GLint oldclear, oldindex;
@@ -394,8 +394,8 @@ DOTRACE("ObjTogl::toglEpsCallback");
   glClearIndex(255);
   glClear(GL_COLOR_BUFFER_BIT);
   glIndexi(0);
-  if (*glist_h != NULL)
-	 (*glist_h)->drawCurGroup();
+  if (*tlist_h != NULL)
+	 (*tlist_h)->drawCurTrial();
   glFlush();
   
   // restore the old color indices
