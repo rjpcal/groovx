@@ -1,6 +1,6 @@
-TARGET = grsh.a0.1
+TARGET = grsh.a1.1
 CC = aCC
-FLAGS = +O3
+FLAGS = 
 #+O3 +Onolimit 
 OPTIM = 
 
@@ -12,7 +12,7 @@ LIBRARIES = -L/opt/graphics/OpenGL/lib \
 	-ltk -ltcl -lXmu \
 	-lX11 -lXext \
 	-lm
-
+#-lGLw  -lXt -lXhp11
 OBJECTS = 	\
 	expttcl.o \
 	face.o facetcl.o \
@@ -25,6 +25,7 @@ OBJECTS = 	\
 	misctcl.o \
 	objlist.o objlisttcl.o \
 	objtogl.o \
+	position.o \
 	realexpt.o \
 	scaleable.o scaleabletcl.o \
 	tcldlist.o \
@@ -32,10 +33,9 @@ OBJECTS = 	\
 	toglconfig.o \
 	trace.o
 
-ALL_OBJECTS = $(OBJECTS) timertcl.o timer.o \
+ALL_OBJECTS = $(OBJECTS) \
 	subjecttcl.o subject.o \
 	fixpt.o fixpttcl.o \
-	grobjtcl.o 
 
 .SUFFIXES:
 .SUFFIXES: .cc .o
@@ -50,21 +50,22 @@ $(TARGET): tags $(ALL_OBJECTS) grshAppInit.o
 # object files #
 ################
 
+face.o: io.h ioutils.h gfxattribs.h grobj.h face.h face.cc
+fixpt.o: io.h ioutils.h grobj.h fixpt.h fixpt.cc
+grobj.o: io.h ioutils.h grobj.h grobj.cc
+grobjmgr.o: grobjmgr.h grobjmgr.cc face.h fixpt.h grobj.h io.h
+io.o: io.h io.cc
+ioutils.o: io.h ioutils.h ioutils.cc
+position.o: io.h position.h position.cc
+
 expttcl.o: io.h objlisttcl.h glisttcl.h glist.h expt.h realexpt.h \
 	expttcl.h expttcl.cc
-face.o: io.h ioutils.h gfxattribs.h grobj.h scaleable.h face.h face.cc
 facetcl.o: objlist.h objlisttcl.h face.h facetcl.cc
-fixpt.o: io.h ioutils.h grobj.h scaleable.h fixpt.h fixpt.cc
 fixpttcl.o: fixpt.h objlist.h objlisttcl.h fixpttcl.cc
 gfxattribs.o: gfxattribs.h gfxattribs.cc
 glist.o: io.h ioutils.h objlist.h glist.h glist.cc
 glisttcl.o: glist.h objlisttcl.h glisttcl.h glisttcl.cc
-grobj.o: io.h ioutils.h grobj.h grobj.cc
-grobjmgr.o: grobjmgr.h grobjmgr.cc face.h fixpt.h scaleable.h grobj.h io.h
-grobjtcl.o: grobjtcl.h grobjtcl.cc objlist.h objlisttcl.h
 grshAppInit.o: grshAppInit.cc
-io.o: io.h io.cc
-ioutils.o: io.h ioutils.h ioutils.cc
 misctcl.o: misctcl.h misctcl.cc
 objlist.o: io.h grobj.h objlist.h scaleable.h objlist.cc grobjmgr.h \
 	ioutils.h randutils.h
@@ -73,25 +74,26 @@ objtogl.o: glist.h glisttcl.h toglconfig.h objtogl.h objtogl.cc io.h rect.h \
 	gfxattribs.h
 realexpt.o: expt.h glist.h realexpt.h realexpt.cc face.h io.h ioutils.h \
 	face.h scaleable.h grobj.h objlist.h randutils.h
-scaleable.o: io.h ioutils.h scaleable.h scaleable.cc
-scaleabletcl.o: io.h grobj.h objlisttcl.h scaleable.h \
-	scaleabletcl.h scaleabletcl.cc
-subject.o: io.h ioutils.h subject.h subject.cc
-subjecttcl.o: subject.h subjecttcl.cc
-tclgl.o: tclgl.h tclgl.cc
-tcldlist.o: tcldlist.h tcldlist.cc 
-timer.o: io.h grobj.h timer.h timer.cc
-timertcl.o: timertcl.h timertcl.cc grobjtcl.h grobjtcl.cc timer.h objlist.h \
-	objlisttcl.h
 toglconfig.o: rect.h toglconfig.h toglconfig.cc
 trace.o: trace.cc
 
 
 # old files #
 
+#grobjtcl.o: grobjtcl.h grobjtcl.cc objlist.h objlisttcl.h
 #stimdg.o: stimdg.h stimdg.cc tcldlist.h
 #stimdgtcl.o: face.h glist.h glisttcl.h objlist.h objlisttcl.h \
 #	stimdg.h stimdgtcl.h stimdgtcl.cc
+#scaleable.o: io.h ioutils.h scaleable.h scaleable.cc
+#scaleabletcl.o: io.h grobj.h objlisttcl.h scaleable.h \
+#	scaleabletcl.h scaleabletcl.cc
+#subject.o: io.h ioutils.h subject.h subject.cc
+#subjecttcl.o: subject.h subjecttcl.cc
+#tclgl.o: tclgl.h tclgl.cc
+#tcldlist.o: tcldlist.h tcldlist.cc 
+#timer.o: io.h grobj.h timer.h timer.cc
+#timertcl.o: timertcl.h timertcl.cc grobjtcl.h grobjtcl.cc timer.h objlist.h \
+#	objlisttcl.h
 
 
 test:	test.cc
