@@ -3,7 +3,7 @@
 // ioproxy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 22 21:41:38 2000
-// written: Thu Oct 19 17:38:18 2000
+// written: Tue Oct 24 16:29:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ public:
   virtual void writeTo(IO::Writer* writer) const
 	 { itsReferand->C::writeTo(writer); }
 
-  virtual unsigned long id() const
+  virtual IO::UID id() const
 	 { return itsReferand->C::id(); }
 
   virtual IO::VersionId serialVersionId() const
@@ -68,7 +68,7 @@ public:
   virtual void writeTo(IO::Writer* writer) const
 	 { itsReferand->C::writeTo(writer); }
 
-  virtual unsigned long id() const
+  virtual IO::UID id() const
 	 { return itsReferand->C::id(); }
 
   virtual IO::VersionId serialVersionId() const

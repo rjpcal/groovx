@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Sun Oct 22 16:13:40 2000
+// written: Tue Oct 24 16:28:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ public:
       be overridden by public clients; it will only be overridden by
       other classes internal to the io system, such as \c IO::IoProxy for
       example. */
-  virtual unsigned long id() const;
+  virtual IO::UID id() const;
 
   /** Returns a serialization version id for the class. The default
       implementation returns zero. Classes should override this when
