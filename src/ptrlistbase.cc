@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Dec  1 15:01:24 1999
+// written: Wed Dec  1 15:39:13 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,8 @@
 
 #include <algorithm> // for ::count
 #include <typeinfo>
+
+#include "demangle.h"
 
 #include "trace.h"
 #include "debug.h"
@@ -113,7 +115,7 @@ void* VoidPtrList::getCheckedVoidPtr(int id) const throw (InvalidIdError) {
 DOTRACE("VoidPtrList::getCheckedVoidPtr");
   if ( !isValidId(id) ) {
 	 throw InvalidIdError(string("attempt to access invalid id in ")
-								 + typeid(*this).name());
+								 + demangle(typeid(*this).name()));
   }
   return getVoidPtr(id);
 }
