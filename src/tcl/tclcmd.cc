@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Fri Jul 16 17:31:58 1999
+// written: Wed Sep 29 19:46:35 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,22 @@
 #define LOCAL_ASSERT
 #include "debug.h"
 
+namespace {
+  Tcl_Obj* nullObject () {
+	 static Tcl_Obj* obj = 0;
+	 if (obj == 0) {
+		obj = Tcl_NewObj();
+		Tcl_IncrRefCount(obj);
+	 }
+	 return obj;
+  }
+
+  void dummyDeleteProc(ClientData clientData) {
+	 TclCmd* cmd = static_cast<TclCmd*>(clientData);
+	 delete cmd;
+  }
+}
+
 TclCmd::~TclCmd() {
 DOTRACE("TclCmd::~TclCmd");
 }
@@ -31,11 +47,12 @@ TclCmd::TclCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
 					int objc_min, int objc_max, bool exact_objc) :
   itsUsage(usage),
   itsObjcMin(objc_min),
-  itsObjcMax(objc_max),
+  itsObjcMax( (objc_max > 0) ? objc_max : objc_min),
   itsExactObjc(exact_objc),
   itsInterp(0),
   itsObjc(0),
   itsObjv(0),
+  itsArgs(),
   itsResult(TCL_OK)
 {
 DOTRACE("TclCmd::TclCmd");
@@ -43,7 +60,7 @@ DOTRACE("TclCmd::TclCmd");
 							  const_cast<char *>(cmd_name),
 							  dummyInvoke,
 							  static_cast<ClientData> (this),
-							  (Tcl_CmdDeleteProc *) NULL);
+							  (Tcl_CmdDeleteProc*) NULL);
 }
 
 void TclCmd::usage() {
@@ -58,6 +75,19 @@ DOTRACE("TclCmd::errorMessage");
   err_message(itsInterp, itsObjv, msg);
 }
 
+
+void TclCmd::args(vector<Value*>& vec) {
+DOTRACE("TclCmd::args");
+  for (int i = 0; i < itsObjc; ++i) {
+ 	 vec.push_back(&itsArgs[i]);
+  }
+}
+
+TclValue& TclCmd::arg(int argn) {
+DOTRACE("TclCmd::arg");
+  if (argn > itsObjc) { throw TclError("argument number too high"); }
+  return itsArgs[argn];
+}
 
 int TclCmd::getIntFromArg(int argn) {
 DOTRACE("TclCmd::getIntFromArg");
@@ -107,6 +137,13 @@ DOTRACE("TclCmd::getCstringFromArg");
   return Tcl_GetString(itsObjv[argn]);
 }
 
+void TclCmd::returnVal(const Value& val) {
+DOTRACE("TclCmd::returnVal");
+  TclValue return_val(itsInterp, val);
+  Tcl_SetObjResult(itsInterp, return_val.getObj());
+  itsResult = TCL_OK;
+};
+
 void TclCmd::returnVoid() {
 DOTRACE("TclCmd::returnVoid");
   itsResult = TCL_OK;
@@ -151,6 +188,15 @@ void TclCmd::returnString(const string& val) {
 DOTRACE("TclCmd::returnString");
   Tcl_SetObjResult(itsInterp, Tcl_NewStringObj(val.c_str(), -1));
   itsResult = TCL_OK;
+}
+
+void TclCmd::lappendVal(const Value& val) {
+DOTRACE("TclCmd::lappendVal");
+  Tcl_Obj* result = Tcl_GetObjResult(itsInterp);
+  TclValue list_element(itsInterp, val);
+  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
+														  list_element.getObj());
+  if (cmd_result != TCL_OK) throw TclError();
 }
 
 void TclCmd::lappendVal(int val) {
@@ -234,6 +280,15 @@ DOTRACE("TclCmd::dummyInvoke");
   // ...otherwise if the argument count is OK, try the command and
   // catch all possible exceptions
   try {
+	 
+	 if (theCmd->itsArgs.size() == 0) {
+		Tcl_Obj* init = Tcl_NewObj();
+		theCmd->itsArgs.resize(theCmd->itsObjcMax, TclValue(interp, init));
+	 }
+	 for (int i=0; i < objc; ++i) {
+		theCmd->itsArgs[i].setObj(objv[i]);
+	 }
+
 	 theCmd->invoke();
   }
   catch (TclError& err) {
@@ -269,6 +324,14 @@ DOTRACE("TclCmd::dummyInvoke");
  	 err_message(interp, theCmd->itsObjv, "an error of unknown type occurred");
  	 theCmd->itsResult = TCL_ERROR;
   }
+
+
+  // cleanup
+  for (int i=0; i < objc; ++i) {
+ 	 theCmd->itsArgs[i].setObj(nullObject());
+  }
+  theCmd->itsObjc = 0;
+
   DebugEvalNL(theCmd->itsResult == TCL_OK);
   return theCmd->itsResult;
 }
