@@ -123,13 +123,13 @@ unset EPS
 
 ### Face::stringifyCmd ###
 test "FaceTcl-Face::stringify" "error from wrong type" {
-    set fx [Fixpt::Fixpt]
+    set fx [FixPt::FixPt]
 	 Face::stringify $fx
 } {^Face::stringify: an error of type (std::)?bad_cast occurred:.*$}
 
 ### Face::destringifyCmd ###
 test "FaceTcl-Face::destringify" "error from wrong type" {
-    set fx [Fixpt::Fixpt]
+    set fx [FixPt::FixPt]
 	 Face::destringify $fx junk
 } {^Face::destringify: an error of type (std::)?bad_cast occurred:.*$}
 test "FaceTcl-Face::destringify" "stringify/destringify check" {
