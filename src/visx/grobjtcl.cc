@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Mon Aug 13 12:15:36 2001
+// written: Wed Aug 15 13:37:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 
 #include "gfx/rect.h"
 
+#include "tcl/fieldpkg.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
@@ -68,7 +69,7 @@ public:
   {
     Tcl::defTracing(this, GrObj::tracer);
 
-    Tcl::defGenericObjCmds<GrObj>(this);
+    Tcl::defFieldContainer<GrObj>(this);
 
     defVec( "boundingBox", "item_id(s)", &GrobjTcl::boundingBox );
     defVec( "saveBitmapCache", "item_id(s) filename(s)",
@@ -77,25 +78,7 @@ public:
 
     def( "setBitmapCacheDir", "filename", &GrObj::setBitmapCacheDir );
 
-    defAttrib("alignmentMode",
-              &GrObj::getAlignmentMode, &GrObj::setAlignmentMode);
-    defAttrib("aspectRatio",
-              &GrObj::getAspectRatio, &GrObj::setAspectRatio);
-    defAttrib("bbVisibility",
-              &GrObj::getBBVisibility, &GrObj::setBBVisibility);
     defAttrib("category", &GrObj::category, &GrObj::setCategory);
-    defAttrib("centerX", &GrObj::getCenterX, &GrObj::setCenterX);
-    defAttrib("centerY", &GrObj::getCenterY, &GrObj::setCenterY);
-    defAttrib("height", &GrObj::getHeight, &GrObj::setHeight);
-    defAttrib("maxDimension",
-              &GrObj::getMaxDimension, &GrObj::setMaxDimension);
-    defAttrib("renderMode",
-              &GrObj::getRenderMode, &GrObj::setRenderMode);
-    defAttrib("scalingMode",
-              &GrObj::getScalingMode, &GrObj::setScalingMode);
-    defAttrib("unRenderMode",
-              &GrObj::getUnRenderMode, &GrObj::setUnRenderMode);
-    defAttrib("width", &GrObj::getWidth, &GrObj::setWidth);
 
     linkVarCopy("GrObj::DIRECT_RENDER", Gmodes::DIRECT_RENDER);
     linkVarCopy("GrObj::GLCOMPILE", Gmodes::GLCOMPILE);
