@@ -42,6 +42,7 @@
 #include "util/strings.h"
 #include "util/value.h"
 
+#include <map>
 #include <ostream>
 #include <set>
 
@@ -51,6 +52,44 @@ DBG_REGISTER
 
 using Util::Ref;
 using Util::SoftRef;
+
+namespace
+{
+  /// Translate UIDs into a repeatable id sequence for the XML file.
+  /** This way, we can guarantee that, a given object hierarchy will always
+      produce the same XML file, regardless of what the UIDs happen to
+      be. */
+  class IdMap
+  {
+  public:
+    IdMap() :
+      itsMap(),
+      itsNextId(1)
+    {}
+
+    int get(Util::UID uid) const
+    {
+      if (uid == 0) return 0;
+
+      MapType::iterator itr = itsMap.find(uid);
+      if (itr == itsMap.end())
+        {
+          int val = itsNextId++;
+          itsMap.insert(MapType::value_type(uid, val));
+          return val;
+        }
+
+      // else...
+      Assert((*itr).second != 0);
+      return (*itr).second;
+    }
+
+  private:
+    typedef std::map<Util::UID, int> MapType;
+    mutable MapType itsMap;
+    mutable int itsNextId;
+  };
+}
 
 class XMLWriter : public IO::Writer
 {
@@ -103,7 +142,8 @@ private:
     itsBuf << "\"/>\n";
   }
 
-  void flattenObject(SoftRef<const IO::IoObject> obj, const char* name);
+  void flattenObject(SoftRef<const IO::IoObject> obj, const char* name,
+                     const char* xmltype);
 
   bool alreadyWritten(SoftRef<const IO::IoObject> obj) const
   {
@@ -127,6 +167,7 @@ private:
   STD_IO::ostream& itsBuf;
   std::set<Util::UID> itsWrittenObjects;
   int itsIndentLevel;
+  IdMap itsIdMap;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -207,12 +248,12 @@ DOTRACE("XMLWriter::writeObject");
         {
           indent();
           itsBuf << "<objref type=\"" << obj->objTypename() << "\""
-                 << " id=\"" << obj->id() << "\""
+                 << " id=\"" << itsIdMap.get(obj->id()) << "\""
                  << " name=\"" << name << "\"/>\n";
         }
       else
         {
-          flattenObject(obj, name);
+          flattenObject(obj, name, "object");
         }
     }
   else
@@ -227,7 +268,7 @@ void XMLWriter::writeOwnedObject(const char* name,
 {
 DOTRACE("XMLWriter::writeOwnedObject");
 
-  flattenObject(obj, name);
+  flattenObject(obj, name, "ownedobj");
 }
 
 void XMLWriter::writeBaseClass(const char* baseClassName,
@@ -235,14 +276,15 @@ void XMLWriter::writeBaseClass(const char* baseClassName,
 {
 DOTRACE("XMLWriter::writeBaseClass");
 
-  flattenObject(basePart, baseClassName);
+  flattenObject(basePart, baseClassName, "baseclass");
 }
 
 void XMLWriter::writeRoot(const IO::IoObject* root)
 {
 DOTRACE("XMLWriter::writeRoot");
 
-  flattenObject(SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root)), "root");
+  flattenObject(SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root)),
+                "root", "object");
 
   itsBuf.flush();
 }
@@ -254,13 +296,13 @@ DOTRACE("XMLWriter::writeCstring");
 }
 
 void XMLWriter::flattenObject(SoftRef<const IO::IoObject> obj,
-                              const char* name)
+                              const char* name, const char* xmltype)
 {
 DOTRACE("XMLWriter::flattenObject");
 
   indent();
-  itsBuf << "<object type=\"" << obj->objTypename() << "\""
-         << " id=\"" << obj->id() << "\""
+  itsBuf << "<" << xmltype << " type=\"" << obj->objTypename() << "\""
+         << " id=\"" << itsIdMap.get(obj->id()) << "\""
          << " name=\"" << name << "\""
          << " version=\"" << obj->serialVersionId() << "\""
          << " attribCount=\"" << obj->ioAttribCount() << "\">\n";
@@ -272,7 +314,7 @@ DOTRACE("XMLWriter::flattenObject");
   markObjectAsWritten(obj);
 
   indent();
-  itsBuf << "</object>\n";
+  itsBuf << "</" << xmltype << ">\n";
 }
 
 void XMLWriter::writeEscaped(const char* p)
