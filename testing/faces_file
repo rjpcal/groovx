@@ -1,13 +1,13 @@
 # This is a comment at the beginning...
-Face @1 { 0   0.28   0.92   0.48   -0.60 GrObj @-1 }
-Face @1 { 0   0.42   0.49   0.64   -0.77 GrObj @-1 }
-Face @1 { 0   0.28   0.70   0.48   -0.77 GrObj @-1 }
-Face @1 { 0   0.28   0.70   0.64   -0.77 GrObj @-1 }
+Face @2 { 0   0.28   0.92   0.48   -0.60 GxShapeKit @-1 }
+Face @2 { 0   0.42   0.49   0.64   -0.77 GxShapeKit @-1 }
+Face @2 { 0   0.28   0.70   0.48   -0.77 GxShapeKit @-1 }
+Face @2 { 0   0.28   0.70   0.64   -0.77 GxShapeKit @-1 }
 #A comment in the middle...
-Face @1 { 0   0.28   0.70   0.64   -0.94 GrObj @-1 }
-Face @1 { 1   0.58   0.49   0.32   -0.60 GrObj @-1 }
-Face @1 { 1   0.42   0.70   0.32   -0.94 GrObj @-1 }
-Face @1 { 1   0.58   0.49   0.64   -0.60 GrObj @-1 }
-Face @1 { 1   0.58   0.49   0.64   -0.94 GrObj @-1 }
-Face @1 { 1   0.58   0.49   0.32   -0.94 GrObj @-1 }
+Face @2 { 0   0.28   0.70   0.64   -0.94 GxShapeKit @-1 }
+Face @2 { 1   0.58   0.49   0.32   -0.60 GxShapeKit @-1 }
+Face @2 { 1   0.42   0.70   0.32   -0.94 GxShapeKit @-1 }
+Face @2 { 1   0.58   0.49   0.64   -0.60 GxShapeKit @-1 }
+Face @2 { 1   0.58   0.49   0.64   -0.94 GxShapeKit @-1 }
+Face @2 { 1   0.58   0.49   0.32   -0.94 GxShapeKit @-1 }
 #One more at the end
