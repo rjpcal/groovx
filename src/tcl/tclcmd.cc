@@ -146,12 +146,6 @@ DOTRACE("Tcl::Command::name");
   return rep->overloads->cmdName();
 }
 
-fstring Tcl::Command::usage() const
-{
-DOTRACE("Tcl::Command::usage");
-  return rep->overloads->usage();
-}
-
 bool Tcl::Command::allowsObjc(unsigned int objc) const
 {
 DOTRACE("Tcl::Command::allowsObjc");
@@ -187,18 +181,6 @@ void Tcl::Command::setDispatcher(shared_ptr<Tcl::Dispatcher> dpx)
 {
 DOTRACE("Tcl::Command::setDispatcher");
   rep->dispatcher = dpx;
-}
-
-Tcl::Command* Tcl::Command::lookup(Tcl::Interp& interp, const char* name)
-{
-DOTRACE("Tcl::Command::lookup");
-  CommandGroup* const c = Tcl::CommandGroup::lookup(interp, name);
-
-  if (c == 0)
-    return 0;
-
-  // else...
-  return c->first();
 }
 
 

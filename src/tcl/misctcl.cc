@@ -36,7 +36,7 @@
 
 #include "tcl/tclpkg.h"
 
-#include "tcl/tclcmd.h"
+#include "tcl/tclcommandgroup.h"
 
 #include "util/error.h"
 #include "util/rand.h"
@@ -73,10 +73,10 @@ namespace
   fstring cmdUsage(Tcl::Context& ctx)
   {
     const char* name = ctx.getValFromArg<const char*>(1);
-    Tcl::Command* cmd = Tcl::Command::lookup(ctx.interp(), name);
+    Tcl::CommandGroup* cmd = Tcl::CommandGroup::lookup(ctx.interp(), name);
 
     if (cmd == 0)
-      throw Util::Error("no such Tcl::Command");
+      throw Util::Error("no such Tcl::CommandGroup");
 
     return cmd->usage();
   }

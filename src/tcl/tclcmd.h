@@ -94,9 +94,6 @@ public:
   /// Returns the command registered name.
   const fstring& name() const;
 
-  /// Returns a string describing the command's proper usage, including overloads.
-  fstring usage() const;
-
   /// Returns a string describing this single command's usage.
   fstring rawUsage() const;
 
@@ -116,10 +113,6 @@ public:
 
   /// Change the Tcl::Dispatcher for this command.
   void setDispatcher(shared_ptr<Dispatcher> dpx);
-
-  /// Find the command associated with a given name.
-  /** Returns null if no such command. */
-  static Tcl::Command* lookup(Tcl::Interp& interp, const char* name);
 
 private:
   Command(const Command&);

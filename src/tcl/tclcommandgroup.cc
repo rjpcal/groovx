@@ -104,7 +104,7 @@ DOTRACE("Tcl::CommandGroup::~CommandGroup");
 }
 
 Tcl::CommandGroup* Tcl::CommandGroup::lookup(Tcl::Interp& interp,
-                                             const char* name)
+                                             const char* name) throw()
 {
 DOTRACE("Tcl::CommandGroup::lookup");
   /*
