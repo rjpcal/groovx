@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Wed May 14 16:45:53 2003
+// written: Wed May 14 18:04:24 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -135,6 +135,7 @@ private:
   Cached<double> itsThetaJitter;
   Cached<double> itsGaborPeriod;
   Cached<double> itsGaborSigma;
+  Cached<int> itsContrastSeed;
   Cached<double> itsContrastJitter;
 
   mutable int itsTotalNumber;

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Wed May 14 16:47:54 2003
+// written: Wed May 14 18:05:31 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -91,6 +91,7 @@ GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
   itsThetaJitter(0.0),
   itsGaborPeriod(gaborPeriod),
   itsGaborSigma(gaborSigma),
+  itsContrastSeed(0),
   itsContrastJitter(0.0),
 
   itsTotalNumber(0),
@@ -125,6 +126,7 @@ const FieldMap& GaborArray::classFields()
     Field("thetaJitter", &GaborArray::itsThetaJitter, 0.0, 0.0, 1.0, 0.01),
     Field("gaborPeriod", &GaborArray::itsGaborPeriod, 15.0, 1.0, 50.0, 1.0),
     Field("gaborSigma", &GaborArray::itsGaborSigma, 7.5, 0.5, 25.0, 0.5),
+    Field("contrastSeed", &GaborArray::itsContrastSeed, 0, 0, 20000, 1),
     Field("contrastJitter", &GaborArray::itsContrastJitter, 0.0, 0.0, 2.0, 0.01),
   };
 
@@ -311,6 +313,7 @@ DOTRACE("GaborArray::updateBmap");
       && itsThetaJitter.ok()
       && itsGaborPeriod.ok()
       && itsGaborSigma.ok()
+      && itsContrastSeed.ok()
       && itsContrastJitter.ok())
     return;
 
@@ -323,6 +326,7 @@ DOTRACE("GaborArray::updateBmap");
 
   Util::Urand thetas(itsThetaSeed);
   Util::Urand phases(itsPhaseSeed);
+  Util::Urand contrasts(itsContrastSeed);
 
   for (int i = 0; i < itsTotalNumber; ++i)
     {
@@ -351,7 +355,7 @@ DOTRACE("GaborArray::updateBmap");
       const int x1 = x0 + p.size();
       const int y1 = y0 + p.size();
 
-      const double contrast = exp(-itsContrastJitter * phases.fdraw());
+      const double contrast = exp(-itsContrastJitter * contrasts.fdraw());
 
       for (int y = y0; y < y1; ++y)
         for (int x = x0; x < x1; ++x)
@@ -391,6 +395,7 @@ DOTRACE("GaborArray::updateBmap");
   itsThetaJitter.save();
   itsGaborPeriod.save();
   itsGaborSigma.save();
+  itsContrastSeed.save();
   itsContrastJitter.save();
 }
 
