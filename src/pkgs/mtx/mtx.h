@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Fri Apr  6 12:37:51 2001
+// written: Fri Apr  6 16:34:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,28 @@
 #include "datablock.h"
 #include "num.h"
 
-class Mtx;
+namespace RC // Range checking
+{
+  void assertLess(const void* x, const void* lim);
+  void assertLEQ(const void* x, const void* lim);
+  void assertInHalfOpen(const void* x, const void* llim, const void* ulim);
 
+  void assertLess(int x, int lim);
+  void assertLEQ(int x, int lim);
+  void assertInHalfOpen(int x, int llim, int ulim);
+}
+
+#ifdef RANGE_CHECK
+#  define RC_assertLess(x,lim) RC::assertLess((x),(lim))
+#  define RC_assertLEQ(x,lim) RC::assertLEQ((x),(lim))
+#  define RC_assertInHalfOpen(x,llim,ulim) RC::assertInHalfOpen((x),(llim),(ulim))
+#else
+#  define RC_assertLess(x,lim)
+#  define RC_assertLEQ(x,lim)
+#  define RC_assertInHalfOpen(x,llim,ulim)
+#endif
+
+class Mtx;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -68,9 +88,13 @@ class MtxIter {
 
 public:
 
-  double& operator*() { return *data; }
+  double& operator*() { RC_assertLess(data, stop); return *data; }
 
-  MtxIter& operator++() { data += stride; return *this; }
+  MtxIter& operator++()
+  {
+	 data += stride;
+	 return *this;
+  }
 
   bool hasMore() const { return data < stop; }
 };
@@ -90,7 +114,7 @@ public:
   MtxConstIter(const MtxIter& other) :
 	 data(other.data), stride(other.stride), stop(other.stop) {}
 
-  double operator*() const { return *data; }
+  double operator*() const { RC_assertLess(data, stop); return *data; }
 
   MtxConstIter& operator++() { data += stride; return *this; }
 
