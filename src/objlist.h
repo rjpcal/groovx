@@ -3,7 +3,7 @@
 // objlist.h 
 // Rob Peters
 // Created: Nov-98
-// written: Thu Jul 22 12:55:03 1999
+// written: Wed Oct 20 17:59:21 1999
 // $Id$
 //
 //
@@ -22,8 +22,6 @@
 #ifndef PTRLIST_H_DEFINED
 #include "ptrlist.h"
 #endif
-
-#include "id.h"
 
 class GrObj;
 
