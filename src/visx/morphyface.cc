@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Mon Aug 20 18:19:22 2001
+// written: Thu Aug 23 09:49:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -99,24 +99,22 @@ namespace
     return &hair_vertices[0];
   }
 
-  void drawHairStrip(const double* vertices, double x_scale, double y_scale)
+  void drawHairStrip(Gfx::Canvas& canvas,
+                     const double* vertices, double x_scale, double y_scale)
   {
-    glPushMatrix();
+    Gfx::Canvas::MatrixSaver saver(canvas);
+
+    glScalef(x_scale, y_scale, 1.0);
+
+    glBegin(GL_QUAD_STRIP);
     {
-      glScalef(x_scale, y_scale, 1.0);
-
-      glBegin(GL_QUAD_STRIP);
-      {
-        for (unsigned int i = 0; i < NUM_HAIR_POINTS; ++i)
-          {
-            glVertex2d(vertices[4*i  ], vertices[4*i+1]);
-            glVertex2d(vertices[4*i+2], vertices[4*i+3]);
-          }
-      }
-      glEnd();
-
+      for (unsigned int i = 0; i < NUM_HAIR_POINTS; ++i)
+        {
+          glVertex2d(vertices[4*i  ], vertices[4*i+1]);
+          glVertex2d(vertices[4*i+2], vertices[4*i+3]);
+        }
     }
-    glPopMatrix();
+    glEnd();
   }
 }
 
@@ -281,9 +279,10 @@ DOTRACE("MorphyFace::grRender");
   // Enable antialiasing, if it is available
   const bool have_antialiasing = canvas.isRgba();
 
+  Gfx::Canvas::AttribSaver attribSaver(canvas);
+
   if (have_antialiasing)
     {
-      glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
       glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
 
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency
@@ -315,69 +314,65 @@ DOTRACE("MorphyFace::grRender");
 
   for (int left_right = -1; left_right < 2; left_right += 2)
     {
-      glPushMatrix();
-      {
-        // Do appropriate reflection
-        glScalef(left_right*1.0, 1.0, 1.0);
+      Gfx::Canvas::MatrixSaver msaver(canvas);
 
-        // Move to the eye position
-        glTranslatef(Util::abs(itsEyeDistance)/2.0, itsEyeYpos, 0.0);
+      // Do appropriate reflection
+      glScalef(left_right*1.0, 1.0, 1.0);
 
-        // Draw eye outline
-        for (int top_bottom = -1; top_bottom < 2; top_bottom += 2)
-          {
-            glPushMatrix();
-            {
-              glScalef(itsEyeHeight*itsEyeAspectRatio,
-                       itsEyeHeight*top_bottom,
-                       1.0);
-              glEnable(GL_MAP1_VERTEX_3);
-              glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, eye_ctrlpnts);
-              // Evaluate the 1-d Bezier curve
-              glMapGrid1d(eye_subdivisions, 0.0, 1.0);
-              glEvalMesh1(GL_LINE, 0, eye_subdivisions);
-              glPopMatrix();
-            }
-          }
+      // Move to the eye position
+      glTranslatef(Util::abs(itsEyeDistance)/2.0, itsEyeYpos, 0.0);
 
-        // Draw eyebrow
-        glPushMatrix();
+      // Draw eye outline
+      for (int top_bottom = -1; top_bottom < 2; top_bottom += 2)
         {
-          glTranslatef(itsEyebrowXpos, itsEyebrowYpos, 0.0);
-          glRotatef(itsEyebrowAngle, 0.0, 0.0, 1.0);
+          Gfx::Canvas::MatrixSaver msaver2(canvas);
+
           glScalef(itsEyeHeight*itsEyeAspectRatio,
-                   itsEyeHeight*itsEyebrowCurvature,
+                   itsEyeHeight*top_bottom,
                    1.0);
-          glPushAttrib(GL_LINE_BIT);
-          {
-            GLdouble line_width;
-            glGetDoublev(GL_LINE_WIDTH, &line_width);
-            glLineWidth(itsEyebrowThickness*line_width);
-            glEnable(GL_MAP1_VERTEX_3);
-            glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, eye_ctrlpnts);
-            // Evaluate the 1-d Bezier curve
-            glMapGrid1d(eye_subdivisions, 0.0, 1.0);
-            glEvalMesh1(GL_LINE, 0, eye_subdivisions);
-          }
-          glPopAttrib();
+          glEnable(GL_MAP1_VERTEX_3);
+          glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, eye_ctrlpnts);
+          // Evaluate the 1-d Bezier curve
+          glMapGrid1d(eye_subdivisions, 0.0, 1.0);
+          glEvalMesh1(GL_LINE, 0, eye_subdivisions);
         }
-        glPopMatrix();
 
-        // Draw pupil
-        glPushMatrix();
+      // Draw eyebrow
+      {
+        Gfx::Canvas::MatrixSaver msaver3(canvas);
+
+        glTranslatef(itsEyebrowXpos, itsEyebrowYpos, 0.0);
+        glRotatef(itsEyebrowAngle, 0.0, 0.0, 1.0);
+        glScalef(itsEyeHeight*itsEyeAspectRatio,
+                 itsEyeHeight*itsEyebrowCurvature,
+                 1.0);
+
         {
-          glTranslatef(left_right*itsPupilXpos, itsPupilYpos, 0.0);
-          glScalef(itsPupilSize*itsEyeHeight,
-                   itsPupilSize*itsEyeHeight,
-                   1.0);
-          static const int num_slices = 20;
-          static const int num_loops = 1;
-          gluDisk(qobj, 0.5*Util::abs(itsPupilDilation), 0.5,
-                  num_slices, num_loops);
+          Gfx::Canvas::AttribSaver asaver(canvas);
+          GLdouble line_width;
+          glGetDoublev(GL_LINE_WIDTH, &line_width);
+          glLineWidth(itsEyebrowThickness*line_width);
+          glEnable(GL_MAP1_VERTEX_3);
+          glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, eye_ctrlpnts);
+          // Evaluate the 1-d Bezier curve
+          glMapGrid1d(eye_subdivisions, 0.0, 1.0);
+          glEvalMesh1(GL_LINE, 0, eye_subdivisions);
         }
-        glPopMatrix();
       }
-      glPopMatrix();
+
+      // Draw pupil
+      {
+        Gfx::Canvas::MatrixSaver msaver4(canvas);
+
+        glTranslatef(left_right*itsPupilXpos, itsPupilYpos, 0.0);
+        glScalef(itsPupilSize*itsEyeHeight,
+                 itsPupilSize*itsEyeHeight,
+                 1.0);
+        static const int num_slices = 20;
+        static const int num_loops = 1;
+        gluDisk(qobj, 0.5*Util::abs(itsPupilDilation), 0.5,
+                num_slices, num_loops);
+      }
     }
 
   gluDeleteQuadric(qobj);
@@ -415,8 +410,9 @@ DOTRACE("MorphyFace::grRender");
   // Draw nose.
   //
 
-  glPushMatrix();
   {
+    Gfx::Canvas::MatrixSaver msaver5(canvas);
+
     glTranslatef(itsNoseXpos, itsNoseYpos, 0.0);
     glScalef(Util::abs(itsNoseWidth)/2.0, Util::abs(itsNoseLength), 1.0);
     glBegin(GL_LINE_STRIP);
@@ -431,7 +427,6 @@ DOTRACE("MorphyFace::grRender");
       glVertex2d( 0.75, 0.5);
     glEnd();
   }
-  glPopMatrix();
 
   //
   // Draw mouth.
@@ -445,8 +440,9 @@ DOTRACE("MorphyFace::grRender");
      0.5,  0.5,      0.0
   };
 
-  glPushMatrix();
   {
+    Gfx::Canvas::MatrixSaver msaver6(canvas);
+
     glTranslatef(itsMouthXpos, itsMouthYpos, 0.0);
     glScalef(itsMouthWidth, itsMouthCurvature, 1.0);
     glEnable(GL_MAP1_VERTEX_3);
@@ -455,14 +451,14 @@ DOTRACE("MorphyFace::grRender");
     glMapGrid1d(num_subdivisions, 0.0, 1.0);
     glEvalMesh1(GL_LINE, 0, num_subdivisions);
   }
-  glPopMatrix();
 
   //
   // Draw hair.
   //
 
-  glPushAttrib(GL_POLYGON_BIT);
   {
+    Gfx::Canvas::AttribSaver saver(canvas);
+
     if (itsHairStyle == 0)
       {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -475,18 +471,11 @@ DOTRACE("MorphyFace::grRender");
     const double* hair_vertices = getHairVertices(itsTopWidth, itsHairWidth);
 
     // Draw right side
-    drawHairStrip(hair_vertices, itsFaceWidth, itsTopHeight);
+    drawHairStrip(canvas, hair_vertices, itsFaceWidth, itsTopHeight);
 
     // Draw left side
-    drawHairStrip(hair_vertices, -itsFaceWidth, itsTopHeight);
+    drawHairStrip(canvas, hair_vertices, -itsFaceWidth, itsTopHeight);
   }
-  glPopAttrib();
-
-  // Undo pushes
-  if (have_antialiasing)
-    {
-      glPopAttrib();
-    }
 }
 
 ///////////////////////////////////////////////////////////////////////
