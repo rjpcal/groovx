@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Tue Sep 21 16:28:10 1999
+// written: Tue Sep 21 18:01:51 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -260,6 +260,10 @@ protected:
 
   private: void grRecacheBitmap() const;
   // This function updates the cached bitmap.
+
+  private: void grDoScaling() const;
+
+  private: void grDoAlignment() const;
 
 private:
   GrObjImpl* const itsImpl;	  // opaque pointer to implementation
