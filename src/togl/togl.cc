@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Thu May 25 01:03:37 2000
+// written: Thu May 25 01:17:59 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -148,6 +148,9 @@ public:
   void freeColor(unsigned long pixel) const;
   void setColor(unsigned long index,
 					 float red, float green, float blue) const;
+
+  GLuint loadBitmapFont(const char* fontname) const;
+  void unloadBitmapFont(GLuint fontbase) const;
 
 private:
   void eventProc(XEvent* eventPtr);
@@ -470,55 +473,20 @@ DOTRACE("<togl.cc>::get_rgb_colormap");
 }
 
 
-
-/*
- * Register a C function to be called when an Togl widget is realized.
- */
 void Togl_CreateFunc( Togl_Callback *proc )
-{
-DOTRACE("<togl.cc>::Togl_CreateFunc");
-  DefaultCreateProc = proc;
-}
+  { DefaultCreateProc = proc; }
 
-
-/*
- * Register a C function to be called when an Togl widget must be redrawn.
- */
 void Togl_DisplayFunc( Togl_Callback *proc )
-{
-DOTRACE("<togl.cc>::Togl_DisplayFunc");
-  DefaultDisplayProc = proc;
-}
+  { DefaultDisplayProc = proc; }
 
-
-/*
- * Register a C function to be called when an Togl widget is resized.
- */
 void Togl_ReshapeFunc( Togl_Callback *proc )
-{
-DOTRACE("<togl.cc>::Togl_ReshapeFunc");
-  DefaultReshapeProc = proc;
-}
+  { DefaultReshapeProc = proc; }
 
-
-/*
- * Register a C function to be called when an Togl widget is destroyed.
- */
 void Togl_DestroyFunc( Togl_Callback *proc )
-{
-DOTRACE("<togl.cc>::Togl_DestroyFunc");
-  DefaultDestroyProc = proc;
-}
+  { DefaultDestroyProc = proc; }
 
-
-/*
- * Register a C function to be called from TimerEventHandler.
- */
 void Togl_TimerFunc( Togl_Callback *proc )
-{
-DOTRACE("<togl.cc>::Togl_TimerFunc");
-  DefaultTimerProc = proc;
-}
+  { DefaultTimerProc = proc; }
 
 
 /*
@@ -536,35 +504,14 @@ DOTRACE("<togl.cc>::Togl_ResetDefaultCallbacks");
   DefaultClientData = NULL;
 }
 
-
-/*
- * Change the display/redraw callback for a specific Togl widget.
- */
 void Togl_SetDisplayFunc( Togl* togl, Togl_Callback *proc )
-{
-DOTRACE("<togl.cc>::Togl_SetDisplayFunc");
-  togl->setDisplayFunc(proc);
-}
+  { togl->setDisplayFunc(proc); }
 
-
-/*
- * Change the reshape callback for a specific Togl widget.
- */
 void Togl_SetReshapeFunc( Togl* togl, Togl_Callback *proc )
-{
-DOTRACE("<togl.cc>::Togl_SetReshapeFunc");
-  togl->setReshapeFunc(proc);
-}
+  { togl->setReshapeFunc(proc); }
 
-
-/*
- * Change the destroy callback for a specific Togl widget.
- */
 void Togl_SetDestroyFunc( Togl* togl, Togl_Callback *proc )
-{
-DOTRACE("<togl.cc>::Togl_SetDestroyFunc");
-  togl->setDestroyFunc(proc);
-}
+  { togl->setDestroyFunc(proc); }
 
 
 /*
@@ -585,19 +532,11 @@ DOTRACE("<togl.cc>::Togl_CreateCommand");
 
 
 void Togl_MakeCurrent( const Togl* togl )
-{
-  togl->makeCurrent();
-}
+  { togl->makeCurrent(); }
 
-/*
- * It's possible to change with this function or in a script some
- * options like RGBA - ColorIndex ; Z-buffer and so on
- */
 int Togl_Configure(Tcl_Interp *interp, Togl* togl,
                    int argc, char *argv[], int flags)
-{
-  togl->configure(interp, argc, argv, flags);
-}
+  { return togl->configure(interp, argc, argv, flags); }
 
 
 int Togl_WidgetCmd(ClientData clientData, Tcl_Interp *interp,
@@ -682,52 +621,25 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
 
 
 void Togl_PostRedisplay( Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_PostRedisplay");
-  togl->postRedisplay();
-}
-
+  { togl->postRedisplay(); }
 
 void Togl_SwapBuffers( const Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_SwapBuffers");
-  togl->swapBuffers();
-}
-
+  { togl->swapBuffers(); }
 
 char* Togl_Ident( const Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_Ident");
-  return togl->ident();
-}
-
+  { return togl->ident(); }
 
 int Togl_Width( const Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_Width");
-  return togl->width();
-}
-
+  { return togl->width(); }
 
 int Togl_Height( const Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_Height");
-  return togl->height();
-}
-
+  { return togl->height(); }
 
 Tcl_Interp* Togl_Interp( const Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_Interp");
-  return togl->interp();
-}
-
+  { return togl->interp(); }
 
 Tk_Window Togl_TkWin( const Togl* togl )
-{
-DOTRACE("<togl.cc>::Togl_TkWin");
-  return togl->tkWin();
-}
+  { return togl->tkWin(); }
 
 
 /*
@@ -804,140 +716,22 @@ DOTRACE("<togl.cc>::noFaultXAllocColor");
 
 unsigned long Togl_AllocColor( const Togl* togl,
                                float red, float green, float blue )
-{
-  return togl->allocColor(red, green, blue);
-}
-
+  { return togl->allocColor(red, green, blue); }
 
 void Togl_FreeColor( const Togl* togl, unsigned long pixel )
-{
-  togl->freeColor(pixel);
-}
-
+  { togl->freeColor(pixel); }
 
 void Togl_SetColor( const Togl* togl,
                     unsigned long index, float red, float green, float blue )
-{
-  togl->setColor(index, red, green, blue);
-}
+  { togl->setColor(index, red, green, blue); }
 
+GLuint Togl_LoadBitmapFont( const Togl* togl, const char *fontname )
+  { togl->loadBitmapFont(fontname); }
 
-
-#define MAX_FONTS 1000
-static GLuint ListBase[MAX_FONTS];
-static GLuint ListCount[MAX_FONTS];
-
-
+void Togl_UnloadBitmapFont( const Togl* togl, GLuint fontbase )
+  { togl->unloadBitmapFont(fontbase); }
 
 /// XXX
-
-/*
- * Load the named bitmap font as a sequence of bitmaps in a display list.
- * fontname may be one of the predefined fonts like TOGL_BITMAP_8_BY_13
- * or an X font name, or a Windows font name, etc.
- */
-GLuint Togl_LoadBitmapFont( const Togl* togl, const char *fontname )
-{
-DOTRACE("<togl.cc>::Togl_LoadBitmapFont");
-  static int FirstTime = 1;
-  XFontStruct *fontinfo;
-  int first, last, count;
-  GLuint fontbase;
-  const char *name;
-
-  /* Initialize the ListBase and ListCount arrays */
-  if (FirstTime) {
-	 int i;
-	 for (i=0;i<MAX_FONTS;i++) {
-		ListBase[i] = ListCount[i] = 0;
-	 }
-	 FirstTime = 0;
-  }
-
-  /*
-	* This method of selecting X fonts according to a TOGL_ font name
-	* is a kludge.  To be fixed when I find time...
-	*/
-  if (fontname==TOGL_BITMAP_8_BY_13) {
-	 name = "8x13";
-  }
-  else if (fontname==TOGL_BITMAP_9_BY_15) {
-	 name = "9x15";
-  }
-  else if (fontname==TOGL_BITMAP_TIMES_ROMAN_10) {
-	 name = "-adobe-times-medium-r-normal--10-100-75-75-p-54-iso8859-1";
-  }
-  else if (fontname==TOGL_BITMAP_TIMES_ROMAN_24) {
-	 name = "-adobe-times-medium-r-normal--24-240-75-75-p-124-iso8859-1";
-  }
-  else if (fontname==TOGL_BITMAP_HELVETICA_10) {
-	 name = "-adobe-helvetica-medium-r-normal--10-100-75-75-p-57-iso8859-1";
-  }
-  else if (fontname==TOGL_BITMAP_HELVETICA_12) {
-	 name = "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1";
-  }
-  else if (fontname==TOGL_BITMAP_HELVETICA_18) {
-	 name = "-adobe-helvetica-medium-r-normal--18-180-75-75-p-98-iso8859-1";
-  }
-  else if (!fontname) {
-	 name = DEFAULT_FONTNAME;
-  }
-  else {
-	 name = (const char *) fontname;
-  }
-
-  assert( name );
-
-  fontinfo = XLoadQueryFont( Tk_Display(togl->itsTkWin), name );
-  if (!fontinfo) {
-	 return 0;
-  }
-
-  first = fontinfo->min_char_or_byte2;
-  last = fontinfo->max_char_or_byte2;
-  count = last-first+1;
-
-  fontbase = glGenLists( (GLuint) (last+1) );
-  if (fontbase==0) {
-	 return 0;
-  }
-  glXUseXFont( fontinfo->fid, first, count, (int) fontbase+first );
-
-  /* Record the list base and number of display lists
-	* for Togl_UnloadBitmapFont().
-	*/
-  {
-	 int i;
-	 for (i=0;i<MAX_FONTS;i++) {
-		if (ListBase[i]==0) {
-		  ListBase[i] = fontbase;
-		  ListCount[i] = last+1;
-		  break;
-		}
-	 }
-  }
-
-  return fontbase;
-}
-
-
-
-/*
- * Release the display lists which were generated by Togl_LoadBitmapFont().
- */
-void Togl_UnloadBitmapFont( const Togl* togl, GLuint fontbase )
-{
-DOTRACE("<togl.cc>::Togl_UnloadBitmapFont");
-  int i;
-  (void) togl;
-  for (i=0;i<MAX_FONTS;i++) {
-	 if (ListBase[i]==fontbase) {
-		glDeleteLists( ListBase[i], ListCount[i] );
-		ListBase[i] = ListCount[i] = 0;
-		return;
-	 }
-  }
-}
 
 
 /*
@@ -1768,6 +1562,13 @@ DOTRACE("Togl::~Togl");
   removeSelfFromList();
 }
 
+//---------------------------------------------------------------------
+//
+// It's possible to change with this function or in a script some
+// options like RGBA - ColorIndex ; Z-buffer and so on
+//
+//---------------------------------------------------------------------
+
 int Togl::configure(Tcl_Interp* interp, int argc, char* argv[], int flags) {
 DOTRACE("Togl::configure");
 
@@ -1997,6 +1798,112 @@ DOTRACE("Togl::setColor");
   itsEpsRedMap[xcol.pixel] = xcol.red / 65535.0;
   itsEpsGreenMap[xcol.pixel] = xcol.green / 65535.0;
   itsEpsBlueMap[xcol.pixel] = xcol.blue / 65535.0;
+}
+
+
+#define MAX_FONTS 1000
+static GLuint ListBase[MAX_FONTS];
+static GLuint ListCount[MAX_FONTS];
+
+
+//---------------------------------------------------------------------
+//
+// Load the named bitmap font as a sequence of bitmaps in a display list.
+// fontname may be one of the predefined fonts like TOGL_BITMAP_8_BY_13
+// or an X font name, or a Windows font name, etc.
+//
+//---------------------------------------------------------------------
+
+GLuint Togl::loadBitmapFont(const char* fontname) const {
+DOTRACE("Togl::loadBitmapFont");
+  static int FirstTime = 1;
+
+  /* Initialize the ListBase and ListCount arrays */
+  if (FirstTime) {
+	 int i;
+	 for (i=0;i<MAX_FONTS;i++) {
+		ListBase[i] = ListCount[i] = 0;
+	 }
+	 FirstTime = 0;
+  }
+
+  /*
+	* This method of selecting X fonts according to a TOGL_ font name
+	* is a kludge.  To be fixed when I find time...
+	*/
+  const char* name;
+  if (fontname==TOGL_BITMAP_8_BY_13) {
+	 name = "8x13";
+  }
+  else if (fontname==TOGL_BITMAP_9_BY_15) {
+	 name = "9x15";
+  }
+  else if (fontname==TOGL_BITMAP_TIMES_ROMAN_10) {
+	 name = "-adobe-times-medium-r-normal--10-100-75-75-p-54-iso8859-1";
+  }
+  else if (fontname==TOGL_BITMAP_TIMES_ROMAN_24) {
+	 name = "-adobe-times-medium-r-normal--24-240-75-75-p-124-iso8859-1";
+  }
+  else if (fontname==TOGL_BITMAP_HELVETICA_10) {
+	 name = "-adobe-helvetica-medium-r-normal--10-100-75-75-p-57-iso8859-1";
+  }
+  else if (fontname==TOGL_BITMAP_HELVETICA_12) {
+	 name = "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1";
+  }
+  else if (fontname==TOGL_BITMAP_HELVETICA_18) {
+	 name = "-adobe-helvetica-medium-r-normal--18-180-75-75-p-98-iso8859-1";
+  }
+  else if (!fontname) {
+	 name = DEFAULT_FONTNAME;
+  }
+  else {
+	 name = fontname;
+  }
+
+  assert( name );
+
+  XFontStruct *fontinfo = XLoadQueryFont( Tk_Display(this->itsTkWin), name );
+  if (!fontinfo) {
+	 return 0;
+  }
+
+  int first = fontinfo->min_char_or_byte2;
+  int last = fontinfo->max_char_or_byte2;
+  int count = last-first+1;
+
+  GLuint fontbase = glGenLists( (GLuint) (last+1) );
+  if (fontbase==0) {
+	 return 0;
+  }
+  glXUseXFont( fontinfo->fid, first, count, (int) fontbase+first );
+
+  /* Record the list base and number of display lists
+	* for Togl_UnloadBitmapFont().
+	*/
+  {
+	 int i;
+	 for (i=0;i<MAX_FONTS;i++) {
+		if (ListBase[i]==0) {
+		  ListBase[i] = fontbase;
+		  ListCount[i] = last+1;
+		  break;
+		}
+	 }
+  }
+
+  return fontbase;
+}
+
+// Release the display lists which were generated by loadBitmapFont().
+void Togl::unloadBitmapFont(GLuint fontbase) const {
+DOTRACE("Togl::unloadBitmapFont");
+  for (int i=0; i<MAX_FONTS; ++i) {
+	 if (ListBase[i]==fontbase) {
+		glDeleteLists( ListBase[i], ListCount[i] );
+		ListBase[i] = ListCount[i] = 0;
+		return;
+	 }
+  }
 }
 
 void Togl::eventProc(XEvent* eventPtr) {
