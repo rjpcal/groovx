@@ -2,7 +2,7 @@
 // trialexpt.cc
 // Rob Peters
 // created: Sat Mar 13 17:57:49 1999
-// written: Tue Mar 16 19:14:12 1999
+// written: Tue Mar 16 19:14:27 1999
 // $Header$
 ///////////////////////////////////////////////////////////////////////
 

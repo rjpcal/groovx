@@ -2,7 +2,8 @@
 // trialexpt.h
 // Rob Peters
 // created: Sat Mar 13 17:55:27 1999
-// written: Tue Mar 16 19:13:21 1999
+// written: Tue Mar 16 19:13:57 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TRIALEXPT_H_DEFINED
