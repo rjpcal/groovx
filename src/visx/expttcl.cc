@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Sat Jan 15 11:03:41 2000
+// written: Mon Mar  6 12:10:43 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -15,23 +15,22 @@
 #ifndef EXPTTCL_CC_DEFINED
 #define EXPTTCL_CC_DEFINED
 
-#include <tcl.h>
-#include <string>
-#include <fstream.h>
-
 #include "asciistreamreader.h"
 #include "asciistreamwriter.h"
 #include "grshapp.h"
 #include "tclevalcmd.h"
 #include "exptdriver.h"
+#include "strings.h"
 #include "tclitempkg.h"
 #include "tclcmd.h"
 #include "widget.h"
 
+#include <fstream.h>
+
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -189,7 +188,7 @@ public:
 protected:
   virtual void invoke() {
 	 // Build the script to be executed when the start key is pressed
-	 string start_command = "{ ";
+	 dynamic_string start_command = "{ ";
 	 start_command += getCstringFromArg(1);
 	 start_command += " }";
 
