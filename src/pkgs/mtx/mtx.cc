@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Sun Mar  3 14:15:03 2002
+// written: Mon Mar  4 11:38:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,6 +126,15 @@ void RC::inHalfOpen(int x, int llim, int ulim, const char* f, int ln)
 // Slice member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+Slice Slice::operator()(const Range& rng) const
+{
+  RC_inHalfOpen(rng.begin(), 0, itsNelems);
+  RC_geq(rng.count(), 0);
+  RC_leq(rng.end(), itsNelems);
+
+  return Slice(itsOwner, storageOffset(rng.begin()), itsStride, rng.count());
+}
 
 void Slice::print() const
 {
