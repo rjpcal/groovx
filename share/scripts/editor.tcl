@@ -35,15 +35,20 @@ itcl::class FieldControls {
 	 private variable isItMulti
 	 private variable isItGettable
 	 private variable isItSettable
+	 private variable itsMultiCounts
 	 private variable itsFrame
 	 private variable itsControls
 	 private variable itsCachedValues
 
 	 private method setControl {fname val} {
 		  set control $itsControls($fname)
-		  if { $isItString($fname) || $isItMulti($fname) } {
+		  if { $isItString($fname) } {
 				$control delete 0 end
 				$control insert 0 $val
+		  } elseif { $isItMulti($fname) } {
+				for {set i 0} {$i < $itsMultiCounts($fname)} {incr i} {
+					 $control.multi$i set [lindex $val $i]
+				}
 		  } else {
 				$control set $val
 		  }
@@ -51,11 +56,28 @@ itcl::class FieldControls {
 	 }
 
 	 private method onControl {callback fname {val {}}} {
-		  if { $isItString($fname) || $isItMulti($fname) } {
+		  if { $isItString($fname) } {
 				set control $itsControls($fname)
 				set val [$control get]
+		  } elseif { $isItMulti($fname) } {
+				set control $itsControls($fname)
+				set val [list]
+				for {set i 0} {$i < $itsMultiCounts($fname)} {incr i} {
+					 lappend val [$control.multi$i get]
+				}
 		  }
 		  $callback $fname $val
+	 }
+
+	 private method buildScale {path label min max step callback} {
+		  scale $path -label $label \
+					 -from $min -to $max \
+					 -resolution $step \
+					 -bigincrement $step \
+					 -digits [string length $step] \
+					 -repeatdelay 500 -repeatinterval 250 \
+					 -orient horizontal \
+					 -command $callback
 	 }
 
 	 constructor {panes objtype setCallback} {
@@ -85,6 +107,7 @@ itcl::class FieldControls {
 				set isItMulti($fname) [expr [lsearch $flags MULTI] != -1]
 				set isItGettable($fname) [expr [lsearch $flags NO_GET] == -1]
 				set isItSettable($fname) [expr [lsearch $flags NO_SET] == -1]
+				set itsMultiCounts($fname) [llength $lower]
 
 				lappend itsNames $fname
 				set itsCachedValues($fname) 0
@@ -96,26 +119,39 @@ itcl::class FieldControls {
 
 				set pane $currentframe
 
-				if {$isItString($fname) || $isItMulti($fname)} {
+				if { $isItString($fname) } {
 					 iwidgets::entryfield $pane.$fname -labeltext $fname -width 15 \
 								-command [itcl::code $this onControl $setCallback $fname]
 					 lappend align_us $pane.$fname
+
+				} elseif { $isItMulti($fname) } {
+					 frame $pane.$fname -relief ridge -borderwidth 2
+
+					 label $pane.$fname.label -text "$fname"
+
+					 $pane.$fname.label configure -foreground darkgreen
+
+					 pack $pane.$fname.label -side top -anchor nw
+
+					 for {set i 0} {$i < $itsMultiCounts($fname)} {incr i} {
+						  set path $pane.$fname.multi$i
+						  set min [lindex $lower $i]
+						  set max [lindex $upper $i]
+						  set res [lindex $step $i]
+
+						  buildScale $path "" $min $max $res \
+									 [itcl::code $this onControl $setCallback $fname]
+
+						  pack $pane.$fname.multi$i -side top
+					 }
 				} else {
 
-					 scale $pane.$fname -label $fname -from $lower -to $upper \
-								-resolution $step -bigincrement $step \
-								-digits [string length $step] \
-								-repeatdelay 500 -repeatinterval 250 \
-								-orient horizontal \
-								-command [itcl::code $this onControl $setCallback $fname]
+					 buildScale $pane.$fname $fname $lower $upper $step \
+								[itcl::code $this onControl $setCallback $fname]
 				}
 
 				if {$isItTransient($fname)} {
 					 $pane.$fname configure -foreground blue
-				}
-
-				if {$isItMulti($fname)} {
-					 $pane.$fname configure -foreground darkgreen
 				}
 
 				pack $pane.$fname -side top
