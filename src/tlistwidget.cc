@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Tue Dec 14 17:30:45 1999
+// written: Fri Jan 14 11:45:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,9 @@ namespace {
 }
 
 TlistWidget::TlistWidget(Togl* togl, double dist, double unit_angle) :
-  ToglConfig(togl, dist, unit_angle) 
+  ToglConfig(togl, dist, unit_angle),
+  itsCurTrial(0),
+  itsVisibility(false)
 {
 DOTRACE("TlistWidget::TlistWidget");
 }
