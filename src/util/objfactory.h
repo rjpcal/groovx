@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // iofactory.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Sat Jun 26 23:40:06 1999
-// written: Wed Nov  1 16:23:11 2000
+// written: Fri Nov 10 17:03:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

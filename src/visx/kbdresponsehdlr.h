@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // kbdresponsehdlr.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Mon Jun 21 18:09:11 1999
-// written: Fri Oct 20 17:39:58 2000
+// written: Fri Nov 10 17:03:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

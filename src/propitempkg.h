@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // propitempkg.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Mon Oct  4 15:42:59 1999
-// written: Wed Nov  1 17:43:23 2000
+// written: Fri Nov 10 17:03:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

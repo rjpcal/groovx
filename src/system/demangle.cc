@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // demangle.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Oct 13 10:41:19 1999
-// written: Sat Sep 23 18:03:50 2000
+// written: Fri Nov 10 17:03:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // observable.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Tue May 25 18:39:27 1999
-// written: Wed Oct 18 22:08:18 2000
+// written: Fri Nov 10 17:03:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

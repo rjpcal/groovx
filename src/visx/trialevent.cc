@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // trialevent.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Fri Jun 25 12:44:55 1999
-// written: Thu Oct 19 15:11:16 2000
+// written: Fri Nov 10 17:03:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

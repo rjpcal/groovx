@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // factory.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Sat Nov 20 22:37:31 1999
-// written: Fri Nov  3 14:54:30 2000
+// written: Fri Nov 10 17:03:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

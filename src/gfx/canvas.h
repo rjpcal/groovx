@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // canvas.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Mon Nov 15 18:00:27 1999
-// written: Tue Oct 17 17:04:18 2000
+// written: Fri Nov 10 17:03:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

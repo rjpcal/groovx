@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // property.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Sep 29 11:57:34 1999
-// written: Fri Nov  3 15:06:03 2000
+// written: Fri Nov 10 17:03:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

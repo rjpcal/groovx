@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // sound.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Thu Jul  8 11:43:07 1999
-// written: Mon Oct 30 11:23:06 2000
+// written: Fri Nov 10 17:03:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

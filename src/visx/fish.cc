@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // fish.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Sep 29 11:44:57 1999
-// written: Fri Nov  3 14:57:11 2000
+// written: Fri Nov 10 17:04:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

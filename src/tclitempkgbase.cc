@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // tclitempkgbase.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed May 31 18:32:51 2000
-// written: Wed May 31 19:07:11 2000
+// written: Fri Nov 10 17:03:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

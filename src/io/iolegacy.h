@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // iolegacy.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Tue Sep 26 18:47:31 2000
-// written: Fri Nov  3 14:51:18 2000
+// written: Fri Nov 10 17:03:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

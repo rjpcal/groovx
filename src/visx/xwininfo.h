@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // xwininfo.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Thu Dec  2 13:32:16 1999
-// written: Thu Dec  2 13:32:30 1999
+// written: Fri Nov 10 17:03:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // tclpkg.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Mon Jun 14 11:50:23 1999
-// written: Fri Sep 22 17:50:01 2000
+// written: Fri Nov 10 17:03:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

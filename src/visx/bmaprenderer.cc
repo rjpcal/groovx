@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // bmaprenderer.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Dec  1 16:55:36 1999
-// written: Wed Mar 29 22:12:40 2000
+// written: Fri Nov 10 17:04:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

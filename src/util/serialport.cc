@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // serialport.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Mar 29 13:46:11 2000
-// written: Wed May 17 14:37:15 2000
+// written: Fri Nov 10 17:03:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // iditemutils.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Mon Oct 30 11:19:08 2000
-// written: Mon Oct 30 11:19:27 2000
+// written: Fri Nov 10 17:03:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

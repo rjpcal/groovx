@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // iomap.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Tue Oct 24 16:27:13 2000
-// written: Wed Oct 25 11:50:28 2000
+// written: Fri Nov 10 17:03:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

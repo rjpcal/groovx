@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // bezier.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Tue Sep 21 09:51:40 1999
-// written: Wed Mar 29 14:07:39 2000
+// written: Fri Nov 10 17:03:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

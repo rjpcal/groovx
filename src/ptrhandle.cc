@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // ptrhandle.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Sun Oct 22 15:57:20 2000
-// written: Sun Oct 22 15:57:35 2000
+// written: Fri Nov 10 17:03:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

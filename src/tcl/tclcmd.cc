@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // tclcmd.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Fri Jun 11 14:50:58 1999
-// written: Fri Oct 27 11:04:28 2000
+// written: Fri Nov 10 17:03:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

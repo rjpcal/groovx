@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // thtcl.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu Nov  2 13:09:29 2000
+// written: Fri Nov 10 17:03:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

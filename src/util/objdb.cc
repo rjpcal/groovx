@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // ioptrlist.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Sun Nov 21 00:26:29 1999
-// written: Mon Oct 30 15:57:55 2000
+// written: Fri Nov 10 17:03:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

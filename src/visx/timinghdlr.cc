@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // timinghdlr.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Mon Jun 21 13:09:57 1999
-// written: Tue Oct 31 11:42:58 2000
+// written: Fri Nov 10 17:03:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

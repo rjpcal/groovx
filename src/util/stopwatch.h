@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // stopwatch.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Thu Nov 18 10:24:59 1999
-// written: Wed Mar 29 14:07:34 2000
+// written: Fri Nov 10 17:03:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

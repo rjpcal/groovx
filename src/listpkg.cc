@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // listpkg.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Dec 15 17:27:51 1999
-// written: Wed Nov  1 17:41:26 2000
+// written: Fri Nov 10 17:03:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

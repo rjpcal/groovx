@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // asciistreamwriter.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Mon Jun  7 13:05:57 1999
-// written: Wed Sep 27 14:42:46 2000
+// written: Fri Nov 10 17:03:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // listitempkg.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Jul  7 13:17:04 1999
-// written: Thu Nov  2 13:03:43 2000
+// written: Fri Nov 10 17:03:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

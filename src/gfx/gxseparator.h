@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // gxseparator.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Thu Nov  2 11:20:15 2000
-// written: Thu Nov  2 23:58:24 2000
+// written: Fri Nov 10 16:57:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

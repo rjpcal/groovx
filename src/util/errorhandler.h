@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // errorhandler.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Thu May 11 10:15:41 2000
-// written: Thu Jun  1 14:20:16 2000
+// written: Fri Nov 10 17:03:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // grshapp.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Tue Dec  7 11:26:59 1999
-// written: Mon Sep 25 09:18:57 2000
+// written: Fri Nov 10 17:04:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

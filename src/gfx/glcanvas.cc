@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // glcanvas.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Mon Dec  6 20:28:36 1999
-// written: Thu Jun  1 13:50:02 2000
+// written: Fri Nov 10 17:04:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

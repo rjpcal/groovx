@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // gtexttcl.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Thu Jul  1 12:30:38 1999
-// written: Mon Oct 30 11:12:29 2000
+// written: Fri Nov 10 17:04:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // readutils.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Tue Nov 16 14:25:40 1999
-// written: Thu Oct 26 08:58:28 2000
+// written: Fri Nov 10 17:03:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

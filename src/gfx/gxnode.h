@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // gxnode.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Nov  1 18:26:45 2000
-// written: Thu Nov  2 14:50:47 2000
+// written: Fri Nov 10 17:05:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // ioproxy.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Mar 22 21:41:38 2000
-// written: Mon Oct 30 14:07:42 2000
+// written: Fri Nov 10 17:03:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

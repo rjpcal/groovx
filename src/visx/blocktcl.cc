@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // blocktcl.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Jun 16 19:46:54 1999
-// written: Thu Nov  2 13:06:02 2000
+// written: Fri Nov 10 17:04:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

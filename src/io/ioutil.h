@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // stringifycmd.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Fri Jun 11 21:43:43 1999
-// written: Thu Jun  1 14:12:46 2000
+// written: Fri Nov 10 17:03:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

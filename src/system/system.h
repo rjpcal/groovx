@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // system.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Nov 17 15:05:41 1999
-// written: Tue Sep 19 16:50:22 2000
+// written: Fri Nov 10 17:03:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

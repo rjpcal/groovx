@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // tclutil.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Oct 11 10:27:35 2000
-// written: Mon Oct 16 13:28:56 2000
+// written: Fri Nov 10 17:03:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // minivec.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Tue Oct 31 11:01:16 2000
-// written: Thu Nov  2 11:44:44 2000
+// written: Fri Nov 10 17:03:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // hash.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Mon Mar 20 08:50:34 2000
-// written: Wed Mar 29 14:07:33 2000
+// written: Fri Nov 10 17:03:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

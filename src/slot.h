@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // observer.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Tue May 25 18:37:02 1999
-// written: Mon Dec  6 14:01:08 1999
+// written: Fri Nov 10 17:03:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

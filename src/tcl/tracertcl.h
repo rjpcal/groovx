@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // tracertcl.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Thu Feb 17 13:32:11 2000
-// written: Wed Mar 15 11:56:17 2000
+// written: Fri Nov 10 17:03:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

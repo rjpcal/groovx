@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // tlistwidget.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Fri Dec  3 14:45:34 1999
-// written: Fri Oct 27 09:03:29 2000
+// written: Fri Nov 10 17:03:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // hpsound.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Tue Oct 12 13:03:47 1999
-// written: Sun Oct 29 18:25:18 2000
+// written: Fri Nov 10 17:03:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

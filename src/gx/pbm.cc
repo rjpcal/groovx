@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // pbm.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Tue Jun 15 16:41:07 1999
-// written: Thu Oct  5 13:15:50 2000
+// written: Fri Nov 10 17:03:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

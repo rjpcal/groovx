@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // demangle.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Oct 13 10:41:03 1999
-// written: Wed Mar  8 15:53:41 2000
+// written: Fri Nov 10 17:03:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

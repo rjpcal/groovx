@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // experiment.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Dec  1 10:52:17 1999
-// written: Tue Oct 24 07:10:52 2000
+// written: Fri Nov 10 17:03:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

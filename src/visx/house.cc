@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // house.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Mon Sep 13 12:43:16 1999
-// written: Fri Nov  3 14:57:32 2000
+// written: Fri Nov 10 17:04:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

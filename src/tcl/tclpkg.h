@@ -1,11 +1,12 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // tclitempkg.h
-// Rob Peters rjpeters@klab.caltech.edu
-// created: Tue Jun 15 12:33:59 1999
-// written: Thu Nov  2 13:02:51 2000
-// $Id$
 //
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
+// created: Tue Jun 15 12:33:59 1999
+// written: Fri Nov 10 17:04:20 2000
+// $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // iotcl.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Mon Oct 30 10:00:39 2000
-// written: Thu Nov  2 13:10:46 2000
+// written: Fri Nov 10 17:03:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // grobjtcl.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Thu Jul  1 14:01:18 1999
-// written: Thu Nov  2 14:56:39 2000
+// written: Fri Nov 10 17:04:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // maskhatch.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Thu Sep 23 15:49:58 1999
-// written: Fri Oct 20 17:35:58 2000
+// written: Fri Nov 10 17:03:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // irixsound.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Thu Oct 14 11:23:12 1999
-// written: Fri Oct 27 18:04:26 2000
+// written: Fri Nov 10 17:03:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

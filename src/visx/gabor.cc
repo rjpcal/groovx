@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // gabor.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Oct  6 10:45:58 1999
-// written: Fri Nov  3 14:57:21 2000
+// written: Fri Nov 10 17:04:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // iditem.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Thu Oct 26 17:50:59 2000
-// written: Mon Oct 30 11:21:14 2000
+// written: Fri Nov 10 17:03:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

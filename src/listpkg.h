@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // listpkg.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Tue Jun 29 17:23:03 1999
-// written: Wed Nov  1 17:40:53 2000
+// written: Fri Nov 10 17:03:50 2000
 // $Id$
 //
 // This file defines a TclPkg to be used with IoPtrList's.

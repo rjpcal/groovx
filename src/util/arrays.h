@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // arrays.h
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Mon Mar  6 15:56:36 2000
-// written: Wed Mar 29 14:07:33 2000
+// written: Fri Nov 10 17:03:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

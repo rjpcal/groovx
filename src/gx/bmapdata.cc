@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // bmapdata.cc
-// Rob Peters rjpeters@klab.caltech.edu
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Thu Jan 20 00:37:03 2000
-// written: Mon Oct  9 19:41:23 2000
+// written: Fri Nov 10 17:04:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
