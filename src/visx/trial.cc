@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu May 17 10:50:19 2001
+// written: Thu May 17 11:30:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -232,13 +232,8 @@ DOTRACE("Trial::Impl::readFrom");
 
   reader->readValue("type", itsType);
 
-  IO::IoObject* rhio = reader->readObjectImpl("rh");
-  ResponseHandler* rh = dynamic_cast<ResponseHandler*>(rhio);
-  itsRh = MaybeIdItem<ResponseHandler>(rh);
-
-  IO::IoObject* thio = reader->readObjectImpl("th");
-  TimingHdlr* th = dynamic_cast<TimingHdlr*>(thio);
-  itsTh = MaybeIdItem<TimingHdlr>(th);
+  itsRh = dynamicCast<ResponseHandler>(reader->readMaybeObject("rh"));
+  itsTh = dynamicCast<TimingHdlr>(reader->readMaybeObject("th"));
 }
 
 void Trial::Impl::writeTo(IO::Writer* writer) const {
