@@ -1,19 +1,44 @@
 #!/usr/bin/env tclsh
 
-proc find_src { root pattern } {
-    set dirs [lsort [glob ${root}/$pattern]]
-    set dir [lindex $dirs end]
-    puts "found source directory $dir"
-    return $dir
+# Tcl >= 8.4 is required for [file normalize]
+package require Tcl 8.4
+
+proc find_src { root pkgname } {
+    set pattern ${root}/${pkgname}\[0-9\].*/
+    puts "using glob pattern $pattern"
+    set dirs [lsort [glob -nocomplain $pattern]]
+    if { [llength $dirs] == 0 } {
+	puts "couldn't find a source directory for $pkgname"
+	exit 1
+    }
+    if { [llength $dirs] > 1 } {
+	puts "more than one directory was found for ${pkgname}:"
+	puts "\t[join $dirs \n\t]"
+	puts "please remove one and then re-run this script"
+	exit 1
+    }
+    puts "found source directory $dirs"
+    return $dirs
 }
 
 set root [file normalize [lindex $argv 0]]
 set dst [file normalize [lindex $argv 1]]
 
-set tcl_src [find_src $root tcl\[0-9\].*/]
-set tk_src [find_src $root tk\[0-9\].*/]
-set itcl_src [find_src $root itcl\[0-9\].*/]
-set iwidgets_src [find_src $root iwidgets\[0-9\].*/]
+if { [llength $argv] != 2 } {
+    puts "usage: build_tcl <source_dir> <install_dir>"
+    puts ""
+    puts "  <source_dir>  should contain source directories for tcl, tk"
+    puts "                itcl, and iwidgets"
+    puts ""
+    puts "  <install_dir> specifies a directory where all the packages"
+    puts "                should be installed"
+    exit 1
+}
+
+set tcl_src [find_src $root tcl]
+set tk_src [find_src $root tk]
+set itcl_src [find_src $root itcl]
+set iwidgets_src [find_src $root iwidgets]
 
 cd ${tcl_src}/unix
 exec ./configure --prefix=$dst >&@ stdout
