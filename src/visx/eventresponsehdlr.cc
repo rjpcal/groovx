@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu Jul 19 16:41:50 2001
+// written: Thu Jul 19 17:18:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "eventresponsehdlr.h"
 
 #include "experiment.h"
+#include "feedbackmap.h"
 #include "grshapp.h"
 #include "sound.h"
 #include "response.h"
@@ -28,14 +29,9 @@
 #include "gwt/widget.h"
 
 #include "tcl/tclcmd.h"
-#include "tcl/tclcode.h"
-#include "tcl/tclobjptr.h"
-#include "tcl/tcllistobj.h"
-#include "tcl/tclregexp.h"
 #include "tcl/tclutil.h"
 
 #include "util/error.h"
-#include "util/minivec.h"
 #include "util/pointers.h"
 #include "util/ref.h"
 #include "util/strings.h"
@@ -75,8 +71,6 @@ public:
 
   class ERHState;
   friend class ERHState;
-  class ERHInactiveState;
-  friend class ERHInactiveState;
   class ERHActiveState;
   friend class ERHActiveState;
 
@@ -88,13 +82,16 @@ public:
   public:
     virtual ~ERHState() {}
 
-    virtual void rhAbortTrial() = 0;
-    virtual void rhEndTrial() = 0;
-    virtual void rhHaltExpt() = 0;
+    // all virtual functions have default empty bodies, so this class
+    // functions as the inactive state
 
-    virtual void handleResponse(const char* keysym) = 0;
+    virtual void rhAbortTrial() {}
+    virtual void rhEndTrial() {}
+    virtual void rhHaltExpt() {}
 
-    virtual void onDestroy() = 0;
+    virtual void handleResponse(const char* keysym) {}
+
+    virtual void onDestroy() {}
 
     static shared_ptr<ERHState> activeState(const EventResponseHdlr::Impl* erh,
                                             GWT::Widget& widget,
@@ -103,28 +100,11 @@ public:
   };
 
 
-  class ERHInactiveState : public ERHState {
-  public:
-    virtual ~ERHInactiveState() {}
-
-    virtual void rhAbortTrial() {}
-    virtual void rhEndTrial() {}
-    virtual void rhHaltExpt() {}
-
-    virtual void handleResponse(const char*) {}
-
-    virtual void onDestroy() {};
-  };
-
-
   class ERHActiveState : public ERHState {
   private:
     const EventResponseHdlr::Impl& itsErh;
     GWT::Widget& itsWidget;
     TrialBase& itsTrial;
-
-    bool check()
-    { return (&itsErh != 0) && (&itsWidget != 0) && (&itsTrial != 0); }
 
   public:
     virtual ~ERHActiveState()
@@ -136,13 +116,12 @@ public:
       itsWidget(widget),
       itsTrial(trial)
     {
-      Invariant(check());
+      Assert((&itsErh != 0) && (&itsWidget != 0) && (&itsTrial != 0));
       itsErh.attend(itsWidget);
     }
 
     virtual void rhAbortTrial()
     {
-      Invariant(check());
       itsErh.ignore(itsWidget);
 
       Ref<Sound> p = Sound::getErrSound();
@@ -151,14 +130,12 @@ public:
 
     virtual void rhEndTrial()
     {
-      Invariant(check());
       itsErh.ignore(itsWidget);
       itsErh.changeState(ERHState::inactiveState());
     }
 
     virtual void rhHaltExpt()
     {
-      Invariant(check());
       itsErh.ignore(itsWidget);
       itsErh.changeState(ERHState::inactiveState());
     }
@@ -167,7 +144,6 @@ public:
 
     virtual void onDestroy()
     {
-      Invariant(check());
       itsErh.ignore(itsWidget);
     }
   }; // end class ERHActiveState
@@ -181,13 +157,6 @@ public:
 
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
-
-  void setFeedbackMap(const char* feedback_string)
-    {
-      itsFeedbackMapRep = feedback_string;
-      itsFeedbacksAreDirty = true;
-      updateFeedbacksIfNeeded();
-    }
 
   void rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const
     {
@@ -211,84 +180,43 @@ public:
   // Helper functions
 private:
 
-  // When this procedure is invoked, the program listens to the events
-  // that are pertinent to the response policy. This procedure should
-  // be called when a trial is begun, and should be cancelled with
-  // ignore() when a response has been made so that events are not
-  // received during response processing and during the inter-trial
-  // period.
-  void attend(GWT::Widget& widget) const;
+  dynamic_string getBindingScript() const
+  {
+    return dynamic_string("{ ")
+      .append(itsCmdCallback->name()).append(" ")
+      .append(itsBindingSubstitution).append(" }");
+  }
 
-  // When this procedure is invoked, the program ignores
-  // user-generated events (mouse or keyboard) that would otherwise
-  // signal a response. This effect is useful when the experiment is
-  // in between trials, when a current response is already being
-  // processed, and any other time when it is necessary to avoid an
-  // unintended key/button-press being interpreted as a response. The
-  // effect is cancelled by calling attend().
-  void ignore(GWT::Widget& widget) const;
+  void attend(GWT::Widget& widget) const
+  {
+    DOTRACE("EventResponseHdlr::Impl::attend");
+    widget.bind(itsEventSequence.c_str(), getBindingScript().c_str());
+  }
+
+  void ignore(GWT::Widget& widget) const
+  {
+    DOTRACE("EventResponseHdlr::Impl::ignore");
+    widget.bind(itsEventSequence.c_str(), nullScript.c_str());
+  }
 
   class PrivateHandleCmd;
 
-  void feedback(int response) const;
-  void updateFeedbacksIfNeeded() const;
-  void updateRegexpsIfNeeded() const;
-
-  dynamic_string getBindingScript() const;
-
+  //
   // data
-private:
+  //
+
   EventResponseHdlr* itsOwner;
 
   mutable shared_ptr<ERHState> itsState;
 
+public:
   Tcl::SafeInterp itsSafeIntp;
 
-  PrivateHandleCmd* itsCmdCallback;
+  Tcl::TclCmd* itsCmdCallback;
 
-public:
   ResponseMap itsResponseMap;
 
-private:
-
-  class Condition_Feedback {
-  public:
-    Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
-      itsCondition(cond),
-      itsResultCmd(res, Tcl::Code::THROW_EXCEPTION)
-      {
-        Precondition(cond != 0); Precondition(res != 0);
-      }
-
-    bool invokeIfTrue(const Tcl::SafeInterp& safeInterp) throw (ErrorWithMsg)
-      {
-        if (isTrue(safeInterp))
-          { invoke(safeInterp); return true; }
-        return false;
-      }
-
-  private:
-    bool isTrue(const Tcl::SafeInterp& safeInterp) throw(ErrorWithMsg)
-      {
-        return safeInterp.evalBooleanExpr(itsCondition);
-      }
-
-    void invoke(const Tcl::SafeInterp& safeInterp) throw(ErrorWithMsg)
-      { itsResultCmd.invoke(safeInterp.intp()); }
-
-    Tcl::ObjPtr itsCondition;
-    Tcl::Code itsResultCmd;
-  };
-
-public:
-  fixed_string itsFeedbackMapRep;
-private:
-  mutable minivec<Condition_Feedback> itsFeedbacks;
-
-  mutable bool itsFeedbacksAreDirty;
-
-public:
-  bool itsUseFeedback;
+  FeedbackMap itsFeedbackMap;
 
   fixed_string itsEventSequence;
   fixed_string itsBindingSubstitution;
@@ -360,15 +288,13 @@ shared_ptr<EventResponseHdlr::Impl::ERHState>
 EventResponseHdlr::Impl::ERHState::inactiveState()
 {
 DOTRACE("EventResponseHdlr::Impl::ERHState::inactiveState");
-  return shared_ptr<ERHState>(new ERHInactiveState);
+  return shared_ptr<ERHState>(new ERHState);
 }
 
 void EventResponseHdlr::Impl::ERHActiveState::handleResponse(
   const char* keysym
 ) {
 DOTRACE("EventResponseHdlr::Impl::ERHActiveState::handleResponse");
-
-  Invariant(check());
 
   Response theResponse;
 
@@ -381,15 +307,16 @@ DOTRACE("EventResponseHdlr::Impl::ERHActiveState::handleResponse");
   theResponse.setVal(itsErh.itsResponseMap.valueFor(keysym));
   DebugEvalNL(theResponse.val());
 
-  if ( !theResponse.isValid() ) {
-    if ( itsErh.itsAbortInvalidResponses )
-      itsTrial.trAbortTrial();
-  }
-
-  else {
-    itsTrial.trRecordResponse(theResponse);
-    itsErh.feedback(theResponse.val());
-  }
+  if ( !theResponse.isValid() )
+    {
+      if ( itsErh.itsAbortInvalidResponses )
+        itsTrial.trAbortTrial();
+    }
+  else
+    {
+      itsTrial.trRecordResponse(theResponse);
+      itsErh.itsFeedbackMap.giveFeedback(itsErh.itsSafeIntp, theResponse.val());
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -405,10 +332,7 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
   itsSafeIntp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp()),
   itsCmdCallback(new PrivateHandleCmd(this)),
   itsResponseMap(input_response_map),
-  itsFeedbackMapRep(),
-  itsFeedbacks(),
-  itsFeedbacksAreDirty(true),
-  itsUseFeedback(true),
+  itsFeedbackMap(),
   itsEventSequence("<KeyPress>"),
   itsBindingSubstitution("%K"),
   itsAbortInvalidResponses(true)
@@ -433,110 +357,31 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
     itsResponseMap.set(rep);
   }
 
-  reader->readValue("feedbackMap", itsFeedbackMapRep);
-  reader->readValue("useFeedback", itsUseFeedback);
+  {
+    fixed_string rep;
+    reader->readValue("feedbackMap", rep);
+    itsFeedbackMap.set(rep);
+  }
+
+  reader->readValue("useFeedback", itsFeedbackMap.itsUseFeedback);
   reader->readValue("eventSequence", itsEventSequence);
   reader->readValue("bindingSubstitution", itsBindingSubstitution);
-
-  itsFeedbacksAreDirty = true;
-  updateFeedbacksIfNeeded();
 }
 
 void EventResponseHdlr::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("EventResponseHdlr::Impl::writeTo");
 
   writer->writeValue("inputResponseMap", itsResponseMap.rep());
-  writer->writeValue("feedbackMap", itsFeedbackMapRep);
-  writer->writeValue("useFeedback", itsUseFeedback);
+  writer->writeValue("feedbackMap", itsFeedbackMap.rep());
+  writer->writeValue("useFeedback", itsFeedbackMap.itsUseFeedback);
   writer->writeValue("eventSequence", itsEventSequence);
   writer->writeValue("bindingSubstitution", itsBindingSubstitution);
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// EventResponseHdlr::Impl helper method definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-dynamic_string EventResponseHdlr::Impl::getBindingScript() const
-{
-  return dynamic_string("{ ")
-    .append(itsCmdCallback->name()).append(" ")
-    .append(itsBindingSubstitution).append(" }");
-}
-
-void EventResponseHdlr::Impl::attend(GWT::Widget& widget) const {
-DOTRACE("EventResponseHdlr::Impl::attend");
-
-  widget.bind(itsEventSequence.c_str(), getBindingScript().c_str());
-}
-
-void EventResponseHdlr::Impl::ignore(GWT::Widget& widget) const {
-DOTRACE("EventResponseHdlr::Impl::ignore");
-
-  widget.bind(itsEventSequence.c_str(), nullScript.c_str());
-}
-
-
-void EventResponseHdlr::Impl::feedback(int response) const {
-DOTRACE("EventResponseHdlr::Impl::feedback");
-
-  if (!itsUseFeedback) return;
-
-  updateFeedbacksIfNeeded();
-
-  itsSafeIntp.setGlobalVar("resp_val", response);
-
-  bool feedbackGiven = false;
-  for (size_t i = 0; i<itsFeedbacks.size() && !feedbackGiven; ++i)
-    {
-      feedbackGiven = itsFeedbacks[i].invokeIfTrue(itsSafeIntp);
-    }
-
-  itsSafeIntp.unsetGlobalVar("resp_val");
-}
-
-
-//---------------------------------------------------------------------
-//
-// EventResponseHdlr::updateFeedacksIfNeeded --
-//
-//---------------------------------------------------------------------
-
-void EventResponseHdlr::Impl::updateFeedbacksIfNeeded() const {
-DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
-
-  if (!itsFeedbacksAreDirty) return;
-
-  Tcl::List pairs_list(Tcl::ObjPtr(itsFeedbackMapRep.c_str()));
-
-  itsFeedbacks.clear();
-
-  for (unsigned int i = 0; i < pairs_list.length(); ++i)
-    {
-      Tcl::List current_pair(pairs_list[i]);
-
-      if (current_pair.length() != 2)
-        {
-          throw ErrorWithMsg("\"pair\" did not have length 2 "
-                             "in EventResponseHdlr::updateFeedbacksIfNeeded");
-        }
-
-      itsFeedbacks.push_back(Impl::Condition_Feedback(current_pair[0],
-                                                      current_pair[1]));
-    }
-
-  itsFeedbacksAreDirty = false;
-
-  DebugPrintNL("updateFeedbacksIfNeeded success!");
 }
 
 
 ///////////////////////////////////////////////////////////////////////
 //
 // EventResponseHdlr method definitions
-//
-// All of these methods just delegate to EventResponseHdlr::Impl methods
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -577,22 +422,22 @@ DOTRACE("EventResponseHdlr::setInputResponseMap");
 
 bool EventResponseHdlr::getUseFeedback() const {
 DOTRACE("EventResponseHdlr::getUseFeedback");
-  return itsImpl->itsUseFeedback;
+  return itsImpl->itsFeedbackMap.itsUseFeedback;
 }
 
 void EventResponseHdlr::setUseFeedback(bool val) {
 DOTRACE("EventResponseHdlr::setUseFeedback");
-  itsImpl->itsUseFeedback = val;
+  itsImpl->itsFeedbackMap.itsUseFeedback = val;
 }
 
 const char* EventResponseHdlr::getFeedbackMap() const {
 DOTRACE("EventResponseHdlr::getFeedbackMap");
-  return itsImpl->itsFeedbackMapRep.c_str();
+  return itsImpl->itsFeedbackMap.rep().c_str();
 }
 
 void EventResponseHdlr::setFeedbackMap(const char* feedback_string) {
 DOTRACE("EventResponseHdlr::setFeedbackMap");
-  itsImpl->setFeedbackMap(feedback_string);
+  itsImpl->itsFeedbackMap.set(feedback_string);
 }
 
 const fixed_string& EventResponseHdlr::getEventSequence() const
