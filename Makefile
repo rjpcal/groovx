@@ -168,6 +168,7 @@ GRSH_DYNAMIC_OBJS = \
 	$(GRSH)/block.do \
 	$(GRSH)/blocklist.do \
 	$(GRSH)/blocktcl.do \
+	$(GRSH)/bmapdata.do \
 	$(GRSH)/bmaprenderer.do \
 	$(GRSH)/canvas.do \
 	$(GRSH)/cloneface.do \
@@ -372,7 +373,7 @@ $(PROD_LIBTCLWORKS):   $(PROD_TCLWORKS_OBJS)
 # level 0 headers
 #
 BEZIER_H = bezier.h
-BITMAPREP_H = bitmaprep.h
+BMAPDATA_H = bmapdata.h
 BMAPRENDERER_H = bmaprenderer.h
 CANVAS_H = canvas.h
 DEBUG_H = util/debug.h
@@ -404,11 +405,12 @@ WIDGET_H = widget.h
 # level 1 headers
 #
 APPLICATION_H = $(ERROR_H) application.h
+BITMAPREP_H = $(BMAPDATA_H) bitmaprep.h
 FACTORY_H = $(ERROR_H) $(DEMANGLE_H) factory.h
 GLBMAPRENDERER_H = $(BMAPRENDERER_H) glbmaprenderer.h
 GLCANVAS_H = $(CANVAS_H) glcanvas.h
 IO_H = $(ERROR_H) io.h
-PBM_H = $(ERROR_H) pbm.h
+PBM_H = $(ERROR_H) $(BMAPDATA_H) pbm.h
 READER_H = $(ERROR_H) reader.h
 RECT_H = $(POINT_H) rect.h
 TCLERROR_H = $(ERROR_H) tclerror.h
@@ -532,6 +534,8 @@ BLOCKLIST_CC = $(BLOCKLIST_H) $(TRACE_H) $(DEBUG_H) \
 
 BLOCKTCL_CC = $(IOFACTORY_H) $(BLOCKLIST_H) $(BLOCK_H) $(TCLCMD_H) \
 	$(LISTITEMPKG_H) $(LISTPKG_H) $(TRACE_H) $(DEBUG_H) blocktcl.cc
+
+BMAPDATA_CC = $(BMAPDATA_H) $(TRACE_H) $(DEBUG_H) bmapdata.cc
 
 BMAPRENDERER_CC = $(BMAPRENDERER_H) $(TRACE_H) bmaprenderer.cc
 
@@ -828,6 +832,7 @@ $(GRSH)/bitmaptcl.*[ol]:         $(BITMAPTCL_CC)
 $(GRSH)/block.*[ol]:             $(BLOCK_CC)
 $(GRSH)/blocklist.*[ol]:         $(BLOCKLIST_CC)
 $(GRSH)/blocktcl.*[ol]:          $(BLOCKTCL_CC)
+$(GRSH)/bmapdata.*[ol]:          $(BMAPDATA_CC)
 $(GRSH)/bmaprenderer.*[ol]:      $(BMAPRENDERER_CC)
 $(GRSH)/canvas.*[ol]:            $(CANVAS_CC)
 $(GRSH)/cloneface.*[ol]:         $(CLONEFACE_CC)
