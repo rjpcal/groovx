@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Tue Nov 16 13:53:28 1999
+// written: Thu Nov 18 13:50:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -1493,18 +1493,6 @@ void GrObj::undraw() const {
 void GrObj::grUnRender() const {
 DOTRACE("GrObj::grUnRender");
   // Empty default implementation of this virtual function
-}
-
-void GrObj::grDrawBoundingBox() const {
-  itsImpl->grDrawBoundingBox();
-}
-
-int GrObj::grDisplayList() const {
-  return itsImpl->getDisplayList();
-}
-
-bool GrObj::grIsCurrent() const {
-  return itsImpl->isCurrent();
 }
 
 static const char vcid_grobj_cc[] = "$Header$";
