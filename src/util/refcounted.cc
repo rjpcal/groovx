@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Sat May 19 11:28:37 2001
+// written: Sat Jun  2 15:50:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,22 +43,26 @@ RefCounted::RefCounted() :
   itsRefCount2(0)
 {
 DOTRACE("RefCounted::RefCounted");
+ DebugEval((void*)this); 
 }
 
 RefCounted::~RefCounted()
 {
 DOTRACE("RefCounted::~RefCounted");
-
+ DebugEval((void*)this); 
+ DebugEval(itsRefCount); DebugEvalNL(itsRefCount2); 
   Assert(itsRefCount <= 0 && itsRefCount2 <= 0);
 }
 
 void RefCounted::incrRefCount() const {
 DOTRACE("RefCounted::incrRefCount");
+ DebugEval((void*)this); 
   ++itsRefCount;
 }
 
 void RefCounted::decrRefCount() const {
 DOTRACE("RefCounted::decrRefCount");
+ DebugEval((void*)this); 
   --itsRefCount;
   if (itsRefCount <= 0 && itsRefCount2 <= 0)
 	 delete this;
