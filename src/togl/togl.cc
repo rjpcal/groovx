@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Dec  4 15:22:38 2000
+// written: Tue May 15 13:22:22 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -312,7 +312,12 @@ static Tk_ConfigSpec configSpecs[] = {
 	DEFAULT_WIDTH, Tk_Offset(Togl::Impl, itsWidth), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, "-rgba", "rgba", "Rgba",
-	"true", Tk_Offset(Togl::Impl, itsRgbaFlag), 0, NULL},
+#if defined(I686) || defined(IRIX6)
+	"true",
+#else
+	"false",
+#endif
+	Tk_Offset(Togl::Impl, itsRgbaFlag), 0, NULL},
 
   {TK_CONFIG_INT, "-redsize", "redsize", "RedSize",
 	"1", Tk_Offset(Togl::Impl, itsRgbaRed), 0, NULL},
@@ -324,7 +329,12 @@ static Tk_ConfigSpec configSpecs[] = {
 	"1", Tk_Offset(Togl::Impl, itsRgbaBlue), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, "-double", "double", "Double",
-	"false", Tk_Offset(Togl::Impl, itsDoubleFlag), 0, NULL},
+#if defined(I686) || defined(IRIX6)
+	"true",
+#else
+	"false",
+#endif
+	Tk_Offset(Togl::Impl, itsDoubleFlag), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, "-depth", "depth", "Depth",
 	"false", Tk_Offset(Togl::Impl, itsDepthFlag), 0, NULL},
@@ -1304,11 +1314,19 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsHeight(0),
   itsTime(0),
   itsTimerHandler(0),
+#if defined(I686) || defined(IRIX6)
   itsRgbaFlag(1),
+#else
+  itsRgbaFlag(0),
+#endif
   itsRgbaRed(1),
   itsRgbaGreen(1),
   itsRgbaBlue(1),
+#if defined(I686) || defined(IRIX6)
+  itsDoubleFlag(1),
+#else
   itsDoubleFlag(0),
+#endif
   itsDepthFlag(0),
   itsDepthSize(1),
   itsAccumFlag(0),
