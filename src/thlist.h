@@ -3,7 +3,7 @@
 // thlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:36 1999
-// written: Wed Mar 29 14:07:34 2000
+// written: Mon May 15 19:26:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,8 @@ class TimingHdlr;
 class ThList : public PtrList<TimingHdlr> {
 private:
   typedef PtrList<TimingHdlr> Base;
+
+  static ThList theInstance;
 
 protected:
   /// Construct and reserve space for \a size objects.
