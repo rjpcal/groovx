@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 13:07:53 2001
-// written: Mon Sep 10 17:17:35 2001
+// written: Fri Sep 14 11:39:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef MTXOBJ_H_DEFINED
 #define MTXOBJ_H_DEFINED
 
-#include "visx/mtx.h"
+#include "mtx.h"
 
 #include "util/object.h"
 
