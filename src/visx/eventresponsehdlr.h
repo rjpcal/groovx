@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:30:54 1999
-// written: Wed Jun  6 09:29:09 2001
+// written: Sat Jul 21 20:10:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ class fixed_string;
  * will play the Sound::ok sound if the current response matches the
  * current trial type. Otherwise, it will play the Sound::err sound.
  *
- * @short Handles responses by using Tk event bindings. 
+ * @short Handles responses by using Tk event bindings.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -110,7 +110,7 @@ public:
   /// Changes whether feedback will be given.
   void setUseFeedback(bool val);
 
-  /// Returns the current feedback map. 
+  /// Returns the current feedback map.
   const char* getFeedbackMap() const;
 
   /// Use \a feedbackMap as the current feedback map.
@@ -152,11 +152,13 @@ public:
   // Actions //
   /////////////
 
-  virtual void rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const;
+  virtual void rhBeginTrial(Util::WeakRef<GWT::Widget> widget,
+                            TrialBase& trial) const;
   virtual void rhAbortTrial() const;
   virtual void rhEndTrial() const;
   virtual void rhHaltExpt() const;
-  virtual void rhAllowResponses(GWT::Widget& widget, TrialBase& trial) const;
+  virtual void rhAllowResponses(Util::WeakRef<GWT::Widget> widget,
+                                TrialBase& trial) const;
   virtual void rhDenyResponses() const;
 
 private:
