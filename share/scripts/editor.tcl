@@ -191,7 +191,7 @@ itcl::class Editor {
 		  set itsObjType $objtype
 
 		  set itsPanes [iwidgets::panedwindow $parent.panes \
-					 -width 1000 -height 600]
+					 -width 800 -height 800]
 
 		  $itsPanes add controls
 
@@ -237,9 +237,12 @@ itcl::class Editor {
 
 		  Toglet::defaultParent $parent
 		  set itsToglet [new Toglet]
+		  Toglet::width $itsToglet 600
 		  Toglet::currentToglet $itsToglet
 
 		  makeFieldControls $itsObjType
+
+		  $itsPanes fraction 70 30
 
 		  pack $itsPanes -side left -fill both -expand yes
 
