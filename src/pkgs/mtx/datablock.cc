@@ -35,22 +35,25 @@ namespace
 class SharedDataBlock : public DataBlock
 {
 public:
-  SharedDataBlock(int length) :
-    DataBlock(new double[length], length)
-  {
-    DOTRACE("SharedDataBlock::SharedDataBlock");
-    DebugEval(this); DebugEvalNL(itsData);
-  }
-
-  virtual ~SharedDataBlock()
-  {
-    DOTRACE("SharedDataBlock::~SharedDataBlock");
-    DebugEval(this); DebugEvalNL(itsData);
-    delete [] itsData;
-  }
+  SharedDataBlock(int length);
+  virtual ~SharedDataBlock();
 
   virtual bool isUnique() const { return refCount() <= 1; }
 };
+
+SharedDataBlock::SharedDataBlock(int length) :
+  DataBlock(new double[length], length)
+{
+  DOTRACE("SharedDataBlock::SharedDataBlock");
+  DebugEval(this); DebugEvalNL(itsData);
+}
+
+SharedDataBlock::~SharedDataBlock()
+{
+  DOTRACE("SharedDataBlock::~SharedDataBlock");
+  DebugEval(this); DebugEvalNL(itsData);
+  delete [] itsData;
+}
 
 class BorrowedDataBlock : public DataBlock
 {
