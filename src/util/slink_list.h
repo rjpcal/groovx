@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 18 11:22:40 2000
-// written: Sun Jul 22 23:46:41 2001
+// written: Fri Aug 17 13:11:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,8 +79,8 @@ public:
     iterator& operator=(const iterator& other)
       { nn = other.nn; return *this; }
 
-    reference operator*() { return nn->val; }
-    pointer operator->() { return &(nn->val); }
+    reference operator*() const { return nn->val; }
+    pointer operator->() const { return &(nn->val); }
 
     iterator& operator++() { nn = nn->next; return *this; }
     iterator operator++(int) { iterator temp(*this); ++*this; return temp; }
@@ -107,15 +107,15 @@ public:
     const_iterator& operator=(const const_iterator& other)
       { nn = other.nn; return *this; }
 
-    const_reference operator*() { return nn->val; }
-    const_pointer operator->() { return &(nn->val); }
+    const_reference operator*() const { return nn->val; }
+    const_pointer operator->() const { return &(nn->val); }
 
     const_iterator& operator++() { nn = nn->next; return *this; }
     const_iterator operator++(int)
       { const_iterator temp(*this); ++*this; return temp; }
 
-    bool operator==(const const_iterator& other) { return nn == other.nn; }
-    bool operator!=(const const_iterator& other) { return nn != other.nn; }
+    bool operator==(const const_iterator& other) const { return nn == other.nn; }
+    bool operator!=(const const_iterator& other) const { return nn != other.nn; }
   };
 
   //
