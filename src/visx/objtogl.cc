@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Sun Aug 26 08:35:16 2001
+// written: Wed Sep  5 16:02:01 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -187,6 +187,7 @@ public:
     def( "show", "toglet_id trial_id", &ObjTogl::show );
 
     defSetter("allowRefresh", &Toglet::allowRefresh);
+    defSetter("animate", "item_id(s) frames_per_second", &Toglet::animate);
     defAction("clearscreen", &Toglet::clearscreen);
     defAction("destroy", &Toglet::destroyWidget);
     defSetter("dumpEps", "item_id(s) filename", &Toglet::writeEpsFile);
