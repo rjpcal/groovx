@@ -125,9 +125,9 @@ test "ObjTogl-Togl::setCurTrial" "error on too large trial id" {
 ### Togl::loadFontCmd ###
 test "$PACKAGE-Togl::loadFont" "too many args" {
 	 Togl::loadFont fixed junk
-} {^wrong \# args: should be "Togl::loadFont \?fontname\?"$}
-test "$PACKAGE-Togl::loadFont" "normal use" {
-	 set code [catch {Togl::loadFont} msg]
+} {^wrong \# args: should be \"Togl::loadFont}
+test "$PACKAGE-Togl::loadDefaultFont" "normal use" {
+	 set code [catch {Togl::loadDefaultFont} msg]
 	 set res "$code $msg"
 } {^0 $}
 test "$PACKAGE-Togl::loadFont" "error" {
@@ -137,7 +137,7 @@ test "$PACKAGE-Togl::loadFont" "error" {
 ### Togl::loadFontiCmd ###
 test "$PACKAGE-Togl::loadFonti" "too many args" {
 	 Togl::loadFonti 3 junk
-} {^wrong \# args: should be "Togl::loadFonti \?fontnumber\?"$}
+} {^wrong \# args: should be \"Togl::loadFonti}
 test "$PACKAGE-Togl::loadFonti" "normal use" {
 	 set code [catch {Togl::loadFonti 3} msg]
 	 set res "$code $msg"
