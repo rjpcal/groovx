@@ -19,13 +19,12 @@
 
 #include "error.h"
 #include "experiment.h"
-#include "objtogl.h"
 #include "sound.h"
 #include "soundlist.h"
 #include "reader.h"
 #include "tclevalcmd.h"
 #include "tclobjlock.h"
-#include "toglconfig.h"
+#include "widget.h"
 #include "writer.h"
 
 #define NO_TRACE
@@ -487,10 +486,8 @@ DOTRACE("EventResponseHdlr::Impl::attend");
   clearEventQueue();
   
   try {
-	 if (ObjTogl::toglHasBeenCreated()) {
-		ObjTogl::theToglConfig()->bind(itsEventSequence.c_str(),
-												 getBindingScript().c_str());
-	 }
+	 getExpt().getWidget()->bind(itsEventSequence.c_str(),
+										  getBindingScript().c_str());
   }
   catch (ErrorWithMsg& err) {
 	 raiseBackgroundError(err.msg());
@@ -504,10 +501,8 @@ DOTRACE("EventResponseHdlr::Impl::attend");
 void EventResponseHdlr::Impl::ignore() const {
 DOTRACE("EventResponseHdlr::Impl::ignore");
   try {
-	 if (ObjTogl::toglHasBeenCreated()) {
-		ObjTogl::theToglConfig()->bind(itsEventSequence.c_str(),
-												 nullScript.c_str());
-	 }
+	 getExpt().getWidget()->bind(itsEventSequence.c_str(),
+										  nullScript.c_str());
   }
   catch (ErrorWithMsg& err) {
 	 raiseBackgroundError(err.msg());
