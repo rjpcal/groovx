@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 31 18:32:51 2000
-// written: Thu May 10 12:04:42 2001
+// written: Fri May 11 22:06:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,18 +29,24 @@ Attrib<T>::~Attrib() {}
 Action::~Action() {}
 
 template class Getter<int>;
+template class Getter<unsigned int>;
+template class Getter<unsigned long>;
 template class Getter<bool>;
 template class Getter<double>;
 template class Getter<const char*>;
 template class Getter<const fixed_string&>;
 
 template class Setter<int>;
+template class Setter<unsigned int>;
+template class Setter<unsigned long>;
 template class Setter<bool>;
 template class Setter<double>;
 template class Setter<const char*>;
 template class Setter<const fixed_string&>;
 
 template class Attrib<int>;
+template class Attrib<unsigned int>;
+template class Attrib<unsigned long>;
 template class Attrib<bool>;
 template class Attrib<double>;
 template class Attrib<const char*>;

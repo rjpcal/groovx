@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Thu May 10 12:04:42 2001
+// written: Fri May 11 21:56:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,6 +112,8 @@ void Tcl::TVecGetterCmd<const fixed_string&>::doAppendValForItem(void* item) {
 // Explicit instatiation requests
 namespace Tcl {
 template class TVecGetterCmd<int>;
+template class TVecGetterCmd<unsigned int>;
+template class TVecGetterCmd<unsigned long>;
 template class TVecGetterCmd<bool>;
 template class TVecGetterCmd<double>;
 template class TVecGetterCmd<const char*>;
@@ -242,6 +244,8 @@ DOTRACE("Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn");
 // Explicit instatiation requests
 namespace Tcl {
 template class TVecSetterCmd<int>;
+template class TVecSetterCmd<unsigned int>;
+template class TVecSetterCmd<unsigned long>;
 template class TVecSetterCmd<bool>;
 template class TVecSetterCmd<double>;
 template class TVecSetterCmd<const char*>;
@@ -284,6 +288,8 @@ DOTRACE("Tcl::TVecAttribCmd<>::invoke");
 // Explicit instatiation requests
 namespace Tcl {
 template class TVecAttribCmd<int>;
+template class TVecAttribCmd<unsigned int>;
+template class TVecAttribCmd<unsigned long>;
 template class TVecAttribCmd<bool>;
 template class TVecAttribCmd<double>;
 template class TVecAttribCmd<const char*>;

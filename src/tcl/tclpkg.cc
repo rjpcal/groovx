@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Thu May 10 12:04:42 2001
+// written: Fri May 11 21:54:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,18 +76,24 @@ void Tcl::TclItemPkg::declareAttrib(const char* attrib_name,
 
 void Tcl::TclItemPkg::instantiate() {
   declareGetter(0, (Getter<int>*) 0, 0);
+  declareGetter(0, (Getter<unsigned int>*) 0, 0);
+  declareGetter(0, (Getter<unsigned long>*) 0, 0);
   declareGetter(0, (Getter<bool>*) 0, 0);
   declareGetter(0, (Getter<double>*) 0, 0);
   declareGetter(0, (Getter<const char*>*) 0, 0);
   declareGetter(0, (Getter<const fixed_string&>*) 0, 0);
 
   declareSetter(0, (Setter<int>*) 0, 0);
+  declareSetter(0, (Setter<unsigned int>*) 0, 0);
+  declareSetter(0, (Setter<unsigned long>*) 0, 0);
   declareSetter(0, (Setter<bool>*) 0, 0);
   declareSetter(0, (Setter<double>*) 0, 0);
   declareSetter(0, (Setter<const char*>*) 0, 0);
   declareSetter(0, (Setter<const fixed_string&>*) 0, 0);
 
   declareAttrib(0, (Attrib<int>*) 0, 0);
+  declareAttrib(0, (Attrib<unsigned int>*) 0, 0);
+  declareAttrib(0, (Attrib<unsigned long>*) 0, 0);
   declareAttrib(0, (Attrib<bool>*) 0, 0);
   declareAttrib(0, (Attrib<double>*) 0, 0);
   declareAttrib(0, (Attrib<const char*>*) 0, 0);
