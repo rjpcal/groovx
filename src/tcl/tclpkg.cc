@@ -313,6 +313,7 @@ void Tcl::Pkg::handleLiveException(const rutz::file_pos& pos) throw()
 {
 DOTRACE("Tcl::Pkg::handleLiveException");
   rep->interp.handleLiveException(rep->pkgName.c_str(), pos);
+  this->setInitStatusError();
 }
 
 void Tcl::Pkg::namespaceAlias(const char* namesp,
