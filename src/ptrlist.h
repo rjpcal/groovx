@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Sat Oct  7 20:07:11 2000
+// written: Sun Oct  8 15:55:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,24 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOPTRLIST_H_DEFINED)
 #include "ioptrlist.h"
 #endif
+
+template <class T>
+class MasterPtr : public MasterIoPtr {
+private:
+  T* itsPtr;
+
+public:
+  MasterPtr(T* ptr);
+  virtual ~MasterPtr();
+
+  T* getPtr() { return itsPtr; }
+
+  virtual IO::IoObject* ioPtr() const;
+
+  virtual bool isValid() const;
+
+  virtual bool operator==(const MasterPtrBase& other);
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -68,11 +86,8 @@ public:
   SharedPtr getPtr(int id) const throw () 
     {
 		MasterPtrBase* voidPtr = VoidPtrList::getVoidPtr(id);
-		MasterIoPtr* ioPtr = dynamic_cast<MasterIoPtr*>(voidPtr);
-		if (ioPtr == 0) throw InvalidIdError("IO cast failed");
-		T* t = dynamic_cast<T*>(ioPtr->ioPtr());
-		if (t == 0) throw InvalidIdError("T cast failed");
-		return SharedPtr(t);
+		MasterPtr<T>& tPtr = dynamic_cast<MasterPtr<T>&>(*voidPtr);
+		return SharedPtr(tPtr.getPtr());
 	 }
 
   /** Returns the object at index \a id, after a check is performed to
@@ -81,11 +96,8 @@ public:
   SharedPtr getCheckedPtr(int id) const throw (InvalidIdError)
 	 {
 		MasterPtrBase* voidPtr = VoidPtrList::getCheckedVoidPtr(id);
-		MasterIoPtr* ioPtr = dynamic_cast<MasterIoPtr*>(voidPtr);
-		if (ioPtr == 0) throw InvalidIdError("IO cast failed");
-		T* t = dynamic_cast<T*>(ioPtr->ioPtr());
-		if (t == 0) throw InvalidIdError("T cast failed");
-		return SharedPtr(t);
+		MasterPtr<T>& tPtr = dynamic_cast<MasterPtr<T>&>(*voidPtr);
+		return SharedPtr(tPtr.getPtr());
 	 }
 
   //////////////////
@@ -102,18 +114,20 @@ public:
 
   /// Insert \a ptr into the list, and return its id.
   int insert(T* ptr)
-	 { return VoidPtrList::insertVoidPtr(new MasterIoPtr(ptr)); }
+	 { return VoidPtrList::insertVoidPtr(new MasterPtr<T>(ptr)); }
 
   /** Insert \a ptr into the list at index \a id. If an object
       previously existed at index \a id, that object will be properly
       destroyed. */
   void insertAt(int id, T* ptr)
-	 { VoidPtrList::insertVoidPtrAt(id, new MasterIoPtr(ptr)); }
+	 { VoidPtrList::insertVoidPtrAt(id, new MasterPtr<T>(ptr)); }
 
 protected:
   /** Reimplemented from \c IoPtrList to include "PtrList<T>" with \c
       \a T replaced with the the typename of the actual template argument. */
   virtual const char* alternateIoTags() const;
+
+  virtual MasterIoPtr* makeMasterIoPtr(IO::IoObject* obj) const;
 };
 
 static const char vcid_ptrlist_h[] = "$Header$";
