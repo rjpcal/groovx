@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Wed Aug  8 12:28:14 2001
+// written: Wed Aug  8 12:38:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef ERROR_H_DEFINED
 #define ERROR_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
+#include "util/pointers.h"
+#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOSTRING_H_DEFINED)
 #include "util/tostring.h"
@@ -81,7 +85,7 @@ private:
   class Impl;
   friend class Impl;
 
-  dynamic_string* itsInfo;
+  shared_ptr<dynamic_string> itsInfo;
 };
 
 static const char vcid_error_h[] = "$Header$";

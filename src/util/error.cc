@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:48 1999
-// written: Wed Aug  8 12:27:56 2001
+// written: Wed Aug  8 12:42:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ DOTRACE("Util::Error::Error");
 }
 
 Util::Error::Error(const Util::Error& other) :
-  itsInfo(new dynamic_string(*(other.itsInfo)))
+  itsInfo(other.itsInfo)
 {
 DOTRACE("Util::Error::Error");
   DebugEvalNL(*itsInfo);
@@ -50,14 +50,13 @@ DOTRACE("Util::Error::Error");
 Util::Error::~Error()
 {
 DOTRACE("Util::Error::~Error");
-  delete itsInfo;
 }
 
 Util::Error& Util::Error::operator=(const Util::Error& other)
 {
 DOTRACE("Util::Error::operator=");
 
-  *itsInfo = *(other.itsInfo);    DebugEvalNL(*itsInfo);
+  itsInfo = other.itsInfo;    DebugEvalNL(*itsInfo);
 
   return *this;
 }
