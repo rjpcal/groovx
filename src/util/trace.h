@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Jan 21 13:41:20 2002
+// written: Thu Feb  7 14:48:55 2002
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -91,6 +91,10 @@ public:
   double avgTime() const;
 
   void printProfData(STD_IO::ostream& os) const;
+
+  /** Indicate whether profiling information should be written to the profile
+      file at program exit time. */
+  static void printAtExit(bool yes_or_no);
 
   static void resetAllProfData();
 
