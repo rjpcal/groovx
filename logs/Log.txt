@@ -7,33 +7,119 @@ $Id$
 Resource management revisited 17-Oct-2000
 
 (1-done) Generalize Factory so it can take a creation function. Make
-	 class constructors protected and add make() creation functions
-	 instead.
+    class constructors protected and add make() creation functions
+    instead.
 
-(*) Aha! We can get rid of MasterPtr.... IoObject itself should handle
-	 the reference counting. Then PtrHandle<T> of different types can
-	 be assigned to each other, DynamicCast'ed, etc., since the
-	 pointee's (IoObject*'s) will be related through inheritance.
+(2-done) Aha! We can get rid of MasterPtr.... IoObject itself should
+    handle the reference counting. Then PtrHandle<T> of different
+    types can be assigned to each other, DynamicCast'ed, etc., since
+    the pointee's (IoObject*'s) will be related through inheritance.
 
-	 In detail
-	 (*) MasterPtrBase becomes RefCounted
-	 (*) IoObject inherits from RefCounted
-	 (*) VoidPtrHandle manages RefCounted
-	 (*) PtrListBase manages RefCounted
-	 (*) PtrHandle<T> holds T* (derived from RefCounted) directly
-	 (*) NullablePtrHandle<T> holds T* directly
+    In detail
+    (done) MasterPtrBase becomes RefCounted
+    (done) IoObject inherits from RefCounted
+    (done) VoidPtrHandle manages RefCounted
+    (done) PtrListBase manages RefCounted
+    (done) PtrHandle<T> holds T* (derived from RefCounted) directly
+    (done) NullablePtrHandle<T> holds T* directly
+    (done) get rid of masterptrt.cc
 
-(*) Who makes the MasterPtr's? The IoFactory, or the make()
-	 implementations? How would IoFactory know what kind of
-	 MasterPtr<T> to make?
+(3-done) Make sure nobody is writing PtrList ids in writeTo().
+    (done) Block
+    (done) Trial ... this is tricky. Need to refactor the implementation
+		  to store two vectors of GrObj's and Position's, I think. Only
+		  client of beginIdPairs() is TlistUtils::writeMatlab(). That
+		  can change to use an iterator over the GrObj's instead. Will
+		  need to have a dummy IdPairSpoofer structure in the
+		  implementation to allow us to read older files.
+	 (done) ExptDriver
 
-(*) Make IoMgr use the creation functions and create MasterPtr's
-	 directly there. IoMgr should return a MasterPtr or a
-	 PtrHandle. (which?) This should not be too hard to change since
-	 the only clients are AsciiStreamReader, LegacyReader, and
-	 TimingHdlr.
+(4-done) Migrate all old experiment data-files over to this new format
+    that will not include PtrList's. I'll make a snapshot of the
+    system so that we can get back to the state that can convert
+    between old+new format. Then I'll rev the project version and cut
+    out the old format code so that the IO code doesn't get too messy.
 
-(*) Change the Reader/Writer interface to accomodate MasterIoPtr's.
+(*) Make the C++ side independent of PtrList's. Block's need to store
+    Trial*'s (or ItemWithId<TrialBase>'s), and ExptDriver needs to
+    store ItemWithId<Block>'s.
+
+    (done) block.cc      on tlist.h
+    (*) exptdriver.cc on blocklist.h
+    (*) eventresponsehdlr.cc on soundlist.h
+    (*) trial.cc      on rhlist.h
+    (*) trial.cc      on thlist.h
+
+    (*) exptdriver.cc on objlist.h (IO only)
+    (*) exptdriver.cc on poslist.h (IO only)
+    (*) exptdriver.cc on rhlist.h (IO only)
+    (*) exptdriver.cc on tlist.h (IO only)
+    (*) exptdriver.cc on thlist.h (IO only)
+    (*) tlistutils.cc on objlist.h (OK for now--no dependence in interface)
+    (*) tlistutils.cc on poslist.h (OK for now--no dependence in interface)
+    (*) tlistutils.cc on tlist.h (OK for now--no dependence in interface)
+
+(*) Make the IoMap. When an IoObject is constructed, we put its
+    id+address into the map, and when it is destroyed, we remove it
+    from the map. We need functions to iterate through the map, to
+    test if an id is valid, to return the count of objects.
+
+(*) Make the PtrList's just a simple wrapper for IoMap. In essence,
+    PtrList's provide a correspondence between an integer id and an
+    object. IoMap will do the same, therefore, we should be able to
+    reimplement PtrList's in terms of the IoMap. This will be a
+    temporary stage only, to allow us to migrate old data files.
+
+    (*) We will need a mapping (std::map?) from PtrList id's to IoMap
+        id's. 
+
+    (*) insert() should add an entry for the object's ioId().
+    (*) remove() just removes reference to the object's ioId().
+    (*) Spoof the capacity() function.
+    (*) Spoof the reset() function.
+    (*) Spoof the release() function?
+    (*) Implement isValidId().
+    (*) Implement count().
+    (*) Implement getPtr()...
+    (*) Implement readFrom()/writeTo()??? What would these do? For
+        data conversion, we need to be able to read the old
+        format. Actually, this should work fine in a naive
+        implementation... as we read the objects in from the stream,
+        they automatically go in the IoMap when they are created. Then
+        we store their ioId()'s in our PtrList id<-->ioId map.
+    (*) Implement insertValidIds().
+
+(***) An important intermediate goal is the state where the PtrList's
+    are still physically in place, but all of the id's in existence
+    are just the plain IoId's. ... Maybe this is not really a useful
+    stage. I think once we are at the point where this stage is
+    feasible, we'll just be wanting to finally ditch the PtrList's.
+
+(*) Perhaps a special IoMap iterator type would see only certain
+    subclasses of objects. This would likely be a template.
+
+(*) Expose incrRefCount and decrRefCount to the Tcl side. These
+    actually shouldn't be needed much. In most cases, a Tcl command
+    will create a new object with a ref-count of 0, and then this
+    object will immediately be added into the object hierarchy at some
+    point, causing its ref-count to be incremented (e.g. creating a
+    Face, then adding it to a Trial). This will work as long as we do
+    not purge the IoMap in between the Tcl calls.
+
+(*) Reimplement ItemWithId and NullableItemWithId in terms of IoMap.
+
+(*) Make sure there is a snapshot of the project that can read old
+    files (i.e. with PtrList's) but also write new files (w/o PtrList's).
+
+(*) ObjList::LoadObjectCmd can be replaced with something generic that
+    works for all IoObject types.
+
+(22-Oct-2000) I see the elimination of PtrList's in the
+future. Instead we can maintain a map of ioId()'s to IoObject*'s. This
+can be managed in the constructor+destructor for IoObject. This map
+could be purged of refcount-0 objects on command. The map would allow
+us to do similar operations to what the PtrList's provide now. For
+example, find all objects of a given type.
 
 (18-Oct-2000) Aha! I have a vision... the PtrList's do not need to be
 serialized at all... they can become merely a runtime resource that
@@ -72,61 +158,6 @@ ItemWithId. This is a first step to eliminating reliance on the int
 id's in the C++ side of things. Done.
 
 ------------------------------------------------------------------------
-
-blocklist.h:
-blocklist.cc
-blocktcl.cc
-exptdriver.cc
-
-objlist.h:
-bitmaptcl.cc
-exptdriver.cc
-facetcl.cc
-fishtcl.cc
-fixpttcl.cc
-gabortcl.cc
-grobjtcl.cc
-gtexttcl.cc
-housetcl.cc
-masktcl.cc
-morphyfacetcl.cc
-objlist.cc
-objlisttcl.cc
-tlistutils.cc
-
-poslist.h
-exptdriver.cc
-jittertcl.cc
-positiontcl.cc
-poslist.cc
-poslisttcl.cc
-tlistutils.cc
-
-rhlist.h:
-exptdriver.cc
-rhlist.cc
-rhtcl.cc
-trial.cc
-
-soundlist.h:
-eventresponsehdlr.cc
-soundlist.cc
-soundtcl.cc
-
-thlist.h:
-exptdriver.cc
-thlist.cc
-thtcl.cc
-trial.cc
-
-tlist.h
-block.cc
-exptdriver.cc
-tlist.cc
-tlisttcl.cc
-tlistutils.cc
-tlistwidget.cc
-trialtcl.cc
 
 (11-Oct-2000) Put more behavior in Tcl::SafeInterp. This functionality
 would be able to be used in many places.
@@ -229,16 +260,16 @@ methods, and would also increase the homomorphism of the readFrom and
 writeTo methods.
 
 (29-Sep-2000) Revisit legacyValidTypenames()... this is only used in
-	the PtrList hierarchy. Maybe there is a more direct/efficient way
-	to handle this. We could have a map<string, list<string>> that
-	would relate typenames to lists of alternate typenames. The list
-	could be built at runtime by having clients install their info into
-	the map, or we could just have LegacyReader "magically" know the
-	correct typenames.
+   the PtrList hierarchy. Maybe there is a more direct/efficient way
+   to handle this. We could have a map<string, list<string>> that
+   would relate typenames to lists of alternate typenames. The list
+   could be built at runtime by having clients install their info into
+   the map, or we could just have LegacyReader "magically" know the
+   correct typenames.
 
 (29-Sep-2000) LegacyReader could probably remember the state and
-	handle the braces as well. Actually, LegacyReader could just "know"
-	how to handle Face and MorphyFace...
+   handle the braces as well. Actually, LegacyReader could just "know"
+   how to handle Face and MorphyFace...
 
 (28-Sep-2000) fixed_block and dynamic_block should have release()
 members, so that we can use them for exception-safe storage, then
@@ -440,14 +471,14 @@ redrawn upon Expose or Resize events)...
 gap between output of Grsh program running experiment, and necessary
 input to Matlab to process data. I think this is a possible route:
 
-		1) expt completes and saves files
+      1) expt completes and saves files
 
-		2) a Grsh script runs and processes the data further, generating
+      2) a Grsh script runs and processes the data further, generating
          the data files that matlab needs, and also **generating a
          Matlab script file (.m file)** that we can run to process the
          data.
-			
-		3) Run the .m file to finish the data processing.
+         
+      3) Run the .m file to finish the data processing.
 
 What input does this process need? We need to know the location of the
 pairs/triads experiment file, and of the classification experiment
@@ -492,14 +523,14 @@ itself over the entire duration).
 1) 'log in' a subject ==> change to the correct directory
 2) run an experiment
 3) move the experiment data files to appropriate names and chmod appropriately
-	--> this requires ExptDriver() to provide the names of its most
-	recently saved files
+   --> this requires ExptDriver() to provide the names of its most
+   recently saved files
 4) possibly repeat steps 2+3
-	--> We can store a file that contains a list of experiment commands
-	that should be issued. A separate file, called 'next_expt' can be
-	updated to always contain the command needed to run the next
-	experiment. When one experiment is completed, the driver rewrites
-	the 'next_expt' file appropriately.
+   --> We can store a file that contains a list of experiment commands
+   that should be issued. A separate file, called 'next_expt' can be
+   updated to always contain the command needed to run the next
+   experiment. When one experiment is completed, the driver rewrites
+   the 'next_expt' file appropriately.
 5) exit
 ------------------------------------------------------------------------
 
