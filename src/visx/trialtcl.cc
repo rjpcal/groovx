@@ -67,6 +67,7 @@ DOTRACE("Trial_Init");
                  &Trial::getCorrectResponse, &Trial::setCorrectResponse);
   pkg->defAttrib("currentNode",
                  &Trial::getCurrentNode, &Trial::setCurrentNode);
+  pkg->defAttrib("info", &Trial::vxInfo, &Trial::setInfo);
   pkg->defGetter("lastResponse", &Trial::lastResponse);
   pkg->defAction("nextNode", &Trial::trNextNode);
   pkg->defGetter("nodes", &Trial::nodes);

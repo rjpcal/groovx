@@ -112,6 +112,10 @@ public:
       implementation of vxInfo(). */
   fstring stdInfo() const;
 
+  /// Set the contents of what will be returned from vxInfo().
+  /** If setInfo() is called with an empty string, then vxInfo() will by
+      default return the result of stdInfo() instead. */
+  void setInfo(fstring info);
 
   //
   // Element interface

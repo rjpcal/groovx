@@ -120,6 +120,7 @@ public:
     trialType(-1),
     rh(),
     th(),
+    info(),
     activeState(0)
   {}
 
@@ -137,6 +138,8 @@ public:
   int trialType;
   SoftRef<ResponseHandler> rh;
   SoftRef<TimingHdlr> th;
+
+  fstring info;
 
   scoped_ptr<ActiveState> activeState;
 
@@ -294,7 +297,10 @@ void Trial::setType(int t)
 fstring Trial::vxInfo() const
 {
 DOTRACE("Trial::vxInfo");
-  return stdInfo();
+  if (rep->info.is_empty())
+    return stdInfo();
+
+  return rep->info;
 }
 
 int Trial::lastResponse() const
@@ -423,6 +429,12 @@ DOTRACE("Trial::stdInfo");
   buf.append(", objs ==", objids, ", categories == ", cats);
 
   return buf;
+}
+
+void Trial::setInfo(fstring info)
+{
+DOTRACE("Trial::setInfo");
+  rep->info = info;
 }
 
 
