@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Nov 15 16:08:01 1999
+// written: Mon Nov 15 16:36:16 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -221,12 +221,9 @@ void Bitmap::grabWorldRect(double left, double top,
   grabWorldRect(Rect<double>(left, top, right, bottom));
 }
 
-void Bitmap::grabWorldRect(const Rect<double>& rect) {
+void Bitmap::grabWorldRect(const Rect<double>& world_rect) {
 DOTRACE("Bitmap::grabWorldRect");
-  Rect<int> screen_rect;
-
-  screen_rect.setBottomLeft( getScreenFromWorld(rect.bottomLeft())      );
-  screen_rect.setTopRight  ( getScreenFromWorld(rect.topRight(), false) );
+  Rect<int> screen_rect = GrObj::getScreenFromWorld(world_rect);
 
   grabScreenRect(screen_rect);
 }
@@ -333,12 +330,10 @@ DOTRACE("Bitmap::grRender");
 
 void Bitmap::grUnRender() const {
 DOTRACE("Bitmap::grUnRender"); 
-  Rect<double> world_pos;
-  getBoundingBox(world_pos);
+  Rect<double> world_rect;
+  getBoundingBox(world_rect);
 
-  Rect<int> screen_pos;
-  screen_pos.setBottomLeft( getScreenFromWorld(world_pos.bottomLeft()      ) );
-  screen_pos.setTopRight  ( getScreenFromWorld(world_pos.topRight(),  false) );
+  Rect<int> screen_pos = GrObj::getScreenFromWorld(world_rect);
 
   screen_pos.widenByStep(1);
   screen_pos.heightenByStep(1);
