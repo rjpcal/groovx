@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  9 20:25:02 1999
-// written: Tue Aug 21 15:22:43 2001
+// written: Sun Aug 26 08:18:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class DummyCountingWriter : public IO::Writer {
+class DummyCountingWriter : public IO::Writer
+{
 public:
   DummyCountingWriter() : itsCount(0) {}
 
@@ -65,17 +66,20 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-IO::IoObject::IoObject() {
+IO::IoObject::IoObject()
+{
 DOTRACE("IO::IoObject::IoObject");
   DebugEvalNL(this);
 }
 
 // Must be defined out of line to avoid duplication of IO's vtable
-IO::IoObject::~IoObject() {
+IO::IoObject::~IoObject()
+{
 DOTRACE("IO::IoObject::~IoObject");
 }
 
-unsigned int IO::IoObject::ioAttribCount() const {
+unsigned int IO::IoObject::ioAttribCount() const
+{
 DOTRACE("IO::IoObject::ioAttribCount");
   static DummyCountingWriter counter;
   counter.reset();
@@ -83,12 +87,14 @@ DOTRACE("IO::IoObject::ioAttribCount");
   return counter.attribCount();
 }
 
-IO::VersionId IO::IoObject::serialVersionId() const {
+IO::VersionId IO::IoObject::serialVersionId() const
+{
 DOTRACE("IO::IoObject::serialVersionId");
   return 0;
 }
 
-fstring IO::IoObject::ioTypename() const {
+fstring IO::IoObject::ioTypename() const
+{
 DOTRACE("IO::IoObject::ioTypename");
   return demangle_cstr(typeid(*this).name());
 }
