@@ -3,7 +3,7 @@
 // tclvalue.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Dec  8 01:06:23 1999
+// written: Wed Feb 16 09:21:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,24 +34,38 @@ namespace Tcl {
 
 class Tcl::TclValue : public Value {
 public:
+  /// Construct from a Tcl object \a obj.
   TclValue(Tcl_Interp* interp, Tcl_Obj* obj);
 
+  /// Construct with initial value \a val.
   TclValue(Tcl_Interp* interp, int val);
+  /// Construct with initial value \a val.
   TclValue(Tcl_Interp* interp, long val);
+  /// Construct with initial value \a val.
   TclValue(Tcl_Interp* interp, bool val);
+  /// Construct with initial value \a val.
   TclValue(Tcl_Interp* interp, double val);
+  /// Construct with initial value \a val.
   TclValue(Tcl_Interp* interp, const char* val);
+  /// Construct with initial value \a val.
   TclValue(Tcl_Interp* interp, const string& val);
 
-  TclValue(Tcl_Interp* interp, const Value& rhs);
+  /// Construct with initial value \a val.
+  TclValue(Tcl_Interp* interp, const Value& val);
 
+  /// Copy constructor.
   TclValue(const TclValue& rhs);
 
+  /// Virtual destructor.
   virtual ~TclValue();
 
+  /// Get the \c Tcl_Obj used as the internal representation.
   Tcl_Obj* getObj() const;
+
+  /// Change the \c Tcl_Obj used as the internal representation to \a obj.
   void setObj(Tcl_Obj* obj);
 
+  /// Assignment operator.
   TclValue& operator=(Tcl_Obj* obj) { setObj(obj); return *this; }
 
   virtual Value* clone() const;
