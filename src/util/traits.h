@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri May 18 16:13:27 2001
-// written: Tue Aug  7 10:14:15 2001
+// written: Tue Sep  4 10:58:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,12 +22,29 @@ namespace Util
   };
 
   template <class T>
-  struct TypeTraits {};
+  struct TypeTraits
+  {
+    typedef T DerefT;
+    typedef T StackT;
+  };
 
   template <class T>
   struct TypeTraits<T*>
   {
     typedef T Pointee;
+    typedef T DerefT;
+  };
+
+  template <class T>
+  struct TypeTraits<T&>
+  {
+    typedef T StackT;
+  };
+
+  template <class T>
+  struct TypeTraits<const T&>
+  {
+    typedef T StackT;
   };
 
   template <class T>
