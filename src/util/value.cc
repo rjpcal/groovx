@@ -3,7 +3,7 @@
 // value.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:21:32 1999
-// written: Wed Sep 29 17:27:34 1999
+// written: Sat Oct  2 21:24:15 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,6 +94,80 @@ template class TValue<bool>;
 template class TValue<double>;
 template class TValue<const char*>;
 template class TValue<string>;
+
+///////////////////////////////////////////////////////////////////////
+//
+// TValuePtr member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class T>
+TValuePtr::~TValuePtr() {}
+
+template <class T>
+Value* TValuePtr::clone() const { return new TValuePtr<T>(*itsValPtr); }
+
+template <>
+Value::Type TValuePtr<int>::getNativeType() const { return Value::INT; }
+
+template <>
+Value::Type TValuePtr<long>::getNativeType() const { return Value::LONG; }
+
+template <>
+Value::Type TValuePtr<bool>::getNativeType() const { return Value::BOOL; }
+
+template <>
+Value::Type TValuePtr<double>::getNativeType() const { return Value::DOUBLE; }
+
+template <>
+Value::Type TValuePtr<const char*>::getNativeType() const { return Value::CSTRING; }
+
+template <>
+Value::Type TValuePtr<string>::getNativeType() const { return Value::STRING; }
+
+
+//
+// The get functions default to throwing an exception, but are
+// specialized to return the correct value when the type requested
+// matches the type of the template parameter.
+//
+
+template <class T> int TValuePtr::getInt() const { throw ValueError(); }
+template <class T> long TValuePtr::getLong() const { throw ValueError(); }
+template <class T> bool TValuePtr::getBool() const { throw ValueError(); }
+template <class T> double TValuePtr::getDouble() const { throw ValueError(); }
+template <class T> const char* TValuePtr::getCstring() const { throw ValueError(); }
+template <class T> string TValuePtr::getString() const { throw ValueError(); }
+
+template <> int TValuePtr<int>::getInt() const { return *itsValPtr; }
+template <> long TValuePtr<long>::getLong() const { return *itsValPtr; }
+template <> bool TValuePtr<bool>::getBool() const { return *itsValPtr; }
+template <> double TValuePtr<double>::getDouble() const { return *itsValPtr; }
+template <> const char* TValuePtr<const char*>::getCstring() const { return *itsValPtr; }
+template <> string TValuePtr<string>::getString() const { return *itsValPtr; }
+
+template <class T> void TValuePtr::get(int&) const { throw ValueError(); }
+template <class T> void TValuePtr::get(long&) const { throw ValueError(); }
+template <class T> void TValuePtr::get(bool&) const { throw ValueError(); }
+template <class T> void TValuePtr::get(double&) const { throw ValueError(); }
+template <class T> void TValuePtr::get(const char*&) const { throw ValueError(); }
+template <class T> void TValuePtr::get(string&) const { throw ValueError(); }
+
+template <> void TValuePtr<int>::get(int& val) const { val = *itsValPtr; }
+template <> void TValuePtr<long>::get(long& val) const { val = *itsValPtr; }
+template <> void TValuePtr<bool>::get(bool& val) const { val = *itsValPtr; }
+template <> void TValuePtr<double>::get(double& val) const { val = *itsValPtr; }
+template <> void TValuePtr<const char*>::get(const char*& val) const { val = *itsValPtr; }
+template <> void TValuePtr<string>::get(string& val) const { val = *itsValPtr; }
+
+
+// Explicit instantiations
+template class TValuePtr<int>;
+template class TValuePtr<long>;
+template class TValuePtr<bool>;
+template class TValuePtr<double>;
+template class TValuePtr<const char*>;
+template class TValuePtr<string>;
 
 static const char vcid_value_cc[] = "$Header$";
 #endif // !VALUE_CC_DEFINED

@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Wed Sep 29 17:25:15 1999
+// written: Sat Oct  2 21:22:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,6 +95,46 @@ public:
   virtual void get(string& val) const;
 
   T itsVal;
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// TValuePtr template class defintion
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class T>
+class TValuePtr : public Value {
+public:
+  TValuePtr(T& valRef) : itsValPtr(&valRef) {}
+
+  virtual ~TValuePtr();
+
+  void reseat(T& valRef) { itsValPtr = &valRef; }
+
+  virtual Value* clone() const;
+  
+  virtual Type getNativeType() const;
+
+  virtual int getInt() const;
+  virtual long getLong() const;
+  virtual bool getBool() const;
+  virtual double getDouble() const;
+  virtual const char* getCstring() const;
+  virtual string getString() const;
+
+  virtual void get(int& val) const;
+  virtual void get(long& val) const;
+  virtual void get(bool& val) const;
+  virtual void get(double& val) const;
+  virtual void get(const char*& val) const;
+  virtual void get(string& val) const;
+
+  T& operator()() { return *itsValPtr; }
+  const T& operator()() const { return *itsValPtr; }
+
+private:
+  T* itsValPtr;
 };
 
 static const char vcid_value_h[] = "$Header$";
