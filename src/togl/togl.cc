@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 17:07:44 2002
+// written: Mon Sep 16 17:16:48 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -67,7 +67,6 @@ struct ToglOpts
     time = 0;
     privateCmapFlag = 0;
     overlayFlag = 0;
-    cursor = None;
     glx.toDefaults();
   }
 
@@ -76,7 +75,6 @@ struct ToglOpts
   int time;
   int privateCmapFlag;
   int overlayFlag;
-  Tk_Cursor cursor;          /* The widget's cursor */
   GlxOpts glx;
 };
 
@@ -190,9 +188,6 @@ namespace
 
     {TK_OPTION_BOOLEAN, (char*)"-overlay", (char*)"overlay", (char*)"Overlay",
      (char*)"false", -1, Tk_Offset(ToglOpts, overlayFlag), 0, NULL, TOGL_OVERLAY_OPTION},
-
-    { TK_OPTION_CURSOR, (char*)"-cursor", (char*)"cursor", (char*)"Cursor",
-      (char*)"", -1, Tk_Offset(ToglOpts, cursor), TK_OPTION_NULL_OK, NULL , 0},
 
     {TK_OPTION_INT, (char*)"-time", (char*)"time", (char*)"Time",
      (char*)DEFAULT_TIME, -1, Tk_Offset(ToglOpts, time), 0, NULL, 0},
