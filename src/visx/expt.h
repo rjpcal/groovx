@@ -3,7 +3,7 @@
 // expt.h
 // Rob Peters
 // created: Sat Mar 13 17:55:27 1999
-// written: Wed Jun  9 16:14:10 1999
+// written: Fri Jun 25 13:47:32 1999
 // $Id$
 //
 // This file defines the class Expt. Expt holds a sequence of trial
@@ -45,12 +45,21 @@ public:
   // creators //
   //////////////
 
-  Expt(int repeat, int seed = 0, const string& date="", 
-		 const string& host="", const string& subject="");
+  Expt();
   virtual ~Expt() {}
 
-  void init(int repeat, int seed = 0, const string& date="", 
-				const string& host="", const string& subject="");
+  // Add to the Block all valid trialids between first_trial and
+  // last_trial, inclusive. If a boundary is set to -1, then the
+  // trialid is not checked against that boundary. Each trialid is
+  // added 'repeat' times.
+  void addTrials(int first_trial=-1, int last_trial=-1, int repeat=1);
+
+  // Randomly permute the sequence of trialids, using seed as the
+  // random seed for the shuffle.
+  void shuffle(int seed=0);
+
+  // Clear the Block's list of trialids.
+  void reset();
 
   // These I/O functions write/read the _entire_ state of the Expt,
   // including the global Tlist, ObjList, and PosList.
@@ -62,14 +71,34 @@ public:
   // accessors //
   ///////////////
   
-  Trial& curTrial() const;
+  Trial& getCurTrial() const;
 
+  // Returns the total number of trials that will comprise the Expt.
   virtual int numTrials() const;
+
+  // Returns the number of trials that have been successfully
+  // completed.  This number will not include trials that have been
+  // aborted either due to an invalid response or due to a timeout.
   virtual int numCompleted() const;
   virtual int currentTrial() const;
+
+  // Returns the integer type of the current trial.
   virtual int currentTrialType() const;
+
+  // Returns the last valid (but not necessarily "correct") response
+  // that was recorded in the current Expt.
   virtual int prevResponse() const;
+
+  // Returns true if the current experiment is complete (i.e. all
+  // trials in the trial sequence have finished successfully), false
+  // otherwise.
   virtual bool isComplete() const;
+
+  // Returns a human(experimenter)-readable description of the current
+  // trial that shows the trial's id, the trial's type, the id's of
+  // the objects that are displayed in the trial, the categories of
+  // those objects, and the number of completed trials and number of
+  // total trials.
   virtual const char* trialDescription() const;
 
   virtual bool getVerbose() const { return itsVerbose; }
@@ -83,8 +112,18 @@ public:
 
   virtual void drawTrial();
   virtual void undrawTrial();
+
+  // Each of these three functions effectively ends the current trial,
+  // and prepares the Block in some way for the next trial.
   virtual void abortTrial();
   virtual void processResponse(int response);
+  virtual void endTrial();
+
+  // The state of the experiment is restored to what it was just prior
+  // to the beginning of the most recent successfully completed
+  // trial. Thus, the current trial is changed to its previous value,
+  // and the response to the most recently successfully completed
+  // trial is erased.
   virtual void undoPrevTrial();
 
 private:
@@ -93,15 +132,9 @@ private:
 
   int itsRandSeed;				  // Random seed used to create itsTrialSequence
   int itsCurTrialSeqIdx;        // Index of the current trial
-
-  string itsBeginDate;			  // Date(+time) when Expt was begun
-  string itsHostname;			  // Host computer on which Expt was begun
-  string itsSubject;				  // Id of subject on whom Expt was performed
+  bool itsVerbose;
 
   mutable timeval itsBeginTime; // Used to record the start time of each Trial
-
-  // This is serialized elsewhere for legacy reasons
-  bool itsVerbose;
 };
 
 static const char vcid_expt_h[] = "$Header$";
