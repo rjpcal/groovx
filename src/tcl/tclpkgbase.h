@@ -3,7 +3,7 @@
 // tclpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 11:50:23 1999
-// written: Wed Dec 15 15:09:47 1999
+// written: Tue Feb  8 18:00:50 2000
 // $Id$
 //
 // This file defines a class TclPkg which can be used alone, or as a
@@ -64,7 +64,6 @@ public:
   void linkConstVar(const char* varName, double& var) throw (TclError);
   void linkConstVar(const char* varName, char*& var) throw (TclError);
 
-protected:
   void addCommand(TclCmd* cmd);
 
 private:
