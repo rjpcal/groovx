@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Fri Aug 10 18:42:37 2001
+// written: Fri Aug 10 18:54:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,8 +81,7 @@ public:
   shared_ptr<GLCacheNode> itsGLCache;
   shared_ptr<GrObjAligner> itsAligner;
   shared_ptr<GrObjScaler> itsScaler;
-
-  BitmapCacheNode itsBitmapCache;
+  shared_ptr<BitmapCacheNode> itsBitmapCache;
 };
 
 static const char vcid_grobjimpl_h[] = "$Header$";

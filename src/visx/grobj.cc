@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 18:43:38 2001
+// written: Fri Aug 10 18:57:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ void GrObj::getBoundingBox(Gfx::Canvas& canvas, Rect<double>& bbox) const
 {
 DOTRACE("GrObj::getBoundingBox");
 
-  bbox = itsImpl->itsBB->gnodeBoundingBox(canvas);
+  bbox = itsImpl->itsBitmapCache->gnodeBoundingBox(canvas);
 }
 
 Gmodes::ScalingMode GrObj::getScalingMode() const
@@ -243,7 +243,7 @@ DOTRACE("GrObj::setCategory");
 void GrObj::setRenderMode(Gmodes::RenderMode mode) {
 DOTRACE("GrObj::setRenderMode");
 
-  itsImpl->itsBitmapCache.setMode(mode);
+  itsImpl->itsBitmapCache->setMode(mode);
   itsImpl->itsGLCache->setMode(mode);
   sendStateChangeMsg();
 }
@@ -286,8 +286,7 @@ void GrObj::saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const
 
   draw(canvas);
 
-  itsImpl->itsBitmapCache.saveBitmapCache(itsImpl->itsGLCache.get(),
-                                          canvas, filename);
+  itsImpl->itsBitmapCache->saveBitmapCache(canvas, filename);
 }
 
 void GrObj::update(Gfx::Canvas& canvas) const

@@ -31,7 +31,8 @@
 
 fstring BitmapCacheNode::BITMAP_CACHE_DIR(".");
 
-BitmapCacheNode::BitmapCacheNode() :
+BitmapCacheNode::BitmapCacheNode(shared_ptr<Gnode> child) :
+  Gnode(child),
   itsMode(Gmodes::DIRECT_RENDER),
   itsCacheFilename(""),
   itsBitmapRep(0)
@@ -57,7 +58,7 @@ DOTRACE("BitmapCacheNode::invalidate");
   itsBitmapRep.reset( 0 );
 }
 
-bool BitmapCacheNode::recacheBitmap(const Gnode* node, Gfx::Canvas& canvas) const
+bool BitmapCacheNode::recacheBitmap(Gfx::Canvas& canvas) const
 {
 DOTRACE("BitmapCacheNode::recacheBitmap");
 
@@ -84,15 +85,15 @@ DOTRACE("BitmapCacheNode::recacheBitmap");
       return false;
     }
 
-  node->gnodeUndraw(canvas);
+  child()->gnodeUndraw(canvas);
 
-  Rect<double> bmapbox = node->gnodeBoundingBox(canvas);
+  Rect<double> bmapbox = child()->gnodeBoundingBox(canvas);
 
   glPushAttrib(GL_COLOR_BUFFER_BIT);
   {
     glDrawBuffer(GL_FRONT);
 
-    node->gnodeDraw(canvas);
+    child()->gnodeDraw(canvas);
 
     itsBitmapRep->grabWorldRect(bmapbox);
   }
@@ -122,19 +123,29 @@ DOTRACE("BitmapCacheNode::setMode");
   itsMode = new_mode;
 }
 
-void BitmapCacheNode::render(const Gnode* node, Gfx::Canvas& canvas) const
+void BitmapCacheNode::saveBitmapCache(Gfx::Canvas& canvas,
+												  const char* filename) const
 {
-DOTRACE("BitmapCacheNode::render");
+  if (itsBitmapRep.get() != 0)
+    {
+      itsCacheFilename = filename;
+      itsBitmapRep->savePbmFile(fullCacheFilename().c_str());
+    }
+}
+
+void BitmapCacheNode::gnodeDraw(Gfx::Canvas& canvas) const
+{
+DOTRACE("BitmapCacheNode::gnodeDraw");
   DebugEvalNL(itsMode);
 
   if (itsMode != Gmodes::GL_BITMAP_CACHE &&
       itsMode != Gmodes::X11_BITMAP_CACHE)
     {
-      node->gnodeDraw(canvas);
+      child()->gnodeDraw(canvas);
     }
   else
     {
-      bool objectDrawn = recacheBitmap(node, canvas);
+      bool objectDrawn = recacheBitmap(canvas);
       if (!objectDrawn)
         {
           Assert(itsBitmapRep.get() != 0);
@@ -143,21 +154,16 @@ DOTRACE("BitmapCacheNode::render");
     }
 }
 
-void BitmapCacheNode::unrender(const Gnode* node, Gfx::Canvas& canvas) const
+void BitmapCacheNode::gnodeUndraw(Gfx::Canvas& canvas) const
 {
-DOTRACE("BitmapCacheNode::unrender");
+DOTRACE("BitmapCacheNode::gnodeUndraw");
 
-  node->gnodeUndraw(canvas);
+  child()->gnodeUndraw(canvas);
 }
 
-void BitmapCacheNode::saveBitmapCache(const Gnode* node, Gfx::Canvas& canvas,
-                                    const char* filename) const
+Rect<double> BitmapCacheNode::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
-  if (itsBitmapRep.get() != 0)
-    {
-      itsCacheFilename = filename;
-      itsBitmapRep->savePbmFile(fullCacheFilename().c_str());
-    }
+  return child()->gnodeBoundingBox(canvas);
 }
 
 static const char vcid_bitmapcachenode_cc[] = "$Header$";

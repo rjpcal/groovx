@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Aug 10 18:43:18 2001
+// written: Fri Aug 10 18:55:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ GrObjImpl::GrObjImpl(GrObj* obj) :
   itsGLCache(new GLCacheNode(itsBB)),
   itsAligner(new GrObjAligner(itsGLCache)),
   itsScaler(new GrObjScaler(itsAligner)),
-  itsBitmapCache()
+  itsBitmapCache(new BitmapCacheNode(itsScaler))
 {};
 
 GrObjImpl::~GrObjImpl()
@@ -77,13 +77,13 @@ DOTRACE("GrObjImpl::readFrom");
     int temp;
     reader->readValue("GrObj::renderMode", temp);
     itsGLCache->setMode(temp);
-    itsBitmapCache.setMode(temp);
+    itsBitmapCache->setMode(temp);
   }
 
   {
     fstring filename;
     reader->readValue("GrObj::cacheFilename", filename);
-    itsBitmapCache.setCacheFilename(filename);
+    itsBitmapCache->setCacheFilename(filename);
   }
 
   {
@@ -125,7 +125,7 @@ DOTRACE("GrObjImpl::writeTo");
 
   writer->writeValue("GrObj::renderMode", itsGLCache->getMode());
 
-  writer->writeValue("GrObj::cacheFilename", itsBitmapCache.getCacheFilename());
+  writer->writeValue("GrObj::cacheFilename", itsBitmapCache->getCacheFilename());
 
   writer->writeValue("GrObj::unRenderMode", itsGLCache->getUnMode());
 
@@ -150,28 +150,20 @@ DOTRACE("GrObjImpl::writeTo");
 void GrObjImpl::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjImpl::draw");
-  Gfx::Canvas::StateSaver state(canvas);
-
-//    itsScaler->doScaling(canvas);
-
-  itsBitmapCache.render(itsScaler.get(), canvas);
+  itsBitmapCache->gnodeDraw(canvas);
 }
 
 void GrObjImpl::undraw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjImpl::undraw");
-  Gfx::Canvas::StateSaver state(canvas);
-
-//    itsScaler->doScaling(canvas);
-
-  itsBitmapCache.unrender(itsScaler.get(), canvas);
+  itsBitmapCache->gnodeUndraw(canvas);
 }
 
 void GrObjImpl::invalidateCaches()
 {
 DOTRACE("GrObjImpl::invalidateCaches");
   itsGLCache->invalidate();
-  itsBitmapCache.invalidate();
+  itsBitmapCache->invalidate();
 }
 
 static const char vcid_grobjimpl_cc[] = "$Header$";

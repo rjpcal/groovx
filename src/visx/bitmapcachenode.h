@@ -21,31 +21,30 @@
 
 class BitmapRep;
 
-class Gnode;
-
-class BitmapCacheNode {
+class BitmapCacheNode : public Gnode {
 public:
-  BitmapCacheNode();
+  BitmapCacheNode(shared_ptr<Gnode> child);
   virtual ~BitmapCacheNode();
 
   static fstring BITMAP_CACHE_DIR;
 
-  void setMode(Gmodes::RenderMode new_mode);
-
   Gmodes::RenderMode getMode() const { return itsMode; }
+
+  void setMode(Gmodes::RenderMode new_mode);
 
   const fstring& getCacheFilename() const { return itsCacheFilename; }
 
-  void invalidate();
-
   void setCacheFilename(const fstring& name);
 
-  void render(const Gnode* node, Gfx::Canvas& canvas) const;
+  void invalidate();
 
-  void unrender(const Gnode* node, Gfx::Canvas& canvas) const;
+  void saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const;
 
-  void saveBitmapCache(const Gnode* node, Gfx::Canvas& canvas,
-                       const char* filename) const;
+  virtual void gnodeDraw(Gfx::Canvas& canvas) const;
+
+  virtual void gnodeUndraw(Gfx::Canvas& canvas) const;
+
+  virtual Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 
 private:
   Gmodes::RenderMode itsMode;
@@ -64,7 +63,7 @@ private:
 
   // This function updates the cached bitmap, and returns a true if
   // the bitmap was actually recached, and false if nothing was done.
-  bool recacheBitmap(const Gnode* node, Gfx::Canvas& canvas) const;
+  bool recacheBitmap(Gfx::Canvas& canvas) const;
 };
 
 static const char vcid_bitmapcachenode_h[] = "$Header$";
