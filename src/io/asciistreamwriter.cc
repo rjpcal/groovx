@@ -294,7 +294,13 @@ DOTRACE("AsciiStreamWriter::writeRoot");
   itsToHandleV.clear();
   itsWrittenObjects.clear();
 
-  itsToHandleV.push_back(SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root)));
+  // need the const_cast here because:
+  // (1) SoftRef constructor will optionally call RefHelper::insertItem()
+  // (2) insertItem() will put the object in the ObjDb
+  // (3) objects in the ObjDb are non-const since they can be
+  //     retrieved and modified
+  itsToHandleV.push_back
+    (SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root)));
 
   while ( !itsToHandleV.empty() )
     {
