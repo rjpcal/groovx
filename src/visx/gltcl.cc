@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Thu Jul 22 17:46:48 1999
+// written: Thu Jul 22 17:55:04 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -60,6 +60,7 @@ namespace TclGL {
   class glEndCmd;
   class glEndListCmd;
   class glFlushCmd;
+  class glFrustumCmd;
   class glGenListsCmd;
   class glGetCmd;
   class glIndexiCmd;
@@ -323,6 +324,30 @@ public:
 	 GLCmd(pkg, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() { glFlush(); }
+};
+
+//---------------------------------------------------------------------
+//
+// TclGL::glFrustumCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::glFrustumCmd : public TclGL::GLCmd {
+public:
+  glFrustumCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, "left right bottom top zNear zFar", 7, 7) {}
+protected:
+  virtual void invoke() {
+	 GLdouble left   = getDoubleFromArg(1);
+	 GLdouble right  = getDoubleFromArg(2);
+	 GLdouble bottom = getDoubleFromArg(3);
+	 GLdouble top    = getDoubleFromArg(4);
+	 GLdouble zNear  = getDoubleFromArg(5);
+	 GLdouble zFar   = getDoubleFromArg(6);
+
+	 glFrustum(left, right, bottom, top, zNear, zFar);
+	 checkGL();
+  }
 };
 
 //---------------------------------------------------------------------
@@ -1344,6 +1369,7 @@ public:
 	 addCommand( new glEndCmd          (this, "glEnd") );
 	 addCommand( new glEndListCmd      (this, "glEndList") );
 	 addCommand( new glFlushCmd        (this, "glFlush") );
+	 addCommand( new glFrustumCmd      (this, "glFrustum") );
 	 addCommand( new glGenListsCmd     (this, "glGenLists") );
 	 addCommand( new glGetTypeCmd<GLboolean>(this, "glGetBoolean") );
 	 addCommand( new glGetTypeCmd<GLdouble>(this, "glGetDouble") );
