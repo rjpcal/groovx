@@ -115,15 +115,20 @@ namespace
 
 class Tcl::TclCmd::Impl {
 public:
-  Impl(const char* cmd_name, const char* usage,
+  Impl(Tcl::TclCmd* owner, Tcl_Interp* interp,
+       const char* cmd_name, const char* usage,
        int objc_min, int objc_max, bool exact_objc) :
+    itsOwner(owner),
     itsUsage(usage),
     itsObjcMin(objc_min < 0 ? 0 : (unsigned int) objc_min),
     itsObjcMax( (objc_max > 0) ? (unsigned int) objc_max : itsObjcMin),
     itsExactObjc(exact_objc),
     itsCmdName(cmd_name),
-    itsUseCount(0)
-  {}
+    itsUseCount(0),
+    itsOverload(0)
+  {
+    registerCmdProc(interp);
+  }
 
   ~Impl()
     {
@@ -154,17 +159,47 @@ public:
 
   void onInvoke() { ++itsUseCount; }
 
+  void addOverload(Tcl_Interp* interp, shared_ptr<TclCmd> other)
+  {
+	 itsOverload = other;
+
+	 // We need to re-register our own CmdProc, since the overload
+	 // probably blew ours away in its own constructor 
+	 registerCmdProc(interp);
+  }
+
+  Impl* getOverload() const
+  {
+	 Tcl::TclCmd* overload = itsOverload.get();
+	 return overload ? overload->itsImpl : 0;
+  }
+
+  void registerCmdProc(Tcl_Interp* interp)
+  {
+    Tcl_CreateObjCommand(interp,
+                         const_cast<char*>(itsCmdName.c_str()),
+                         invokeCallback,
+                         static_cast<ClientData>(itsOwner),
+                         (Tcl_CmdDeleteProc*) NULL);
+  }
+
+  /// The procedure that is actually registered with the Tcl C API.
+  static int invokeCallback(ClientData clientData, Tcl_Interp* interp,
+                            int objc, Tcl_Obj *const objv[]);
+
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
   // These are set once per command object
+  Tcl::TclCmd* const itsOwner;
   const char* const itsUsage;
   const unsigned int itsObjcMin;
   const unsigned int itsObjcMax;
   const bool itsExactObjc;
   fixed_string itsCmdName;
   int itsUseCount;
+  shared_ptr<Tcl::TclCmd> itsOverload;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -181,14 +216,10 @@ DOTRACE("Tcl::TclCmd::~TclCmd");
 Tcl::TclCmd::TclCmd(Tcl_Interp* interp,
                     const char* cmd_name, const char* usage,
                     int objc_min, int objc_max, bool exact_objc) :
-  itsImpl(new Impl(cmd_name, usage, objc_min, objc_max, exact_objc))
+  itsImpl(new Impl(this, interp, cmd_name, usage,
+                   objc_min, objc_max, exact_objc))
 {
 DOTRACE("Tcl::TclCmd::TclCmd");
-  Tcl_CreateObjCommand(interp,
-                       const_cast<char *>(cmd_name),
-                       invokeCallback,
-                       static_cast<ClientData> (this),
-                       (Tcl_CmdDeleteProc*) NULL);
 
   if (firstTime)
     {
@@ -211,32 +242,45 @@ DOTRACE("Tcl::TclCmd::rawInvoke");
   invoke(ctx);
 }
 
-int Tcl::TclCmd::invokeCallback(ClientData clientData, Tcl_Interp* interp,
-                                int s_objc, Tcl_Obj *const objv[])
+void Tcl::TclCmd::addOverload(Tcl_Interp* interp, shared_ptr<TclCmd> other)
 {
-DOTRACE("Tcl::TclCmd::invokeCallback");
+DOTRACE("Tcl::TclCmd::addOverload");
+  itsImpl->addOverload(interp, other);
+}
 
-  TclCmd* theCmd = static_cast<TclCmd*>(clientData);
+int Tcl::TclCmd::Impl::invokeCallback(ClientData clientData, Tcl_Interp* interp,
+                                      int s_objc, Tcl_Obj *const objv[])
+{
+DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
 
-  theCmd->itsImpl->onInvoke();
+  Impl* theImpl = static_cast<Tcl::TclCmd*>(clientData)->itsImpl;
+
+  theImpl->onInvoke();
 
   Assert(s_objc >= 0);
 
   unsigned int objc = (unsigned int) s_objc;
 
-  // Check for bad argument count, if so abort the command and return
-  // TCL_ERROR...
-  if ( theCmd->itsImpl->rejectsObjc(objc) )
+  // Look for an overload that matches...
+  while ( theImpl->rejectsObjc(objc) )
     {
-      Tcl_WrongNumArgs(interp, 1, objv,
-                       const_cast<char*>(theCmd->itsImpl->usage()));
-      return TCL_ERROR;
+      theImpl = theImpl->getOverload();
+
+      // If we run out of potential overloads, abort the command.
+      if ( theImpl == 0 )
+        {
+          Impl* originalImpl = static_cast<Tcl::TclCmd*>(clientData)->itsImpl;
+          Tcl_WrongNumArgs(interp, 1, objv,
+                           const_cast<char*>(originalImpl->usage()));
+          return TCL_ERROR;
+        }
     }
+
   // ...otherwise if the argument count is OK, try the command and
   // catch all possible exceptions
   try
     {
-      theCmd->rawInvoke(interp, objc, objv);
+      theImpl->itsOwner->rawInvoke(interp, objc, objv);
       return TCL_OK;
     }
   catch (ErrorWithMsg& err)
@@ -244,32 +288,32 @@ DOTRACE("Tcl::TclCmd::invokeCallback");
       DebugPrintNL("catch (ErrorWithMsg&)");
       if ( !string_literal(err.msg_cstr()).empty() )
         {
-          errMessage(interp, theCmd->itsImpl->cmdName(), err.msg_cstr());
+          errMessage(interp, theImpl->cmdName(), err.msg_cstr());
         }
       else
         {
-          errMessage(interp, theCmd->itsImpl->cmdName(), typeid(err));
+          errMessage(interp, theImpl->cmdName(), typeid(err));
         }
     }
   catch (Error& err)
     {
       DebugPrintNL("catch (Error&)");
-      errMessage(interp, theCmd->itsImpl->cmdName(), typeid(err));
+      errMessage(interp, theImpl->cmdName(), typeid(err));
     }
   catch (std::exception& err)
     {
-      errMessage(interp, theCmd->itsImpl->cmdName(), typeid(err), err.what());
+      errMessage(interp, theImpl->cmdName(), typeid(err), err.what());
     }
   catch (const char* text)
     {
       dynamic_string msg = "an error occurred: ";
       msg += text;
-      errMessage(interp, theCmd->itsImpl->cmdName(), msg.c_str());
+      errMessage(interp, theImpl->cmdName(), msg.c_str());
     }
   catch (...)
     {
       DebugPrintNL("catch (...)");
-      errMessage(interp, theCmd->itsImpl->cmdName(),
+      errMessage(interp, theImpl->cmdName(),
                  "an error of unknown type occurred");
     }
 
