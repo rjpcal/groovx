@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Nov 21 00:26:13 1999
+// written: Sun Nov 21 00:33:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,6 +117,13 @@ protected:
 
   /** Must be overridden to free the memory pointed to by ptr. */
   virtual void destroyPtr(void* ptr) = 0;
+
+protected:
+  vector<void*>& vec() { return itsVec; }
+  const vector<void*>& vec() const { return itsVec; }
+
+  int& firstVacant() { return itsFirstVacant; }
+  const int& firstVacant() const { return itsFirstVacant; }
 
 private:
   VoidPtrList(const VoidPtrList&);
