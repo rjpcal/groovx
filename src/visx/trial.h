@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Wed Jun  6 09:48:16 2001
+// written: Mon Jun 11 13:54:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,12 +21,15 @@
 #include "io/iodecls.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ATTRIBS_H_DEFINED)
+#include "io/attribs.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRIALBASE_H_DEFINED)
 #include "trialbase.h"
 #endif
 
 #ifdef PRESTANDARD_IOSTREAMS
-class istream;
 class ostream;
 #else
 #  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
@@ -37,14 +40,10 @@ class ostream;
 
 template <class T> class IdItem;
 
-namespace GWT {
-  class Canvas;
-  class Widget;
-}
+namespace GWT { class Widget; }
 
 namespace Util { class ErrorHandler; }
 
-class Position;
 class Block;
 class Response;
 class ResponseHandler;
@@ -56,7 +55,7 @@ class TimingHdlr;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Trial : public TrialBase {
+class Trial : public TrialBase, public FieldContainer {
 public:
 
   /** This tracer dynamically controls the tracing of Trial member
@@ -80,6 +79,8 @@ public:
 
   void writeMatlab(STD_IO::ostream& os) const;
 
+  static const FieldMap& classFields();
+
   ////////////////////////////
   // accessors+manipulators //
   ////////////////////////////
@@ -96,6 +97,8 @@ public:
   // returns some info about relationship between objects in trial
   virtual int trialType() const;
   void setType(int t);
+
+  ReadWriteAttrib<Trial, int> tType;
 
   virtual const char* description() const;
 

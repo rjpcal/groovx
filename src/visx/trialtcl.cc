@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed Jun  6 19:45:43 2001
+// written: Mon Jun 11 12:59:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "responsehandler.h"
 #include "timinghdlr.h"
 
-#include "tcl/ioitempkg.h"
+#include "tcl/fieldpkg.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
@@ -59,10 +59,10 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TrialTcl::TrialPkg : public Tcl::IoItemPkg<Trial> {
+class TrialTcl::TrialPkg : public Tcl::FieldCntrPkg<Trial> {
 public:
   TrialPkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<Trial>(interp, "Trial", "$Revision$")
+	 Tcl::FieldCntrPkg<Trial>(interp, "Trial", "$Revision$")
   {
 	 Tcl::addTracing(this, Trial::tracer);
 

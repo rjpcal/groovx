@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Jun  6 09:39:03 2001
+// written: Mon Jun 11 13:48:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -613,19 +613,35 @@ DOTRACE("Trial::Impl::undoLastResponse");
 //
 ///////////////////////////////////////////////////////////////////////
 
+namespace {
+  const FieldInfo FINFOS[] = {
+	 FieldInfo("tType", &Trial::tType, -1, -10, 10, 1, true)
+  };
+
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  const FieldMap TRIAL_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
+}
+
 //////////////
 // creators //
 //////////////
+
+const FieldMap& Trial::classFields() { return TRIAL_FIELDS; }
 
 Trial* Trial::make() {
 DOTRACE("Trial::make");
   return new Trial;
 }
 
-Trial::Trial() : 
+Trial::Trial() :
+  FieldContainer(),
+  tType(this, &Trial::trialType, &Trial::setType),
   itsImpl( new Impl(this) )
 {
 DOTRACE("Trial::Trial()");
+
+  setFieldMap(TRIAL_FIELDS); 
 }
 
 Trial::~Trial() {
