@@ -3,7 +3,7 @@
 // expttesttcl.cc
 // Rob Peters
 // created: Tue May 11 13:13:41 1999
-// written: Sun Jun 20 17:57:02 1999
+// written: Sat Jun 26 12:55:46 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include <tcl.h>
 
-#include "expt.h"
+#include "block.h"
 #include "tcllink.h"
 #include "exptdriver.h"
 
@@ -22,7 +22,7 @@
 #include "debug.h"
 
 namespace {
-  Expt& getExpt() { return ExptDriver::theExptDriver().expt(); }
+  Block& getBlock() { return ExptDriver::theExptDriver().block(); }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ DOTRACE("ExptTestTcl::abortTrialCmd");
     return TCL_ERROR;
   }
 
-  getExpt().abortTrial();
+  getBlock().abortTrial();
   return TCL_OK;
 }
 #endif
@@ -99,8 +99,8 @@ DOTRACE("ExptTestTcl::beginTrialCmd");
     return TCL_ERROR;
   }
 
-  Expt& expt = getExpt();
-  expt.drawTrial();
+  Block& block = getBlock();
+  block.drawTrial();
 
   return TCL_OK;
 }
@@ -129,7 +129,7 @@ DOTRACE("ExptTestTcl::recordResponseCmd");
   if (Tcl_GetIntFromObj(interp, objv[1], &response) != TCL_OK)
     return TCL_ERROR;
 
-  getExpt().processResponse(response);
+  getBlock().processResponse(response);
   return TCL_OK;
 }
 #endif
@@ -152,7 +152,7 @@ DOTRACE("ExptTestTcl::undrawTrialCmd");
     return TCL_ERROR;
   }
 
-  getExpt().undrawTrial();
+  getBlock().undrawTrial();
   return TCL_OK;
 }
 #endif
@@ -169,13 +169,13 @@ extern "C" int Expttest_Init(Tcl_Interp* interp);
 int Expttest_Init(Tcl_Interp* interp) {
 DOTRACE("Expttest_Init");
 
+  using namespace ExptTestTcl;
+
 #ifdef LOCAL_TEST
   struct CmdName_CmdProc {
 	 const char* cmdName;
 	 Tcl_ObjCmdProc* cmdProc;
   };
-
-  using namespace ExptTestTcl;
 
   static CmdName_CmdProc Names_Procs[] = {
     { "Expt::abortTrial", abortTrialCmd },
