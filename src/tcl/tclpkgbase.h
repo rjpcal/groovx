@@ -95,11 +95,11 @@ public:
 
   /** Returns a Tcl status code indicating whether the package
       initialization was successful. */
-  int initStatus() const;
+  int initStatus() const throw();
 
   /** Returns a Tcl status code reflecting the combination of this
       package's initStatus() with \a otherStatus. */
-  int combineStatus(int otherStatus) const
+  int combineStatus(int otherStatus) const throw()
   {
     return combineStatus(initStatus(), otherStatus);
   }
@@ -108,16 +108,16 @@ public:
       current \a status1 with \a status2. If either status represents
       failure, the result will also represent failure, otherwise
       success. */
-  static int combineStatus(int status1, int status2);
+  static int combineStatus(int status1, int status2) throw();
 
   /** Return the init status of \a pkg, or return okStatus() if \a pkg
       is null */
-  static int initStatus(PkgBase* pkg);
+  static int initStatus(PkgBase* pkg) throw();
 
   /// Combine the init statuses of several packages.
   static int initStatus(PkgBase* pkg1, PkgBase* pkg2,
                         PkgBase* pkg3=0, PkgBase* pkg4=0,
-                        PkgBase* pkg5=0, PkgBase* pkg6=0)
+                        PkgBase* pkg5=0, PkgBase* pkg6=0) throw()
   {
     return combineStatus(initStatus(pkg1),
            combineStatus(initStatus(pkg2),
@@ -128,14 +128,14 @@ public:
   }
 
   /// Returns the Tcl interpreter that was passed to the constructor.
-  Tcl::Interp& interp();
+  Tcl::Interp& interp() throw();
 
   /// Returns the package's "namespace name".
   /** Note that the "namespace name" will be the same as the "package name"
       except possibly for capitalization. The "namespace name" is the name
       of the namespace that is used as the default prefix all commands
       contained in the package. */
-  const char* namespName();
+  const char* namespName() throw();
 
   /// Return the package's "package name".
   /** Note that the "package name" will be the same as the "namespace name"
@@ -143,27 +143,27 @@ public:
       that is passed to Tcl_PkgProvide() and Tcl_PkgProvide(), and has a
       well-defined capitalization scheme: first character uppercase, all
       remaining letters lowercase. */
-  const char* pkgName();
+  const char* pkgName() throw();
 
   /// Returns the package version string.
-  const char* version();
+  const char* version() throw();
 
   /** Causes all of our package's currently defined commands and procedures to
       be imported into the specified other namespace. */
-  void namespaceAlias(const char* namesp);
+  void namespaceAlias(const char* namesp) throw();
 
   /** Import all of the commands and procedures defined in the specified
       namespace into our own package namespace. */
-  void inherit(const char* namesp);
+  void inherit(const char* namesp) throw();
 
   /// Import all of the commands and procedures defined in the named pkg.
   /** If the named pkg has not yet been loaded, this function will attempt
       to load it via loookup(). If a null pointer is passed to version (the
       default), then any version will be acceptable. */
-  void inheritPkg(const char* name, const char* version = 0);
+  void inheritPkg(const char* name, const char* version = 0) throw();
 
   /// Does a simple \c Tcl_Eval of \a script using the package's \c Tcl_Interp.
-  void eval(const char* script);
+  void eval(const char* script) throw();
 
   /// Links the \a var with the Tcl variable \a varName.
   void linkVar(const char* varName, int& var);
@@ -194,7 +194,7 @@ protected:
   /// Adds \a cmd to the commands managed by the package.
   void addCommand(Command* cmd);
 
-  void setInitStatusError();
+  void setInitStatusError() throw();
 
 private:
   PkgBase(const PkgBase&);

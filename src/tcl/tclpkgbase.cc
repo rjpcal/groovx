@@ -183,18 +183,22 @@ DOTRACE("Tcl::PkgBase::lookup");
   return 0;
 }
 
-int Tcl::PkgBase::initStatus() const
+int Tcl::PkgBase::initStatus() const throw()
 {
 DOTRACE("Tcl::PkgBase::initStatus");
+  if (rep->interp.getResult<const char*>()[0] != '\0')
+    {
+      rep->initStatus = TCL_ERROR;
+    }
   return rep->initStatus;
 }
 
-int Tcl::PkgBase::initStatus(PkgBase* pkg)
+int Tcl::PkgBase::initStatus(PkgBase* pkg) throw()
 {
   return pkg ? pkg->initStatus() : TCL_OK;
 }
 
-int Tcl::PkgBase::combineStatus(int status1, int status2)
+int Tcl::PkgBase::combineStatus(int status1, int status2) throw()
 {
 DOTRACE("Tcl::PkgBase::combineStatus");
   if (TCL_ERROR == status1 || TCL_ERROR == status2)
@@ -207,7 +211,7 @@ DOTRACE("Tcl::PkgBase::combineStatus");
   return TCL_OK;
 }
 
-Tcl::Interp& Tcl::PkgBase::interp()
+Tcl::Interp& Tcl::PkgBase::interp() throw()
 {
 DOTRACE("Tcl::PkgBase::interp");
   return rep->interp;
@@ -231,23 +235,37 @@ namespace
   }
 }
 
-void Tcl::PkgBase::namespaceAlias(const char* namesp)
+void Tcl::PkgBase::namespaceAlias(const char* namesp) throw()
 {
 DOTRACE("Tcl::PkgBase::namespaceAlias");
 
-  exportAll(rep->interp, rep->namespName.c_str());
-  exportInto(rep->interp, rep->namespName.c_str(), namesp);
+  try
+    {
+      exportAll(rep->interp, rep->namespName.c_str());
+      exportInto(rep->interp, rep->namespName.c_str(), namesp);
+    }
+  catch (...)
+    {
+      rep->interp.handleLiveException("Tcl::PkgBase::inherit", false);
+    }
 }
 
-void Tcl::PkgBase::inherit(const char* namesp)
+void Tcl::PkgBase::inherit(const char* namesp) throw()
 {
 DOTRACE("Tcl::PkgBase::inherit");
 
-  exportAll(rep->interp, namesp);
-  exportInto(rep->interp, namesp, rep->namespName.c_str());
+  try
+    {
+      exportAll(rep->interp, namesp);
+      exportInto(rep->interp, namesp, rep->namespName.c_str());
+    }
+  catch (...)
+    {
+      rep->interp.handleLiveException("Tcl::PkgBase::inherit", false);
+    }
 }
 
-void Tcl::PkgBase::inheritPkg(const char* name, const char* version)
+void Tcl::PkgBase::inheritPkg(const char* name, const char* version) throw()
 {
 DOTRACE("Tcl::PkgBase::inheritPkg");
 
@@ -259,17 +277,17 @@ DOTRACE("Tcl::PkgBase::inheritPkg");
     }
 }
 
-const char* Tcl::PkgBase::namespName()
+const char* Tcl::PkgBase::namespName() throw()
 {
   return rep->namespName.c_str();
 }
 
-const char* Tcl::PkgBase::pkgName()
+const char* Tcl::PkgBase::pkgName() throw()
 {
   return rep->pkgName.c_str();
 }
 
-const char* Tcl::PkgBase::version()
+const char* Tcl::PkgBase::version() throw()
 {
   return rep->version.c_str();
 }
@@ -297,11 +315,18 @@ DOTRACE("Tcl::PkgBase::makePkgCmdName");
     }
 }
 
-void Tcl::PkgBase::eval(const char* script)
+void Tcl::PkgBase::eval(const char* script) throw()
 {
 DOTRACE("Tcl::PkgBase::eval");
 
-  rep->interp.eval(script);
+  try
+    {
+      rep->interp.eval(script);
+    }
+  catch(...)
+    {
+      rep->interp.handleLiveException("Tcl::PkgBase::eval", false);
+    }
 }
 
 void Tcl::PkgBase::addCommand(Command* cmd)
@@ -350,7 +375,7 @@ DOTRACE("Tcl::PkgBase::linkConstVar double");
   rep->interp.linkDouble(varName, &var, true);
 }
 
-void Tcl::PkgBase::setInitStatusError()
+void Tcl::PkgBase::setInitStatusError() throw()
 {
 DOTRACE("Tcl::PkgBase::setInitStatusError");
   rep->initStatus = TCL_ERROR;
