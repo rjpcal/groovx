@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 14:20:08 2002
-// written: Tue Nov 19 12:47:06 2002
+// written: Tue Nov 19 17:30:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ DOTRACE("GxSphere::getBoundingCube");
                   -itsRadius, itsRadius,
                   -itsRadius, itsRadius);
 
-  bbox.cube.unionize(mybox);
+  bbox.drawBox(mybox);
 }
 
 void GxSphere::draw(Gfx::Canvas& canvas) const

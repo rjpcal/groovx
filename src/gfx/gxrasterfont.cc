@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 16:45:32 2002
-// written: Tue Nov 19 14:00:20 2002
+// written: Tue Nov 19 17:24:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -242,7 +242,7 @@ DOTRACE("GxRasterFont::bboxOf");
   screen.bottom() -= desc;
   screen.top() += asc;
 
-  bbox.cube.merge(bbox.worldFromScreen(screen));
+  bbox.drawRect(bbox.worldFromScreen(screen));
 }
 
 static const char vcid_gxrasterfont_cc[] = "$Header$";

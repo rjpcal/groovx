@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 13:34:18 2002
-// written: Tue Nov 19 12:56:48 2002
+// written: Tue Nov 19 18:00:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,8 +39,6 @@ void GxBounds::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxBounds::getBoundingCube");
 
-  child()->getBoundingCube(bbox);
-
   int border_pixels = itsPixelBorder;
 
   // Add extra pixels if the box itself will be visible.
@@ -48,9 +46,17 @@ DOTRACE("GxBounds::getBoundingCube");
 
   dbgEval(3, itsPixelBorder); dbgEvalNL(3, border_pixels);
 
-  bbox.cube.scale(1.0 + border_pixels/100.0);
+  bbox.push();
 
-  dbgDump(2, bbox.cube);
+  const double s = 1.0 + border_pixels/100.0;
+
+  bbox.scale(Gfx::Vec3<double>(s,s,s));
+
+  child()->getBoundingCube(bbox);
+
+  bbox.pop();
+
+  dbgDump(2, bbox.cube());
 }
 
 void GxBounds::draw(Gfx::Canvas& canvas) const
@@ -62,10 +68,11 @@ DOTRACE("GxBounds::draw");
   if (isItVisible)
     {
       Gfx::Bbox bbox(canvas);
+      const double s = 1.0 + itsPixelBorder/100.0;
+      bbox.scale(Gfx::Vec3<double>(s,s,s));
       child()->getBoundingCube(bbox);
-      bbox.cube.scale(1.0 + itsPixelBorder/100.0);
 
-      Gfx::Rect<double> bounds = bbox.cube.rect();
+      Gfx::Rect<double> bounds = bbox.rect();
 
 #define ANIMATE_BBOX
 

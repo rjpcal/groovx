@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 12:59:04 2002
-// written: Tue Nov 19 14:04:19 2002
+// written: Tue Nov 19 17:44:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,19 +85,19 @@ void GxAligner::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxAligner::getBoundingCube");
 
-  Gfx::Bbox mybox = bbox.push();
+  Gfx::Bbox mybox = bbox.peer();
 
   child()->getBoundingCube(mybox);
 
-  Gfx::Rect<double> bounds = mybox.cube.rect();
+  Gfx::Rect<double> bounds = mybox.rect();
 
   Gfx::Vec2<double> center = getCenter(bounds);
 
   bounds.setCenter(center);
 
-  bbox.cube.unionize(bounds);
+  bbox.drawRect(bounds);
 
-  dbgDump(2, bbox.cube);
+  dbgDump(2, bbox.cube());
 }
 
 static const char vcid_gxaligner_cc[] = "$Header$";

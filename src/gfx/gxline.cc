@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 17 16:00:32 2002
-// written: Tue Nov 19 12:55:23 2002
+// written: Tue Nov 19 17:25:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,11 +92,8 @@ void GxLine::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxColor::getBoundingCube");
 
-  Gfx::Box<double> mybox;
-
-  mybox.setCorners(start, stop);
-
-  bbox.cube.unionize(mybox);
+  bbox.vertex3(start);
+  bbox.vertex3(stop);
 }
 
 void GxLine::draw(Gfx::Canvas& canvas) const

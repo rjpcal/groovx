@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Tue Nov 19 13:47:20 2002
+// written: Tue Nov 19 17:52:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ public:
   virtual void getBoundingCube(Gfx::Bbox& bbox) const
   {
     itsObj->grGetBoundingBox(bbox);
-    dbgDump(2, bbox.cube);
+    dbgDump(2, bbox.cube());
   }
 };
 

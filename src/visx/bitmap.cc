@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Tue Nov 19 13:52:46 2002
+// written: Tue Nov 19 17:50:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -347,9 +347,9 @@ DOTRACE("Bitmap::grGetBoundingBox");
   Gfx::Vec2<int> bottom_left = bbox.screenFromWorld(Gfx::Vec2<double>());
   Gfx::Vec2<int> top_right = bottom_left + (size() * getZoom());
 
-  bbox.cube.merge(Gfx::Vec2<double>());
+  bbox.vertex2(Gfx::Vec2<double>());
 
-  bbox.cube.merge(bbox.worldFromScreen(top_right));
+  bbox.vertex2(bbox.worldFromScreen(top_right));
 }
 
 Gfx::Vec2<int> Bitmap::size() const

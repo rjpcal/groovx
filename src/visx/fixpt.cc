@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Nov 19 13:41:18 2002
+// written: Tue Nov 19 17:58:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "gfx/canvas.h"
 
 #include "gx/bbox.h"
+#include "gx/vec2.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -103,8 +104,8 @@ void FixPt::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("FixPt::grGetBoundingBox");
 
-  bbox.cube.merge(Gfx::Vec2<double>(-itsLength/2.0, -itsLength/2.0));
-  bbox.cube.merge(Gfx::Vec2<double>(+itsLength/2.0, +itsLength/2.0));
+  bbox.vertex2(Gfx::Vec2<double>(-itsLength/2.0, -itsLength/2.0));
+  bbox.vertex2(Gfx::Vec2<double>(+itsLength/2.0, +itsLength/2.0));
 }
 
 void FixPt::grRender(Gfx::Canvas& canvas) const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Tue Nov 19 13:39:09 2002
+// written: Tue Nov 19 17:51:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -292,8 +292,8 @@ void Face::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Face::grGetBoundingBox");
 
-  bbox.cube.merge(Gfx::Vec2<double>(-0.7, 0.2 + 0.75*(-1.7-0.2)));
-  bbox.cube.merge(Gfx::Vec2<double>(+0.7, 0.2 + 0.75*(+1.4-0.2)));
+  bbox.vertex2(Gfx::Vec2<double>(-0.7, 0.2 + 0.75*(-1.7-0.2)));
+  bbox.vertex2(Gfx::Vec2<double>(+0.7, 0.2 + 0.75*(+1.4-0.2)));
 }
 
 int Face::category() const

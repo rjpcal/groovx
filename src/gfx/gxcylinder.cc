@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 12:46:27 2002
-// written: Tue Nov 19 12:54:20 2002
+// written: Tue Nov 19 17:25:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ DOTRACE("GxCylinder::getBoundingCube");
                   -maxr, maxr,
                   0.0, itsHeight);
 
-  bbox.cube.unionize(mybox);
+  bbox.drawBox(mybox);
 }
 
 void GxCylinder::draw(Gfx::Canvas& canvas) const

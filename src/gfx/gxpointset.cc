@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 12:46:27 2002
-// written: Tue Nov 19 12:48:15 2002
+// written: Tue Nov 19 17:45:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,18 +79,8 @@ void GxPointSet::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxPointSet::getBoundingCube");
 
-  Gfx::Box<double> mybox;
-
-  if (itsPoints.arr().size() > 0)
-    {
-      mybox.set000(itsPoints.arr()[0]);
-      mybox.set111(itsPoints.arr()[0]);
-
-      for (unsigned int i = 1; i < itsPoints.arr().size(); ++i)
-        mybox.merge(itsPoints.arr()[i]);
-    }
-
-  bbox.cube.unionize(mybox);
+  for (unsigned int i = 0; i < itsPoints.arr().size(); ++i)
+    bbox.vertex3(itsPoints.arr()[i]);
 }
 
 void GxPointSet::draw(Gfx::Canvas& canvas) const

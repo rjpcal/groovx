@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:27:15 2000
-// written: Tue Nov 19 12:42:02 2002
+// written: Tue Nov 19 17:26:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ DOTRACE("GxNode::getBoundingBox");
   Gfx::Bbox bbox(canvas);
   getBoundingCube(bbox);
 
-  return bbox.cube.rect();
+  return bbox.rect();
 }
 
 void GxNode::undraw(Gfx::Canvas& canvas) const

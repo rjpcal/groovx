@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Nov 19 13:46:31 2002
+// written: Tue Nov 19 17:52:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ void MaskHatch::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("MaskHatch::grGetBoundingBox");
 
-  bbox.cube.merge(Gfx::RectLBWH<double>(0.0, 0.0, 1.0, 1.0));
+  bbox.drawRect(Gfx::RectLBWH<double>(0.0, 0.0, 1.0, 1.0));
 }
 
 void MaskHatch::grRender(Gfx::Canvas& canvas) const

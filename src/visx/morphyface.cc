@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Nov 19 13:46:54 2002
+// written: Tue Nov 19 18:12:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -460,7 +460,7 @@ DOTRACE("MorphyFace::grGetBoundingBox");
   rect.top()    =  itsTopHeight * (1 + itsHairWidth);
   rect.bottom() =  itsBottomHeight;
 
-  bbox.cube.merge(rect);
+  bbox.drawRect(rect);
 }
 
 static const char vcid_morphyface_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Tue Nov 19 13:53:24 2002
+// written: Tue Nov 19 17:52:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -171,7 +171,7 @@ DOTRACE("Gabor::grGetBoundingBox");
 
   Gfx::Rect<double> world_rect = bbox.worldFromScreen(screen_rect);
 
-  bbox.cube.merge(world_rect);
+  bbox.drawRect(world_rect);
 }
 
 void Gabor::grRender(Gfx::Canvas& canvas) const

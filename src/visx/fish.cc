@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue Nov 19 13:40:15 2002
+// written: Tue Nov 19 17:52:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -439,8 +439,8 @@ void Fish::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Fish::grGetBoundingBox");
 
-  bbox.cube.merge(Gfx::Vec2<double>(-0.75, -0.5));
-  bbox.cube.merge(Gfx::Vec2<double>(+0.75, +0.5));
+  bbox.vertex2(Gfx::Vec2<double>(-0.75, -0.5));
+  bbox.vertex2(Gfx::Vec2<double>(+0.75, +0.5));
 }
 
 void Fish::grRender(Gfx::Canvas& canvas) const

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 20:05:41 2002
-// written: Tue Nov 19 14:00:26 2002
+// written: Tue Nov 19 17:50:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -775,7 +775,7 @@ void GxVectorFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
   rect.bottom() = -1.0;
   rect.top() = 6.0;
 
-  bbox.cube.merge(rect);
+  bbox.drawRect(rect);
 }
 
 static const char vcid_gxvectorfont_cc[] = "$Header$";

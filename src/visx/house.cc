@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Tue Nov 19 13:45:30 2002
+// written: Tue Nov 19 17:52:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -287,7 +287,7 @@ DOTRACE("House::grGetBoundingBox");
 
   rect.top()    =  (main_height/2.0 + extra_chimney_height) / max_dim;
 
-  bbox.cube.merge(rect);
+  bbox.drawRect(rect);
 }
 
 void House::grRender(Gfx::Canvas& canvas) const

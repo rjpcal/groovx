@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 13:04:32 2002
-// written: Tue Nov 19 12:57:01 2002
+// written: Tue Nov 19 18:23:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -180,11 +180,16 @@ void GxScaler::draw(Gfx::Canvas& canvas) const
 
 void GxScaler::getBoundingCube(Gfx::Bbox& bbox) const
 {
+  bbox.push();
+
+  if (NATIVE_SCALING != itsMode)
+    bbox.scale(Gfx::Vec3<double>(itsWidthFactor, itsHeightFactor, 1.0));
+
   child()->getBoundingCube(bbox);
 
-  bbox.cube.scale(Gfx::Vec3<double>(itsWidthFactor, itsHeightFactor, 1.0));
+  bbox.pop();
 
-  dbgDump(2, bbox.cube);
+  dbgDump(2, bbox.cube());
 }
 
 static const char vcid_gxscaler_cc[] = "$Header$";

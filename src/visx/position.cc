@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Tue Nov 19 12:53:52 2002
+// written: Tue Nov 19 18:25:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -203,36 +203,7 @@ void Position::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("Position::getBoundingCube");
 
-  const Gfx::Txform& txform = getTxform();
-
-  Gfx::Vec3<double> p1 = txform.applyTo(bbox.cube.point000());
-  Gfx::Vec3<double> p2 = txform.applyTo(bbox.cube.point001());
-  Gfx::Vec3<double> p3 = txform.applyTo(bbox.cube.point010());
-  Gfx::Vec3<double> p4 = txform.applyTo(bbox.cube.point011());
-  Gfx::Vec3<double> p5 = txform.applyTo(bbox.cube.point100());
-  Gfx::Vec3<double> p6 = txform.applyTo(bbox.cube.point101());
-  Gfx::Vec3<double> p7 = txform.applyTo(bbox.cube.point110());
-  Gfx::Vec3<double> p8 = txform.applyTo(bbox.cube.point111());
-
-  using Util::min;
-  using Util::max;
-
-  const double x0 = min(min(min(p1.x(), p2.x()), min(p3.x(), p4.x())),
-                        min(min(p5.x(), p6.x()), min(p7.x(), p8.x())));
-  const double x1 = max(max(max(p1.x(), p2.x()), max(p3.x(), p4.x())),
-                        max(max(p5.x(), p6.x()), max(p7.x(), p8.x())));
-
-  const double y0 = min(min(min(p1.y(), p2.y()), min(p3.y(), p4.y())),
-                        min(min(p5.y(), p6.y()), min(p7.y(), p8.y())));
-  const double y1 = max(max(max(p1.y(), p2.y()), max(p3.y(), p4.y())),
-                        max(max(p5.y(), p6.y()), max(p7.y(), p8.y())));
-
-  const double z0 = min(min(min(p1.z(), p2.z()), min(p3.z(), p4.z())),
-                        min(min(p5.z(), p6.z()), min(p7.z(), p8.z())));
-  const double z1 = max(max(max(p1.z(), p2.z()), max(p3.z(), p4.z())),
-                        max(max(p5.z(), p6.z()), max(p7.z(), p8.z())));
-
-  bbox.cube.setXXYYZZ(x0, x1, y0, y1, z0, z1);
+  bbox.transform(getTxform());
 }
 
 void Position::draw(Gfx::Canvas& canvas) const
