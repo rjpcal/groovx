@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Thu Jul 22 18:19:19 1999
+// written: Thu Jul 22 19:48:54 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -171,7 +171,7 @@ public:
 protected:
   virtual void invoke() {
 	 GLuint list_id = getIntFromArg(1);
-	 glCallList(1);
+	 glCallList(list_id);
   }
 };
 
