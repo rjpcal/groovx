@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Sep 16 11:16:24 2002
+// written: Mon Sep 16 12:14:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,15 +63,6 @@ namespace
     buf.append(int(id));
 
     return buf.c_str();
-  }
-
-  void setIntParam(Togl* togl, const char* param, int val)
-  {
-    fstring cmd_str(togl->pathname(), " configure -", param);
-    cmd_str.append(" ", val);
-
-    Tcl::Code cmd(cmd_str, Tcl::Code::THROW_EXCEPTION);
-    cmd.invoke(togl->interp());
   }
 }
 
@@ -645,7 +636,7 @@ DOTRACE("Toglet::setHeight");
 
   // This automatically triggers a ConfigureNotify/Expose event pair
   // through the Togl/Tk machinery
-  setIntParam(rep->togl, "height", val);
+  rep->togl->setHeight(val);
 }
 
 void Toglet::setWidth(int val)
@@ -654,7 +645,7 @@ DOTRACE("Toglet::setWidth");
 
   // This automatically triggers a ConfigureNotify/Expose event pair
   // through the Togl/Tk machinery
-  setIntParam(rep->togl, "width", val);
+  rep->togl->setWidth(val);
 }
 
 /////////////
