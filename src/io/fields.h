@@ -41,8 +41,6 @@ namespace IO
   class Writer;
 }
 
-class Field;
-class FieldInfo;
 class FieldContainer;
 
 template <class T>
@@ -56,12 +54,12 @@ public:
 
   static shared_ptr<BoundsChecker<T> > make(const T& min, const T& max)
   {
-	 return shared_ptr<BoundsChecker<T> >(new BoundsChecker<T>(min, max));
+    return shared_ptr<BoundsChecker<T> >(new BoundsChecker<T>(min, max));
   }
 
   T limit(const T& raw)
   {
-	 return Util::max(itsMin, Util::min(itsMax, raw));
+    return Util::max(itsMin, Util::min(itsMax, raw));
   }
 };
 
@@ -86,31 +84,6 @@ public:
                              IO::Reader* reader, const fstring& name) = 0;
   virtual void writeValueTo(const FieldContainer* obj,
                             IO::Writer* writer, const fstring& name) const = 0;
-};
-
-/** CFieldMemberPtr  */
-template <class C, class T>
-class CFieldMemberPtr : public FieldMemberPtr {
-private:
-  T C::* itsPtr;
-
-  Field& dereference(FieldContainer* obj) const;
-
-public:
-  CFieldMemberPtr(T C::* ptr) : itsPtr(ptr) {}
-
-  CFieldMemberPtr(const CFieldMemberPtr& other) : itsPtr(other.itsPtr) {}
-
-  CFieldMemberPtr& operator=(const CFieldMemberPtr& other)
-    { itsPtr = other.itsPtr; return *this; }
-
-  virtual void set(FieldContainer* obj, const Value& new_val) const;
-  virtual shared_ptr<Value> get(const FieldContainer* obj) const;
-
-  virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader* reader, const fstring& name);
-  virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer* writer, const fstring& name) const;
 };
 
 namespace
@@ -164,16 +137,16 @@ public:
   DataAttrib(T C::* memptr) : itsDataMember(memptr), itsChecker(0) {}
 
   DataAttrib(T C::* memptr, shared_ptr<BoundsChecker<DerefT> > checker) :
-	 itsDataMember(memptr), itsChecker(checker) {}
+    itsDataMember(memptr), itsChecker(checker) {}
 
   virtual void set(FieldContainer* obj, const Value& new_val) const
   {
     C& cobj = dynamic_cast<C&>(*obj);
 
-	 DerefT raw = new_val.get(Util::TypeCue<DerefT>());
+    DerefT raw = new_val.get(Util::TypeCue<DerefT>());
 
     dereference(cobj, itsDataMember) =
-		itsChecker.get() == 0 ? raw : itsChecker->limit(raw);
+      itsChecker.get() == 0 ? raw : itsChecker->limit(raw);
   }
 
   virtual shared_ptr<Value> get(const FieldContainer* obj) const
@@ -206,6 +179,50 @@ private:
 
   T C::* itsDataMember;
   shared_ptr<BoundsChecker<DerefT> > itsChecker;
+};
+
+/** ValueAttrib */
+template <class C, class V>
+class ValueAttrib : public FieldMemberPtr {
+public:
+
+  ValueAttrib(V C::* memptr) : itsValueMember(memptr) {}
+
+  virtual void set(FieldContainer* obj, const Value& new_val) const
+  {
+    C& cobj = dynamic_cast<C&>(*obj);
+
+    dereference(cobj, itsValueMember).assignFrom(new_val);
+  }
+
+  virtual shared_ptr<Value> get(const FieldContainer* obj) const
+  {
+    const C& cobj = dynamic_cast<const C&>(*obj);
+
+    return shared_ptr<Value>(dereference(cobj, itsValueMember).clone());
+  }
+
+  virtual void readValueFrom(FieldContainer* obj,
+                             IO::Reader* reader, const fstring& name)
+  {
+    C& cobj = dynamic_cast<C&>(*obj);
+
+    reader->readValueObj(name, dereference(cobj, itsValueMember));
+  }
+
+  virtual void writeValueTo(const FieldContainer* obj,
+                            IO::Writer* writer, const fstring& name) const
+  {
+    const C& cobj = dynamic_cast<const C&>(*obj);
+
+    writer->writeValueObj(name.c_str(), dereference(cobj, itsValueMember));
+  }
+
+private:
+  ValueAttrib& operator=(const ValueAttrib&);
+  ValueAttrib(const ValueAttrib&);
+
+  V C::* itsValueMember;
 };
 
 /** ReadWriteAttrib */
@@ -279,6 +296,8 @@ public:
 
   struct BoundsCheck {};
 
+  struct ValueType {};
+
   template <class C, class T>
   static shared_ptr<FieldMemberPtr> makeMemPtr(T C::* member_ptr)
   {
@@ -290,8 +309,8 @@ public:
                                                const T& min, const T& max)
   {
     return shared_ptr<FieldMemberPtr>
-		(new DataAttrib<C,T>(member_ptr,
-									BoundsChecker<Deref<T>::Type>::make(min, max)));
+      (new DataAttrib<C,T>(member_ptr,
+                           BoundsChecker<Deref<T>::Type>::make(min, max)));
   }
 
   template <class C, class T>
@@ -307,14 +326,12 @@ public:
     return ptr;
   }
 
-  struct OldTag {};
-
-  template <class T, class C, class F>
-  FieldInfo(const fstring& name, OldTag, F C::* field_ptr,
+  template <class T, class C, class V>
+  FieldInfo(const fstring& name, ValueType, V C::* value_ptr,
             const T& def, const T& min, const T& max, const T& res,
             bool new_group=false) :
     itsName(name),
-    itsMemberPtr(new CFieldMemberPtr<C,F>(field_ptr)),
+    itsMemberPtr(new ValueAttrib<C,V>(value_ptr)),
     itsDefaultValue(new TValue<T>(def)),
     itsMin(new TValue<T>(min)),
     itsMax(new TValue<T>(max)),
@@ -358,50 +375,6 @@ public:
   bool startsNewGroup() const { return itsStartsNewGroup; }
 
   FieldMemberPtr& memberPtr() const { return *itsMemberPtr; }
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * Field base class. Value's provide an interface between the untyped
- * world of Tcl, and the strongly typed world of C++. The abstract
- * Value interface provides operations to get() basic value types from
- * the object. Field's are intended to be members of C++ classes, and
- * expose value()/setValue() functions that take or return
- * Value's. C++ classes can inherit from FieldContainer to maintain a
- * list of FieldInfo's that act as pointer-to-members for the
- * contained Field's. This FieldMap is then sufficient for a template
- * to be able to generate all the necessary Tcl::TclCmd's to expose a
- * class's fields to Tcl. A C++ class may actually store Value
- * subclasses that provide efficient access to their native type to
- * clients (such as the owner of the Value) who know the real type of
- * the Value. For example, a simple template TValue stores an object
- * of a basic type, provides access to that object via get/setNative()
- * procedures, but also implements the Value interface. Any call to a
- * get() function of the wrong type will throw a run-time exception.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class Field {
-private:
-  Field& operator=(const Field& other);
-
-protected:
-  virtual void doSetValue(const Value& new_val) = 0;
-
-public:
-  Field();
-
-  Field(const Field&) {}
-
-  virtual ~Field();
-
-  virtual void readValueFrom(IO::Reader* reader, const fstring& name) = 0;
-  virtual void writeValueTo(IO::Writer* writer, const fstring& name) const = 0;
-
-  virtual shared_ptr<Value> value() const = 0;
-  void setValue(const Value& new_val);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -510,48 +483,6 @@ public:
   const FieldMap& fields() const { return *itsFieldMap; }
 };
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// out-of-line method implementations
-//
-///////////////////////////////////////////////////////////////////////
-
-template <class C, class T>
-Field& CFieldMemberPtr<C, T>::dereference(FieldContainer* obj) const
-{
-  C& p = dynamic_cast<C&>(*obj);
-  return p.*itsPtr;
-}
-
-template <class C, class T>
-void CFieldMemberPtr<C, T>::set(FieldContainer* obj,
-                                const Value& new_val) const
-{
-  dereference(obj).setValue(new_val);
-}
-
-template <class C, class T>
-shared_ptr<Value> CFieldMemberPtr<C, T>::get(const FieldContainer* obj) const
-{
-  return dereference(const_cast<FieldContainer*>(obj)).value();
-}
-
-template <class C, class T>
-void CFieldMemberPtr<C, T>::readValueFrom(FieldContainer* obj,
-                                          IO::Reader* reader,
-                                          const fstring& name)
-{
-  dereference(obj).readValueFrom(reader, name);
-}
-
-template <class C, class T>
-void CFieldMemberPtr<C, T>::writeValueTo(const FieldContainer* obj,
-                                         IO::Writer* writer,
-                                         const fstring& name) const
-{
-  dereference(const_cast<FieldContainer*>(obj)).writeValueTo(writer, name);
-}
 
 static const char vcid_fields_h[] = "$Header$";
 #endif // !FIELDS_H_DEFINED

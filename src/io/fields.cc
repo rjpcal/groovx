@@ -28,14 +28,6 @@
 
 FieldMemberPtr::~FieldMemberPtr() {}
 
-Field::Field() {}
-Field::~Field() {}
-
-void Field::setValue(const Value& new_val)
-{
-  doSetValue(new_val);
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 //
