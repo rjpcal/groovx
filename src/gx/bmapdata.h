@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Wed Mar 19 17:55:57 2003
+// written: Sat May  3 11:54:48 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -147,6 +147,9 @@ public:
 
   /// Get the current row order.
   RowOrder rowOrder() const;
+
+  /// Get a checksum of all the data bytes.
+  long int checkSum() const;
 
   //---------------------------------------------------------------------
   //
