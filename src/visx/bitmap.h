@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Sep 24 15:57:28 1999
+// written: Tue Oct 19 15:27:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,9 @@ public:
   virtual void deserialize(istream& is, IOFlag flag);
 
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   /////////////
   // actions //
