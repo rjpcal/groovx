@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Dec  6 23:07:22 1999
+// written: Tue Jan 11 17:17:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,10 +101,10 @@ DOTRACE("BitmapRep::deserialize");
 
   if (is.fail()) throw InputError(ioTag);
 
-  itsBytes.resize(1);
-  itsRenderer->notifyBytesChanged();
-
-  if ( !itsFilename.empty() ) {
+  if ( itsFilename.empty() ) {
+	 clearBytes();
+  }
+  else {
 	 loadPbmFile(itsFilename.c_str());
   }
 }
@@ -124,6 +124,13 @@ DOTRACE("BitmapRep::readFrom");
   reader->readValue("usingZoom", itsUsingZoom);
   reader->readValue("contrastFlip", itsContrastFlip);
   reader->readValue("verticalFlip", itsVerticalFlip);
+
+  if ( itsFilename.empty() ) {
+	 clearBytes();
+  }
+  else {
+	 loadPbmFile(itsFilename.c_str());
+  }
 }
 
 void BitmapRep::writeTo(Writer* writer) const {
@@ -451,6 +458,15 @@ DOTRACE("BitmapRep::setUsingZoom");
 	 itsZoomX = 1.0;
 	 itsZoomY = 1.0;
   }
+}
+
+void BitmapRep::clearBytes() {
+DOTRACE("BitmapRep::clearBytes");
+  itsBytes.resize(1);
+  itsHeight = 1;
+  itsWidth = 1;
+  itsBitsPerPixel = 1;
+  itsRenderer->notifyBytesChanged();
 }
 
 static const char vcid_bitmaprep_cc[] = "$Header$";
