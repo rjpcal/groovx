@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 30 11:41:47 2002
-// written: Wed Jan 30 11:50:56 2002
+// written: Wed Jan 30 15:07:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,9 +36,6 @@ private:
   ProcWrapper(const ProcWrapper&);
   ProcWrapper& operator=(const ProcWrapper&);
 
-  // Just run the code, but don't yet extract a result from the interpreter
-  void invoke(const fstring& args) const;
-
   Tcl::Interp itsInterp;
   const fstring itsName;
   fstring itsArgs;
@@ -59,6 +56,9 @@ public:
   /// Query whether the code chunk is a no-op (i.e. both args+body are empty)
   bool isNoop() const;
 
+  // Just run the code, but don't yet extract a result from the interpreter
+  void invoke(const fstring& args) const;
+
   template <class T>
   T call(const fstring& args) const
   {
@@ -72,6 +72,8 @@ public:
   const fstring& name() const { return itsName; }
   const fstring& args() const { return itsArgs; }
   const fstring& body() const { return itsBody; }
+
+  fstring fullSpec() const;
 };
 
 static const char vcid_tclprocwrapper_h[] = "$Header$";
