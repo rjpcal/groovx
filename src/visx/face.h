@@ -2,7 +2,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed May 26 10:42:11 1999
+// written: Thu Jun 17 20:22:10 1999
 // $Id$
 //
 // The Face class is derived from GrObj. Face provides the
@@ -40,7 +40,7 @@ public:
   // creators //
   //////////////
 
-  Face (float eh=0.6, float es=0.4, float nl=0.4, float mh=-0.8, int categ=0);
+  Face (double eh=0.6, double es=0.4, double nl=0.4, double mh=-0.8, int categ=0);
   Face (istream &is, IOFlag flag);
   virtual ~Face ();
 
@@ -58,24 +58,24 @@ public:
   // accessors //
   ///////////////
 
-  float getEyeHgt() const { return itsEyeHeight(); }
+  double getEyeHgt() const { return itsEyeHeight(); }
 
-  float getEyeDist() const { return itsEyeDistance(); }
+  double getEyeDist() const { return itsEyeDistance(); }
 
-  float getNoseLen() const { return itsNoseLength(); }
+  double getNoseLen() const { return itsNoseLength(); }
 
-  float getMouthHgt() const { return itsMouthHeight(); }
+  double getMouthHgt() const { return itsMouthHeight(); }
   
   virtual int getCategory() const { return itsCategory(); }
 
 protected:
-  virtual const float* getCtrlPnts() const;
+  virtual const double* getCtrlPnts() const;
   // Returns an array of Bezier control points for face outline
 
-  virtual float getEyeAspect() const;
+  virtual double getEyeAspect() const;
   // Returns the aspect ratio of eye outline.
   
-  virtual float getVertOffset() const;
+  virtual double getVertOffset() const;
   // Returns the amount of vertical offset applied to all features.
 
   //////////////////
@@ -83,10 +83,10 @@ protected:
   //////////////////
 
 public:
-  void setEyeHgt(float eh);
-  void setEyeDist(float ed);
-  void setNoseLen(float nl);
-  void setMouthHgt(float mh);
+  void setEyeHgt(double eh);
+  void setEyeDist(double ed);
+  void setNoseLen(double nl);
+  void setMouthHgt(double mh);
   
   virtual void setCategory(int val) { itsCategory() = val; }
 
@@ -106,10 +106,10 @@ private:
   void makeIoList(vector<IO *>& vec);
   void makeIoList(vector<const IO *>& vec) const;
 
-  IoWrapper<float> itsEyeDistance;
-  IoWrapper<float> itsNoseLength;
-  IoWrapper<float> itsMouthHeight;
-  IoWrapper<float> itsEyeHeight;
+  IoWrapper<double> itsEyeDistance;
+  IoWrapper<double> itsNoseLength;
+  IoWrapper<double> itsMouthHeight;
+  IoWrapper<double> itsEyeHeight;
 
   IoWrapper<int> itsCategory;	  // holds an arbitrary category specification
 };
@@ -120,22 +120,22 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-inline void Face::setNoseLen(float nl) {
+inline void Face::setNoseLen(double nl) {
   itsNoseLength() = abs(nl);
   sendStateChangeMsg();
 }
 
-inline void Face::setEyeDist(float ed) {
+inline void Face::setEyeDist(double ed) {
   itsEyeDistance() = abs(ed);
   sendStateChangeMsg();
 }
 
-inline void Face::setEyeHgt(float eh) {
+inline void Face::setEyeHgt(double eh) {
   itsEyeHeight() = eh;
   sendStateChangeMsg();
 }
 
-inline void Face::setMouthHgt(float mh) {
+inline void Face::setMouthHgt(double mh) {
   itsMouthHeight() = mh;
   sendStateChangeMsg();
 }

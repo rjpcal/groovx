@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Mon Jun  7 14:18:52 1999
+// written: Thu Jun 17 20:22:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 
 class FixPt : public GrObj {
 public:
-  FixPt (float len=0.1, int wid=1);
+  FixPt (double len=0.1, int wid=1);
   FixPt (istream &is, IOFlag flag);
   virtual ~FixPt ();
 
@@ -31,19 +31,19 @@ public:
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
 
-  void setLength(float len) { sendStateChangeMsg(); itsLength = len; }
+  void setLength(double len) { sendStateChangeMsg(); itsLength = len; }
   void setWidth(int wid) { sendStateChangeMsg(); itsWidth = wid; }
   virtual void setCategory(int) {}
   virtual int getCategory() const { return -1; }
 
-  float getLength() const { return itsLength; }
+  double getLength() const { return itsLength; }
   int getWidth() const { return itsWidth; }
 
 protected:
   virtual void grRecompile() const;
 
 private:
-  float itsLength;               // length of crosshairs in GL coordinates
+  double itsLength;               // length of crosshairs in GL coordinates
   int itsWidth;                  // width of crosshairs in pixels
 };
 

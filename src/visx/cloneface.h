@@ -3,7 +3,7 @@
 // cloneface.h
 // Rob Peters
 // created: Thu Apr 29 09:19:25 1999
-// written: Thu Jun  3 11:01:23 1999
+// written: Thu Jun 17 20:22:10 1999
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional
@@ -33,19 +33,19 @@ public:
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
 
-  virtual const float* getCtrlPnts() const;
+  virtual const double* getCtrlPnts() const;
   // Returns an array of Bezier control points for face outline
 
-  virtual float getEyeAspect() const;
+  virtual double getEyeAspect() const;
   // Returns the aspect ratio of eye outline.
   
-  virtual float getVertOffset() const;
+  virtual double getVertOffset() const;
   // Returns the amount of vertical offset applied to all features.
 
 private:
-  float itsCtrlPnts[24];		  // Bezier control points for face outline
-  float itsEyeAspect;			  // control aspect ratio of eye outline
-  float itsVertOffset;			  // amount of vertical offset of all features
+  double itsCtrlPnts[24];		  // Bezier control points for face outline
+  double itsEyeAspect;			  // control aspect ratio of eye outline
+  double itsVertOffset;			  // amount of vertical offset of all features
 };
 
 static const char vcid_cloneface_h[] = "$Header$";

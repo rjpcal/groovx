@@ -3,7 +3,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Thu May 27 20:22:52 1999
+// written: Thu Jun 17 20:22:04 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,6 @@
 #include "rect.h"
 #endif
 
-class Tlist;
-
 ///////////////////////////////////////////////////////////////////////
 //
 // ToglConfig class definition
@@ -25,32 +23,29 @@ class Tlist;
 
 class ToglConfig {
 public:
-  ToglConfig(const Tlist& tlist, float dist, float unit_angle);
+  ToglConfig(double dist, double unit_angle);
   virtual ~ToglConfig() {}
 
-  void setViewingDistIn(float in);
+  void setViewingDistIn(double in);
 
-  void setUnitAngle(float deg);
+  void setUnitAngle(double deg);
 
-  float getFixedScale() const;
-  void setFixedScale(float s);
+  double getFixedScale() const;
+  void setFixedScale(double s);
 
-  Rect<float> getMinRect() const;
-  void setMinRectLTRB(float L, float T, float R, float B);
+  Rect<double> getMinRect() const;
+  void setMinRectLTRB(double L, double T, double R, double B);
 
   bool usingFixedScale() const;
-
-  const Tlist& getTlist() const;
 
 private:
   ToglConfig(const ToglConfig&); // no copy constructor
   ToglConfig& operator=(const ToglConfig&); // no assignment operator
 
-  const Tlist& itsTlist;
-  float itsViewingDistance;     // inches
+  double itsViewingDistance;     // inches
   bool itsFixedScaleFlag;
-  float itsFixedScale;
-  Rect<float> itsMinRect;
+  double itsFixedScale;
+  Rect<double> itsMinRect;
 };
 
 static const char vcid_toglconfig_h[] = "$Header$";

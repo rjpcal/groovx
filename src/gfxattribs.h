@@ -2,7 +2,7 @@
 // gfxattribs.h
 // Rob Peters
 // created: Tue Mar  9 18:28:13 1999
-// written: Tue Mar 16 19:42:57 1999
+// written: Thu Jun 17 20:22:08 1999
 // $Id$
 //
 // This class containing only static members serves as a
@@ -31,14 +31,14 @@ public:
     return ((theFlags & flag) != 0);
   }
 
-  static float getScreenPpi() { return theScreenPpi; }
-  static void setScreenPpi(float f) { theScreenPpi = f; }
+  static double getScreenPpi() { return theScreenPpi; }
+  static void setScreenPpi(double f) { theScreenPpi = f; }
 
 private:
   GfxAttribs ();                // this class not to be instantiated
   
   static GfxFlag theFlags;
-  static float theScreenPpi;
+  static double theScreenPpi;
 };
 
 static const char vcid_gfxattribs_h[] = "$Header$";

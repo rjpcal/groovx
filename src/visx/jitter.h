@@ -3,7 +3,7 @@
 // jitter.h
 // Rob Peters
 // created: Wed Apr  7 13:46:40 1999
-// written: Thu May 27 19:54:06 1999
+// written: Thu Jun 17 20:22:07 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,9 +39,9 @@ public:
   // manipulators //
   //////////////////
 
-  void setXJitter(float xj) { itsXJitter = xj; }
-  void setYJitter(float yj) { itsYJitter = yj; }
-  void setRJitter(float rj) { itsRJitter = rj; }
+  void setXJitter(double xj) { itsXJitter = xj; }
+  void setYJitter(double yj) { itsYJitter = yj; }
+  void setRJitter(double rj) { itsRJitter = rj; }
 
   /////////////
   // actions //
@@ -64,13 +64,13 @@ private:
   // These specify the amount of jitter that will be effected by the
   // translate() or rotate() calls; the actual value used will be in
   // the range of the specified value +/- jitter value.
-  float itsXJitter;
-  float itsYJitter;
-  float itsRJitter;
+  double itsXJitter;
+  double itsYJitter;
+  double itsRJitter;
 
-  mutable float itsXShift;
-  mutable float itsYShift;
-  mutable float itsRShift;
+  mutable double itsXShift;
+  mutable double itsYShift;
+  mutable double itsRShift;
 };
 
 static const char vcid_jitter_h_[] = "$Header$";

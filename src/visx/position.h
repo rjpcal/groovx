@@ -2,7 +2,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Thu May 27 20:00:18 1999
+// written: Thu Jun 17 20:22:06 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -39,18 +39,18 @@ public:
   // accessors //
   ///////////////
 
-  void getRotate(float &a, float &x, float &y, float &z) const;
+  void getRotate(double &a, double &x, double &y, double &z) const;
   // Return the vector (x, y, z) specifying the rotational axis
   // through the reference parameters x, y, and z, and return the
   // angle of rotation (in degrees) about that axis through the
   // reference parameter a.
 
-  void getScale(float &x, float &y, float &z) const;
+  void getScale(double &x, double &y, double &z) const;
   // Return the scaling vector (x, y, z) through the reference
   // parameters x, y, and z. A negative value indicates a reflection
   // about the axis.
 
-  void getTranslate(float &x, float &y, float &z) const;
+  void getTranslate(double &x, double &y, double &z) const;
   // Return the translation vector (x, y, z) through the reference
   // parameters x, y, and z.
 
@@ -58,18 +58,18 @@ public:
   // manipulators //
   //////////////////
 
-  void setAngle(float a);
+  void setAngle(double a);
   // Set the angle of rotation to 'a' degrees.
 
-  void setRotate(float a, float x, float y, float z);
+  void setRotate(double a, double x, double y, double z);
   // Set the angle of rotation to 'a' degrees, and set the axis of
   // rotation to the vector (x, y, z).
 
-  void setScale(float x, float y, float z);
+  void setScale(double x, double y, double z);
   // Set the scaling vector to (x, y, z), where negative values
   // indicate a reflection about that axis.
 
-  void setTranslate(float x, float y, float z);
+  void setTranslate(double x, double y, double z);
   // Set the translation vector to (x, y, z).
 
   /////////////
