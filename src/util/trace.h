@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu May 10 12:04:35 2001
+// written: Fri May 11 15:20:50 2001
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -83,12 +83,7 @@ namespace Util {
 
 class Util::Prof {
 public:
-  Prof(const char* s) : funcName(s), callCount(0), totalTime()
-	 {
-		totalTime.tv_sec = 0;
-		totalTime.tv_usec = 0;
-	 }
-
+  Prof(const char* s);
   ~Prof();
 
   int count() const { return callCount; }
@@ -117,6 +112,12 @@ public:
 		return (double(totalTime.tv_sec)*1000000 + totalTime.tv_usec)
 		  / callCount; 
 	 }
+
+  void printProfData(ostream& os) const;
+
+  static void resetAllProfData();
+
+  static void printAllProfData(ostream& os);
 
 private:
   Prof(const Prof&);
