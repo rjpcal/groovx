@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Fri May 12 14:25:26 2000
+// written: Wed May 17 13:59:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,10 @@
 ///////////////////////////////////////////////////////////////////////
 
 class TimingHdlr::Impl {
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
 public:
   Impl() :
 	 itsImmediateEvents(),
