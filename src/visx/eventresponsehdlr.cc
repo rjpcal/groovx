@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu Sep 28 18:55:40 2000
+// written: Fri Sep 29 08:40:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -456,12 +456,8 @@ DOTRACE("EventResponseHdlr::Impl::legacySrlz");
 
 	 oldLegacySrlz(writer);
 
-	 ostream& os = lwriter->output();
-
-	 os << itsEventSequence << endl;
-	 os << itsBindingSubstitution << endl;
-
-	 lwriter->throwIfError(ioTag.c_str());
+	 writer->writeValue("eventSequence", itsEventSequence);
+	 writer->writeValue("bindingSubstitution", itsBindingSubstitution);
   }
 }
 
@@ -472,12 +468,8 @@ DOTRACE("EventResponseHdlr::Impl::legacyDesrlz");
 
 	 oldLegacyDesrlz(reader);
 
-	 istream& is = lreader->input();
-
-	 getline(is, itsEventSequence, '\n');       DebugEvalNL(itsEventSequence);
-	 getline(is, itsBindingSubstitution, '\n'); DebugEvalNL(itsBindingSubstitution);
-
-	 lreader->throwIfError(ioTag.c_str());
+	 reader->readValue("eventSequence", itsEventSequence);
+	 reader->readValue("bindingSubstitution", itsBindingSubstitution);
   }
 }
 
@@ -486,12 +478,13 @@ DOTRACE("EventResponseHdlr::Impl::oldLegacySrlz");
 
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
-	 ostream& os = lwriter->output();
-	 os << itsInputResponseMap << endl;
-	 os << itsFeedbackMap << endl;
-	 os << itsUseFeedback << endl;
+	 lwriter->setStringMode(IO::GETLINE_NEWLINE);
 
-	 lwriter->throwIfError(ioTag.c_str());
+	 writer->writeValue("inputResponseMap", itsInputResponseMap);
+	 writer->writeValue("feedbackMap", itsFeedbackMap);
+
+	 lwriter->setFieldSeparator('\n');
+	 writer->writeValue("useFeedback", itsUseFeedback);
   }
 }
 
@@ -499,38 +492,26 @@ void EventResponseHdlr::Impl::oldLegacyDesrlz(IO::Reader* reader) {
 DOTRACE("EventResponseHdlr::Impl::oldLegacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-	 istream& is = lreader->input();
+	 lreader->setStringMode(IO::GETLINE_NEWLINE);
+	 reader->readValue("inputResponseMap", itsInputResponseMap);
+	 reader->readValue("feedbackMap", itsFeedbackMap);
+	 reader->readValue("useFeedback", itsUseFeedback);
 
-	 // XXX This is some sort of strange platform dependency..if the next
-	 // character in the stream is a space (the separator following the
-	 // typename), then we must pull it off the stream; however, in some
-	 // cases (using aCC/hp9000s700), the space is already gone by the
-	 // time we get here.
-	 DebugEvalNL(is.peek());
-	 if ( is.peek() == ' ' ) {
-		is.get();
-	 }
-
-	 getline(is, itsInputResponseMap, '\n');
 	 itsRegexpsAreDirty = true;
-
-	 DebugEvalNL(is.peek());
-	 getline(is, itsFeedbackMap, '\n');
 	 itsFeedbacksAreDirty = true;
 
-	 int val;
-	 is >> val;
-	 itsUseFeedback = bool(val);
+#ifdef MIPSPRO_COMPILER
+	 // The next character after itsUseFeedback had better be a
+	 // newline, and we need to remove it from the stream. ... OK, now
+	 // I've commented out the code that does this, since I believe
+	 // it's no longer necessary.
 
-	 // The next character after itsUseFeedback had better be a newline,
-	 // and we need to remove it from the stream.
-	 int cc = is.get();
-	 if ( cc != '\n' ) {
-		DebugEvalNL(cc);
-		throw IO::LogicError(ioTag.c_str());
-	 }
-
-	 lreader->throwIfError(ioTag.c_str());
+//    	 int cc = lreader->getChar();
+//    	 if ( cc != '\n' ) {
+//    		DebugEvalNL(cc);
+//    		throw IO::LogicError(ioTag.c_str());
+//    	 }
+#endif
   }
 }
 
