@@ -3,7 +3,7 @@
 // listpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec 15 17:27:51 1999
-// written: Thu Mar 30 08:29:19 2000
+// written: Wed May 17 14:03:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ namespace Tcl {
 class GetValidIdsCmd : public TclItemCmd<IoPtrList> {
 public:
   GetValidIdsCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<IoPtrList>(pkg, cmd_name, NULL, 1, 1) {}
+	 TclItemCmd<IoPtrList>(pkg, cmd_name, (char*)0, 1, 1) {}
 protected:
   virtual void invoke() {
 	 IoPtrList* theList = TclItemCmd<IoPtrList>::getItem();
