@@ -3,7 +3,7 @@
 // bezier.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 21 09:51:40 1999
-// written: Fri Mar 10 00:24:27 2000
+// written: Sat Mar 18 13:17:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,15 +11,28 @@
 #ifndef BEZIER_H_DEFINED
 #define BEZIER_H_DEFINED
 
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
-#endif
-
 #ifndef CMATH_DEFINED
 #include <cmath>
 #define CMATH_DEFINED
 #endif
+
+#ifndef ARRAYS_H_DEFINED
+#include "util/arrays.h"
+#endif
+
+#ifndef LISTS_H_DEFINED
+#include "util/lists.h"
+#endif
+
+namespace {
+  template <class T>
+  inline T max(const T& a, const T& b)
+	 { return (a > b) ? a : b; }
+
+  template <class T>
+  inline T min(const T& a, const T& b)
+	 { return (a < b) ? a : b; }
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -27,24 +40,21 @@
  * Bezier is a general class for evaluating Bezier curves, their
  * derivatives, and their minimum and maximum values.
  *
- * @short General class for evaluating Bezier curves.
  **/
 ///////////////////////////////////////////////////////////////////////
 
 class Bezier {
 private:
-  vector<double> R;				  // control points
+  dynamic_block<double> R;		  // control points
 
   // coefficients of the Bezier polynomial
   // p(u) = c0[0] + c0[1]*u + c0[2]*u^2 + c0[3]*u^3
-  vector<double> c0;
+  dynamic_block<double> c0;
 
   // coefficients of the derivative polynomial
   // p'(u) = c1[0] + c1[1]*u + c1[2]*u^2
-  vector<double> c1;
-  
-  vector<double> extrema;
-  
+  dynamic_block<double> c1;
+
   double uMin_;	 // value of u in [0,1] which gives the minimum
   double uMax_;  // value of u in [0,1] which gives the maximum
   double valMin_;
@@ -75,10 +85,10 @@ public:
       will be examined when searching for the extrema. If extrema_res
       is < 0 (the default value), a default number of subdivisions
       will be used. */
-  Bezier(const vector<double>& RR, int extrema_res=-1);
+  Bezier(const dynamic_block<double>& RR, int extrema_res=-1);
 
   /// Reset the control points,
-  void setCtrlPnts(const vector<double>& RR, int extrema_res=-1);
+  void setCtrlPnts(const dynamic_block<double>& RR, int extrema_res=-1);
 
   
   /// Evaluate the Bezier curve for a given u in [0, 1]
@@ -101,12 +111,10 @@ public:
   double valMax() { return valMax_; }
 };
 
-Bezier::Bezier(const vector<double>& RR, int extrema_res) :
-  R(RR),
-  c0(RR.size()),
-  c1(RR.size()-1),
-  extrema(RR.size()), // there are (RR.size()-2) roots of the derivative,
-							 // plus two for the range endpoints (0.0, 1.0)
+Bezier::Bezier(const dynamic_block<double>& RR, int extrema_res) :
+  R(),
+  c0(),
+  c1(),
   uMin_(0.0),
   uMax_(0.0),
   valMin_(0.0),
@@ -115,8 +123,10 @@ Bezier::Bezier(const vector<double>& RR, int extrema_res) :
   setCtrlPnts(RR, extrema_res);
 }
 
-void Bezier::setCtrlPnts(const vector<double>& RR, int extrema_res) {
+void Bezier::setCtrlPnts(const dynamic_block<double>& RR, int extrema_res) {
   R = RR;
+  c0.resize(RR.size());
+  c1.resize(RR.size()-1);
 
   int n = RR.size()-1;			  // degree of polynomial = num_points - 1
 
@@ -143,8 +153,9 @@ void Bezier::setCtrlPnts(const vector<double>& RR, int extrema_res) {
 
   if (extrema_res <= 0) { extrema_res = 4*(RR.size()); }
 
-  extrema.clear();
-  extrema.push_back(0.0);
+  list_stack<double> extrema;
+
+  extrema.push_front(0.0);
 
   double prev, current = evalDeriv(0.0);
   for (int e = 1; e <= extrema_res; ++e) {
@@ -153,26 +164,31 @@ void Bezier::setCtrlPnts(const vector<double>& RR, int extrema_res) {
 	 // See if the derivative has crossed zero by checking if the signs
 	 // of current and prev are different
 	 if ( (prev > 0.0) != (current > 0.0) ) {
-		extrema.push_back((current+prev)/2.0);
+		extrema.push_front((current+prev)/2.0);
 	 }
   }
   
-  extrema.push_back(1.0);
+  extrema.push_front(1.0);
 
   uMin_ = uMax_ = 0.0;
   valMin_ = valMax_ = eval(0.0);
 
-  {for (size_t i = 0; i < extrema.size(); ++i) {
-	 double current = eval(extrema[i]);
-	 if (current < valMin_) {
-		valMin_ = current;
-		uMin_ = extrema[i];
+  for (list_stack<double>::iterator
+			ii = extrema.begin(),
+			end = extrema.end();
+		 ii != end;
+		 ++ii)
+	 {
+		double current = eval(*ii);
+		if (current < valMin_) {
+		  valMin_ = current;
+		  uMin_ = *ii;
+		}
+		if (current > valMax_) {
+		  valMax_ = current;
+		  uMax_ = *ii;
+		}
 	 }
-	 if (current > valMax_) {
-		valMax_ = current;
-		uMax_ = extrema[i];
-	 }
-  }}
 }
 
 double Bezier::eval(double u) {
@@ -204,15 +220,15 @@ double Bezier::evalDeriv(double u) {
 
 class Bezier4 {
 private:
-  vector<double> R;				  // control points
+  fixed_block<double> R;		  // control points
 
   // coefficients of the Bezier polynomial
   // p(u) = c0[0] + c0[1]*u + c0[2]*u^2 + c0[3]*u^3
-  vector<double> c0;
+  fixed_block<double> c0;
 
   // coefficients of the derivative polynomial
   // p'(u) = c1[0] + c1[1]*u + c1[2]*u^2
-  vector<double> c1;
+  fixed_block<double> c1;
 
   double b2_4ac;
 
