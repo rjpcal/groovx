@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Fri Jan 18 16:07:07 2002
+// written: Wed Apr 17 16:15:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "gfx/gxcolor.h"
 #include "gfx/gxdrawstyle.h"
+#include "gfx/gxline.h"
 #include "gfx/gxnode.h"
 #include "gfx/gxseparator.h"
 #include "gfx/pscanvas.h"
@@ -76,6 +77,7 @@ DOTRACE("Gx_Init");
   pkg1->defVec("deepChildren", "item_id(s)", &GxNode::deepChildren);
   pkg1->def( "savePS", "item_id filename", &GxTcl::savePS );
 
+  int status = pkg1->initStatus();
 
   Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "GxSeparator", "$Revision$");
   Tcl::defGenericObjCmds<GxSeparator>(pkg2);
@@ -91,15 +93,27 @@ DOTRACE("Gx_Init");
   pkg2->def("removeChild","sep_id(s) child_id(s)", &GxSeparator::removeChild);
   Util::ObjFactory::theOne().registerCreatorFunc(&GxSeparator::make);
 
+  status = pkg2->combineStatus(status);
+
   Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "GxColor", "$Revision$");
   Tcl::defFieldContainer<GxColor>(pkg3);
   Tcl::defCreator<GxColor>(pkg3);
+
+  status = pkg3->combineStatus(status);
 
   Tcl::Pkg* pkg4 = new Tcl::Pkg(interp, "GxDrawStyle", "$Revision$");
   Tcl::defFieldContainer<GxDrawStyle>(pkg4);
   Tcl::defCreator<GxDrawStyle>(pkg4);
 
-  return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3, pkg4);
+  status = pkg4->combineStatus(status);
+
+  Tcl::Pkg* pkg5 = new Tcl::Pkg(interp, "GxLine", "$Revision$");
+  Tcl::defFieldContainer<GxLine>(pkg5);
+  Tcl::defCreator<GxLine>(pkg5);
+
+  status = pkg5->combineStatus(status);
+
+  return status;
 }
 
 static const char vcid_gxtcl_cc[] = "$Header$";
