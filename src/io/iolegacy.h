@@ -3,7 +3,7 @@
 // iolegacy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 26 18:47:31 2000
-// written: Thu Sep 28 19:22:30 2000
+// written: Thu Sep 28 19:50:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,8 @@ namespace IO {
 
   class LRFlagJanitor;
   class LWFlagJanitor;
+
+  enum LegacyStringMode { GETLINE_NEWLINE, GETLINE_TAB, CHAR_COUNT };
 }
 
 class IO::LegacyReader : public IO::Reader {
@@ -49,6 +51,12 @@ public:
   void throwIfError(const char* type);
 
   int eatWhitespace();
+
+  int peek();
+
+  int getChar();
+
+  void setStringMode(LegacyStringMode mode);
 
   virtual IO::VersionId readSerialVersionId();
 
@@ -68,6 +76,7 @@ public:
 private:
   STD_IO::istream& itsInStream;
   IO::IOFlag itsFlags;
+  LegacyStringMode itsStringMode;
 };
 
 class IO::LRFlagJanitor {
@@ -107,6 +116,8 @@ public:
 
   void insertChar(char c);
 
+  void setStringMode(LegacyStringMode mode);
+
   virtual void writeChar(const char* name, char val);
   virtual void writeInt(const char* name, int val);
   virtual void writeBool(const char* name, bool val);
@@ -124,6 +135,7 @@ private:
   STD_IO::ostream& itsOutStream;
   IO::IOFlag itsFlags;
   char itsFieldSeparator[8];
+  LegacyStringMode itsStringMode;
 };
 
 
