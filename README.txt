@@ -56,6 +56,11 @@
    that use the grsh software.
    
      * itcl and itk (itcl3.2.1_src.tgz)
+
+       # note that the itcl+itk configure script expects to find the
+         tcl+tk sources sitting in the location where you built
+         them... so, don't remove the tcl+tk sources until after you
+         build and install itcl+itk
    
        cd /path/to/source
        tar xfz itcl3.2.1_src.tgz
