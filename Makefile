@@ -24,10 +24,12 @@ CC = aCC
 #
 #-------------------------------------------------------------------------
 
-INCLUDE_DIRS = -I/cit/rjpeters/include/
+HOME_DIR = /cit/rjpeters
+
+INCLUDE_DIRS = -I$(HOME)/include
 
 LIB_DIRS =  -L/opt/graphics/OpenGL/lib \
-	-L/cit/rjpeters/lib \
+	-L$(HOME)/lib \
 	-L/opt/audio/lib
 
 LIBRARIES = \
