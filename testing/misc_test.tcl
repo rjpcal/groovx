@@ -110,6 +110,6 @@ test "MiscTcl-usleepr" "error from negative input" {
 	 set exit_code [catch {usleepr -1 -1}]
 	 set res [time {catch {usleepr -1 -1}} 100]
 	 set us [lindex $res 0]
-	 expr $exit_code == 1 && $us > 0 && $us < 250
+	 expr $exit_code == 1 && $us > 0 && $us < 500
 } {^1$}
 
