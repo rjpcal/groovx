@@ -659,24 +659,24 @@ DOTRACE("Gfx::PSCanvas::~PSCanvas");
   delete rep;
 }
 
-vec3i Gfx::PSCanvas::screenFromWorld(
-  const vec3d& /*world_pos*/
+vec2i Gfx::PSCanvas::screenFromWorld(
+  const vec2d& /*world_pos*/
   ) const
 {
-DOTRACE("Gfx::PSCanvas::screenFromWorld(vec3d)");
+DOTRACE("Gfx::PSCanvas::screenFromWorld(vec2d)");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
-  return vec3i();
+  return vec2i();
 }
 
-vec3d Gfx::PSCanvas::worldFromScreen(
-  const vec3i& /*screen_pos*/
+vec2d Gfx::PSCanvas::worldFromScreen(
+  const vec2i& /*screen_pos*/
   ) const
 {
-DOTRACE("Gfx::PSCanvas::worldFromScreen(vec3i)");
+DOTRACE("Gfx::PSCanvas::worldFromScreen(vec2i)");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
-  return vec3d();
+  return vec2d();
 }
 
 

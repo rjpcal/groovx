@@ -88,16 +88,10 @@ public:
 
 
   /// Convert a point from world coordinates to screen coordinates.
-  geom::vec2<int> screenFromWorld(const geom::vec2<double>& world_pos) const;
+  virtual geom::vec2<int> screenFromWorld(const geom::vec2<double>& world_pos) const = 0;
 
   /// Convert a point from screen coordinates to world coordinates.
-  geom::vec2<double> worldFromScreen(const geom::vec2<int>& screen_pos) const;
-
-  /// Convert a point from world coordinates to screen coordinates.
-  virtual geom::vec3<int> screenFromWorld(const geom::vec3<double>& world_pos) const = 0;
-
-  /// Convert a point from screen coordinates to world coordinates.
-  virtual geom::vec3<double> worldFromScreen(const geom::vec3<int>& screen_pos) const = 0;
+  virtual geom::vec2<double> worldFromScreen(const geom::vec2<int>& screen_pos) const = 0;
 
   /// Convert a rect from screen coordinates to world coordinates.
   virtual geom::rect<int> screenFromWorld(const geom::rect<double>& world_pos) const = 0;

@@ -47,8 +47,8 @@ public:
 
   virtual ~PSCanvas() throw();
 
-  virtual geom::vec3<int> screenFromWorld(const geom::vec3<double>& world_pos) const;
-  virtual geom::vec3<double> worldFromScreen(const geom::vec3<int>& screen_pos) const;
+  virtual geom::vec2<int> screenFromWorld(const geom::vec2<double>& world_pos) const;
+  virtual geom::vec2<double> worldFromScreen(const geom::vec2<int>& screen_pos) const;
 
   virtual geom::rect<int> screenFromWorld(const geom::rect<double>& world_pos) const;
   virtual geom::rect<double> worldFromScreen(const geom::rect<int>& screen_pos) const;
