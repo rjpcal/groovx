@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Mar 15 20:07:05 2000
+// written: Wed Mar 15 20:09:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,6 @@
 #include "util/strings.h"
 
 #include <tcl.h>
-#include <string>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -70,21 +69,18 @@ void Tcl::TclItemPkg::instantiate() {
   declareGetter_(this, 0, (Getter<bool>*) 0, 0);
   declareGetter_(this, 0, (Getter<double>*) 0, 0);
   declareGetter_(this, 0, (Getter<const char*>*) 0, 0);
-  declareGetter_(this, 0, (Getter<const string&>*) 0, 0);
   declareGetter_(this, 0, (Getter<const fixed_string&>*) 0, 0);
 
   declareSetter_(this, 0, (Setter<int>*) 0, 0);
   declareSetter_(this, 0, (Setter<bool>*) 0, 0);
   declareSetter_(this, 0, (Setter<double>*) 0, 0);
   declareSetter_(this, 0, (Setter<const char*>*) 0, 0);
-  declareSetter_(this, 0, (Setter<const string&>*) 0, 0);
   declareSetter_(this, 0, (Setter<const fixed_string&>*) 0, 0);
 
   declareAttrib_(this, 0, (Attrib<int>*) 0, 0);
   declareAttrib_(this, 0, (Attrib<bool>*) 0, 0);
   declareAttrib_(this, 0, (Attrib<double>*) 0, 0);
   declareAttrib_(this, 0, (Attrib<const char*>*) 0, 0);
-  declareAttrib_(this, 0, (Attrib<const string&>*) 0, 0);
   declareAttrib_(this, 0, (Attrib<const fixed_string&>*) 0, 0);
 }
 
