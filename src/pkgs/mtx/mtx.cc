@@ -32,7 +32,6 @@
 
 #include "mtx.h"
 
-#include "util/arrays.h"
 #include "util/error.h"
 #include "util/strings.h"
 
@@ -43,6 +42,7 @@
 #include <matrix.h>
 #endif
 #include <numeric>
+#include <vector>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -221,33 +221,35 @@ namespace
 {
   struct ValIndex
   {
-    static int counter;
     double val;
-    int index;
+    unsigned int index;
 
-    ValIndex(double v=0.0) : val(v), index(counter++) {}
+    ValIndex(double v=0.0) : val(v) {}
 
     bool operator<(const ValIndex& v2) const { return val < v2.val; }
   };
-
-  int ValIndex::counter = 0;
 }
 
 Mtx Slice::getSortOrder() const
 {
 DOTRACE("Slice::getSortOrder");
 
-  ValIndex::counter = 0;
+  std::vector<ValIndex> buf(this->begin(), this->end());
 
-  dynamic_block<ValIndex> buf;
-  buf.assign(begin(), end());
+  for (unsigned int i = 0; i < buf.size(); ++i)
+    {
+      buf[i].index = i;
+    }
 
   std::sort(buf.begin(), buf.end());
 
   Mtx index(1,nelems());
 
   for (int i = 0; i < nelems(); ++i)
-    index.at(0,i) = buf[i].index;
+    {
+      Assert(buf[i].index < static_cast<unsigned int>(nelems()));
+      index.at(0,i) = buf[i].index;
+    }
 
   return index;
 }
