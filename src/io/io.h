@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed Sep 27 14:45:14 2000
+// written: Wed Sep 27 15:15:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -122,8 +122,6 @@ public:
   static void readTypename(STD_IO::istream& theStream,
 									const char* correctNames,
 									bool doCheck = true);
-
-protected:
 
   /** The old-style function to send an object to a stream. Each
       subclass must implement its own formatting. \c writeTo() should
