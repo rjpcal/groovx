@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Tue Oct 24 22:49:29 2000
+// written: Tue Oct 31 11:42:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,8 +19,7 @@
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
-#include <cstring>
-#include <vector>
+#include "util/minivec.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -60,10 +59,10 @@ public:
 	 itsTrial(0)
 	 {}
 
-  std::vector<TrialEvent*> itsImmediateEvents;
-  std::vector<TrialEvent*> itsStartEvents;
-  std::vector<TrialEvent*> itsResponseEvents;
-  std::vector<TrialEvent*> itsAbortEvents;
+  minivec<TrialEvent*> itsImmediateEvents;
+  minivec<TrialEvent*> itsStartEvents;
+  minivec<TrialEvent*> itsResponseEvents;
+  minivec<TrialEvent*> itsAbortEvents;
 
   mutable StopWatch itsTimer;
 
@@ -72,11 +71,11 @@ private:
   Util::ErrorHandler* itsErrorHandler;
   TrialBase* itsTrial;
 
-  void scheduleAll(std::vector<TrialEvent*>& events);
-  void cancelAll(std::vector<TrialEvent*>& events);
+  void scheduleAll(minivec<TrialEvent*>& events);
+  void cancelAll(minivec<TrialEvent*>& events);
 
 public:
-  void deleteAll(std::vector<TrialEvent*>& events);
+  void deleteAll(minivec<TrialEvent*>& events);
 
   // Delegand functions
   void thHaltExpt();
@@ -259,7 +258,7 @@ DOTRACE("TimingHdlr::addEventByName");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void TimingHdlr::Impl::scheduleAll(std::vector<TrialEvent*>& events) {
+void TimingHdlr::Impl::scheduleAll(minivec<TrialEvent*>& events) {
 DOTRACE("TimingHdlr::Impl::scheduleAll");
   Precondition(itsTrial != 0);
   Precondition(itsWidget != 0);
@@ -270,14 +269,14 @@ DOTRACE("TimingHdlr::Impl::scheduleAll");
   }
 }
 
-void TimingHdlr::Impl::cancelAll(std::vector<TrialEvent*>& events) {
+void TimingHdlr::Impl::cancelAll(minivec<TrialEvent*>& events) {
 DOTRACE("TimingHdlr::Impl::cancelAll");
   for (size_t i = 0; i < events.size(); ++i) {
 	 events[i]->cancel();
   }
 }
 
-void TimingHdlr::Impl::deleteAll(std::vector<TrialEvent*>& events) {
+void TimingHdlr::Impl::deleteAll(minivec<TrialEvent*>& events) {
 DOTRACE("TimingHdlr::Impl::deleteAll");
   for (size_t i = 0; i < events.size(); ++i) {
 	 delete events[i];

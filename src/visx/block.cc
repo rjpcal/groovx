@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Mon Oct 30 11:22:11 2000
+// written: Tue Oct 31 11:38:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,11 +24,10 @@
 #include "io/writeutils.h"
 
 #include "util/rand.h"
-#include "util/strings.h"
+#include "util/minivec.h"
 
 #include <algorithm>
 #include <strstream.h>
-#include <vector>
 
 #define DYNAMIC_TRACE_EXPR Block::tracer.status()
 #include "util/trace.h"
@@ -44,8 +43,6 @@ Util::Tracer Block::tracer;
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string_literal ioTag("Block");
-
   IO::VersionId BLOCK_SERIAL_VERSION_ID = 1;
 }
 
@@ -71,7 +68,9 @@ public:
 	 {}
 
   // Ordered sequence of indexes into the Tlist
-  std::vector<IdItem<TrialBase> > itsTrialSequence;
+//   typedef std::vector<IdItem<TrialBase> > TrialSeqType;
+  typedef minivec<IdItem<TrialBase> > TrialSeqType;
+  TrialSeqType itsTrialSequence;
 
   int itsRandSeed;				  // Random seed used to create itsTrialSequence
   int itsCurTrialSeqIdx;		  // Index of the current trial
@@ -188,7 +187,7 @@ DOTRACE("Block::readFrom");
   reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
   if (itsImpl->itsCurTrialSeqIdx < 0 ||
 		size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
-	 throw IO::ValueError(ioTag.c_str());
+	 throw IO::ValueError("Block");
   }
 
   reader->readValue("verbose", itsImpl->itsVerbose);

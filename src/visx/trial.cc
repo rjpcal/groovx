@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Oct 30 17:35:06 2000
+// written: Tue Oct 31 11:42:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,10 +30,9 @@
 #include "gwt/widget.h"
 
 #include "util/errorhandler.h"
-#include "util/strings.h"
+#include "util/minivec.h"
 
 #include <strstream.h>
-#include <vector>
 
 #define DYNAMIC_TRACE_EXPR Trial::tracer.status()
 #include "util/trace.h"
@@ -53,7 +52,7 @@ Util::Tracer Trial::tracer;
 namespace {
   const IO::VersionId TRIAL_SERIAL_VERSION_ID = 2;
 
-  const string_literal ioTag("Trial");
+  const char* ioTag = "Trial";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -86,10 +85,10 @@ public:
 private:
   int itsCorrectResponse;
 
-  std::vector<IdItem<GrObj> > itsGrObjs;
-  std::vector<IdItem<Position> > itsPositions;
+  minivec<IdItem<GrObj> > itsGrObjs;
+  minivec<IdItem<Position> > itsPositions;
 
-  std::vector<Response> itsResponses;
+  minivec<Response> itsResponses;
   int itsType;
   MaybeIdItem<ResponseHandler> itsRh;
   MaybeIdItem<TimingHdlr> itsTh;
@@ -288,7 +287,7 @@ DOTRACE("Trial::Impl::readFromObjidsOnly");
   if (offset == 0) {
     while (is >> objid) {
 		if ( objid < 0) {
-		  throw IO::ValueError(ioTag.c_str());
+		  throw IO::ValueError(ioTag);
 		}
       add(objid, posid);
       ++posid;
@@ -297,7 +296,7 @@ DOTRACE("Trial::Impl::readFromObjidsOnly");
   else { // offset != 0
     while (is >> objid) {
 		if ( (objid+offset) < 0 ) {
-		  throw IO::ValueError(ioTag.c_str());
+		  throw IO::ValueError(ioTag);
 		}
       add(objid+offset, posid);
       ++posid;
@@ -308,7 +307,7 @@ DOTRACE("Trial::Impl::readFromObjidsOnly");
   // istrstream's seem to always fail at eof, even if nothing went
   // wrong, we must only throw the exception if we have fail'ed with
   // out reaching eof. This should catch most mistakes.
-  if (is.fail() && !is.eof()) throw IO::InputError(ioTag.c_str());
+  if (is.fail() && !is.eof()) throw IO::InputError(ioTag);
 
   // return the number of objid's read
   return posid;
@@ -385,7 +384,7 @@ DOTRACE("Trial::Impl::numResponses");
 double Trial::Impl::avgResponse() const {
 DOTRACE("Trial::Impl::avgResponse");
   int sum = 0;
-  for (std::vector<Response>::const_iterator ii = itsResponses.begin();
+  for (minivec<Response>::const_iterator ii = itsResponses.begin();
 		 ii != itsResponses.end();
 		 ++ii) {
 	 sum += ii->val();
@@ -396,7 +395,7 @@ DOTRACE("Trial::Impl::avgResponse");
 double Trial::Impl::avgRespTime() const {
 DOTRACE("Trial::Impl::avgRespTime");
   int sum = 0;
-  for (std::vector<Response>::const_iterator ii = itsResponses.begin();
+  for (minivec<Response>::const_iterator ii = itsResponses.begin();
 		 ii != itsResponses.end();
 		 ++ii) {
 	 sum += ii->msec();

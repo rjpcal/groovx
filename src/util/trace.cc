@@ -3,7 +3,7 @@
 // trace.cc
 // Rob Peters 
 // created: Jan-99
-// written: Tue Oct 10 08:05:47 2000
+// written: Tue Oct 31 11:38:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,10 +14,11 @@
 #define LOCAL_PROF
 #include "util/trace.h"
 
+#include "util/minivec.h"
+
 #include <fstream.h>
 #include <iostream.h>
 #include <iomanip.h>
-#include <vector>
 
 int MAX_TRACE_LEVEL = 6;
 
@@ -46,7 +47,7 @@ namespace {
 	 }
   }
 
-  std::vector<Util::Prof*> callStack;
+  minivec<Util::Prof*> callStack;
 }
 
 Util::Prof::~Prof() {
