@@ -3,7 +3,7 @@
 // writeutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:18:36 1999
-// written: Thu Mar 30 12:13:46 2000
+// written: Thu Sep 28 17:54:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,11 +23,13 @@ public:
   /** A generic interface for handling containers, sequences, etc. of
       value types. */
   template <class Itr>
-  static void writeValueSeq(IO::Writer* writer,
-									 const char* name, Itr begin, Itr end)
+  static void writeValueSeq(IO::Writer* writer, const char* name,
+									 Itr begin, Itr end, bool skip_count=false)
 	 {
-		writer->writeValue(makeSeqCountString(name),
-								 computeCount(begin, end));
+		if (!skip_count) {
+		  writer->writeValue(makeSeqCountString(name),
+									computeCount(begin, end));
+		}
 
 		int count = 0;
 	 
@@ -41,11 +43,13 @@ public:
   /** A generic interface for handling containers, sequences, etc. of
 		objects of Value subtypes */
   template <class Itr>
-  static void writeValueObjSeq(IO::Writer* writer,
-										 const char* name, Itr begin, Itr end)
+  static void writeValueObjSeq(IO::Writer* writer, const char* name,
+										 Itr begin, Itr end, bool skip_count=false)
 	 {
-		writer->writeValue(makeSeqCountString(name),
-								 computeCount(begin, end));
+		if (!skip_count) {
+		  writer->writeValue(makeSeqCountString(name),
+									computeCount(begin, end));
+		}
 
 		int count = 0;
 	 
@@ -59,11 +63,13 @@ public:
 
   /// A generic interface for handling containers, sequences, etc. of objects
   template <class Itr>
-  static void writeObjectSeq(IO::Writer* writer,
-									  const char* name, Itr begin, Itr end)
+  static void writeObjectSeq(IO::Writer* writer, const char* name,
+									  Itr begin, Itr end, bool skip_count=false)
 	 {
-		writer->writeValue(makeSeqCountString(name),
-								 computeCount(begin, end));
+		if (!skip_count) {
+		  writer->writeValue(makeSeqCountString(name),
+									computeCount(begin, end));
+		}
 
 		int count = 0;
 	 
