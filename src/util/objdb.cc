@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Nov 21 03:04:42 1999
+// written: Sun Nov 21 03:10:48 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,6 +114,7 @@ DOTRACE("IoPtrList::deserialize");
 	 insertVoidPtrAt(ptrid, fromIOToVoid(obj));
 
 	 obj->deserialize(is, flag & ~IO::TYPENAME);
+	 afterInsertHook(ptrid, fromIOToVoid(obj));
   }
   // itsFirstVacant
   is >> VoidPtrList::firstVacant();
@@ -156,16 +157,20 @@ void IoPtrList::readFrom(Reader* reader) {
 DOTRACE("IoPtrList::readFrom");
   firstVacant() = reader->readInt("itsFirstVacant");
 
-  vector<IO*> tempVec;
+  vector<IO*> ioVec;
 
-  reader->readObjectSeq("itsVec", back_inserter(tempVec), (IO*) 0);
+  reader->readObjectSeq("itsVec", back_inserter(ioVec), (IO*) 0);
 
-  vec().clear();
-  vec().resize(tempVec.size());
+  vector<void*>& voidVec = VoidPtrList::vec();
 
-  for (int i = 0; i < tempVec.size(); ++i)
-	 if (tempVec[i] != 0)
-		vec()[i] = static_cast<void*>(tempVec[i]);
+  voidVec.clear();
+  voidVec.resize(ioVec.size());
+
+  for (int i = 0; i < ioVec.size(); ++i)
+	 if (ioVec[i] != 0) {
+		voidVec[i] = fromIOToVoid(ioVec[i]);
+		afterInsertHook(i, voidVec[i]);
+	 }
 }
 
 
