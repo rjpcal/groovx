@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Mon Sep  3 15:57:17 2001
+// written: Mon Sep  3 18:01:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ namespace
 {
   int dummy_int=0; // We need a dummy int to attach various CPtrField's
 
-  const IO::VersionId FISH_SERIAL_VERSION_ID = 2;
+  const IO::VersionId FISH_SERIAL_VERSION_ID = 3;
 
   typedef Gfx::Vec3<float> Pt3;
 
@@ -118,12 +118,13 @@ const FieldMap& Fish::classFields()
     Field("mouthCoord", &Fish::itsMouthCoord, 0.0, -2.0, 2.0, 0.1),
 
     Field("currentPart", &Fish::itsCurrentPart, 0, 0, 3, 1,
-          Field::NEW_GROUP | Field::CHECKED),
+          Field::NEW_GROUP | Field::CHECKED | Field::TRANSIENT),
 
-    Field("currentEndPt", &Fish::itsCurrentEndPt, 0, 0, 3, 1, Field::CHECKED),
+    Field("currentEndPt", &Fish::itsCurrentEndPt, 0, 0, 3, 1,
+          Field::CHECKED | Field::TRANSIENT),
 
-    Field("endPt_Part", &Fish::itsEndPt_Part, 1, 1, 4, 1),
-    Field("endPt_Bkpt", &Fish::itsEndPt_Bkpt, 1, 1, 10, 1),
+    Field("endPt_Part", &Fish::itsEndPt_Part, 1, 1, 4, 1, Field::TRANSIENT),
+    Field("endPt_Bkpt", &Fish::itsEndPt_Bkpt, 1, 1, 10, 1, Field::TRANSIENT),
 
     Field("inColor", &Fish::inColor,
           false, false, true, true, Field::TRANSIENT),
@@ -288,7 +289,7 @@ void Fish::readFrom(IO::Reader* reader)
 {
 DOTRACE("Fish::readFrom");
 
-  reader->ensureReadVersionId("Fish", 2, "Try grsh0.8a4");
+  reader->ensureReadVersionId("Fish", 2, "Try grsh0.8a7");
 
   readFieldsFrom(reader, classFields());
 
@@ -299,8 +300,8 @@ void Fish::writeTo(IO::Writer* writer) const
 {
 DOTRACE("Fish::writeTo");
 
-  writer->ensureWriteVersionId("Fish", FISH_SERIAL_VERSION_ID, 2,
-                               "Try grsh0.8a4");
+  writer->ensureWriteVersionId("Fish", FISH_SERIAL_VERSION_ID, 3,
+                               "Try grsh0.8a7");
 
   writeFieldsTo(writer, classFields());
 

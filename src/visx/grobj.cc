@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Aug 29 16:47:01 2001
+// written: Tue Sep  4 12:53:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,38 +19,20 @@
 
 #include "gfx/canvas.h"
 
+#include "io/reader.h"
+#include "io/writer.h"
+
 #define DYNAMIC_TRACE_EXPR GrObj::tracer.status()
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-Util::Tracer GrObj::tracer;
-
 namespace
 {
-#define GETSET(type, attr) std::make_pair(&type::get##attr, &type::set##attr)
-
-  const Field FIELD_ARRAY[] =
-  {
-    Field("renderMode", GETSET(GrObj, RenderMode), 1, 1, 4, 1,
-          Field::NEW_GROUP),
-    Field("unRenderMode", GETSET(GrObj, UnRenderMode), 6, 1, 6, 1),
-    Field("bbVisibility", GETSET(GrObj, BBVisibility), false, false, true, true),
-    Field("scalingMode", GETSET(GrObj, ScalingMode), 1, 1, 3, 1),
-    // xx widthFactor
-    // xx heightFactor
-    Field("aspectRatio", GETSET(GrObj, AspectRatio), 1.0, 0.1, 10.0, 0.1),
-    Field("width", GETSET(GrObj, Width), 1.0, 0.1, 10.0, 0.1),
-    Field("height", GETSET(GrObj, Height), 1.0, 0.1, 10.0, 0.1),
-    Field("maxDimension", GETSET(GrObj, MaxDimension), 1.0, 0.1, 10.0, 0.1),
-    Field("alignmentMode", GETSET(GrObj, AlignmentMode), 1, 1, 7, 1),
-    Field("centerX", GETSET(GrObj, CenterX), 0.0, -10.0, 10.0, 0.1),
-    Field("centerY", GETSET(GrObj, CenterY), 0.0, -10.0, 10.0, 0.1)
-  };
-#undef GETSET
-
-  FieldMap GROBJ_FIELDS(FIELD_ARRAY);
+  const IO::VersionId GROBJ_SERIAL_VERSION_ID = 3;
 }
+
+Util::Tracer GrObj::tracer;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -70,6 +52,8 @@ GrObj::GrObj() :
 {
 DOTRACE("GrObj::GrObj");
 
+  setFieldMap(GrObj::classFields());
+
   // This is necessary because any representations that have been
   // cached during the GrObj constructor will become invalid upon
   // return to the derived class constructor.
@@ -86,26 +70,67 @@ DOTRACE("GrObj::~GrObj");
 IO::VersionId GrObj::serialVersionId() const
 {
 DOTRACE("GrObj::serialVersionId");
-  return itsImpl->serialVersionId();
+  return GROBJ_SERIAL_VERSION_ID;
 }
 
 void GrObj::readFrom(IO::Reader* reader)
 {
 DOTRACE("GrObj::readFrom");
 
-  itsImpl->readFrom(reader);
-  this->sigNodeChanged.emit();
+  int svid = reader->ensureReadVersionId("GrObj", 1, "Try grsh0.8a7");
+
+  if (svid == 1)
+	 {
+		itsImpl->readFrom(reader);
+	 }
+  else
+	 {
+		readFieldsFrom(reader, classFields());
+	 }
 }
 
 void GrObj::writeTo(IO::Writer* writer) const
 {
 DOTRACE("GrObj::writeTo");
 
-  itsImpl->writeTo(writer);
+  writer->ensureWriteVersionId("GrObj", GROBJ_SERIAL_VERSION_ID, 3,
+                               "Try grsh0.8a7");
+
+  writeFieldsTo(writer, classFields());
 }
 
 const FieldMap& GrObj::classFields()
 {
+#define GETSET(type, attr) std::make_pair(&type::get##attr, &type::set##attr)
+
+  static const Field FIELD_ARRAY[] =
+  {
+    Field("category", std::make_pair(&GrObj::category, &GrObj::setCategory),
+          0, 0, 20, 1, Field::NEW_GROUP),
+    Field("renderMode", GETSET(GrObj, RenderMode), 1, 1, 4, 1),
+    Field("cacheFilename", GETSET(GrObj, CacheFilename), 0, 0, 20, 1,
+          Field::STRING),
+    Field("bbVisibility", GETSET(GrObj, BBVisibility),
+          false, false, true, true),
+    Field("scalingMode", GETSET(GrObj, ScalingMode), 1, 1, 3, 1),
+    Field("widthFactor", GETSET(GrObj, WidthFactor), 1.0, 0.1, 10.0, 0.1),
+    Field("heightFactor", GETSET(GrObj, HeightFactor), 1.0, 0.1, 10.0, 0.1),
+    Field("aspectRatio", GETSET(GrObj, AspectRatio), 1.0, 0.1, 10.0, 0.1,
+          Field::TRANSIENT),
+    Field("width", GETSET(GrObj, Width), 1.0, 0.1, 10.0, 0.1,
+			 Field::TRANSIENT),
+    Field("height", GETSET(GrObj, Height), 1.0, 0.1, 10.0, 0.1,
+			 Field::TRANSIENT),
+    Field("maxDimension", GETSET(GrObj, MaxDimension), 1.0, 0.1, 10.0, 0.1,
+          Field::TRANSIENT),
+    Field("alignmentMode", GETSET(GrObj, AlignmentMode), 1, 1, 7, 1),
+    Field("centerX", GETSET(GrObj, CenterX), 0.0, -10.0, 10.0, 0.1),
+    Field("centerY", GETSET(GrObj, CenterY), 0.0, -10.0, 10.0, 0.1)
+  };
+#undef GETSET
+
+  static FieldMap GROBJ_FIELDS(FIELD_ARRAY);
+
   return GROBJ_FIELDS;
 }
 
@@ -135,13 +160,13 @@ DOTRACE("GrObj::getScalingMode");
 double GrObj::getWidth() const
 {
 DOTRACE("GrObj::getWidth");
-  return itsImpl->itsScaler->scaledWidth(grGetBoundingBox());
+  return itsImpl->itsScaler->scaledWidth();
 }
 
 double GrObj::getHeight() const
 {
 DOTRACE("GrObj::getHeight");
-  return itsImpl->itsScaler->scaledHeight(grGetBoundingBox());
+  return itsImpl->itsScaler->scaledHeight();
 }
 
 double GrObj::getAspectRatio() const
@@ -153,7 +178,7 @@ DOTRACE("GrObj::getAspectRatio");
 double GrObj::getMaxDimension() const
 {
 DOTRACE("GrObj::getMaxDimension");
-  return itsImpl->itsScaler->scaledMaxDim(grGetBoundingBox());
+  return itsImpl->itsScaler->scaledMaxDim();
 }
 
 Gmodes::AlignmentMode GrObj::getAlignmentMode() const
@@ -191,12 +216,6 @@ Gmodes::RenderMode GrObj::getRenderMode() const
   return itsImpl->itsGLCache->getMode();
 }
 
-Gmodes::RenderMode GrObj::getUnRenderMode() const
-{
-DOTRACE("GrObj::getUnRenderMode");
-  return Gmodes::CLEAR_BOUNDING_BOX;
-}
-
 //////////////////
 // manipulators //
 //////////////////
@@ -225,7 +244,7 @@ void GrObj::setWidth(double val)
 {
 DOTRACE("GrObj::setWidth");
 
-  itsImpl->itsScaler->setWidth(val, grGetBoundingBox());
+  itsImpl->itsScaler->setWidth(val);
   this->sigNodeChanged.emit();
 }
 
@@ -233,7 +252,7 @@ void GrObj::setHeight(double val)
 {
 DOTRACE("GrObj::setHeight");
 
-  itsImpl->itsScaler->setHeight(val, grGetBoundingBox());
+  itsImpl->itsScaler->setHeight(val);
   this->sigNodeChanged.emit();
 }
 
@@ -249,7 +268,7 @@ void GrObj::setMaxDimension(double val)
 {
 DOTRACE("GrObj::setMaxDimension");
 
-  itsImpl->itsScaler->setMaxDim(val, grGetBoundingBox());
+  itsImpl->itsScaler->setMaxDim(val);
   this->sigNodeChanged.emit();
 }
 
@@ -298,11 +317,6 @@ DOTRACE("GrObj::setRenderMode");
   this->sigNodeChanged.emit();
 }
 
-void GrObj::setUnRenderMode(Gmodes::RenderMode)
-{
-DOTRACE("GrObj::setUnRenderMode");
-}
-
 
 /////////////
 // actions //
@@ -339,6 +353,42 @@ DOTRACE("GrObj::undraw");
   Gfx::Rect<int> screen_box = canvas.screenFromWorld(world_box);
 
   canvas.clearColorBuffer(screen_box);
+}
+
+const fstring& GrObj::getCacheFilename() const
+{
+DOTRACE("GrObj::getCacheFilename");
+  return itsImpl->itsBitmapCache->getCacheFilename();
+}
+
+void GrObj::setCacheFilename(const fstring& name)
+{
+DOTRACE("GrObj::setCacheFilename");
+  itsImpl->itsBitmapCache->setCacheFilename(name);
+}
+
+double GrObj::getWidthFactor() const
+{
+DOTRACE("GrObj::getWidthFactor");
+  return itsImpl->itsScaler->itsWidthFactor;
+}
+
+void GrObj::setWidthFactor(double val)
+{
+DOTRACE("GrObj::setWidthFactor");
+  itsImpl->itsScaler->itsWidthFactor = val;
+}
+
+double GrObj::getHeightFactor() const
+{
+DOTRACE("GrObj::getHeightFactor");
+  return itsImpl->itsScaler->itsHeightFactor;
+}
+
+void GrObj::setHeightFactor(double val)
+{
+DOTRACE("GrObj::setHeightFactor");
+  itsImpl->itsScaler->itsHeightFactor = val;
 }
 
 static const char vcid_grobj_cc[] = "$Header$";
