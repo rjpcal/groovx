@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Jul 18 12:15:51 2001
+// written: Fri Jul 20 14:09:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,6 @@
 
 #include "util/objfactory.h"
 #include "util/ref.h"
-#include "util/strings.h"
 
 #include "tcl/tclpkg.h"
 
@@ -30,20 +29,6 @@
 
 namespace BitmapTcl
 {
-  void loadPbmGz(Util::Ref<Bitmap> bmap, const char* filename)
-  {
-    dynamic_string gzname(filename); gzname += ".gz";
-
-    bmap->loadPbmFile(gzname.c_str());
-  }
-
-  void writePbmGz(Util::Ref<Bitmap> bmap, const char* filename)
-  {
-    dynamic_string gzname(filename); gzname += ".gz";
-
-    bmap->writePbmFile(gzname.c_str());
-  }
-
   class BitmapPkg;
 }
 
@@ -61,11 +46,7 @@ public:
     Tcl::defGenericObjCmds<Bitmap>(this);
 
     defVec( "loadPbm", "item_id(s) filename(s)", &Bitmap::loadPbmFile );
-    defVec( "loadPbmGz", "item_id(s) filename(s)(no-gz-suffix)",
-            &BitmapTcl::loadPbmGz );
     defVec( "writePbm", "item_id(s) filename(s)", &Bitmap::writePbmFile );
-    defVec( "writePbmGz", "item_id(s) filename(s)(no-gz-suffix)",
-            &BitmapTcl::writePbmGz );
     defVec( "grabScreenRect", "item_id(s) left top right bottom",
             (void(Bitmap::*)(int,int,int,int)) &Bitmap::grabScreenRect );
     defVec( "grabWorldRect", "item_id(s) left top right bottom",
