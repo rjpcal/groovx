@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Wed Mar 19 17:58:04 2003
+// written: Thu Mar 20 08:03:35 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -275,7 +275,7 @@ public:
   }
 
   /// Copy constructor.
-  shared_array(const shared_array& r) : px(r.px) throw()
+  shared_array(const shared_array& r) throw() : px(r.px)
   { ++*(pn = r.pn); }
 
   /// Destructor.
