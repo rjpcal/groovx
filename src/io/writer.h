@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:49 1999
-// written: Wed Aug  8 12:27:24 2001
+// written: Wed Aug  8 13:13:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,13 +21,15 @@
 #include "io/iodecls.h"
 #endif
 
-namespace Util { template <class T> class Ref; };
-namespace Util { template <class T> class WeakRef; }
+namespace Util
+{
+  template <class T> class Ref;
+  template <class T> class WeakRef;
+};
 
-namespace IO {
+namespace IO
+{
   class IoObject;
-  class WriteError;
-  class WriteVersionError;
   class Writer;
 }
 
