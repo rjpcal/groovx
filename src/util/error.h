@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Fri Jan 18 16:06:55 2002
+// written: Wed Jul 31 15:34:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,10 +33,10 @@ class Util::Error
 {
 public:
   /// Default construct with an empty message string.
-  Error() : itsInfo() {}
+  Error();
 
   /// Construct with an error message.
-  Error(const fstring& msg) : itsInfo(msg) {}
+  Error(const fstring& msg);
 
   /// Copy constructor.
   Error(const Error& other);
