@@ -45,7 +45,6 @@
 #include "util/strings.h"
 
 #include <tk.h>
-#include <X11/Xlib.h>
 
 #ifdef HAVE_LIMITS
 #  include <limits>
@@ -370,31 +369,6 @@ void Toglet::animate(unsigned int framesPerSecond)
 {
   makeCurrent();
   rep->scene->animate(framesPerSecond);
-}
-
-Toglet::Color Toglet::queryColor(unsigned int color_index) const
-{
-DOTRACE("Toglet::queryColor");
-
-  XColor col;
-
-  col.pixel = color_index;
-  XQueryColor(Tk_Display(rep->tkWin), Tk_Colormap(rep->tkWin), &col);
-
-  Toglet::Color color;
-
-  color.pixel = (unsigned int)col.pixel;
-#ifdef HAVE_LIMITS
-  const unsigned short usmax = std::numeric_limits<unsigned short>::max();
-#else
-  const unsigned short usmax = USHRT_MAX;
-#endif
-
-  color.red   = double(col.red)   / usmax;
-  color.green = double(col.green) / usmax;
-  color.blue  = double(col.blue)  / usmax;
-
-  return color;
 }
 
 static const char vcid_toglet_cc[] = "$Header$";

@@ -47,35 +47,6 @@
 
 namespace
 {
-  Tcl::List dumpCmap(Util::SoftRef<Toglet> toglet,
-                     unsigned int start, unsigned end)
-  {
-    if (start > 255 || end > 255)
-      {
-        throw Util::Error("colormap index out of range");
-      }
-
-    Tcl::List result;
-
-    for (unsigned int i = start; i <= end; ++i)
-      {
-        Toglet::Color color = toglet->queryColor(i);
-        Tcl::List color_list;
-        color_list.append(i);
-        color_list.append(color.red);
-        color_list.append(color.green);
-        color_list.append(color.blue);
-        result.append(color_list);
-      }
-
-    return result;
-  }
-
-  Tcl::List dumpCmapAll(Util::SoftRef<Toglet> toglet)
-  {
-    return dumpCmap(toglet, 0, 255);
-  }
-
   // Make a specified GxNode the widget's current drawable, and draw
   // it in the OpenGL window. The widget's visibility is set to true.
   Util::UID see(Util::SoftRef<Toglet> widg, Util::Ref<GxNode> item)
@@ -118,8 +89,6 @@ DOTRACE("Toglet_Init");
   pkg->def( "current", "toglet_id", &Toglet::setCurrent );
   pkg->def( "current", 0, &Toglet::getCurrent );
   pkg->def( "defaultParent", "parent", &Toglet::defaultParent );
-  pkg->def( "dumpCmap", "toglet_id start_index end_index", &dumpCmap );
-  pkg->def( "dumpCmap", "toglet_id", &dumpCmapAll );
   pkg->def( "see", "gxnode_id", &see );
 
   pkg->defSetter("allowRefresh", &Toglet::allowRefresh);

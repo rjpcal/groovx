@@ -58,27 +58,6 @@ test "Toglet-Togl::setVisible" "error on non-numeric input" {
     Togl::setVisible junk
 } {expected boolean value but got "junk"}
 
-### dumpCmapCmd ###
-test "Toglet-dumpCmap" "too many args" {
-    Togl::dumpCmap junk junk junk
-} {^wrong \# args: should be}
-test "Toglet-dumpCmap" "normal use" {
-    set str [Togl::dumpCmap 0 3]
-	 lindex $str 3
-} "3$SP$FLT$SP$FLT$SP$FLT"
-test "Toglet-dumpCmap" "error from non-integral number arg1" {
-    Togl::dumpCmap 0.5 1
-} {expected integer but got "0\.5"}
-test "Toglet-dumpCmap" "error from non-integral number arg2" {
-    Togl::dumpCmap 0 1.5
-} {expected integer but got "1\.5"}
-test "Toglet-dumpCmap" "error from too small index" {
-    Togl::dumpCmap -3 -1
-} {Toglet::dumpCmap:}
-test "Toglet-dumpCmap" "error from too large index" {
-    Togl::dumpCmap 100 900
-} {Toglet::dumpCmap: colormap index out of range}
-
 ### pixelsPerUnitCmd ###
 test "GxCamera-pixelsPerUnit" "args" {
     GxFixedScaleCamera::pixelsPerUnit

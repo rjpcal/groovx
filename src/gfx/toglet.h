@@ -93,17 +93,6 @@ public:
   /// Swap buffers in a double-buffered GL context.
   void swapBuffers();
 
-  /// Simple RGB color struct.
-  struct Color
-  {
-    Color(unsigned int p=0, double r=0.0, double g=0.0, double b=0.0):
-      pixel(p), red(r), green(g), blue(b) {}
-    unsigned int pixel;
-    double red, green, blue;
-  };
-
-  Color queryColor(unsigned int color_index) const;
-
   // Access to GxScene:
 
   GxScene& scene();
