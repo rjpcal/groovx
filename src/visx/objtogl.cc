@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Mar  6 18:53:57 2000
+// written: Thu Mar  9 16:04:31 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -220,8 +220,7 @@ public:
   InitCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name,
 					 "init_args ?viewing_dist=30?"
-					 "?gl_unit_angle=2.05? ?pack=yes?", 2, 5),
-    itsInterp(interp)
+					 "?gl_unit_angle=2.05? ?pack=yes?", 2, 5)
   {
     Togl_CreateFunc(createCallback);
   }
@@ -251,7 +250,7 @@ protected:
 
     Tcl::TclEvalCmd create_cmd(create_cmd_str.c_str(),
 										 Tcl::TclEvalCmd::THROW_EXCEPTION);
-    create_cmd.invoke(itsInterp);
+    create_cmd.invoke(interp());
 
     // Make sure that widget creation and the create callback
     // successfully set ObjTogl::theTogl to point to a struct Togl
@@ -270,7 +269,7 @@ protected:
 		pack_cmd_str += " -expand 1 -fill both";
 		Tcl::TclEvalCmd pack_cmd(pack_cmd_str.c_str(),
 										 Tcl::TclEvalCmd::THROW_EXCEPTION);
-		pack_cmd.invoke(itsInterp);
+		pack_cmd.invoke(interp());
 	 }
 
     toglCreated = true;
@@ -279,8 +278,6 @@ protected:
 
     returnVoid();
   }
-private:
-  Tcl_Interp* itsInterp;
 };
 
 //---------------------------------------------------------------------

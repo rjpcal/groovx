@@ -3,7 +3,7 @@
 // tclevalcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jun 17 10:38:13 1999
-// written: Wed Mar  8 13:28:38 2000
+// written: Thu Mar  9 16:01:28 2000
 // $Id$
 //
 // TclEvalCmd serves as a wrapper for a Tcl command string that is to
@@ -79,6 +79,9 @@ public:
   }
 
 private:
+  TclEvalCmd(const TclEvalCmd&);
+  TclEvalCmd& operator=(const TclEvalCmd&);
+
   Tcl_Obj* itsCmdObj;
   Tcl::TclObjLock itsLock;
   ErrorHandlingMode itsErrorMode;

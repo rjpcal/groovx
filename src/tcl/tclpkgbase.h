@@ -3,7 +3,7 @@
 // tclpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 11:50:23 1999
-// written: Wed Mar  8 16:41:36 2000
+// written: Thu Mar  9 16:01:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -127,6 +127,9 @@ protected:
   void setInitStatusError();
 
 private:
+  TclPkg(const TclPkg&);
+  TclPkg& operator=(const TclPkg&);
+
   struct Impl;
   Impl* itsImpl;
 };

@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Mar  6 12:31:28 2000
+// written: Thu Mar  9 16:14:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,7 +86,12 @@ ToglConfig::ToglConfig(Togl* togl, double dist, double unit_angle) :
   itsWidget(togl),
   itsViewingDistance(dist), 
   itsFixedScaleFlag(true),
-  itsFontListBase(0)
+  itsFixedScale(1.0),
+  itsMinRect(),
+  itsFontListBase(0),
+  itsUsingRgba(false),
+  itsHasPrivateCmap(false),
+  itsIsDoubleBuffered(false)
 {
 DOTRACE("ToglConfig::ToglConfig"); 
   DebugEvalNL((void*) this);
@@ -286,7 +291,7 @@ DOTRACE("ToglConfig::setColor");
   static const char* const bad_index_msg = "color index must be in [0, 255]";
 
   try {
-	 if (color.pixel < 0   || color.pixel > 255) { throw ToglError(bad_index_msg); }
+	 if (                     color.pixel > 255) { throw ToglError(bad_index_msg); }
 	 if (color.red   < 0.0 || color.red   > 1.0) { throw ToglError(bad_val_msg); }
 	 if (color.green < 0.0 || color.green > 1.0) { throw ToglError(bad_val_msg); }
 	 if (color.blue  < 0.0 || color.blue  > 1.0) { throw ToglError(bad_val_msg); }
@@ -419,7 +424,7 @@ DOTRACE("ToglConfig::loadFonti");
   GLuint newListBase =
 	 Togl_LoadBitmapFont(itsWidget, reinterpret_cast<char*>(fontnumber));
 #else
-  GLuint newListBase = 0;		  // this will force an exception to be thrown
+  GLuint newListBase = 0*fontnumber; // this will force an exception to be thrown
 #endif
   
 

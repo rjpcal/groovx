@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Sat Mar  4 16:29:25 2000
+// written: Thu Mar  9 15:50:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,9 @@ DOTRACE("Jitter::Jitter");
 }
 
 Jitter::Jitter(istream &is, IOFlag flag) : 
-  Position() 
+  Position() ,
+  itsXJitter(0.0), itsYJitter(0.0), itsRJitter(0.0),
+  itsXShift(0.0), itsYShift(0.0), itsRShift(0.0)
 {
 DOTRACE("Jitter::Jitter");
   deserialize(is, flag);

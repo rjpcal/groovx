@@ -3,7 +3,7 @@
 // bezier.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 21 09:51:40 1999
-// written: Mon Dec  6 13:57:13 1999
+// written: Thu Mar  9 15:51:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,8 +105,12 @@ Bezier::Bezier(const vector<double>& RR, int extrema_res) :
   R(RR),
   c0(RR.size()),
   c1(RR.size()-1),
-  extrema(RR.size()) // there are (RR.size()-2) roots of the derivative,
-							// plus two for the range endpoints (0.0, 1.0)
+  extrema(RR.size()), // there are (RR.size()-2) roots of the derivative,
+							 // plus two for the range endpoints (0.0, 1.0)
+  uMin_(0.0),
+  uMax_(0.0),
+  valMin_(0.0),
+  valMax_(0.0)
 {
   setCtrlPnts(RR, extrema_res);
 }

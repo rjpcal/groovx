@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Mar  8 15:42:01 2000
+// written: Thu Mar  9 16:08:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ protected:
       elements of type \c T, and inserts these through the insert
       iterator \a itr. */
   template <class T, class Iterator>
-  void getSequenceFromArg(int argn, Iterator itr, T* dummy) {
+  void getSequenceFromArg(int argn, Iterator itr, T* /* dummy */) {
 	 Tcl_Obj** elements;
 	 int count;
 	 safeSplitList(itsObjv[argn], &count, &elements);
@@ -215,6 +215,9 @@ protected:
   /// Append to the result a list element with the generic \c Value \a val.
   void lappendVal(const Value& val) { lappendValue(val); }
 
+  /// Append to the result a list element with the \c unsigned \c char value \a val.
+  void lappendVal(unsigned char val) { lappendInt(int(val)); }
+
   /// Append to the result a list element with the \c int value \a val.
   void lappendVal(int val) { lappendInt(val); }
 
@@ -240,6 +243,9 @@ protected:
 	 }
   }
 
+protected:
+  Tcl_Interp* interp() { return itsInterp; }
+
 private:
   /// The procedure that is actually registered with the Tcl C API.
   static int dummyInvoke(ClientData clientData, Tcl_Interp* interp,
@@ -257,6 +263,9 @@ private:
 
   template <class T>
   void getValFromObj(Tcl_Obj* obj, T& val);
+
+  TclCmd(const TclCmd&);
+  TclCmd& operator=(const TclCmd&);
 
   // These are set once per command object
   const char* const itsUsage;

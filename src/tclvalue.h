@@ -3,7 +3,7 @@
 // tclvalue.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Mar  8 17:39:00 2000
+// written: Thu Mar  9 15:57:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,12 @@ public:
   void setObj(Tcl_Obj* obj);
 
   /// Assignment operator.
-  TclValue& operator=(Tcl_Obj* obj) { setObj(obj); return *this; }
+  TclValue& operator=(const TclValue& other)
+	 { setObj(other.itsObj); return *this; }
+
+  /// Assignment from raw \c Tcl_Obj*.
+  TclValue& operator=(Tcl_Obj* obj)
+	 { setObj(obj); return *this; }
 
   virtual Value* clone() const;
   

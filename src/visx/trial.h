@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Tue Mar  7 10:42:12 2000
+// written: Thu Mar  9 16:09:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -157,6 +157,9 @@ public:
   void trUndraw(Canvas& canvas, bool flush) const;
 
 private:
+  Trial(const Trial&);
+  Trial& operator=(const Trial&);
+
   class Impl;
   Impl* const itsImpl;
 };

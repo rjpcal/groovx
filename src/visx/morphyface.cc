@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Sun Mar  5 14:47:12 2000
+// written: Thu Mar  9 15:53:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -239,52 +239,86 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 MorphyFace::MorphyFace() :
-  GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX)
+  GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),
+
+  faceWidth(2.75),
+  topHeight(3.8),
+  bottomHeight(-3.0),
+  topWidth(1.15),
+  bottomWidth(1.0),
+
+  hairWidth(0.20),
+  hairStyle(0),
+
+  eyeYpos(0.375),
+  eyeDistance(2.25),
+  eyeHeight(0.9),
+  eyeAspectRatio(1.555556),
+
+  pupilXpos(0.0),
+  pupilYpos(0.0),
+  pupilSize(0.6),
+  pupilDilation(0.5),
+
+  eyebrowXpos(0.0),
+  eyebrowYpos(0.5),
+  eyebrowCurvature(0.8),
+  eyebrowAngle(-5),
+  eyebrowThickness(2.0),
+
+  noseXpos(0.0),
+  noseYpos(-0.825),
+  noseLength(0.75),
+  noseWidth(1.5),
+
+  mouthXpos(0.0),
+  mouthYpos(-2.0),
+  mouthWidth(2.5),
+  mouthCurvature(0.6)
 {
 DOTRACE("MorphyFace::MorphyFace");
-
-  faceWidth() = 2.75; 
-  topHeight() = 3.8;
-  bottomHeight() = -3.0;
-  topWidth() = 1.15;
-  bottomWidth() = 1.0;
-
-  hairWidth() = 0.20;
-  hairStyle() = 0;
-
-  eyeYpos() = 0.375;
-  eyeDistance() = 2.25;
-  eyeHeight() = 0.9;
-  eyeAspectRatio() = 1.555556;
-
-  pupilXpos() = 0.0;
-  pupilYpos() = 0.0;
-  pupilSize() = 0.6;
-  pupilDilation() = 0.5;
-
-  eyebrowXpos() = 0.0;
-  eyebrowYpos() = 0.5;
-  eyebrowCurvature() = 0.8;
-  eyebrowAngle() = -5;
-  eyebrowThickness() = 2.0;
-
-  noseXpos() = 0.0;
-  noseYpos() = -0.825;
-  noseLength() = 0.75;
-  noseWidth() = 1.5;
-
-  mouthXpos() = 0.0;
-  mouthYpos() = -2.0;
-  mouthWidth() = 2.5;
-  mouthCurvature() = 0.6;
-
   Invariant(check());
 }
 
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
 MorphyFace::MorphyFace(istream& is, IOFlag flag) :
-  GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX)
+  GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),
+
+  faceWidth(2.75), 
+  topHeight(3.8),
+  bottomHeight(-3.0),
+  topWidth(1.15),
+  bottomWidth(1.0),
+
+  hairWidth(0.20),
+  hairStyle(0),
+
+  eyeYpos(0.375),
+  eyeDistance(2.25),
+  eyeHeight(0.9),
+  eyeAspectRatio(1.555556),
+
+  pupilXpos(0.0),
+  pupilYpos(0.0),
+  pupilSize(0.6),
+  pupilDilation(0.5),
+
+  eyebrowXpos(0.0),
+  eyebrowYpos(0.5),
+  eyebrowCurvature(0.8),
+  eyebrowAngle(-5),
+  eyebrowThickness(2.0),
+
+  noseXpos(0.0),
+  noseYpos(-0.825),
+  noseLength(0.75),
+  noseWidth(1.5),
+
+  mouthXpos(0.0),
+  mouthYpos(-2.0),
+  mouthWidth(2.5),
+  mouthCurvature(0.6)
 {
 DOTRACE("MorphyFace::MorphyFace(istream&, IOFlag)");
   deserialize(is, flag);

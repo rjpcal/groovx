@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Mar  9 10:41:55 2000
+// written: Thu Mar  9 16:05:29 2000
 // $Id$
 //
 //
@@ -54,6 +54,9 @@ public:
   }
 
 private:
+  CGetter(const CGetter&);
+  CGetter& operator=(const CGetter&);
+
   Getter_f itsGetter_f;
 };
 
@@ -79,6 +82,9 @@ public:
   }
 
 private:
+  CSetter(const CSetter&);
+  CSetter& operator=(const CSetter&);
+
   Setter_f itsSetter_f;
 };
 
@@ -125,6 +131,9 @@ public:
   }
 
 private:
+  CAction(const CAction&);
+  CAction& operator=(const CAction&);
+
   Action_f itsAction_f;
 };
 
@@ -254,6 +263,9 @@ protected:
   }
 
 private:
+  TclItemCmd(const TclItemCmd&);
+  TclItemCmd& operator=(const TclItemCmd&);
+
   TclItemPkg* itsPkg;
 };
 
@@ -369,6 +381,9 @@ public:
 
 class VecPropertyCmdBase : public TclCmd {
 private:
+  VecPropertyCmdBase(const VecPropertyCmdBase&);
+  VecPropertyCmdBase& operator=(const VecPropertyCmdBase&);
+
   TclItemPkg* itsPkg;
   int itsItemArgn;
   int itsValArgn;
@@ -420,6 +435,9 @@ private:
 
 class PropertiesCmdBase : public TclCmd {
 private:
+  PropertiesCmdBase(const PropertiesCmdBase&);
+  PropertiesCmdBase& operator=(const PropertiesCmdBase&);
+
   Tcl_Interp* itsInterp;
   Tcl_Obj* itsPropertyList;
 
