@@ -429,8 +429,8 @@ ncsl:
 docs: $(DOC)/DoxyConfig
 	mkdir -p $(BUILD)/html
 	(time $(DOXYGEN_PROG) $(DOC)/DoxyConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
-	time cp -r $(BUILD)/html/* $(with_htmldoc)
-	chmod -R og+r $(with_htmldoc)
+	time chmod -R og=u-w $(BUILD)/html
+	time cp -r --preserve=mode $(BUILD)/html/* $(with_htmldoc)
 
 # Generate tags file based only on header files
 H_TAGS: $(ALL_SRCS)
