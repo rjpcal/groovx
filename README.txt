@@ -30,20 +30,27 @@
 
    This software requires the following packages:
 
-     Tcl/Tk (version 8.4b1 or later)
-     X11 windowing system
-     OpenGL
-     libz (gzip library)
+     * Tcl/Tk (version 8.4b1 or later)
+
+       Note that you'll need to install all of the tkInt*.h files to an
+       include directory, in addition to the other tk*.h files that are
+       normally installed as part of tk. The tkInt*.h files are those in
+       tk8.4b1/generic/tkInt*.h, replacing 8.4b1 with whichever version of
+       Tk you have.
+
+     * X11 windowing system
+     * OpenGL
+     * libz (gzip library)
 
    The following packages are not critical, but are expected by default in
    the Makefile, so some source hacking might be necessary to disable them.
 
-     libpng (portable network graphics library)
-     matlab (allows running a matlab engine inside the grsh shell)
+     * libpng (portable network graphics library)
+     * matlab (allows running a matlab engine inside the grsh shell)
 
 4. Makefile configuration
 
-   There is no autoconf/configure script available to do Makefile
+   There is currently no autoconf/configure script to do Makefile
    configuration at the present time. Instead, top-level configuration
    options are listed together at the top of the Makefile. These include
    options for specifying where the software should be installed, and for
@@ -55,6 +62,10 @@
    customization to the Makefile, just type "make" and everything should
    build and install. A short test suite (takes ~10 seconds on a 1GHz
    Pentium III Linux machine) is run at the end of every "make" invocation.
+
+   On Linux, you need to make sure that your LD_LIBRARY_PATH environment
+   variable includes the paths to wherever you have installed the libraries
+   associated with this package.
 
 6. Portability
 
