@@ -60,7 +60,7 @@ test "ExptTcl-Expt::load" "too many args" {
 test "ExptTcl-Expt::load" "fMRI sample" {
 	 Togl::setVisible false
 	 Expt::clear
-	 IoDb::clear
+	 ObjDb::clear
 	 set files {expt215302Aug1999.asw.gz expt215012Jan2000.asw.gz expt232423May2000.asw.gz}
 	 set ocounts {113 166 76}
 	 set i [expr int(rand()*3)]
@@ -79,7 +79,7 @@ test "ExptTcl-Expt::load" "psyphy samples" {
 
 	 for {set i 0} {$i < 3} {incr i} {
 		  Expt::clear
-		  IoDb::clear
+		  ObjDb::clear
 
 		  Expt::load $::TEST_DIR/[lindex $files $i]
 		  set odif [expr [GrObj::countAll] - [lindex $ocounts $i]]

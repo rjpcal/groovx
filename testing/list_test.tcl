@@ -20,7 +20,7 @@ variable TEST_DEFINED 1
 proc purgeAll {} {
 	 Togl::setVisible 0
 	 Expt::clear
-	 IoDb::clear
+	 ObjDb::clear
 }
 
 proc testList { baseclass subclass1 subclass2 } {
