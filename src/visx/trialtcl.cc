@@ -3,7 +3,7 @@
 // trialtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 09:51:54 1999
-// written: Tue Aug  3 13:30:48 1999
+// written: Fri Sep 24 13:15:45 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,6 +63,8 @@ public:
   TrialPkg(Tcl_Interp* interp) :
 	 ListItemPkg<Trial, Tlist>(interp, Tlist::theTlist(), "Trial", "1.1")
   {
+	 addCommand( new AddCmd(this, "Trial::add") );
+
 	 declareCGetter("avgResponse", &Trial::avgResponse);
 	 declareCGetter("avgRespTime", &Trial::avgRespTime);
 	 declareCAction("clearObjs", &Trial::clearObjs);
