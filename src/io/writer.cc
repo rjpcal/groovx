@@ -3,7 +3,7 @@
 // writer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:50 1999
-// written: Fri Mar  3 23:34:41 2000
+// written: Mon Mar  6 17:38:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,9 @@
 
 #include "writer.h"
 
+#include "util/strings.h"
+
+#include <string>
 #include <strstream.h>
 
 Writer::~Writer () {}
@@ -45,6 +48,20 @@ void Writer::writeValue<double>(const char* name, const double& val) {
 template<>
 void Writer::writeValue<string>(const char* name, const string& val) {
   writeString(name, val);
+}
+
+
+template<>
+void Writer::writeValue<fixed_string>(const char* name,
+												  const fixed_string& val) {
+  writeString(name, string(val.c_str()));
+}
+
+
+template<>
+void Writer::writeValue<dynamic_string>(const char* name,
+													 const dynamic_string& val) {
+  writeString(name, string(val.c_str()));
 }
 
 template<>
