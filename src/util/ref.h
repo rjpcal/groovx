@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Wed Sep 25 18:59:56 2002
+// written: Fri Nov 22 15:25:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,12 @@ namespace Util
 {
   enum RefType { WEAK, STRONG };
 
-  enum RefVis { PRIVATE, PUBLIC };
+  enum RefVis
+    {
+      PRIVATE,   // ObjDb gets no reference to the object
+      PROTECTED, // ObjDb gets a weak reference to the object
+      PUBLIC     // ObjDb gets a strong reference to the object
+    };
 
   template <class T> class Ref;
   template <class T> class SoftRef;
@@ -46,6 +51,7 @@ namespace Util
     Util::Object* getCheckedItem(Util::UID id);
 
     void insertItem(Util::Object* obj);
+    void insertItemWeak(Util::Object* obj);
 
     void throwError(const char* msg);
 
@@ -196,7 +202,8 @@ public:
   explicit Ref(T* ptr, RefVis vis = PUBLIC) :
     itsHandle(ptr)
   {
-    if (vis == PUBLIC) RefHelper::insertItem(ptr);
+    if      (vis == PUBLIC)    RefHelper::insertItem(ptr);
+    else if (vis == PROTECTED) RefHelper::insertItemWeak(ptr);
   }
 
   template <class U>
@@ -372,12 +379,6 @@ private:
 
   mutable WeakHandle itsHandle;
 
-  void insertItem()
-  {
-    if (itsHandle.isValid())
-      RefHelper::insertItem(itsHandle.get());
-  }
-
 public:
   SoftRef() : itsHandle(0, STRONG) {}
 
@@ -387,10 +388,20 @@ public:
               tp)
   {}
 
+  void insertItem()
+  {
+    if (itsHandle.isValid())
+      RefHelper::insertItem(itsHandle.get());
+  }
+
   explicit SoftRef(T* master, RefType tp = STRONG, RefVis vis = PUBLIC) :
     itsHandle(master,tp)
   {
-    if (vis == PUBLIC) insertItem();
+    if (itsHandle.isValid())
+      {
+        if      (vis == PUBLIC)    RefHelper::insertItem(itsHandle.get());
+        else if (vis == PROTECTED) RefHelper::insertItemWeak(itsHandle.get());
+      }
   }
 
   template <class U>
