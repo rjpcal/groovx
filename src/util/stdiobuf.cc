@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Feb 25 13:52:11 2003
-// written: Wed Feb 26 08:48:20 2003
+// written: Wed Feb 26 08:54:55 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 
 #include <ios>
 
+#include "util/debug.h"
 #include "util/trace.h"
 
 void Util::stdiobuf::init(FILE* f, int om, bool throw_exception)
@@ -169,8 +170,10 @@ int Util::stdiobuf::flushoutput()
 {
   if (!(itsMode & std::ios::out) || !is_open()) return EOF;
 
-  int num = pptr()-pbase();
-  if ( fwrite(pbase(), 1, num, itsFile) != num )
+  const int num = pptr()-pbase();
+  Assert(num >= 0);
+
+  if ( fwrite(pbase(), 1, num, itsFile) != (unsigned int)num )
     {
       return EOF;
     }
