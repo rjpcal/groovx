@@ -19,6 +19,8 @@
 #include "util/errorhandler.h"
 #endif
 
+struct Tcl_Interp;
+
 namespace Tcl {
   class TclError;
   class BkdErrorHandler;
