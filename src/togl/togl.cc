@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 19:41:31 2002
+// written: Mon Sep 16 20:10:54 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -42,6 +42,9 @@
 #include "util/error.h"
 #include "util/pointers.h"
 #include "util/ref.h"
+#include "util/strings.h"
+
+#include "visx/xbmaprenderer.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -828,9 +831,13 @@ Togl::Togl(Tcl_Interp* interp, const char* pathname) :
 {
 DOTRACE("Togl::Togl");
 
-  TkWidget::setTkWin(rep->itsTkWin);
+  TkWidget::init(interp, rep->itsTkWin);
 
   incrRefCount();
+
+  makeCurrent();
+
+  XBmapRenderer::initClass(rep->itsTkWin);
 }
 
 Togl::~Togl()
@@ -871,7 +878,7 @@ void Togl::configure(int objc, Tcl_Obj* const objv[])
 void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(rep->windowId()); }
 void Togl::requestRedisplay()           { rep->requestRedisplay(); }
 void Togl::requestReconfigure()         { rep->requestReconfigure(); }
-void Togl::swapBuffers() const          { rep->swapBuffers(); }
+void Togl::swapBuffers()                { rep->swapBuffers(); }
 int Togl::width() const                 { return rep->itsOpts->width; }
 int Togl::height() const                { return rep->itsOpts->height; }
 bool Togl::isRgba() const               { return rep->itsOpts->glx.rgbaFlag; }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Sep 16 19:40:32 2002
+// written: Mon Sep 16 20:16:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,6 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOGL_H_DEFINED)
 #include "togl/togl.h"
 #endif
-
-struct Tcl_Interp;
-struct Tcl_Obj;
 
 class TogletSizer;
 
@@ -40,12 +37,9 @@ public:
   // accessors
   bool usingFixedScale() const;
 
-  virtual Gfx::Canvas& getCanvas();
-
   // manipulators
   static void defaultParent(const char* pathname);
 
-  void destroyWidget();
   void scaleRect(double factor);
   void setPixelsPerUnit(double s);
   void setFixedRectLTRB(double L, double T, double R, double B);
@@ -53,11 +47,6 @@ public:
   void setUnitAngle(double deg);
   void setViewingDistIn(double in);
   void setPerspective(double fovy, double zNear, double zFar);
-
-  // widget functions
-  virtual void bind(const char* event_sequence, const char* script);
-  virtual void swapBuffers();
-  virtual void takeFocus();
 
   // actions
   void writeEpsFile(const char* filename);

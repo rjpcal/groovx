@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Sep 16 19:40:14 2002
+// written: Mon Sep 16 20:17:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,22 +20,15 @@
 #include "gx/rect.h"
 #include "gx/rgbacolor.h"
 
-#include "tcl/tclcode.h"
 #include "tcl/tclmain.h"
-#include "tcl/tclsafeinterp.h"
 
 #include "togl/glutil.h"
-#include "togl/togl.h"
 
 #include "util/error.h"
-#include "util/ref.h"
 #include "util/strings.h"
-
-#include "visx/xbmaprenderer.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <tk.h>
 #include <cmath>
 
 #include "util/trace.h"
@@ -281,19 +274,7 @@ DOTRACE("Toglet::Toglet");
 
   setUnitAngle(default_unit_angle);
 
-  Togl::makeCurrent();
-
-  Tk_Window tkwin = Togl::tkWin();
-  XBmapRenderer::initClass(tkwin);
-
-  if (pack)
-    {
-      fstring pack_cmd_str = "pack ";
-      pack_cmd_str.append( pathname() );
-      pack_cmd_str.append( " -side left -expand 1 -fill both; update" );
-      Tcl::Code pack_cmd(pack_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
-      pack_cmd.invoke(Togl::interp());
-    }
+  if (pack) Tcl::TkWidget::pack();
 }
 
 Toglet::~Toglet()
@@ -316,12 +297,6 @@ DOTRACE("Toglet::usingFixedScale");
   return itsSizer->usingFixedScale();
 }
 
-Gfx::Canvas& Toglet::getCanvas()
-{
-DOTRACE("Toglet::getCanvas");
-  return Togl::getCanvas();
-}
-
 //////////////////
 // manipulators //
 //////////////////
@@ -330,23 +305,6 @@ void Toglet::defaultParent(const char* pathname)
 {
 DOTRACE("Toglet::defaultParent");
   PARENT = pathname;
-}
-
-void Toglet::destroyWidget()
-{
-DOTRACE("Toglet::destroyWidget");
-DebugPrintNL("Toglet::destroyWidget");
-
-  // If we are exiting, don't bother destroying the widget; otherwise...
-  if ( !Tcl_InterpDeleted(Togl::interp()) )
-    {
-      fstring destroy_cmd_str = "destroy ";
-      destroy_cmd_str.append( pathname() );
-
-      Tcl::Code destroy_cmd(destroy_cmd_str.c_str(),
-                            Tcl::Code::BACKGROUND_ERROR);
-      destroy_cmd.invoke(Togl::interp());
-    }
 }
 
 void Toglet::scaleRect(double factor)
@@ -404,32 +362,6 @@ DOTRACE("Toglet::setMinRectLTRB");
 // actions //
 /////////////
 
-void Toglet::bind(const char* event_sequence, const char* script)
-{
-DOTRACE("Toglet::bind");
-
-  fstring cmd_str("bind ", pathname(), " ");
-  cmd_str.append( event_sequence, " ");
-  cmd_str.append("{ ", script, " }");
-
-  Tcl::Code cmd(cmd_str, Tcl::Code::THROW_EXCEPTION);
-
-  cmd.invoke(Togl::interp());
-}
-
-void Toglet::swapBuffers() { Togl::swapBuffers(); }
-
-void Toglet::takeFocus()
-{
-DOTRACE("Toglet::takeFocus");
-  fstring cmd_str = "focus -force ";
-  cmd_str.append( pathname() );
-
-  Tcl::Code cmd(cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
-
-  cmd.invoke(Togl::interp());
-}
-
 void Toglet::writeEpsFile(const char* filename)
 {
 DOTRACE("Toglet::writeEpsFile");
@@ -478,8 +410,6 @@ DOTRACE("Toglet::displayCallback");
 void Toglet::reshapeCallback()
 {
 DOTRACE("Toglet::reshapeCallback");
-
-  makeCurrent();
 
   itsSizer->reconfigure(width(), height());
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Sep 16 19:21:09 2002
+// written: Mon Sep 16 20:19:11 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -175,7 +175,7 @@ public:
     defSetter("allowRefresh", &Toglet::allowRefresh);
     defSetter("animate", "item_id(s) frames_per_second", &Toglet::animate);
     defAction("clearscreen", &Toglet::fullClearscreen);
-    defAction("destroy", &Toglet::destroyWidget);
+    defAction("destroy", &Tcl::TkWidget::destroyWidget);
     defSetter("dumpEps", "item_id(s) filename", &Toglet::writeEpsFile);
     def("fixedRect", "uid left top right bottom", &Toglet::setFixedRectLTRB);
     defAttrib("height", &Togl::height, &Togl::setHeight);
@@ -193,8 +193,8 @@ public:
     defSetter("setViewingDistance", "item_id(s) distance_in_inches",
               &Toglet::setViewingDistIn);
     defSetter("setVisible", "item_id(s) visibility", &Toglet::setVisibility);
-    defAction("swapBuffers", &Toglet::swapBuffers);
-    defAction("takeFocus", &Toglet::takeFocus);
+    defAction("swapBuffers", &Togl::swapBuffers);
+    defAction("takeFocus", &Togl::takeFocus);
     defAction("undraw", &Toglet::undraw);
     defGetter("usingFixedScale", &Toglet::usingFixedScale);
     defAttrib("width", &Togl::width, &Togl::setWidth);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Tue Jun 25 17:27:26 2002
+// written: Mon Sep 16 20:08:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CANVASWIDGET_H_DEFINED)
 #include "gwt/canvaswidget.h"
 #endif
+
+struct Tcl_Interp;
 
 typedef struct Tk_Window_ *Tk_Window;
 
@@ -38,11 +40,21 @@ class Tcl::TkWidget : public GWT::CanvasWidget
 {
 protected:
   Tk_Window tkWin() const;
-  void setTkWin(Tk_Window win);
+  void init(Tcl_Interp* interp, Tk_Window win);
 
 public:
   TkWidget();
   virtual ~TkWidget();
+
+  void destroyWidget();
+
+  void pack();
+
+  /// Overridden from GWT::Widget.
+  virtual void bind(const char* event_sequence, const char* script);
+
+  /// Overridden from GWT::Widget.
+  virtual void takeFocus();
 
   virtual void addButtonListener (Util::Ref<GWT::ButtonListener> b);
   virtual void addKeyListener    (Util::Ref<GWT::KeyListener> k);
@@ -59,7 +71,7 @@ private:
   class TkWidgImpl;
   friend class TkWidgImpl;
 
-  TkWidgImpl* itsImpl;
+  TkWidgImpl* rep;
 };
 
 static const char vcid_tkwidget_h[] = "$Header$";

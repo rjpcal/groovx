@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Sep 16 19:40:58 2002
+// written: Mon Sep 16 20:05:15 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -56,6 +56,9 @@ public:
 
   virtual bool isNotShareable() const { return true; }
 
+  /// Overridden from GWT::Widget.
+  virtual Gfx::Canvas& getCanvas() const;
+
   // Callbacks
   virtual void displayCallback();
   virtual void reshapeCallback();
@@ -71,7 +74,9 @@ public:
   void makeCurrent() const;
   void requestRedisplay();
   void requestReconfigure();
-  void swapBuffers() const;
+
+  /// Overridden from GWT::Widget.
+  virtual void swapBuffers();
 
   // Query functions
   int width() const;
@@ -133,9 +138,6 @@ public:
   // Manipulators
   void setWidth(int w);
   void setHeight(int h);
-
-  // Canvas
-  Gfx::Canvas& getCanvas() const;
 
   class Impl;
   friend class Impl;
