@@ -1,9 +1,13 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // subject.h
-// Rob Peters
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Dec-98
-// written: Thu Oct 19 14:44:06 2000
+// written: Fri Nov 10 17:27:02 2000
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECT_H_DEFINED

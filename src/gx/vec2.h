@@ -1,9 +1,13 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // point.h
-// Rob Peters
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Thu Jan 28 12:54:13 1999
-// written: Mon Nov 15 16:10:48 1999
+// written: Fri Nov 10 17:27:02 2000
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POINT_H_DEFINED

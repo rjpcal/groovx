@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // tcldlist.cc
-// Rob Peters 
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Dec-98
-// written: Wed Mar 15 10:55:16 2000
+// written: Fri Nov 10 17:23:54 2000
 // $Id$
 //
 // This package provides additional list manipulation functions using

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // responsehandler.cc
-// Rob Peters
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Tue May 18 16:21:09 1999
-// written: Wed Mar 15 10:17:27 2000
+// written: Fri Nov 10 17:27:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

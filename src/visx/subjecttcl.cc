@@ -1,9 +1,13 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // subjecttcl.cc
-// Rob Peters 
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Jan-99
-// written: Wed Oct 25 13:41:26 2000
+// written: Fri Nov 10 17:23:31 2000
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECTTCL_CC_DEFINED

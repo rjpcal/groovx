@@ -1,9 +1,13 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // iomgr.h
-// Rob Peters
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Fri Apr 23 01:12:37 1999
-// written: Fri Nov  3 14:44:05 2000
+// written: Fri Nov 10 17:27:02 2000
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IOMGR_H_DEFINED

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // tcldlist.h
-// Rob Peters
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Dec-98
-// written: Sun Jun 20 17:13:37 1999
+// written: Fri Nov 10 17:27:02 2000
 // $Id$
 //
 // This package provides additional list manipulation functions using

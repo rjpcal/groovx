@@ -1,8 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // errmsg.h
-// Rob Peters
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Dec-98
-// written: Wed Mar 29 14:07:33 2000
+// written: Fri Nov 10 17:27:01 2000
 // $Id$
 //
 // This file provides several simple inlined functions that append a

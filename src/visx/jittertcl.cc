@@ -1,9 +1,13 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // jittertcl.cc
-// Rob Peters
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Wed Apr  7 14:58:40 1999
-// written: Thu Nov  2 13:07:11 2000
+// written: Fri Nov 10 17:27:02 2000
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef JITTERTCL_CC_DEFINED

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // objtogl.h
-// Rob Peters
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Nov-98
-// written: Tue Nov  9 13:17:43 1999
+// written: Fri Nov 10 17:27:03 2000
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to

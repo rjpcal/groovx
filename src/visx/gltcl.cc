@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // tclgl.cc
-// Rob Peters
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Nov-98
-// written: Sat Sep 23 16:55:15 2000
+// written: Fri Nov 10 17:27:04 2000
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers

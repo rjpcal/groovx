@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // misctcl.cc
-// Rob Peters
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Nov-98
-// written: Thu Mar 30 12:25:21 2000
+// written: Fri Nov 10 17:27:03 2000
 // $Id$
 //
 // this file contains the implementations for some simple Tcl functions

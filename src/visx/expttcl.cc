@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // expttcl.cc
-// Rob Peters
+//
+// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+//
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Nov  2 13:06:34 2000
+// written: Fri Nov 10 17:27:06 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
