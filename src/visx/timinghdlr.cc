@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Tue Nov 14 15:11:57 2000
+// written: Sat Dec  2 11:06:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "trialevent.h"
 
+#include "io/iditem.h"
 #include "io/iomgr.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
@@ -61,10 +62,12 @@ public:
 	 itsTrial(0)
 	 {}
 
-  minivec<TrialEvent*> itsImmediateEvents;
-  minivec<TrialEvent*> itsStartEvents;
-  minivec<TrialEvent*> itsResponseEvents;
-  minivec<TrialEvent*> itsAbortEvents;
+  typedef minivec<IdItem<TrialEvent> > EventGroup;
+
+  EventGroup itsImmediateEvents;
+  EventGroup itsStartEvents;
+  EventGroup itsResponseEvents;
+  EventGroup itsAbortEvents;
 
   mutable StopWatch itsTimer;
 
@@ -73,12 +76,10 @@ private:
   Util::ErrorHandler* itsErrorHandler;
   TrialBase* itsTrial;
 
-  void scheduleAll(minivec<TrialEvent*>& events);
-  void cancelAll(minivec<TrialEvent*>& events);
+  void scheduleAll(EventGroup& events);
+  void cancelAll(EventGroup& events);
 
 public:
-  void deleteAll(minivec<TrialEvent*>& events);
-
   // Delegand functions
   void thHaltExpt();
   void thAbortTrial();
@@ -116,10 +117,6 @@ DOTRACE("TimingHdlr::TimingHdlr");
 
 TimingHdlr::~TimingHdlr() {
 DOTRACE("TimingHdlr::~TimingHdlr");
-  itsImpl->deleteAll(itsImpl->itsImmediateEvents);
-  itsImpl->deleteAll(itsImpl->itsStartEvents);
-  itsImpl->deleteAll(itsImpl->itsResponseEvents);
-  itsImpl->deleteAll(itsImpl->itsAbortEvents);
 
   delete itsImpl;
 }
@@ -134,21 +131,21 @@ DOTRACE("TimingHdlr::readFrom");
 
   reader->ensureReadVersionId("TimingHdlr", 1, "Try grsh0.8a4");
 
-  itsImpl->deleteAll(itsImpl->itsImmediateEvents);
+  itsImpl->itsImmediateEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "immediateEvents",
-								std::back_inserter(itsImpl->itsImmediateEvents));
+				IdItem<TrialEvent>::makeInserter(itsImpl->itsImmediateEvents));
 
-  itsImpl->deleteAll(itsImpl->itsStartEvents);
+  itsImpl->itsStartEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "startEvents",
-								std::back_inserter(itsImpl->itsStartEvents));
+				IdItem<TrialEvent>::makeInserter(itsImpl->itsStartEvents));
 
-  itsImpl->deleteAll(itsImpl->itsResponseEvents);
+  itsImpl->itsResponseEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "responseEvents",
-								std::back_inserter(itsImpl->itsResponseEvents));
+				IdItem<TrialEvent>::makeInserter(itsImpl->itsResponseEvents));
 
-  itsImpl->deleteAll(itsImpl->itsAbortEvents);
+  itsImpl->itsAbortEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "abortEvents",
-								std::back_inserter(itsImpl->itsAbortEvents));
+				IdItem<TrialEvent>::makeInserter(itsImpl->itsAbortEvents));
 }
 
 void TimingHdlr::writeTo(IO::Writer* writer) const {
@@ -157,16 +154,16 @@ DOTRACE("TimingHdlr::writeTo");
   writer->ensureWriteVersionId("TimingHdlr", TIMINGHDLR_SERIAL_VERSION_ID, 1,
 										 "Try grsh0.8a4");
 
-  IO::WriteUtils::writeObjectSeq(writer, "immediateEvents",
+  IO::WriteUtils::writeSmartPtrSeq(writer, "immediateEvents",
 								 itsImpl->itsImmediateEvents.begin(), itsImpl->itsImmediateEvents.end());
 
-  IO::WriteUtils::writeObjectSeq(writer, "startEvents",
+  IO::WriteUtils::writeSmartPtrSeq(writer, "startEvents",
 								 itsImpl->itsStartEvents.begin(), itsImpl->itsStartEvents.end());
 
-  IO::WriteUtils::writeObjectSeq(writer, "responseEvents",
+  IO::WriteUtils::writeSmartPtrSeq(writer, "responseEvents",
 								 itsImpl->itsResponseEvents.begin(), itsImpl->itsResponseEvents.end());
 
-  IO::WriteUtils::writeObjectSeq(writer, "abortEvents",
+  IO::WriteUtils::writeSmartPtrSeq(writer, "abortEvents",
 								 itsImpl->itsAbortEvents.begin(), itsImpl->itsAbortEvents.end());
 }
 
@@ -178,16 +175,16 @@ TrialEvent* TimingHdlr::getEvent(TimePoint time_point, int index) const {
 DOTRACE("TimingHdlr::getEvent");
   switch (time_point) {
   case IMMEDIATE:
-	 return itsImpl->itsImmediateEvents[index];
+	 return itsImpl->itsImmediateEvents[index].get();
 	 break;
   case FROM_START:
-	 return itsImpl->itsStartEvents[index];
+	 return itsImpl->itsStartEvents[index].get();
 	 break;
   case FROM_RESPONSE:
-	 return itsImpl->itsResponseEvents[index];
+	 return itsImpl->itsResponseEvents[index].get();
 	 break;
   case FROM_ABORT:
-	 return itsImpl->itsAbortEvents[index];
+	 return itsImpl->itsAbortEvents[index].get();
 	 break;
   default:
 	 break;
@@ -206,32 +203,30 @@ DOTRACE("TimingHdlr::getElapsedMsec");
 
 int TimingHdlr::addEvent(TrialEvent* event, TimePoint time_point) {
 DOTRACE("TimingHdlr::addEvent");
+
+  IdItem<TrialEvent> event_item(event, IdItem<TrialEvent>::Insert());
+
   switch (time_point) {
   case IMMEDIATE:
-	 event->setDelay(0);
-	 itsImpl->itsImmediateEvents.push_back(event);
+	 event_item->setDelay(0);
+	 itsImpl->itsImmediateEvents.push_back(event_item);
 	 return itsImpl->itsImmediateEvents.size() - 1;
 	 break;
   case FROM_START:
-	 itsImpl->itsStartEvents.push_back(event);
+	 itsImpl->itsStartEvents.push_back(event_item);
 	 return itsImpl->itsStartEvents.size() - 1;
 	 break;
   case FROM_RESPONSE:
-	 itsImpl->itsResponseEvents.push_back(event);
+	 itsImpl->itsResponseEvents.push_back(event_item);
 	 return itsImpl->itsResponseEvents.size() - 1;
 	 break;
   case FROM_ABORT:
-	 itsImpl->itsAbortEvents.push_back(event);
+	 itsImpl->itsAbortEvents.push_back(event_item);
 	 return itsImpl->itsAbortEvents.size() - 1;
 	 break;
   default:
 	 break;
   }
-
-  // This is necessary to prevent a resource leak, since this function
-  // unconditionally assumes ownership of 'event'; if it does not make
-  // it onto one of the lists then we must get rid of it now.
-  delete event;
 
   return -1;
 }
@@ -252,7 +247,7 @@ DOTRACE("TimingHdlr::addEventByName");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void TimingHdlr::Impl::scheduleAll(minivec<TrialEvent*>& events) {
+void TimingHdlr::Impl::scheduleAll(EventGroup& events) {
 DOTRACE("TimingHdlr::Impl::scheduleAll");
   Precondition(itsTrial != 0);
   Precondition(itsWidget != 0);
@@ -263,20 +258,11 @@ DOTRACE("TimingHdlr::Impl::scheduleAll");
   }
 }
 
-void TimingHdlr::Impl::cancelAll(minivec<TrialEvent*>& events) {
+void TimingHdlr::Impl::cancelAll(EventGroup& events) {
 DOTRACE("TimingHdlr::Impl::cancelAll");
   for (size_t i = 0; i < events.size(); ++i) {
 	 events[i]->cancel();
   }
-}
-
-void TimingHdlr::Impl::deleteAll(minivec<TrialEvent*>& events) {
-DOTRACE("TimingHdlr::Impl::deleteAll");
-  for (size_t i = 0; i < events.size(); ++i) {
-	 delete events[i];
-	 events[i] = 0;
-  }
-  events.resize(0);
 }
 
 ///////////////////////////////////////////////////////////////////////
