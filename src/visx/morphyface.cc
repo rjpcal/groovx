@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Sep 22 15:04:41 1999
+// written: Wed Sep 29 20:54:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -157,42 +157,43 @@ MorphyFace::MorphyFace(int categ) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX)
 {
 DOTRACE("MorphyFace::MorphyFace");
-  itsCategory() = categ;
 
-  itsFaceWidth() = 2.75; 
-  itsTopHeight() = 3.8;
-  itsBottomHeight() = -3.0;
-  itsTopWidth() = 1.15;
-  itsBottomWidth() = 1.0;
+  category() = categ;
 
-  itsHairWidth() = 0.20;
-  itsHairStyle() = 0;
+  faceWidth() = 2.75; 
+  topHeight() = 3.8;
+  bottomHeight() = -3.0;
+  topWidth() = 1.15;
+  bottomWidth() = 1.0;
 
-  itsEyeYpos() = 0.375;
-  itsEyeDistance() = 2.25;
-  itsEyeHeight() = 0.9;
-  itsEyeAspectRatio() = 1.555556;
+  hairWidth() = 0.20;
+  hairStyle() = 0;
 
-  itsPupilXpos() = 0.0;
-  itsPupilYpos() = 0.0;
-  itsPupilSize() = 0.6;
-  itsPupilDilation() = 0.5;
+  eyeYpos() = 0.375;
+  eyeDistance() = 2.25;
+  eyeHeight() = 0.9;
+  eyeAspectRatio() = 1.555556;
 
-  itsEyebrowXpos() = 0.0;
-  itsEyebrowYpos() = 0.5;
-  itsEyebrowCurvature() = 0.8;
-  itsEyebrowAngle() = -5;
-  itsEyebrowThickness() = 2.0;
+  pupilXpos() = 0.0;
+  pupilYpos() = 0.0;
+  pupilSize() = 0.6;
+  pupilDilation() = 0.5;
 
-  itsNoseXpos() = 0.0;
-  itsNoseYpos() = -0.825;
-  itsNoseLength() = 0.75;
-  itsNoseWidth() = 1.5;
+  eyebrowXpos() = 0.0;
+  eyebrowYpos() = 0.5;
+  eyebrowCurvature() = 0.8;
+  eyebrowAngle() = -5;
+  eyebrowThickness() = 2.0;
 
-  itsMouthXpos() = 0.0;
-  itsMouthYpos() = -2.0;
-  itsMouthWidth() = 2.5;
-  itsMouthCurvature() = 0.6;
+  noseXpos() = 0.0;
+  noseYpos() = -0.825;
+  noseLength() = 0.75;
+  noseWidth() = 1.5;
+
+  mouthXpos() = 0.0;
+  mouthYpos() = -2.0;
+  mouthWidth() = 2.5;
+  mouthCurvature() = 0.6;
 
   Invariant(check());
 }
@@ -310,6 +311,60 @@ DOTRACE("MorphyFace::charCount");
 }
 
 ///////////////////////////////////////////////////////////////////////
+//
+// Properties
+//
+///////////////////////////////////////////////////////////////////////
+
+const vector<MorphyFace::PInfo> & MorphyFace::getPropertyInfos() {
+DOTRACE("MorphyFace::getPropertyInfos");
+  static vector<PInfo> p;
+
+  // just to shorten up the line lengths below
+  typedef MorphyFace MF;
+
+  if (p.size() == 0) {
+	 p.push_back(PInfo("faceWidth", &MF::faceWidth, 1.5, 3.5, 0.1, true));
+	 p.push_back(PInfo("topWidth", &MF::topWidth, 0.05, 2.0, 0.05));
+	 p.push_back(PInfo("bottomWidth", &MF::bottomWidth, 0.05, 2.0, 0.05));
+	 p.push_back(PInfo("topHeight", &MF::topHeight, 0.5, 5.0, 0.25));
+	 p.push_back(PInfo("bottomHeight", &MF::bottomHeight, -5.0, -0.5, 0.25));
+	 
+	 p.push_back(PInfo("hairWidth", &MF::hairWidth, 0.00, 0.5, 0.02, true));
+	 p.push_back(PInfo("hairStyle", &MF::hairStyle, 0, 1, 1));
+	 
+	 p.push_back(PInfo("eyeYpos", &MF::eyeYpos, -2.0, 2.0, 0.1, true));
+	 p.push_back(PInfo("eyeDistance", &MF::eyeDistance, 0.0, 5.0, 0.25));
+	 p.push_back(PInfo("eyeHeight", &MF::eyeHeight, 0.0, 2.0, 0.1));
+	 p.push_back(PInfo("eyeAspectRatio", &MF::eyeAspectRatio, 0.1, 5.0, 0.1));
+	 
+	 p.push_back(PInfo("pupilXpos", &MF::pupilXpos, -0.5, 0.5, 0.05, true));
+	 p.push_back(PInfo("pupilYpos", &MF::pupilYpos, -0.5, 0.5, 0.05));
+	 p.push_back(PInfo("pupilSize", &MF::pupilSize, 0.0, 1.0, 0.05));
+	 p.push_back(PInfo("pupilDilation", &MF::pupilDilation, 0.0, 1.0, 0.05));
+	 
+	 p.push_back(PInfo("eyebrowXpos", &MF::eyebrowXpos, -0.5, 0.5, 0.02, true));
+	 p.push_back(PInfo("eyebrowYpos", &MF::eyebrowYpos, 0.0, 1.5, 0.05));
+	 p.push_back(PInfo("eyebrowCurvature", &MF::eyebrowCurvature, -2.0, 2.0, 0.1));
+	 p.push_back(PInfo("eyebrowAngle", &MF::eyebrowAngle, -50, 50, 1));
+	 p.push_back(PInfo("eyebrowThickness", &MF::eyebrowThickness, 0.1, 4.0, 0.1));
+	
+	 p.push_back(PInfo("noseXpos", &MF::noseXpos, -1.0, 1.0, 0.05, true));
+	 p.push_back(PInfo("noseYpos", &MF::noseYpos, -2.0, 2.0, 0.1));
+	 p.push_back(PInfo("noseLength", &MF::noseLength, 0.0, 2.0, 0.1));
+	 p.push_back(PInfo("noseWidth", &MF::noseWidth, 0.0, 3.0, 0.1));
+	 
+	 p.push_back(PInfo("mouthXpos", &MF::mouthXpos, -2.0, 2.0, 0.1, true));
+	 p.push_back(PInfo("mouthYpos", &MF::mouthYpos, -3.0, 1.0, 0.1));
+	 p.push_back(PInfo("mouthWidth", &MF::mouthWidth, 0.0, 5.0, 0.25));
+	 p.push_back(PInfo("mouthCurvature", &MF::mouthCurvature, -2.0, 2.0, 0.1));
+
+  }
+  return p;
+}
+
+
+///////////////////////////////////////////////////////////////////////
 // Actions
 ///////////////////////////////////////////////////////////////////////
 
@@ -354,13 +409,13 @@ DOTRACE("MorphyFace::grRender");
 	   glScalef(left_right*1.0, 1.0, 1.0);
 
 		// Move to the eye position
-		glTranslatef(abs(itsEyeDistance())/2.0, itsEyeYpos(), 0.0);
+		glTranslatef(abs(eyeDistance())/2.0, eyeYpos(), 0.0);
 
 		// Draw eye outline
 		for (int top_bottom = -1; top_bottom < 2; top_bottom += 2) {
 		  glPushMatrix();
-		    glScalef(itsEyeHeight()*itsEyeAspectRatio(),
-						 itsEyeHeight()*top_bottom,
+		    glScalef(eyeHeight()*eyeAspectRatio(),
+						 eyeHeight()*top_bottom,
 						 1.0);
 			 glEnable(GL_MAP1_VERTEX_3);
 			 glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, eye_ctrlpnts);
@@ -372,16 +427,16 @@ DOTRACE("MorphyFace::grRender");
 
 		// Draw eyebrow
 		glPushMatrix();
-		  glTranslatef(itsEyebrowXpos(), itsEyebrowYpos(), 0.0);
-		  glRotatef(itsEyebrowAngle(), 0.0, 0.0, 1.0);
-		  glScalef(itsEyeHeight()*itsEyeAspectRatio(),
-					  itsEyeHeight()*itsEyebrowCurvature(),
+		  glTranslatef(eyebrowXpos(), eyebrowYpos(), 0.0);
+		  glRotatef(eyebrowAngle(), 0.0, 0.0, 1.0);
+		  glScalef(eyeHeight()*eyeAspectRatio(),
+					  eyeHeight()*eyebrowCurvature(),
 					  1.0);
 		  glPushAttrib(GL_LINE_BIT);
 		  {
 			 GLdouble line_width;
 			 glGetDoublev(GL_LINE_WIDTH, &line_width);
-			 glLineWidth(itsEyebrowThickness()*line_width);
+			 glLineWidth(eyebrowThickness()*line_width);
 			 glEnable(GL_MAP1_VERTEX_3);
 			 glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, eye_ctrlpnts);
 			 // Evaluate the 1-d Bezier curve
@@ -393,13 +448,13 @@ DOTRACE("MorphyFace::grRender");
 
 		// Draw pupil
 		glPushMatrix();
-		  glTranslatef(left_right*itsPupilXpos(), itsPupilYpos(), 0.0);
-		  glScalef(itsPupilSize()*itsEyeHeight(),
-					  itsPupilSize()*itsEyeHeight(),
+		  glTranslatef(left_right*pupilXpos(), pupilYpos(), 0.0);
+		  glScalef(pupilSize()*eyeHeight(),
+					  pupilSize()*eyeHeight(),
 					  1.0);
 		  static const int num_slices = 20;
 		  static const int num_loops = 1;
-		  gluDisk(qobj, 0.5*itsPupilDilation(), 0.5, num_slices, num_loops);
+		  gluDisk(qobj, 0.5*pupilDilation(), 0.5, num_slices, num_loops);
 		glPopMatrix();
 
 	 glPopMatrix();
@@ -416,14 +471,14 @@ DOTRACE("MorphyFace::grRender");
   static const int num_subdivisions = 30;
   static const int nctrlsets = 2;
   const double ctrlpnts[] = {
-    -itsFaceWidth(), 0.0,        0,        // first 4 control points 
-	 -itsTopWidth()*itsFaceWidth(),  itsTopHeight()*4.0/3.0, 0,
-	 itsTopWidth()*itsFaceWidth(),   itsTopHeight()*4.0/3.0, 0,
-	 itsFaceWidth(),  0.0,        0,
-	 itsFaceWidth(), 0.0, 0, // second 4 control points 
-	 itsBottomWidth()*itsFaceWidth(), itsBottomHeight()*4.0/3.0, 0,
-	 -itsBottomWidth()*itsFaceWidth(), itsBottomHeight()*4.0/3.0, 0,
-	 -itsFaceWidth(), 0.0, 0};
+    -faceWidth(), 0.0,        0,        // first 4 control points 
+	 -topWidth()*faceWidth(),  topHeight()*4.0/3.0, 0,
+	 topWidth()*faceWidth(),   topHeight()*4.0/3.0, 0,
+	 faceWidth(),  0.0,        0,
+	 faceWidth(), 0.0, 0, // second 4 control points 
+	 bottomWidth()*faceWidth(), bottomHeight()*4.0/3.0, 0,
+	 -bottomWidth()*faceWidth(), bottomHeight()*4.0/3.0, 0,
+	 -faceWidth(), 0.0, 0};
   
   glEnable(GL_MAP1_VERTEX_3);
   for (int i = 1; i < nctrlsets; ++i) {
@@ -438,8 +493,8 @@ DOTRACE("MorphyFace::grRender");
   //
 
   glPushMatrix();
-    glTranslatef(itsNoseXpos(), itsNoseYpos(), 0.0);
-	 glScalef(abs(itsNoseWidth())/2.0, abs(itsNoseLength()), 1.0);
+    glTranslatef(noseXpos(), noseYpos(), 0.0);
+	 glScalef(abs(noseWidth())/2.0, abs(noseLength()), 1.0);
 	 glBegin(GL_LINE_STRIP);
 	   glVertex2d(-0.75, 0.5);
 		glVertex2d(-1.0,  0.0);
@@ -465,8 +520,8 @@ DOTRACE("MorphyFace::grRender");
   };
   
   glPushMatrix();
-    glTranslatef(itsMouthXpos(), itsMouthYpos(), 0.0);
-	 glScalef(itsMouthWidth(), itsMouthCurvature(), 1.0);
+    glTranslatef(mouthXpos(), mouthYpos(), 0.0);
+	 glScalef(mouthWidth(), mouthCurvature(), 1.0);
 	 glEnable(GL_MAP1_VERTEX_3);
 	 glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, mouth_ctrlpnts);
 	 // Evaluate the 1-d Bezier curve
@@ -478,7 +533,7 @@ DOTRACE("MorphyFace::grRender");
   // Draw hair.
   //
 
-  Bezier4 xbezier(-1.0, -itsTopWidth(), itsTopWidth(), 1.0);
+  Bezier4 xbezier(-1.0, -topWidth(), topWidth(), 1.0);
   Bezier4 ybezier( 0.0,     4.0/3.0   ,   4.0/3.0  , 0.0);
 
   const int num_hair_points = 15;
@@ -515,19 +570,19 @@ DOTRACE("MorphyFace::grRender");
 		hair_y_normals[i] = norm_y * norm_factor;
 		
 		hair_vertices[4*i]   = // inner x value
-		  x - hair_x_normals[i]*hair_widths[i]*itsHairWidth();
+		  x - hair_x_normals[i]*hair_widths[i]*hairWidth();
 		hair_vertices[4*i+1] = // inner y value
-		  y - hair_y_normals[i]*hair_widths[i]*itsHairWidth();
+		  y - hair_y_normals[i]*hair_widths[i]*hairWidth();
 		hair_vertices[4*i+2] = // outer x value
-		  x + hair_x_normals[i]*hair_widths[i]*itsHairWidth();
+		  x + hair_x_normals[i]*hair_widths[i]*hairWidth();
 		hair_vertices[4*i+3] = // outer y value
-		  y + hair_y_normals[i]*hair_widths[i]*itsHairWidth();
+		  y + hair_y_normals[i]*hair_widths[i]*hairWidth();
 	 }
   }
   
   glPushAttrib(GL_POLYGON_BIT);
   {
-	 if (itsHairStyle() == 0) {
+	 if (hairStyle() == 0) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	 }
 	 else {
@@ -537,7 +592,7 @@ DOTRACE("MorphyFace::grRender");
 	 // Draw right side
 	 glPushMatrix();
 	 {
-		glScalef(itsFaceWidth(), itsTopHeight(), 1.0);
+		glScalef(faceWidth(), topHeight(), 1.0);
 		
 		glBegin(GL_QUAD_STRIP);
 		{
@@ -554,7 +609,7 @@ DOTRACE("MorphyFace::grRender");
 	 // Draw left side
 	 glPushMatrix();
 	 {
-		glScalef(-itsFaceWidth(), itsTopHeight(), 1.0);
+		glScalef(-faceWidth(), topHeight(), 1.0);
 		
 		glBegin(GL_QUAD_STRIP);
 		{
@@ -585,8 +640,8 @@ bool MorphyFace::grGetBoundingBox(double& left, double& top,
 											 double& right, double& bottom,
 											 int& border_pixels) const {
 DOTRACE("MorphyFace::grGetBoundingBox");
-  Bezier4 xbezier_top(-1.0, -itsTopWidth(), itsTopWidth(), 1.0);
-  Bezier4 xbezier_bottom(1.0, itsBottomWidth(), -itsBottomWidth(), -1.0);
+  Bezier4 xbezier_top(-1.0, -topWidth(), topWidth(), 1.0);
+  Bezier4 xbezier_bottom(1.0, bottomWidth(), -bottomWidth(), -1.0);
 
   double top_width = xbezier_top.evalMax();
   double bottom_width = xbezier_bottom.evalMax();
@@ -597,10 +652,10 @@ DOTRACE("MorphyFace::grGetBoundingBox");
 
   DebugEvalNL(max_width);
 
-  left   = -max_width      * itsFaceWidth() * (1 + itsHairWidth());
-  right  =  max_width      * itsFaceWidth() * (1 + itsHairWidth());
-  top    =  itsTopHeight() * (1 + itsHairWidth());
-  bottom =  itsBottomHeight();
+  left   = -max_width      * faceWidth() * (1 + hairWidth());
+  right  =  max_width      * faceWidth() * (1 + hairWidth());
+  top    =  topHeight() * (1 + hairWidth());
+  bottom =  bottomHeight();
 
   border_pixels = 4;
 
@@ -609,7 +664,7 @@ DOTRACE("MorphyFace::grGetBoundingBox");
 
 bool MorphyFace::check() const {
 DOTRACE("MorphyFace::check");
-  return (itsEyeDistance() >= 0.0 && itsNoseLength() >= 0.0);
+  return (eyeDistance() >= 0.0 && noseLength() >= 0.0);
 }
 
 void MorphyFace::makeIoList(vector<IO *>& vec) {
@@ -626,42 +681,42 @@ DOTRACE("MorphyFace::makeIoList const");
   vec.push_back(&its\1);
  */
 
-  vec.push_back(&itsCategory);
+  vec.push_back(&category);
 
-  vec.push_back(&itsFaceWidth);
-  vec.push_back(&itsTopWidth);
-  vec.push_back(&itsBottomWidth);
-  vec.push_back(&itsTopHeight);
-  vec.push_back(&itsBottomHeight);
+  vec.push_back(&faceWidth);
+  vec.push_back(&topWidth);
+  vec.push_back(&bottomWidth);
+  vec.push_back(&topHeight);
+  vec.push_back(&bottomHeight);
 
-  vec.push_back(&itsHairWidth);
-  vec.push_back(&itsHairStyle);
+  vec.push_back(&hairWidth);
+  vec.push_back(&hairStyle);
 
-  vec.push_back(&itsEyeYpos);
-  vec.push_back(&itsEyeDistance);
-  vec.push_back(&itsEyeHeight);
-  vec.push_back(&itsEyeAspectRatio);
+  vec.push_back(&eyeYpos);
+  vec.push_back(&eyeDistance);
+  vec.push_back(&eyeHeight);
+  vec.push_back(&eyeAspectRatio);
 
-  vec.push_back(&itsPupilXpos);
-  vec.push_back(&itsPupilYpos);
-  vec.push_back(&itsPupilSize);
-  vec.push_back(&itsPupilDilation);
+  vec.push_back(&pupilXpos);
+  vec.push_back(&pupilYpos);
+  vec.push_back(&pupilSize);
+  vec.push_back(&pupilDilation);
 
-  vec.push_back(&itsEyebrowXpos);
-  vec.push_back(&itsEyebrowYpos);
-  vec.push_back(&itsEyebrowCurvature);
-  vec.push_back(&itsEyebrowAngle);
-  vec.push_back(&itsEyebrowThickness);
+  vec.push_back(&eyebrowXpos);
+  vec.push_back(&eyebrowYpos);
+  vec.push_back(&eyebrowCurvature);
+  vec.push_back(&eyebrowAngle);
+  vec.push_back(&eyebrowThickness);
 
-  vec.push_back(&itsNoseXpos);
-  vec.push_back(&itsNoseYpos);
-  vec.push_back(&itsNoseLength);
-  vec.push_back(&itsNoseWidth);
+  vec.push_back(&noseXpos);
+  vec.push_back(&noseYpos);
+  vec.push_back(&noseLength);
+  vec.push_back(&noseWidth);
 
-  vec.push_back(&itsMouthXpos);
-  vec.push_back(&itsMouthYpos);
-  vec.push_back(&itsMouthWidth);
-  vec.push_back(&itsMouthCurvature);
+  vec.push_back(&mouthXpos);
+  vec.push_back(&mouthYpos);
+  vec.push_back(&mouthWidth);
+  vec.push_back(&mouthCurvature);
 }
 
 static const char vcid_morphyface_cc[] = "$Header$";
