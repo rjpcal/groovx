@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Wed Aug 22 18:01:45 2001
+// written: Mon Aug 27 17:31:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "gfx/gxcolor.h"
 #include "gfx/gxnode.h"
 #include "gfx/gxseparator.h"
+#include "gfx/pscanvas.h"
 
 #include "tcl/fieldpkg.h"
 #include "tcl/tclpkg.h"
@@ -32,6 +33,13 @@ namespace GxTcl
   {
     return item->contains(other.get());
   }
+
+  void savePS(Ref<GxNode> item, const char* filename)
+  {
+    Gfx::PSCanvas canvas(filename);
+
+    item->draw(canvas);
+  }
 }
 
 extern "C"
@@ -44,6 +52,7 @@ DOTRACE("Gx_Init");
 
   pkg1->def( "contains", "item_id other_id", &GxTcl::contains );
   pkg1->defVec("deepChildren", "item_id(s)", &GxNode::deepChildren);
+  pkg1->def( "savePS", "item_id filename", &GxTcl::savePS );
 
 
   Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "GxSeparator", "$Revision$");
