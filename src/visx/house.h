@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:15 1999
-// written: Sat Nov 11 10:19:51 2000
+// written: Mon Nov 13 22:09:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "grobj.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H_DEFINED)
-#include "io/property.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
+#include "io/fields.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class House : public GrObj, public PropFriend<House> {
+class House : public GrObj, public FieldContainer {
 protected:
   /// Default constructor.
   House();
@@ -53,71 +53,64 @@ public:
   // properties //
   ////////////////
 
-  /// Info about a \c House property.
-  typedef PropertyInfo<House> PInfo;
-
-  /// Return the number of \c House properties.
-  static unsigned int numPropertyInfos();
-
-  /// Return info on the i'th \c House property.
-  static const PInfo& getPropertyInfo(unsigned int i);
-
   /// Width/height ratio of each story.
-  TProperty<double> storyAspectRatio;
+  TField<double> storyAspectRatio;
 
   /// Number of stories in the building.
-  TProperty<int> numStories;
+  TField<int> numStories;
 
   /// Position of the door in range [0, numWindows).
-  TProperty<int> doorPosition;
+  TField<int> doorPosition;
 
   /// Width of door as fraction of available parcel.
-  TProperty<double> doorWidth;
+  TField<double> doorWidth;
 
   /// Height of door as fraction of one story.
-  TProperty<double> doorHeight;
+  TField<double> doorHeight;
 
   /// Whether door handle is on left or right.
-  TProperty<bool> doorOrientation;
+  TField<bool> doorOrientation;
 
   /// Number of windows per story.
-  TProperty<int> numWindows;
+  TField<int> numWindows;
 
   /// Width of windows as fraction of available parcel.
-  TProperty<double> windowWidth;
+  TField<double> windowWidth;
 
   /// Height of windows as fraction of one story.
-  TProperty<double> windowHeight;
+  TField<double> windowHeight;
 
   /// Number of vertical bars in each window.
-  TProperty<int> windowVertBars;
+  TField<int> windowVertBars;
 
   /// Number of horizontal bars in each window.
-  TProperty<int> windowHorizBars;
+  TField<int> windowHorizBars;
 
   /// Enumerated mode for the roof shape.
-  TProperty<int> roofShape;
+  TField<int> roofShape;
 
   /// Amount of roof overhang, as a fraction of story width.
-  TProperty<double> roofOverhang;
+  TField<double> roofOverhang;
 
   /// Height of roof as fraction of the story height.
-  TProperty<double> roofHeight;
+  TField<double> roofHeight;
 
   /// Color of the roof: 0 -> black, 1 -> white.
-  TProperty<int> roofColor;
+  TField<int> roofColor;
 
   /// X position of the chimney within the roof.
-  TProperty<double> chimneyXPosition;
+  TField<double> chimneyXPosition;
 
   /// Y position of the chimney within the roof.
-  TProperty<double> chimneyYPosition;
+  TField<double> chimneyYPosition;
 
   /// Width of the chimney, as fraction of the story width.
-  TProperty<double> chimneyWidth;
+  TField<double> chimneyWidth;
 
   /// Height of the chimney, as fraction of the story height.
-  TProperty<double> chimneyHeight;
+  TField<double> chimneyHeight;
+
+  static const FieldMap& classFields();
 
 protected:
   virtual void grGetBoundingBox(Rect<double>& bbox,

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Sat Nov 11 10:19:08 2000
+// written: Mon Nov 13 22:05:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "grobj.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H_DEFINED)
-#include "io/property.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
+#include "io/fields.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Gabor : public GrObj, public PropFriend<Gabor> {
+class Gabor : public GrObj, public FieldContainer {
 protected:
   /// Default constructor.
   Gabor();
@@ -70,43 +70,36 @@ public:
       proportional to the value of the Gabor function. */
   static const ColorMode BW_DITHER_RECT = 4;
 
-  /// Info about a \c Gabor property.
-  typedef PropertyInfo<Gabor> PInfo;
-
-  /// Return the number of \c Gabor properties.
-  static unsigned int numPropertyInfos();
-
-  /// Return info on the i'th \c Gabor property.
-  static const PInfo& getPropertyInfo(unsigned int i);
-
   /// The current \c ColorMode used for rendering.
-  TProperty<ColorMode> colorMode;
+  TField<ColorMode> colorMode;
 
   /// Contrast of the sine grating.
-  TProperty<double> contrast;
+  TField<double> contrast;
 
   /// The spatial frequency of the sine grating, in cycles per OpenGL unit.
-  TProperty<double> spatialFreq;
+  TField<double> spatialFreq;
 
   /// Phase of the sine grating, in degrees.
-  TProperty<int> phase;
+  TField<int> phase;
 
   /// The base standard deviation for the Gaussian.
-  TProperty<double> sigma;
+  TField<double> sigma;
 
   /// The ratio of standard deviations width/height.
-  TProperty<double> aspectRatio;
+  TField<double> aspectRatio;
 
   /// Orientation of the sine grating, in degrees.
-  TProperty<int> orientation;
+  TField<int> orientation;
 
   /** Number of rectangle subdivisions per OpenGL unit (note that this
 		applies only when the colorMode is \a BW_DITHER_RECT). */
-  TProperty<int> resolution;
+  TField<int> resolution;
 
   /** The size of the points used when \a colorMode is either \a
       GRAYSCALE or \a BW_DITHER_POINT. */
-  TProperty<int> pointSize;
+  TField<int> pointSize;
+
+  static const FieldMap& classFields();
 
 protected:
   virtual void grGetBoundingBox(Rect<double>& bbox,
