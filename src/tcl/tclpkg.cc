@@ -79,16 +79,24 @@ namespace
     return clean;
   }
 
-  std::string makeCleanVersionString(const char* ver)
+  std::string makeCleanVersionString(const std::string& s)
   {
-    std::string result = ver ? ver : "";
+    std::string::size_type dollar1 = s.find_first_of("$");
+    std::string::size_type dollar2 = s.find_last_of("$");
 
-    // Fix up version to remove any extraneous char's (such as
-    // version-control info, where we'd get a string like
-    //   '$Revision 2.8 $'
+    if (dollar1 == dollar2)
+      return std::string();
 
-    result.erase(0, result.find_first_of("0123456789"));
-    result.erase(result.find_last_of("0123456789")+1, std::string::npos);
+    const std::string r = s.substr(dollar1,dollar2+1-dollar1);
+
+    std::string::size_type n1 = r.find_first_of("0123456789");
+    std::string::size_type n2 = r.find_last_of("0123456789");
+
+    const std::string n = r.substr(n1,n2+1-n1);
+
+    std::string result(s);
+
+    result.replace(dollar1, dollar2+1-dollar1, n);
 
     return result;
   }
