@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Sat Jun  2 09:08:54 2001
+// written: Wed Jun  6 17:44:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -325,7 +325,7 @@ template <class C>
 class TclItemCmd : public TclCmd {
 public:
   TclItemCmd(CTclItemPkg<C>* pkg, const char* cmd_name, const char* usage, 
-				 int objc_min=0, int objc_max=100000, bool exact_objc=false) :
+				 int objc_min=0, int objc_max=-1, bool exact_objc=false) :
 	 TclCmd(pkg->interp(), cmd_name, usage, objc_min, objc_max, exact_objc),
 	 itsPkg(pkg) {}
 protected:
