@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Thu Mar 23 16:39:28 2000
+// written: Wed Mar 29 22:09:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ DOTRACE("GrObj::getBBVisibility");
   return itsImpl->getBBVisibility();
 }
 
-bool GrObj::getBoundingBox(const Canvas& canvas, Rect<double>& bbox) const {
+bool GrObj::getBoundingBox(const GWT::Canvas& canvas, Rect<double>& bbox) const {
 DOTRACE("GrObj::getBoundingBox");
 
   return itsImpl->getBoundingBox(canvas, bbox);
@@ -319,7 +319,7 @@ DOTRACE("GrObj::receiveDestroyMsg");
 // actions //
 /////////////
 
-void GrObj::saveBitmapCache(Canvas& canvas, const char* filename) const {
+void GrObj::saveBitmapCache(GWT::Canvas& canvas, const char* filename) const {
   itsImpl->saveBitmapCache(canvas, filename);
 }
 
@@ -327,19 +327,19 @@ void GrObj::restoreBitmapCache() const {
   itsImpl->restoreBitmapCache();
 }
 
-void GrObj::update(Canvas& canvas) const {
+void GrObj::update(GWT::Canvas& canvas) const {
   itsImpl->update(canvas);
 }
 
-void GrObj::draw(Canvas& canvas) const {
+void GrObj::draw(GWT::Canvas& canvas) const {
   itsImpl->draw(canvas);
 }
 
-void GrObj::undraw(Canvas& canvas) const {
+void GrObj::undraw(GWT::Canvas& canvas) const {
   itsImpl->undraw(canvas);
 }
 
-void GrObj::grUnRender(Canvas&) const {
+void GrObj::grUnRender(GWT::Canvas&) const {
 DOTRACE("GrObj::grUnRender");
   // Empty default implementation of this virtual function
 }

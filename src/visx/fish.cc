@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Sat Mar 18 10:32:16 2000
+// written: Wed Mar 29 22:09:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -464,7 +464,7 @@ DOTRACE("Fish::grHasBoundingBox");
   return true;
 }
 
-void Fish::grRender(Canvas&) const {
+void Fish::grRender(GWT::Canvas&) const {
 DOTRACE("Fish::grRender");
   // Create and configure the NURBS object
   GLUnurbsObj* theNurb = gluNewNurbsRenderer();

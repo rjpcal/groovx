@@ -3,7 +3,7 @@
 // glbmaprenderer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:52:41 1999
-// written: Wed Mar 15 10:17:29 2000
+// written: Wed Mar 29 22:09:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ GLBmapRenderer::~GLBmapRenderer () {
 DOTRACE("GLBmapRenderer::~GLBmapRenderer ");
 }
 
-void GLBmapRenderer::doRender(Canvas&,
+void GLBmapRenderer::doRender(GWT::Canvas&,
 										unsigned char* bytes,
 										double x_pos,
 										double y_pos,

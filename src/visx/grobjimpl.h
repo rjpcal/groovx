@@ -3,7 +3,7 @@
 // grobjimpl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:54 2000
-// written: Thu Mar 23 18:03:20 2000
+// written: Wed Mar 29 22:09:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ private:
 		  return itsCachedRawBB;
 		}
 
-	 const Rect<double>& getFinal(const Canvas& canvas) const
+	 const Rect<double>& getFinal(const GWT::Canvas& canvas) const
 		{
 		  updateFinal(canvas);
 		  return itsCachedFinalBB;
@@ -106,7 +106,7 @@ private:
   private:
 	 void updateRaw() const;
 
-	 void updateFinal(const Canvas& canvas) const;
+	 void updateFinal(const GWT::Canvas& canvas) const;
 
 	 int pixelBorder() const
 		{
@@ -143,7 +143,7 @@ public:
 
   bool hasBB() const { return itsBB.bbExists(); }
 
-  bool getBoundingBox(const Canvas& canvas, Rect<double>& bbox) const;
+  bool getBoundingBox(const GWT::Canvas& canvas, Rect<double>& bbox) const;
 
   bool getBBVisibility() const { return itsBB.itsIsVisible; }
 
@@ -249,11 +249,11 @@ private:
 
 	 // Returns true if the object was rendered to the screen as part
 	 // of the update, false otherwise
-	 bool update(const GrObj::Impl* obj, Canvas& canvas) const;
+	 bool update(const GrObj::Impl* obj, GWT::Canvas& canvas) const;
 
-	 void render(const GrObj::Impl* obj, Canvas& canvas) const;
+	 void render(const GrObj::Impl* obj, GWT::Canvas& canvas) const;
 
-	 void saveBitmapCache(const GrObj::Impl* obj, Canvas& canvas,
+	 void saveBitmapCache(const GrObj::Impl* obj, GWT::Canvas& canvas,
 								 const char* filename) const
 		{
 		  recacheBitmapIfNeeded(obj, canvas);
@@ -295,11 +295,11 @@ private:
 		}
 
 	 // This function updates the cached OpenGL display list.
-	 void recompileIfNeeded(const GrObj::Impl* obj, Canvas& canvas) const;
+	 void recompileIfNeeded(const GrObj::Impl* obj, GWT::Canvas& canvas) const;
 
 	 // This function updates the cached bitmap, and returns a true if
 	 // the bitmap was actually recached, and false if nothing was done.
-	 bool recacheBitmapIfNeeded(const GrObj::Impl* obj, Canvas& canvas) const;
+	 bool recacheBitmapIfNeeded(const GrObj::Impl* obj, GWT::Canvas& canvas) const;
 
 	 void postUpdated() const { itsIsCurrent = true; }
 
@@ -316,14 +316,14 @@ public:
 	 { itsRenderer.setMode(new_mode, this); }
 
 
-  void saveBitmapCache(Canvas& canvas, const char* filename);
+  void saveBitmapCache(GWT::Canvas& canvas, const char* filename);
   void restoreBitmapCache() const
 	 { itsRenderer.restoreBitmapCache(); }
-  void update(Canvas& canvas) const
+  void update(GWT::Canvas& canvas) const
 	 { itsRenderer.update(this, canvas); }
-  void draw(Canvas& canvas) const;
+  void draw(GWT::Canvas& canvas) const;
 
-  void grDrawBoundingBox(const Canvas& canvas) const;
+  void grDrawBoundingBox(const GWT::Canvas& canvas) const;
 
   /////////////////
   // unrendering //
@@ -338,11 +338,11 @@ private:
 	 GrObj::GrObjRenderMode itsMode;
   };
 
-  void undrawDirectRender(Canvas& canvas) const;
-  void undrawSwapForeBack(Canvas& canvas) const;
-  void undrawClearBoundingBox(Canvas& canvas) const;
+  void undrawDirectRender(GWT::Canvas& canvas) const;
+  void undrawSwapForeBack(GWT::Canvas& canvas) const;
+  void undrawClearBoundingBox(GWT::Canvas& canvas) const;
 
-  void undrawBoundingBox(Canvas& canvas) const;
+  void undrawBoundingBox(GWT::Canvas& canvas) const;
 
 public:
 
@@ -351,7 +351,7 @@ public:
 
   void setUnRenderMode(GrObj::GrObjRenderMode new_mode);
 
-  void undraw(Canvas& canvas) const;
+  void undraw(GWT::Canvas& canvas) const;
 
   ///////////////
   // ? other ? //
@@ -372,8 +372,8 @@ public:
   // Forwards to GrObj's protected members //
   ///////////////////////////////////////////
 
-  void grRender(Canvas& canvas) const { self->grRender(canvas); }
-  void grUnRender(Canvas& canvas) const { self->grUnRender(canvas); }
+  void grRender(GWT::Canvas& canvas) const { self->grRender(canvas); }
+  void grUnRender(GWT::Canvas& canvas) const { self->grUnRender(canvas); }
 
   void grGetBoundingBox(Rect<double>& bbox, int& pixel_border) const
 	 { self->grGetBoundingBox(bbox, pixel_border); }

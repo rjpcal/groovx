@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Mar 29 14:07:38 2000
+// written: Wed Mar 29 22:10:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,9 +81,9 @@ public:
   /// Change the name of the file to use for autosaves
   void setAutosaveFile(const fixed_string& str);
 
-  virtual Widget* getWidget();
+  virtual GWT::Widget* getWidget();
 
-  virtual Canvas* getCanvas();
+  virtual GWT::Canvas* getCanvas();
 
   virtual void edDraw();
   virtual void edUndraw();

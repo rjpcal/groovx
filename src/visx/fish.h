@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Wed Mar 29 14:07:38 2000
+// written: Wed Mar 29 22:09:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,7 +121,7 @@ protected:
 
   virtual bool grHasBoundingBox() const;
 
-  virtual void grRender(Canvas& canvas) const;
+  virtual void grRender(GWT::Canvas& canvas) const;
 
 private:
   Fish(const Fish&);

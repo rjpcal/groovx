@@ -3,7 +3,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar 29 14:07:34 2000
+// written: Wed Mar 29 22:13:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(WIDGET_H_DEFINED)
-#include "widget.h"
+#include "gwt/widget.h"
 #endif
 
 struct Togl;
@@ -39,7 +39,7 @@ typedef unsigned long Window;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ToglConfig : public Widget {
+class ToglConfig : public GWT::Widget {
 public:
   // types
   struct Color {
@@ -75,7 +75,7 @@ public:
   int getX11ScreenNumber() const;
   Window getX11Window() const;
 
-  virtual Canvas* getCanvas();
+  virtual GWT::Canvas* getCanvas();
 
   // manipulators
   void destroyWidget();
@@ -108,7 +108,7 @@ private:
   ToglConfig(const ToglConfig&); // no copy constructor
   ToglConfig& operator=(const ToglConfig&); // no assignment operator
 
-  scoped_ptr<Canvas> itsCanvas;
+  scoped_ptr<GWT::Canvas> itsCanvas;
 
   Togl* itsWidget;
   double itsViewingDistance;     // inches

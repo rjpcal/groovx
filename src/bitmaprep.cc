@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Mar  9 16:55:18 2000
+// written: Wed Mar 29 22:12:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,13 +17,15 @@
 #include "bmapdata.h"
 #include "experiment.h"
 #include "bmaprenderer.h"
-#include "canvas.h"
 #include "io.h"
 #include "pbm.h"
 #include "reader.h"
 #include "rect.h"
-#include "util/strings.h"
 #include "writer.h"
+
+#include "gwt/canvas.h"
+
+#include "util/strings.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -328,7 +330,7 @@ void BitmapRep::grabWorldRect(double left, double top,
 
 void BitmapRep::grabWorldRect(const Rect<double>& world_rect) {
 DOTRACE("BitmapRep::grabWorldRect");
-  Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+  GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
 
   Rect<int> screen_rect = canvas->getScreenFromWorld(world_rect);
 
@@ -378,7 +380,7 @@ DOTRACE("BitmapRep::center");
   screen_pos.bottom() = viewport[1];
   screen_pos.top() = viewport[1] + itsImpl->itsData.height();
 
-  Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+  GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
 
   Rect<double> world_pos = canvas->getWorldFromScreen(screen_pos);
 
@@ -394,7 +396,7 @@ DOTRACE("BitmapRep::center");
   itsImpl->itsRasterY *= abs(itsImpl->itsZoomY);
 }
 
-void BitmapRep::grRender(Canvas& canvas) const {
+void BitmapRep::grRender(GWT::Canvas& canvas) const {
 DOTRACE("BitmapRep::grRender");
   itsImpl->itsRenderer->doRender(canvas,
 								itsImpl->itsData.bytesPtr(),
@@ -405,7 +407,7 @@ DOTRACE("BitmapRep::grRender");
 								itsImpl->itsZoomX, itsImpl->itsZoomY);
 }
 
-void BitmapRep::grUnRender(Canvas& canvas) const {
+void BitmapRep::grUnRender(GWT::Canvas& canvas) const {
 DOTRACE("BitmapRep::grUnRender"); 
   Rect<double> world_rect;
   int border_pixels;
@@ -438,7 +440,7 @@ DOTRACE("BitmapRep::grGetBoundingBox");
   bbox.bottom() = itsImpl->itsRasterY;
 
   // Get screen coordinates for the lower left corner
-  Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+  GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
 
   Point<int> screen_point =
 	 canvas->getScreenFromWorld(Point<double>(itsImpl->itsRasterX, itsImpl->itsRasterY));

@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Mar 15 10:17:30 2000
+// written: Wed Mar 29 22:09:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ DOTRACE("Gabor::grHasBoundingBox");
   return true;
 }
 
-void Gabor::grRender(Canvas&) const {
+void Gabor::grRender(GWT::Canvas&) const {
 DOTRACE("Gabor::grRender");
   double xsigma = sigma()*aspectRatio();
   double ysigma = sigma();

@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Wed Mar 15 20:24:18 2000
+// written: Wed Mar 29 22:09:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,6 @@
 
 #include "tlistutils.h"
 
-#include <iostream.h>
-#include <fstream.h>
-#include <strstream.h>
-#include <iomanip.h>
-#include <cmath>
-
-#include "canvas.h"
-#include "util/error.h"
 #include "gtext.h"
 #include "objlist.h"
 #include "position.h"
@@ -29,7 +21,16 @@
 #include "trial.h"
 #include "tlist.h"
 
+#include "gwt/canvas.h"
+
 #include "util/arrays.h"
+#include "util/error.h"
+
+#include <iostream.h>
+#include <fstream.h>
+#include <strstream.h>
+#include <iomanip.h>
+#include <cmath>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -41,7 +42,7 @@ namespace {
 }
 
 int TlistUtils::createPreview(Tlist& tlist,
-										const Canvas& canvas,
+										const GWT::Canvas& canvas,
 										int* objids, unsigned int objids_size,
 										int pixel_width,
 										int pixel_height) {

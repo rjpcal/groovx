@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Wed Mar 29 14:07:36 2000
+// written: Wed Mar 29 22:09:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -140,7 +140,7 @@ protected:
 
   virtual bool grHasBoundingBox() const;
 
-  virtual void grRender(Canvas& canvas) const; 
+  virtual void grRender(GWT::Canvas& canvas) const; 
 
 private:
   /// Check all invariants and return true if everything is OK.

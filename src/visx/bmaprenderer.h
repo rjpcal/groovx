@@ -3,7 +3,7 @@
 // bmaprenderer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 16:51:34 1999
-// written: Wed Feb 16 08:38:47 2000
+// written: Wed Mar 29 22:12:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,9 @@
 #ifndef BMAPRENDERER_H_DEFINED
 #define BMAPRENDERER_H_DEFINED
 
-class Canvas;
+namespace GWT {
+  class Canvas;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -31,7 +33,7 @@ public:
 		actual rendering of the bitmap data. All of the information
 		needed to do the rendering is passed as arguments to the
 		function. */
-  virtual void doRender(Canvas& canvas,
+  virtual void doRender(GWT::Canvas& canvas,
 								unsigned char* /* bytes */,
 								double /* x_pos */,
 								double /* y_pos */,
@@ -45,7 +47,7 @@ public:
   /** This is the operation that subclasses should override if they
       need to provide a special unrendering method. A default no-op
       implementation is provided. */
-  virtual void doUndraw(Canvas& canvas,
+  virtual void doUndraw(GWT::Canvas& canvas,
 					  int /*winRasterX*/, int /*winRasterY*/,
 					  int /*winWidthX*/, int /*winHeightY*/) const;
 

@@ -3,7 +3,7 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Mar  9 15:22:03 2000
+// written: Wed Mar 29 22:12:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,12 +12,15 @@
 #define BITMAPREP_H_DEFINED
 
 class BmapRenderer;
-class Canvas;
 class istream;
 class ostream;
 class Reader;
 class Writer;
 template <class V> class Rect;
+
+namespace GWT {
+  class Canvas;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -124,11 +127,11 @@ public:
 
   /** Implements the rendering operation. This function delegates the
       work to itsRenderer. */
-  void grRender(Canvas& canvas) const;
+  void grRender(GWT::Canvas& canvas) const;
 
   /** Implements the undrawing operation. This function delegates the
       work to itsRenderer. */
-  void grUnRender(Canvas& canvas) const;
+  void grUnRender(GWT::Canvas& canvas) const;
 
   ///////////////
   // accessors //

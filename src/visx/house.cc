@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Wed Mar 15 10:17:29 2000
+// written: Wed Mar 29 22:09:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -330,7 +330,7 @@ DOTRACE("House::grHasBoundingBox");
   return true;
 }
 
-void House::grRender(Canvas&) const {
+void House::grRender(GWT::Canvas&) const {
 DOTRACE("House::grRender");
   GLdouble total_width = storyAspectRatio();
   GLdouble total_height = numStories() + roofHeight();

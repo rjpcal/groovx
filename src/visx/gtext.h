@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Wed Mar 29 14:07:37 2000
+// written: Wed Mar 29 22:09:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ protected:
 
   virtual bool grHasBoundingBox() const;
 
-  virtual void grRender(Canvas& canvas) const;
+  virtual void grRender(GWT::Canvas& canvas) const;
 
 private:
   fixed_string itsText;

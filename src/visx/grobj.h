@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Mar 29 14:07:37 2000
+// written: Wed Mar 29 22:09:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,9 @@
 template <class V> class Point;
 template <class V> class Rect;
 
-class Canvas;
+namespace GWT {
+  class Canvas;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -240,7 +242,7 @@ public:
 		mode, and pixel border values. If a bounding box is not
 		available, the function returns false and does not modify the
 		input reference parameters. */
-  bool getBoundingBox(const Canvas& canvas, Rect<double>& bounding_box) const;
+  bool getBoundingBox(const GWT::Canvas& canvas, Rect<double>& bounding_box) const;
 
 protected: 
   /** Subclasses may override this function to fill in the parameters
@@ -378,7 +380,7 @@ public:
       will be stored in the directory given to \c
       setBitmapCacheDir(). The filename must refer to a format
       supported by \c Pbm. */
-  void saveBitmapCache(Canvas& canvas, const char* filename) const;
+  void saveBitmapCache(GWT::Canvas& canvas, const char* filename) const;
 
   /** Restores the bitmap cache from the bitmap cache filename that
       was most recently passed to \c saveBitmapCache(). */
@@ -386,25 +388,25 @@ public:
 
   /** Recompiles the OpenGL display list or bitmap cache, if there are
 		changes pending, otherwise does nothing. */
-  void update(Canvas& canvas) const;
+  void update(GWT::Canvas& canvas) const;
 
   /** This function draws the object according to the GrRenderMode
 		selected with setRenderMode(). */
-  void draw(Canvas& canvas) const;
+  void draw(GWT::Canvas& canvas) const;
 
   /** This function undraws the object according to the GrRenderMode
 		selected with setUnRenderMode(). */
-  void undraw(Canvas& canvas) const;
+  void undraw(GWT::Canvas& canvas) const;
 
 protected:
   /** This function must be overridden in derived classes to execute
 		the actual OpenGL commands that render the object. */
-  virtual void grRender(Canvas& canvas) const = 0;
+  virtual void grRender(GWT::Canvas& canvas) const = 0;
 
   /** This function will be called if the unrendering mode is set to
 		GROBJ_DIRECT_RENDER or to any of the compile or cache modes. The
 		default implementation provided by GrObj does nothing. */
-  virtual void grUnRender(Canvas& canvas) const;
+  virtual void grUnRender(GWT::Canvas& canvas) const;
 
 private:
   GrObj(const GrObj&);

@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Mar 23 19:39:43 2000
+// written: Wed Mar 29 22:13:22 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -19,7 +19,8 @@
 #include "asciistreamwriter.h"
 #include "grshapp.h"
 #include "exptdriver.h"
-#include "widget.h"
+
+#include "gwt/widget.h"
 
 #include "tcl/tclcmd.h"
 #include "tcl/tclevalcmd.h"
@@ -82,7 +83,7 @@ void ExptTcl::BeginCmd::invoke() {
 DOTRACE("ExptTcl::BeginCmd::beginCmd");
 
   ExptDriver* ed = getItem();
-  Widget* widget = ed->getWidget();
+  GWT::Widget* widget = ed->getWidget();
 
   // Create the begin key binding
   widget->bind("<Control-KeyPress-b>", "{ Togl::takeFocus; Expt::begin }");
@@ -189,7 +190,7 @@ protected:
 	 start_command += " }";
 
 	 ExptDriver* ed = getItem();
-	 Widget* widget = ed->getWidget();
+	 GWT::Widget* widget = ed->getWidget();
 
 	 widget->bind("<KeyPress-s>", start_command.c_str());
 	 widget->takeFocus();

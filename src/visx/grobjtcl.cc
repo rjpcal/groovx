@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Thu Mar 23 15:52:52 2000
+// written: Wed Mar 29 22:09:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ public:
 	 Tcl::TclItemCmd<GrObj>(pkg, cmd_name, "objid", 2, 2) {}
 protected:
   virtual void invoke() {
-	 Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+	 GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
 
 	 Rect<double> bbox;
 	 bool have_box = getItem()->getBoundingBox(*canvas, bbox);
@@ -71,7 +71,7 @@ class GrobjTcl::SaveBitmapCacheAction : public Setter<const char*> {
 public:
   virtual void set(void* item, const char* filename) {
 	 GrObj* obj = static_cast<GrObj*>(item);
-	 Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+	 GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
 	 obj->saveBitmapCache(*canvas, filename);
   }
 };
@@ -103,7 +103,7 @@ class GrobjTcl::Updater : public Action {
 public:
   virtual void action(void* item) {
 	 GrObj* obj = static_cast<GrObj*>(item);
-	 Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+	 GWT::Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
 	 obj->update(*canvas);
   }
 };

@@ -3,7 +3,7 @@
 // gabor.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Mar 29 14:07:38 2000
+// written: Wed Mar 29 22:09:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ protected:
 
   virtual bool grHasBoundingBox() const;
 
-  virtual void grRender(Canvas& canvas) const;
+  virtual void grRender(GWT::Canvas& canvas) const;
 };
 
 static const char vcid_gabor_h[] = "$Header$";

@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Mon Mar 13 19:32:21 2000
+// written: Wed Mar 29 22:10:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,9 +12,12 @@
 #define EXPERIMENT_H_DEFINED
 
 class IO;
-class Widget;
-class Canvas;
 class Response;
+
+namespace GWT {
+  class Widget;
+  class Canvas;
+}
 
 /// Protocol class that represents psychophysical experiments.
 class Experiment {
@@ -22,10 +25,10 @@ public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Experiment();
 
-  virtual Widget* getWidget() = 0;
+  virtual GWT::Widget* getWidget() = 0;
   ///< Return the Widget in which the experiment is running.
 
-  virtual Canvas* getCanvas() = 0;
+  virtual GWT::Canvas* getCanvas() = 0;
   ///< Return the Canvas for the Widget in which the experiment is running.
 
   virtual void manageObject(const char* name, IO* object) = 0;

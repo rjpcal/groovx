@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Mar 15 11:04:18 2000
+// written: Wed Mar 29 22:10:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -153,10 +153,10 @@ public:
 
   void setAutosaveFile(const fixed_string& str) { itsAutosaveFile = str; }
 
-  Widget* getWidget()
+  GWT::Widget* getWidget()
 	 { return ObjTogl::theToglConfig(); }
 
-  Canvas* getCanvas()
+  GWT::Canvas* getCanvas()
 	 { return getWidget()->getCanvas(); }
 
   void edDraw();
@@ -1065,10 +1065,10 @@ const fixed_string& ExptDriver::getAutosaveFile() const
 void ExptDriver::setAutosaveFile(const fixed_string& str) 
   { itsImpl->setAutosaveFile(str); }
 
-Widget* ExptDriver::getWidget()
+GWT::Widget* ExptDriver::getWidget()
   { return itsImpl->getWidget(); }
 
-Canvas* ExptDriver::getCanvas()
+GWT::Canvas* ExptDriver::getCanvas()
   { return itsImpl->getCanvas(); }
 
 void ExptDriver::manageObject(const char* name, IO* object)

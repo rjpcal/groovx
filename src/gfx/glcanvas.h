@@ -3,7 +3,7 @@
 // glcanvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Dec  6 20:27:48 1999
-// written: Wed Mar 29 14:07:37 2000
+// written: Wed Mar 29 22:09:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,10 +12,10 @@
 #define GLCANVAS_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CANVAS_H_DEFINED)
-#include "canvas.h"
+#include "gwt/canvas.h"
 #endif
 
-class GLCanvas : public Canvas {
+class GLCanvas : public GWT::Canvas {
 public:
   virtual Point<int> getScreenFromWorld(const Point<double>& world_pos) const;
   virtual Point<double> getWorldFromScreen(const Point<int>& screen_pos) const;

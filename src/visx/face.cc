@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Mar 23 09:47:03 2000
+// written: Wed Mar 29 22:09:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,12 @@
 
 #include "face.h"
 
-#include "canvas.h"
 #include "ioproxy.h"
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"
+
+#include "gwt/canvas.h"
 
 #include "util/strings.h"
 
@@ -274,7 +275,7 @@ DOTRACE("Face::getPropertyInfo");
 // Actions
 ///////////////////////////////////////////////////////////////////////
 
-void Face::grRender(Canvas& canvas) const {
+void Face::grRender(GWT::Canvas& canvas) const {
 DOTRACE("Face::grRender");
   Invariant(check());
 

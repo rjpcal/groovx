@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Mar 29 14:07:39 2000
+// written: Wed Mar 29 22:12:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,14 +124,14 @@ public:
       constructor. Therefore, subclasses of \c Bitmap should not
       override \c grRender(), but should instead provide a specialized
       \c BmapRenderer. */
-  virtual void grRender(Canvas& canvas) const;
+  virtual void grRender(GWT::Canvas& canvas) const;
 
   /** Implements the \c GrObj rendering operation. The rendering is
       delegated to the \c BmapRenderer passed to the
       constructor. Therefore, subclasses of \c Bitmap should not
       override \c grUnRender(), but should instead provide a
       specialized \c BmapRenderer. */
-  virtual void grUnRender(Canvas& canvas) const;
+  virtual void grUnRender(GWT::Canvas& canvas) const;
 
   ///////////////
   // accessors //

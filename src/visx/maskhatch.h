@@ -3,7 +3,7 @@
 // maskhatch.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Mar 29 14:07:36 2000
+// written: Wed Mar 29 22:09:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ protected:
 
   virtual bool grHasBoundingBox() const;
 
-  virtual void grRender(Canvas& canvas) const; 
+  virtual void grRender(GWT::Canvas& canvas) const; 
 };
 
 static const char vcid_maskhatch_h[] = "$Header$";

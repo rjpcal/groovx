@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Mar 23 12:39:24 2000
+// written: Wed Mar 29 22:12:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -134,10 +134,10 @@ void Bitmap::doFlipVertical()
 void Bitmap::center()
   { itsImpl->center(); sendStateChangeMsg(); }
 
-void Bitmap::grRender(Canvas& canvas) const
+void Bitmap::grRender(GWT::Canvas& canvas) const
   { itsImpl->grRender(canvas); }
 
-void Bitmap::grUnRender(Canvas& canvas) const
+void Bitmap::grUnRender(GWT::Canvas& canvas) const
   { itsImpl->grUnRender(canvas); }
 
 ///////////////

@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Mar 29 14:07:38 2000
+// written: Wed Mar 29 22:09:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ public:
 
   /** Reimplements the \c GrObj pure virtual function. It renders a
 		face with the appropriate parameters. */
-  protected: virtual void grRender(Canvas& canvas) const; 
+  protected: virtual void grRender(GWT::Canvas& canvas) const; 
 
 private:
   /// Check all invariants and return true if everything is OK.

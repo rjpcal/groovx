@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Mar 24 19:17:33 2000
+// written: Wed Mar 29 22:09:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,6 @@
 
 #include "trial.h"
 
-#include "canvas.h"
 #include "objlist.h"
 #include "poslist.h"
 #include "grobj.h"
@@ -21,9 +20,12 @@
 #include "reader.h"
 #include "readutils.h"
 #include "response.h"
-#include "util/strings.h"
 #include "writer.h"
 #include "writeutils.h"
+
+#include "gwt/canvas.h"
+
+#include "util/strings.h"
 
 #include <iostream.h>
 #include <strstream.h>
@@ -413,7 +415,7 @@ DOTRACE("Trial::clearResponses");
 // actions //
 /////////////
 
-void Trial::trDraw(Canvas& canvas, bool flush) const {
+void Trial::trDraw(GWT::Canvas& canvas, bool flush) const {
 DOTRACE("Trial::trDraw");
   for (size_t i = 0; i < itsImpl->itsIdPairs.size(); ++i) {
     ObjList::Ptr obj =
@@ -428,7 +430,7 @@ DOTRACE("Trial::trDraw");
 
 
 	 { 
-		Canvas::StateSaver state(canvas);
+		GWT::Canvas::StateSaver state(canvas);
 		pos->go();
 		obj->draw(canvas);
 	 }
@@ -437,7 +439,7 @@ DOTRACE("Trial::trDraw");
   if (flush) canvas.flushOutput();
 }
 
-void Trial::trUndraw(Canvas& canvas, bool flush) const {
+void Trial::trUndraw(GWT::Canvas& canvas, bool flush) const {
 DOTRACE("Trial::trUndraw");
   for (size_t i = 0; i < itsImpl->itsIdPairs.size(); ++i) {
     ObjList::Ptr obj =
@@ -446,7 +448,7 @@ DOTRACE("Trial::trUndraw");
 		PosList::thePosList().getCheckedPtr(itsImpl->itsIdPairs[i].posid);
 
 	 {
-		Canvas::StateSaver state(canvas);
+		GWT::Canvas::StateSaver state(canvas);
 		pos->rego();
 		obj->undraw(canvas);
 	 }

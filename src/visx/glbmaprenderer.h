@@ -3,7 +3,7 @@
 // glbmaprenderer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:52:41 1999
-// written: Wed Mar 29 14:07:38 2000
+// written: Wed Mar 29 22:09:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ public:
   /// Virtual destructor.
   virtual ~GLBmapRenderer();
 
-  virtual void doRender(Canvas& canvas,
+  virtual void doRender(GWT::Canvas& canvas,
 								unsigned char* bytes,
 								double x_pos,
 								double y_pos,

@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Mar 23 19:16:10 2000
+// written: Wed Mar 29 22:09:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,11 +18,12 @@
 #include "morphyface.h"
 
 #include "bezier.h"
-#include "canvas.h"
 #include "ioproxy.h"
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"
+
+#include "gwt/canvas.h"
 
 #include <cstring>
 #include <iostream.h>           // for serialize
@@ -135,7 +136,7 @@ namespace {
 
   const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(MF::PInfo);
 
-  void draw_hairstyle1(Canvas& canvas) {
+  void draw_hairstyle1(GWT::Canvas& canvas) {
 	 const GLdouble hair_vertices[] = {
 		-0.955, 0.293,
 		-1.000, 0.000,
@@ -492,7 +493,7 @@ DOTRACE("MorphyFace::getPropertyInfo");
 // Actions
 ///////////////////////////////////////////////////////////////////////
 
-void MorphyFace::grRender(Canvas& canvas) const {
+void MorphyFace::grRender(GWT::Canvas& canvas) const {
 DOTRACE("MorphyFace::grRender");
   Invariant(check());
 

@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 17 11:57:02 2000
+// written: Wed Mar 29 22:09:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,7 +129,7 @@ DOTRACE("FixPt::grHasBoundingBox");
   return true;
 }
 
-void FixPt::grRender(Canvas&) const {
+void FixPt::grRender(GWT::Canvas&) const {
 DOTRACE("FixPt::grRender");
   glPushAttrib(GL_LINE_BIT);
   glLineWidth(width());

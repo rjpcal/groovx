@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Wed Mar 29 14:07:34 2000
+// written: Wed Mar 29 22:09:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,9 @@
 #include "value.h"
 #endif
 
-class Canvas;
+namespace GWT {
+  class Canvas;
+}
 
 class Response;
 
@@ -121,8 +123,8 @@ public:
   // actions //
   /////////////
 
-  void trDraw(Canvas& canvas, bool flush) const;
-  void trUndraw(Canvas& canvas, bool flush) const;
+  void trDraw(GWT::Canvas& canvas, bool flush) const;
+  void trUndraw(GWT::Canvas& canvas, bool flush) const;
 
 private:
   Trial(const Trial&);

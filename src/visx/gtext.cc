@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Thu Mar  9 17:29:01 2000
+// written: Wed Mar 29 22:09:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -766,7 +766,7 @@ DOTRACE("Gtext::grHasBoundingBox");
   return true;
 }
 
-void Gtext::grRender(Canvas&) const {
+void Gtext::grRender(GWT::Canvas&) const {
 DOTRACE("Gtext::grRender");
 //   unsigned int fontListBase = ObjTogl::theToglConfig()->getFontListBase();
 //   if (itsListBase != fontListBase) { 

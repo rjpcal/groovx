@@ -3,7 +3,7 @@
 // grobjimpl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:57 2000
-// written: Sat Mar 25 11:15:30 2000
+// written: Wed Mar 29 22:09:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,10 @@
 
 #include "grobjimpl.h"
 
-#include "canvas.h"
 #include "reader.h"
 #include "writer.h"
+
+#include "gwt/canvas.h"
 
 #include "util/error.h"
 #include "util/janitor.h"
@@ -134,7 +135,7 @@ DOTRACE("GrObj::Impl::BoundingBox::updateRaw");
   DebugEvalNL(itsHasBB);
 }
 
-void GrObj::Impl::BoundingBox::updateFinal(const Canvas& canvas) const {
+void GrObj::Impl::BoundingBox::updateFinal(const GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 
   if ( !itsFinalBBIsCurrent ) {
@@ -147,7 +148,7 @@ DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 	 {
 		glMatrixMode(GL_MODELVIEW);
 
-		Canvas::StateSaver state(canvas);
+		GWT::Canvas::StateSaver state(canvas);
 
 		itsOwner->doScaling();
 		itsOwner->doAlignment();
@@ -197,7 +198,7 @@ DOTRACE("GrObj::Impl::Renderer::~Renderer");
 }
 
 void GrObj::Impl::Renderer::recompileIfNeeded(const GrObj::Impl* obj,
-															 Canvas& canvas) const {
+															 GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::Renderer::recompileIfNeeded");
   if (itsIsCurrent) return;
   
@@ -211,17 +212,22 @@ DOTRACE("GrObj::Impl::Renderer::recompileIfNeeded");
 }
 
 bool GrObj::Impl::Renderer::recacheBitmapIfNeeded(const GrObj::Impl* obj,
-																  Canvas& canvas) const {
+																  GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
   if (itsIsCurrent) return false;
 
   Assert(itsBitmapCache.get() != 0);
   
   obj->undraw(canvas);
-  
+
+  Assert(obj->hasBB());
+
+  Rect<double> bmapbox;
+  obj->getBoundingBox(canvas, bmapbox);
+
   {
 	 glMatrixMode(GL_MODELVIEW);
-	 Canvas::StateSaver state(canvas);
+	 GWT::Canvas::StateSaver state(canvas);
 
 	 glPushAttrib(GL_COLOR_BUFFER_BIT|GL_PIXEL_MODE_BIT);
 	 {
@@ -232,14 +238,12 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
 		
 		obj->grRender(canvas);
 
-		Assert(obj->hasBB());
-
 		glReadBuffer(GL_FRONT);
-		Rect<double> bmapbox_init = obj->getRawBB();
-		Rect<int> screen_rect = canvas.getScreenFromWorld(bmapbox_init);
-		screen_rect.widenByStep(2);
-		screen_rect.heightenByStep(2);
-		Rect<double> bmapbox = canvas.getWorldFromScreen(screen_rect);
+// 		Rect<double> bmapbox_init = obj->getRawBB();
+// 		Rect<int> screen_rect = canvas.getScreenFromWorld(bmapbox_init);
+// 		screen_rect.widenByStep(2);
+// 		screen_rect.heightenByStep(2);
+// 		Rect<double> bmapbox = canvas.getWorldFromScreen(screen_rect);
 
 		DebugEval(bmapbox.left()); DebugEval(bmapbox.top());
 		DebugEval(bmapbox.right()); DebugEvalNL(bmapbox.bottom());
@@ -322,7 +326,7 @@ DOTRACE("GrObj::Impl::Renderer::setMode");
 }
 
 void GrObj::Impl::Renderer::render(const GrObj::Impl* obj,
-											  Canvas& canvas) const {
+											  GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::Renderer::render");
   DebugEvalNL(itsMode);
   switch (itsMode) {
@@ -345,7 +349,7 @@ DOTRACE("GrObj::Impl::Renderer::render");
 }
 
 bool GrObj::Impl::Renderer::update(const GrObj::Impl* obj,
-											  Canvas& canvas) const {
+											  GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::Renderer::update");
   checkForGlError("before GrObj::update");
 
@@ -539,7 +543,7 @@ DOTRACE("GrObj::Impl::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool GrObj::Impl::getBoundingBox(const Canvas& canvas,
+bool GrObj::Impl::getBoundingBox(const GWT::Canvas& canvas,
 											Rect<double>& bbox) const {
 DOTRACE("GrObj::Impl::getBoundingBox");
 
@@ -673,7 +677,7 @@ DOTRACE("GrObj::Impl::setUnRenderMode");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GrObj::Impl::draw(Canvas& canvas) const {
+void GrObj::Impl::draw(GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::draw");
   checkForGlError("before GrObj::draw");
 
@@ -688,7 +692,7 @@ DOTRACE("GrObj::Impl::draw");
 	 {
 		glMatrixMode(GL_MODELVIEW);
 
-		Canvas::StateSaver state(canvas);
+		GWT::Canvas::StateSaver state(canvas);
 
 	   doScaling();
 		doAlignment();
@@ -701,7 +705,7 @@ DOTRACE("GrObj::Impl::draw");
 }
 
 void GrObj::Impl::saveBitmapCache(
-  Canvas& canvas, const char* filename
+  GWT::Canvas& canvas, const char* filename
   ) {
 DOTRACE("GrObj::Impl::Renderer::saveBitmapCache");
 
@@ -720,7 +724,7 @@ DOTRACE("GrObj::Impl::Renderer::saveBitmapCache");
   invalidateCaches();
 }
 
-void GrObj::Impl::undraw(Canvas& canvas) const {
+void GrObj::Impl::undraw(GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undraw");
   checkForGlError("before GrObj::undraw");
 
@@ -738,7 +742,7 @@ DOTRACE("GrObj::Impl::undraw");
   checkForGlError("during GrObj::undraw");
 }
 
-void GrObj::Impl::grDrawBoundingBox(const Canvas& canvas) const {
+void GrObj::Impl::grDrawBoundingBox(const GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::grDrawBoundingBox");
   Rect<double> bbox;
   if ( getBoundingBox(canvas, bbox) ) {
@@ -804,11 +808,11 @@ DOTRACE("GrObj::Impl::doAlignment");
 					0.0);
 }
 
-void GrObj::Impl::undrawDirectRender(Canvas& canvas) const {
+void GrObj::Impl::undrawDirectRender(GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawDirectRender");
   glMatrixMode(GL_MODELVIEW);
 
-  Canvas::StateSaver state(canvas);
+  GWT::Canvas::StateSaver state(canvas);
 
   doScaling();
   doAlignment();
@@ -816,7 +820,7 @@ DOTRACE("GrObj::Impl::undrawDirectRender");
   self->grUnRender(canvas);
 }
 
-void GrObj::Impl::undrawSwapForeBack(Canvas& canvas) const {
+void GrObj::Impl::undrawSwapForeBack(GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawSwapForeBack");
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
   {
@@ -825,7 +829,7 @@ DOTRACE("GrObj::Impl::undrawSwapForeBack");
 	 {
 		glMatrixMode(GL_MODELVIEW);
 
-		Canvas::StateSaver state(canvas);
+		GWT::Canvas::StateSaver state(canvas);
 
 		doScaling();
 		doAlignment();
@@ -841,7 +845,7 @@ DOTRACE("GrObj::Impl::undrawSwapForeBack");
   glPopAttrib();
 }
 
-void GrObj::Impl::undrawClearBoundingBox(Canvas& canvas) const {
+void GrObj::Impl::undrawClearBoundingBox(GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawClearBoundingBox");
   glMatrixMode(GL_MODELVIEW);
 
@@ -867,7 +871,7 @@ DOTRACE("GrObj::Impl::undrawClearBoundingBox");
   }
 }
 
-void GrObj::Impl::undrawBoundingBox(Canvas& canvas) const {
+void GrObj::Impl::undrawBoundingBox(GWT::Canvas& canvas) const {
 DOTRACE("GrObj::Impl::undrawBoundingBox");
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
   {
@@ -876,7 +880,7 @@ DOTRACE("GrObj::Impl::undrawBoundingBox");
 	 {
 		glMatrixMode(GL_MODELVIEW);
 
-		Canvas::StateSaver state(canvas);
+		GWT::Canvas::StateSaver state(canvas);
 
 		doScaling();
 		doAlignment();

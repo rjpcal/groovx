@@ -3,7 +3,7 @@
 // xbmaprenderer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:22:34 1999
-// written: Wed Mar 15 10:19:30 2000
+// written: Wed Mar 29 22:09:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,15 +13,17 @@
 
 #include "xbmaprenderer.h"
 
+#include "point.h"
+
+#include "gwt/canvas.h"
+
+#include "util/error.h"
+
 #include <tk.h>
 #include <X11/Xlib.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <GL/glu.h>
-
-#include "canvas.h"
-#include "util/error.h"
-#include "point.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -100,7 +102,7 @@ DOTRACE("XBmapRenderer::~XBmapRenderer");
   if (itsImage) XFree(itsImage);
 }
 
-void XBmapRenderer::doRender(Canvas& canvas,
+void XBmapRenderer::doRender(GWT::Canvas& canvas,
 									  unsigned char* bytes,
 									  double x_pos,
 									  double y_pos,
@@ -146,7 +148,7 @@ DOTRACE("XBmapRenderer::doRender");
   glXWaitX();
 }
 
-void XBmapRenderer::doUndraw(Canvas& /* canvas */,
+void XBmapRenderer::doUndraw(GWT::Canvas& /* canvas */,
 									  int winRasterX, int winRasterY,
 									  int winWidthX, int winHeightY) const {
 DOTRACE("XBmapRenderer::doUndraw");

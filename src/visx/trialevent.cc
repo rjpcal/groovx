@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Mar 15 10:19:30 2000
+// written: Wed Mar 29 22:09:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,13 @@
 
 #include "trialevent.h"
 
-#include "canvas.h"
 #include "demangle.h"
 #include "util/error.h"
 #include "experiment.h"
 #include "reader.h"
 #include "writer.h"
+
+#include "gwt/canvas.h"
 
 #include <tcl.h>
 #include <cmath>
@@ -236,7 +237,7 @@ DOTRACE("RenderFrontEvent::invoke");
 
 void ClearBufferEvent::invoke() {
 DOTRACE("ClearBufferEvent::invoke");
-  Canvas* canvas = getExperiment().getCanvas();
+  GWT::Canvas* canvas = getExperiment().getCanvas();
   canvas->clearColorBuffer();
   canvas->flushOutput();
 }
