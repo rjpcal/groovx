@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Fri Jan 18 16:07:05 2002
+// written: Thu Sep 12 15:09:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -347,6 +347,16 @@ template <>
 Tcl::ObjPtr Tcl::Convert<fstring>::toTcl(fstring val)
 {
   return Convert<const fstring&>::toTcl(val);
+}
+
+namespace Tcl
+{
+  // FIXME FIXME FIXME !!!
+  template <>
+  struct Return<const Value&>
+  {
+    typedef void Type;
+  };
 }
 
 template <>
