@@ -23,7 +23,6 @@ set RUN_IF_EQUAL 1
 ### Run test procedures
 set files {
     { bitmap_test.tcl 1 }
-    { blackbox_test.tcl 1 }
     { block_test.tcl 1 }
     { dlist_test.tcl 1 }
     { eventrh_test.tcl 1 }
@@ -52,6 +51,7 @@ set files {
     { th_test.tcl 1 }
     { tlist_test.tcl 1 }
     { trial_test.tcl 1 }
+    { whitebox_test.tcl 1 }
 }
 
 set others {

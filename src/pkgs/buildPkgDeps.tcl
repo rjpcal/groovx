@@ -114,7 +114,7 @@ foreach dir [glob \[a-z\]*/] {
 
     set dir [string trimright $dir "/"]
 
-    if { ![string equal $dir "blackbox"] } {
+    if { ![string equal $dir "whitebox"] } {
 
 	# For "normal" packages, we assume all the .cc files in the
 	# directory should be merged into one shlib, and the directory name
@@ -126,7 +126,7 @@ foreach dir [glob \[a-z\]*/] {
 	setup_package $pkgname $ccfiles $libdir
     } else {
 
-	# For the special case of the blackbox tests, each .cc file becomes
+	# For the special case of the whitebox tests, each .cc file becomes
 	# its own package/shlib, and the package name is taken from the
 	# stem (i.e. "rootname") of the .cc filename
 
