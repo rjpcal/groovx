@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:27:36 2001
-// written: Fri Apr  6 10:27:20 2001
+// written: Tue Apr 10 10:06:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,11 +76,28 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Div {
-  double factor;
+class Mul {
+  const double factor;
 public:
-  Div(double div) : factor(1.0/div) {}
-  double operator()(double d) { return factor*d; }
+  Mul(double fac) : factor(fac) {}
+  double operator()(double d) { return d*factor; }
+};
+
+class Div : public Mul {
+public:
+  Div(double div) : Mul(1.0/div) {}
+};
+
+class Add {
+  const double x;
+public:
+  Add(double x_) : x(x_) {}
+  double operator()(double d) { return d + x; }
+};
+
+class Sub : public Add {
+public:
+  Sub(double x_) : Add(-x_) {}
 };
 
 static const char vcid_num_h[] = "$Header$";
