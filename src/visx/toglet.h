@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Sep 17 12:25:05 2002
+// written: Tue Sep 17 17:14:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,6 +51,7 @@ public:
   // actions
   void writeEpsFile(const char* filename);
 
+  /// Overridden from Tcl::TkWidget.
   virtual void reshapeCallback();
 
 private:
