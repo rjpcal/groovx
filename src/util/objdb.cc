@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Feb 16 14:31:55 2000
+// written: Wed Feb 16 14:36:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ DOTRACE("IoPtrList::deserialize");
 
   if (flag & BASES) { /* there are no bases to deserialize */ }
   if (flag & TYPENAME) { 
-	 IO::readTypename(is, ioTag);
+	 IO::readTypename(is, ioTag + " " + alternateIoTags());
   }
 
   vector<void*>& theVec = VoidPtrList::vec();
