@@ -55,7 +55,8 @@ private:
   Impl& operator=(const Impl&);
 };
 
-Tcl::CommandGroup::CommandGroup(Tcl::Interp& interp, const fstring& cmd_name) :
+Tcl::CommandGroup::CommandGroup(Tcl::Interp& interp,
+                                const fstring& cmd_name) :
   rep(new Impl(interp, cmd_name))
 {
 DOTRACE("Tcl::CommandGroup::CommandGroup");
@@ -83,9 +84,9 @@ DOTRACE("Tcl::CommandGroup::CommandGroup");
 
    (1) it is always "safe" to destroy the Tcl_Command, in the sense that it
        can't cause any crashes... in particular, it's OK to destroy the
-       Tcl_Command even if rep->cmdList is not empty; that would just mean that
-       the remaining Tcl::Command objects in rep->cmdList won't have any input
-       sent their way
+       Tcl_Command even if rep->cmdList is not empty; that would just mean
+       that the remaining Tcl::Command objects in rep->cmdList won't have
+       any input sent their way
  */
 Tcl::CommandGroup::~CommandGroup() throw()
 {
@@ -131,7 +132,8 @@ Tcl::CommandGroup* Tcl::CommandGroup::make(Tcl::Interp& interp,
                                            const fstring& cmd_name)
 {
 DOTRACE("Tcl::CommandGroup::make");
-  CommandGroup* const c = Tcl::CommandGroup::lookup(interp, cmd_name.c_str());
+  CommandGroup* const c =
+    Tcl::CommandGroup::lookup(interp, cmd_name.c_str());
 
   if (c != 0)
     return c;
@@ -290,7 +292,6 @@ DOTRACE("Tcl::CommandGroup::cDeleteCallback");
   Assert(c != 0);
   c->rep->cmdToken = 0; // since this callback is notifying us that the
                         // command was deleted
-  // FIXME need to notify cmdList that we're being deleted?
   delete c;
 }
 
