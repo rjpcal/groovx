@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Oct 14 15:54:32 1999
+// written: Tue Oct 19 16:20:57 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,8 @@
 #include <cctype>
 
 #include "gfxattribs.h"
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -176,6 +178,26 @@ DOTRACE("Face::charCount");
 			 + 1);//fudge factor
 }
 
+void Face::readFrom(Reader* reader) {
+DOTRACE("Face::readFrom");
+  const vector<PInfo>& infos = getPropertyInfos();
+  for (int i = 0; i < infos.size(); ++i) {
+	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
+  }
+
+  GrObj::readFrom(reader);
+}
+
+void Face::writeTo(Writer* writer) const {
+DOTRACE("Face::writeTo");
+  const vector<PInfo>& infos = getPropertyInfos();
+  for (int i = 0; i < infos.size(); ++i) {
+	 writer->writeValueObj(infos[i].name, get(infos[i].property));
+  }
+
+  GrObj::writeTo(writer);
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Properties
@@ -190,7 +212,8 @@ DOTRACE("Face::getPropertyInfos");
   typedef Face F;
 
   if (p.size() == 0) {
-	 p.push_back(PInfo("eyeHeight", &Face::eyeHeight, -1.2, 1.2, 0.1, true));
+	 p.push_back(PInfo("category", &Face::category, 0, 10, 1, true));
+	 p.push_back(PInfo("eyeHeight", &Face::eyeHeight, -1.2, 1.2, 0.1));
 	 p.push_back(PInfo("eyeDistance", &Face::eyeDistance, 0.0, 1.8, 0.1));
 	 p.push_back(PInfo("noseLength", &Face::noseLength, -0.0, 3.0, 0.1));
 	 p.push_back(PInfo("mouthHeight", &Face::mouthHeight, -1.2, 1.2, 0.1));
