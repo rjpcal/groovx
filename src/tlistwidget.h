@@ -3,7 +3,7 @@
 // tlistwidget.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:45:34 1999
-// written: Sat Dec  4 01:10:49 1999
+// written: Fri Jan 14 11:58:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,6 +32,8 @@ public:
   void setCurTrial(int trial);
 
 private:
+  void safeDrawTrial();
+
   int itsCurTrial;
   bool itsVisibility;
 };
