@@ -77,27 +77,28 @@ public:
 
   ~TclProcWrapper() { destroy(); }
 
-  void create(Tcl::Interp& intp, const fstring& args, const fstring& body)
+  void create(Tcl::Interp& intp,
+              const fstring& name, const fstring& args, const fstring& body)
   {
     destroy();
 
-    itsName = uniqueCmdName("responseProc");
+    itsName = name;
     itsArgs = args;
     itsBody = body;
     itsInterp = &intp;
 
     itsInterp->createProc("", itsName.c_str(),
-			  itsArgs.c_str(), itsBody.c_str());
+                          itsArgs.c_str(), itsBody.c_str());
   }
 
   void destroy()
   {
     if (exists())
       {
-	Assert( itsInterp != 0 );
-	itsInterp->deleteProc("", itsName.c_str());
+        Assert( itsInterp != 0 );
+        itsInterp->deleteProc("", itsName.c_str());
 
-	itsName = itsArgs = itsBody = fstring();
+        itsName = itsArgs = itsBody = fstring();
       }
 
     Postcondition( !exists() );
@@ -105,7 +106,8 @@ public:
 
   bool exists() const { return !itsName.is_empty(); }
 
-  int call(const fstring& args) const
+  template <class T>
+  T call(const fstring& args) const
   {
     Precondition( exists() );
 
@@ -113,15 +115,13 @@ public:
 
     fstring cmd = itsName; cmd.append(" ").append(args);
 
-    Tcl::Code code(cmd, Tcl::Code::IGNORE_ERRORS);
+    Tcl::Code code(cmd, Tcl::Code::THROW_EXCEPTION);
 
+    // might throw if Tcl code raises an error:
     code.invoke(*itsInterp);
 
-    int result = Response::INVALID_VALUE;
-
-    try { result = itsInterp->getResult<int>(); } catch(...) {}
-
-    return result;
+    // might throw if conversion to T fails:
+    return itsInterp->template getResult<T>();
   }
 
   const fstring& name() const { return itsName; }
@@ -214,7 +214,11 @@ public:
 
       if (impl->itsResponseProc.exists())
         {
-          theResponse.setVal(impl->itsResponseProc.call(event_info));
+          try {
+	    theResponse.setVal(impl->itsResponseProc.call<int>(event_info));
+          } catch (...) {
+	    theResponse.setVal(Response::INVALID_VALUE);
+	  }
         }
       else
         {
@@ -368,7 +372,8 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
       reader->readValue("responseProcArgs", args);
       reader->readValue("responseProcBody", body);
 
-      itsResponseProc.create(itsInterp, args, body);
+      itsResponseProc.create(itsInterp,
+                             uniqueCmdName("responseProc"), args, body);
     }
 }
 
@@ -474,7 +479,10 @@ void EventResponseHdlr::setBindingSubstitution(const fstring& sub)
 
 void EventResponseHdlr::setResponseProc(const fstring& args,
                                         const fstring& body)
-  { itsImpl->itsResponseProc.create(itsImpl->itsInterp, args, body); }
+{
+  itsImpl->itsResponseProc.create(itsImpl->itsInterp,
+                                  uniqueCmdName("responseProc"), args, body);
+}
 
 void EventResponseHdlr::abortInvalidResponses()
   { itsImpl->itsAbortInvalidResponses = true; }
