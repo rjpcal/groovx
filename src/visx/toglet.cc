@@ -143,6 +143,8 @@ DOTRACE("Toglet::Toglet");
 
   setUnitAngle(unit_angle);
 
+  itsTogl->makeCurrent();
+
   if ( itsTogl->usesRgba() ) {
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -507,6 +509,8 @@ DOTRACE("Toglet::reconfigure");
 
   if (!itsTogl) return;
 
+  itsTogl->makeCurrent();
+
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glViewport(0, 0, getWidth(), getHeight());
@@ -583,6 +587,8 @@ void Toglet::writeEpsFile(const char* filename) {
 DOTRACE("Toglet::writeEpsFile");
 
   if (!itsTogl) return;
+
+  itsTogl->makeCurrent();
 
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
   {
