@@ -137,6 +137,9 @@ private:
   double itsMouthCurvature;
     ///< The degree of curvature of the mouth.
 
+  bool itsLineJoin;
+    ///< Whether or not to do fancy line-joining.
+
 public:
   static const FieldMap& classFields();
 
