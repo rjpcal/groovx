@@ -42,6 +42,7 @@
 #include <iostream>
 #include <iomanip>
 #include <numeric>
+#include <sstream>
 #include <vector>
 
 #include "util/trace.h"
@@ -568,20 +569,29 @@ DOTRACE("mtx::print");
   if (mtx_name != 0 && mtx_name[0] != '\0')
     s << mtx_name << '\n';
 
-  s << "mrows " << mrows() << " ncols " << ncols() << '\n';
+  s << "mrows " << mrows() << " ncols " << ncols();
   for(int i = 0; i < mrows(); ++i)
     {
+      s << '\n';
       for(int j = 0; j < ncols(); ++j)
         s << std::setw(12) << std::setprecision(7) << at(i,j);
-      s << '\n';
     }
-  s << std::endl;
 }
 
 void mtx::print_stdout() const
 {
 DOTRACE("mtx::print_stdout");
   print(std::cout);
+}
+
+rutz::fstring mtx::as_string() const
+{
+DOTRACE("mtx::as_string");
+  std::ostringstream oss;
+
+  this->print(oss);
+
+  return rutz::fstring(oss.str().c_str());
 }
 
 void mtx::scan(std::istream& s)

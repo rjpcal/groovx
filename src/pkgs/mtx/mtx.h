@@ -39,6 +39,11 @@
 #include <iosfwd>
 #include <iterator>
 
+namespace rutz
+{
+  class fstring;
+}
+
 //  #######################################################
 //  =======================================================
 /// range-checking infrastructure
@@ -857,6 +862,9 @@ public:
 
   /// Print the mtx to stdout
   void print_stdout() const;
+
+  /// Convert the mtx to a string, by printing it to a string stream.
+  rutz::fstring as_string() const;
 
   /// Read the mtx from the given istream
   void scan(std::istream& s);
