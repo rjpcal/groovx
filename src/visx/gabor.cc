@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Thu Aug  9 12:04:32 2001
+// written: Thu Aug  9 14:03:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "util/algo.h"
 #include "util/randutils.h"
 
 #include <GL/gl.h>
@@ -31,17 +32,19 @@
 #include "util/debug.h"
 
 
-namespace {
-  const FieldInfo FINFOS[] = {
-      FieldInfo("colorMode", &Gabor::colorMode, 2, 1, 3, 1, true),
-      FieldInfo("contrast", &Gabor::contrast, 1.0, 0.0, 1.0, 0.05),
-      FieldInfo("spatialFreq", &Gabor::spatialFreq, 3.5, 0.5, 10.0, 0.5),
-      FieldInfo("phase", &Gabor::phase, 0.0, -180.0, 179.0, 1.0),
-      FieldInfo("sigma", &Gabor::sigma, 0.15, 0.025, 0.5, 0.025),
-      FieldInfo("aspectRatio", &Gabor::aspectRatio, 1.0, 0.1, 10.0, 0.1),
-      FieldInfo("orientation", &Gabor::orientation, 0.0, -180.0, 179.0, 1.0),
-      FieldInfo("resolution", &Gabor::resolution, 60, 5, 500, 5),
-      FieldInfo("pointSize", &Gabor::pointSize, 1, 1, 25, 1)
+namespace
+{
+  const FieldInfo FINFOS[] =
+  {
+    FieldInfo("colorMode", &Gabor::colorMode, 2, 1, 3, 1, true),
+    FieldInfo("contrast", &Gabor::contrast, 1.0, 0.0, 1.0, 0.05),
+    FieldInfo("spatialFreq", &Gabor::spatialFreq, 3.5, 0.5, 10.0, 0.5),
+    FieldInfo("phase", &Gabor::phase, 0.0, -180.0, 179.0, 1.0),
+    FieldInfo("sigma", &Gabor::sigma, 0.15, 0.025, 0.5, 0.025),
+    FieldInfo("aspectRatio", &Gabor::aspectRatio, 1.0, 0.1, 10.0, 0.1),
+    FieldInfo("orientation", &Gabor::orientation, 0.0, -180.0, 179.0, 1.0),
+    FieldInfo("resolution", &Gabor::resolution, 60, 5, 500, 1),
+    FieldInfo("pointSize", &Gabor::pointSize, 1, 1, 25, 1)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
@@ -58,22 +61,23 @@ const Gabor::ColorMode Gabor::BW_DITHER_RECT;
 
 const FieldMap& Gabor::classFields() { return GABOR_FIELDS; }
 
-Gabor* Gabor::make() {
+Gabor* Gabor::make()
+{
 DOTRACE("Gabor::make");
   return new Gabor;
 }
 
 Gabor::Gabor() :
   FieldContainer(),
-  colorMode(2),
+  colorMode(1),
   contrast(1.0),
   spatialFreq(3.5),
-  phase(0.0),
+  phase(0),
   sigma(0.15),
   aspectRatio(1.0),
-  orientation(0.0),
-  resolution(60),
-  pointSize(1)
+  orientation(0),
+  resolution(116),
+  pointSize(2)
 {
 DOTRACE("Gabor::Gabor");
 
@@ -83,17 +87,19 @@ DOTRACE("Gabor::Gabor");
   GrObj::setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
 }
 
-Gabor::~Gabor () {
+Gabor::~Gabor ()
+{
 DOTRACE("Gabor::~Gabor");
-
 }
 
-IO::VersionId Gabor::serialVersionId() const {
+IO::VersionId Gabor::serialVersionId() const
+{
 DOTRACE("Gabor::serialVersionId");
   return GABOR_SERIAL_VERSION_ID;
 }
 
-void Gabor::readFrom(IO::Reader* reader) {
+void Gabor::readFrom(IO::Reader* reader)
+{
 DOTRACE("Gabor::readFrom");
 
   reader->ensureReadVersionId("Gabor", 1, "Try grsh0.8a4");
@@ -103,7 +109,8 @@ DOTRACE("Gabor::readFrom");
   reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
 }
 
-void Gabor::writeTo(IO::Writer* writer) const {
+void Gabor::writeTo(IO::Writer* writer) const
+{
 DOTRACE("Gabor::writeTo");
 
   writer->ensureWriteVersionId("Gabor", GABOR_SERIAL_VERSION_ID, 1,
@@ -114,7 +121,8 @@ DOTRACE("Gabor::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-Rect<double> Gabor::grGetBoundingBox() const {
+Rect<double> Gabor::grGetBoundingBox() const
+{
 DOTRACE("Gabor::grGetBoundingBox");
 
   Rect<double> bbox;
@@ -126,7 +134,8 @@ DOTRACE("Gabor::grGetBoundingBox");
   return bbox;
 }
 
-void Gabor::grRender(GWT::Canvas&, DrawMode) const {
+void Gabor::grRender(GWT::Canvas&, DrawMode) const
+{
 DOTRACE("Gabor::grRender");
   double xsigma = sigma()*aspectRatio();
   double ysigma = sigma();
@@ -151,101 +160,126 @@ DOTRACE("Gabor::grRender");
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glPointSize(pointSize());
 
-    for (int x_step = 0; x_step < resolution(); ++x_step) {
+    for (int x_step = 0; x_step < resolution(); ++x_step)
+      {
+        double unrotated_x = x_step*res_step - 0.5;
 
-      double unrotated_x = x_step*res_step - 0.5;
+        double x = unrotated_x;
 
-      double x = unrotated_x;
+        for (int y_step = 0; y_step < resolution(); ++y_step)
+          {
+            double unrotated_y = y_step*res_step - 0.5;
 
-      for (int y_step = 0; y_step < resolution(); ++y_step) {
+            double y = unrotated_y;
 
-        double unrotated_y = y_step*res_step - 0.5;
+            if ( orientation() != 0 )
+              {
+                if ( orientation() == 90 )
+                  {
+                    x = -unrotated_y;
+                    y = unrotated_x;
+                  }
+                else if ( orientation() == 180 )
+                  {
+                    x = -unrotated_x;
+                    y = -unrotated_y;
+                  }
+                else if ( orientation() == 270 )
+                  {
+                    x = unrotated_y;
+                    y= -unrotated_x;
+                  }
+                else
+                  {
+                    double r = sqrt(unrotated_x*unrotated_x +
+                                    unrotated_y*unrotated_y);
 
-        double y = unrotated_y;
+                    double atan_y_x = atan2(unrotated_y, unrotated_x);
 
-        if ( orientation() != 0 ) {
-          if ( orientation() == 90 ) {
-            x = -unrotated_y;
-            y = unrotated_x;
-          } else if ( orientation() == 180 ) {
-            x = -unrotated_x;
-            y = -unrotated_y;
-          } else if ( orientation() == 270 ) {
-            x = unrotated_y;
-            y= -unrotated_x;
+                    double new_theta = atan_y_x + orientation()*PI/180.0;
+
+                    while (new_theta > PI)
+                      {
+                        new_theta -= 2*PI;
+                      }
+                    while (new_theta < -PI)
+                      {
+                        new_theta += 2*PI;
+                      }
+
+                    double unscaled_new_x = 1.0;
+                    double unscaled_new_y = Util::abs(tan(new_theta));
+
+                    double scale_factor =
+                      sqrt(unscaled_new_x*unscaled_new_x +
+                           unscaled_new_y*unscaled_new_y);
+
+                    x = r * unscaled_new_x / scale_factor;
+                    y = r * unscaled_new_y / scale_factor;
+
+                    if (new_theta < -PI/2.0)
+                      {
+                        x = -x;
+                        y = -y;
+                      }
+                    else if (new_theta < 0.0)
+                      {
+                        y = -y;
+                      }
+                    else if (new_theta < PI/2.0)
+                      {
+                        ; // nothing
+                      }
+                    else
+                      {
+                        x = -x;
+                      }
+                  }
+              }
+
+            double gauss_x = exp( -1.0*(x-xmean)*(x-xmean) /
+                                  (4.0*xsigma*xsigma) );
+
+            double sin_x = sin(2*PI*spatialFreq()*x + phase()*PI/180.0);
+
+            double gauss_y = exp( -1.0*(y-ymean)*(y-ymean) /
+                                  (4.0*ysigma*ysigma) );
+
+            double gabor = 0.5*sin_x*gauss_x*gauss_y*contrast() + 0.5;
+
+            if ( colorMode() == GRAYSCALE )
+              {
+                glColor4d(gabor, gabor, gabor, 1.0);
+                glBegin(GL_POINTS);
+                glVertex2d(unrotated_x, unrotated_y);
+                glEnd();
+              }
+            else if ( colorMode() == COLOR_INDEX )
+              {
+                glIndexd(gabor*255.0);
+                glBegin(GL_POINTS);
+                glVertex2d(unrotated_x, unrotated_y);
+                glEnd();
+              }
+            else if ( colorMode() == BW_DITHER_POINT )
+              {
+                if ( Util::randDoubleRange(0.0, 1.0) < gabor )
+                  {
+                    glBegin(GL_POINTS);
+                    glVertex2d(unrotated_x, unrotated_y);
+                    glEnd();
+                  }
+              }
+            else if ( colorMode() == BW_DITHER_RECT )
+              {
+                if ( Util::randDoubleRange(0.0, 1.0) < gabor )
+                  {
+                    glRectd(unrotated_x, unrotated_y,
+                            unrotated_x+res_step, unrotated_y+res_step);
+                  }
+              }
           }
-          else {
-            double r = sqrt(unrotated_x*unrotated_x + unrotated_y*unrotated_y);
-
-            double atan_y_x = atan2(unrotated_x, unrotated_y);
-
-            // Note: the (orientation() + 90) is required to translate
-            // from North == 0 to East == 0
-            double new_theta = atan_y_x + (orientation()+90)*PI/180.0;
-
-            while (new_theta > PI) {
-              new_theta -= 2*PI;
-            }
-            while (new_theta < -PI) {
-              new_theta += 2*PI;
-            }
-
-            double unscaled_new_x = 1.0;
-            double unscaled_new_y = abs(tan(new_theta));
-
-            double scale_factor =
-              sqrt(unscaled_new_x*unscaled_new_x + unscaled_new_y*unscaled_new_y);
-
-            x = r * unscaled_new_x / scale_factor;
-            y = r * unscaled_new_y / scale_factor;
-
-            if (new_theta < -PI/2.0) {
-              x = -x;
-              y = -y;
-            } else if (new_theta < 0.0) {
-              y = -y;
-            } else if (new_theta < PI/2.0) {
-            } else {
-              x = -x;
-            }
-          }
-        }
-
-        double gauss_x = exp( -1.0*(x-xmean)*(x-xmean) / (4.0*xsigma*xsigma) );
-
-        double sin_x = sin(2*PI*spatialFreq()*x + phase()*PI/180.0);
-
-        double gauss_y = exp( -1.0*(y-ymean)*(y-ymean) / (4.0*ysigma*ysigma) );
-
-        double gabor = 0.5*sin_x*gauss_x*gauss_y*contrast() + 0.5;
-
-        if ( colorMode() == GRAYSCALE ) {
-          glColor4d(gabor, gabor, gabor, 1.0);
-          glBegin(GL_POINTS);
-          glVertex2d(unrotated_x, unrotated_y);
-          glEnd();
-        }
-        else if ( colorMode() == COLOR_INDEX ) {
-          glIndexd(gabor*255.0);
-          glBegin(GL_POINTS);
-          glVertex2d(unrotated_x, unrotated_y);
-          glEnd();
-        }
-        else if ( colorMode() == BW_DITHER_POINT ) {
-          if ( Util::randDoubleRange(0.0, 1.0) < gabor ) {
-            glBegin(GL_POINTS);
-            glVertex2d(unrotated_x, unrotated_y);
-            glEnd();
-          }
-        }
-        else if ( colorMode() == BW_DITHER_RECT ) {
-          if ( Util::randDoubleRange(0.0, 1.0) < gabor ) {
-            glRectd(unrotated_x, unrotated_y,
-                    unrotated_x+res_step, unrotated_y+res_step);
-          }
-        }
       }
-    }
   }
   glPopAttrib();
 }
