@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Fri Jun 15 14:00:41 2001
+// written: Mon Jun 18 09:43:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,28 +112,6 @@ private:
     Handle(const Handle& other) : itsMaster(other.itsMaster)
     { itsMaster->incrRefCount(); }
 
-#if defined(MIPSPRO_COMPILER)
-
-    template <class U> friend class Ref<U>::Handle;
-#   define HANDLE_U typename Ref<U>::Handle
-
-#elif defined(ACC_COMPILER)
-
-#   define HANDLE_U U
-
-#else
-
-    template <class U> friend class Handle;
-#   define HANDLE_U Handle<U>
-
-#endif
-
-    template <class U>
-    Handle(const HANDLE_U& other) : itsMaster(other.itsMaster)
-    { itsMaster->incrRefCount(); }
-
-#undef HANDLE_U
-
     Handle& operator=(const Handle& other)
     {
       Handle otherCopy(other);
@@ -154,9 +132,6 @@ private:
       this->itsMaster = otherMaster;
     }
 
-#ifdef ACC_COMPILER // because we can't do template friend with aCC
-  public:
-#endif
     T* itsMaster;
   };
 
@@ -263,30 +238,6 @@ private:
       itsCounts(other.itsCounts)
     { acquire(); }
 
-#if defined(MIPSPRO_COMPILER)
-
-    template <class U> friend class WeakRef<U>::WeakHandle;
-#   define WEAKHANDLE_U typename WeakRef<U>::WeakHandle
-
-#elif defined(ACC_COMPILER)
-
-#   define WEAKHANDLE_U U
-
-#else
-
-    template <class U> friend class WeakHandle;
-#   define WEAKHANDLE_U WeakHandle<U>
-
-#endif
-
-    template <class U>
-    WeakHandle(const WEAKHANDLE_U& other) :
-      itsMaster(other.itsMaster),
-      itsCounts(other.itsCounts)
-    { acquire(); }
-
-#undef WEAKHANDLE_U
-
     WeakHandle& operator=(const WeakHandle& other)
     {
       WeakHandle otherCopy(other);
@@ -354,10 +305,6 @@ private:
       other.itsCounts = this->itsCounts;
       this->itsCounts = otherCounts;
     }
-
-#ifdef ACC_COMPILER // because we can't do template friend with aCC
-  public:
-#endif
 
     // In order to avoid storing a separate bool indicating whether we
     // are using strong or weak ref's, we use the following
