@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 20 07:54:29 2001
-// written: Fri Jul 20 08:07:17 2001
+// written: Thu Aug  9 11:54:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,9 @@ private:
   };
 
   Node* itsNodeList;
+
+  FreeListBase(const FreeListBase&);
+  FreeListBase& operator=(const FreeListBase&);
 
 public:
   FreeListBase() : itsNodeList(0) {}
