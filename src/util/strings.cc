@@ -360,14 +360,27 @@ void fstring::do_append(double x)        { APPEND("%g", x); }
 
 #undef APPEND
 
-void fstring::append_range(const char* text, std::size_t length)
+void fstring::append_range(const char* text, std::size_t len)
 {
 DOTRACE("fstring::append_range");
 
-  if (length > 0)
+  if (len == 0)
+    return;
+
+  // special case for when the current string is empty: just make a new
+  // rep with the to-be-appended text and swap
+  if (itsRep->length() == 0)
+    {
+      string_rep* newrep = string_rep::make(len, text);
+      string_rep* oldrep = itsRep;
+      itsRep = newrep;
+      oldrep->decr_ref_count();
+      itsRep->incr_ref_count();
+    }
+  else
     {
       string_rep::make_unique(itsRep);
-      itsRep->append(length, text);
+      itsRep->append(len, text);
     }
 }
 
