@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Jan  6 15:04:49 2000
+// written: Wed Feb 16 08:45:29 2000
 // $Id$
 //
 //
@@ -32,13 +32,22 @@ class IO;
 //
 ///////////////////////////////////////////////////////////////////////
 
+/**
+ *
+ * \c CGetter implements the \c Getter interface by calling a member
+ * function of the template class \c C.
+ *
+ **/
 template <class C, class T>
 class CGetter : public virtual Getter<T> {
 public:
+  /// The type of member function pointer that will be called in \c get().
   typedef T (C::* Getter_f) () const;
 
+  /// Construct with a member function pointer.
   CGetter(Getter_f getter) : itsGetter_f(getter) {}
 
+  /// Casts \a item to type \c C* and calls the stored member function.
   virtual T get(void *item) const {
 	 const C* p = static_cast<C*>(item);
 	 return (p->*itsGetter_f)();
@@ -48,13 +57,22 @@ private:
   Getter_f itsGetter_f;
 };
 
+/**
+ *
+ * \c CSetter implements the \c Setter interface by calling a member
+ * function of the template class \c C.
+ *
+ **/
 template <class C, class T>
 class CSetter : public virtual Setter<T> {
 public:
+  /// The type of member function pointer that will be called in \c set().
   typedef void (C::* Setter_f) (T);
 
+  /// Construct with a member function pointer.
   CSetter(Setter_f setter) : itsSetter_f(setter) {}
 
+  /// Casts \a item to type \c C* and calls the stored member function.
   virtual void set(void* item, T val) {
 	 C* p = static_cast<C*>(item);
 	 (p->*itsSetter_f)(val);
@@ -64,24 +82,43 @@ private:
   Setter_f itsSetter_f;
 };
 
+/**
+ *
+ * \c CGetter implements the \c Attrib interface by calling member
+ * functions of the template class \c C.
+ *
+ **/
 template <class C, class T>
 class CAttrib : public Attrib<T>, public CGetter<C,T>, public CSetter<C,T> {
 public:
+  /// The type of member function pointer that will be called in \c get().
   typedef T (C::* Getter_f) () const;
+
+  /// The type of member function pointer that will be called in \c set().
   typedef void (C::* Setter_f) (T);
 
+  /// Construct with a getter and setter member function pointers.
   CAttrib(Getter_f getter, Setter_f setter) :
 	 CGetter<C,T>(getter),
 	 CSetter<C,T>(setter) {}
 };
 
+/**
+ *
+ * \c CAction implements the \c Action interface by calling a member
+ * function of the template class \c C.
+ *
+ **/
 template <class C>
 class CAction: public Action {
 public:
+  /// The type of member function pointer that will be called in \c action().
   typedef void (C::* Action_f) ();
 
+  /// Construct with a member function pointer.
   CAction(Action_f action_f) : itsAction_f(action_f) {}
 
+  /// Casts \a item to type \c C* and calls the stored member function.
   virtual void action(void* item) {
 	 C* p = static_cast<C*>(item);
 	 (p->*itsAction_f)();
@@ -91,13 +128,22 @@ private:
   Action_f itsAction_f;
 };
 
+/**
+ *
+ * \c CConstAction implements the \c Action interface by calling a
+ * const member function of the template class \c C.
+ *
+ **/
 template <class C>
 class CConstAction : public Action {
 public:
+  /// The type of member function pointer that will be called in \c action().
   typedef void (C::* Action_f) () const;
 
+  /// Construct with a member function pointer.
   CConstAction(Action_f action_f) : itsAction_f(action_f) {}
 
+  /// Casts \a item to type \c const \c C* and calls the stored member function.
   virtual void action(void* item) {
 	 const C* p = static_cast<C*>(item);
 	 (p->*itsAction_f)();
