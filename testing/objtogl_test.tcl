@@ -14,8 +14,7 @@ set PACKAGE ObjTogl
 
 ### ObjTogl::InitCmd ###
 test "ObjTogl-Togl::Init" "test widget create" {
-	 if { ![Togl::inited] } { Togl::init "-rgba false"}
-	 update
+	 if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 } {^$}
 
 ### Togl::loadFontCmd ###
