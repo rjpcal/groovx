@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Wed Sep 25 19:00:24 2002
+// written: Sat Nov  2 09:35:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,13 @@ public:
   static void makeUnique(string_rep*& rep);
 
   void incrRefCount() { ++itsRefCount; }
-  void decrRefCount() { if (--itsRefCount <= 0) delete this; }
+  std::size_t decrRefCount()
+  {
+    std::size_t c = --itsRefCount;
+    if (c <= 0)
+      delete this;
+    return c;
+  }
 
   std::size_t length() const { return itsLength; }
   std::size_t capacity() const { return itsCapacity; }
@@ -84,6 +90,8 @@ public:
   void realloc(std::size_t capacity);
 
   void reserve(std::size_t capacity);
+
+  void debugDump() const;
 
 private:
   unsigned int itsRefCount;
@@ -296,6 +304,8 @@ public:
 
   bool operator!=(const char* rhs) const    { return !equals(rhs); }
   bool operator!=(const fstring& rhs) const { return !equals(rhs); }
+
+  void debugDump() const;
 
 private:
   void do_append(const char& c)
