@@ -20,18 +20,14 @@ default: all
 
 MAKEFLAGS += --warn-undefined-variables
 
-ifndef BUILD
-	BUILD := build/$(ARCH)-debug
-endif
-
 
 ###
 ### All configuration options should be selected via the configure script,
 ### which will generate an appropriate Makedefs file, which is included here:
 ###
 
-$(BUILD)/Makedefs: Makedefs.in config.status
-	./config.status --file=$(BUILD)/Makedefs:Makedefs.in
+Makedefs: Makedefs.in config.status
+	./config.status --file=Makedefs:Makedefs.in
 
 config.status: configure
 	./config.status --recheck
@@ -39,7 +35,7 @@ config.status: configure
 configure: configure.in
 	autoconf
 
-include $(BUILD)/Makedefs
+include Makedefs
 
 ###
 ### SHOULDN'T NEED TO MODIFY ANYTHING BELOW THIS POINT
@@ -50,6 +46,10 @@ include $(BUILD)/Makedefs
 # Directories for different file types
 #
 #-------------------------------------------------------------------------
+
+ifndef BUILD
+	BUILD := build
+endif
 
 SRC := src
 DEP := $(BUILD)/dep

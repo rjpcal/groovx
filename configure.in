@@ -435,17 +435,12 @@ if test $enable_debug = yes; then
    CXXFLAGS="$CXXFLAGS $DEBUG_CXXFLAGS"
    AC_SUBST(LIB_SUFFIX, .d.${PACKAGE_VERSION})
    AC_SUBST(EXECUTABLE, \${exec_prefix}/bin/testsh)
-   build=build/${ARCH}-debug
 else
    CXXFLAGS="$CXXFLAGS $PROD_CXXFLAGS"
    AC_SUBST(LIB_SUFFIX, ${PACKAGE_VERSION})
    AC_SUBST(EXECUTABLE, \${exec_prefix}/bin/grsh${PACKAGE_VERSION})
-   build=build/${ARCH}-prod
 fi
 
-AC_MSG_CHECKING([for build directory])
-AC_MSG_RESULT($build)
-
-AC_CONFIG_FILES([${build}/Makedefs:Makedefs.in])
+AC_CONFIG_FILES([Makedefs:Makedefs.in])
 
 AC_OUTPUT()
