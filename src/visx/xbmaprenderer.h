@@ -3,7 +3,7 @@
 // xbmaprenderer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:19:23 1999
-// written: Wed Dec  1 17:49:24 1999
+// written: Wed Dec  1 21:06:10 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,11 +18,12 @@
 struct _XImage;
 typedef _XImage XImage;
 
-class ToglConfig;
+struct Tk_Window_;
+typedef Tk_Window_* Tk_Window;
 
 class XBmapRenderer : public BmapRenderer {
 public:
-  static void initClass(const ToglConfig* config);
+  static void initClass(Tk_Window win);
 
   XBmapRenderer();
   virtual ~XBmapRenderer();
