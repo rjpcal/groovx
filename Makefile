@@ -469,10 +469,10 @@ ncsl:
 	NCSL $(ALL_SOURCES) $(ALL_HEADERS)
 
 do_sizes:
-	ls -lR obj/$(PLATFORM) | grep \.do | sort -n +5 > do_sizes
+	ls -lLR obj/$(PLATFORM) | grep "\.do" | sort -n +4 > do_sizes
 
 o_sizes:
-	ls -lR obj/$(PLATFORM) | grep "\.o" | sort -n +5 > o_sizes
+	ls -lLR obj/$(PLATFORM) | grep "\.o" | sort -n +4 > o_sizes
 
 docs: $(DOC)/DoxygenConfig $(SRC)/*.h $(SRC)/*.doc
 	(doxygen $(DOC)/DoxygenConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
