@@ -1,0 +1,2 @@
+#!/bin/csh -f
+echo {obj/${ARCH}/*.do,obj/${ARCH}/[a-z]*/*.do}

@@ -1,0 +1,2 @@
+#!/bin/csh -f
+echo {src/[a-z]*/*.cc,src/[a-z]*/*.h,src/[a-z]*/[a-z]*/*.cc,src/[a-z]*/[a-z]*/*.h}

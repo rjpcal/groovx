@@ -1,0 +1,2 @@
+#!/bin/csh -f
+echo {src/*.h,src/[a-z]*/*.h}
