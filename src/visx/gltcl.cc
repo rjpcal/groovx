@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Jun 18 10:07:52 2001
+// written: Mon Jun 18 13:37:00 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -248,7 +248,7 @@ namespace GLTcl {
     {
       P1 p1 = getValFromArg(1, (P1*)0);
       P2 p2 = getValFromArg(2, (P2*)0);
-      P3 p3 = getValFromArg(2, (P3*)0);
+      P3 p3 = getValFromArg(3, (P3*)0);
       returnVal(itsFunc(p1, p2, p3));
     }
 
@@ -275,7 +275,7 @@ namespace GLTcl {
     {
       P1 p1 = getValFromArg(1, (P1*)0);
       P2 p2 = getValFromArg(2, (P2*)0);
-      P3 p3 = getValFromArg(2, (P3*)0);
+      P3 p3 = getValFromArg(3, (P3*)0);
       itsFunc(p1, p2, p3);
     }
 
@@ -307,8 +307,8 @@ namespace GLTcl {
     {
       P1 p1 = getValFromArg(1, (P1*)0);
       P2 p2 = getValFromArg(2, (P2*)0);
-      P3 p3 = getValFromArg(2, (P3*)0);
-      P4 p4 = getValFromArg(2, (P4*)0);
+      P3 p3 = getValFromArg(3, (P3*)0);
+      P4 p4 = getValFromArg(4, (P4*)0);
       returnVal(itsFunc(p1, p2, p3, p4));
     }
 
@@ -335,8 +335,8 @@ namespace GLTcl {
     {
       P1 p1 = getValFromArg(1, (P1*)0);
       P2 p2 = getValFromArg(2, (P2*)0);
-      P3 p3 = getValFromArg(2, (P3*)0);
-      P4 p4 = getValFromArg(2, (P4*)0);
+      P3 p3 = getValFromArg(3, (P3*)0);
+      P4 p4 = getValFromArg(4, (P4*)0);
       itsFunc(p1, p2, p3, p4);
     }
 
