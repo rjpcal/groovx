@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue May 30 16:06:43 2000
+// written: Tue May 30 16:51:38 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -145,6 +145,9 @@ public:
   char* ident() const { return itsIdent; }
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
+  bool usesRgba() const { return itsRgbaFlag; }
+  bool isDoubleBuffered() const { return itsDoubleFlag; }
+  bool hasPrivateCmap() const { return itsPrivateCmapFlag; }
   Tcl_Interp* interp() const { return itsInterp; }
   Tk_Window tkWin() const { return itsTkWin; }
 
@@ -581,6 +584,15 @@ int Togl::width() const
 
 int Togl::height() const
   { return itsImpl->height(); }
+
+bool Togl::usesRgba() const
+  { return itsImpl->usesRgba(); }
+
+bool Togl::isDoubleBuffered() const
+  { return itsImpl->isDoubleBuffered(); }
+
+bool Togl::hasPrivateCmap() const
+  { return itsImpl->hasPrivateCmap(); }
 
 Tcl_Interp* Togl::interp() const
   { return itsImpl->interp(); }
