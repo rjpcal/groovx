@@ -24,33 +24,25 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
 
     variable BASE_CLASS_TESTED
 
-    set testObj(testbase) [expr !$BASE_CLASS_TESTED]
-    set testObj(testsubclass) [expr ![string equal $subclass "GxShapeKit"]]
-    set testObj(package) $package
-    set testObj(subclass) $subclass
-    if { $testObj(testsubclass) } {
+    set this(testbase) [expr !$BASE_CLASS_TESTED]
+    set this(testsubclass) [expr ![string equal $subclass "GxShapeKit"]]
+    set this(package) $package
+    set this(subclass) $subclass
+    if { $this(testsubclass) } {
         if { $objid == -1 } {
-            set testObj(objid) [eval Obj::new $subclass ]
+            set this(objid) [eval Obj::new $subclass ]
         } else {
-            set testObj(objid) $objid
+            set this(objid) $objid
         }
     } else {
-        set testObj(objid) -1
+        set this(objid) -1
     }
 
-    testTypeCmd testObj
-    if { $testObj(objid) > 0 } {
-	::testReadWrite $testObj(package) $testObj(objid)
+    if { $this(objid) > 0 } {
+	::testReadWrite $this(package) $this(objid)
     }
-    testCategoryCmd testObj
-    testDrawCmd testObj
 
-    set BASE_CLASS_TESTED 1
-}
-
-proc testTypeCmd { objname } {
-    upvar $objname this
-
+    # class::type
     set cmdname "Obj::type"
     set usage "wrong \# args: should be \"$cmdname objref\\(s\\)\""
     set testname "${this(package)}-${cmdname}"
@@ -72,11 +64,9 @@ proc testTypeCmd { objname } {
             $cmdname $this(objid)
         "} {$this(subclass)}
     }
-}
 
-proc testCategoryCmd { objname } {
-    upvar $objname this
 
+    # classname::category
     set cmdname "GxShapeKit::category"
     set usage "wrong \# args: should be"
     set testname "${this(package)}-${cmdname}"
@@ -110,11 +100,9 @@ proc testCategoryCmd { objname } {
             GxShapeKit::category \"$this(objid) $this(objid)\" 
         "} {"^${::INT}${::SP}${::INT}$"}
     }
-}
 
-proc testDrawCmd { objname } {
-    upvar $objname this
 
+    # class::draw
     set testname "${this(package)}-draw"
 
     if { $this(testsubclass) } {
@@ -131,6 +119,8 @@ proc testDrawCmd { objname } {
             return \"\[expr \$pix1 == \$pix2\] \$pix1 \$pix2\"
          "} {"^0 "}
     }
+
+    set BASE_CLASS_TESTED 1
 }
 
 }
