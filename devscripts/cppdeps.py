@@ -19,7 +19,8 @@ class DirectIncludeMap:
     def isNotFile(self, path):
         return not os.path.isfile(path)
 
-    def resolve(self, rawIncludes, rootPathCopies):
+    def resolve(self, rawIncludes, rootPath):
+        rootPathCopies = (rootPath,)*200
         fullPaths = map(operator.add, \
                         rootPathCopies[:len(rawIncludes)], rawIncludes)
 
@@ -44,8 +45,8 @@ class DirectIncludeMap:
         unresolved = theRegex.findall(text)
         resolved = []
 
-        for pathCopies in self.itsPathCopies:
-            (newResolved, unresolved) = self.resolve(unresolved, pathCopies)
+        for path in self.itsPaths:
+            (newResolved, unresolved) = self.resolve(unresolved, path)
             resolved.extend(newResolved)
 
         # If there are still some failed lookups, try looking in the
@@ -53,9 +54,7 @@ class DirectIncludeMap:
         if len(unresolved) > 0:
             egoPath = os.path.dirname(file) + '/'
 
-            egoPathCopies = (egoPath,)*200
-
-            (newResolved, unresolved) = self.resolve(unresolved, egoPathCopies)
+            (newResolved, unresolved) = self.resolve(unresolved, egoPath)
             resolved.extend(newResolved)
 
         # All attempts to resolve have failed, so issue a warning:
@@ -69,11 +68,9 @@ class DirectIncludeMap:
 
     def __init__(self, paths):
         self.itsPaths = []
-        self.itsPathCopies = []
         for path in paths:
             path = path + '/'
             self.itsPaths.append(path)
-            self.itsPathCopies.append((path,)*200)
 
         self.itsIncludes = {}
 
@@ -82,6 +79,7 @@ class DirectIncludeMap:
             self.loadDirectIncludes(file)
 
         return self.itsIncludes[file]
+        
 
 #
 # DepBuilder class
@@ -114,8 +112,9 @@ class DepBuilder:
 
     objDir = 'obj/' + os.getenv('ARCH') + '/'
 
-    def printTarget(self, file, stream):
-        parts = file.split('/')
+
+    def getObjFilestem(self, ccfilename):
+        parts = ccfilename.split('/')
 
         assert parts[0] == self.itsProjectPath
         stem = '/'.join(parts[1:])
@@ -125,10 +124,16 @@ class DepBuilder:
 
         ostem = self.objDir + stem
 
+        return ostem
+
+    def printOneFileDeps(self, file, stream):
+        ostem = self.getObjFilestem(file)
+
         stream.write('\n\n%s.do %s.o:' % (ostem, ostem))
 
         for dep in sort(self.itsFullIncludes[file].keys()):
             stream.write(' \\\n\t%s' % dep)
+        
 
     # public interface
 
@@ -136,6 +141,8 @@ class DepBuilder:
         self.itsProjectPath = paths[0]
         self.itsFullIncludes = {}
         self.itsDirectIncludes = DirectIncludeMap(paths)
+        self.itsCLevels = {}
+        self.itsLLevels = {}
 
     def buildDepTree(self):
         os.path.walk(self.itsProjectPath, self.visitDir, None)
@@ -146,6 +153,122 @@ class DepBuilder:
         stream.write(header)
 
         for file in sort(self.itsFullIncludes.keys()):
-            self.printTarget(file, stream)
+            self.printOneFileDeps(file, stream)
+
+        stream.write('\n')
+
+    #
+    # Compile-time dependencies
+    #
+
+    def getCdepLevel(self, file):
+        if not self.itsCLevels.has_key(file):
+            
+            depends = self.itsDirectIncludes.get(file)
+
+            if len(depends) == 0:
+                self.itsCLevels[file] = 0
+            else:
+                maxlevel = 0
+                for dep in depends:
+                    deplevel = self.getCdepLevel(dep)
+                    if (deplevel + 1) > maxlevel:
+                        maxlevel = deplevel + 1
+                self.itsCLevels[file] = maxlevel
+
+        return self.itsCLevels[file]
+
+    def printOneCdepLevel(self, file, stream, indentlevel, maxindent):
+        indents = '\t' * indentlevel
+        stream.write('%s%s (%d)\n' % (indents, file, self.getCdepLevel(file)))
+
+        if indentlevel < maxindent:
+            for dep in sort(self.itsDirectIncludes.get(file)):
+                self.printOneCdepLevel(dep, stream, indentlevel+1, maxindent)
+
+    def printCdepLevels(self, stream):
+        backmap = {}
+
+        for file in sort(self.itsFullIncludes.keys()):
+            level = self.getCdepLevel(file)
+            if not backmap.has_key(level):
+                backmap[level] = []
+            backmap[level].append(file)
+            
+        for level in sort(backmap.keys()):
+            for file in backmap[level]:
+                stream.write('\n\n')
+                self.printOneCdepLevel(file, stream, 0, 100)
+
+        stream.write('\n')
+
+    #
+    # Link-time dependencies
+    #
+
+    def getLdepLevel(self, antecedents, file):
+        if not self.itsLLevels.has_key(file):
+
+            antecedents.append(file)
+
+            depends = self.itsDirectIncludes.get(file)
+
+            if len(depends) == 0:
+                self.itsLLevels[file] = 0
+            else:
+                maxlevel = 0
+                for dep in depends:
+                    (stem, ext) = os.path.splitext(dep)
+                    dep = stem + '.cc'
+
+                    if (not (dep == file)) and (os.path.isfile(dep)):
+                        if (antecedents.count(dep) > 0):
+                            sys.stderr.write('CYCLE! %s <--> %s\n' % (dep, file))
+                        else:
+                            deplevel = self.getLdepLevel(antecedents, dep)
+                            if (deplevel + 1) > maxlevel:
+                                maxlevel = deplevel + 1
+
+                self.itsLLevels[file] = maxlevel
+
+            antecedents.pop()
+
+        return self.itsLLevels[file]
+
+    def printOneLdepLevel(self, file, stream, marks, level, maxlevel):
+
+        if not marks.has_key(file):
+            indents = '\t' * (len(marks) > 0)
+
+            stream.write('%s%s (%d)\n' % (indents, file,
+                                          self.getLdepLevel([], file)))
+
+            marks[file] = 1
+
+            if (level < maxlevel):
+                for dep in sort(self.itsDirectIncludes.get(file)):
+                    (stem, ext) = os.path.splitext(dep)
+                    dep = stem + '.cc'
+
+                    if (os.path.isfile(dep)):
+                        self.printOneLdepLevel(dep, stream, marks,
+                                               level+1, maxlevel)
+
+    def printLdepLevels(self, stream):
+        backmap = {}
+
+        for file in sort(self.itsFullIncludes.keys()):
+            level = self.getLdepLevel([], file)
+            if not backmap.has_key(level):
+                backmap[level] = []
+            backmap[level].append(file)
+
+        marks = {}
+
+        for level in sort(backmap.keys()):
+            for file in backmap[level]:
+                stream.write('\n\n')
+                marks.clear()
+                self.printOneLdepLevel(file, stream, marks, 0, 1)
 
         stream.write('\n')
