@@ -483,10 +483,10 @@ cleaner: clean
 
 # Count the lines in all source files
 count: $(ALL_SOURCES) $(ALL_HEADERS)
-	wc -lc $+
+	wc $+
 
 counts: $(ALL_SOURCES) $(ALL_HEADERS)
-	wc -lc $+ | sort -n > counts
+	wc $+ | sort -n > counts
 
 do_sizes:
 	ls -lLR obj/$(PLATFORM) | grep "\.do" | sort -n +4 > do_sizes
