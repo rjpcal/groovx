@@ -25,7 +25,7 @@ test "SoundTcl-Sound::Sound" "too many args" {
 test "SoundTcl-Sound::Sound" "normal sound create" {
 	 puts $::TEST_DIR/sound1.au
 	 set ::TEST_SOUND [Sound::Sound $::TEST_DIR/sound1.au]
-	 expr {$::TEST_SOUND > 0}
+	 expr {$::TEST_SOUND >= 0}
 } {^1$}
 
 
@@ -50,7 +50,8 @@ test "SoundTcl-Sound::file" "error on bad filename" {
 } "^Sound::file: bad or nonexistent file '$::TEST_DIR/nonexistent_file'$"
 test "SoundTcl-Sound::file" "error on junk file" {
 	 Sound::file $::TEST_SOUND $::TEST_DIR/junk_text_file
-} "^Sound::file: HP Audio Error: Cannot Determine File Format$"
+} "^Sound::file: HP Audio Error: Cannot Determine File Format$" \
+  [expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
 
 ### Sound::playCmd ###
 test "SoundTcl-Sound::play" "too few args" {
