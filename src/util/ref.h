@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Fri Nov 10 17:03:51 2000
+// written: Tue Nov 28 14:35:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,6 +61,9 @@ public:
   IdItem(PtrHandle<T> item_) : itsHandle(item_) {}
 
   // Default destructor, copy constructor, operator=() are fine
+
+  template <class U>
+  IdItem(const IdItem<U>& other) : itsHandle(other.handle()) {}
 
   /** A symbol class to pass to constructors indicating that the item
 		should be inserted into an appropriate PtrList. */
