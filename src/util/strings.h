@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Mon Jan 21 14:24:46 2002
+// written: Wed Jan 30 15:17:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -198,12 +198,6 @@ public:
   // Appending
   //
 
-  /// Append a character to the fstring.
-  fstring& append(char c)
-  {
-    append_text(1, &c); return *this;
-  }
-
   /// Append additional text to the fstring.
   template <class T1>
   fstring& append(const T1& part1)
@@ -250,6 +244,9 @@ public:
   void readline(STD_IO::istream& is, char eol);
 
 private:
+  void do_append(const char& c)
+  { append_text(1, &c); }
+
   void do_append(Util::CharData cdata)
   { append_text(cdata.len, cdata.text); }
 
