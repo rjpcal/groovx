@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Wed Aug  8 21:03:21 2001
+// written: Thu Aug  9 07:47:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,52 +13,15 @@
 #ifndef STRINGS_H_DEFINED
 #define STRINGS_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTRING_DEFINED)
-#include <cstring>
-#define CSTRING_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDDEF_DEFINED)
+#include <cstddef>
+#define CSTDDEF_DEFINED
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOSTRING_H_DEFINED)
 #include "util/tostring.h"
-#define CSTRING_DEFINED
 #endif
 
-class string_literal;
-class fstring;
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * \c string_literal is a simple string class that just holds a
- * pointer to a const char* that has been allocated elsewhere. The \c
- * char* used as an initializer must point to storage that will be
- * valid for the entire lifetime of the \c string_literal, since no
- * copy is made of the text. No non-const operations are provided for
- * \c string_literal.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class string_literal {
-public:
-  friend class fstring;
-
-  string_literal(const char* literal);
-
-  bool equals(const char* other) const;
-  bool equals(const string_literal& other) const;
-
-  const char* c_str() const { return itsText; }
-  std::size_t length() const { return itsLength; }
-  bool empty() const { return (length() == 0); }
-
-private:
-  string_literal(const string_literal&);
-  string_literal& operator=(const string_literal&);
-
-  const char* const itsText;
-  const std::size_t itsLength;
-};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -135,8 +98,6 @@ private:
 
 class fstring {
 public:
-  friend class string_literal;
-
   fstring();
   fstring(const char* text);
   fstring(const fstring& other);
@@ -176,20 +137,23 @@ public:
   fstring& operator=(const char* text);
   fstring& operator=(const fstring& other);
 
-  bool equals(const char* other) const;
-  bool equals(const string_literal& other) const;
-  bool equals(const fstring& other) const;
-
   void make_space(std::size_t len)
   {
     string_rep::makeUnique(itsRep); itsRep->make_space(len);
   }
 
-  char* data() { string_rep::makeUnique(itsRep); return itsRep->data(); }
+  char* data()
+  {
+    string_rep::makeUnique(itsRep); return itsRep->data();
+  }
 
   const char* c_str() const { return itsRep->text(); }
   std::size_t length() const { return itsRep->length(); }
   bool empty() const { return (length() == 0); }
+
+  //
+  // Substring operations
+  //
 
   bool ends_with(const fstring& ext) const;
 
@@ -197,33 +161,33 @@ public:
   // Comparison operators
   //
 
-  bool operator<(const char* other) const
-    { return strcmp(itsRep->text(), other) < 0; }
+  bool equals(const char* other) const;
+  bool equals(const fstring& other) const;
+
+  bool operator<(const char* other) const;
 
   template <class StrType>
   bool operator<(const StrType& other) const
-    {
-      // Check if we are pointing to the same string
-      if (c_str() == other.c_str()) return false;
-      // ...otherwise do a string compare
-      return strcmp(c_str(), other.c_str()) < 0;
-    }
+  {
+    return operator<(other.c_str());
+  }
 
-  bool operator>(const char* other) const
-    { return strcmp(c_str(), other) < 0; }
+  bool operator>(const char* other) const;
 
   template <class StrType>
   bool operator>(const StrType& other) const
-    {
-      // Check if we are pointing to the same string
-      if (c_str() == other.c_str()) return false;
-      // ...otherwise do a string compare
-      return strcmp(c_str(), other.c_str()) > 0;
-    }
+  {
+    return operator>(other.c_str());
+  }
 
   //
   // Appending
   //
+
+  fstring& append(char c)
+  {
+    append_text(1, &c);
+  }
 
   /** Append additional text to the error message. */
   template <class T1>
@@ -259,13 +223,9 @@ public:
   fstring& operator+=(const T& x) { return append(x); }
 
 private:
-  void do_append(const char* text)
-  { if (text) append_text(strlen(text), text); }
+  void do_append(const char* text);
 
   void do_append(const fstring& other)
-  { append_text(other.length(), other.c_str()); }
-
-  void do_append(const string_literal& other)
   { append_text(other.length(), other.c_str()); }
 
   template <class T>
@@ -286,12 +246,6 @@ private:
 namespace Util
 {
   template <>
-  struct Convert<string_literal>
-  {
-    static const char* toString(const string_literal& x) { return x.c_str(); }
-  };
-
-  template <>
   struct Convert<fstring>
   {
     static const char* toString(const fstring& x) { return x.c_str(); }
@@ -306,29 +260,12 @@ namespace Util
 
 // With const char* on left
 
-inline bool operator==(const char* lhs, const string_literal& rhs)
-  { return rhs.equals(lhs); }
-
 inline bool operator==(const char* lhs, const fstring& rhs)
-  { return rhs.equals(lhs); }
-
-// With string_literal on left
-
-inline bool operator==(const string_literal& lhs, const char* rhs)
-  { return lhs.equals(rhs); }
-
-inline bool operator==(const string_literal& lhs, const string_literal& rhs)
-  { return lhs.equals(rhs); }
-
-inline bool operator==(const string_literal& lhs, const fstring& rhs)
   { return rhs.equals(lhs); }
 
 // With fstring on left
 
 inline bool operator==(const fstring& lhs, const char* rhs)
-  { return lhs.equals(rhs); }
-
-inline bool operator==(const fstring& lhs, const string_literal& rhs)
   { return lhs.equals(rhs); }
 
 inline bool operator==(const fstring& lhs, const fstring& rhs)
@@ -352,7 +289,6 @@ class ostream;
 
 STD_IO::istream& operator>>(STD_IO::istream& is, fstring& str);
 
-STD_IO::ostream& operator<<(STD_IO::ostream& os, const string_literal& str);
 STD_IO::ostream& operator<<(STD_IO::ostream& os, const fstring& str);
 
 STD_IO::istream& getline(STD_IO::istream& is, fstring& str);
