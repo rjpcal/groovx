@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Fri May 11 20:47:46 2001
+// written: Tue May 15 18:25:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -150,8 +150,16 @@ DOTRACE("GWT::Widget::Impl::display");
 void GWT::Widget::Impl::clearscreen(GWT::Canvas& canvas) {
 DOTRACE("GWT::Widget::Impl::clearscreen");
   setVisibility(false); 
-  canvas.clearColorBuffer();
-  canvas.flushOutput();
+  if (canvas.isDoubleBuffered())
+	 {
+		canvas.clearColorBuffer();
+		itsOwner->swapBuffers();
+	 }
+  else
+	 {
+		canvas.clearColorBuffer();
+		canvas.flushOutput();
+	 }
 }
 
 void GWT::Widget::Impl::undraw(GWT::Canvas& canvas) {
