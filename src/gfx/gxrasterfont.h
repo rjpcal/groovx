@@ -32,32 +32,27 @@
 
 #include "gfx/gxfont.h"
 
+template <class T> class shared_ptr;
+
 /// Builds an OpenGL raster font from an X11 font.
 class GxRasterFont : public GxFont
 {
 public:
-  /// Construct from the given X11 font specification.
-  GxRasterFont(const char* fontname);
+  /// Construct a platform-appropriate raster font from the given X11 font specification.
+  static shared_ptr<GxRasterFont> make(const char* fontname);
 
-  virtual ~GxRasterFont() throw();
+  virtual ~GxRasterFont() throw() = 0;
 
-  virtual const char* fontName() const;
+  virtual const char* fontName() const = 0;
 
-  virtual unsigned int listBase() const;
+  virtual unsigned int listBase() const = 0;
 
-  virtual void bboxOf(const char* text, Gfx::Bbox& bbox) const;
+  virtual void bboxOf(const char* text, Gfx::Bbox& bbox) const = 0;
 
-  virtual void drawText(const char* text, Gfx::Canvas& canvas) const;
+  virtual void drawText(const char* text, Gfx::Canvas& canvas) const = 0;
 
   /// Return the line height of the font, in screen coords (i.e., pixels).
-  int rasterHeight() const;
-
-private:
-  GxRasterFont(const GxRasterFont&);
-  GxRasterFont& operator=(const GxRasterFont&);
-
-  struct Impl;
-  Impl* rep;
+  virtual int rasterHeight() const = 0;
 };
 
 static const char vcid_gxrasterfont_h[] = "$Header$";

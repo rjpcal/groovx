@@ -63,7 +63,7 @@ shared_ptr<GxFont> GxFont::make(const char* name_cstr)
       return font;
     }
 
-  shared_ptr<GxFont> font(new GxRasterFont(name_cstr));
+  shared_ptr<GxFont> font(GxRasterFont::make(name_cstr));
   theFontMap.insert(MapType::value_type(name, font));
   return font;
 }
