@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Sat Sep 23 16:56:08 2000
+// written: Sun Sep 24 17:51:20 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -2122,12 +2122,14 @@ DOTRACE("Togl::Impl::setupVisInfoAndContext");
 
 	 /* It may take a few tries to get a visual */
 	 for (int attempt=0; attempt<MAX_ATTEMPTS; attempt++) {
+		DebugEvalNL(attempt);
  		buildAttribList(attrib_list, ci_depths[attempt], dbl_flags[attempt]);
 
 		itsVisInfo = glXChooseVisual( itsDisplay,
 												DefaultScreen(itsDisplay), attrib_list );
 
 		if (itsVisInfo) {
+		  DebugEvalNL((void*)itsVisInfo->visualid);
 		  /* found a GLX visual! */
 		  break;
 		}
@@ -2138,7 +2140,7 @@ DOTRACE("Togl::Impl::setupVisInfoAndContext");
 	 }
 
 	 // Create a new OpenGL rendering context.
-	 setupGLXContext();
+	 setupGLXContext();   DebugEvalNL(itsGLXContext);
 
 	 if (itsGLXContext == NULL) {
 		return TCL_ERR(itsInterp, "could not create rendering context");
@@ -2159,14 +2161,14 @@ DOTRACE("Togl::Impl::buildAttribList");
 	 /* RGB[A] mode */
 	 attrib_list[attrib_count++] = GLX_RGBA;
 	 attrib_list[attrib_count++] = GLX_RED_SIZE;
-	 attrib_list[attrib_count++] = itsRgbaRed;
+	 attrib_list[attrib_count++] = itsRgbaRed;     DebugEval(itsRgbaRed);
 	 attrib_list[attrib_count++] = GLX_GREEN_SIZE;
-	 attrib_list[attrib_count++] = itsRgbaGreen;
+	 attrib_list[attrib_count++] = itsRgbaGreen;   DebugEval(itsRgbaGreen);
 	 attrib_list[attrib_count++] = GLX_BLUE_SIZE;
-	 attrib_list[attrib_count++] = itsRgbaBlue;
+	 attrib_list[attrib_count++] = itsRgbaBlue;    DebugEvalNL(itsRgbaBlue);
 	 if (itsAlphaFlag) {
 		attrib_list[attrib_count++] = GLX_ALPHA_SIZE;
-		attrib_list[attrib_count++] = itsAlphaSize;
+		attrib_list[attrib_count++] = itsAlphaSize;  DebugEvalNL(itsAlphaSize);
 	 }
 
 	 /* for EPS Output */
@@ -2280,23 +2282,26 @@ DOTRACE("Togl::Impl::createWindow");
   // install the colormap when the Togl widget becomes the active
   // window, but this has not worked yet.
 
-  Window current = itsWindowId;
-  Window root = XRootWindow( itsDisplay, DefaultScreen(itsDisplay) );
+  if (!itsRgbaFlag) {
 
-  while (current != root) {
+	 Window current = itsWindowId;
+	 Window root = XRootWindow( itsDisplay, DefaultScreen(itsDisplay) );
 
-	 DebugEval((void*)current); DebugEvalNL((void*)root);
+	 while (current != root) {
 
-	 XSetWindowColormap(itsDisplay, current, cmap);
+		DebugEval((void*)current); DebugEvalNL((void*)root);
 
-	 Window parent;
-	 Window* children;
-	 unsigned int nchildren;
+		XSetWindowColormap(itsDisplay, current, cmap);
 
-	 XQueryTree(itsDisplay, current, &root, &parent, &children, &nchildren);
-	 XFree(children);
+		Window parent;
+		Window* children;
+		unsigned int nchildren;
 
-	 current = parent;
+		XQueryTree(itsDisplay, current, &root, &parent, &children, &nchildren);
+		XFree(children);
+
+		current = parent;
+	 }
   }
 
   int dummy_new_flag;
