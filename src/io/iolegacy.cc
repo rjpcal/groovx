@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Thu May 17 10:50:19 2001
+// written: Thu May 17 15:34:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "io/iolegacy.h"
 
+#include "io/iditem.h"
 #include "io/iomgr.h"
 
 #include "util/strings.h"
@@ -271,17 +272,17 @@ DOTRACE("IO::LegacyReader::readBaseClass");
   itsImpl->inflateObject(baseClassName, basePart);
 }
 
-IO::IoObject* IO::LegacyReader::readRoot(IO::IoObject* root) {
+IdItem<IO::IoObject> IO::LegacyReader::readRoot(IO::IoObject* root) {
 DOTRACE("IO::LegacyReader::readRoot");
   if (root == 0) {
-	 return readObjectImpl("rootObject");
+	 return IdItem<IO::IoObject>(readObjectImpl("rootObject"));
   }
   DebugEvalNL(root->ioTypename());
 
   itsImpl->readTypename(root->ioTypename());
   itsImpl->inflateObject("rootObject", root);
 
-  return root;
+  return IdItem<IO::IoObject>(root);
 }
 
 ///////////////////////////////////////////////////////////////////////

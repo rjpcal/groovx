@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu May 17 10:50:19 2001
+// written: Thu May 17 15:32:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "io/asciistreamreader.h"
 
 #include "io/io.h"
+#include "io/iditem.h"
 #include "io/iomgr.h"
 
 #include "util/arrays.h"
@@ -262,7 +263,7 @@ public:
   void readBaseClass(IO::Reader* reader, const fixed_string& baseClassName,
 							IO::IoObject* basePart);
 
-  IO::IoObject* readRoot(IO::Reader* reader, IO::IoObject* given_root);
+  IdItem<IO::IoObject> readRoot(IO::Reader* reader, IO::IoObject* given_root);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -516,7 +517,9 @@ DOTRACE("AsciiStreamReader::Impl::readBaseClass");
   ist >> bracket >> ws;
 }
 
-IO::IoObject* AsciiStreamReader::Impl::readRoot(IO::Reader* reader, IO::IoObject* given_root) {
+IdItem<IO::IoObject> AsciiStreamReader::Impl::readRoot(
+  IO::Reader* reader, IO::IoObject* given_root
+) {
 DOTRACE("AsciiStreamReader::Impl::readRoot");
 
   itsObjects.clear();
@@ -563,7 +566,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 	 }
   }
 
-  return itsObjects.getObject(rootid);
+  return IdItem<IO::IoObject>(itsObjects.getObject(rootid));
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -641,7 +644,7 @@ void AsciiStreamReader::readBaseClass(
   itsImpl.readBaseClass(this, baseClassName, basePart);
 }
 
-IO::IoObject* AsciiStreamReader::readRoot(IO::IoObject* given_root) {
+IdItem<IO::IoObject> AsciiStreamReader::readRoot(IO::IoObject* given_root) {
   return itsImpl.readRoot(this, given_root);
 }
 
