@@ -2,13 +2,13 @@
 #
 # Makefile 
 #
-# Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+# Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 #
 # This is the Makefile for the grsh shell. This shell provides the
 # following functionality:
 # 
-# 	1) Tcl/Tk 8.2.1 core
-# 	2) OpenGL graphics, via the Togl widget
+# 	1) Tcl/Tk 8.3.3 core
+# 	2) OpenGL graphics
 # 	3) A set of extensions for running visual psychophysics experiments
 #
 #
