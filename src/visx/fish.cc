@@ -132,6 +132,17 @@ struct Fish::EndPt {
 //
 ///////////////////////////////////////////////////////////////////////
 
+Fish* Fish::make() {
+DOTRACE("Fish::make");
+  return new Fish;
+}
+
+Fish* Fish::makeFromFiles(const char* splinefile,
+								  const char* coordfile, int index) {
+DOTRACE("Fish::makeFromFiles");
+  return new Fish(splinefile, coordfile, index);
+}
+
 Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   category(-1),
   dorsalFinCoord(itsCoords[0]),

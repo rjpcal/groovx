@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Thu Oct 19 13:28:10 2000
+// written: Fri Oct 20 18:13:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,12 +38,18 @@ public:
   /// This tracer dynamically controls the tracing of \c Fish member functions.
   static Util::Tracer tracer;
 
-
+protected:
   /** Constructor can make a Fish by reading a spline file and a
       coordinate file. If either of these filenames are null, the
       constructor will use default values for the spline
       coefficients. */
   Fish(const char* splinefile=0, const char* coordfile=0, int index=0);
+
+public:
+  static Fish* make();
+
+  static Fish* makeFromFiles(const char* splinefile,
+									  const char* coordfile, int index);
 
 private:
   void restoreToDefault();
