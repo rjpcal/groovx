@@ -3,7 +3,7 @@
 // tclvalue.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Mar  8 17:39:48 2000
+// written: Fri Mar 10 01:06:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,7 +75,8 @@ DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, const char*)");
 }
 
 Tcl::TclValue::TclValue(Tcl_Interp* interp, const Value& rhs) :
-  itsInterp(interp)
+  itsInterp(interp),
+  itsObj(0)
 {
 DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, const Value&)");
 
@@ -115,6 +116,7 @@ DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, const Value&)");
 }
 
 Tcl::TclValue::TclValue(const TclValue& rhs) :
+  Value(rhs),
   itsInterp(rhs.itsInterp),
   itsObj(rhs.itsObj)
 {
