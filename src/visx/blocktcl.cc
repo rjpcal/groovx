@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Jun 13 15:16:02 2001
+// written: Wed Jul 11 12:52:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ protected:
 
     int repeat = (objc() < 4)  ?  1 : getIntFromArg(3);
 
-    for (Tcl::ListIterator<int>
+    for (Tcl::List::Iterator<int>
            itr = beginOfArg(2, (int*)0),
            end = endOfArg(2, (int*)0);
          itr != end;

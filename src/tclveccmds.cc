@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Wed Jul 11 10:21:23 2001
+// written: Wed Jul 11 12:53:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ Tcl::VecGetterBaseCmd::~VecGetterBaseCmd() {}
 void Tcl::VecGetterBaseCmd::invoke() {
 DOTRACE("Tcl::VecGetterBaseCmd::invoke");
   if (itsItemArgn) {
-    Tcl::ListIterator<int>
+    Tcl::List::Iterator<int>
       id_itr = beginOfArg(itsItemArgn, (int*)0),
       end    =   endOfArg(itsItemArgn, (int*)0);
 
@@ -210,7 +210,7 @@ template <class Traits>
 void Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn(int item_argn, int val_argn) {
 DOTRACE("Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn");
 
-  Tcl::ListIterator<int>
+  Tcl::List::Iterator<int>
 #ifdef LOCAL_DEBUG
     begin  = beginOfArg(item_argn, (int*)0),
 #endif
@@ -336,7 +336,7 @@ Tcl::VecActionCmd::~VecActionCmd() {}
 void Tcl::VecActionCmd::invoke() {
 DOTRACE("Tcl::VecActionCmd::invoke");
   if (itsItemArgn) {
-    Tcl::ListIterator<int>
+    Tcl::List::Iterator<int>
       id_itr = beginOfArg(itsItemArgn, (int*)0),
       end    =   endOfArg(itsItemArgn, (int*)0);
 

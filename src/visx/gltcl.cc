@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Fri Jun 22 09:28:44 2001
+// written: Wed Jul 11 12:52:27 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -451,7 +451,7 @@ protected:
     fixed_block<GLdouble> matrix(16);
 
     unsigned int i = 0;
-    for (Tcl::ListIterator<GLdouble>
+    for (Tcl::List::Iterator<GLdouble>
            itr = beginOfArg(2, (GLdouble*)0),
            end = endOfArg(2, (GLdouble*)0);
          itr != end && i < matrix.size();

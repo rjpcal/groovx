@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Wed Jul 11 10:48:06 2001
+// written: Wed Jul 11 12:54:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ DOTRACE("Tcl::FieldVecCmd::invoke");
       }
     else
       {
-        Tcl::ListIterator<Tcl::TclValue>
+        Tcl::List::Iterator<Tcl::TclValue>
           val_itr = beginOfArg(itsValArgn, (TclValue*)0),
           val_end = endOfArg(itsValArgn, (TclValue*)0);
 

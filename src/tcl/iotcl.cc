@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jul 11 11:02:13 2001
+// written: Wed Jul 11 12:54:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -201,7 +201,7 @@ public:
 protected:
   virtual void invoke() {
 #ifndef FUNCTIONAL_OK
-    Tcl::ListIterator<int>
+    Tcl::List::Iterator<int>
       itr = beginOfArg(1, (int*)0),
       stop = endOfArg(1, (int*)0);
     while (itr != stop)

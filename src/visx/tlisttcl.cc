@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Jul 11 11:01:56 2001
+// written: Wed Jul 11 12:54:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ protected:
   virtual void invoke() {
     int posid = getIntFromArg(2);
 
-    for (Tcl::ListIterator<int>
+    for (Tcl::List::Iterator<int>
            itr = beginOfArg(1, (int*)0),
            end = endOfArg(1, (int*)0);
          itr != end;
@@ -144,12 +144,12 @@ protected:
     int posid1 = getIntFromArg(3);
     int posid2 = getIntFromArg(4);
 
-    for (Tcl::ListIterator<int>
+    for (Tcl::List::Iterator<int>
            itr1 = beginOfArg(1, (int*)0),
            end1 = endOfArg(1, (int*)0);
          itr1 != end1;
          ++itr1)
-      for (Tcl::ListIterator<int>
+      for (Tcl::List::Iterator<int>
              itr2 = beginOfArg(2, (int*)0),
              end2 = endOfArg(2, (int*)0);
            itr2 != end2;
@@ -202,7 +202,7 @@ protected:
       {2, 0, 1},
       {2, 1, 0} };
 
-    Tcl::ListIterator<int>
+    Tcl::List::Iterator<int>
       itr = beginOfArg(1, (int*)0),
       end = endOfArg(1, (int*)0);
 
