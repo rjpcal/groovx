@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Wed Aug 29 10:15:29 2001
+// written: Wed Aug 29 10:40:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -401,6 +401,8 @@ public:
 
   void setlinewidth(double w)
   {
+    itsLineWidth = w;
+
     indent(); push1(w/getLineScaleFactor()); itsFstream << "setlinewidth\n";
   }
 
