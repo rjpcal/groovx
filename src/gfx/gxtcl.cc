@@ -54,13 +54,17 @@
 #include "gfx/pointtcl.h"
 #include "gfx/recttcl.h"
 
+#include "gx/bezier4.h"
+
 #include "io/fieldpkg.h"
 
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
+#include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
+#include "util/error.h"
 #include "util/objfactory.h"
 
 #include "util/trace.h"
@@ -117,6 +121,41 @@ namespace GxTcl
     obj->saveBitmapCache(Gfx::Canvas::current(), filename);
   }
 #endif
+
+  Tcl::List bezier4(double p1, double p2, double p3, double p4,
+                    unsigned int N)
+  {
+    DOTRACE("<gxtcl.cc>::bezier4");
+
+    if (N < 4)
+      {
+        throw Util::Error("N must be at least 4");
+      }
+
+    Tcl::List result;
+
+    Bezier4 bez(p1, p2, p3, p4);
+
+    for (unsigned int i = 0; i < N; ++i)
+      {
+        const double u = double(i) / double(N-1);
+        result.append(bez.eval(u));
+      }
+
+    return result;
+  }
+}
+
+extern "C"
+int Gx_Init(Tcl_Interp* interp)
+{
+DOTRACE("Gx_Init");
+
+  PKG_CREATE(interp, "Gx", "$Revision$");
+
+  pkg->def( "bezier4", "p1 p2 p3 p4 N", &GxTcl::bezier4);
+
+  PKG_RETURN;
 }
 
 extern "C"
