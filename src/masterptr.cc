@@ -3,7 +3,7 @@
 // masterptr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  9 08:19:46 2000
-// written: Mon Oct  9 08:52:14 2000
+// written: Mon Oct  9 13:28:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,6 +52,16 @@ DOTRACE("MasterPtrBase::decrRefCount");
   --itsRefCount;
   if (itsRefCount <= 0)
 	 delete this;
+}
+
+bool MasterPtrBase::isShared() const {
+DOTRACE("MasterPtrBase::isShared");
+  return (itsRefCount > 1);
+}
+
+bool MasterPtrBase::isUnshared() const {
+DOTRACE("MasterPtrBase::isUnshared");
+  return (itsRefCount <= 1);
 }
 
 int MasterPtrBase::refCount() const {
