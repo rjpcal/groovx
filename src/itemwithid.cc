@@ -3,7 +3,7 @@
 // itemwithid.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 23 11:42:18 2000
-// written: Mon Oct 23 18:05:04 2000
+// written: Tue Oct 24 15:35:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,12 @@
 // ItemWithId member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+template <class T>
+ItemWithId<T>::ItemWithId(int id) :
+  itsHandle(ptrList().getCheckedPtr(id).handle()),
+  itsId(id)
+{}
 
 template <class T>
 ItemWithId<T>::ItemWithId(T* ptr, Insert /*dummy param*/) :

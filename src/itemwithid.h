@@ -3,7 +3,7 @@
 // itemwithid.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 23 11:41:23 2000
-// written: Mon Oct 23 22:48:43 2000
+// written: Tue Oct 24 15:34:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ private:
   int itsId;
 
 public:
-
+  ItemWithId(int id);
   ItemWithId(T* master, int id_) : itsHandle(master), itsId(id_) {}
   ItemWithId(PtrHandle<T> item_, int id_) : itsHandle(item_), itsId(id_) {}
 
