@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Aug  7 15:32:43 2002
+// written: Wed Aug  7 16:12:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -178,6 +178,8 @@ void Util::BackTrace::print() const throw()
 
 void Util::BackTrace::print(STD_IO::ostream& os) const throw()
 {
+  os.exceptions(0);
+
   os << "stack trace:\n";
 
   const unsigned int end = size();
@@ -217,8 +219,6 @@ namespace
   bool GLOBAL_TRACE = false;
 
   const char* PDATA_FILE = "prof.out";
-
-  STD_IO::ofstream* PDATA_STREAM = new STD_IO::ofstream(PDATA_FILE);
 
   bool PRINT_AT_EXIT = true;
 
@@ -273,9 +273,22 @@ Util::Prof::~Prof() throw()
 {
   if (PRINT_AT_EXIT)
     {
-      if (PDATA_STREAM->good())
+      static STD_IO::ofstream* stream = 0;
+      static bool inited = false;
+
+      if (!inited)
         {
-          printProfData(*PDATA_STREAM);
+          stream = new (std::nothrow) STD_IO::ofstream(PDATA_FILE);
+
+          // need this extra state flag since it's possible that the new
+          // call above fails, so we can't simply check (stream != 0) to
+          // see if initialization has already been tried
+          inited = true;
+        }
+
+      if (stream && stream->good())
+        {
+          printProfData(*stream);
         }
       else
         {
@@ -332,6 +345,8 @@ double Util::Prof::avgTime() const throw()
 
 void Util::Prof::printProfData(std::ostream& os) const throw()
 {
+  os.exceptions(0);
+
   os << std::setw(14) << long(avgTime()) << '\t'
      << std::setw(5) << count() << '\t'
      << std::setw(14) << long(totalTime()) << '\t'
@@ -359,6 +374,8 @@ namespace
 
 void Util::Prof::printAllProfData(STD_IO::ostream& os) throw()
 {
+  os.exceptions(0);
+
   std::stable_sort(allProfs().begin(), allProfs().end(), compareTotalTime);
 
   for (unsigned int i = 0; i < allProfs().size(); ++i)
