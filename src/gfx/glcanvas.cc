@@ -200,8 +200,8 @@ geom::rect<int> GLCanvas::getScreenViewport() const
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
 
-  return geom::rect_lbwh<int>(viewport[0], viewport[1],
-                              viewport[2], viewport[3]);
+  return geom::rect<int>::lbwh(viewport[0], viewport[1],
+                               viewport[2], viewport[3]);
 }
 
 geom::rect<double> GLCanvas::getWorldViewport() const

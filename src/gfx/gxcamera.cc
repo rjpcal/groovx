@@ -178,7 +178,7 @@ namespace
     const double b = -1 * (h / 2.0) / ppu;
     const double t =      (h / 2.0) / ppu;
 
-    canvas.orthographic(geom::rect_ltrb<double>(l,t,r,b), -10.0, 10.0);
+    canvas.orthographic(geom::rect<double>::ltrb(l,t,r,b), -10.0, 10.0);
   }
 }
 

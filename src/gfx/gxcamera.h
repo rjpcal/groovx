@@ -107,7 +107,7 @@ public:
   /// Default constructor.
   GxFixedRectCamera() :
     GxCamera(),
-    itsRect(geom::rect_ltrb<double>(-1.0, 1.0, 1.0, -1.0))
+    itsRect(geom::rect<double>::ltrb(-1.0, 1.0, 1.0, -1.0))
   {}
 
   /// Virtual no-throw destructor.
@@ -135,7 +135,7 @@ public:
   /// Default constructor.
   GxMinRectCamera() :
     GxCamera(),
-    itsRect(geom::rect_ltrb<double>(-1.0, 1.0, 1.0, -1.0))
+    itsRect(geom::rect<double>::ltrb(-1.0, 1.0, 1.0, -1.0))
   {}
 
   /// Virtual no-throw destructor.

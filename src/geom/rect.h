@@ -56,6 +56,18 @@ namespace geom
     rect<V>& operator=(const rect<V>& i)
     { ll=i.ll; tt=i.tt; rr=i.rr; bb=i.bb; return *this; }
 
+    /// Factory for building rect's with left/top/right/bottom arguments.
+    static rect<V> ltrb(V l, V t, V r, V b)
+    {
+      return rect<V>().set_ltrb(l, t, r, b);
+    }
+
+    /// Factory for building rect's with left/bottom/width/height arguments.
+    static rect<V> lbwh(V l, V b, V w, V h)
+    {
+      return rect<V>().set_lbwh(l, b, w, h);
+    }
+
     // Accessors
     void get_ltrb(V& L, V& T, V& R, V& B) const
     { L = ll; T = tt; R = rr; B = bb; }
@@ -210,20 +222,6 @@ namespace geom
     // Data members
     V ll, tt, rr, bb;
   };
-
-  /// Factory for building rect's with left/top/right/bottom arguments.
-  template <class V>
-  rect<V> rect_ltrb(V l, V t, V r, V b)
-  {
-    return rect<V>().set_ltrb(l, t, r, b);
-  }
-
-  /// Factory for building rect's with left/bottom/width/height arguments.
-  template <class V>
-  rect<V> rect_lbwh(V l, V b, V w, V h)
-  {
-    return rect<V>().set_lbwh(l, b, w, h);
-  }
 
 } // end namespace geom
 

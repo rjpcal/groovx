@@ -46,10 +46,10 @@ namespace Tcl
   inline geom::rect<T> fromTcl(Tcl_Obj* obj, geom::rect<T>*)
   {
     Tcl::List listObj(obj);
-    geom::rect<T> result = geom::rect_ltrb<T>(listObj.get(0, (T*)0),
-                                              listObj.get(1, (T*)0),
-                                              listObj.get(2, (T*)0),
-                                              listObj.get(3, (T*)0));
+    geom::rect<T> result = geom::rect<T>::ltrb(listObj.get(0, (T*)0),
+                                               listObj.get(1, (T*)0),
+                                               listObj.get(2, (T*)0),
+                                               listObj.get(3, (T*)0));
 
     if (result.width() <= 0.0)
       throw rutz::error("invalid rect (width was <= 0)", SRC_POS);

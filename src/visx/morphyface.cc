@@ -526,7 +526,7 @@ DOTRACE("MorphyFace::grGetBoundingBox");
   const double t =  itsTopHeight * (1 + itsHairWidth);
   const double b =  itsBottomHeight;
 
-  bbox.drawRect(geom::rect_ltrb<double>(l,t,r,b));
+  bbox.drawRect(geom::rect<double>::ltrb(l,t,r,b));
 }
 
 static const char vcid_morphyface_cc[] = "$Header$";

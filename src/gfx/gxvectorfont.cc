@@ -828,7 +828,7 @@ void GxVectorFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
   const double b = -1.0 - (lines - 1) * 8.0;
   const double t = 6.0;
 
-  bbox.drawRect(geom::rect_ltrb<double>(l,t,r,b));
+  bbox.drawRect(geom::rect<double>::ltrb(l,t,r,b));
 }
 
 void GxVectorFont::drawText(const char* text, Gfx::Canvas& canvas) const
