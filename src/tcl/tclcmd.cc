@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Mar  8 15:56:51 2000
+// written: Fri Mar 10 01:02:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,8 @@ namespace {
 
 class Tcl::TclCmd::Impl {
 public:
+  Impl() : itsArgs() {}
+
   vector<TclValue> itsArgs;
 };
 
