@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:57:31 2001
-// written: Sun Jul 22 17:53:20 2001
+// written: Tue Aug  7 15:40:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,6 +62,11 @@ namespace Tcl
     static Tcl_Obj*            toTcl( T val );
   };
 
+  template <>
+  inline Tcl_Obj* Convert<Tcl_Obj*>::fromTcl( Tcl_Obj* obj ) { return obj; }
+
+  template <>
+  inline Tcl_Obj* Convert<Tcl_Obj*>::toTcl( Tcl_Obj* val ) { return val; }
 }
 
 static const char vcid_tclconvert_h[] = "$Header$";

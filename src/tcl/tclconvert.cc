@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Mon Jul 16 08:00:18 2001
+// written: Tue Aug  7 15:41:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -229,14 +229,6 @@ DOTRACE("Tcl::Convert<Tcl::List>::fromTcl");
   return Tcl::List(obj);
 }
 
-template <>
-Tcl_Obj* Tcl::Convert<Tcl_Obj*>::fromTcl(Tcl_Obj* obj)
-{
-DOTRACE("Tcl::Convert<Tcl_Obj*>::fromTcl");
-
-  return obj;
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -386,14 +378,6 @@ template <>
 Tcl_Obj* Tcl::Convert<Tcl::ObjPtr>::toTcl(Tcl::ObjPtr val)
 {
 DOTRACE("Tcl::Convert<Tcl::ObjPtr>::toTcl");
-
-  return val;
-}
-
-template <>
-Tcl_Obj* Tcl::Convert<Tcl_Obj*>::toTcl(Tcl_Obj* val)
-{
-DOTRACE("Tcl::Convert<Tcl_Obj*>::toTcl");
 
   return val;
 }
