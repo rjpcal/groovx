@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Wed Sep 25 18:52:58 2002
+// written: Tue Nov 19 12:38:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 
 namespace Gfx
 {
+  class Bbox;
   class Canvas;
   template <class V> class Rect;
   template <class V> class Box;
@@ -72,10 +73,9 @@ public:
   /// Get the 2-D z-projection of the result of getBoundingCube().
   Gfx::Rect<double> getBoundingBox(Gfx::Canvas& canvas) const;
 
-  /** Subclasses override this to transform \a bbox according to how that
-      subclass will be rendered. */
-  virtual void getBoundingCube(Gfx::Box<double>& cube,
-                               Gfx::Canvas& canvas) const = 0;
+  /** Subclasses override this to transform the bounding box according to
+      how that subclass is rendered. */
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const = 0;
 
   /// Draw the object on \a canvas.
   virtual void draw(Gfx::Canvas& canvas) const = 0;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:27:15 2000
-// written: Fri Jul  5 14:04:52 2002
+// written: Tue Nov 19 12:42:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/canvas.h"
 
+#include "gx/bbox.h"
 #include "gx/box.h"
 
 #include "util/iter.h"
@@ -79,10 +80,10 @@ Gfx::Rect<double> GxNode::getBoundingBox(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxNode::getBoundingBox");
 
-  Gfx::Box<double> cube;
-  getBoundingCube(cube, canvas);
+  Gfx::Bbox bbox(canvas);
+  getBoundingCube(bbox);
 
-  return cube.rect();
+  return bbox.cube.rect();
 }
 
 void GxNode::undraw(Gfx::Canvas& canvas) const
