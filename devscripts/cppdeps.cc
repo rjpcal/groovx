@@ -34,6 +34,7 @@
 #include <cassert>
 #include <cctype>
 #include <cstring>     // for strerror()
+#include <fstream>
 #include <iostream>
 #include <map>
 #include <set>
@@ -322,9 +323,42 @@ public:
   void add_format(const string& src_colon_pattern)
   {
     string::size_type colon = src_colon_pattern.find_first_of(':');
+    if (colon == string::npos)
+      {
+        cerr << "ERROR: invalid format (missing colon): '"
+             << src_colon_pattern << "'\n";
+        exit(1);
+      }
     string src = src_colon_pattern.substr(0, colon);
     string pattern = src_colon_pattern.substr(colon+1);
     m_links.push_back(formatter(src, pattern));
+  }
+
+  void load_file(const char* filename)
+  {
+    if (!file_exists(filename))
+      {
+        cerr << "ERROR: couldn't open format file: " << filename << '\n';
+        exit(1);
+      }
+
+    std::ifstream in(filename);
+
+    if (!in.is_open())
+      {
+        cerr << "ERROR: couldn't open format file for reading: " << filename << '\n';
+        exit(1);
+      }
+
+    string line;
+    while (in)
+      {
+        std::getline(in, line);
+        if (line.length() > 0 && line[0] != '#')
+          {
+            add_format(line);
+          }
+      }
   }
 
   string transform(const string& srcfile) const
@@ -334,7 +368,7 @@ public:
         if (m_links[i-1].matches(srcfile))
           return m_links[i-1].transform(srcfile);
       }
-    cerr << "no patterns matched source file: " << srcfile << '\n';
+    cerr << "ERROR: no patterns matched source file: " << srcfile << '\n';
     exit(1);
     return string(); // can't happen, but placate compiler
   }
@@ -456,6 +490,7 @@ cppdeps::cppdeps(const int argc, char** const argv) :
          "                          will have more than one target; the default is for\n"
          "                          the list of extensions to include just '.o'\n"
          "    --exeformat\n"
+         "    --exeformat-file\n"
          "    --linkformat\n"
          "    --checksys            force tracking of dependencies in #include <...>\n"
          "                          directives (default is to not record <...> files\n"
@@ -550,6 +585,10 @@ cppdeps::cppdeps(const int argc, char** const argv) :
       else if (strcmp(*arg, "--exeformat") == 0)
         {
           m_cfg_exe_formats.add_format(*++arg);
+        }
+      else if (strcmp(*arg, "--exeformat-file") == 0)
+        {
+          m_cfg_exe_formats.load_file(*++arg);
         }
       else if (strcmp(*arg, "--linkformat") == 0)
         {
