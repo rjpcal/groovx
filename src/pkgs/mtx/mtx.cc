@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Feb 19 13:51:26 2002
+// written: Tue Feb 19 13:58:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -236,7 +236,7 @@ Slice& Slice::operator=(const Mtx& other)
 ///////////////////////////////////////////////////////////////////////
 
 #ifdef HAVE_MATLAB
-Mtx::MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
+MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
 {
   if (!mxIsDouble(a))
     throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
@@ -245,7 +245,7 @@ Mtx::MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
 }
 #endif
 
-void Mtx::MtxImpl::reshape(int mr, int nc)
+void MtxImpl::reshape(int mr, int nc)
 {
   if (mr*nc != nelems())
     {
@@ -264,7 +264,7 @@ void Mtx::MtxImpl::reshape(int mr, int nc)
   ncols_ = nc;
 }
 
-void Mtx::MtxImpl::selectRowRange(int r, int nr)
+void MtxImpl::selectRowRange(int r, int nr)
 {
   if (r < 0 || nr < 0)
     throw Util::Error("attempted to select rows with negative indices");
@@ -276,7 +276,7 @@ void Mtx::MtxImpl::selectRowRange(int r, int nr)
   mrows_ = nr;
 }
 
-void Mtx::MtxImpl::selectColumnRange(int c, int nc)
+void MtxImpl::selectColumnRange(int c, int nc)
 {
   if (c < 0 || nc < 0)
     throw Util::Error("attempted to select rows with negative indices");
@@ -288,11 +288,11 @@ void Mtx::MtxImpl::selectColumnRange(int c, int nc)
   ncols_ = nc;
 }
 
-void Mtx::MtxImpl::makeUnique()
+void MtxImpl::makeUnique()
 {
   if ( !datablock_->isUnique() )
     {
-      DOTRACE("Mtx::MtxImpl::makeUnique");
+      DOTRACE("MtxImpl::makeUnique");
       DataBlock::makeUnique(datablock_);
     }
 }
