@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Oct  8 15:52:36 1999
+// written: Fri Oct  8 15:57:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,13 +118,14 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 class ObjlistTcl::SaveObjectsCmd : public TclCmd {
 public:
   SaveObjectsCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "filename objids", 3, 3)
+	 TclCmd(interp, cmd_name, "objids filename", 3, 3)
   {}
 protected:
   virtual void invoke() {
-	 const char* filename = arg(1).getCstring();
 	 vector<int> objids;
-	 getSequenceFromArg(2, back_inserter(objids), (int*) 0);
+	 getSequenceFromArg(1, back_inserter(objids), (int*) 0);
+
+	 const char* filename = arg(2).getCstring();
 
 	 ofstream ofs(filename);
 	 if (ofs.fail()) {
