@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Thu Mar 15 16:28:55 2001
+// written: Thu Mar 15 16:44:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,12 +118,7 @@ protected:
 
 public:
 
-  Slice(const Slice& other) :
-	 itsOwner(other.itsOwner),
-	 itsOffset(other.itsOffset),
-	 itsStride(other.itsStride),
-	 itsNelems(other.itsNelems)
-  {}
+  // Default copy constructor OK
 
   //
   // Data access
@@ -208,13 +203,12 @@ typedef struct mxArray_tag mxArray;
 
 class Mtx {
 public:
-  enum StoragePolicy { COPY, BORROW };
-
-public:
 
   //
   // Constructors
   //
+
+  enum StoragePolicy { COPY, BORROW };
 
   static const Mtx& emptyMtx();
 
@@ -325,8 +319,8 @@ public:
 private:
   void makeUnique() { itsImpl.makeUnique(); }
 
-  const double* dataStorage() const { return itsImpl.dataStorage(); }
-  double* dataStorage() { return itsImpl.dataStorage(); }
+  const double* storageStart() const { return itsImpl.storageStart(); }
+  double* storageStart() { return itsImpl.storageStart(); }
 
   friend class MtxIter;
 
@@ -349,7 +343,7 @@ private:
 		mrows_ = mrows;
 		rowstride_ = mrows;
 		ncols_ = ncols;
-		setOffset(0);
+		offset_ = 0;
 	 }
 
 	 MtxImpl& operator=(const MtxImpl& other); // not allowed
@@ -361,7 +355,7 @@ private:
 		doswap(mrows_, other.mrows_);
 		doswap(rowstride_, other.rowstride_);
 		doswap(ncols_, other.ncols_);
-		doswap(start_, other.start_);
+		doswap(offset_, other.offset_);
 	 }
 
 	 MtxImpl(const MtxImpl& other) :
@@ -369,7 +363,7 @@ private:
 		mrows_(other.mrows_),
 		rowstride_(other.rowstride_),
 		ncols_(other.ncols_),
-		start_(other.start_)
+		offset_(other.offset_)
 	 {
 		storage_->incrRefCount();
 	 }
@@ -379,7 +373,7 @@ private:
 		mrows_(mrows),
 		rowstride_(mrows),
 		ncols_(ncols),
-		start_(storage_->itsData)
+		offset_(0)
 	 {
 		storage_->incrRefCount();
 	 }
@@ -401,10 +395,8 @@ private:
 	 int ncols() const { return ncols_; }
 	 int colstride() const { return colstride_; }
 
-//  	 double at(int i) const { return start_[i]; }
-//  	 double& at(int i) { return start_[i]; }
-	 double at(int i) const { return storage_->itsData[i+getOffset()]; }
-	 double& at(int i) { return storage_->itsData[i+getOffset()]; }
+	 double at(int i) const { return storage_->itsData[i+offset_]; }
+	 double& at(int i) { return storage_->itsData[i+offset_]; }
 
 	 void reshape(int mrows, int ncols);
 
@@ -421,17 +413,17 @@ private:
 	 }
 
 	 ptrdiff_t offsetFromStorage(int row, int col) const
-      { return getOffset() + offsetFromStart(row, col); }
+      { return offset_ + offsetFromStart(row, col); }
 
 	 double* address(int row, int col)
-      { return storage_->itsData + getOffset() + offsetFromStart(row, col); }
+      { return storage_->itsData + offset_ + offsetFromStart(row, col); }
 
 	 const double* address(int row, int col) const
-      { return storage_->itsData + getOffset() + offsetFromStart(row, col); }
+      { return storage_->itsData + offset_ + offsetFromStart(row, col); }
 
 	 void apply(double func(double))
     {
-		double* p = storage_->itsData + getOffset();
+		double* p = storage_->itsData + offset_;
 		int gap = rowgap();
 
 		if (gap == 0)
@@ -456,19 +448,16 @@ private:
 
 	 void makeUnique();
 
-	 const double* dataStorage() const { return storage_->itsData; }
-	 double* dataStorage() { return storage_->itsData; }
+	 const double* storageStart() const { return storage_->itsData; }
+	 double* storageStart() { return storage_->itsData; }
 
   private:
-	 void setOffset(ptrdiff_t o) { start_ = storage_->itsData + o; }
-	 ptrdiff_t getOffset() const { return start_ - storage_->itsData; }
-
 	 DataBlock* storage_;
 	 int mrows_;
 	 int rowstride_;
 	 int ncols_;
 	 static const int colstride_ = 1;
-	 double* start_;
+	 ptrdiff_t offset_;
   };
 
   MtxImpl itsImpl;
@@ -503,7 +492,7 @@ inline ElemProxy::operator double() { return m.itsImpl.at(i); }
 
 
 inline const double* Slice::dataStart() const
-{ return itsOwner.dataStorage() + itsOffset; }
+{ return itsOwner.storageStart() + itsOffset; }
 
 inline Slice::Slice(const Mtx& owner, ptrdiff_t offset, int s, int n) :
   itsOwner(const_cast<Mtx&>(owner)),
