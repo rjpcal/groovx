@@ -2,7 +2,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Thu Jun 17 20:22:06 1999
+// written: Thu Oct 21 17:52:57 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -34,6 +34,9 @@ public:
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   ///////////////
   // accessors //
