@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 11:50:23 1999
-// written: Fri Nov 10 17:03:49 2000
+// written: Tue Dec  5 15:59:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -110,8 +110,6 @@ public:
   void linkVar(const char* varName, int& var) throw (TclError);
   /// Links \a var with the Tcl variable \a varName.
   void linkVar(const char* varName, double& var) throw (TclError);
-  /// Links \a var with the Tcl variable \a varName.
-  void linkVar(const char* varName, char*& var) throw (TclError);
 
   /** Links a copy of \a var with the Tcl variable \a varName. The Tcl
       variable will be read-only.*/
@@ -119,9 +117,6 @@ public:
   /** Links a copy of \a var with the Tcl variable \a varName. The Tcl
       variable will be read-only.*/
   void linkVarCopy(const char* varName, double var) throw (TclError);
-  /** Links a copy of \a var with the Tcl variable \a varName. The Tcl
-      variable will be read-only.*/
-  void linkVarCopy(const char* varName, const char* var) throw (TclError);
 
   /** Links \a var with the Tcl variable \a varName. The Tcl variable
       will be read_only. */
@@ -129,9 +124,6 @@ public:
   /** Links \a var with the Tcl variable \a varName. The Tcl variable
       will be read_only. */
   void linkConstVar(const char* varName, double& var) throw (TclError);
-  /** Links \a var with the Tcl variable \a varName. The Tcl variable
-      will be read_only. */
-  void linkConstVar(const char* varName, char*& var) throw (TclError);
 
 protected:
   void setInitStatusOk();
