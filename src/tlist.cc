@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Wed Feb 16 07:59:52 2000
+// written: Wed Feb 16 08:04:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,13 +41,13 @@ namespace {
 // creators //
 //////////////
 
-Tlist::Tlist() : 
-  PtrList<Trial>(1)
+Tlist::Tlist(int size) : 
+  PtrList<Trial>(size)
 {
 DOTRACE("Tlist::Tlist");
 }
 
-Tlist Tlist::theInstance;
+Tlist Tlist::theInstance(100);
 
 Tlist& Tlist::theTlist() {
 DOTRACE("Tlist::theTlist");
