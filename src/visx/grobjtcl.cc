@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Mon Nov 15 15:55:02 1999
+// written: Mon Dec  6 22:18:17 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ public:
 						 &GrObj::getScalingMode, &GrObj::setScalingMode);
 	 declareCAttrib("unRenderMode",
 						 &GrObj::getUnRenderMode, &GrObj::setUnRenderMode);
-	 declareCAction("update", &GrObj::update);
+//  	 declareCAction("update", &GrObj::update);
 	 declareCAttrib("width", &GrObj::getWidth, &GrObj::setWidth);
 
 	 linkVarCopy("GrObj::GROBJ_DIRECT_RENDER", GrObj::GROBJ_DIRECT_RENDER);
