@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Tue Apr 30 09:05:26 2002
+// written: Tue Apr 30 09:32:08 2002
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -20,11 +20,14 @@
 #include "tcl/tclpkg.h"
 
 #include "util/algo.h"
+#include "util/arrays.h"
+#include "util/rand.h"
 #include "util/randutils.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
 
+#include <algorithm>
 
 namespace DlistTcl
 {
@@ -255,6 +258,28 @@ namespace DlistTcl
 
   //---------------------------------------------------------------------
   //
+  // dlist::shuffle
+  //
+  //---------------------------------------------------------------------
+
+  Tcl::List shuffle(Tcl::List src, int seed)
+  {
+    fixed_block<Tcl::ObjPtr> objs(src.begin<Tcl::ObjPtr>(),
+                                  src.end<Tcl::ObjPtr>());
+
+    Util::Urand generator(seed);
+
+    std::random_shuffle(objs.begin(), objs.end(), generator);
+
+    Tcl::List result;
+
+    std::copy(objs.begin(), objs.end(), result.appender());
+
+    return result;
+  }
+
+  //---------------------------------------------------------------------
+  //
   // dlist::slice
   //
   //---------------------------------------------------------------------
@@ -352,6 +377,8 @@ DOTRACE("Dlist_Init");
   pkg->def( "range", "begin end", Util::bindLast(&DlistTcl::range, 1) );
   pkg->def( "repeat", "source_list times_list", &DlistTcl::repeat );
   pkg->def( "select", "source_list flags_list", &DlistTcl::select );
+  pkg->def( "shuffle", "source_list ?seed=0?", &DlistTcl::shuffle );
+  pkg->def( "shuffle", "source_list", Util::bindLast(&DlistTcl::shuffle, 0) );
   pkg->def( "slice", "list n", &DlistTcl::slice );
   pkg->def( "sum", "source_list", &DlistTcl::sum );
   pkg->def( "zeros", "num_zeros", &DlistTcl::zeros );
