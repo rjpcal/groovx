@@ -28,6 +28,8 @@
 struct Tcl_Interp;
 struct Tcl_Obj;
 
+class fixed_string;
+
 namespace Tcl
 {
   class SafeInterp;
@@ -86,6 +88,10 @@ public:
 
   // Commands/procedures
   bool hasCommand(const char* cmd_name) const;
+
+  fixed_string getProcBody(const char* proc_name) const;
+  void createProc(const char* namesp, const char* proc_name,
+						const char* args, const char* body);
 
 private:
   Tcl_Obj* getObjResult() const;
