@@ -209,14 +209,14 @@ public:
   bool updatePending;
   bool shutdownRequested;
 
-  void dbgButtonPress(const GWT::ButtonPressEvent& ev)
+  void dbgButtonPress(const Tcl::ButtonPressEvent& ev)
   {
     std::cerr << "ButtonPress: "
               << "button " << ev.button
               << " x " << ev.x << " y " << ev.y << std::endl;
   }
 
-  void dbgKeyPress(const GWT::KeyPressEvent& ev)
+  void dbgKeyPress(const Tcl::KeyPressEvent& ev)
   {
     std::cerr << "KeyPress: "
               << "keys '" << ev.keys << "'"
@@ -299,7 +299,7 @@ DOTRACE("TkWidgImpl::buttonEventProc");
         }
     }
 
-  GWT::ButtonPressEvent ev = {eventPtr->button, eventPtr->x, eventPtr->y};
+  Tcl::ButtonPressEvent ev = {eventPtr->button, eventPtr->x, eventPtr->y};
   owner->sigButtonPressed.emit(ev);
 }
 
@@ -330,7 +330,7 @@ DOTRACE("TkWidgImpl::keyEventProc");
   // Restore the state
   eventPtr->state = saveState;
 
-  GWT::KeyPressEvent ev = {&buf[0], eventPtr->x, eventPtr->y, controlPressed};
+  Tcl::KeyPressEvent ev = {&buf[0], eventPtr->x, eventPtr->y, controlPressed};
   owner->sigKeyPressed.emit(ev);
 }
 

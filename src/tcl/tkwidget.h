@@ -30,7 +30,8 @@
 #ifndef TKWIDGET_H_DEFINED
 #define TKWIDGET_H_DEFINED
 
-#include "gwt/widget.h"
+#include "util/object.h"
+#include "util/signal.h"
 
 struct Tcl_Interp;
 
@@ -45,6 +46,25 @@ namespace Tcl
 {
   class Interp;
   class TkWidget;
+
+  enum EventStatus { HANDLED, NOT_HANDLED };
+
+  /// A mouse button-press event.
+  struct ButtonPressEvent
+  {
+    unsigned int button;
+    int x;
+    int y;
+  };
+
+  /// A keypress event.
+  struct KeyPressEvent
+  {
+    const char* keys;
+    int x;
+    int y;
+    bool controlPressed;
+  };
 }
 
 class TkWidgImpl;
@@ -59,7 +79,7 @@ class TkWidgImpl;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TkWidget : public GWT::Widget
+class Tcl::TkWidget : public virtual Util::Object
 {
 public:
   /// Build a TkWidget; calls Tk_CreateWindowFromPath() internally.
@@ -133,6 +153,9 @@ public:
   void requestRedisplay();
 
   void hook();
+
+  Util::Signal1<const Tcl::ButtonPressEvent&> sigButtonPressed;
+  Util::Signal1<const Tcl::KeyPressEvent&> sigKeyPressed;
 
 private:
   TkWidget(const TkWidget&);
