@@ -3,7 +3,7 @@
 // trialtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 09:51:54 1999
-// written: Tue Dec  7 19:05:50 1999
+// written: Wed Dec 15 13:07:02 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include <tcl.h>
 
-#include "iomgr.h"
+#include "iofactory.h"
 #include "trial.h"
 #include "tlist.h"
 #include "listitempkg.h"

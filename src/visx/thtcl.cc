@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Tue Dec  7 19:05:50 1999
+// written: Wed Dec 15 13:06:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include <tcl.h>
 #include <string>
 
-#include "iomgr.h"
+#include "iofactory.h"
 #include "thlist.h"
 #include "tclcmd.h"
 #include "timinghandler.h"

@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Tue Dec  7 19:15:39 1999
+// written: Wed Dec 15 13:06:01 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include <tcl.h>
 
 #include "eventresponsehdlr.h"
-#include "iomgr.h"
+#include "iofactory.h"
 #include "rhlist.h"
 #include "responsehandler.h"
 #include "kbdresponsehdlr.h"
