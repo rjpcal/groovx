@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Wed Nov 13 12:15:28 2002
+// written: Mon Nov 25 11:49:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ class FieldContainer;
 namespace Util
 {
   template <class T> class FwdIter;
-  class Signal;
+  class Signal0;
 }
 
 /// A template class for limiting values within a numeric range
@@ -569,13 +569,13 @@ class FieldContainer : public virtual Util::Object
 {
 private:
   const FieldMap* itsFieldMap;
-  Util::Signal* itsSignal;
+  Util::Signal0* itsSignal;
 
   FieldContainer(const FieldContainer&);
   FieldContainer& operator=(const FieldContainer&);
 
 public:
-  FieldContainer(Util::Signal* sig);
+  FieldContainer(Util::Signal0* sig);
   virtual ~FieldContainer();
 
   void setFieldMap(const FieldMap& fields);

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 23 17:42:51 2002
-// written: Sat Nov 23 18:04:22 2002
+// written: Mon Nov 25 11:49:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ GxScene::GxScene(Util::SoftRef<Gfx::Canvas> canvas) :
   isItRefreshing(true),
   isItRefreshed(false),
   itsTimer(100, true),
-  slotNodeChanged(Util::Slot::make(this, &GxScene::onNodeChange))
+  slotNodeChanged(Util::Slot0::make(this, &GxScene::onNodeChange))
 {
 DOTRACE("GxScene::GxScene");
   itsTimer.sigTimeOut.connect(this, &GxScene::fullRender);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Wed Nov 13 12:10:50 2002
+// written: Mon Nov 25 11:49:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ FieldMap::Iterator FieldMap::ioFields() const
 //
 ///////////////////////////////////////////////////////////////////////
 
-FieldContainer::FieldContainer(Util::Signal* sig) :
+FieldContainer::FieldContainer(Util::Signal0* sig) :
   itsFieldMap(FieldMap::emptyFieldMap()),
   itsSignal(sig)
 {}

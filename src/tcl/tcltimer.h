@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug 23 11:42:34 2001
-// written: Wed Sep 25 18:57:38 2002
+// written: Mon Nov 25 11:49:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ public:
   Timer(unsigned int msec, bool repeat = false);
   ~Timer();
 
-  Util::Signal sigTimeOut;
+  Util::Signal0 sigTimeOut;
 
   void schedule();
   void cancel();

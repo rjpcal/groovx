@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Tue Nov 19 12:38:56 2002
+// written: Mon Nov 25 11:49:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ public:
   /// Virtual destructor.
   virtual ~GxNode();
 
-  Util::Signal sigNodeChanged;
+  Util::Signal0 sigNodeChanged;
 
   /// Get the value of the user-defined category. Default returns -1.
   virtual int category() const;

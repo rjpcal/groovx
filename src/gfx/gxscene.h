@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 23 17:42:38 2002
-// written: Sat Nov 23 18:03:12 2002
+// written: Mon Nov 25 11:49:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ private:
 
   Tcl::Timer itsTimer;
 
-  Util::Ref<Util::Slot> slotNodeChanged;
+  Util::Ref<Util::Slot0> slotNodeChanged;
 };
 
 static const char vcid_gxscene_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Mon Nov 25 11:05:21 2002
+// written: Mon Nov 25 11:49:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,18 +23,18 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Slot members
+// Slot0 members
 //
 ///////////////////////////////////////////////////////////////////////
 
-Util::Slot::Slot()
+Util::Slot0::Slot0()
 {
-DOTRACE("Util::Slot::Slot");
+DOTRACE("Util::Slot0::Slot0");
 }
 
-Util::Slot::~Slot()
+Util::Slot0::~Slot0()
 {
-DOTRACE("Util::Slot::~Slot");
+DOTRACE("Util::Slot0::~Slot0");
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ DOTRACE("Util::Slot::~Slot");
 
 namespace
 {
-  typedef Util::Ref<Util::Slot> SlotRef;
+  typedef Util::Ref<Util::Slot0> SlotRef;
 }
 
 struct Util::SignalBase::Impl
@@ -53,7 +53,7 @@ struct Util::SignalBase::Impl
 public:
   Impl(SignalBase* owner) :
     itsSlots(),
-    slotEmitSelf(Util::Slot::make(owner, &SignalBase::receive)),
+    slotEmitSelf(Util::Slot0::make(owner, &SignalBase::receive)),
     isItEmitting(false)
   {}
 
@@ -63,7 +63,7 @@ public:
 
   ListType itsSlots;
 
-  Util::Ref<Util::Slot> slotEmitSelf;
+  Util::Ref<Util::Slot0> slotEmitSelf;
 
   bool isItEmitting;
 
@@ -128,7 +128,7 @@ Util::SignalBase::~SignalBase()
 void Util::SignalBase::receive() { rep->emit(); }
 void Util::SignalBase::emit() const { rep->emit(); }
 
-void Util::SignalBase::disconnect(Util::SoftRef<Util::Slot> slot)
+void Util::SignalBase::disconnect(Util::SoftRef<Util::Slot0> slot)
 {
 DOTRACE("Util::SignalBase::disconnect");
   if (!slot.isValid()) return;
@@ -138,7 +138,7 @@ DOTRACE("Util::SignalBase::disconnect");
   dbgEvalNL(3, rep->itsSlots.size());
 }
 
-void Util::SignalBase::connect(Util::SoftRef<Util::Slot> slot)
+void Util::SignalBase::connect(Util::SoftRef<Util::Slot0> slot)
 {
 DOTRACE("Util::SignalBase::connect");
   if (!slot.isValid()) return;
@@ -148,7 +148,7 @@ DOTRACE("Util::SignalBase::connect");
   dbgEvalNL(3, rep->itsSlots.size());
 }
 
-Util::SoftRef<Util::Slot> Util::SignalBase::slot() const
+Util::SoftRef<Util::Slot0> Util::SignalBase::slot() const
 {
 DOTRACE("Util::SignalBase::slot");
   return rep->slotEmitSelf;
@@ -156,37 +156,37 @@ DOTRACE("Util::SignalBase::slot");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Signal method definitions
+// Signal0 method definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Util::Signal::Signal() :
+Util::Signal0::Signal0() :
   SignalBase()
 {
-DOTRACE("Util::Signal::Signal");
+DOTRACE("Util::Signal0::Signal0");
 }
 
-Util::Signal::~Signal()
+Util::Signal0::~Signal0()
 {
-DOTRACE("Util::Signal::~Signal");
+DOTRACE("Util::Signal0::~Signal0");
 }
 
-void Util::Signal::disconnect(Util::SoftRef<Util::Slot> slot)
+void Util::Signal0::disconnect(Util::SoftRef<Util::Slot0> slot)
 {
   SignalBase::disconnect(slot);
 }
 
-void Util::Signal::connect(Util::SoftRef<Util::Slot> slot)
+void Util::Signal0::connect(Util::SoftRef<Util::Slot0> slot)
 {
   SignalBase::connect(slot);
 }
 
-void Util::Signal::emit() const
+void Util::Signal0::emit() const
 {
   SignalBase::emit();
 }
 
-Util::SoftRef<Util::Slot> Util::Signal::slot() const
+Util::SoftRef<Util::Slot0> Util::Signal0::slot() const
 {
   return SignalBase::slot();
 }
