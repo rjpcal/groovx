@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Tue Mar  7 10:30:09 2000
+// written: Tue Mar  7 11:01:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,12 @@
 
 #include "tlistutils.h"
 
+#include <iostream.h>
 #include <fstream.h>
 #include <strstream.h>
 #include <iomanip.h>
 #include <cmath>
+#include <vector>
 
 #include "canvas.h"
 #include "error.h"
@@ -39,7 +41,7 @@ namespace {
 
 int TlistUtils::createPreview(Tlist& tlist,
 										const Canvas& canvas,
-										const vector<int>& objids,
+										int* objids, unsigned int objids_size,
 										int pixel_width,
 										int pixel_height) {
 DOTRACE("TlistUtils::createPreview");
@@ -57,13 +59,13 @@ DOTRACE("TlistUtils::createPreview");
   world_width -= world_origin_x;
   world_height -= world_origin_y;
 
-  vector<Rect<double> > bbxs(objids.size());
+  vector<Rect<double> > bbxs(objids_size);
 
   Trial* preview = new Trial();
   int previewid = tlist.insert(Tlist::Ptr(preview));
 
   double window_area = world_width*world_height;
-  double parcel_area = window_area/objids.size();
+  double parcel_area = window_area/objids_size;
   double raw_parcel_side = sqrt(parcel_area);
 	 
   int num_cols = int(world_width/raw_parcel_side) + 1;
@@ -73,7 +75,7 @@ DOTRACE("TlistUtils::createPreview");
   int x_step = -1;
   int y_step = 0;
 
-  for (size_t i = 0; i < objids.size(); ++i) {
+  for (size_t i = 0; i < objids_size; ++i) {
 	 ++x_step;
 	 if (x_step == num_cols) { x_step = 0; ++y_step; }
 

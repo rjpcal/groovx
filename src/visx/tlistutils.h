@@ -3,7 +3,7 @@
 // tlistutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 02:58:20 1999
-// written: Sun Jan 16 22:55:26 2000
+// written: Tue Mar  7 11:00:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,10 +11,7 @@
 #ifndef TLISTUTILS_H_DEFINED
 #define TLISTUTILS_H_DEFINED
 
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
-#endif
+class istream;
 
 class Tlist;
 
@@ -24,7 +21,7 @@ class TlistUtils {
 public:
   static int createPreview(Tlist& tlist,
 									const Canvas& canvas,
-									const vector<int>& objids,
+									int* objids, unsigned int objids_size,
 									int pixel_width,
 									int pixel_height);
 
