@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Sun Oct  8 15:51:33 2000
+// written: Sun Oct  8 18:42:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,9 +58,7 @@ PtrList<T>::PtrList(int size) :
 {}
 
 template <class T>
-PtrList<T>::~PtrList() {
-  clear();
-}
+PtrList<T>::~PtrList() {}
 
 template <class T>
 const char* PtrList<T>::alternateIoTags() const {
