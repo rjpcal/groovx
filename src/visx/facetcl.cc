@@ -3,15 +3,13 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Sun Oct  3 19:01:50 1999
+// written: Sun Oct  3 19:03:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FACETCL_CC_DEFINED
 #define FACETCL_CC_DEFINED
-
-#include "facetcl.h"
 
 #include <tcl.h>
 #include <fstream.h>
