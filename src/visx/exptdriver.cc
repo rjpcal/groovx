@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Oct 26 09:28:18 2000
+// written: Thu Oct 26 16:20:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 #include "tlistutils.h"
 #include "objtogl.h"
 #include "toglconfig.h"
-#include "blocklist.h"
 #include "tlistwidget.h"
 #include "trialbase.h"
 
@@ -99,6 +98,7 @@ private:
 
   bool haveValidBlock() const
 	 {
+		DebugEval(itsCurrentBlockIdx); DebugEvalNL(itsBlocks.size());
 		if ( 0 <= itsCurrentBlockIdx &&
 			  itsCurrentBlockIdx < itsBlocks.size() )
 		  {
@@ -109,11 +109,16 @@ private:
 
   // This accessor will NOT recover if the corresponding id is
   // invalid; clients must check validity before calling the accessor.
-  Block& block() const
+  Block& block()
 	 {
 		Precondition( haveValidBlock() );
-		// FIXME const-correctness problem
-		return const_cast<Block&>(*(itsBlocks.at(itsCurrentBlockIdx).get()));
+		return *(itsBlocks.at(itsCurrentBlockIdx).get());
+	 }
+
+  const Block& block() const
+	 {
+		Precondition( haveValidBlock() );
+		return *(itsBlocks.at(itsCurrentBlockIdx).get());
 	 }
 
   // Check the validity of all its id's, return true if all are ok,
@@ -153,10 +158,6 @@ public:
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
 
-  void includeAllBlocks();
-
-  void init();
-
   const fixed_string& getAutosaveFile() const { return itsAutosaveFile; }
 
   void setAutosaveFile(const fixed_string& str) { itsAutosaveFile = str; }
@@ -179,6 +180,11 @@ public:
 	 itsInfoLog.append(message);
 	 itsInfoLog.append("\n");
   }
+
+  void addBlock(int block_id)
+	 {
+		itsBlocks.push_back(ItemWithId<Block>(block_id));
+	 }
 
   Util::ErrorHandler& getErrorHandler()
 	 { return itsErrHandler; }
@@ -370,8 +376,10 @@ DOTRACE("ExptDriver::Impl::assertIds");
 	 return true;
   }
 
+  DebugPrintNL("assertIds failed... raising background error");
+
   // ...one of the validity checks failed, so generate an error+message
-  itsErrHandler.handleMsg("invalid Block id in ExptDriver::assertIds()");
+  itsErrHandler.handleMsg("ExptDriver does not have a valid block");
 
   // ...and halt any of the participants for which we have valid id's
   edHaltExpt();
@@ -564,35 +572,6 @@ DOTRACE("ExptDriver::Impl::writeTo");
   writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
 }
 
-void ExptDriver::Impl::init() {
-DOTRACE("ExptDriver::Impl::init");
-
-  getCurrentTimeDateString(itsBeginDate);
-  getHostname(itsHostname);
-  getSubjectKey(itsSubject);
-}
-
-void ExptDriver::Impl::includeAllBlocks() {
-DOTRACE("ExptDriver::Impl::includeAllBlocks");
-
-  // This makes sure that no current blocks are garbage collected when
-  // we clear itsBlocks next
-  std::vector<ItemWithId<Block> > blocks_copy(itsBlocks);
-
-  itsBlocks.clear();
-
-  for (BlockList::IdIterator
-			itr = BlockList::theBlockList().beginIds(),
-			end = BlockList::theBlockList().endIds();
-		 itr != end;
-		 ++itr)
-	 {
-		itsBlocks.push_back(ItemWithId<Block>(*itr));
-	 }
-
-  itsCurrentBlockIdx = 0;
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // ExptDriver action method definitions
@@ -610,9 +589,9 @@ DOTRACE("ExptDriver::Impl::edBeginExpt");
 
   addLogInfo("Beginning experiment.");
 
-  init();
-
-  includeAllBlocks();
+  getCurrentTimeDateString(itsBeginDate);
+  getHostname(itsHostname);
+  getSubjectKey(itsSubject);
 
   itsTimer.restart();
 
@@ -661,7 +640,10 @@ void ExptDriver::Impl::edHaltExpt() const {
 DOTRACE("ExptDriver::Impl::edHaltExpt");
 
   if ( haveValidBlock() ) {
-	 block().haltExpt();
+	 // FIXME const-correctness problem -- should haltExpt be const or
+	 // non-const throughout the system???
+	 Block& nc_block = const_cast<Block&>(block());
+	 nc_block.haltExpt();
   }
 }
 
@@ -868,6 +850,9 @@ const char* ExptDriver::getInfoLog() const
 
 void ExptDriver::addLogInfo(const char* message)
   { itsImpl->addLogInfo(message); }
+
+void ExptDriver::addBlock(int block_id)
+  { itsImpl->addBlock(block_id); }
 
 Util::ErrorHandler& ExptDriver::getErrorHandler()
   { return itsImpl->getErrorHandler(); }
