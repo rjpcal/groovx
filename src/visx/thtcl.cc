@@ -150,10 +150,6 @@ extern "C"
 int Th_Init(Tcl_Interp* interp) {
 DOTRACE("Th_Init");
 
-  Tcl::TclPkg* pkg1 = new ThTcl::ThPkg(interp);
-  Tcl::TclPkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);
-  Tcl::TclPkg* pkg3 = new ThlistTcl::ThListPkg(interp);
-
   IO::IoFactory::theOne().registerCreatorFunc(&TimingHdlr::make);
   IO::IoFactory::theOne().registerCreatorFunc(&TimingHandler::make);
 
@@ -165,6 +161,10 @@ DOTRACE("Th_Init");
   IO::IoFactory::theOne().registerCreatorFunc(&RenderBackEvent::make);
   IO::IoFactory::theOne().registerCreatorFunc(&RenderFrontEvent::make);
   IO::IoFactory::theOne().registerCreatorFunc(&ClearBufferEvent::make);
+
+  Tcl::TclPkg* pkg1 = new ThTcl::ThPkg(interp);
+  Tcl::TclPkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);
+  Tcl::TclPkg* pkg3 = new ThlistTcl::ThListPkg(interp);
 
   return pkg1->combineStatus(pkg2->combineStatus(pkg3->initStatus()));
 }
