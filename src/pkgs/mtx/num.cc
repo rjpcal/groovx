@@ -74,9 +74,9 @@ namespace
   }
 }
 
-double Num::gammaln_engine(const double xx)
+double dash::detail::gammaln_engine(const double xx)
 {
-DOTRACE("Num::gammaln_engine");
+DOTRACE("dash::detail::gammaln_engine");
 
   static const double cof[6] =
     {

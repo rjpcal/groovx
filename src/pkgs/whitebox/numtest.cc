@@ -87,14 +87,14 @@ namespace
   {
     // Compare custom gammaln() with builtin lgamma() function
     for (int f = 1; f <= 100; ++f)
-      TEST_REQUIRE_APPROX(Num::gammaln(f), ::lgamma(f), 1e-5);
+      TEST_REQUIRE_APPROX(dash::gammaln(f), ::lgamma(f), 1e-5);
 
     double x = 0.0;
 
     const rutz::time t1 = rutz::time::user_rusage();
     for (int i = 0; i < 2500; ++i)
       for (int f = 1; f <= 100; ++f)
-        x += Num::gammaln(f);
+        x += dash::gammaln(f);
     const rutz::time t2 = rutz::time::user_rusage();
     const rutz::time custom_gammaln = t2-t1;
 

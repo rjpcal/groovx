@@ -35,6 +35,44 @@
 #include <cmath>
 
 /// Numeric operations.
+namespace dash
+{
+  namespace detail
+  {
+    double gammaln_engine(double xx);
+  }
+
+  /// natural-log of the gamma function
+  inline double gammaln(double xx)
+  {
+    static bool filled = false;
+    static const int TABLE_SIZE = 101;
+    static double lookup[TABLE_SIZE] = { 0.0 };
+
+
+    const double tol = 1e-50;
+
+    const int ival = int(xx);
+
+    if ( (ival < TABLE_SIZE) && (xx - double(ival) < tol) )
+      {
+        if (!filled)
+          {
+            for (int i = 0; i < TABLE_SIZE; ++i)
+              lookup[i] = dash::detail::gammaln_engine(double(i));
+
+            filled = true;
+          }
+        return lookup[ival];
+      }
+    else
+      {
+        return dash::detail::gammaln_engine(xx);
+      }
+  }
+}
+
+/// Numeric operations.
 class Num
 {
 public:
@@ -54,43 +92,11 @@ public:
     return x >= 0.0 ? ans : 2.0-ans;
   }
 
-  /// natural-log of the gamma function
-  static double gammaln(double xx)
-  {
-    static bool filled = false;
-    static const int TABLE_SIZE = 101;
-    static double lookup[TABLE_SIZE] = { 0.0 };
-
-
-    const double tol = 1e-50;
-
-    const int ival = int(xx);
-
-    if ( (ival < TABLE_SIZE) && (xx - double(ival) < tol) )
-      {
-        if (!filled)
-          {
-            for (int i = 0; i < TABLE_SIZE; ++i)
-              lookup[i] = gammaln_engine(double(i));
-
-            filled = true;
-          }
-        return lookup[ival];
-      }
-    else
-      {
-        return gammaln_engine(xx);
-      }
-  }
-
   /// A speedy version of the exponential function.
   /** Computes the result to the seventh term of the Taylor series. */
   static double fastexp7(double xx);
 
   static const double SQRT_2;
-
-private:
-  static double gammaln_engine(double xx);
 };
 
 ///////////////////////////////////////////////////////////////////////
