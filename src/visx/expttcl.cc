@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Mon Oct 23 12:29:22 2000
+// written: Tue Oct 24 07:12:54 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -234,6 +234,7 @@ ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
   declareCAttrib("autosavePeriod",
 					  &ExptDriver::getAutosavePeriod,
 					  &ExptDriver::setAutosavePeriod);
+  declareCAction("clear", &ExptDriver::edClearExpt);
   declareCAction("reset", &ExptDriver::edResetExpt);
   declareCAction("stop", &ExptDriver::edHaltExpt);
   declareCAction("storeData", &ExptDriver::storeData);

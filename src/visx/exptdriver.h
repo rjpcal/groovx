@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Oct 23 22:13:01 2000
+// written: Tue Oct 24 07:11:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,6 +105,7 @@ public:
   virtual void edNextBlock();
   virtual void edHaltExpt() const;
   virtual void edResumeExpt();
+  virtual void edClearExpt();
   virtual void edResetExpt();
 
   /// Returns the id of the current trial

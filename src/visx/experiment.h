@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Mon Oct 23 22:13:16 2000
+// written: Tue Oct 24 07:10:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,6 +52,9 @@ public:
 
   virtual void edResumeExpt() = 0;
   ///< Resume the experiment after it has been halted.
+
+  virtual void edClearExpt() = 0;
+  ///< Reset the experiment to an empty state.
 
   virtual void edResetExpt() = 0;
   /**< Reset the Experiment, restoring it to a state in which no
