@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Tue Dec 10 16:53:17 2002
+// written: Sat Dec 14 17:52:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,7 +125,7 @@ public:
   /** Interprets the Tcl_Obj* arguments, sets up an appropriate
       Tcl::Context, and calls invoke() on the \a cmd with that
       context. */
-  virtual void dispatch(Tcl_Interp* interp,
+  virtual void dispatch(Tcl::Interp& interp,
                         unsigned int objc, Tcl_Obj* const objv[],
                         Tcl::Command& cmd) = 0;
 };
@@ -147,13 +147,13 @@ public:
   friend class Command;
 
   /// Construct with a Tcl interpreter and an argument list.
-  Context(Tcl_Interp* interp, unsigned int objc, Tcl_Obj* const* objv);
+  Context(Tcl::Interp& interp, unsigned int objc, Tcl_Obj* const* objv);
 
   /// Virtual destructor.
   virtual ~Context();
 
   /// Get the Tcl interpreter of the current invocation.
-  Tcl_Interp* interp() const { return itsInterp; }
+  Tcl::Interp& interp() const { return itsInterp; }
 
   /// Return the number of arguments in the current invocation.
   unsigned int objc() const { return itsObjc; }
@@ -192,7 +192,7 @@ private:
   Context(const Context&);
   Context& operator=(const Context&);
 
-  Tcl_Interp* const itsInterp;
+  Tcl::Interp& itsInterp;
   unsigned int const itsObjc;
   Tcl_Obj* const* const itsObjv;
 };

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Tue Dec 10 13:49:49 2002
+// written: Sat Dec 14 17:34:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -133,7 +133,7 @@ DOTRACE("Tcl::Interp::evalBooleanExpr");
 
   if (Tcl_ExprBooleanObj(intp(), obj.obj(), &expr_result) != TCL_OK)
     {
-      handleError("error evaluating boolean expression");
+      throw TclError("error evaluating boolean expression");
     }
 
   return bool(expr_result);
@@ -434,13 +434,6 @@ DOTRACE("Tcl::Interp::deleteProc");
   cmd_str.append("::", proc_name, " \"\"");
 
   eval(cmd_str, Util::ThrowingErrorHandler::get());
-}
-
-void Tcl::Interp::handleError(const char* msg) const
-{
-DOTRACE("Tcl::Interp::handleError");
-
-  throw TclError(msg);
 }
 
 static const char vcid_tclsafeinterp_cc[] = "$Header$";

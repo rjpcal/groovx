@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:15:46 2001
-// written: Fri Nov  1 12:11:51 2002
+// written: Sat Dec 14 17:49:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ namespace Tcl
 class Tcl::VecContext : public Tcl::Context
 {
 public:
-  VecContext(Tcl_Interp* interp, unsigned int objc, Tcl_Obj* const objv[],
+  VecContext(Tcl::Interp& interp, unsigned int objc, Tcl_Obj* const objv[],
              unsigned int num_calls) :
     Context(interp, objc, objv),
     itsArg0(objv[0]),
@@ -118,7 +118,7 @@ class Tcl::VecDispatcher : public Tcl::Dispatcher
 public:
   VecDispatcher(unsigned int key_argn) : itsKeyArgn(key_argn) {}
 
-  virtual void dispatch(Tcl_Interp* interp,
+  virtual void dispatch(Tcl::Interp& interp,
                         unsigned int objc, Tcl_Obj* const objv[],
                         Tcl::Command& cmd);
 
@@ -127,7 +127,7 @@ private:
 };
 
 
-void Tcl::VecDispatcher::dispatch(Tcl_Interp* interp,
+void Tcl::VecDispatcher::dispatch(Tcl::Interp& interp,
                                   unsigned int objc, Tcl_Obj* const objv[],
                                   Tcl::Command& cmd)
 {

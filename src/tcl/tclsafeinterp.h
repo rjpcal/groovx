@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Tue Dec 10 13:49:20 2002
+// written: Sat Dec 14 17:34:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -123,8 +123,6 @@ private:
   Tcl_Obj* getObjResult() const;
   Tcl_Obj* getObjGlobalVar(const char* name1, const char* name2) const;
   void setObjResult(Tcl_Obj* obj);
-
-  void handleError(const char* msg) const;
 
   borrowed_ptr<Tcl_Interp> itsInterp;
 };

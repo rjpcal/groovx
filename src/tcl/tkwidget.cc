@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Tue Dec 10 13:17:59 2002
+// written: Sat Dec 14 17:19:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -350,7 +350,7 @@ DOTRACE("Tcl::TkWidget::requestRedisplay");
 
   if (!rep->updatePending)
     {
-      Tk_DoWhenIdle(TkWidgImpl::cRenderCallback, static_cast<ClientData>(this));
+      Tcl_DoWhenIdle(TkWidgImpl::cRenderCallback, static_cast<ClientData>(this));
       rep->updatePending = true;
     }
 }

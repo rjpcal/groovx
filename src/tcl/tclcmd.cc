@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Tue Dec 10 16:57:05 2002
+// written: Sat Dec 14 17:54:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ namespace Tcl
   class DefaultDispatcher : public Dispatcher
   {
   public:
-    virtual void dispatch(Tcl_Interp* interp,
+    virtual void dispatch(Tcl::Interp& interp,
                           unsigned int objc, Tcl_Obj* const objv[],
                           Tcl::Command& cmd)
     {
@@ -398,38 +398,40 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-int Tcl::Command::Impl::invokeCallback(ClientData clientData, Tcl_Interp* interp,
+int Tcl::Command::Impl::invokeCallback(ClientData clientData, Tcl_Interp* intp,
                                        int s_objc, Tcl_Obj *const objv[])
 {
 DOTRACE("Tcl::Command::Impl::invokeCallback");
 
   Impl* theImpl = static_cast<Tcl::Command*>(clientData)->itsImpl;
 
-  theImpl->onInvoke();
-
   Assert(s_objc >= 0);
 
   unsigned int objc = (unsigned int) s_objc;
 
-  // Look for an overload that matches...
-  while ( theImpl->rejectsObjc(objc) )
-    {
-      theImpl = theImpl->getOverload();
-
-      // If we run out of potential overloads, abort the command.
-      if ( theImpl == 0 )
-        {
-          Impl* originalImpl = static_cast<Tcl::Command*>(clientData)->itsImpl;
-          Tcl::Interp safeIntp(interp);
-          safeIntp.resetResult();
-          safeIntp.appendResult(originalImpl->warnUsage().c_str());
-          return TCL_ERROR;
-        }
-    }
-
-  // ...and try the matching overload and catch all possible exceptions
+  // catch all possible exceptions since this is a callback from C
   try
     {
+      theImpl->onInvoke();
+
+      Tcl::Interp& interp = theImpl->itsInterp;
+
+      // Look for an overload that matches...
+      while ( theImpl->rejectsObjc(objc) )
+        {
+          theImpl = theImpl->getOverload();
+
+          // If we run out of potential overloads, abort the command.
+          if ( theImpl == 0 )
+            {
+              Impl* originalImpl = static_cast<Tcl::Command*>(clientData)->itsImpl;
+              interp.resetResult();
+              interp.appendResult(originalImpl->warnUsage().c_str());
+              return TCL_ERROR;
+            }
+        }
+
+      // ...and try the matching overload
       theImpl->itsDispatcher->dispatch(interp, objc, objv, *(theImpl->itsOwner));
       return TCL_OK;
     }
@@ -439,22 +441,22 @@ DOTRACE("Tcl::Command::Impl::invokeCallback");
       if ( !err.msg().is_empty() )
         {
           dbgDump(4, err.msg());
-          errMessage(interp, theImpl->cmdName(), err.msg_cstr());
+          errMessage(intp, theImpl->cmdName(), err.msg_cstr());
         }
       else
         {
-          errMessage(interp, theImpl->cmdName(), typeid(err));
+          errMessage(intp, theImpl->cmdName(), typeid(err));
         }
     }
   catch (std::exception& err)
     {
       dbgPrintNL(3, "caught (std::exception&)");
-      errMessage(interp, theImpl->cmdName(), typeid(err), err.what());
+      errMessage(intp, theImpl->cmdName(), typeid(err), err.what());
     }
   catch (...)
     {
       dbgPrintNL(3, "caught (...)");
-      errMessage(interp, theImpl->cmdName(),
+      errMessage(intp, theImpl->cmdName(),
                  "an error of unknown type occurred");
     }
 
@@ -524,7 +526,7 @@ DOTRACE("Tcl::Command::setDispatcher");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::Context::Context(Tcl_Interp* interp,
+Tcl::Context::Context(Tcl::Interp& interp,
                       unsigned int objc, Tcl_Obj* const* objv) :
   itsInterp(interp),
   itsObjc(objc),
@@ -537,7 +539,7 @@ Tcl::Context::~Context()
 void Tcl::Context::setObjResult(const Tcl::ObjPtr& obj)
 {
 DOTRACE("Tcl::Context::setObjResult");
-  Tcl_SetObjResult(itsInterp, obj.obj());
+  itsInterp.setResult(obj);
 }
 
 static const char vcid_tclcmd_cc[] = "$Header$";
