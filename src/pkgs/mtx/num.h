@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:27:36 2001
-// written: Thu Feb 14 11:56:54 2002
+// written: Thu Feb 14 18:21:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -102,6 +102,14 @@ struct Add
 struct Sub : public Add
 {
   Sub(double x_) : Add(-x_) {}
+};
+
+struct ToPow
+{
+  const double p;
+
+  ToPow(double p_) : p(p_) {}
+  double operator()(double v) { return pow(v, p); }
 };
 
 static const char vcid_num_h[] = "$Header$";
