@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Tue Aug 14 11:47:03 2001
+// written: Wed Aug 22 18:16:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -99,31 +99,51 @@ public:
   /// Select the back buffer for future drawing operations.
   virtual void drawOnBackBuffer() const = 0;
 
-  /// Save the current state.
-  virtual void pushState() const = 0;
+  /// Save the current matrix.
+  virtual void pushMatrix() const = 0;
 
-  /// Restore the previously saved state.
-  virtual void popState() const = 0;
+  /// Restore the previously saved matrix.
+  virtual void popMatrix() const = 0;
 
-  /** \c StateSaver handles saving and restoring of state within a
-      lexical scope. */
-  class StateSaver {
+  /// Save the entire current state.
+  virtual void pushFullState() const = 0;
+
+  /// Restore the previously saved entire state.
+  virtual void popFullState() const = 0;
+
+  typedef void (Gfx::Canvas::* Manip)() const;
+
+  /** \c MatrixSaver handles saving and restoring of some part of the
+      matrix state within a lexical scope, in an exception-safe manner. */
+  template <Manip doit, Manip undoit>
+  class Saver {
   public:
     /** Save the state of \a canvas. Its state will be restored to the
-        saved state when the \c StateSaver is destroyed. */
-    StateSaver(const Canvas& canvas) : itsCanvas(canvas)
-      { itsCanvas.pushState(); }
+        saved state when the \c MatrixSaver is destroyed. */
+    Saver(const Canvas& canvas) :
+      itsCanvas(canvas)
+    { (itsCanvas.*doit)(); }
 
-    /// Destroy the \c StateSaver and restore the state of the \c Canvas.
-    ~StateSaver()
-      { itsCanvas.popState(); }
+    /// Destroy the \c MatrixSaver and restore the state of the \c Canvas.
+    ~Saver()
+    { (itsCanvas.*undoit)(); }
 
   private:
-    StateSaver(const StateSaver&);
-    StateSaver& operator=(const StateSaver&);
+    Saver(const Saver&);
+    Saver& operator=(const Saver&);
 
     const Canvas& itsCanvas;
   };
+
+  /** \c MatrixSaver handles saving and restoring of the matrix within
+      a lexical scope. */
+  typedef Saver<&Gfx::Canvas::pushMatrix, &Gfx::Canvas::popMatrix>
+  MatrixSaver;
+
+  /** \c MatrixSaver handles saving and restoring of the full canvas
+      state within a lexical scope. */
+  typedef Saver<&Gfx::Canvas::pushFullState, &Gfx::Canvas::popFullState>
+  FullSaver;
 
   virtual void translate(const Gfx::Vec3<double>& v) const = 0;
   virtual void scale(const Gfx::Vec3<double>& v) const = 0;
