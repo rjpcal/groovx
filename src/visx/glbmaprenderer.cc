@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:52:41 1999
-// written: Thu May 10 12:04:47 2001
+// written: Fri Jun  1 17:56:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define GLBMAPRENDERER_CC_DEFINED
 
 #include "glbmaprenderer.h"
+
+#include "gwt/canvas.h"
 
 #include <GL/gl.h>
 
@@ -29,7 +31,7 @@ GLBmapRenderer::~GLBmapRenderer () {
 DOTRACE("GLBmapRenderer::~GLBmapRenderer ");
 }
 
-void GLBmapRenderer::doRender(GWT::Canvas&,
+void GLBmapRenderer::doRender(GWT::Canvas& canvas,
 										unsigned char* bytes,
 										double x_pos,
 										double y_pos,
@@ -59,6 +61,17 @@ DOTRACE("GLBmapRenderer::doRender");
 					static_cast<GLubyte*>(bytes));
 	 }
 	 else {
+
+		if (canvas.isRgba())
+		  {
+			 GLfloat simplemap[] = {0.0, 1.0};
+
+			 glPixelMapfv(GL_PIXEL_MAP_I_TO_R, 2, simplemap);
+			 glPixelMapfv(GL_PIXEL_MAP_I_TO_G, 2, simplemap);
+			 glPixelMapfv(GL_PIXEL_MAP_I_TO_B, 2, simplemap);
+			 glPixelMapfv(GL_PIXEL_MAP_I_TO_A, 2, simplemap);
+		  }
+
 		glDrawPixels(width, height, GL_COLOR_INDEX, GL_BITMAP,
 						 static_cast<GLvoid*>(bytes));
 	 }
