@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Mon Nov 25 11:46:54 2002
+// written: Mon Nov 25 12:31:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ public:
     that Signal. Thereafter, the Slot will receive notifications of any
     emit()'ed Signal's via call(). */
 
-class Slot0 : public virtual Util::Object
+class Slot0 : public SlotBase
 {
 public:
   /// Default constructor.
@@ -81,21 +81,17 @@ public:
 
 class SignalBase : public Util::VolatileObject
 {
-public:
+protected:
   SignalBase();
   virtual ~SignalBase();
 
-  void receive();
-  void emit() const;
+  void doEmit(void* params) const;
 
   /// Add a Slot to the list of those watching this Signal.
-  void connect(Util::SoftRef<Slot0> slot);
+  void connect(Util::SoftRef<SlotBase> slot);
 
   /// Remove a Slot from the list of those watching this Signal.
-  void disconnect(Util::SoftRef<Slot0> slot);
-
-  /// Returns a slot which when call()'ed will cause this Signal to emit().
-  Util::SoftRef<Slot0> slot() const;
+  void disconnect(Util::SoftRef<SlotBase> slot);
 
 private:
   SignalBase(const SignalBase&);
@@ -140,15 +136,16 @@ public:
 
   /** Informs all this object's Slots that this Signal's state
       has changed */
-  void emit() const;
+  void emit() const { SignalBase::doEmit((void*)0); }
 
   /// Returns a slot which when call()'ed will cause this Signal to emit().
-  Util::SoftRef<Slot0> slot() const;
+  Util::SoftRef<Slot0> slot() const { return slotEmitSelf; }
 
 private:
-
   Signal0(const Signal0&);
   Signal0& operator=(const Signal0&);
+
+  Util::Ref<Util::Slot0> slotEmitSelf;
 };
 
 
