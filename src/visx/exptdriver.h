@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Mon Jun 11 14:49:17 2001
+// written: Mon Jun 11 18:31:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,9 +96,9 @@ public:
 
   virtual Util::ErrorHandler& getErrorHandler();
 
-  virtual GWT::Widget* getWidget();
+  virtual GWT::Widget& getWidget();
 
-  virtual GWT::Canvas* getCanvas();
+  virtual GWT::Canvas& getCanvas();
 
   virtual void edBeginExpt();
   virtual void edEndTrial();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 10:52:17 1999
-// written: Thu May 10 12:04:41 2001
+// written: Mon Jun 11 18:33:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,11 @@
 #ifndef EXPERIMENT_H_DEFINED
 #define EXPERIMENT_H_DEFINED
 
-namespace GWT {
+namespace GWT
+{
   class Widget;
   class Canvas;
 }
-
-namespace IO { class IoObject; }
 
 namespace Util { class ErrorHandler; }
 
@@ -33,10 +32,10 @@ public:
   virtual Util::ErrorHandler& getErrorHandler() = 0;
   ///< Return an \c ErrorHandler that can deal with error messages.
 
-  virtual GWT::Widget* getWidget() = 0;
+  virtual GWT::Widget& getWidget() = 0;
   ///< Return the Widget in which the experiment is running.
 
-  virtual GWT::Canvas* getCanvas() = 0;
+  virtual GWT::Canvas& getCanvas() = 0;
   ///< Return the Canvas for the Widget in which the experiment is running.
 
   virtual void edBeginExpt() = 0;
@@ -60,7 +59,7 @@ public:
 
   virtual void edResetExpt() = 0;
   /**< Reset the Experiment, restoring it to a state in which no
-	    trials have been run. */
+       trials have been run. */
 };
 
 static const char vcid_experiment_h[] = "$Header$";
