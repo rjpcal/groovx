@@ -20,10 +20,9 @@
 namespace Gfx
 {
   template <class V> class Vec3;
-}
 
 template <class V>
-class Gfx::Vec3
+class Vec3
 {
 private:
   V itsData[3];
@@ -58,7 +57,7 @@ public:
         V* data()       { return &itsData[0]; }
   const V* data() const { return &itsData[0]; }
 
-  Gfx::Vec2<V> vec2() const { return Gfx::Vec2<V>(x(), y()); }
+  Vec2<V> vec2() const { return Vec2<V>(x(), y()); }
 
   //
   // Vec3-scalar math
@@ -96,6 +95,8 @@ public:
   Vec3 operator/(const Vec3<V>& rhs) const
     { return Vec3<V>(x() / rhs.x(), y() / rhs.y(), z() / rhs.z()); }
 };
+
+} // end namespace Gfx
 
 static const char vcid_vec3_h[] = "$Header$";
 #endif // !VEC3.H_DEFINED

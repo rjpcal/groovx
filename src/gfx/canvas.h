@@ -23,7 +23,6 @@ namespace Gfx
   template <class V> class Rect;
   template <class V> class Vec2;
   template <class V> class Vec3;
-}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -35,7 +34,7 @@ namespace Gfx
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Gfx::Canvas
+class Canvas
 {
 public:
   /// Virtual destructor ensures proper destruction of subclasses.
@@ -83,7 +82,7 @@ public:
 
 
 
-  typedef void (Gfx::Canvas::* Manip)();
+  typedef void (Canvas::* Manip)();
 
   /** \c MatrixSaver handles saving and restoring of some part of the
       matrix state within a lexical scope, in an exception-safe manner. */
@@ -119,11 +118,6 @@ public:
 
   /// Restore the previously saved entire attrib set.
   virtual void popAttribs() = 0;
-
-  /** \c MatrixSaver handles saving and restoring of all of the canvas
-      attribs within a lexical scope. */
-  typedef Saver<&Gfx::Canvas::pushAttribs, &Gfx::Canvas::popAttribs>
-  AttribSaver;
 
   /// Select the front buffer for future drawing operations.
   virtual void drawOnFrontBuffer() = 0;
@@ -166,11 +160,6 @@ public:
 
   /// Restore the previously saved transformation matrix.
   virtual void popMatrix() = 0;
-
-  /** \c MatrixSaver handles saving and restoring of the matrix within
-      a lexical scope. */
-  typedef Saver<&Gfx::Canvas::pushMatrix, &Gfx::Canvas::popMatrix>
-  MatrixSaver;
 
   virtual void translate(const Gfx::Vec3<double>& v) = 0;
   virtual void scale(const Gfx::Vec3<double>& v) = 0;
@@ -236,9 +225,10 @@ public:
 
   /// Flush all pending drawing requests.
   virtual void flushOutput() = 0;
+};
 
 #define BLOCK_TYPEDEF(name) \
-  typedef Saver<&Gfx::Canvas::begin##name, &Gfx::Canvas::end> name##Block;
+  typedef Canvas::Saver<&Canvas::begin##name, &Canvas::end> name##Block;
 
   BLOCK_TYPEDEF(Points);
   BLOCK_TYPEDEF(Lines);
@@ -252,7 +242,18 @@ public:
   BLOCK_TYPEDEF(Polygon);
 
 #undef BLOCK_TYPEDEF
-};
+
+  /** \c MatrixSaver handles saving and restoring of the matrix within
+      a lexical scope. */
+  typedef Canvas::Saver<&Canvas::pushMatrix, &Canvas::popMatrix>
+  MatrixSaver;
+
+  /** \c MatrixSaver handles saving and restoring of all of the canvas
+      attribs within a lexical scope. */
+  typedef Canvas::Saver<&Canvas::pushAttribs, &Canvas::popAttribs>
+  AttribSaver;
+
+} // end namespace Gfx
 
 static const char vcid_canvas_h[] = "$Header$";
 #endif // !CANVAS_H_DEFINED

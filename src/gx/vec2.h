@@ -37,10 +37,9 @@ namespace Gfx
     void setPolarPoint(Vec2<double>& point,
                        double length, double degrees);
   }
-}
 
 template<class V>
-class Gfx::Vec2
+class Vec2
 {
 public:
   Vec2(V x=0, V y=0) : xx(x), yy(y) {}
@@ -172,6 +171,8 @@ private:
   V xx;
   V yy;
 };
+
+} // end namespace Gfx
 
 static const char vcid_point_h[] = "$Header$";
 #endif // !VEC2_H_DEFINED

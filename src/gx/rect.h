@@ -29,7 +29,6 @@ namespace Gfx
   // takes arguments in the order specified by the mnemonic
   template <class V> class RectLTRB;
   template <class V> class RectLBWH;
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -38,7 +37,7 @@ namespace Gfx
 ///////////////////////////////////////////////////////////////////////
 
 template<class V>
-class Gfx::Rect
+class Rect
 {
 public:
   // Creators
@@ -183,26 +182,28 @@ private:
 
 
 template <class V>
-class Gfx::RectLTRB : public Gfx::Rect<V>
+class RectLTRB : public Rect<V>
 {
 public:
   RectLTRB(V l, V t, V r, V b) :
-    Gfx::Rect<V>()
+    Rect<V>()
   {
     setRectLTRB(l, t, r, b);
   }
 };
 
 template <class V>
-class Gfx::RectLBWH : public Gfx::Rect<V>
+class RectLBWH : public Rect<V>
 {
 public:
   RectLBWH(V l, V b, V w, V h) :
-    Gfx::Rect<V>()
+    Rect<V>()
   {
     setRectXYWH(l, b, w, h);
   }
 };
+
+} // end namespace Gfx
 
 static const char vcid_rect_h[] = "$Header$";
 #endif // !RECT_H_DEFINED

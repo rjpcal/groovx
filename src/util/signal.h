@@ -26,7 +26,6 @@ namespace Util
   class Slot;
   template <class C, class MF> class SlotAdapter;
   class Signal;
-}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -39,7 +38,7 @@ namespace Util
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Util::Slot : public virtual Util::Object
+class Slot : public virtual Util::Object
 {
 public:
   /// Default constructor.
@@ -49,7 +48,7 @@ public:
   virtual ~Slot();
 
   template<class C, class MF>
-  static Util::SoftRef<Util::Slot> make(C* obj, MF mf);
+  static Util::SoftRef<Slot> make(C* obj, MF mf);
 
   /** Answers whether the components of this Slot still exist. This
       allows SlotAdapter, for example, to indicate if its target
@@ -63,16 +62,16 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Along with Slot, roughly implements the Observer design
- * pattern. Classes that need to notify others of changes should hold
- * a Util::Signal object by value, and call Signal::emit() when it is
- * necessary to notify observers of the change. In turn, emit() will
- * \c call() all of the Slot's that are observing this Signal.
+ * Along with Util::Slot, roughly implements the Observer design
+ * pattern. Classes that need to notify others of changes should hold a
+ * Util::Signal object by value, and call Signal::emit() when it is necessary
+ * to notify observers of the change. In turn, emit() will \c call() all of
+ * the Slot's that are observing this Signal.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Util::Signal
+class Signal
 {
 public:
   /// Default constructor.
@@ -82,7 +81,7 @@ public:
   virtual ~Signal();
 
   /// Add a Slot to the list of those watching this Signal.
-  void connect(Util::SoftRef<Util::Slot> slot);
+  void connect(Util::SoftRef<Slot> slot);
 
   /** Connect an object to this Signal, so that when the signal is
       triggered, \a mem_func will be called on \a obj. \c connect()
@@ -92,14 +91,14 @@ public:
   void connect(C* obj, MF mem_func);
 
   /// Remove a Slot from the list of those watching this Signal.
-  void disconnect(Util::SoftRef<Util::Slot> slot);
+  void disconnect(Util::SoftRef<Slot> slot);
 
   /** Informs all this object's Slots that this Signal's state
       has changed */
   void emit() const;
 
   /// Returns a slot which when call()'ed will cause this Signal to emit().
-  Util::SoftRef<Util::Slot> slot() const;
+  Util::SoftRef<Slot> slot() const;
 
 private:
 
@@ -122,7 +121,7 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 template <class C, class MF>
-class Util::SlotAdapter : public Util::Slot
+class SlotAdapter : public Slot
 {
   Util::SoftRef<C> itsObject;
   MF itsMemFunc;
@@ -131,8 +130,8 @@ class Util::SlotAdapter : public Util::Slot
     itsObject(obj, Util::WEAK, Util::PRIVATE), itsMemFunc(mf) {}
 
 public:
-  static Util::SlotAdapter<C, MF>* make(C* obj, MF mf)
-  { return new Util::SlotAdapter<C, MF>(obj, mf); }
+  static SlotAdapter<C, MF>* make(C* obj, MF mf)
+  { return new SlotAdapter<C, MF>(obj, mf); }
 
   virtual bool exists() const { return itsObject.isValid(); }
 
@@ -151,18 +150,20 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 template <class C, class MF>
-inline Util::SoftRef<Util::Slot> Util::Slot::make(C* obj, MF mf)
+inline Util::SoftRef<Slot> Slot::make(C* obj, MF mf)
 {
-  return Util::SoftRef<Util::Slot>(Util::SlotAdapter<C, MF>::make(obj, mf),
-                                   Util::STRONG,
-                                   Util::PRIVATE);
+  return Util::SoftRef<Slot>(SlotAdapter<C, MF>::make(obj, mf),
+			     Util::STRONG,
+			     Util::PRIVATE);
 };
 
 template <class C, class MF>
-inline void Util::Signal::connect(C* obj, MF mem_func)
+inline void Signal::connect(C* obj, MF mem_func)
 {
   connect(Slot::make(obj, mem_func));
 }
+
+} // end namespace Util
 
 static const char vcid_signal_h[] = "$Header$";
 #endif // !SIGNAL_H_DEFINED

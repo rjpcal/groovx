@@ -47,7 +47,6 @@ namespace Util
 
   template <class T1, class T2>
   inline T2& getref(std::pair<T1, T2>& p) { return p.second; }
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -57,7 +56,7 @@ namespace Util
 
 
 template <class T, class Ifx>
-class Util::ConcreteIter
+class ConcreteIter
 {
   shared_ptr<Ifx> itsImpl;
 
@@ -109,11 +108,11 @@ public:
 
 
 template <class T>
-class Util::FwdIterIfx
+class FwdIterIfx
 {
 public:
   typedef T ValueType;
-  typedef Util::FwdIterIfx<T> Interface;
+  typedef FwdIterIfx<T> Interface;
 
   virtual ~FwdIterIfx() {}
   virtual FwdIterIfx<T>* clone() const = 0;
@@ -124,11 +123,11 @@ public:
 
 
 template <class Iter, class T>
-class Util::FwdIterAdapter : public Util::FwdIterIfx<T>
+class FwdIterAdapter : public FwdIterIfx<T>
 {
   FwdIterAdapter<Iter, T>& operator=(const FwdIterAdapter<Iter, T>&);
 
-  typedef Util::FwdIterIfx<T> Base;
+  typedef FwdIterIfx<T> Base;
 
   Iter itsIter;
   Iter itsEnd;
@@ -148,20 +147,20 @@ public:
 
 
 template <class T>
-class Util::FwdIter :
-  public Util::ConcreteIter<T, Util::FwdIterIfx<T> >
+class FwdIter :
+  public ConcreteIter<T, FwdIterIfx<T> >
 {
   template <class It>
-  shared_ptr<Util::FwdIterIfx<T> >
+  shared_ptr<FwdIterIfx<T> >
   adapt(It iter, It end)
   {
-    return shared_ptr<Util::FwdIterIfx<T> >
+    return shared_ptr<FwdIterIfx<T> >
       (new FwdIterAdapter<It, T>(iter, end));
   }
 
 public:
-  typedef Util::FwdIterIfx<T> Interface;
-  typedef Util::ConcreteIter<T, Interface> Base;
+  typedef FwdIterIfx<T> Interface;
+  typedef ConcreteIter<T, Interface> Base;
 
   FwdIter(const Base& other) : Base(other) {}
 
@@ -179,10 +178,10 @@ public:
 
 
 template <class T>
-class Util::BidirIterIfx : public Util::FwdIterIfx<T>
+class BidirIterIfx : public FwdIterIfx<T>
 {
 public:
-  typedef Util::BidirIterIfx<T> Interface;
+  typedef BidirIterIfx<T> Interface;
 
   virtual BidirIterIfx<T>* clone() const = 0;
   virtual void prev() = 0;
@@ -190,11 +189,11 @@ public:
 
 
 template <class Iter, class T>
-class Util::BidirIterAdapter : public Util::BidirIterIfx<T>
+class BidirIterAdapter : public BidirIterIfx<T>
 {
   BidirIterAdapter<Iter, T>& operator=(const BidirIterAdapter<Iter, T>&);
 
-  typedef Util::BidirIterIfx<T> Base;
+  typedef BidirIterIfx<T> Base;
 
   Iter itsIter;
   Iter itsEnd;
@@ -215,20 +214,20 @@ public:
 
 
 template <class T>
-class Util::BidirIter :
-  public Util::ConcreteIter<T, Util::BidirIterIfx<T> >
+class BidirIter :
+  public ConcreteIter<T, BidirIterIfx<T> >
 {
   template <class It>
-  shared_ptr<Util::BidirIterIfx<T> >
+  shared_ptr<BidirIterIfx<T> >
   adapt(It iter, It end)
   {
-    return shared_ptr<Util::BidirIterIfx<T> >
+    return shared_ptr<BidirIterIfx<T> >
       (new BidirIterAdapter<It, T>(iter, end));
   }
 
 public:
-  typedef Util::BidirIterIfx<T> Interface;
-  typedef Util::ConcreteIter<T, Interface> Base;
+  typedef BidirIterIfx<T> Interface;
+  typedef ConcreteIter<T, Interface> Base;
 
   BidirIter(const Base& other) : Base(other) {}
 
@@ -246,10 +245,10 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class Util::RxsIterIfx : public Util::BidirIterIfx<T>
+class RxsIterIfx : public BidirIterIfx<T>
 {
 public:
-  typedef Util::RxsIterIfx<T> Interface;
+  typedef RxsIterIfx<T> Interface;
 
   virtual RxsIterIfx<T>* clone() const = 0;
   virtual void step(int n) = 0;
@@ -259,11 +258,11 @@ public:
 
 
 template <class Iter, class T>
-class Util::RxsIterAdapter : public Util::RxsIterIfx<T>
+class RxsIterAdapter : public RxsIterIfx<T>
 {
   RxsIterAdapter<Iter, T>& operator=(const RxsIterAdapter<Iter, T>&);
 
-  typedef Util::RxsIterIfx<T> Base;
+  typedef RxsIterIfx<T> Base;
 
   Iter itsIter;
   Iter itsEnd;
@@ -294,20 +293,20 @@ public:
 
 
 template <class T>
-class Util::RxsIter :
-  public Util::ConcreteIter<T, Util::RxsIterIfx<T> >
+class RxsIter :
+  public ConcreteIter<T, RxsIterIfx<T> >
 {
   template <class It>
-  shared_ptr<Util::RxsIterIfx<T> >
+  shared_ptr<RxsIterIfx<T> >
   adapt(It iter, It end)
   {
-    return shared_ptr<Util::RxsIterIfx<T> >
+    return shared_ptr<RxsIterIfx<T> >
       (new RxsIterAdapter<It, T>(iter, end));
   }
 
 public:
-  typedef Util::RxsIterIfx<T> Interface;
-  typedef Util::ConcreteIter<T, Interface> Base;
+  typedef RxsIterIfx<T> Interface;
+  typedef ConcreteIter<T, Interface> Base;
 
   RxsIter(const Base& other) : Base(other) {}
 
@@ -316,6 +315,8 @@ public:
   template <class It>
   RxsIter(It iter, It end) : Base(adapt(iter, end)) {}
 };
+
+} // end namespace Util
 
 static const char vcid_iter_h[] = "$Header$";
 #endif // !ITER_H_DEFINED
