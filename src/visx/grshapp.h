@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:26:58 1999
-// written: Thu May 10 12:04:40 2001
+// written: Mon Jun 11 18:17:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,18 +25,18 @@ struct Tcl_Interp;
 
 /**
  *
- * This exception class will be thrown by \c GrshApp::getExperiment()
- * if no one has installed an \c Experiment.
+ * This exception class will be thrown by \c GrshApp::getCanvas()
+ * if no one has installed a \c Canvas.
  *
  **/
-class NoExptError : public ErrorWithMsg {
+class NoCanvasError : public ErrorWithMsg {
 public:
   /// Default constructor.
-  NoExptError();
+  NoCanvasError();
   /// Construct with an appropriate message.
-  NoExptError(const char* msg);
+  NoCanvasError(const char* msg);
   /// Virtual destructor.
-  virtual ~NoExptError();
+  virtual ~NoCanvasError();
 };
 
 
@@ -51,18 +51,18 @@ public:
   /// Returns the application's Tcl interpreter.
   Tcl_Interp* getInterp();
 
-  /// Installs \a expt as the application's \c Experiment.
-  void installExperiment(Experiment* expt);
+  /// Installs \a canavs as the application's \c Canvas.
+  void installCanvas(GWT::Canvas& canvas);
 
-  /// Returns the application's \c Experiment.
-  virtual Experiment* getExperiment();
+  /// Returns the application's \c Canvas.
+  virtual GWT::Canvas& getCanvas();
 
 private:
   GrshApp(const GrshApp&);
   GrshApp& operator=(const GrshApp&);
 
   Tcl_Interp* itsInterp;
-  Experiment* itsExpt;
+  GWT::Canvas* itsCanvas;
 };
 
 static const char vcid_grshapp_h[] = "$Header$";
