@@ -34,8 +34,14 @@
 
 #include <cstddef>
 
+namespace rutz
+{
+  class free_list_base;
+  template <class T> class free_list;
+}
+
 /// Un-typesafe base class for maintaining a free-list memory pool.
-class free_list_base
+class rutz::free_list_base
 {
 private:
   /// Free-node class for free-list memory pools.
@@ -67,10 +73,10 @@ public:
 
 /// Typesafe wrapper of free_list_base for maintaining free-list memory pools.
 template <class T>
-class free_list
+class rutz::free_list
 {
 private:
-  free_list_base m_base;
+  rutz::free_list_base m_base;
 
 public:
   /// Construct an (empty) free list.

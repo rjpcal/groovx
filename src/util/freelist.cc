@@ -37,13 +37,13 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-free_list_base::free_list_base(std::size_t size_check) :
+rutz::free_list_base::free_list_base(std::size_t size_check) :
   m_node_list(0), m_size_check(size_check)
 {
   Assert(m_size_check >= sizeof(node));
 }
 
-void* free_list_base::allocate(std::size_t bytes)
+void* rutz::free_list_base::allocate(std::size_t bytes)
 {
   Assert(bytes == m_size_check);
   if (m_node_list == 0)
@@ -53,7 +53,7 @@ void* free_list_base::allocate(std::size_t bytes)
   return static_cast<void*>(node);
 }
 
-void free_list_base::deallocate(void* space)
+void rutz::free_list_base::deallocate(void* space)
 {
   node* n = static_cast<node*>(space);
   n->next = m_node_list;
