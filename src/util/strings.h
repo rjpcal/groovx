@@ -3,13 +3,15 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Sat Sep 23 15:37:47 2000
+// written: Tue Oct 31 12:03:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef STRINGS_H_DEFINED
 #define STRINGS_H_DEFINED
+
+#include <cstring>
 
 class string_literal;
 class fixed_string;
@@ -87,6 +89,24 @@ public:
   unsigned int length() const { return itsLength; }
   bool empty() const { return (length() == 0); }
 
+  //
+  // Comparison operators
+  //
+
+  bool operator<(const char* other) const
+	 { return strcmp(itsText, other) < 0; }
+
+  template <class StrType>
+  bool operator<(const StrType& other) const
+	 { return strcmp(itsText, other.c_str()) < 0; }
+
+  bool operator>(const char* other) const
+	 { return strcmp(this->c_str(), other) < 0; }
+
+  template <class StrType>
+  bool operator>(const StrType& other) const
+	 { return strcmp(this->c_str(), other.c_str()) > 0; }
+
 private:
   char* itsText;
   unsigned int itsLength;
@@ -139,6 +159,24 @@ public:
   const char* c_str() const;
   unsigned int length() const;
   bool empty() const { return (length() == 0); }
+
+  //
+  // Comparison operators
+  //
+
+  bool operator<(const char* other) const
+	 { return strcmp(this->c_str(), other) < 0; }
+
+  template <class StrType>
+  bool operator<(const StrType& other) const
+	 { return strcmp(this->c_str(), other.c_str()) < 0; }
+
+  bool operator>(const char* other) const
+	 { return strcmp(this->c_str(), other) > 0; }
+
+  template <class StrType>
+  bool operator>(const StrType& other) const
+	 { return strcmp(this->c_str(), other.c_str()) > 0; }
 
 protected:
   /** This template is instantiated only for std::string, to allow
