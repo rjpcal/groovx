@@ -3,7 +3,7 @@
 // ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Oct 22 15:33:30 2000
+// written: Sun Oct 22 17:10:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,15 +58,26 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 class DummyObject : public RefCounted {
-public:
   DummyObject() : RefCounted() {}
+
+public:
+  static DummyObject* getDummy() {
+	 static DummyObject* theDummy = 0;
+	 if (theDummy == 0) {
+		theDummy = new DummyObject;
+		theDummy->incrRefCount();
+	 }
+	 Postcondition(theDummy != 0);
+	 return theDummy;
+  }
+
   virtual bool isValid() const { return false; }
 };
 
 class VoidPtrHandle {
 public:
   VoidPtrHandle() :
-	 itsMaster(new DummyObject)
+	 itsMaster(DummyObject::getDummy())
   {
 	 Invariant(itsMaster != 0);
 	 itsMaster->incrRefCount();
@@ -232,7 +243,7 @@ void PtrListBase::release(int id) {
 DOTRACE("PtrListBase::release");
   if (!isValidId(id)) return;
 
-  itsImpl->itsPtrVec[id] = VoidPtrHandle(new DummyObject);
+  itsImpl->itsPtrVec[id] = VoidPtrHandle();
 
   // reset itsImpl->itsFirstVacant in case i would now be the first vacant
   if (itsImpl->itsFirstVacant > id) itsImpl->itsFirstVacant = id;
