@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Tue Mar  7 19:08:26 2000
+// written: Wed Mar  8 16:02:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,17 +82,15 @@ void Tcl::TVecGetterCmd<ValType>::doAppendValForItem(void* item) {
   lappendVal(itsGetter->get(item));
 }
 
-// Oddly, aCC requires these specializations for 'const string&', even
-// though the code is *exactly the same* as in the generic templated
-// versions above.
+// Specializations for std::string
 template <>
 void Tcl::TVecGetterCmd<const string&>::doReturnValForItem(void* item) {
-  returnVal(itsGetter->get(item));
+  returnVal(itsGetter->get(item).c_str());
 }
 
 template <>
 void Tcl::TVecGetterCmd<const string&>::doAppendValForItem(void* item) {
-  lappendVal(itsGetter->get(item));
+  lappendVal(itsGetter->get(item).c_str());
 }
 
 // Specializations for fixed_string
@@ -145,7 +143,7 @@ DOTRACE("Tcl::VecSetterBaseCmd::invoke");
 	 ids.push_back(-1);
   }
 
-  size_t num_vals;
+  unsigned int num_vals;
   void* vals = getValVec(itsValArgn, ids.size(), num_vals);
 
   if (num_vals < 1) {
@@ -181,7 +179,7 @@ DOTRACE("Tcl::TVecSetterCmd<>::TVecSetterCmd");
 
 template <class T>
 void* Tcl::TVecSetterCmd<T>::getValVec(int val_argn, int num_ids,
-													size_t& num_vals) {
+													unsigned int& num_vals) {
   vector<T>* vals = new vector<T>;
   if (num_ids == 1) {
 	 T val;
@@ -197,7 +195,7 @@ void* Tcl::TVecSetterCmd<T>::getValVec(int val_argn, int num_ids,
 
 template <class T>
 void Tcl::TVecSetterCmd<T>::setValForItem(void* item,
-														void* val_vec, size_t valn) {
+														void* val_vec, unsigned int valn) {
   vector<T>& vals = *(static_cast<vector<T>*>(val_vec));
   itsSetter->set(item, vals[valn]);
 }
@@ -213,7 +211,7 @@ void Tcl::TVecSetterCmd<T>::destroyValVec(void* val_vec) {
 // type 'vector<string>' rather than 'vector<const string&>'.
 template <>
 void* Tcl::TVecSetterCmd<const string&>::getValVec(int val_argn, int num_ids,
-																	size_t& num_vals) {
+																	unsigned int& num_vals) {
   vector<string>* vals = new vector<string>;
   if (num_ids == 1) {
 	 string val;
@@ -229,7 +227,7 @@ void* Tcl::TVecSetterCmd<const string&>::getValVec(int val_argn, int num_ids,
 
 template <>
 void Tcl::TVecSetterCmd<const string&>::setValForItem(void* item,
-														void* val_vec, size_t valn) {
+														void* val_vec, unsigned int valn) {
   vector<string>& vals = *(static_cast<vector<string>*>(val_vec));
   itsSetter->set(item, vals[valn]);
 }
@@ -244,7 +242,7 @@ void Tcl::TVecSetterCmd<const string&>::destroyValVec(void* val_vec) {
 // Specialization for T=const fixed_string&
 template <>
 void* Tcl::TVecSetterCmd<const fixed_string&>::getValVec(
-  int val_argn, int num_ids, size_t& num_vals
+  int val_argn, int num_ids, unsigned int& num_vals
 ) {
   vector<fixed_string>* vals = new vector<fixed_string>;
   if (num_ids == 1) {
@@ -260,7 +258,7 @@ void* Tcl::TVecSetterCmd<const fixed_string&>::getValVec(
 
 template <>
 void Tcl::TVecSetterCmd<const fixed_string&>::setValForItem(
-  void* item, void* val_vec, size_t valn
+  void* item, void* val_vec, unsigned int valn
 ) {
   vector<fixed_string>& vals = *(static_cast<vector<fixed_string>*>(val_vec));
   itsSetter->set(item, vals[valn]);

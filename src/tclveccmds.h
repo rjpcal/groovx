@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Tue Mar  7 15:34:56 2000
+// written: Wed Mar  8 15:59:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,8 +84,8 @@ public:
   virtual void invoke();
 
 protected:
-  virtual void* getValVec(int val_argn, int num_ids, size_t& num_vals) = 0;
-  virtual void setValForItem(void* item, void* val_vec, size_t valn) = 0;
+  virtual void* getValVec(int val_argn, int num_ids, unsigned int& num_vals) = 0;
+  virtual void setValForItem(void* item, void* val_vec, unsigned int valn) = 0;
   virtual void destroyValVec(void* val_vec) = 0;
 
 private:
@@ -101,8 +101,8 @@ public:
                 const char* usage, int item_argn);
 
 protected:
-  virtual void* getValVec(int val_argn, int num_ids, size_t& num_vals);
-  virtual void setValForItem(void* item, void* val_vec, size_t valn);
+  virtual void* getValVec(int val_argn, int num_ids, unsigned int& num_vals);
+  virtual void setValForItem(void* item, void* val_vec, unsigned int valn);
   virtual void destroyValVec(void* val_vec);
 
 private:
