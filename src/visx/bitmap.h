@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Sep  8 13:14:11 1999
+// written: Mon Sep 20 11:55:36 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,11 @@
 #ifndef STRING_DEFINED
 #include <string>
 #define STRING_DEFINED
+#endif
+
+#ifndef VECTOR_DEFINED
+#include <vector>
+#define VECTOR_DEFINED
 #endif
 
 class Bitmap : public GrObj {
@@ -37,13 +42,25 @@ public:
 
   virtual int charCount() const;
 
-  // Actions
+  /////////////
+  // actions //
+  /////////////
 
   public:    void loadPbmFile(const char* filename);
 
+  public:    void grabPixelRect(int left, int top, int right, int bottom);
+  public:    void grabGLRect(double left, double top,
+									  double right, double bottom);
+  // These routines grab pixels from a rectanglur area of the screen
+  // buffer into the Bitmap's pixel array. Two functions are provided
+  // so that the coordinates of the rectangle may be specified in
+  // pixel values, or in OpenGL coordinate values.
+
   protected: virtual void bytesChangeHook(unsigned char* /* theBytes */,
 														int /* width */,
-														int /* height */) {}
+														int /* height */,
+														int /* bits_per_pixel */,
+														int /* byte_alignment */) {}
 
   public:    void flipContrast();
   protected: void doFlipContrast();
@@ -60,6 +77,7 @@ public:
 											  int /* width */,
 											  int /* height */,
 											  int /* bits_per_pixel */,
+											  int /* byte_alignment */,
 											  double /* zoom_x */,
 											  double /* zoom_y */) const = 0;
 
@@ -68,7 +86,10 @@ public:
 					  int /*winRasterX*/, int /*winRasterY*/,
 					  int /*winWidthX*/, int /*winHeightY*/) const = 0;
 
-  // Accessors
+  ///////////////
+  // accessors //
+  ///////////////
+
 public:
   virtual int getCategory() const { return -1; }
 
@@ -85,7 +106,9 @@ public:
 
   bool getUsingZoom() const;
 
-  // Manipulators
+  //////////////////
+  // manipulators //
+  //////////////////
 
   virtual void setCategory(int) {}
 
@@ -97,7 +120,8 @@ public:
   void setUsingZoom(bool val);
   
 protected:
-  unsigned char* theBytes() const { return itsBytes; }
+  unsigned char* theBytes() const
+	 { return const_cast<unsigned char*>(&(itsBytes[0])); }
 
 private:
   string itsFilename;
@@ -109,10 +133,11 @@ private:
   bool itsContrastFlip;
   bool itsVerticalFlip;
 
-  unsigned char* itsBytes;
+  vector<unsigned char> itsBytes;
   int itsHeight;
   int itsWidth;
   int itsBitsPerPixel;
+  int itsByteAlignment;
 };
 
 static const char vcid_bitmap_h[] = "$Header$";
