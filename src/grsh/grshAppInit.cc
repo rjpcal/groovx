@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu Jan 31 13:08:57 2002
+// written: Fri Jun 14 16:34:57 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -57,6 +57,7 @@ extern "C"
   Tcl_PackageInitProc Mask_Init;
   Tcl_PackageInitProc Misc_Init;
   Tcl_PackageInitProc Morphyface_Init;
+  Tcl_PackageInitProc Obj_Init;
   Tcl_PackageInitProc Objtogl_Init;
   Tcl_PackageInitProc Position_Init;
   Tcl_PackageInitProc Rh_Init;
@@ -106,6 +107,7 @@ PackageInfo IMMEDIATE_PKGS[] =
   { "Mask",     Mask_Init      },
   { "Misc",     Misc_Init      },
   { "Morphyface",Morphyface_Init},
+  { "Obj",      Obj_Init       },
   { "Objtogl",  Objtogl_Init   },
   { "Position", Position_Init  },
   { "Rh",       Rh_Init        },
@@ -152,15 +154,15 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 #endif
       int result = IMMEDIATE_PKGS[i].pkgInitProc(interp.intp());
       if (result != TCL_OK)
-	{
-	  itsStatus = result;
-	  std::cerr << "initialization failed: "
-		    << IMMEDIATE_PKGS[i].pkgName << '\n';
-	  fstring msg = interp.getResult<const char*>();
-	  if ( !msg.is_empty() )
-	    std::cerr << '\t' << msg << '\n';
-	  interp.resetResult();
-	}
+        {
+          itsStatus = result;
+          std::cerr << "initialization failed: "
+                    << IMMEDIATE_PKGS[i].pkgName << '\n';
+          fstring msg = interp.getResult<const char*>();
+          if ( !msg.is_empty() )
+            std::cerr << '\t' << msg << '\n';
+          interp.resetResult();
+        }
     }
   }
 
