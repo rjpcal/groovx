@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec 11 14:38:13 2000
-// written: Wed Jun 13 15:16:01 2001
+// written: Fri Jun 15 15:32:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,11 @@
 #include "util/objdb.h"
 #include "util/object.h"
 
+#ifdef FUNCTIONAL_OK
+#  include <algorithm>
+#  include <functional>
+#endif
+
 //---------------------------------------------------------------------
 //
 // ObjCaster
@@ -28,8 +33,8 @@ Tcl::ObjCaster::ObjCaster() {}
 
 Tcl::ObjCaster::~ObjCaster() {}
 
-bool Tcl::ObjCaster::isMyType(int id) {
-  WeakRef<Util::Object> item(id);
+bool Tcl::ObjCaster::isIdMyType(Util::UID uid) {
+  WeakRef<Util::Object> item(uid);
   return (item.isValid() && isMyType(item.get()));
 }
 
@@ -48,7 +53,7 @@ Tcl::IsCmd::~IsCmd() {}
 
 void Tcl::IsCmd::invoke() {
   int id = TclCmd::getIntFromArg(1);
-  returnBool(itsCaster->isMyType(id));
+  returnBool(itsCaster->isIdMyType(id));
 }
 
 //---------------------------------------------------------------------
@@ -66,18 +71,24 @@ Tcl::CountAllCmd::CountAllCmd(Tcl_Interp* interp, ObjCaster* caster,
 Tcl::CountAllCmd::~CountAllCmd() {}
 
 void Tcl::CountAllCmd::invoke() {
+  ObjDb& theDb = ObjDb::theDb();
+#ifndef FUNCTIONAL_OK
   int count = 0;
-  ObjDb& theList = ObjDb::theDb();
-  for (ObjDb::IdIterator
-         itr = theList.beginIds(),
-         end = theList.endIds();
+  for (ObjDb::PtrIterator
+         itr = theDb.beginPtrs(),
+         end = theDb.endPtrs();
        itr != end;
        ++itr)
     {
-      if (itsCaster->isMyType(itr.getObject()))
+      if (itsCaster->isMyType(*itr))
         ++count;
     }
   returnInt(count);
+#else
+  returnInt(std::count_if(theDb.beginPtrs(), theDb.endPtrs(),
+                          std::bind1st(std::mem_fun(&ObjCaster::isMyType),
+                                       itsCaster)));
+#endif
 }
 
 //---------------------------------------------------------------------
@@ -95,16 +106,29 @@ Tcl::FindAllCmd::FindAllCmd(Tcl_Interp* interp, ObjCaster* caster,
 Tcl::FindAllCmd::~FindAllCmd() {}
 
 void Tcl::FindAllCmd::invoke() {
-  ObjDb& theList = ObjDb::theDb();
-  for (ObjDb::IdIterator
-         itr = theList.beginIds(),
-         end = theList.endIds();
+  ObjDb& theDb = ObjDb::theDb();
+
+#if 1
+  for (ObjDb::PtrIterator
+         itr = theDb.beginPtrs(),
+         end = theDb.endPtrs();
        itr != end;
        ++itr)
     {
-      if (itsCaster->isMyType(itr.getObject()))
-        lappendVal(*itr);
+      if (itsCaster->isMyType(*itr))
+        lappendVal(itr.getId());
     }
+
+  /*
+    STL-style functional implementation... unfortunately, this is
+    about 8 times slower than the for-loop version
+  */
+#else
+    std::remove_copy_if(theDb.beginIds(), theDb.endIds(),
+                        resultAppender<int>(),
+                        std::bind1st(std::mem_fun(&ObjCaster::isIdNotMyType),
+                        itsCaster));
+#endif
 }
 
 //---------------------------------------------------------------------
@@ -122,10 +146,10 @@ Tcl::RemoveAllCmd::RemoveAllCmd(Tcl_Interp* interp, ObjCaster* caster,
 Tcl::RemoveAllCmd::~RemoveAllCmd() {}
 
 void Tcl::RemoveAllCmd::invoke() {
-  ObjDb& theList = ObjDb::theDb();
+  ObjDb& theDb = ObjDb::theDb();
   for (ObjDb::IdIterator
-         itr = theList.beginIds(),
-         end = theList.endIds();
+         itr = theDb.beginIds(),
+         end = theDb.endIds();
        itr != end;
        /* increment done in loop body */)
     {
@@ -134,7 +158,7 @@ void Tcl::RemoveAllCmd::invoke() {
         {
           int remove_me = *itr;
           ++itr;
-          theList.remove(remove_me);
+          theDb.remove(remove_me);
         }
       else
         {
