@@ -155,6 +155,9 @@ public:
     if (activeState->widget.isValid() && currentNode < gxNodes.size())
       {
         activeState->widget->setDrawable(gxNodes[currentNode]);
+        Util::log(fstring("current node is ",
+                          gxNodes[currentNode]->objTypename(), " ",
+                          gxNodes[currentNode]->id()));
       }
   }
 };
