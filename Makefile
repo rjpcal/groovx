@@ -11,7 +11,7 @@ LIBRARIES = -L/opt/graphics/OpenGL/lib \
 	-ltk -ltcl -lXmu \
 	-lX11 -lXext \
 	-lm
-#-lGLw  -lXt -lXhp11
+
 OBJECTS = 	\
 	expttcl.o \
 	face.o facetcl.o \
