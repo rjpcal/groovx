@@ -189,10 +189,7 @@ DOTRACE("PtrListBase::remove");
   if ( itsImpl->itsPtrVec[id].masterPtr()->isShared() )
 	 throw ErrorWithMsg("can't remove a shared object");
 
-  itsImpl->itsPtrVec[id] = VoidPtrHandle(new NullMasterPtr);
-
-  // reset itsImpl->itsFirstVacant in case i would now be the first vacant
-  if (itsImpl->itsFirstVacant > id) itsImpl->itsFirstVacant = id;
+  release(id);
 }
 
 void PtrListBase::release(int id) {
@@ -209,18 +206,20 @@ void PtrListBase::clear() {
 DOTRACE("PtrListBase::clear");
   DebugEvalNL(typeid(*this).name());
   for (size_t i = 0; i < itsImpl->itsPtrVec.size(); ++i) {
-	 DebugEval(i);
+
+	 DebugEval(i); DebugEvalNL(itsImpl->itsPtrVec[i].masterPtr()->refCount());
+	 DebugEvalNL(itsImpl->itsPtrVec[i].masterPtr()->isUnshared());
+
 	 if ( itsImpl->itsPtrVec[i].masterPtr()->isUnshared() )
-		itsImpl->itsPtrVec[i] = VoidPtrHandle(new NullMasterPtr);
+		{
+		  release(i);
+		}
   }
-
-  itsImpl->itsPtrVec.resize(0, VoidPtrHandle());
-
-  itsImpl->itsFirstVacant = 0;
 }
 
 MasterPtrBase* PtrListBase::getPtrBase(int id) const throw () {
 DOTRACE("PtrListBase::getPtrBase");
+  DebugEvalNL(itsImpl->itsPtrVec[id].masterPtr()->refCount());
   return itsImpl->itsPtrVec[id].masterPtr();
 }
 
@@ -247,7 +246,7 @@ DOTRACE("PtrListBase::insertPtrBaseAt");
 
   Precondition(ptr != 0);
 
-  DebugEval(id); DebugEvalNL(ptr->ptr());
+  DebugEval(id);
   if (id < 0) return;
 
   size_t uid = size_t(id);
