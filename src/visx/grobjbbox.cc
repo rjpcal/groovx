@@ -21,6 +21,7 @@
 #include <GL/gl.h>
 
 #include "util/trace.h"
+#include "util/debug.h"
 
 namespace
 {
@@ -55,10 +56,12 @@ namespace
 
 Gfx::Rect<double> GrObjBBox::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
-DOTRACE("GrObjBBox::withBorder");
+DOTRACE("GrObjBBox::gnodeBoundingBox");
 
   // Add extra pixels if the box itself will be visible.
-  int border_pixels = itsIsVisible ? itsPixelBorder+2 : itsPixelBorder;
+  int border_pixels = itsIsVisible ? itsPixelBorder+4 : itsPixelBorder;
+
+  DebugEval(itsPixelBorder); DebugEval(border_pixels);
 
   return addPixelBorder(canvas,
 								child()->gnodeBoundingBox(canvas),
