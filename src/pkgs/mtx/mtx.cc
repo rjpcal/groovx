@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Feb 19 14:35:03 2002
+// written: Tue Feb 19 14:51:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -146,7 +146,7 @@ DOTRACE("Slice::getSortOrder");
 
   minivec<ValIndex> buf(begin(), end());
 
-  ::sort(buf.begin(), buf.end());
+  std::sort(buf.begin(), buf.end());
 
   Mtx index(1,nelems());
 
@@ -158,7 +158,7 @@ DOTRACE("Slice::getSortOrder");
 
 void Slice::sort()
 {
-  ::sort(beginNC(), endNC());
+  std::sort(beginNC(), endNC());
 }
 
 void Slice::reorder(const Mtx& index_)
