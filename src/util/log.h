@@ -48,6 +48,12 @@ namespace Util
 
     /// Remove the scope named after the given object's type + id.
     void removeObjScope(const Util::Object& obj);
+
+    /// Specify the name of a file to which log info should be appended.
+    void setLogFilename(const fstring& filename);
+
+    /// Specify whether to copy log output to stdout (default = yes).
+    void setCopyToStdout(bool shouldcopy);
   }
 
   void log(const char* msg);

@@ -33,10 +33,12 @@
 #include "util/log.h"
 
 #include "util/object.h"
+#include "util/pointers.h"
 #include "util/stopwatch.h"
 #include "util/strings.h"
 
 #include <algorithm>
+#include <fstream>
 #include <functional>
 #include <iomanip>
 #include <iostream>
@@ -53,29 +55,33 @@ namespace
     fstring itsName;
     StopWatch itsTimer;
 
-    void print(const timeval* now) const
+    void print(std::ostream& os, const Util::Time& now) const
     {
       DOTRACE("ScopeInfo::print");
-      std::cout << itsName << " @ ";
+      os << itsName << " @ ";
 
-      std::cout.setf(std::ios::showpoint | std::ios::fixed);
+      os.setf(std::ios::showpoint | std::ios::fixed);
 
-      std::cout << std::setprecision(3)
-                << itsTimer.elapsedMsec(*now) << " | ";
+      os << std::setprecision(3)
+         << itsTimer.elapsed(now).msec() << " | ";
     }
   };
 
   std::vector<ScopeInfo> scopes;
+  shared_ptr<std::ofstream> logFile(0);
+  bool copyToStdout = true;
 
   template <class Str>
-  inline void logImpl(Str msg)
+  inline void logImpl(std::ostream& os, Str msg)
   {
-    timeval now; gettimeofday(&now, 0);
+    const Util::Time now = Util::Time::wallClockNow();
 
-    std::for_each(scopes.begin(), scopes.end(),
-                  std::bind2nd(std::mem_fun_ref(&ScopeInfo::print), &now));
+    for (unsigned int i = 0; i < scopes.size(); ++i)
+      {
+        scopes[i].print(os, now);
+      }
 
-    std::cout << msg << std::endl;
+    os << msg << std::endl;
   }
 }
 
@@ -125,16 +131,41 @@ DOTRACE("Util::Log::removeObjScope");
   removeScope(scopename);
 }
 
+void Util::Log::setLogFilename(const fstring& filename)
+{
+DOTRACE("Util::Log::setLogFilename");
+
+  shared_ptr<std::ofstream> newfile
+    (new std::ofstream(filename.c_str(), std::ios::out | std::ios::app));
+
+  if (newfile->is_open() && newfile->good())
+    logFile.swap(newfile);
+}
+
+void Util::Log::setCopyToStdout(bool shouldcopy)
+{
+DOTRACE("Util::Log::setCopyToStdout");
+  copyToStdout = shouldcopy;
+}
+
 void Util::log(const char* msg)
 {
 DOTRACE("Util::log");
-  logImpl(msg);
+  if (copyToStdout)
+    logImpl(std::cout, msg);
+
+  if (logFile.get() != 0)
+    logImpl(*logFile, msg);
 }
 
 void Util::log(const fstring& msg)
 {
 DOTRACE("Util::log");
-  logImpl(msg);
+  if (copyToStdout)
+    logImpl(std::cout, msg);
+
+  if (logFile.get() != 0)
+    logImpl(*logFile, msg);
 }
 
 static const char vcid_log_cc[] = "$Header$";
