@@ -1,16 +1,18 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // facetcl.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Mar 16 19:44:07 1999
+// written: Thu May 27 19:47:54 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FACETCL_H_DEFINED
 #define FACETCL_H_DEFINED
 
 struct Tcl_Interp;
-typedef int (Tcl_PackageInitProc) (Tcl_Interp *interp);
+typedef int (Tcl_PackageInitProc) (Tcl_Interp* interp);
 
 namespace FaceTcl {
   Tcl_PackageInitProc Face_Init;
