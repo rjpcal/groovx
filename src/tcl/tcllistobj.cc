@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:32:35 2001
-// written: Wed Jul 11 14:00:10 2001
+// written: Wed Jul 11 17:53:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,17 +54,18 @@ DOTRACE("Tcl::List::split");
   itsLength = (unsigned int) count;
 }
 
-void Tcl::List::doAppend(Tcl_Obj* obj)
+void Tcl::List::doAppend(Tcl_Obj* obj, unsigned int times)
 {
 DOTRACE("Tcl::List::doAppend");
 
   itsList.ensureUnique();
 
-  if ( Tcl_ListObjAppendElement(0, itsList, obj)
-       != TCL_OK )
-    {
-      throw Tcl::TclError("couldn't append to Tcl list");
-    }
+  while (times--)
+    if ( Tcl_ListObjAppendElement(0, itsList, obj)
+         != TCL_OK )
+      {
+        throw Tcl::TclError("couldn't append to Tcl list");
+      }
 
   invalidate();
 }
