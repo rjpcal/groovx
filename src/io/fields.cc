@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Fri Aug 31 08:34:07 2001
+// written: Mon Sep  3 13:25:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,8 @@
 
 #include "io/reader.h"
 #include "io/writer.h"
+
+#include "tcl/tclvalue.h"
 
 #include "util/iter.h"
 #include "util/signal.h"
@@ -142,24 +144,25 @@ void FieldContainer::setFieldMap(const FieldMap& fields)
   itsFieldMap = &fields;
 }
 
-shared_ptr<Value> FieldContainer::getField(const fstring& name) const
+Tcl::ObjPtr FieldContainer::getField(const fstring& name) const
 {
   return getField(itsFieldMap->field(name));
 }
 
-shared_ptr<Value> FieldContainer::getField(const Field& field) const
+Tcl::ObjPtr FieldContainer::getField(const Field& field) const
 {
-  return field.getValue(this);
+  return Tcl::Convert<const Value&>::toTcl(*(field.getValue(this)));
 }
 
-void FieldContainer::setField(const fstring& name, const Value& new_val)
+void FieldContainer::setField(const fstring& name, Tcl::ObjPtr new_val)
 {
   setField(itsFieldMap->field(name), new_val);
 }
 
-void FieldContainer::setField(const Field& field, const Value& new_val)
+void FieldContainer::setField(const Field& field, Tcl::ObjPtr new_val)
 {
-  field.setValue(this, new_val);
+  Tcl::TclValue tval(new_val);
+  field.setValue(this, tval);
   if (itsSignal)
     itsSignal->emit();
 }

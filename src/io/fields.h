@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Thu Aug 30 10:06:51 2001
+// written: Mon Sep  3 13:25:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,6 +50,11 @@ namespace Util
 {
   template <class T> class FwdIter;
   class Signal;
+}
+
+namespace Tcl
+{
+  class ObjPtr;
 }
 
 template <class T>
@@ -262,7 +267,7 @@ public:
 
   virtual void set(FieldContainer* obj, const Value& new_val) const
   {
-	 if (itsSetter == 0) throwNotAllowed("set");
+    if (itsSetter == 0) throwNotAllowed("set");
 
     C& cobj = dynamic_cast<C&>(*obj);
 
@@ -271,7 +276,7 @@ public:
 
   virtual shared_ptr<Value> get(const FieldContainer* obj) const
   {
-	 if (itsGetter == 0) throwNotAllowed("get");
+    if (itsGetter == 0) throwNotAllowed("get");
 
     const C& cobj = dynamic_cast<const C&>(*obj);
 
@@ -281,7 +286,7 @@ public:
   virtual void readValueFrom(FieldContainer* obj,
                              IO::Reader* reader, const fstring& name) const
   {
-	 if (itsSetter == 0) throwNotAllowed("read");
+    if (itsSetter == 0) throwNotAllowed("read");
 
     C& cobj = dynamic_cast<C&>(*obj);
 
@@ -293,7 +298,7 @@ public:
   virtual void writeValueTo(const FieldContainer* obj,
                             IO::Writer* writer, const fstring& name) const
   {
-	 if (itsGetter == 0) throwNotAllowed("write");
+    if (itsGetter == 0) throwNotAllowed("write");
 
     const C& cobj = dynamic_cast<const C&>(*obj);
 
@@ -358,8 +363,8 @@ public:
   struct ValueType {};
 
   /**
-	* Make a FieldImpl from a member-pointer-to-data
-	**/
+   * Make a FieldImpl from a member-pointer-to-data
+   **/
 
   template <class C, class T>
   static shared_ptr<FieldImpl>
@@ -372,9 +377,9 @@ public:
   }
 
   /**
-	* Make a FieldImpl from a getter/setter pair of
-	* member-pointer-to-functions
-	**/
+   * Make a FieldImpl from a getter/setter pair of
+   * member-pointer-to-functions
+   **/
 
   template <class C, class T>
   static shared_ptr<FieldImpl>
@@ -386,8 +391,8 @@ public:
   }
 
   /**
-	* Make a read-only FieldImpl from a getter member-pointer-to-function
-	**/
+   * Make a read-only FieldImpl from a getter member-pointer-to-function
+   **/
 
   template <class C, class T>
   static shared_ptr<FieldImpl>
@@ -399,8 +404,8 @@ public:
   }
 
   /**
-	* Make a write-only FieldImpl from a setter member-pointer-to-function
-	**/
+   * Make a write-only FieldImpl from a setter member-pointer-to-function
+   **/
 
   template <class C, class T>
   static shared_ptr<FieldImpl>
@@ -559,11 +564,11 @@ public:
 
   void setFieldMap(const FieldMap& fields);
 
-  void setField(const fstring& name, const Value& new_val);
-  void setField(const Field& field, const Value& new_val);
+  Tcl::ObjPtr getField(const fstring& name) const;
+  Tcl::ObjPtr getField(const Field& field) const;
 
-  shared_ptr<Value> getField(const fstring& name) const;
-  shared_ptr<Value> getField(const Field& field) const;
+  void setField(const fstring& name, Tcl::ObjPtr new_val);
+  void setField(const Field& field, Tcl::ObjPtr new_val);
 
   void readFieldsFrom(IO::Reader* reader, const FieldMap& fields);
   void writeFieldsTo(IO::Writer* writer, const FieldMap& fields) const;

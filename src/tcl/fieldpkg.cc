@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Thu Aug 30 11:46:59 2001
+// written: Mon Sep  3 13:25:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       Ref<FieldContainer> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
-      ctx.setResult<const Value&>(*(item->getField(itsField)));
+      ctx.setResult(item->getField(itsField));
     }
   };
 
@@ -52,7 +52,7 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       Ref<FieldContainer> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
-      TclValue val = ctx.getValFromArg(2, TypeCue<TclValue>());
+      Tcl::ObjPtr val(ctx.getValFromArg(2, TypeCue<Tcl::ObjPtr>()));
       item->setField(itsField, val);
     }
   };
