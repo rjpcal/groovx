@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu Sep 12 13:20:30 2002
+// written: Mon Sep 16 17:08:32 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -67,7 +67,6 @@ extern "C"
   Tcl_PackageInitProc Subject_Init;
   Tcl_PackageInitProc Th_Init;
   Tcl_PackageInitProc Tlist_Init;
-  Tcl_PackageInitProc Togl_Init;
   Tcl_PackageInitProc Trial_Init;
 }
 
@@ -88,7 +87,6 @@ PackageInfo IMMEDIATE_PKGS[] =
 {
   { "Tcl",      Tcl_Init       },
   { "Tk",       Tk_Init        },
-  { "Togl",     Togl_Init      },
   { "Bitmap",   Bitmap_Init    },
   { "Block",    Block_Init     },
   { "Dlist",    Dlist_Init     },
