@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Feb 19 18:13:48 2002
+// written: Wed Feb 27 15:18:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -302,6 +302,18 @@ MtxImpl::MtxImpl(int mrows, int ncols, InitPolicy p) :
 #ifdef HAVE_MATLAB
 MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
 {
+  if (!mxIsDouble(a))
+    throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
+
+  init(mxGetPr(a), mxGetM(a), mxGetN(a), s);
+}
+
+MtxImpl::MtxImpl(const mxArray* a, StoragePolicy s)
+{
+  if (s != BORROW && s != COPY)
+    throw Util::Error("cannot construct a Mtx from a const mxArray* "
+                      "unless the StoragePolicy is COPY or BORROW");
+
   if (!mxIsDouble(a))
     throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
 

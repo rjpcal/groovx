@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Feb 20 18:06:48 2002
+// written: Wed Feb 27 15:16:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -341,6 +341,10 @@ public:
 
   MtxImpl(mxArray* a, StoragePolicy s);
 
+  /** With a const mxArray*, only BORROW or COPY are allowed as storage
+      policies, in order to preserve const-correctness. */
+  MtxImpl(const mxArray* a, StoragePolicy s);
+
   ~MtxImpl();
 
   int length() const { return (mrows_ > ncols_) ? mrows_ : ncols_; }
@@ -467,6 +471,10 @@ public:
   static const Mtx& emptyMtx();
 
   Mtx(mxArray* a, StoragePolicy s = COPY) : itsImpl(a, s) {}
+
+  /** With a const mxArray*, only BORROW or COPY are allowed as storage
+      policies, in order to preserve const-correctness. */
+  Mtx(const mxArray* a, StoragePolicy s = COPY) : itsImpl(a, s) {}
 
   Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
     itsImpl(data, mrows, ncols, s) {}
