@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Wed Aug 15 19:42:44 2001
+// written: Mon Aug 20 10:24:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "tcl/tclvalue.h"
 #include "tcl/tclveccmd.h"
 
+#include "util/iter.h"
 #include "util/ref.h"
 
 #include "util/trace.h"
@@ -98,11 +99,7 @@ DOTRACE("Tcl::FieldsLister::operator()");
            fmap != 0;
            fmap = isItRecursive ? fmap->parent() : 0)
         {
-          for (FieldMap::IoIterator
-                 itr = fmap->ioBegin(),
-                 end = fmap->ioEnd();
-               itr != end;
-               ++itr)
+          for (FieldMap::Iterator itr(fmap->ioFields()); itr.isValid(); ++itr)
             {
               const Field& field = *itr;
 
@@ -146,9 +143,7 @@ DOTRACE("Tcl::defAllFields");
 
   for (const FieldMap* fmap = &fieldmap; fmap != 0; fmap = fmap->parent())
     {
-      for (FieldMap::Iterator itr = fmap->begin(), end = fmap->end();
-           itr != end;
-           ++itr)
+      for (FieldMap::Iterator itr(fmap->ioFields()); itr.isValid(); ++itr)
         {
           defField(pkg, *itr);
         }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Sat Aug 18 08:07:18 2001
+// written: Mon Aug 20 10:23:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
 #include "util/strings.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
+#include "util/utilfwd.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUEx_H_DEFINED)
@@ -442,34 +446,14 @@ public:
 
   const Field& field(const fstring& name) const;
 
-  class ItrImpl;
+  typedef Util::FwdIter<const Field> Iterator;
 
   // Iterates over the Field's in alphabetical order by name
-  class Iterator {
-  private:
-    ItrImpl* const itsImpl;
-  public:
-    Iterator(ItrImpl* impl) : itsImpl(impl) {}
-    Iterator(const Iterator& other);
-    Iterator& operator=(const Iterator& other);
-    ~Iterator();
+  Iterator alphaFields() const;
 
-    const Field& operator*() const;
-    const Field* operator->() const;
-    Iterator& operator++();
-    bool operator==(const Iterator& other);
-    bool operator!=(const Iterator& other)
-      { return !(operator==(other)); }
-  };
-
-  Iterator begin() const;
-  Iterator end() const;
-
-  // Iterates over the Field's in the order they were declared in
+  // Iterates over the Field's in the order they were listed in
   // the sequence that was passed to the FieldMap constructor.
-  typedef const Field* IoIterator;
-  IoIterator ioBegin() const;
-  IoIterator ioEnd() const;
+  Iterator ioFields() const;
 };
 
 ///////////////////////////////////////////////////////////////////////

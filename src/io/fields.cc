@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Wed Aug 15 19:43:44 2001
+// written: Mon Aug 20 10:25:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "util/iter.h"
 #include "util/observable.h"
 
 #include <map>
@@ -54,13 +55,13 @@ public:
     itsIoBegin(begin),
     itsIoEnd(end),
     itsParent(parent)
-    {
-      while (begin != end)
-        {
-          itsNameMap.insert(MapType::value_type(begin->name(), begin));
-          ++begin;
-        }
-    }
+  {
+    while (begin != end)
+      {
+        itsNameMap.insert(MapType::value_type(begin->name(), begin));
+        ++begin;
+      }
+  }
 };
 
 void FieldMap::init(const Field* begin, const Field* end,
@@ -70,7 +71,10 @@ void FieldMap::init(const Field* begin, const Field* end,
   itsImpl = new Impl(begin, end, parent);
 }
 
-FieldMap::~FieldMap() { delete itsImpl; }
+FieldMap::~FieldMap()
+{
+  delete itsImpl;
+}
 
 const FieldMap* FieldMap::emptyFieldMap()
 {
@@ -81,12 +85,17 @@ const FieldMap* FieldMap::emptyFieldMap()
 }
 
 bool FieldMap::hasParent() const
-{ return (itsImpl->itsParent != 0); }
+{
+  return (itsImpl->itsParent != 0);
+}
 
 const FieldMap* FieldMap::parent() const
-{ return itsImpl->itsParent; }
+{
+  return itsImpl->itsParent;
+}
 
-const Field& FieldMap::field(const fstring& name) const {
+const Field& FieldMap::field(const fstring& name) const
+{
   Impl::MapType::const_iterator itr = itsImpl->itsNameMap.find(name);
 
   if (itr != itsImpl->itsNameMap.end())
@@ -102,48 +111,10 @@ const Field& FieldMap::field(const fstring& name) const {
     }
 }
 
-class FieldMap::ItrImpl {
-public:
-  typedef std::map<fstring, const Field*> MapType;
-
-  ItrImpl(MapType::const_iterator i) : itsItr(i) {}
-
-  MapType::const_iterator itsItr;
-};
-
-FieldMap::Iterator::Iterator(const FieldMap::Iterator& other) :
-  itsImpl(new ItrImpl(other.itsImpl->itsItr))
-{}
-
-FieldMap::Iterator&
-FieldMap::Iterator::operator=(const FieldMap::Iterator& other)
-{ itsImpl->itsItr = other.itsImpl->itsItr; return *this; }
-
-FieldMap::Iterator::~Iterator() { delete itsImpl; }
-
-const Field& FieldMap::Iterator::operator*() const
-{ return *(operator->()); }
-
-const Field* FieldMap::Iterator::operator->() const
-{ return (*(itsImpl->itsItr)).second; }
-
-FieldMap::Iterator& FieldMap::Iterator::operator++()
-{ ++(itsImpl->itsItr); return *this; }
-
-bool FieldMap::Iterator::operator==(const FieldMap::Iterator& other)
-{ return (itsImpl->itsItr) == (other.itsImpl->itsItr); }
-
-FieldMap::Iterator FieldMap::begin() const
-{ return Iterator(new ItrImpl(itsImpl->itsNameMap.begin())); }
-
-FieldMap::Iterator FieldMap::end() const
-{ return Iterator(new ItrImpl(itsImpl->itsNameMap.end())); }
-
-FieldMap::IoIterator FieldMap::ioBegin() const
-{ return itsImpl->itsIoBegin; }
-
-FieldMap::IoIterator FieldMap::ioEnd() const
-{ return itsImpl->itsIoEnd; }
+FieldMap::Iterator FieldMap::ioFields() const
+{
+  return Iterator(itsImpl->itsIoBegin, itsImpl->itsIoEnd);
+}
 
 
 
@@ -191,11 +162,8 @@ void FieldContainer::readFieldsFrom(IO::Reader* reader,
                                     const FieldMap& fields)
 {
 DOTRACE("FieldContainer::readFieldsFrom");
-  for (FieldMap::IoIterator
-         itr = fields.ioBegin(),
-         end = fields.ioEnd();
-       itr != end;
-       ++itr)
+
+  for (FieldMap::Iterator itr(fields.ioFields()); itr.isValid(); ++itr)
     {
       itr->readValueFrom(this, reader, itr->name());
     }
@@ -208,11 +176,8 @@ void FieldContainer::writeFieldsTo(IO::Writer* writer,
                                    const FieldMap& fields) const
 {
 DOTRACE("FieldContainer::writeFieldsTo");
-  for (FieldMap::IoIterator
-         itr = fields.ioBegin(),
-         end = fields.ioEnd();
-       itr != end;
-       ++itr)
+
+  for (FieldMap::Iterator itr(fields.ioFields()); itr.isValid(); ++itr)
     {
       itr->writeValueTo(this, writer, itr->name());
     }
