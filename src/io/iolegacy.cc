@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Wed Jun 13 13:15:55 2001
+// written: Wed Aug  8 13:05:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -203,15 +203,15 @@ DOTRACE("IO::LegacyReader::readStringImpl");
 
   if (numchars < 0)
     {
-      throw IO::LogicError("LegacyReader::readStringImpl "
-                           "saw negative character count");
+      throw IO::ReadError("LegacyReader::readStringImpl "
+                          "saw negative character count");
     }
 
   int c = itsImpl->itsInStream.get();
   if (c != ' ')
     {
-      throw IO::LogicError("LegacyReader::readStringImpl "
-                           "did not have whitespace after character count");
+      throw IO::ReadError("LegacyReader::readStringImpl "
+                          "did not have whitespace after character count");
     }
 
 //   if (itsImpl->itsInStream.peek() == '\n') { itsImpl->itsInStream.get(); }
