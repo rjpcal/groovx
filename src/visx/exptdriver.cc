@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Fri May 11 20:35:38 2001
+// written: Sat May 12 08:51:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -297,20 +297,17 @@ DOTRACE("ExptDriver::Impl::~Impl");
 bool ExptDriver::Impl::doesDoUponCompletionExist() const {
 DOTRACE("ExptDriver::Impl::doesDoUponCompletionExist");
   Tcl_ResetResult(itsInterp);
-  int tclresult =
-	 Tcl_GlobalEval(itsInterp,
-						 "llength [  namespace eval ::Expt "
-						 "            {info procs doUponCompletion}  ]");
 
-  if (tclresult != TCL_OK) {
-	 itsErrHandler.handleMsg("error getting procs in doesDoUponCompletionExist");
-	 return false;
-  }
+  if (!safeTclGlobalEval("llength [  namespace eval ::Expt "
+								 "            {info procs doUponCompletion}  ]"))
+	 {
+		return false;
+	 }
 
   int llength;
-  tclresult = Tcl_GetIntFromObj(itsInterp,
-										  Tcl_GetObjResult(itsInterp),
-										  &llength);
+  int tclresult = Tcl_GetIntFromObj(itsInterp,
+												Tcl_GetObjResult(itsInterp),
+												&llength);
 
   if (tclresult != TCL_OK) {
 	 itsErrHandler.handleMsg("error reading result in doesDoUponCompletionExist");
@@ -324,13 +321,12 @@ void ExptDriver::Impl::updateDoUponCompletionBody() const {
 DOTRACE("ExptDriver::Impl::updateDoUponCompletionBody");
   if (doesDoUponCompletionExist()) {
 	 Tcl_ResetResult(itsInterp);
-	 int tclresult =
-		Tcl_GlobalEval(itsInterp,
-							"info body Expt::doUponCompletion");
 
-	 if (tclresult != TCL_OK) {
-		throw IO::OutputError("couldn't get the proc body for Expt::doUponCompletion");
-	 }
+	 if (!safeTclGlobalEval("info body Expt::doUponCompletion"))
+		{
+		  itsDoUponCompletionBody = "";
+		  throw IO::OutputError("couldn't get the proc body for Expt::doUponCompletion");
+		}
 
 	 itsDoUponCompletionBody = Tcl_GetStringResult(itsInterp);
 	 Tcl_ResetResult(itsInterp);
