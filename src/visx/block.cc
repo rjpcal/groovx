@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Oct 21 18:34:44 1999
+// written: Thu Oct 21 19:27:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -175,7 +175,7 @@ int Block::charCount() const {
 void Block::readFrom(Reader* reader) {
 DOTRACE("Block::readFrom");
   itsTrialSequence.clear();
-  reader->readValueSeq("trialSeq", back_inserter(itsTrialSequence));
+  reader->readValueSeq("trialSeq", back_inserter(itsTrialSequence), (int*)0);
   reader->readValue("randSeed", itsRandSeed);
   reader->readValue("curTrialSeqdx", itsCurTrialSeqIdx);
   reader->readValue("verbose", itsVerbose);
