@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:27:36 2001
-// written: Fri Mar  9 19:01:17 2001
+// written: Thu Mar 15 15:49:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,10 +14,6 @@
 #define NUM_H_DEFINED
 
 #include <cmath>
-
-class ConstSlice;
-class Slice;
-class Mtx;
 
 class Num {
 public:
