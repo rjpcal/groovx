@@ -1,17 +1,17 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// gxvec.h
+// gbvec.h
 //
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Wed Nov 29 13:08:12 2000
+// written: Sat Dec  2 09:21:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXVEC_H_DEFINED
-#define GXVEC_H_DEFINED
+#ifndef GBVEC_H_DEFINED
+#define GBVEC_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
 #include "io/fields.h"
@@ -22,13 +22,13 @@
 #endif
 
 template <class T>
-class GxVec3 : public Field, public Value {
+class GbVec3 : public Field, public Value {
 private:
   Vec3<T> itsData;
 
 public:
-  GxVec3(FieldContainer* owner, double x_=0.0, double y_=0.0, double z_=0.0);
-  virtual ~GxVec3();
+  GbVec3(FieldContainer* owner, double x_=0.0, double y_=0.0, double z_=0.0);
+  virtual ~GbVec3();
 
         T& x()       { return itsData.x(); }
   const T& x() const { return itsData.x(); }
@@ -67,5 +67,5 @@ public:
   virtual const Value& value() const;
 };
 
-static const char vcid_gxvec_h[] = "$Header$";
-#endif // !GXVEC_H_DEFINED
+static const char vcid_gbvec_h[] = "$Header$";
+#endif // !GBVEC_H_DEFINED

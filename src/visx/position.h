@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Wed Nov 29 13:28:36 2000
+// written: Sat Dec  2 09:22:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,12 @@
 #ifndef POSITION_H_DEFINED
 #define POSITION_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
-#include "gx/gxnode.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GBVEC_H_DEFINED)
+#include "gx/gbvec.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXVEC_H_DEFINED)
-#include "gx/gxvec.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
+#include "gx/gxnode.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
@@ -62,13 +62,13 @@ public:
   ////////////
 
   /// The translation vector.
-  GxVec3<double> translation;
+  GbVec3<double> translation;
 
   /// The scaling factors.
-  GxVec3<double> scaling;
+  GbVec3<double> scaling;
 
   /// The axis around which the rotation is performed.
-  GxVec3<double> rotationAxis;
+  GbVec3<double> rotationAxis;
 
   /// The angle of rotation in degrees.
   TField<double> rotationAngle;
