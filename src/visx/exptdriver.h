@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Fri Sep 29 14:43:24 2000
+// written: Thu Oct 19 17:59:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,12 +112,6 @@ public:
   /// Returns the id of the current trial
   virtual int edGetCurrentTrial() const;
   virtual void edSetCurrentTrial(int trial);
-
-  /// Uses \c legacyDesrlz() to read an experiment from \a filename.
-  void read(const char* filename);
-
-  /// Uses \c legacySrlz() to write an experiment to \a filename.
-  void write(const char* filename) const;
 
   /** This saves the experiment file and a summary-of-responses file
 		under unique filenames based on the date and time. */
