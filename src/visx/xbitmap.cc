@@ -25,6 +25,8 @@
 
 namespace {
   const string ioTag = "XBitmap";
+
+  XBmapRenderer* tempRenderer = 0;
 }
 
 void XBitmap::initClass(const ToglConfig* config) {
@@ -37,21 +39,26 @@ DOTRACE("XBitmap::initClass");
 //////////////
 
 XBitmap::XBitmap() :
-  Bitmap(new XBmapRenderer())
+  Bitmap(tempRenderer = new XBmapRenderer()),
+  itsRenderer(tempRenderer)
 {
 DOTRACE("XBitmap::XBitmap");
   init();
 }
 
 XBitmap::XBitmap(const char* filename) :
-  Bitmap(new XBmapRenderer(), filename)
+  Bitmap(tempRenderer = new XBmapRenderer(), filename),
+  itsRenderer(tempRenderer)
+
 {
 DOTRACE("XBitmap::XBitmap");
   init();
 }
 
 XBitmap::XBitmap(istream& is, IOFlag flag) :
-  Bitmap(new XBmapRenderer())
+  Bitmap(tempRenderer = new XBmapRenderer()),
+  itsRenderer(tempRenderer)
+
 {
 DOTRACE("XBitmap::XBitmap");
   init();
@@ -68,6 +75,7 @@ DOTRACE("XBitmap::init");
 
 XBitmap::~XBitmap() {
 DOTRACE("XBitmap::~XBitmap");
+  delete itsRenderer; 
 }
 
 void XBitmap::serialize(ostream& os, IOFlag flag) const {

@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Wed Dec  1 17:47:30 1999
+// written: Wed Dec  1 20:13:06 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #endif
 
 class ToglConfig;
+
+class XBmapRenderer;
 
 class XBitmap : public Bitmap {
 public:
@@ -38,6 +40,9 @@ public:
 
   virtual void readFrom(Reader* reader);
   virtual void writeTo(Writer* writer) const;
+
+private:
+  XBmapRenderer* itsRenderer;
 };
 
 static const char vcid_xbitmap_h[] = "$Header$";
