@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Nov 20 19:47:05 2002
+// written: Wed Nov 20 20:22:44 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -26,9 +26,8 @@
 
 #include "togl/togl.h"
 
-#include "gfx/canvas.h"
+#include "gfx/glcanvas.h"
 #include "gfx/glxopts.h"
-#include "gfx/glxwrapper.h"
 
 #include "gx/rgbacolor.h"
 
@@ -67,7 +66,7 @@ public:
   Togl* itsOwner;
   const Tk_Window itsTkWin;
   shared_ptr<GlxOpts> itsOpts;
-  shared_ptr<GlxWrapper> itsGlx;
+  Util::SoftRef<GLCanvas> itsCanvas;
 
   bool itsPrivateCmapFlag;
 
@@ -102,7 +101,7 @@ Togl::Impl::Impl(Togl* owner) :
   itsOwner(owner),
   itsTkWin(owner->tkWin()),
   itsOpts(new GlxOpts),
-  itsGlx(0),
+  itsCanvas(),
 
   itsPrivateCmapFlag(false)
 {
@@ -125,7 +124,7 @@ void Togl::Impl::swapBuffers() const
 {
 DOTRACE("Togl::Impl::swapBuffers");
 
-  itsGlx->flush(Tk_WindowId(itsTkWin));
+  itsCanvas->glxFlush(Tk_WindowId(itsTkWin));
 }
 
 Togl::Color Togl::Impl::queryColor(unsigned int color_index) const
@@ -193,9 +192,10 @@ Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
 
   Display* dpy = Tk_Display(tkwin);
 
-  rep->itsGlx.reset(GlxWrapper::make(dpy, *(rep->itsOpts)));
+  rep->itsCanvas =
+    Util::SoftRef<GLCanvas>(GLCanvas::make(dpy, *(rep->itsOpts)));
 
-  XVisualInfo* visInfo = rep->itsGlx->visInfo();
+  XVisualInfo* visInfo = rep->itsCanvas->visInfo();
 
   Colormap cmap = findColormap(dpy, visInfo, rep->itsPrivateCmapFlag);
 
@@ -231,28 +231,19 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
   XSelectInput(dpy, win, ALL_EVENTS_MASK);
 
   // Bind the context to the window and make it the current context
-  rep->itsGlx->makeCurrent(win);
+  rep->itsCanvas->makeCurrent(win);
 
   if (rep->itsOpts->rgbaFlag)
     {
       DOTRACE("GlxWrapper::GlxWrapper::rgbaFlag");
-      rep->itsGlx->canvas().setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
-      rep->itsGlx->canvas().setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
+      rep->itsCanvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
+      rep->itsCanvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
     }
   else
     {
       // FIXME use XBlackPixel(), XWhitePixel() here?
-      rep->itsGlx->canvas().setColorIndex(0);
-      rep->itsGlx->canvas().setClearColorIndex(1);
-    }
-
-  // Check for a single/double buffering snafu
-  if (rep->itsOpts->doubleFlag == 0 && rep->itsGlx->isDoubleBuffered())
-    {
-      // We requested single buffering but had to accept a double buffered
-      // visual.  Set the GL draw buffer to be the front buffer to
-      // simulate single buffering.
-      glDrawBuffer(GL_FRONT);
+      rep->itsCanvas->setColorIndex(0);
+      rep->itsCanvas->setClearColorIndex(1);
     }
 
   return win;
@@ -281,15 +272,15 @@ void Togl::displayCallback()
 {
 DOTRACE("Togl::displayCallback");
 
-  rep->itsGlx->makeCurrent(Tk_WindowId(rep->itsTkWin));
+  rep->itsCanvas->makeCurrent(Tk_WindowId(rep->itsTkWin));
   fullRender();
 }
 
-void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(Tk_WindowId(rep->itsTkWin)); }
+void Togl::makeCurrent() const          { rep->itsCanvas->makeCurrent(Tk_WindowId(rep->itsTkWin)); }
 void Togl::swapBuffers()                { rep->swapBuffers(); }
-bool Togl::isRgba() const               { return rep->itsOpts->rgbaFlag; }
-bool Togl::isDoubleBuffered() const     { return rep->itsOpts->doubleFlag; }
-unsigned int Togl::bitsPerPixel() const { return rep->itsGlx->visInfo()->depth; }
+bool Togl::isRgba() const               { return rep->itsCanvas->isRgba(); }
+bool Togl::isDoubleBuffered() const     { return rep->itsCanvas->isDoubleBuffered(); }
+unsigned int Togl::bitsPerPixel() const { return rep->itsCanvas->bitsPerPixel(); }
 bool Togl::hasPrivateCmap() const       { return rep->itsPrivateCmapFlag; }
 
 Togl::Color Togl::queryColor(unsigned int color_index) const
@@ -299,7 +290,7 @@ Gfx::Canvas& Togl::getCanvas() const
 {
 DOTRACE("Togl::getCanvas");
   makeCurrent();
-  return rep->itsGlx->canvas();
+  return *(rep->itsCanvas);
 }
 
 static const char vcid_togl_cc[] = "$Header$";

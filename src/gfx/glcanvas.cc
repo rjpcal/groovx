@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Nov 20 16:07:25 2002
+// written: Wed Nov 20 20:20:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,8 @@
 
 #include "gfx/glcanvas.h"
 
+#include "gfx/glxwrapper.h"
+
 #include "gx/bmapdata.h"
 #include "gx/rect.h"
 #include "gx/rgbacolor.h"
@@ -23,6 +25,7 @@
 #include "gx/vec3.h"
 
 #include "util/error.h"
+#include "util/pointers.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -33,32 +36,59 @@
 class GLCanvas::Impl
 {
 public:
-  Impl(unsigned int color_buffer_bits,
-       bool is_rgba,
-       bool is_db) :
-    itsColorBufferBits(color_buffer_bits),
-    isItRgba(is_rgba),
-    isItDoubleBuffered(is_db)
+  Impl(Display* dpy, GlxOpts& opts, GlxWrapper* share) :
+    glx(new GlxWrapper(dpy, opts, share)),
+    opts(opts)
   {}
 
-  const unsigned int itsColorBufferBits;
-  const bool isItRgba;
-  const bool isItDoubleBuffered;
+  shared_ptr<GlxWrapper> glx;
+  GlxOpts opts; // FIXME avoid duplication of GlxOpts in GlxWrapper?
 };
 
-GLCanvas::GLCanvas(unsigned int col_buf_bits, bool is_rgba, bool is_db) :
-  itsImpl(new Impl(col_buf_bits, is_rgba, is_db))
+GLCanvas::GLCanvas(Display* dpy, GlxOpts& opts, GlxWrapper* share) :
+  rep(new Impl(dpy, opts, share))
 {}
 
-GLCanvas* GLCanvas::make(unsigned int bpp, bool is_rgba, bool is_db)
+GLCanvas* GLCanvas::make(Display* dpy, GlxOpts& opts, GlxWrapper* share)
 {
 DOTRACE("GLCanvas::make");
-  return new GLCanvas(bpp, is_rgba, is_db);
+  return new GLCanvas(dpy, opts, share);
 }
 
 GLCanvas::~GLCanvas()
 {
-  delete itsImpl;
+  delete rep;
+  rep = 0;
+}
+
+XVisualInfo* GLCanvas::visInfo() const
+{
+  return rep->glx->visInfo();
+}
+
+void GLCanvas::makeCurrent(Window win)
+{
+DOTRACE("GLCanvas::makeCurrent");
+
+  rep->glx->makeCurrent(win);
+
+  // Check for a single/double buffering snafu
+  if (rep->opts.doubleFlag == 0 && isDoubleBuffered())
+    {
+      // We requested single buffering but had to accept a double buffered
+      // visual.  Set the GL draw buffer to be the front buffer to
+      // simulate single buffering.
+      glDrawBuffer(GL_FRONT);
+    }
+
+  Gfx::Canvas::setCurrent(*this);
+}
+
+void GLCanvas::glxFlush(Window win)
+{
+DOTRACE("GLCanvas::glxFlush");
+
+  rep->glx->flush(win);
 }
 
 Gfx::Vec2<int> GLCanvas::screenFromWorld(
@@ -165,28 +195,28 @@ bool GLCanvas::isRgba() const
 {
 DOTRACE("GLCanvas::isRgba");
 
-  return itsImpl->isItRgba;
+  return rep->opts.rgbaFlag;
 }
 
 bool GLCanvas::isColorIndex() const
 {
 DOTRACE("GLCanvas::isColorIndex");
 
-  return !(itsImpl->isItRgba);
+  return !(rep->opts.rgbaFlag);
 }
 
 bool GLCanvas::isDoubleBuffered() const
 {
 DOTRACE("GLCanvas::isDoubleBuffered");
 
-  return itsImpl->isItDoubleBuffered;
+  return rep->glx->isDoubleBuffered();
 }
 
 unsigned int GLCanvas::bitsPerPixel() const
 {
 DOTRACE("GLCanvas::bitsPerPixel");
 
-  return itsImpl->itsColorBufferBits;
+  return rep->glx->visInfo()->depth;
 }
 
 void GLCanvas::throwIfError(const char* where) const

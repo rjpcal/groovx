@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:03 2002
-// written: Wed Nov 20 19:46:54 2002
+// written: Wed Nov 20 19:57:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,13 +20,6 @@
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 
-namespace Gfx
-{
-  class Canvas;
-}
-
-class GLCanvas;
-
 class GlxAttribs;
 class GlxOpts;
 
@@ -37,7 +30,6 @@ private:
   XVisualInfo* itsVisInfo;
   GLXContext itsContext;
   GlxOpts itsOpts;
-  Util::SoftRef<GLCanvas> itsCanvas;
 
 public:
   GlxWrapper(Display* dpy, GlxOpts& opts, GlxWrapper* share = 0);
@@ -56,8 +48,6 @@ public:
   void makeCurrent(Window win) const;
 
   XVisualInfo* visInfo() const { return itsVisInfo; }
-
-  Gfx::Canvas& canvas() const;
 
   GLXContext context() const { return itsContext; }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Wed Sep 25 18:52:20 2002
+// written: Wed Nov 20 20:19:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,20 +15,28 @@
 
 #include "gfx/canvas.h"
 
+#include <X11/Xlib.h>
+#include <X11/Xutil.h> // for XVisualInfo
+
+class GlxOpts;
+class GlxWrapper;
+
 /// GLCanvas implements Gfx::Canvas using OpenGL.
 class GLCanvas : public Gfx::Canvas
 {
 protected:
-  GLCanvas(unsigned int bits_per_pixel,
-           bool is_rgba,
-           bool is_doublebuffered);
+  GLCanvas(Display* dpy, GlxOpts& opts, GlxWrapper* share = 0);
 
 public:
-  static GLCanvas* make(unsigned int bits_per_pixel,
-                        bool is_rgba,
-                        bool is_doublebuffered);
+  static GLCanvas* make(Display* dpy, GlxOpts& opts, GlxWrapper* share = 0);
 
   virtual ~GLCanvas();
+
+  XVisualInfo* visInfo() const;
+
+  void makeCurrent(Window win);
+
+  void glxFlush(Window win);
 
   virtual Gfx::Vec2<int> screenFromWorld(const Gfx::Vec2<double>& world_pos) const;
   virtual Gfx::Vec2<double> worldFromScreen(const Gfx::Vec2<int>& screen_pos) const;
@@ -145,7 +153,7 @@ private:
   GLCanvas& operator=(const GLCanvas&);
 
   class Impl;
-  Impl* itsImpl;
+  Impl* rep;
 };
 
 static const char vcid_glcanvas_h[] = "$Header$";
