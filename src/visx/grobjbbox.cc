@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Wed Nov 13 11:27:24 2002
+// written: Wed Nov 13 11:31:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,16 +22,6 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-
-namespace
-{
-  void addPixelBorder(Gfx::Box<double>& cube, int border_percent)
-  {
-    cube.scaleX(1.0 + border_percent/100.0);
-    cube.scaleY(1.0 + border_percent/100.0);
-    cube.scaleZ(1.0 + border_percent/100.0);
-  }
-}
 
 GrObjBBox::GrObjBBox(Util::SoftRef<Gnode> child) :
   Gnode(child),
@@ -50,12 +40,14 @@ DOTRACE("GrObjBBox::getBoundingCube");
 
   child()->getBoundingCube(cube, canvas);
 
+  int border_pixels = itsPixelBorder;
+
   // Add extra pixels if the box itself will be visible.
-  int border_pixels = isItVisible ? itsPixelBorder+4 : itsPixelBorder;
+  if (isItVisible) border_pixels += 4;
 
   dbgEval(3, itsPixelBorder); dbgEvalNL(3, border_pixels);
 
-  addPixelBorder(cube, border_pixels);
+  cube.scale(1.0 + border_pixels/100.0);
 }
 
 void GrObjBBox::draw(Gfx::Canvas& canvas) const
@@ -68,7 +60,7 @@ DOTRACE("GrObjBBox::draw");
     {
       Gfx::Box<double> cube;
       child()->getBoundingCube(cube, canvas);
-      addPixelBorder(cube, itsPixelBorder);
+      cube.scale(1.0 + itsPixelBorder/100.0);
 
       Gfx::Rect<double> bounds = cube.rect();
 
