@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Tue Mar  7 15:31:20 2000
+// written: Tue Mar  7 15:59:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,7 @@
 #include <GL/glu.h>
 #include <cctype>
 #include <cmath>					  // for abs
+#include <iostream.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -152,9 +153,9 @@ DOTRACE("BitmapRep::init");
 void BitmapRep::serialize(ostream& os, int flag) const {
 DOTRACE("BitmapRep::serialize");
   char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag.c_str() << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
-  os << itsImpl->itsFilename.c_str() << '\t';
+  os << itsImpl->itsFilename << '\t';
   os << itsImpl->itsRasterX << sep << itsImpl->itsRasterY << sep;
   os << itsImpl->itsZoomX << sep << itsImpl->itsZoomY << sep;
   os << itsImpl->itsUsingZoom << sep;
