@@ -27,7 +27,7 @@ test "BlockTcl-Block::currentTrial" "too many args" {
 test "BlockTcl-Block::currentTrial" "normal use on empty block" {
 	 Block::removeAllTrials $::BLOCK
 	 Block::currentTrial $::BLOCK
-} {^\-1$}
+} {^0$}
 test "BlockTcl-Block::currentTrial" "no error" {} $BLANK $no_test
 
 ### Block::currentTrialTypeCmd ###

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Mon Jun 11 14:49:17 2001
+// written: Sun Aug  5 19:48:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,11 @@
 #include "io/io.h"
 #endif
 
-namespace Util { template <class T> class Ref; };
+namespace Util
+{
+  template <class T> class Ref;
+  template <class T> class WeakRef;
+};
 
 class TrialBase;
 
@@ -46,7 +50,7 @@ class Response;
 class Block : public virtual IO::IoObject {
 public:
   /** This tracer dynamically controls the tracing of Block member
-		functions. */
+      functions. */
   static Util::Tracer tracer;
 
   //////////////
@@ -68,7 +72,7 @@ public:
   void addTrial(Util::Ref<TrialBase> trial, int repeat=1);
 
   /** Randomly permute the sequence of trialids, using seed as the
-		random seed for the shuffle. */
+      random seed for the shuffle. */
   void shuffle(int seed=0);
 
   /// Clear the Block's list of trial ids.
@@ -83,44 +87,44 @@ public:
   ///////////////
 
   /// Returns the total number of trials that will comprise the Block.
-  virtual int numTrials() const;
+  int numTrials() const;
 
   /** Returns the number of trials that have been successfully
-		completed.  This number will not include trials that have been
-		aborted either due to an invalid response or due to a
-		timeout. */
-  virtual int numCompleted() const;
+      completed.  This number will not include trials that have been
+      aborted either due to an invalid response or due to a
+      timeout. */
+  int numCompleted() const;
 
   /// Get the trial id (an index into Tlist) of the current trial.
-  virtual int currentTrial() const;
+  Util::WeakRef<TrialBase> currentTrial() const;
 
   /** Returns the integer type of the current trial (the result of
       TrialBase::trialType(). */
-  virtual int currentTrialType() const;
+  int currentTrialType() const;
 
   /** Returns the last valid (but not necessarily "correct") response
-		that was recorded in the current Block. */
-  virtual int prevResponse() const;
+      that was recorded in the current Block. */
+  int prevResponse() const;
 
   /** Returns true if the current experiment is complete (i.e. all
-		trials in the trial sequence have finished successfully), false
-		otherwise. */
-  virtual bool isComplete() const;
+      trials in the trial sequence have finished successfully), false
+      otherwise. */
+  bool isComplete() const;
 
   /** Returns a human(experimenter)-readable description of the
       current trial that shows the trial's id, the trial's type, the
       id's of the objects that are displayed in the trial, the
       categories of those objects, and the number of completed trials
       and number of total trials. */
-  virtual const char* trialDescription() const;
+  const char* trialDescription() const;
 
   /** Query whether the trialDescription() is printed to standard
       output at the beginning of each trial. */
-  virtual bool getVerbose() const;
+  bool getVerbose() const;
 
   /** Change whether the trialDescription() is printed to standard
       output at the beginning of each trial. */
-  virtual void setVerbose(bool val);
+  void setVerbose(bool val);
 
   /////////////
   // actions //
@@ -128,7 +132,7 @@ public:
 
   /** Does whatever is necessary at the beginning of a trial, and
       restarts the response time timer. */
-  virtual void beginTrial(Experiment& expt);
+  void beginTrial(Experiment& expt);
 
   /** Aborts the current trial of the experiment. The current (to be
       aborted) trial is put at the end of the trial sequence in the
@@ -136,37 +140,37 @@ public:
       call to drawTrial will start the same trial that would have
       started if the current trial had been completed normally,
       instead of being aborted. */
-  virtual void abortTrial();
+  void abortTrial();
 
   /** Record a response to the current trial in the Block, and prepare
       the Block for the next trial. The response is recorded for the
       current trial, and the Block's trial sequence index is
       incremented. Also, the next call to prevResponse will return the
       response that was recorded in the present command. */
-  virtual void processResponse(const Response& response);
+  void processResponse(const Response& response);
 
   /** Prepares the Block to start the next trial by incrementing the
       trial sequence index. */
-  virtual void endTrial();
+  void endTrial();
 
   /// Begins the next trial, moving on to the next Block if necessary.
-  virtual void nextTrial();
+  void nextTrial();
 
   /// Undraws, aborts, and ends the current trial.
-  virtual void haltExpt();
+  void haltExpt();
 
   /** The state of the experiment is restored to what it was just
-		prior to the beginning of the most recent successfully completed
-		trial. Thus, the current trial is changed to its previous value,
-		and the response to the most recently successfully completed
-		trial is erased. After a call to undoPrevTrial(), the next
-		invocation of drawTrial() will redo the trial that was undone in
-		the present command.*/
-  virtual void undoPrevTrial();
+      prior to the beginning of the most recent successfully completed
+      trial. Thus, the current trial is changed to its previous value,
+      and the response to the most recently successfully completed
+      trial is erased. After a call to undoPrevTrial(), the next
+      invocation of drawTrial() will redo the trial that was undone in
+      the present command.*/
+  void undoPrevTrial();
 
   /** Undoes all responses to all of the Trial's in the Block, and
-		puts its trial counter back to the beginning of the block. */
-  virtual void resetBlock();
+      puts its trial counter back to the beginning of the block. */
+  void resetBlock();
 
 private:
   Block(const Block&);
