@@ -14,7 +14,9 @@ set TEST_TCL_DEFINED 1
 set START_CLICKS [clock clicks]
 
 if { ![info exists ::VERBOSE] } { set ::VERBOSE 0 }
-if { ![info exists ::TEST_DIR] } { set ::TEST_DIR /cit/rjpeters/grsh/testing }
+if { ![info exists ::TEST_DIR] } {
+	 set ::TEST_DIR /cit/rjpeters/sorcery/grsh/testing
+}
 
 set DATE [clock format [clock seconds] -format %H%M%d%b%Y]
 
