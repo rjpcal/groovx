@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 31 18:32:51 2000
-// written: Sat May 26 17:50:01 2001
+// written: Thu Jul 12 13:15:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define TCLITEMPKGBASE_CC_DEFINED
 
 #include "tcl/tclitempkgbase.h"
+
+#include "tcl/tclcmd.h"
 
 #include "util/strings.h"
 
@@ -46,11 +48,19 @@ template class Setter<const char*>;
 template class Setter<const fixed_string&>;
 
 Tcl::TclItemPkgBase::TclItemPkgBase(Tcl_Interp* interp,
-												const char* name, const char* version) :
-  TclPkg(interp, name, version)
+                                    const char* name, const char* version,
+                                    int item_argn) :
+  TclPkg(interp, name, version),
+  itsItemArgn(item_argn)
 {}
 
 Tcl::TclItemPkgBase::~TclItemPkgBase() {}
+
+void* Tcl::TclItemPkgBase::getItemFromContext(Tcl::Context& ctx)
+{
+  int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
+  return getItemFromId(id);
+}
 
 static const char vcid_tclitempkgbase_cc[] = "$Header$";
 #endif // !TCLITEMPKGBASE_CC_DEFINED
