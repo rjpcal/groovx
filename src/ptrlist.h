@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Tue Oct 24 13:08:19 2000
+// written: Tue Oct 24 15:27:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,6 @@ public:
   // accessors //
   ///////////////
 
-public:
   /** Return the object at index \a id. No range check is performed on
       \a id, so the behavior is undefined if \a id is not a valid
       index into the list. If \a id is out of range, a segmentation
@@ -71,6 +70,10 @@ public:
   // manipulators //
   //////////////////
 
+  friend class ItemWithId<T>;
+  friend class NullableItemWithId<T>;
+
+private:
   /// Insert \a ptr into the list, and return its id.
   SharedPtr insert(T* master);
 
