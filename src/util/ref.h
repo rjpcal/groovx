@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Wed Jun 13 13:16:50 2001
+// written: Wed Jun 13 13:36:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -210,39 +210,26 @@ private:
   private:
     Util::RefCounts* getCounts(T* master)
     {
-      return master ? master->refCounts() : 0;
-    }
-
-    bool isVolatile(T* master)
-    {
-      return master ? master->isVolatile() : true;
-    }
-
-    static void ensure(bool expr, const char* where)
-    {
-      if (!expr) RefHelper::throwErrorWithMsg(where);
+      return (master && master->isVolatile()) ? master->refCounts() : 0;
     }
 
   public:
     explicit WeakHandle(T* master) : itsMaster(master),
-                                     itsCounts(getCounts(master)),
-                                     itsIsWeakRef(isVolatile(master))
+                                     itsCounts(getCounts(master))
     { acquire(); }
 
     ~WeakHandle()
     { release(); }
 
     WeakHandle(const WeakHandle& other) : itsMaster(other.itsMaster),
-                                          itsCounts(getCounts(itsMaster)),
-                                          itsIsWeakRef(isVolatile(itsMaster))
+                                          itsCounts(getCounts(itsMaster))
     { acquire(); }
 
     template <class U> friend class WeakHandle;
 
     template <class U>
     WeakHandle(const WeakHandle<U>& other) : itsMaster(other.itsMaster),
-                                             itsCounts(getCounts(itsMaster)),
-                                             itsIsWeakRef(isVolatile(itsMaster))
+                                             itsCounts(getCounts(itsMaster))
     { acquire(); }
 
     WeakHandle& operator=(const WeakHandle& other)
@@ -254,7 +241,14 @@ private:
 
     bool isValid() const
     {
-      if (itsCounts != 0 && itsCounts->strongCount() > 0) return true;
+      if (itsCounts == 0) // implies we are using strong ref's
+        {
+          return (itsMaster != 0);
+        }
+      else // (itsCounts != 0) implies we are using weak ref's
+        {
+          if (itsCounts->strongCount() > 0) return true;
+        }
 
       release(); return false;
     }
@@ -264,26 +258,22 @@ private:
   private:
     void acquire() const
     {
-      ensure(bool(itsMaster) == bool(itsCounts), "WeakHandle::acquire");
-
-      if (itsCounts)
+      if (itsMaster)
         {
-          if (itsIsWeakRef) itsCounts->acquireWeak();
-          else              itsMaster->incrRefCount();
+          if (itsCounts) itsCounts->acquireWeak();
+          else           itsMaster->incrRefCount();
         }
     }
 
     void release() const
     {
-      ensure(bool(itsMaster) == bool(itsCounts), "WeakHandle::release");
-
-      if (itsCounts)
+      if (itsMaster)
         {
-          if (itsIsWeakRef) itsCounts->releaseWeak();
-          else              itsMaster->decrRefCount();
+          if (itsCounts) itsCounts->releaseWeak();
+          else           itsMaster->decrRefCount();
         }
 
-      itsCounts = 0; itsMaster = 0; itsIsWeakRef = true;
+      itsCounts = 0; itsMaster = 0;
     }
 
     void ensureValid() const
@@ -302,15 +292,16 @@ private:
       Util::RefCounts* otherCounts = other.itsCounts;
       other.itsCounts = this->itsCounts;
       this->itsCounts = otherCounts;
-
-      bool otherIsVolatile = other.itsIsWeakRef;
-      other.itsIsWeakRef = this->itsIsWeakRef;
-      this->itsIsWeakRef = otherIsVolatile;
     }
+
+    // In order to avoid storing a separate bool indicating whether we
+    // are using strong or weak ref's, we use the following
+    // convention: if we are strong ref-counting, then itsCounts stays
+    // null, but if we are weak ref-counting, then itsCounts will be
+    // non-null.
 
     mutable T* itsMaster;
     mutable Util::RefCounts* itsCounts;
-    mutable bool itsIsWeakRef;
 
   }; // end helper class WeakHandle
 
