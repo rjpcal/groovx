@@ -27,6 +27,7 @@ Table of contents:
 - \ref usingscripts
 - \ref sampleexpt
 - \ref cxxinternals
+- \ref cxxtclbridge
 
 <!--############################################################--><hr>
 
@@ -361,8 +362,8 @@ Table of contents:
 
      groovx>>> ? GxText::type
      GxText::type resolves to ::Obj::type
-     	     ::Obj::type objref(s)
-     	     (defined at src/io/objtcl.cc:205)
+             ::Obj::type objref(s)
+             (defined at src/io/objtcl.cc:205)
 
    \endcode
 
@@ -770,10 +771,10 @@ Table of contents:
 
 \section cxxinternals 6. Exploring the C++ internals
 
-   I'd like to think that I've done a decent job of keeping the C++
-   code organized, but nevertheless it can be difficult to
-   automatically see the relationships between the script (tcl/groovx)
-   side of things and the underlying C++ code.
+   I hope I've done a decent job of keeping the C++ code organized,
+   but nevertheless it can be difficult to automatically see the
+   relationships between the script (tcl/groovx) side of things and
+   the underlying C++ code.
 
    There are a couple mechanisms in place to help with the discovery
    of these relationships, involving different ways to get referred to
@@ -951,4 +952,131 @@ Table of contents:
 
    \endcode
 
+<!--############################################################--><hr>
+
+\section cxxtclbridge 7. The C++/Tcl bridge
+
+   Here are some examples of the C++/Tcl bridge.
+
+   \subsection ex1 Example 1 (from src/tcl/dlisttcl.cc)
+
+   \code
+
+   #include "tcl/tcllistobj.h"
+   #include "tcl/tclpkg.h"
+
+   namespace Dlist
+   {
+     Tcl::List choose(Tcl::List source_list, Tcl::List index_list)
+     {
+       Tcl::List result;
+
+       for (unsigned int i = 0; i < index_list.length(); ++i)
+         {
+           unsigned int index = index_list.get<unsigned int>(i);
+
+           result.append(source_list.at(index));
+         }
+
+       ASSERT(result.length() == index_list.length());
+
+       return result;
+     }
+   }
+
+   \endcode
+
+   Here we see how the C++ class Tcl::List wraps the functionality of
+   Tcl list objects, making them easily manipulable within C++. Next,
+   we expose this choose() function as a Tcl command, [dlist::choose]:
+
+   \code
+
+   extern "C"
+   int Dlist_Init(Tcl_Interp* interp)
+   {
+     PKG_CREATE(interp, "dlist", "$Revision$");
+
+     pkg->def( "choose", "source_list index_list", &Dlist::choose, SRC_POS );
+
+     PKG_RETURN;
+   }
+
+   \endcode
+
+   <ol>
+
+   <li> We have created a Tcl::Pkg with the PKG_CREATE() macro. By
+        default packages are associated with a namespace, which we've
+        specified here as "dlist".
+
+   <li> Next, we use pkg->def() to create the [dlist::choose]
+        command. Commands go into the package's namespace by default,
+        unless there is an explicit namespace qualifier in the given
+        command name -- here we've just given "choose" as the command
+        name (the first argument to def()).
+
+   <li> The second argument to def() gives a human-readable
+        description of the arguments that the command expects. This
+        description is fed back to the user in case he or she enters
+        the command with the wrong number of arguments.
+
+   <li> The third argument to def() gives a pointer to the C++
+        function that we're trying to wrap, in this case
+        &Dlist::choose. This parameter can be either a pointer to a
+        free function, or a pointer to a member function, or a
+        suitable functor object. Here's what Tcl::Pkg::def() does, in
+        more detail.
+
+        <ul>
+
+        <li> Tcl::Pkg::def() (defined in src/tcl/tclpkg.h) calls
+             Tcl::makeCmd().
+
+        <li> Tcl::makeCmd() (defined in src/tcl/tclfunctor.h) calls
+             Tcl::makeGenericCmd (also defined in
+             src/tcl/tclfunctor.h)
+
+        <li> Tcl::makeGenericCmd builds a Tcl::Command using a
+             suitable Tcl::GenericCallback. The Tcl::GenericCallback
+             object is responsible for converting all of the commands
+             arguments from Tcl to appropriate C++ types, and for
+             converting the C++ result back to an appropriate Tcl
+             object.
+
+        <li> The C++/Tcl conversion routines are defined in
+             src/tcl/tclconvert.h as a set of Tcl::fromTcl() and
+             Tcl::toTcl() overloads. That file contains overloads for
+             the basic built-in types as well as for fundamental value
+             types (like strings). This mechanism is extensible; users
+             can simply provide additional Tcl::toTcl() and
+             Tcl::fromTcl() overloads for their own types, as long as
+             these overloads are defined before they are needed by any
+             Tcl::Pkg::def() call.
+
+        <li> The Tcl::Command object (defined in src/tcl/tclcmd.h)
+             built by Tcl::makeGenericCmd sets up the raw C callback
+             with the Tcl interpreter. It does this through one final
+             indirection, namely Tcl::CommandGroup (defined in
+             src/tcl/tclcommandgroup.h).
+
+        <li> Tcl::CommandGroup is responsible for managing an overload
+             set of commands. Each Tcl::CommandGroup represents a
+             single Tcl_CreateObjCommand() call. But, when the
+             Tcl::CommandGroup gets called back by the Tcl
+             interpreter, that CommandGroup will look into its set of
+             overloads to try to find whose number of arguments
+             matches the number of arguments in the current command
+             invocation. If one is found, then it is invoked; if no
+             matching overload is found, then an error message is
+             returnd via the Tcl interpreter.
+
+        </ul>
+
+   </ol>
+
 **/
+
+/* Local Variables: */
+/* indent-tabs-mode: nil */
+/* End: */
