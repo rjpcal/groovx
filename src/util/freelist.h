@@ -35,26 +35,25 @@
 #include <cstddef>
 
 /// Un-typesafe base class for maintaining a free-list memory pool.
-class FreeListBase
+class free_list_base
 {
 private:
   /// Free-node class for free-list memory pools.
-  struct Node
+  struct node
   {
-    Node* next;
+    node* next;
   };
 
-  Node* itsNodeList;
-  std::size_t itsSizeCheck;
+  node* m_node_list;
+  const std::size_t m_size_check;
 
-  FreeListBase(const FreeListBase&);
-  FreeListBase& operator=(const FreeListBase&);
+  free_list_base(const free_list_base&);
+  free_list_base& operator=(const free_list_base&);
 
 public:
   /// Construct an (empty) free list.
-  /** All objects from this list are expected to be of size \a size_check. */
-  FreeListBase(std::size_t size_check) :
-    itsNodeList(0), itsSizeCheck(size_check) {}
+  /** All objects from this list must be of size \a size_check. */
+  free_list_base(std::size_t size_check);
 
   /// Allocate space for a new object.
   /** If there are chunks available in the free list, one of those is
@@ -66,26 +65,26 @@ public:
   void deallocate(void* space);
 };
 
-/// Typesafe wrapper of FreeListBase for maintaining free-list memory pools.
+/// Typesafe wrapper of free_list_base for maintaining free-list memory pools.
 template <class T>
-class FreeList
+class free_list
 {
 private:
-  FreeListBase itsBase;;
+  free_list_base m_base;
 
 public:
   /// Construct an (empty) free list.
   /** All objects allocated from this list must be of size sizeof(T). */
-  FreeList() : itsBase(sizeof(T)) {}
+  free_list() : m_base(sizeof(T)) {}
 
   void* allocate(std::size_t bytes)
   {
-    return itsBase.allocate(bytes);
+    return m_base.allocate(bytes);
   }
 
   void deallocate(void* space)
   {
-    itsBase.deallocate(space);
+    m_base.deallocate(space);
   }
 };
 

@@ -37,20 +37,27 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-void* FreeListBase::allocate(std::size_t bytes)
+free_list_base::free_list_base(std::size_t size_check) :
+  m_node_list(0), m_size_check(size_check)
 {
-  Assert(bytes == itsSizeCheck);
-  if (itsNodeList == 0)
-    return ::operator new(bytes);
-  Node* node = itsNodeList;
-  itsNodeList = itsNodeList->next;
-  return (void*) node;
+  Assert(m_size_check >= sizeof(node));
 }
 
-void FreeListBase::deallocate(void* space)
+void* free_list_base::allocate(std::size_t bytes)
 {
-  ((Node*)space)->next = itsNodeList;
-  itsNodeList = (Node*)space;
+  Assert(bytes == m_size_check);
+  if (m_node_list == 0)
+    return ::operator new(bytes);
+  node* node = m_node_list;
+  m_node_list = m_node_list->next;
+  return static_cast<void*>(node);
+}
+
+void free_list_base::deallocate(void* space)
+{
+  node* n = static_cast<node*>(space);
+  n->next = m_node_list;
+  m_node_list = n;
 }
 
 static const char vcid_freelist_cc[] = "$Header$";
