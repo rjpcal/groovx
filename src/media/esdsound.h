@@ -38,6 +38,7 @@
 #include "util/fstring.h"
 #include "util/sharedptr.h"
 
+#include <cstring> // for strncpy()
 #include <esd.h>
 
 #include "util/trace.h"
