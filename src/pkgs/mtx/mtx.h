@@ -813,7 +813,8 @@ public:
     Base(specs, data)
   {}
 
-  mtx(double* data, int mrows, int ncols, storage_policy s = COPY);
+  static mtx colmaj_import_from(double* data, int mrows, int ncols,
+                                storage_policy s = COPY);
 
   static mtx zeros(const mtx_shape& s);
 
