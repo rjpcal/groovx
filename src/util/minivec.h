@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Wed Jun 26 12:13:19 2002
+// written: Wed Jul 31 18:08:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -434,12 +434,12 @@ minivec<T>& minivec<T>::operator= (const minivec<T>& x)
     }
   else if (size() >= x.size())
     {
-      iterator i = copy(x.begin(), x.end(), begin());
+      iterator i = MVUtils::copy(x.begin(), x.end(), begin());
       destroy(i, finish);
     }
   else
     {
-      copy(x.begin(), x.begin() + size(), begin());
+      MVUtils::copy(x.begin(), x.begin() + size(), begin());
       MVUtils::uninitialized_copy(x.begin() + size(), x.end(), begin() + size());
     }
   finish = begin() + x.size();
