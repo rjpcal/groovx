@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Feb 19 17:08:27 2002
+// written: Tue Feb 19 17:45:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -304,12 +304,13 @@ public:
 
 typedef struct mxArray_tag mxArray;
 
-struct WithStoragePolicies
+struct WithPolicies
 {
+  enum InitPolicy { ZEROS, NO_INIT };
   enum StoragePolicy { COPY, BORROW, REFER };
 };
 
-class MtxImpl : public WithStoragePolicies
+class MtxImpl : public WithPolicies
 {
 private:
   template <class T>
@@ -325,7 +326,7 @@ public:
 
   MtxImpl(const MtxImpl& other);
 
-  MtxImpl(int mrows, int ncols);
+  MtxImpl(int mrows, int ncols, InitPolicy p);
 
   MtxImpl(double* data, int mrows, int ncols, StoragePolicy s = COPY)
   { init(data, mrows, ncols, s); }
@@ -447,7 +448,7 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 
-class Mtx : public WithStoragePolicies
+class Mtx : public WithPolicies
 {
 public:
 
@@ -462,7 +463,8 @@ public:
   Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
     itsImpl(data, mrows, ncols, s) {}
 
-  Mtx(int mrows, int ncols) : itsImpl(mrows, ncols) {}
+  Mtx(int mrows, int ncols, InitPolicy p = ZEROS) :
+    itsImpl(mrows, ncols, p) {}
 
   Mtx(const Slice& s);
 
@@ -582,6 +584,9 @@ public:
 
   int ncols() const { return itsImpl.ncols(); }
 
+  bool sameSize(const Mtx& x) const
+  { return (mrows() == x.mrows()) && (ncols() == x.ncols()); }
+
   //
   // Slices, submatrices
   //
@@ -663,13 +668,7 @@ public:
   double min() const { return *(find_min()); }
   double max() const { return *(find_max()); }
 
-  double sum() const
-  {
-    double res = 0.0;
-    for (int i = 0; i < nelems(); ++i)
-      res += at(i);
-    return res;
-  }
+  double sum() const;
 
   double mean() const { return sum() / nelems(); }
 
@@ -806,6 +805,9 @@ inline Mtx operator-(const Mtx& m1, const Mtx& m2)
   result -= m2;
   return result;
 }
+
+Mtx min(const Mtx& m1, const Mtx& m2);
+Mtx max(const Mtx& m1, const Mtx& m2);
 
 static const char vcid_mtx_h[] = "$Header$";
 #endif // !MTX_H_DEFINED

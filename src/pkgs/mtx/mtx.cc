@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Feb 19 17:05:07 2002
+// written: Tue Feb 19 17:51:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@
 #ifdef HAVE_MATLAB
 #include <libmatlb.h>
 #endif
+#include <numeric>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -279,8 +280,17 @@ MtxImpl::MtxImpl(const MtxImpl& other) :
   datablock_->incrRefCount();
 }
 
-MtxImpl::MtxImpl(int mrows, int ncols) :
-  datablock_(DataBlock::makeBlank(mrows*ncols)),
+namespace
+{
+  DataBlock* newDataBlock(int mrows, int ncols, MtxImpl::InitPolicy p)
+  {
+    if (p == MtxImpl::ZEROS) return DataBlock::makeBlank(mrows*ncols);
+    return DataBlock::makeUninitialized(mrows*ncols);
+  }
+}
+
+MtxImpl::MtxImpl(int mrows, int ncols, InitPolicy p) :
+  datablock_(newDataBlock(mrows, ncols, p)),
   mrows_(mrows),
   rowstride_(mrows),
   ncols_(ncols),
@@ -388,7 +398,7 @@ DOTRACE("Mtx::resize");
     return;
   else
     {
-      MtxImpl newImpl(mrowsNew, ncolsNew);
+      MtxImpl newImpl(mrowsNew, ncolsNew, ZEROS);
       this->itsImpl.swap(newImpl);
     }
 }
@@ -476,6 +486,10 @@ Mtx::const_iterator Mtx::find_max() const
   return std::max_element(begin(), end());
 }
 
+double Mtx::sum() const
+{
+  return std::accumulate(begin(), end(), 0.0);
+}
 
 Mtx& Mtx::operator+=(const Mtx& other)
 {
@@ -539,6 +553,36 @@ DOTRACE("Mtx::assign_MMmul");
       for (int col = 0; col < m2.ncols(); ++col, ++rowElement)
         *rowElement = innerProduct(veciter, m2.columnIter(col));
     }
+}
+
+Mtx min(const Mtx& m1, const Mtx& m2)
+{
+  if (! m1.sameSize(m2) )
+    throw Util::Error("dimension mismatch in min(Mtx, Mtx)");
+
+  Mtx result(m1.mrows(), m1.ncols(), Mtx::NO_INIT);
+
+  std::transform(m1.begin(), m1.end(),
+                 m2.begin(),
+                 result.begin_nc(),
+                 Min());
+
+  return result;
+}
+
+Mtx max(const Mtx& m1, const Mtx& m2)
+{
+  if (! m1.sameSize(m2) )
+    throw Util::Error("dimension mismatch in max(Mtx, Mtx)");
+
+  Mtx result(m1.mrows(), m1.ncols(), Mtx::NO_INIT);
+
+  std::transform(m1.begin(), m1.end(),
+                 m2.begin(),
+                 result.begin_nc(),
+                 Max());
+
+  return result;
 }
 
 static const char vcid_mtx_cc[] = "$Header$";
