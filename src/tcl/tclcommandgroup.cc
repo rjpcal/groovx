@@ -51,8 +51,8 @@ namespace
   fstring getFullCommandName(Tcl::Interp& interp, Tcl_Command token)
   {
     Tcl::ObjPtr result;
-    // Note, this Tcl API call requires Tcl 8.4.6 or greater (or 8.5 or
-    // greater)
+    // Note, this Tcl API call requires Tcl 8.4.6 or greater (or 8.5
+    // or greater)
     Tcl_GetCommandFullName(interp.intp(), token, result.obj());
     return fstring(result.as<const char*>());
   }
@@ -66,7 +66,8 @@ public:
     cmdToken(Tcl_CreateObjCommand(interp.intp(),
                                   cmd_name.c_str(),
                                   // see comment in CommandGroup's
-                                  // constructor for why we pass zeros here
+                                  // constructor for why we pass zeros
+                                  // here
                                   static_cast<Tcl_ObjCmdProc*>(0),
                                   static_cast<ClientData>(0),
                                   static_cast<Tcl_CmdDeleteProc*>(0))),
@@ -141,13 +142,14 @@ Tcl::CommandGroup::CommandGroup(Tcl::Interp& interp,
 {
 DOTRACE("Tcl::CommandGroup::CommandGroup");
 
-  // Register the command procedure. We do a two-step initialization. When
-  // we call Tcl_CreateObjCommand in Impl's constructor, we don't fill in
-  // the clientData/objProc/deleteProc values there, but instead wait to
-  // fill them in here. The reason is that we don't want to set up any
-  // callbacks from Tcl until after we're sure that everything else in the
-  // construction sequence has succeeded. We want to ensure that we don't
-  // have "dangling callbacks" in case an exception escapes from an earlier
+  // Register the command procedure. We do a two-step
+  // initialization. When we call Tcl_CreateObjCommand in Impl's
+  // constructor, we don't fill in the clientData/objProc/deleteProc
+  // values there, but instead wait to fill them in here. The reason
+  // is that we don't want to set up any callbacks from Tcl until
+  // after we're sure that everything else in the construction
+  // sequence has succeeded. We want to ensure that we don't have
+  // "dangling callbacks" in case an exception escapes from an earlier
   // part of Impl's or CommandGroups's constructor.
   Tcl_CmdInfo info;
   const int result = Tcl_GetCommandInfoFromToken(rep->cmdToken, &info);
@@ -167,16 +169,17 @@ DOTRACE("Tcl::CommandGroup::CommandGroup");
 /*
    (1) application exit might trigger the cExitCallback
 
-   (2) the cDeleteCallback might get triggered either by explicit deletion
-       by the user (e.g. [rename]ing the command to the empty string "")
+   (2) the cDeleteCallback might get triggered either by explicit
+       deletion by the user (e.g. [rename]ing the command to the empty
+       string "")
 
    General principles:
 
-   (1) it is always "safe" to destroy the Tcl_Command, in the sense that it
-       can't cause any crashes... in particular, it's OK to destroy the
-       Tcl_Command even if rep->cmdList is not empty; that would just mean
-       that the remaining Tcl::Command objects in rep->cmdList won't have
-       any input sent their way
+   (1) it is always "safe" to destroy the Tcl_Command, in the sense
+       that it can't cause any crashes... in particular, it's OK to
+       destroy the Tcl_Command even if rep->cmdList is not empty; that
+       would just mean that the remaining Tcl::Command objects in
+       rep->cmdList won't have any input sent their way
  */
 Tcl::CommandGroup::~CommandGroup() throw()
 {
@@ -267,12 +270,13 @@ int Tcl::CommandGroup::rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw()
 {
 DOTRACE("Tcl::CommandGroup::rawInvoke");
 
-  // This is to use the separate Util::Prof object that each CommandGroup
-  // has. This way we can trace the timing of individual Tcl commands.
+  // This is to use the separate Util::Prof object that each
+  // CommandGroup has. This way we can trace the timing of individual
+  // Tcl commands.
   Util::Trace tracer(rep->prof, DYNAMIC_TRACE_EXPR);
 
-  // Should always be at least one since there is always the command-name
-  // itself as the first argument.
+  // Should always be at least one since there is always the
+  // command-name itself as the first argument.
   Assert(s_objc >= 1);
 
   if (GET_DBG_LEVEL() > 1)
