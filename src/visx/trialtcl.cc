@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Thu Jul 12 13:23:43 2001
+// written: Fri Jul 13 18:35:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include "timinghdlr.h"
 
 #include "tcl/fieldpkg.h"
+#include "tcl/objfunctor.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
@@ -28,31 +29,10 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace TrialTcl {
-  class AddCmd;
+namespace TrialTcl
+{
   class TrialPkg;
 }
-
-//---------------------------------------------------------------------
-//
-// TrialTcl::AddCmd --
-//
-//---------------------------------------------------------------------
-
-class TrialTcl::AddCmd : public Tcl::TclItemCmd<Trial> {
-public:
-  AddCmd(Tcl::CTclItemPkg<Trial>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<Trial>(pkg, cmd_name, "trialid objid posid", 4, 4) {}
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-  {
-    int objid = ctx.getIntFromArg(2);
-    int posid = ctx.getIntFromArg(3);
-
-    Trial* t = getItem(ctx);
-    t->add(objid, posid);
-  }
-};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -67,7 +47,7 @@ public:
   {
     Tcl::addTracing(this, Trial::tracer);
 
-    addCommand( new AddCmd(this, "Trial::add") );
+    Tcl::def( this, &Trial::add, "Trial::add", "trialid objid posid" );
 
     declareCSetter("addNode", &Trial::addNode);
     declareCGetter("avgResponse", &Trial::avgResponse);
@@ -98,7 +78,8 @@ public:
 //---------------------------------------------------------------------
 
 extern "C"
-int Trial_Init(Tcl_Interp* interp) {
+int Trial_Init(Tcl_Interp* interp)
+{
 DOTRACE("Trial_Init");
 
   Tcl::TclPkg* pkg = new TrialTcl::TrialPkg(interp);
