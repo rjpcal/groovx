@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Mon Sep 10 17:17:39 2001
+// written: Fri Sep 14 14:06:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef MATLABTCL_CC_DEFINED
 #define MATLABTCL_CC_DEFINED
 
-#include "visx/mtxobj.h"
+#include "pkgs/mtx/mtxobj.h"
 
 #include "tcl/tclpkg.h"
 
@@ -94,9 +94,9 @@ private:
 
 
 extern "C"
-int Matlab_Init(Tcl_Interp* interp)
+int Matlabengine_Init(Tcl_Interp* interp)
 {
-DOTRACE("Matlab_Init");
+DOTRACE("Matlabengine_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "MatlabEngine", "$Revision$");
   Tcl::defGenericObjCmds<MatlabEngine>(pkg);
