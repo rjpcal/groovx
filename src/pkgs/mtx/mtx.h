@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Fri Mar  1 17:03:53 2002
+// written: Sun Mar  3 14:10:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,6 +67,51 @@ namespace RC // Range checking
 #  define RCR_leq(x,lim) (x)
 #  define RCR_inHalfOpen(x,llim,ulim) (x)
 #endif
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * Range class.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class Range
+{
+private:
+  const int itsFirst;
+  const int itsCount;
+
+public:
+  Range(int first, int count) : itsFirst(first), itsCount(count) {}
+
+  int begin() const { return itsFirst; }
+  int end() const { return itsFirst+itsCount; }
+  int count() const { return itsCount; }
+};
+
+class RowRange : public Range
+{
+public:
+  RowRange(int first, int count) : Range(first, count) {}
+};
+
+class ColRange : public Range
+{
+public:
+  ColRange(int first, int count) : Range(first, count) {}
+};
+
+inline Range range(int begin, int end) { return Range(begin, end-begin); }
+inline Range range_n(int begin, int count) { return Range(begin, count); }
+
+inline RowRange row_range(int begin, int end) { return RowRange(begin, end-begin); }
+inline RowRange row_range_n(int begin, int count) { return RowRange(begin, count); }
+
+inline ColRange col_range(int begin, int end) { return ColRange(begin, end-begin); }
+inline ColRange col_range_n(int begin, int count) { return ColRange(begin, count); }
+
+
 
 class Mtx;
 
@@ -146,7 +191,6 @@ private:
 
 typedef MtxIterBase<double> MtxIter;
 typedef MtxIterBase<const double> MtxConstIter;
-
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -390,8 +434,8 @@ public:
 
   void reshape(int mrows, int ncols);
 
-  void selectRowRange(int r, int nr);
-  void selectColumnRange(int c, int nc);
+  void selectRows(const RowRange& rng);
+  void selectCols(const ColRange& rng);
 
   int offsetFromStart(int row, int col) const
   {
@@ -751,7 +795,7 @@ public:
     { return MtxConstIter(itsImpl.address(r,0),
                           itsImpl.rowstride(), itsImpl.ncols()); }
 
-  Mtx rows(int r, int nr) const;
+  Mtx rows(const RowRange& rng) const;
 
   Mtx asRow() const
     { Mtx result(*this); result.reshape(1, nelems()); return result; }
@@ -772,7 +816,7 @@ public:
     { return MtxConstIter(itsImpl.address(0,c),
                           itsImpl.colstride(), mrows()); }
 
-  Mtx columns(int c, int nc) const;
+  Mtx columns(const ColRange& rng) const;
 
   Mtx asColumn() const
     { Mtx result(*this); result.reshape(nelems(), 1); return result; }

@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Fri Mar  1 17:05:19 2002
+// written: Sun Mar  3 14:04:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -354,34 +354,34 @@ void MtxImpl::reshape(int mr, int nc)
   ncols_ = nc;
 }
 
-void MtxImpl::selectRowRange(int r, int nr)
+void MtxImpl::selectRows(const RowRange& rng)
 {
-  if (r < 0)
-    throw Util::Error("selectRowRange(): row index must be >= 0");
+  if (rng.begin() < 0)
+    throw Util::Error("selectRows(): row index must be >= 0");
 
-  if (nr <= 0)
-    throw Util::Error("selectRowRange(): number of rows must be > 0");
+  if (rng.count() <= 0)
+    throw Util::Error("selectRows(): number of rows must be > 0");
 
-  if ((r+nr) > mrows_)
-    throw Util::Error("selecrRowRange(): upper row index out of range");
+  if (rng.end() > mrows_)
+    throw Util::Error("selectRows(): upper row index out of range");
 
-  offset_ += r;
-  mrows_ = nr;
+  offset_ += rng.begin();
+  mrows_ = rng.count();
 }
 
-void MtxImpl::selectColumnRange(int c, int nc)
+void MtxImpl::selectCols(const ColRange& rng)
 {
-  if (c < 0)
-    throw Util::Error("selectColumnRange(): column index must be >= 0");
+  if (rng.begin() < 0)
+    throw Util::Error("selectCols(): column index must be >= 0");
 
-  if (nc <= 0)
-    throw Util::Error("selectColumnRange(): number of columns must be > 0");
+  if (rng.count() <= 0)
+    throw Util::Error("selectCols(): number of columns must be > 0");
 
-  if ((c+nc) > ncols_)
-    throw Util::Error("selectColumnRange(): upper column index out of range");
+  if (rng.end() > ncols_)
+    throw Util::Error("selectCols(): upper column index out of range");
 
-  offset_ += c*rowstride_;
-  ncols_ = nc;
+  offset_ += rng.begin()*rowstride_;
+  ncols_ = rng.count();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -451,11 +451,11 @@ void Mtx::print(const char* mtxName) const
   print();
 }
 
-Mtx Mtx::rows(int r, int nr) const
+Mtx Mtx::rows(const RowRange& rng) const
 {
   Mtx result(*this);
 
-  result.itsImpl.selectRowRange(r, nr);
+  result.itsImpl.selectRows(rng);
 
   return result;
 }
@@ -475,11 +475,11 @@ void Mtx::reorderRows(const Mtx& index_)
   *this = neworder;
 }
 
-Mtx Mtx::columns(int c, int nc) const
+Mtx Mtx::columns(const ColRange& rng) const
 {
   Mtx result(*this);
 
-  result.itsImpl.selectColumnRange(c, nc);
+  result.itsImpl.selectCols(rng);
 
   return result;
 }
