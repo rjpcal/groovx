@@ -21,11 +21,15 @@ itcl::class Editor {
 	 private variable itsAttribValues
 
 	 private method standardSettings {objs} {
-		  GrObj::alignmentMode $objs $GrObj::CENTER_ON_CENTER
-		  GrObj::scalingMode $objs $GrObj::MAINTAIN_ASPECT_SCALING
-		  GrObj::renderMode $objs $GrObj::DIRECT_RENDER
-		  GrObj::unRenderMode $objs $GrObj::CLEAR_BOUNDING_BOX
-		  GrObj::height $objs 1.0
+		  set grobjs [dlist_select $objs [GrObj::is $objs]]
+
+		  if { [llength $grobjs] > 0 } {
+				GrObj::alignmentMode $grobjs $GrObj::CENTER_ON_CENTER
+				GrObj::scalingMode $grobjs $GrObj::MAINTAIN_ASPECT_SCALING
+				GrObj::renderMode $grobjs $GrObj::DIRECT_RENDER
+				GrObj::unRenderMode $grobjs $GrObj::CLEAR_BOUNDING_BOX
+				GrObj::height $grobjs 1.0
+		  }
 	 }
 
 	 private method addNewObject {} {
@@ -168,7 +172,10 @@ itcl::class Editor {
 					 set lower [lindex $field 1]
 					 set upper [lindex $field 2]
 					 set step [lindex $field 3]
-					 set startsnewgroup [lindex $field 4]
+					 set flags [lindex $field 4]
+
+					 set startsnewgroup [expr [lsearch $flags NEW_GROUP] != -1]
+					 set transient [expr [lsearch $flags TRANSIENT] != -1]
 
 					 if {$startsnewgroup} {
 						  set currentframe [frame $fieldFrame.$name]
@@ -185,6 +192,10 @@ itcl::class Editor {
 								-repeatdelay 500 -repeatinterval 250 \
 								-orient horizontal \
 								-command [itcl::code $this setAttrib $name]
+
+					 if {$transient} {
+						  $pane.$name configure -fg blue
+					 }
 
 					 set itsAttribValues($name) 0
 
@@ -302,7 +313,8 @@ itcl::class Editor {
 
 	 public method saveBitmaps {basename} {
 		  set objs [$itsControls.editobjlist get 0 end]
-		  foreach obj $objs {
+		  set grobjs [dlist_select $objs [GrObj::is $objs]]
+		  foreach obj $grobjs {
 				GrObj::renderMode $obj $GrObj::GL_BITMAP_CACHE
 				GrObj::saveBitmapCache $obj "${basename}${obj}.pbm"
 				GrObj::renderMode $obj $GrObj::DIRECT_RENDER
