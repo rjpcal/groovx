@@ -3,7 +3,7 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Oct 19 11:39:05 2000
+// written: Thu Oct 19 18:53:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,6 @@ namespace GWT { class Canvas; }
 namespace IO {
   class Reader;
   class Writer;
-  class LegacyReader;
-  class LegacyWriter;
 }
 
 ///////////////////////////////////////////////////////////////////////
