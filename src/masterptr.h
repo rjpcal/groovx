@@ -3,7 +3,7 @@
 // masterptr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  9 08:18:28 2000
-// written: Mon Oct  9 13:01:11 2000
+// written: Mon Oct  9 13:25:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,15 +43,35 @@ public:
   /// Utility function to throw an \c ErrorWithMsg exception.
   static void throwErrorWithMsg(const char* msg);
 
+  /// Default constructor.
   MasterPtrBase();
 
+  /// Increment the object's reference count.
   void incrRefCount();
+
+  /** Decrement the object's reference count. If this causes the
+      reference count to fall to zero or below, the pointee and the
+      pointer will be destroyed by a call to 'delete this'. */
   void decrRefCount();
 
+  /// Returns true if the reference count is greater than one.
+  bool isShared() const;
+
+  /// Returns true if the reference count is one or less.
+  bool isUnshared() const;
+
+  /// Returns the object's reference count.
   int refCount() const;
 
-  virtual bool isValid() const = 0;
+  /** Returns true if there is a valid pointee (the logical negation
+      of isNull()). */
+  bool isValid() const;
 
+  /// Returns true if the pointee is null.
+  virtual bool isNull() const = 0;
+
+  /** Returns true if the pointee of \a other is logically the same as
+      the pointee of \a this. */
   virtual bool operator==(const MasterPtrBase& other) = 0;
 };
 
@@ -73,8 +93,8 @@ public:
   /// Default constructor.
   NullMasterPtr();
 
-  /// Overridden from \c MasterPtrBase to always returns false.
-  virtual bool isValid() const;
+  /// Overridden from \c MasterPtrBase to always return true.
+  virtual bool isNull() const;
 
   /// Returns true if and only if \a other is also a \c NullMasterPtr.
   virtual bool operator==(const MasterPtrBase& other);
@@ -100,7 +120,7 @@ public:
 
   virtual IO::IoObject* ioPtr() const = 0;
 
-  virtual bool isValid() const = 0;
+  virtual bool isNull() const = 0;
 
   virtual bool operator==(const MasterPtrBase& other) = 0;
 };
@@ -130,7 +150,7 @@ public:
 
   virtual IO::IoObject* ioPtr() const;
 
-  virtual bool isValid() const;
+  virtual bool isNull() const;
 
   virtual bool operator==(const MasterPtrBase& other);
 };
