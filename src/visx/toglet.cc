@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon May 22 15:30:47 2000
+// written: Mon May 22 18:01:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,10 +56,13 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
+namespace ToglConfig_Impl {
   void dummyReshapeCallback(Togl* togl);
   void dummyDisplayCallback(Togl* togl);
   void dummyEpsCallback(const Togl* togl);
+}
+
+namespace {
 
   void dummyEventProc(ClientData clientData, XEvent* eventPtr) {
   DOTRACE("dummyEventProc");
@@ -104,8 +107,8 @@ DOTRACE("ToglConfig::ToglConfig");
   DebugEvalNL((void*) this);
 
   Togl_SetClientData(itsWidget, static_cast<ClientData>(this));
-  Togl_SetReshapeFunc(itsWidget, dummyReshapeCallback);
-  Togl_SetDisplayFunc(itsWidget, dummyDisplayCallback);
+  Togl_SetReshapeFunc(itsWidget, ToglConfig_Impl::dummyReshapeCallback);
+  Togl_SetDisplayFunc(itsWidget, ToglConfig_Impl::dummyDisplayCallback);
   
   setUnitAngle(unit_angle);
 
@@ -552,7 +555,8 @@ DOTRACE("ToglConfig::writeEpsFile");
 	 
 	 // do the EPS dump
 	 const int rgbFlag = 0;
-	 Togl_DumpToEpsFile(itsWidget, filename, rgbFlag, dummyEpsCallback);
+	 Togl_DumpToEpsFile(itsWidget, filename, rgbFlag,
+							  ToglConfig_Impl::dummyEpsCallback);
   }
   glPopAttrib();
 
@@ -566,27 +570,62 @@ DOTRACE("ToglConfig::writeEpsFile");
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
-void dummyReshapeCallback(Togl* togl) {
-DOTRACE("dummyReshapeCallback");
+void ToglConfig_Impl::dummyReshapeCallback(Togl* togl) {
+DOTRACE("ToglConfig_Impl::dummyReshapeCallback");
   ToglConfig* config = static_cast<ToglConfig*>(Togl_GetClientData(togl));
   DebugEvalNL((void*) config);
-  config->reconfigure();
+
+  try {
+	 config->reconfigure();
+  }
+  catch (ErrorWithMsg& err) {
+	 Tcl_AppendResult(Togl_Interp(togl), err.msg_cstr(), (char*) 0);
+	 Tcl_BackgroundError(Togl_Interp(togl));
+  }
+  catch (...) {
+	 Tcl_AppendResult(Togl_Interp(togl), "an error of unknown type occurred "
+							"in dummyReshapeCallback", (char*) 0);
+	 Tcl_BackgroundError(Togl_Interp(togl));
+  }
 }
 
-void dummyDisplayCallback(Togl* togl) {
-DOTRACE("dummyDisplayCallback");
+void ToglConfig_Impl::dummyDisplayCallback(Togl* togl) {
+DOTRACE("ToglConfig_Impl::dummyDisplayCallback");
+
   ToglConfig* config = static_cast<ToglConfig*>(Togl_GetClientData(togl));
   DebugEvalNL((void*) config);
-  config->refresh();
+
+  try {
+	 config->refresh();
+  }
+  catch (ErrorWithMsg& err) {
+	 Tcl_AppendResult(Togl_Interp(togl), err.msg_cstr(), (char*) 0);
+	 Tcl_BackgroundError(Togl_Interp(togl));
+  }
+  catch (...) {
+	 Tcl_AppendResult(Togl_Interp(togl), "an error of unknown type occurred "
+							"in dummyDisplayCallback", (char*) 0);
+	 Tcl_BackgroundError(Togl_Interp(togl));
+  }
 }
 
-void dummyEpsCallback(const Togl* togl) {
-DOTRACE("dummyEpsCallback");
+void ToglConfig_Impl::dummyEpsCallback(const Togl* togl) {
+DOTRACE("ToglConfig_Impl::dummyEpsCallback");
   ToglConfig* config = static_cast<ToglConfig*>(Togl_GetClientData(togl));
   DebugEvalNL((void*) config);
-  config->refresh();
-}
+
+  try {
+	 config->refresh();
+  }
+  catch (ErrorWithMsg& err) {
+	 Tcl_AppendResult(Togl_Interp(togl), err.msg_cstr(), (char*) 0);
+	 Tcl_BackgroundError(Togl_Interp(togl));
+  }
+  catch (...) {
+	 Tcl_AppendResult(Togl_Interp(togl), "an error of unknown type occurred "
+							"in dummyEpsCallback", (char*) 0);
+	 Tcl_BackgroundError(Togl_Interp(togl));
+  }
 }
 
 static const char vcid_toglconfig_cc[] = "$Header$";
