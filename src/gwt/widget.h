@@ -3,7 +3,7 @@
 // widget.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Dec  2 15:05:17 1999
-// written: Mon Dec  6 22:56:35 1999
+// written: Wed Mar 29 21:54:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,12 @@
 #ifndef WIDGET_H_DEFINED
 #define WIDGET_H_DEFINED
 
-class Canvas;
+namespace GWT {
+  class Canvas;
+  class Widget;
+}
 
-class Widget {
+class GWT::Widget {
 public:
   virtual ~Widget();
 
