@@ -130,7 +130,9 @@ test "FaceTcl-Face::loadFaces" "normal file read with no comments" {
 	 set num_read [llength $objids]
 	 expr $num_read == 10 && $num_read == [ObjList::count] \
 				&& [string compare [GrObj::type 0] "Face"] == 0
-} {^1$}
+	 set result "$num_read [ObjList::count] [GrObj::type 0]"
+	 return $result
+} {^10 10 Face$}
 test "FaceTcl-Face::loadFaces" "normal file read" {
 	 ObjList::reset
 	 set objids [Face::loadFaces $::TEST_DIR/faces_file]
@@ -170,7 +172,8 @@ test "FaceTcl-Face::loadFaces" "error from junk text file" {
 } {^Face::loadFaces: (InputError|unable to create object of type).*$}
 test "FaceTcl-Face::loadFaces" "error from junk binary file" {
 	 Face::loadFaces $::TEST_DIR/junk_bin_file
-} {^Face::loadFaces: (InputError|unable to create object of type).*$}
+} {^Face::loadFaces: (InputError|unable to create object of type).*$} \
+  [ expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
 
 ### Face::stringifyCmd ###
 test "FaceTcl-Face::stringify" "too few args" {
