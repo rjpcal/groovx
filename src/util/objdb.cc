@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Nov 17 12:15:46 2000
+// written: Tue Dec  5 18:09:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,8 @@
 #include "io/writeutils.h"
 
 #include "system/demangle.h"
+
+#include "util/ptrhandle.h"
 
 #include <typeinfo>
 #include <map>
@@ -40,62 +42,6 @@ InvalidIdError::~InvalidIdError() {}
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IoPtrHandle
-//
-///////////////////////////////////////////////////////////////////////
-
-class IoPtrHandle {
-  IoPtrHandle(); // not allowed
-
-public:
-
-  explicit IoPtrHandle(IO::IoObject* master) :
-	 itsIoObject(master)
-  {
-	 Invariant(itsIoObject != 0);
-	 itsIoObject->incrRefCount();
-  }
-
-  ~IoPtrHandle()
-  {
-	 Invariant(itsIoObject != 0);
-	 itsIoObject->decrRefCount();
-  }
-
-  IoPtrHandle(const IoPtrHandle& other) :
-	 itsIoObject(other.itsIoObject)
-  {
-	 Invariant(itsIoObject != 0);
-	 itsIoObject->incrRefCount();
-  }
-
-  IoPtrHandle& operator=(const IoPtrHandle& other)
-  {
-	 IoPtrHandle otherCopy(other);
-	 this->swap(otherCopy);
-	 Invariant(itsIoObject != 0);
-	 return *this;
-  }
-
-  IO::IoObject* ioObject() const
-  {
-	 Invariant(itsIoObject != 0);
-	 return itsIoObject;
-  }
-
-private:
-  void swap(IoPtrHandle& other)
-  {
-	 IO::IoObject* otherMaster = other.itsIoObject;
-	 other.itsIoObject = this->itsIoObject;
-	 this->itsIoObject = otherMaster;
-  }
-
-  IO::IoObject* itsIoObject;
-};
-
-///////////////////////////////////////////////////////////////////////
-//
 // IoPtrList::Impl definition
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,6 +54,9 @@ private:
   IoPtrList* itsOwner;
 
 public:
+
+  typedef PtrHandle<IO::IoObject> IoPtrHandle;
+
   typedef std::map<int, IoPtrHandle> MapType;
   MapType itsPtrMap;
 
@@ -155,7 +104,7 @@ public:
 		MapType::iterator itr = itsPtrMap.find(id);
 		if (itr == itsPtrMap.end()) return;
 
-		if ( (*itr).second.ioObject()->isShared() )
+		if ( (*itr).second.get()->isShared() )
 		  throw ErrorWithMsg("can't remove a shared object");
 
 		itsPtrMap.erase(itr);
@@ -176,7 +125,7 @@ public:
 		  {
 			 // If the object is shared, we'll be saving the object, so
 			 // copy it into the new_map,
-			 if ( (*itr).second.ioObject()->isShared() )
+			 if ( (*itr).second.get()->isShared() )
 				{
 				  new_map.insert(*itr);
 				}
@@ -191,9 +140,12 @@ public:
 		return num_removed;
 	 }
 
-  IO::IoObject* getCheckedPtrBase(int id) const throw (InvalidIdError)
+  void clearAll()
+    { itsPtrMap.clear(); }
+
+  IO::IoObject* getCheckedPtrBase(int id) throw (InvalidIdError)
 	 {
-		MapType::const_iterator itr = itsPtrMap.find(id);
+		MapType::iterator itr = itsPtrMap.find(id);
 		if (itr == itsPtrMap.end()) {
 		  InvalidIdError err("attempt to access invalid id '");
 		  err.appendNumber(id);
@@ -201,7 +153,7 @@ public:
 		  throw err;
 		}
 
-		return (*itr).second.ioObject();
+		return (*itr).second.get();
 	 }
 
   int insertPtrBase(IO::IoObject* ptr)
@@ -215,7 +167,7 @@ public:
 		  {
 			 // Make sure the existing object is the same as the object
 			 // that we're trying to insert
-			 Assert( (*existing_site).second.ioObject() == ptr );
+			 Assert( (*existing_site).second.get() == ptr );
 
 			 return ptr->id();
 		  }
@@ -296,7 +248,7 @@ int IoPtrList::Iterator::getId() const
 
 IO::IoObject* IoPtrList::Iterator::getObject() const
 {
-  return (*(itsImpl->itsIter)).second.ioObject();
+  return (*(itsImpl->itsIter)).second.get();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -387,7 +339,12 @@ DOTRACE("IoPtrList::clear");
 	 { ; }
 }
 
-IO::IoObject* IoPtrList::getCheckedPtrBase(int id) const throw (InvalidIdError) {
+void IoPtrList::clearOnExit() {
+DOTRACE("IoPtrList::clearOnExit");
+  itsImpl->clearAll(); 
+}
+
+IO::IoObject* IoPtrList::getCheckedPtrBase(int id) throw (InvalidIdError) {
 DOTRACE("IoPtrList::getCheckedPtrBase");
   return itsImpl->getCheckedPtrBase(id);
 }
