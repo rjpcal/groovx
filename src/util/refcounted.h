@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Sat May 19 11:27:43 2001
+// written: Mon Jun  4 15:06:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,6 @@
 class RefCounted {
 private:
   mutable int itsRefCount;
-  mutable int itsRefCount2;
 
   // These are disallowed since RefCounted's should always be in
   // one-to-one correspondence with their pointee's.
@@ -73,25 +72,14 @@ public:
       pointer will be destroyed by a call to 'delete this'. */
   void decrRefCount() const;
 
-  /// Increment the second (debugging) reference count.
-  void incrRefCount2() const;
-  /// Decrement the second (debugging) reference count.
-  void decrRefCount2() const;
-
   /// Returns true if the reference count is greater than one.
   bool isShared() const;
 
   /// Returns true if the reference count is one or less.
   bool isUnshared() const;
 
-  /// Returns the object's (total=normal+debugging) reference count.
+  /// Returns the object's reference count.
   int refCount() const;
-
-  /// Returns the object's normal reference count.
-  int refCount1() const;
-
-  /// Returns the object's second (debugging) reference count.
-  int refCount2() const;
 };
 
 static const char vcid_refcounted_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Sat Jun  2 15:50:12 2001
+// written: Mon Jun  4 15:09:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,8 +39,7 @@ DOTRACE("RefCounted::operator delete");
 }
 
 RefCounted::RefCounted() :
-  itsRefCount(0),
-  itsRefCount2(0)
+  itsRefCount(0)
 {
 DOTRACE("RefCounted::RefCounted");
  DebugEval((void*)this); 
@@ -49,43 +48,28 @@ DOTRACE("RefCounted::RefCounted");
 RefCounted::~RefCounted()
 {
 DOTRACE("RefCounted::~RefCounted");
- DebugEval((void*)this); 
- DebugEval(itsRefCount); DebugEvalNL(itsRefCount2); 
-  Assert(itsRefCount <= 0 && itsRefCount2 <= 0);
+  DebugEval((void*)this); DebugEvalNL(itsRefCount);
+  Assert(itsRefCount <= 0);
 }
 
 void RefCounted::incrRefCount() const {
 DOTRACE("RefCounted::incrRefCount");
- DebugEval((void*)this); 
+  DebugEval((void*)this);
   ++itsRefCount;
 }
 
 void RefCounted::decrRefCount() const {
 DOTRACE("RefCounted::decrRefCount");
- DebugEval((void*)this); 
+  DebugEval((void*)this); 
+
   --itsRefCount;
-  if (itsRefCount <= 0 && itsRefCount2 <= 0)
-	 delete this;
-}
-
-void RefCounted::incrRefCount2() const {
-DOTRACE("RefCounted::incrRefCount2");
-  ++itsRefCount2;
-}
-
-void RefCounted::decrRefCount2() const {
-DOTRACE("RefCounted::decrRefCount2");
-  --itsRefCount2;
-  if (itsRefCount <= 0 && itsRefCount2 <= 0)
+  if (itsRefCount <= 0)
 	 delete this;
 }
 
 bool RefCounted::isShared() const {
 DOTRACE("RefCounted::isShared");
-  return (itsRefCount > 1 ||
-			 itsRefCount2 > 1 ||
-			 (itsRefCount + itsRefCount2) > 1
-			 );
+  return (itsRefCount > 1);
 }
 
 bool RefCounted::isUnshared() const {
@@ -95,17 +79,7 @@ DOTRACE("RefCounted::isUnshared");
 
 int RefCounted::refCount() const {
 DOTRACE("RefCounted::refCount");
-  return itsRefCount + itsRefCount2;
-}
-
-int RefCounted::refCount1() const {
-DOTRACE("RefCounted::refCount1");
   return itsRefCount;
-}
-
-int RefCounted::refCount2() const {
-DOTRACE("RefCounted::refCount2");
-  return itsRefCount2;
 }
 
 static const char vcid_refcounted_cc[] = "$Header$";
