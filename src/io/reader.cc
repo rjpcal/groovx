@@ -3,7 +3,7 @@
 // reader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:47:00 1999
-// written: Tue Oct 31 11:51:16 2000
+// written: Fri Nov  3 14:35:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,8 +12,6 @@
 #define READER_CC_DEFINED
 
 #include "io/reader.h"
-
-#include "util/strings.h"
 
 #include <cstddef>
 
@@ -43,48 +41,48 @@ IO::ReadVersionError::~ReadVersionError() {}
 IO::Reader::~Reader() {}
 
 template <>
-void IO::Reader::readValue<char>(const char* name, char& return_value) {
+void IO::Reader::readValue<char>(const fixed_string& name, char& return_value) {
   return_value = readChar(name);
 }
 
 template <>
-void IO::Reader::readValue<int>(const char* name, int& return_value) {
+void IO::Reader::readValue<int>(const fixed_string& name, int& return_value) {
   return_value = readInt(name);
 }
 
 template <>
-void IO::Reader::readValue<size_t>(const char* name, size_t& return_value) {
+void IO::Reader::readValue<size_t>(const fixed_string& name,
+											  size_t& return_value) {
   return_value = readInt(name);
 }
 
 template <>
-void IO::Reader::readValue<bool>(const char* name, bool& return_value) {
+void IO::Reader::readValue<bool>(const fixed_string& name,
+											bool& return_value) {
   return_value = readBool(name);
 }
 
 template <>
-void IO::Reader::readValue<double>(const char* name, double& return_value) {
+void IO::Reader::readValue<double>(const fixed_string& name,
+											  double& return_value) {
   return_value = readDouble(name);
 }
 
 template <>
-void IO::Reader::readValue<fixed_string>(const char* name,
-												 fixed_string& return_value) {
-  char* temp = readCstring(name);
-  return_value = temp;
-  delete [] temp;
+void IO::Reader::readValue<fixed_string>(const fixed_string& name,
+													  fixed_string& return_value) {
+  return_value = readStringImpl(name);
 }
 
 template <>
-void IO::Reader::readValue<dynamic_string>(const char* name,
-													dynamic_string& return_value) {
-  char* temp = readCstring(name);
-  return_value = temp;
-  delete [] temp;
+void IO::Reader::readValue<dynamic_string>(const fixed_string& name,
+														 dynamic_string& return_value) {
+  return_value = readStringImpl(name);
 }
 
 template <>
-void IO::Reader::readValue<Value>(const char* name, Value& return_value) {
+void IO::Reader::readValue<Value>(const fixed_string& name,
+											 Value& return_value) {
   readValueObj(name, return_value);
 }
 

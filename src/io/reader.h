@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Fri Nov  3 11:51:53 2000
+// written: Fri Nov  3 14:35:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
+#include "util/strings.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
@@ -27,8 +31,6 @@ namespace IO {
 }
 
 class Value;
-
-class fixed_string;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -95,19 +97,19 @@ public:
   virtual IO::VersionId readSerialVersionId() = 0;
 
   /// Read the \c char attribute associated with the tag \a name.
-  virtual char readChar(const char* name) = 0;
+  virtual char readChar(const fixed_string& name) = 0;
 
   /// Read the \c int attribute associated with the tag \a name.
-  virtual int readInt(const char* name) = 0;
+  virtual int readInt(const fixed_string& name) = 0;
 
   /// Read the \c bool attribute associated with the tag \a name.
-  virtual bool readBool(const char* name) = 0;
+  virtual bool readBool(const fixed_string& name) = 0;
 
   /// Read the \c double attribute associated with the tag \a name.
-  virtual double readDouble(const char* name) = 0;
+  virtual double readDouble(const fixed_string& name) = 0;
 
   /// Read the \c Value attribute associated with the tag \a name.
-  virtual void readValueObj(const char* name, Value& value) = 0;
+  virtual void readValueObj(const fixed_string& name, Value& value) = 0;
 
   /** This generic function reads a value attribute of any basic type,
       of type \c Value, or of several supported string types (\c
@@ -115,24 +117,26 @@ public:
       associated with tag \a name will be copied into \a
       returnValue. */
   template <class T>
-  void readValue(const char* name, T& returnValue);
+  void readValue(const fixed_string& name, T& returnValue);
 
   /** Get a pointer to the \c IO object associated with the tag \a
       name. A new object of the appropriate type will be created, if
       necessary. */
-  virtual IO::IoObject* readObject(const char* name) = 0;
+  virtual IO::IoObject* readObject(const fixed_string& name) = 0;
 
   /** Restore the state of the IO object \a obj, associated with the
       tag \a name. The \c Reader will not create a new object, but
       will use the IO* provided here. */
-  virtual void readOwnedObject(const char* name, IO::IoObject* obj) = 0;
+  virtual void readOwnedObject(const fixed_string& name,
+										 IO::IoObject* obj) = 0;
 
   /** Read the named base class into the IO object \a obj, which
       should be arranged to point or refer to the appropriate base
       class part of the object. In particular, \a obj's virtual
       functions must NOT call the fully derived versions. This effect
       can be best accomplished with an \c IO::IoProxy. */
-  virtual void readBaseClass(const char* baseClassName, IO::IoObject* basePart) = 0;
+  virtual void readBaseClass(const fixed_string& baseClassName,
+									  IO::IoObject* basePart) = 0;
 
   /** Restore an entire object hierarchy, starting with the root
 		object. If \a root is non-null, the function will use \a root as
@@ -143,7 +147,7 @@ public:
 
 protected:
   /// Read the string attribute associated with the tag \a name.
-  virtual fixed_string readStringImpl(const char* name) = 0;
+  virtual fixed_string readStringImpl(const fixed_string& name) = 0;
 };
 
 static const char vcid_reader_h[] = "$Header$";
