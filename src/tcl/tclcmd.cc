@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Mon Oct  9 19:50:40 2000
+// written: Fri Oct 27 11:04:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,12 @@
 #include <tcl.h>
 #include <exception>
 #include <typeinfo>
+
+#define TRACE_USE_COUNT
+
+#ifdef TRACE_USE_COUNT
+#  include <fstream.h>
+#endif
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -61,6 +67,10 @@ namespace {
 		  return Tcl_DuplicateObj(obj);
 		return obj;
 	 }
+
+#ifdef TRACE_USE_COUNT
+  STD_IO::ofstream* USE_COUNT_STREAM = new STD_IO::ofstream("tclprof.out");
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -71,9 +81,19 @@ namespace {
 
 class Tcl::TclCmd::Impl {
 public:
-  // This used to hold something but is now empty... but we can leave
-  // it here as a placeholder for additional fields that may be needed
-  // in the future.
+  Impl(const char* cmd_name) : itsCmdName(cmd_name), itsUseCount(0) {}
+  ~Impl()
+	 {
+#ifdef TRACE_USE_COUNT
+		if (USE_COUNT_STREAM->good())
+		  {
+			 *USE_COUNT_STREAM << itsCmdName << " " << itsUseCount << endl;
+		  }
+#endif
+	 }
+
+  fixed_string itsCmdName;
+  int itsUseCount;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -96,7 +116,7 @@ Tcl::TclCmd::TclCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
   itsInterp(0),
   itsObjc(0),
   itsObjv(0),
-  itsImpl(new Impl),
+  itsImpl(new Impl(cmd_name)),
   itsResult(TCL_OK)
 {
 DOTRACE("Tcl::TclCmd::TclCmd");
@@ -387,6 +407,8 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
 
   DebugEval((void *) theCmd);
   DebugEvalNL(typeid(*theCmd).name());
+
+  ++(theCmd->itsImpl->itsUseCount);
 
   theCmd->itsInterp = interp;
   theCmd->itsObjc = objc;
