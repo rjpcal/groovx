@@ -30,12 +30,15 @@ class ElemProxy {
   Mtx& m;
   int i;
 
+  double value() const;
   double& uniqueRef();
 
 public:
   ElemProxy(Mtx& m_, int i_) : m(m_), i(i_) {}
 
+  double& operator=(const ElemProxy& other);
   double& operator=(double d);
+
   double& operator+=(double d);
   double& operator-=(double d);
   double& operator*=(double d);
@@ -516,12 +519,17 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
+inline double ElemProxy::value() const
+{ return m.itsImpl.at(i); }
 
 inline double& ElemProxy::uniqueRef()
 { m.makeUnique(); return m.itsImpl.at(i); }
 
 inline double& ElemProxy::operator=(double d)
 { return (uniqueRef() = d); }
+
+inline double& ElemProxy::operator=(const ElemProxy& other)
+{ return (uniqueRef() = other.value()); }
 
 inline double& ElemProxy::operator+=(double d)
 { return (uniqueRef() += d); }
