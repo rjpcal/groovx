@@ -2,7 +2,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Thu Jul  1 14:18:53 1999
+// written: Tue Aug  3 17:59:20 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -13,6 +13,7 @@
 
 #include <iostream.h>           // for serialize
 #include <GL/gl.h>
+#include <GL/glu.h>
 
 #include "error.h"
 
@@ -24,10 +25,30 @@
 #define NULL 0L
 #endif
 
-class GrObjError : public virtual Error {
+class GrObjError : public virtual ErrorWithMsg {
 public:
-  GrObjError() : Error() {}
+  GrObjError(const string& msg = "") : ErrorWithMsg(msg) {}
 };
+
+///////////////////////////////////////////////////////////////////////
+//
+// File scope stuff
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace {
+#ifdef LOCAL_DEBUG
+  inline void checkForGlError(const char* where) throw (GrObjError) {
+	 GLenum status = glGetError();
+	 if (status != GL_NO_ERROR) {
+		string msg = reinterpret_cast<const char*>(gluErrorString(status));
+		throw GrObjError(string ("GL error: ") + msg + " " + where);
+	 }
+  }
+#else
+#  define checkForGlError(x) {}
+#endif
+}
 
 ///////////////////////////////////////////////////////////////////////
 // GrObj member functions
@@ -101,11 +122,14 @@ DOTRACE("GrObj::setUsingCompile");
 
 void GrObj::update() const {
 DOTRACE("GrObj::update");
+  checkForGlError("before GrObj::update");
   if ( itsUsingCompile && !grIsCurrent() ) grRecompile(); 
+  checkForGlError("during GrObj::update");
 }
 
 void GrObj::draw() const {
 DOTRACE("GrObj::draw");
+  checkForGlError("before GrObj::draw");
   if (itsUsingCompile) { 
 	 update();
 	 glCallList( itsDisplayList );
@@ -113,16 +137,24 @@ DOTRACE("GrObj::draw");
   else {
 	 grRender();
   }
+  checkForGlError("during GrObj::draw");
 }
 
 void GrObj::undraw() const {
 DOTRACE("GrObj::undraw");
+  checkForGlError("before GrObj::undraw");
   if (itsUsingCompile) {
-	 glCallList( itsDisplayList );
+	 // Since we don't do a recompile of the display list here, we must
+	 // explicitly check that the display list is valid, since it might
+	 // be invalid if the object was recently constructed, for example.
+	 if (glIsList(itsDisplayList) == GL_TRUE) {
+		glCallList( itsDisplayList ); DebugEvalNL(itsDisplayList);
+	 }
   }
   else {
 	 grRender();
   }
+  checkForGlError("during GrObj::undraw");
 }
 
 void GrObj::grRecompile() const {
