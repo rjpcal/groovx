@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Sun Aug 26 08:35:15 2001
+// written: Sat Sep  8 14:16:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,10 +25,7 @@
 
 #include <fstream.h>
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
-#include "util/debug.h"
 
 namespace
 {
@@ -69,11 +66,6 @@ namespace
     return result;
   }
 
-  Tcl::List loadAllObjects(const char* file)
-  {
-    return loadObjects(file, ALL);
-  }
-
   void saveObjects(Tcl::List objids, const char* filename, bool use_bases)
   {
     STD_IO::ofstream ofs(filename);
@@ -95,11 +87,6 @@ namespace
       }
   }
 
-  void saveObjectsDefault(Tcl::List objids, const char* filename)
-  {
-    saveObjects(objids, filename, true);
-  }
-
   Tcl::List objNew(const char* type, unsigned int array_size)
   {
     Tcl::List result;
@@ -111,11 +98,6 @@ namespace
       }
 
     return result;
-  }
-
-  Tcl::List objNewOne(const char* type)
-  {
-    return objNew(type, 1);
   }
 
   void objDelete(Tcl::List item_ids)
@@ -153,9 +135,10 @@ namespace IoTcl
       def( "purge", 0, &dbPurge );
       def( "release", 0, &dbRelease );
       def( "loadObjects", "filename num_to_read=-1", &loadObjects );
-      def( "loadObjects", "filename", &loadAllObjects );
+      def( "loadObjects", "filename", Util::bindLast(&loadObjects, ALL) );
       def( "saveObjects", "objids filename use_bases=yes", &saveObjects );
-      def( "saveObjects", "objids filename", &saveObjectsDefault );
+      def( "saveObjects", "objids filename",
+           Util::bindLast(&saveObjects, true) );
     }
 
     virtual ~ObjDbPkg()
@@ -186,7 +169,7 @@ DOTRACE("Io_Init");
   pkg2->defVec( "type", "item_id(s)", &objType );
 
   pkg2->def( "new", "typename array_size=1", &objNew );
-  pkg2->def( "new", "typename", &objNewOne );
+  pkg2->def( "new", "typename", Util::bindLast(&objNew, 1) );
   pkg2->def( "delete", "item_id(s)", &objDelete );
 
   pkg2->eval("proc new {args} { eval Obj::new $args }");
