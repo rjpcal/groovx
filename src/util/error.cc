@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:48 1999
-// written: Sat May 12 08:19:04 2001
+// written: Sat May 12 09:27:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,11 +112,25 @@ DOTRACE("ErrorWithMsg::num2str");
   return &num2str_buf[0];
 }
 
-template const char* ErrorWithMsg::num2str<>(int);
-template const char* ErrorWithMsg::num2str<>(unsigned int);
-template const char* ErrorWithMsg::num2str<>(long);
-template const char* ErrorWithMsg::num2str<>(unsigned long);
-template const char* ErrorWithMsg::num2str<>(double);
+#ifndef ACC_COMPILER
+template const char* ErrorWithMsg::num2str<int>(int);
+template const char* ErrorWithMsg::num2str<unsigned int>(unsigned int);
+template const char* ErrorWithMsg::num2str<long>(long);
+template const char* ErrorWithMsg::num2str<unsigned long>(unsigned long);
+template const char* ErrorWithMsg::num2str<double>(double);
+#else
+class ErrorWithMsg::Impl {
+public:
+  void dummy() // just a hack since aCC won't do explicit instantiation
+  {
+	 num2str((int)0);
+	 num2str((unsigned int)0);
+	 num2str((long)0);
+	 num2str((unsigned long)0);
+	 num2str((double)0);
+  }
+};
+#endif
 
 void ErrorWithMsg::setMsg(const char* str) {
 DOTRACE("ErrorWithMsg::setMsg");
