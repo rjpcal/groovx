@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Wed Oct 25 09:33:03 2000
+// written: Wed Oct 25 14:41:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,21 +47,10 @@ public:
   friend class ItemWithId<T>;
   friend class NullableItemWithId<T>;
 
-  virtual int capacity() const;
-  virtual int count() const;
-  virtual bool isValidId(int id) const;
-  virtual void remove(int id);
-  virtual void release(int id);
-  virtual void clear();
-
 protected:
-  virtual IO::IoObject* getCheckedPtrBase(int id) const throw (InvalidIdError);
-  virtual int insertPtrBase(IO::IoObject* ptr);
-
   virtual void ensureCorrectType(const IO::IoObject* ptr) const;
 
 private:
-
   /** Returns the object at index \a id, after a check is performed to
       ensure that \a id is in range, and refers to a valid object. If
       the check fails, an \c InvalidIdError exception is thrown. */
