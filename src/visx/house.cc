@@ -159,28 +159,28 @@ const FieldMap& House::classFields()
   static const Field FIELD_ARRAY[] =
   {
     Field("storyAspectRatio",
-          &House::itsStoryAspectRatio, 3.0, 0.5, 10.0, 0.05, true),
+          &House::itsStoryAspectRatio, 3.0, 0.5, 10.0, 0.05, Field::NEW_GROUP),
     Field("numStories", &House::itsNumStories, 2, 1, 5, 1),
 
-    Field("doorPosition", &House::itsDoorPosition, 2, 0, 5, 1, true),
+    Field("doorPosition", &House::itsDoorPosition, 2, 0, 5, 1, Field::NEW_GROUP),
     Field("doorWidth", &House::itsDoorWidth, 0.75, 0.05, 1.0, 0.05),
     Field("doorHeight", &House::itsDoorHeight, 0.75, 0.05, 1.0, 0.05),
     Field("doorOrientation",
           &House::itsDoorOrientation, false, false, true, true),
 
-    Field("numWindows", &House::itsNumWindows, 5, 2, 6, 1, true),
+    Field("numWindows", &House::itsNumWindows, 5, 2, 6, 1, Field::NEW_GROUP),
     Field("windowWidth", &House::itsWindowWidth, 0.75, 0.05, 1.0, 0.05),
     Field("windowHeight", &House::itsWindowHeight, 0.5, 0.05, 1.0, 0.05),
     Field("windowVertBars", &House::itsWindowVertBars, 1, 0, 5, 1),
     Field("windowHorizBars", &House::itsWindowHorizBars, 1, 0, 5, 1),
 
-    Field("roofShape", &House::itsRoofShape, 0, 0, 2, 1, true),
+    Field("roofShape", &House::itsRoofShape, 0, 0, 2, 1, Field::NEW_GROUP),
     Field("roofHeight", &House::itsRoofHeight, 0.05, 0.05, 2.0, 0.05),
     Field("roofOverhang", &House::itsRoofOverhang, 0.75, 0.0, 0.5, 0.05),
     Field("roofColor", &House::itsRoofColor, 1, 0, 1, 1),
 
     Field("chimneyXPosition",
-          &House::itsChimneyXPosition, 0.2, -0.5, 0.5, 0.05, true),
+          &House::itsChimneyXPosition, 0.2, -0.5, 0.5, 0.05, Field::NEW_GROUP),
     Field("chimneyYPosition",
           &House::itsChimneyYPosition, 0.5, 0.0, 1.0, 0.05),
     Field("chimneyWidth", &House::itsChimneyWidth, 0.06, 0.01, 0.30, 0.01),

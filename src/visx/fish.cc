@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Aug 29 16:46:04 2001
+// written: Wed Aug 29 16:46:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,10 +121,10 @@ const FieldMap& Fish::classFields()
     Field("mouthCoord", &Fish::itsMouthCoord, 0.0, -2.0, 2.0, 0.1),
 
     Field("currentPart", Field::BoundsCheck(),
-          &Fish::itsCurrentPart, 0, 0, 3, 1, true),
+          &Fish::itsCurrentPart, 0, 0, 3, 1, Field::NEW_GROUP),
 
     Field("currentEndPt", Field::BoundsCheck(),
-          &Fish::itsCurrentEndPt, 0, 0, 3, 1, true),
+          &Fish::itsCurrentEndPt, 0, 0, 3, 1),
 
     Field("endPt_Part", &Fish::itsEndPt_Part, 1, 1, 4, 1),
     Field("endPt_Bkpt", &Fish::itsEndPt_Bkpt, 1, 1, 10, 1)

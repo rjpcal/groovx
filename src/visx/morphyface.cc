@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Aug 28 12:07:29 2001
+// written: Wed Aug 29 16:48:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,7 +129,7 @@ const FieldMap& MorphyFace::classFields()
 
   static const Field FIELD_ARRAY[] =
   {
-    Field("category", &MF::itsMfaceCategory, 0, 0, 10, 1, true),
+    Field("category", &MF::itsMfaceCategory, 0, 0, 10, 1, Field::NEW_GROUP),
 
     Field("faceWidth", &MF::itsFaceWidth, 2.75, 1.5, 3.5, 0.1),
     Field("topWidth", &MF::itsTopWidth, 1.15, 0.05, 2.0, 0.05),
@@ -137,32 +137,33 @@ const FieldMap& MorphyFace::classFields()
     Field("topHeight", &MF::itsTopHeight, 3.8, 0.5, 5.0, 0.25),
     Field("bottomHeight", &MF::itsBottomHeight, -3.0, -5.0, -0.5, 0.25),
 
-    Field("hairWidth", &MF::itsHairWidth, 0.20, 0.00, 0.5, 0.02, true),
+    Field("hairWidth", &MF::itsHairWidth, 0.20, 0.00, 0.5, 0.02, Field::NEW_GROUP),
     Field("hairStyle", &MF::itsHairStyle, 0, 0, 1, 1),
 
-    Field("eyeYpos", &MF::itsEyeYpos, 0.375, -2.0, 2.0, 0.1, true),
+    Field("eyeYpos", &MF::itsEyeYpos, 0.375, -2.0, 2.0, 0.1, Field::NEW_GROUP),
     Field("eyeDistance", &MF::itsEyeDistance, 2.25, 0.0, 5.0, 0.25),
     Field("eyeHeight", &MF::itsEyeHeight, 0.9, 0.0, 2.0, 0.1),
     Field("eyeAspectRatio", &MF::itsEyeAspectRatio, 1.555556, 0.1, 5.0, 0.1),
 
-    Field("pupilXpos", &MF::itsPupilXpos, 0.0, -0.5, 0.5, 0.05, true),
+    Field("pupilXpos", &MF::itsPupilXpos, 0.0, -0.5, 0.5, 0.05, Field::NEW_GROUP),
     Field("pupilYpos", &MF::itsPupilYpos, 0.0, -0.5, 0.5, 0.05),
     Field("pupilSize", &MF::itsPupilSize, 0.6, 0.0, 1.0, 0.05),
     Field("pupilDilation", Field::BoundsCheck(),
           &MF::itsPupilDilation, 0.5, 0.05, 0.95, 0.05),
 
-    Field("eyebrowXpos", &MF::itsEyebrowXpos, 0.0, -0.5, 0.5, 0.02, true),
+    Field("eyebrowXpos", &MF::itsEyebrowXpos, 0.0, -0.5, 0.5, 0.02,
+          Field::NEW_GROUP),
     Field("eyebrowYpos", &MF::itsEyebrowYpos, 0.5, 0.0, 1.5, 0.05),
     Field("eyebrowCurvature", &MF::itsEyebrowCurvature, 0.8, -2.0, 2.0, 0.1),
     Field("eyebrowAngle", &MF::itsEyebrowAngle, -5, -50, 50, 1),
     Field("eyebrowThickness", &MF::itsEyebrowThickness, 2.0, 0.1, 4.0, 0.1),
 
-    Field("noseXpos", &MF::itsNoseXpos, 0.0, -1.0, 1.0, 0.05, true),
+    Field("noseXpos", &MF::itsNoseXpos, 0.0, -1.0, 1.0, 0.05, Field::NEW_GROUP),
     Field("noseYpos", &MF::itsNoseYpos, -0.825, -2.0, 2.0, 0.1),
     Field("noseLength", &MF::itsNoseLength, 0.75, 0.0, 2.0, 0.1),
     Field("noseWidth", &MF::itsNoseWidth, 1.5, 0.0, 3.0, 0.1),
 
-    Field("mouthXpos", &MF::itsMouthXpos, 0.0, -2.0, 2.0, 0.1, true),
+    Field("mouthXpos", &MF::itsMouthXpos, 0.0, -2.0, 2.0, 0.1, Field::NEW_GROUP),
     Field("mouthYpos", &MF::itsMouthYpos, -2.0, -3.0, 1.0, 0.1),
     Field("mouthWidth", &MF::itsMouthWidth, 2.5, 0.0, 5.0, 0.25),
     Field("mouthCurvature", &MF::itsMouthCurvature, 0.6, -2.0, 2.0, 0.1)

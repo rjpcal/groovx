@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Sun Aug 26 08:36:36 2001
+// written: Wed Aug 29 16:48:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,10 +62,14 @@ const FieldMap& Position::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("translation", Field::ValueType(), &Position::translation, 0., 0., 0., 0., true),
-    Field("scaling", Field::ValueType(), &Position::scaling, 0., 0., 0., 0.),
-    Field("rotationAxis", Field::ValueType(), &Position::rotationAxis, 0., 0., 0., 0.),
-    Field("rotationAngle", &Position::itsRotationAngle, 0., 0., 360., 1.)
+    Field("translation", Field::ValueType(),
+          &Position::translation, 0., 0., 0., 0., Field::NEW_GROUP),
+    Field("scaling", Field::ValueType(),
+          &Position::scaling, 0., 0., 0., 0.),
+    Field("rotationAxis", Field::ValueType(),
+          &Position::rotationAxis, 0., 0., 0., 0.),
+    Field("rotationAngle",
+          &Position::itsRotationAngle, 0., 0., 360., 1.)
   };
 
   static FieldMap POS_FIELDS(FIELD_ARRAY);

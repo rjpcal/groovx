@@ -34,7 +34,7 @@ const FieldMap& MaskHatch::classFields()
 {
   static const Field MASK_FINFOS[] =
   {
-    Field("numLines", &MaskHatch::itsNumLines, 5, 0, 25, 1, true),
+    Field("numLines", &MaskHatch::itsNumLines, 5, 0, 25, 1, Field::NEW_GROUP),
     Field("lineWidth", Field::BoundsCheck(),
           &MaskHatch::itsLineWidth, 1, 0, 25, 1)
   };

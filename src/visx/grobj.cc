@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Aug 22 15:28:51 2001
+// written: Wed Aug 29 16:47:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,11 +32,10 @@ namespace
 
   const Field FIELD_ARRAY[] =
   {
-    Field("renderMode", GETSET(GrObj, RenderMode), 1, 1, 4, 1, true),
-
+    Field("renderMode", GETSET(GrObj, RenderMode), 1, 1, 4, 1,
+          Field::NEW_GROUP),
     Field("unRenderMode", GETSET(GrObj, UnRenderMode), 6, 1, 6, 1),
-    Field("bbVisibility", GETSET(GrObj, BBVisibility),
-          false, false, true, true),
+    Field("bbVisibility", GETSET(GrObj, BBVisibility), false, false, true, true),
     Field("scalingMode", GETSET(GrObj, ScalingMode), 1, 1, 3, 1),
     // xx widthFactor
     // xx heightFactor

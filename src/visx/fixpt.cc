@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Aug 24 18:39:19 2001
+// written: Wed Aug 29 16:46:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ const FieldMap& FixPt::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("length", &FixPt::itsLength, 0.1, 0.0, 10.0, 0.1, true),
+    Field("length", &FixPt::itsLength, 0.1, 0.0, 10.0, 0.1, Field::NEW_GROUP),
     Field("width", &FixPt::itsWidth, 1, 1, 100, 1)
   };
 

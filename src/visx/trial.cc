@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sun Aug 26 08:36:36 2001
+// written: Wed Aug 29 16:48:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -482,7 +482,7 @@ namespace
   const Field FIELD_ARRAY[] =
   {
     Field("tType", std::make_pair(&Trial::trialType, &Trial::setType),
-          -1, -10, 10, 1, true)
+          -1, -10, 10, 1, Field::NEW_GROUP)
   };
 
   FieldMap TRIAL_FIELDS(FIELD_ARRAY);

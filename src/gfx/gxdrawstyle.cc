@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 29 10:19:31 2001
-// written: Wed Aug 29 11:44:14 2001
+// written: Wed Aug 29 16:49:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ const FieldMap& GxDrawStyle::classFields()
   static const Field FIELD_ARRAY[] =
   {
     Field("polygonFill", &GxDrawStyle::polygonFill, false, false, true, true,
-          true),
+          Field::NEW_GROUP),
     Field("pointSize", &GxDrawStyle::pointSize, 1.0, 0.1, 1.0, 0.1),
     Field("lineWidth", &GxDrawStyle::lineWidth, 1.0, 0.1, 1.0, 0.1),
     Field("linePattern", &GxDrawStyle::linePattern, 0xFFFF, 0, 0xFFFF, 1)

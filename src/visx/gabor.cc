@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Sat Aug 18 08:12:49 2001
+// written: Wed Aug 29 16:46:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ const FieldMap& Gabor::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("colorMode", &Gabor::itsColorMode, 2, 1, 4, 1, true),
+    Field("colorMode", &Gabor::itsColorMode, 2, 1, 4, 1, Field::NEW_GROUP),
     Field("contrast", &Gabor::itsContrast, 1.0, 0.0, 1.0, 0.05),
     Field("spatialFreq", &Gabor::itsSpatialFreq, 3.5, 0.5, 10.0, 0.5),
     Field("phase", &Gabor::itsPhase, 0.0, -180.0, 179.0, 1.0),
