@@ -57,6 +57,8 @@
 
 #include "util/trace.h"
 
+using Util::Ref;
+
 namespace
 {
   Util::UID doCreatePreview(Gfx::Canvas& canvas,
@@ -158,7 +160,7 @@ namespace TlistTcl
   Tcl::List loadObjidFile(const char* objid_file, Tcl::List objids,
                           Tcl::List posids, int num_lines);
 
-  Ref<GxSeparator> makeSepPair(Util::Ref<GxNode> obj1, Util::Ref<GxNode> obj2)
+  Ref<GxSeparator> makeSepPair(Ref<GxNode> obj1, Ref<GxNode> obj2)
   {
     Ref<GxSeparator> sep(GxSeparator::make());
     sep->addChild(obj1);
