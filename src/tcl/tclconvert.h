@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Jul 11 08:57:31 2001
-// written: Wed Mar 19 17:58:06 2003
+// written: Thu Mar 20 16:24:32 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -35,7 +35,7 @@
 
 class fstring;
 class Value;
-struct Tcl_Obj;
+typedef struct Tcl_Obj Tcl_Obj;
 
 namespace Tcl
 {

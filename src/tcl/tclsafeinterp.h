@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Wed Mar 19 17:58:05 2003
+// written: Thu Mar 20 16:24:40 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -37,7 +37,7 @@
 #include "util/pointers.h"
 
 struct Tcl_Interp;
-struct Tcl_Obj;
+typedef struct Tcl_Obj Tcl_Obj;
 
 class fstring;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Mar 19 17:58:07 2003
+// written: Thu Mar 20 16:24:13 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -34,7 +34,7 @@
 #include "tcl/tclconvert.h"
 #include "tcl/tclobjptr.h"
 
-struct Tcl_Obj;
+typedef struct Tcl_Obj Tcl_Obj;
 
 class fstring;
 

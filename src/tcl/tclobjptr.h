@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Wed Mar 19 17:58:06 2003
+// written: Thu Mar 20 16:24:36 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,7 +33,7 @@
 
 #include "tcl/tclconvert.h"
 
-struct Tcl_Obj;
+typedef struct Tcl_Obj Tcl_Obj;
 
 namespace Tcl
 {
