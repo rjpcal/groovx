@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Jan 18 16:06:59 2002
+// written: Fri Jan 25 10:43:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -123,10 +123,9 @@ public:
   inline void timeTrace(const char* loc)
   {
 #ifdef TIME_TRACE
-    Util::log() << "in " << loc
-                << "@ elapsed time == "
-                << itsActiveState->itsTh->getElapsedMsec()
-                << '\n';
+    Util::log( fstring("in ", loc,
+                       "@ elapsed time == ",
+                       itsActiveState->itsTh->getElapsedMsec()) );
 #endif
   }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Fri Jan 18 16:07:03 2002
+// written: Fri Jan 25 10:41:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -287,19 +287,18 @@ DOTRACE("Block::isComplete");
           (size_t(itsImpl->itsCurTrialSeqIdx) >= itsImpl->itsTrialSequence.size()));
 }
 
-const char* Block::trialDescription() const
+fstring Block::trialDescription() const
 {
 DOTRACE("Block::trialDescription");
-  if (isComplete()) return "block is complete";
+  if (isComplete()) return fstring("block is complete");
 
-  static fstring descr;
-  descr = "";
-  descr.append("trial id == ").append(currentTrial().id()).append(", ")
+  fstring msg;
+  msg.append("trial id == ").append(currentTrial().id()).append(", ")
     .append(itsImpl->currentTrial()->description())
     .append(", completed ").append(numCompleted())
     .append(" of ").append(numTrials());
 
-  return descr.c_str();
+  return msg;
 }
 
 bool Block::getVerbose() const
@@ -330,7 +329,7 @@ DOTRACE("Block::beginTrial");
 
   if (itsImpl->itsVerbose)
     {
-      Util::log() << trialDescription() << '\n';
+      Util::log( trialDescription() );
     }
 
   itsImpl->setExpt(expt);
@@ -369,7 +368,7 @@ DOTRACE("Block::processResponse");
 
   if (itsImpl->itsVerbose)
     {
-      Util::log() << "response: " << response.val() << '\n';
+      Util::log( fstring("response: ", response.val()) );
     }
 
   DebugEval(response.correctVal());

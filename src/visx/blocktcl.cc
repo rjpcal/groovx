@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Fri Jan 18 16:07:03 2002
+// written: Fri Jan 25 10:46:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
+#include "util/strings.h"
 
 #include "util/trace.h"
 

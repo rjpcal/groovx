@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 17:49:28 2001
-// written: Fri Jan 18 16:07:04 2002
+// written: Fri Jan 25 10:48:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,55 +15,18 @@
 
 #include "util/log.h"
 
+#include "util/strings.h"
+
 #include <iostream.h>
 
-namespace
+void Util::log(const char* msg)
 {
-  Util::Log* theLog=0;
+  std::cerr << msg << '\n';
 }
 
-Util::Log& Util::Log::operator<<(char n)
+void Util::log(const fstring& msg)
 {
-  itsOs << n; return *this;
-}
-
-Util::Log& Util::Log::operator<<(const char* n)
-{
-  itsOs << n; return *this;
-}
-
-Util::Log& Util::Log::operator<<(int n)
-{
-  itsOs << n; return *this;
-}
-
-Util::Log& Util::Log::operator<<(unsigned int n)
-{
-  itsOs << n; return *this;
-}
-
-Util::Log& Util::Log::operator<<(long n)
-{
-  itsOs << n; return *this;
-}
-
-Util::Log& Util::Log::operator<<(unsigned long n)
-{
-  itsOs << n; return *this;
-}
-
-Util::Log& Util::Log::operator<<(double d)
-{
-  itsOs << d; return *this;
-}
-
-Util::Log& Util::log()
-{
-  if (theLog == 0)
-    {
-      theLog = new Util::Log(std::cerr);
-    }
-  return *theLog;
+  std::cerr << msg << '\n';
 }
 
 static const char vcid_log_cc[] = "$Header$";

@@ -414,9 +414,9 @@ void ExptDriver::Impl::edEndExpt()
 {
 DOTRACE("ExptDriver::Impl::edEndExpt");
 
-  Util::log() << "expt completed in "
-              << itsTimer.elapsedMsec()
-              << " milliseconds\n";
+  Util::log( fstring( "expt completed in ",
+		      itsTimer.elapsedMsec(),
+		      " milliseconds") );
 
   addLogInfo("Experiment complete.");
 
@@ -452,13 +452,13 @@ DOTRACE("ExptDriver::Impl::storeData");
       expt_filename.append(unique_file_extension);
       expt_filename.append(".asw");
       IO::saveASW(Util::Ref<IO::IoObject>(itsOwner), expt_filename.c_str());
-      Util::log() << "wrote file " << expt_filename.c_str() << '\n';
+      Util::log( fstring( "wrote file ", expt_filename.c_str()) );
 
       // Write the responses file
       fstring resp_filename = "resp";
       resp_filename.append(unique_file_extension);
       TlistUtils::writeResponses(resp_filename.c_str());
-      Util::log() << "wrote file " << resp_filename.c_str() << '\n';
+      Util::log( fstring( "wrote file ", resp_filename.c_str()) );
 
       // Change file access modes to allow read-only by all
       System::mode_t datafile_mode =
