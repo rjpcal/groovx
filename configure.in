@@ -493,12 +493,10 @@ if test $enable_debug = yes; then
    AC_DEFINE(PROF,1,[enable profiling?])
    CXXFLAGS="$CXXFLAGS $cxxflags_debug"
    AC_SUBST(LIB_SUFFIX, .d.${PACKAGE_VERSION})
-   AC_SUBST(EXECUTABLE, \${exec_prefix}/bin/testsh)
 else
    AC_DEFINE(NO_DEBUG,1,[statically turn off all debug statements?])
    CXXFLAGS="$CXXFLAGS $cxxflags_prod"
    AC_SUBST(LIB_SUFFIX, ${PACKAGE_VERSION})
-   AC_SUBST(EXECUTABLE, \${exec_prefix}/bin/grsh${PACKAGE_VERSION})
 fi
 
 AC_CONFIG_FILES([Makefile:Makefile.in])
