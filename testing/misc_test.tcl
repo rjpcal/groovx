@@ -45,13 +45,13 @@ test "MiscTcl-srand" "error from non-integral number" {
 test "MiscTcl-sleep" "too few args" {
 	 # The command should exit with error, but no message
 	 set exit_code [catch {sleep} res]
-	 expr $exit_code == 1 && [string compare $res ""] == 0
-} {^1$}
+	 return "$exit_code $res"
+} {^1 wrong # args:}
 test "MiscTcl-sleep" "too many args" {
 	 # The command should exit with error, but no message
 	 set exit_code [catch {sleep j u} res]
-	 expr $exit_code == 1 && [string compare $res ""] == 0
-} {^1$}
+	 return "$exit_code $res"
+} {^1 wrong # args:}
 test "MiscTcl-sleep" "normal use" {
 	 set res [time {sleep 1}]
 	 set us [lindex $res 0]
@@ -69,13 +69,13 @@ test "MiscTcl-sleep" "error from negative input" {
 test "MiscTcl-usleep" "too few args" {
 	 # The command should exit with error, but no message
 	 set exit_code [catch {usleep} res]
-	 expr $exit_code == 1 && [string compare $res ""] == 0
-} {^1$}
+	 return "$exit_code $res"
+} {^1 wrong # args:}
 test "MiscTcl-usleep" "too many args" {
 	 # The command should exit with error, but no message
 	 set exit_code [catch {usleep j u} res]
-	 expr $exit_code == 1 && [string compare $res ""] == 0
-} {^1$}
+	 return "$exit_code $res"
+} {^1 wrong # args:}
 test "MiscTcl-usleep" "normal use" {
 	 set res [time {usleep 10000} 10]
 	 set us [lindex $res 0]
@@ -93,13 +93,13 @@ test "MiscTcl-usleep" "error from negative input" {
 test "MiscTcl-usleepr" "too few args" {
 	 # The command should exit with error, but no message
 	 set exit_code [catch {usleepr} res]
-	 expr $exit_code == 1 && [string compare $res ""] == 0
-} {^1$}
+	 return "$exit_code $res"
+} {^1 wrong # args:}
 test "MiscTcl-usleepr" "too many args" {
 	 # The command should exit with error, but no message
 	 set exit_code [catch {usleepr j u n} res]
-	 expr $exit_code == 1 && [string compare $res ""] == 0
-} {^1$}
+	 return "$exit_code $res"
+} {^1 wrong # args:}
 test "MiscTcl-usleepr" "normal use" {
 	 set res [time {usleepr 100 10}]
 	 set us [lindex $res 0]
