@@ -330,7 +330,7 @@ IOUTILS_CC = $(IOUTILS_H) $(IO_H) ioutils.cc
 
 IOFACTORY_CC = $(IOFACTORY_H) iofactory.cc
 
-IOMGR_CC = $(IOMGR_H) iomgr.cc
+IOMGR_CC = $(IOMGR_H) $(TRACE_H) $(DEBUG_H) iomgr.cc
 
 JITTER_CC = $(JITTER_H) $(RANDUTILS_H) $(TRACE_H) $(DEBUG_H) jitter.cc
 
