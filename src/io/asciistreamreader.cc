@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Mon Jan 21 14:32:07 2002
+// written: Tue Jan 29 19:10:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -241,10 +241,8 @@ public:
 
   void readValueObj(const fstring& name, Value& value);
 
-  void readOwnedObject(const fstring& name, Ref<IO::IoObject> obj);
-
-  void readBaseClass(IO::Reader* reader, const fstring& baseClassName,
-                     Ref<IO::IoObject> basePart);
+  void readOwnedObject(IO::Reader* reader,
+                       const fstring& name, Ref<IO::IoObject> obj);
 
   Ref<IO::IoObject> readRoot(IO::Reader* reader, IO::IoObject* given_root);
 };
@@ -476,39 +474,18 @@ DOTRACE("AsciiStreamReader::Impl::readValueObj");
 }
 
 void AsciiStreamReader::Impl::readOwnedObject(
-  const fstring& attrib_name, Ref<IO::IoObject> obj
+  IO::Reader* reader, const fstring& object_name, Ref<IO::IoObject> obj
   )
 {
 DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
 
-  Attrib a = currentAttribs().get(attrib_name);
-  istrstream ist(a.value.c_str());
-  Util::UID id;
-  ist >> id;
-
-  if (ist.fail())
-    throw AttributeReadError(attrib_name);
-
-  if ( id == 0 )
-    throw IO::ReadError("owned object had object id of 0");
-
-  itsObjects.assignObjectForId(id, obj);
-}
-
-void AsciiStreamReader::Impl::readBaseClass(
-  IO::Reader* reader, const fstring& baseClassName,
-  Ref<IO::IoObject> basePart
-  )
-{
-DOTRACE("AsciiStreamReader::Impl::readBaseClass");
-
-  Attrib a = currentAttribs().get(baseClassName);
+  Attrib a = currentAttribs().get(object_name);
   istrstream ist(a.value.c_str());
   char bracket[16];
 
   ist >> bracket;
 
-  inflateObject(reader, ist, baseClassName, basePart);
+  inflateObject(reader, ist, object_name, obj);
 
   ist >> bracket >> STD_IO::ws;
 }
@@ -656,15 +633,16 @@ void AsciiStreamReader::readOwnedObject(const fstring& name,
                                         Ref<IO::IoObject> obj)
 {
   DebugEvalNL(name);
-  itsImpl.readOwnedObject(name, obj);
+  itsImpl.readOwnedObject(this, name, obj);
 }
 
 void AsciiStreamReader::readBaseClass(
   const fstring& baseClassName, Ref<IO::IoObject> basePart
 )
 {
+DOTRACE("AsciiStreamReader::readBaseClass");
   DebugEvalNL(baseClassName);
-  itsImpl.readBaseClass(this, baseClassName, basePart);
+  itsImpl.readOwnedObject(this, baseClassName, basePart);
 }
 
 Ref<IO::IoObject> AsciiStreamReader::readRoot(IO::IoObject* given_root)
