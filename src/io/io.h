@@ -36,7 +36,10 @@
 
 #include "io/iodecls.h"
 
-class fstring;
+namespace rutz
+{
+  class fstring;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**

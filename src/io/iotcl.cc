@@ -40,7 +40,7 @@
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include "util/trace.h"
 

@@ -32,7 +32,7 @@
 #ifndef FSTRINGTEST_CC_DEFINED
 #define FSTRINGTEST_CC_DEFINED
 
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include "pkgs/testutils.h"
 
@@ -40,6 +40,9 @@
 #include <sstream>
 
 #include "util/trace.h"
+
+using rutz::char_range;
+using rutz::fstring;
 
 namespace
 {

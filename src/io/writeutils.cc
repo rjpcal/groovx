@@ -36,6 +36,8 @@
 
 #include "io/readutils.h"
 
+using rutz::fstring;
+
 fstring IO::WriteUtils::makeElementNameString(const fstring& seq_name,
                                               int element_num)
 {

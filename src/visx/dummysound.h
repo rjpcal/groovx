@@ -36,7 +36,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include "util/trace.h"
 #include "util/debug.h"

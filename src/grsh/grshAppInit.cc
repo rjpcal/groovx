@@ -39,7 +39,7 @@
 
 #include "util/demangle.h"
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 #include "util/time.h"
 
 #include <cstdlib> // for atoi()
@@ -292,7 +292,7 @@ DOTRACE("main");
             {
               std::cerr << "fatal initialization error (package '"
                         << IMMEDIATE_PKGS[i].pkgName << "'):\n";
-              fstring msg = interp.getResult<const char*>();
+              rutz::fstring msg = interp.getResult<const char*>();
               if ( !msg.is_empty() )
                 std::cerr << '\t' << msg << '\n';
               interp.resetResult();
@@ -325,13 +325,13 @@ DOTRACE("main");
                             DELAYED_PKGS[i].pkgInitProc,
                             0);
 
-          fstring ifneededcmd("package ifneeded ",
-                              DELAYED_PKGS[i].pkgName,
-                              " ",
-                              DELAYED_PKGS[i].pkgVersion,
-                              " {load {} ",
-                              DELAYED_PKGS[i].pkgName,
-                              " }");
+          rutz::fstring ifneededcmd("package ifneeded ",
+                                    DELAYED_PKGS[i].pkgName,
+                                    " ",
+                                    DELAYED_PKGS[i].pkgVersion,
+                                    " {load {} ",
+                                    DELAYED_PKGS[i].pkgName,
+                                    " }");
 
           interp.eval(ifneededcmd);
         }
@@ -350,7 +350,7 @@ DOTRACE("main");
                 {
                   std::cerr << "initialization error (package '"
                             << DELAYED_PKGS[i].pkgName << "'):\n";
-                  fstring msg = interp.getResult<const char*>();
+                  rutz::fstring msg = interp.getResult<const char*>();
                   if ( !msg.is_empty() )
                     std::cerr << '\t' << msg << '\n';
                   interp.resetResult();

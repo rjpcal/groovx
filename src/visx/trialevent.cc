@@ -57,6 +57,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using rutz::fstring;
+
 ///////////////////////////////////////////////////////////////////////
 //
 // TrialEvent method definitions

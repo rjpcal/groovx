@@ -47,6 +47,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using rutz::fstring;
+
 void FieldAux::throwNotAllowed(const char* what,
                                const rutz::file_pos& pos)
 {

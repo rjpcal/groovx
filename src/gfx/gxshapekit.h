@@ -40,7 +40,10 @@
 
 class GxShapeKitImpl;
 
-class fstring;
+namespace rutz
+{
+  class fstring;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**

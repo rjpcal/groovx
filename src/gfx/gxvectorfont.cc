@@ -39,7 +39,7 @@
 #include "gx/bbox.h"
 #include "gx/rect.h"
 
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <cstring>
 

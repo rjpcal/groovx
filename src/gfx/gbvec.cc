@@ -34,7 +34,7 @@
 
 #include "gfx/gbvec.h"
 
-#include "util/strings.h"
+#include "util/fstring.h"
 
 template <class T>
 GbVec2<T>::GbVec2(T x_, T y_) :
@@ -46,9 +46,9 @@ template <class T>
 GbVec2<T>::~GbVec2() {}
 
 template <class T>
-fstring GbVec2<T>::getNativeTypeName() const
+rutz::fstring GbVec2<T>::getNativeTypeName() const
 {
-  return fstring("GbVec2");
+  return rutz::fstring("GbVec2");
 }
 
 template <class T>
@@ -64,9 +64,9 @@ template <class T>
 GbVec3<T>::~GbVec3() {}
 
 template <class T>
-fstring GbVec3<T>::getNativeTypeName() const
+rutz::fstring GbVec3<T>::getNativeTypeName() const
 {
-  return fstring("GbVec3");
+  return rutz::fstring("GbVec3");
 }
 
 template <class T>

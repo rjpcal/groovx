@@ -34,7 +34,10 @@
 
 #include <sys/types.h>
 
-class fstring;
+namespace rutz
+{
+  class fstring;
+}
 
 /// Wrappers of OS/system calls.
 namespace unixcall
@@ -118,7 +121,7 @@ namespace unixcall
   void remove(const char* pathname);
 
   /// Get the absolute pathname of the current working directory.
-  fstring getcwd();
+  rutz::fstring getcwd();
 };
 
 static const char vcid_system_h[] = "$Header$";

@@ -34,7 +34,7 @@
 
 #include "io/io.h"
 
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <utility>
 #include <vector>
@@ -51,17 +51,17 @@ namespace IO
       Attrib(); // not implemented
 
     public:
-      Attrib(const fstring& t, const fstring& v) :
+      Attrib(const rutz::fstring& t, const rutz::fstring& v) :
         type(t), value(v) {}
 
-      fstring type;
-      fstring value;
+      rutz::fstring type;
+      rutz::fstring value;
     };
 
   private:
-    fstring itsObjTag;
+    rutz::fstring itsObjTag;
 
-    typedef std::pair<fstring, Attrib> ValueType;
+    typedef std::pair<rutz::fstring, Attrib> ValueType;
     typedef std::vector<ValueType> ListType;
 
     ListType itsMap;
@@ -70,7 +70,7 @@ namespace IO
 
   public:
     inline
-    AttribMap(const fstring& obj_tag);
+    AttribMap(const rutz::fstring& obj_tag);
 
     inline
     IO::VersionId getSerialVersionId() const;
@@ -79,18 +79,19 @@ namespace IO
     void setSerialVersionId(IO::VersionId id);
 
     inline
-    Attrib get(const fstring& attrib_name);
+    Attrib get(const rutz::fstring& attrib_name);
 
     inline
-    void addNewAttrib(const fstring& attrib_name,
-                      const fstring& type, const fstring& value);
+    void addNewAttrib(const rutz::fstring& attrib_name,
+                      const rutz::fstring& type,
+                      const rutz::fstring& value);
   };
 }
 
 #include "util/error.h"
 
 inline
-IO::AttribMap::AttribMap(const fstring& obj_tag) :
+IO::AttribMap::AttribMap(const rutz::fstring& obj_tag) :
   itsObjTag(obj_tag),
   itsMap(),
   itsSerialVersionId(0)
@@ -109,7 +110,7 @@ void IO::AttribMap::setSerialVersionId(IO::VersionId id)
 }
 
 inline
-IO::AttribMap::Attrib IO::AttribMap::get(const fstring& attrib_name)
+IO::AttribMap::Attrib IO::AttribMap::get(const rutz::fstring& attrib_name)
 {
   ListType::iterator itr = itsMap.begin(), end = itsMap.end();
   while (itr != end)
@@ -123,9 +124,9 @@ IO::AttribMap::Attrib IO::AttribMap::get(const fstring& attrib_name)
       ++itr;
     }
 
-  fstring msg("no attribute named '",
-              attrib_name.c_str(), "' for ",
-              itsObjTag.c_str(), "\nknown attributes are:\n");
+  rutz::fstring msg("no attribute named '",
+                    attrib_name.c_str(), "' for ",
+                    itsObjTag.c_str(), "\nknown attributes are:\n");
 
   itr = itsMap.begin();
   while (itr != end)
@@ -138,8 +139,9 @@ IO::AttribMap::Attrib IO::AttribMap::get(const fstring& attrib_name)
 }
 
 inline
-void IO::AttribMap::addNewAttrib(const fstring& attrib_name,
-                                 const fstring& type, const fstring& value)
+void IO::AttribMap::addNewAttrib(const rutz::fstring& attrib_name,
+                                 const rutz::fstring& type,
+                                 const rutz::fstring& value)
 {
   itsMap.push_back(ValueType(attrib_name, Attrib(type,value)));
 }

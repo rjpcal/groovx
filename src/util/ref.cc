@@ -61,26 +61,26 @@ void Util::RefHelper::insertItemWeak(Util::Object* obj)
 void Util::RefHelper::throwRefNull(const std::type_info& info,
                                    const rutz::file_pos& pos)
 {
-  throw rutz::error(fstring("attempted to construct a Ref<",
-                            rutz::demangled_name(info),
-                            "> with a null pointer"),
+  throw rutz::error(rutz::fstring("attempted to construct a Ref<",
+                                  rutz::demangled_name(info),
+                                  "> with a null pointer"),
                     pos);
 }
 
 void Util::RefHelper::throwRefUnshareable(const std::type_info& info,
                                           const rutz::file_pos& pos)
 {
-  throw rutz::error(fstring("attempted to construct a Ref<",
-                            rutz::demangled_name(info),
-                            "> with an unshareable object"),
+  throw rutz::error(rutz::fstring("attempted to construct a Ref<",
+                                  rutz::demangled_name(info),
+                                  "> with an unshareable object"),
                     pos);
 }
 
 void Util::RefHelper::throwSoftRefInvalid(const std::type_info& info,
                                           const rutz::file_pos& pos)
 {
-  throw rutz::error(fstring("attempted to access invalid object "
-                            "in SoftRef<", rutz::demangled_name(info), ">"),
+  throw rutz::error(rutz::fstring("attempted to access invalid object "
+                                  "in SoftRef<", rutz::demangled_name(info), ">"),
                     pos);
 }
 

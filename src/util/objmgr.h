@@ -34,7 +34,10 @@
 
 #include "util/ref.h"
 
-class fstring;
+namespace rutz
+{
+  class fstring;
+}
 
 namespace Util
 {
@@ -44,7 +47,7 @@ namespace Util
     Util::SoftRef<Util::Object> newObj(const char* type);
 
     /// Will not return 0; will throw an exception on failure.
-    Util::SoftRef<Util::Object> newObj(const fstring& type);
+    Util::SoftRef<Util::Object> newObj(const rutz::fstring& type);
 
     template <class T, class S>
     Util::SoftRef<T> newTypedObj(S type)

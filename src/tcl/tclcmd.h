@@ -39,11 +39,10 @@
 
 typedef struct Tcl_Obj Tcl_Obj;
 
-class fstring;
-
 namespace rutz
 {
-  struct file_pos;
+  class file_pos;
+  class fstring;
   template <class T> class shared_ptr;
 }
 
@@ -119,7 +118,7 @@ public:
   ~Command() throw();
 
   /// Returns a string describing the arguments expected by this command.
-  fstring usageString() const;
+  rutz::fstring usageString() const;
 
   /// Check if the given argument count is acceptable.
   bool allowsObjc(unsigned int objc) const;

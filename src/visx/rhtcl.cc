@@ -37,10 +37,10 @@
 #include "tcl/tracertcl.h"
 
 #include "util/error.h"
+#include "util/fstring.h"
 #include "util/objfactory.h"
 #include "util/sharedptr.h"
 #include "util/serialport.h"
-#include "util/strings.h"
 
 #include "visx/eventresponsehdlr.h"
 #include "visx/responsehandler.h"

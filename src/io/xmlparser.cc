@@ -35,7 +35,7 @@
 #include "io/xmlparser.h"
 
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <istream>
 
@@ -143,10 +143,10 @@ DOTRACE("XmlParser::parse");
           != XML_STATUS_OK)
         {
           throw rutz::error
-            (fstring("xml parse error at input line ",
-                     XML_GetCurrentLineNumber(itsParser),
-                     ":\n",
-                     XML_ErrorString(XML_GetErrorCode(itsParser))),
+            (rutz::fstring("xml parse error at input line ",
+                           XML_GetCurrentLineNumber(itsParser),
+                           ":\n",
+                           XML_ErrorString(XML_GetErrorCode(itsParser))),
              SRC_POS);
         }
 

@@ -47,7 +47,9 @@ public:
   GbVec2(T x_=T(), T y_=T());
 
   /// String conversion constructor.
-  GbVec2(const fstring& s) : TMultiValue<T>(2) { TMultiValue<T>::setFstring(s); }
+  GbVec2(const rutz::fstring& s)
+    : TMultiValue<T>(2)
+  { TMultiValue<T>::setFstring(s); }
 
   /// Virtual destructor.
   virtual ~GbVec2();
@@ -57,7 +59,7 @@ public:
   /// Get the underlying Gfx::Vec2 value.
   const Gfx::Vec2<T>& vec() const { return *this; }
 
-  virtual fstring getNativeTypeName() const;
+  virtual rutz::fstring getNativeTypeName() const;
 
   virtual const T* constBegin() const;
 };
@@ -72,7 +74,9 @@ public:
   GbVec3(T x_=T(), T y_=T(), T z_=T());
 
   /// String conversion constructor.
-  GbVec3(const fstring& s) : TMultiValue<T>(3) { TMultiValue<T>::setFstring(s); }
+  GbVec3(const rutz::fstring& s)
+    : TMultiValue<T>(3)
+  { TMultiValue<T>::setFstring(s); }
 
   /// Virtual destructor.
   virtual ~GbVec3();
@@ -82,7 +86,7 @@ public:
   /// Get the underlying Gfx::Vec3 value.
   const Gfx::Vec3<T>& vec() const { return *this; }
 
-  virtual fstring getNativeTypeName() const;
+  virtual rutz::fstring getNativeTypeName() const;
 
   virtual const T* constBegin() const;
 };

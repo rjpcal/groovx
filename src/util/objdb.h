@@ -54,10 +54,8 @@ namespace Util
 class InvalidIdError : public rutz::error
 {
 public:
-  InvalidIdError(const fstring& msg, const rutz::file_pos& pos)
-    :
-    rutz::error(msg, pos)
-  {};
+  /// Constructor.
+  InvalidIdError(Util::UID id, const rutz::file_pos& pos);
 
   /// Virtual destructor.
   virtual ~InvalidIdError() throw();

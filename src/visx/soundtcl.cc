@@ -36,8 +36,8 @@
 #include "tcl/tclpkg.h"
 #include "tcl/tclsafeinterp.h"
 
+#include "util/fstring.h"
 #include "util/objfactory.h"
-#include "util/strings.h"
 
 #include "visx/sound.h"
 
@@ -77,8 +77,8 @@ DOTRACE("Sound_Init");
     }
   else
     {
-      const fstring ok_file(GROOVX_AUDIO_DIR "/saw50_500Hz_300ms.au");
-      const fstring err_file(GROOVX_AUDIO_DIR "/saw50_350Hz_2x120ms.au");
+      const rutz::fstring ok_file(GROOVX_AUDIO_DIR "/saw50_500Hz_300ms.au");
+      const rutz::fstring err_file(GROOVX_AUDIO_DIR "/saw50_350Hz_2x120ms.au");
 
       static int OK = -1;
       static int ERR = -1;

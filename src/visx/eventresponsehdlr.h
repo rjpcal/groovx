@@ -36,7 +36,10 @@
 
 #include "visx/responsehandler.h"
 
-class fstring;
+namespace rutz
+{
+  class fstring;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -113,7 +116,7 @@ public:
   ////////////////////////////
 
   /// Use \a responseMap as the current input response map.
-  void setInputResponseMap(const fstring& responseMap);
+  void setInputResponseMap(const rutz::fstring& responseMap);
 
   /// Queries whether feedback will be given.
   bool getUseFeedback() const;
@@ -130,17 +133,17 @@ public:
   /** Returns the event sequence which is currently attended for
       responses. The event sequence is specified in the format used
       in a Tk bind command. */
-  const fstring& getEventSequence() const;
+  const rutz::fstring& getEventSequence() const;
 
   /** Use \a seq as the binding sequence to be attended for
       responses. The event sequence should be specified in the format
       used in a Tk bind command. */
-  void setEventSequence(const fstring& seq);
+  void setEventSequence(const rutz::fstring& seq);
 
   /** Returns the current binding substitution. This will be in the
       format used in a Tk binding script (i.e. a percent sign
       followed by the appropriate character). */
-  const fstring& getBindingSubstitution() const;
+  const rutz::fstring& getBindingSubstitution() const;
 
   /** Use \a sub as the current binding substitution. This must be in
       the format used in a Tk binding script (i.e. a percent sign
@@ -149,16 +152,16 @@ public:
       the binding substitution will be evaluated, and checked for
       matches in the input response map to determine the integer
       response value. */
-  void setBindingSubstitution(const fstring& sub);
+  void setBindingSubstitution(const rutz::fstring& sub);
 
   /** Returns the args and body of the Tcl code chunk that will be used to
       decode responses. */
-  fstring getResponseProc() const;
+  rutz::fstring getResponseProc() const;
 
   /** Specify a Tcl proc-style code chunk that will translate its args (which
       are the results of the binding substitution(s)) into an integer result
       that can be stored in a Response. */
-  void setResponseProc(const fstring& args, const fstring& body);
+  void setResponseProc(const rutz::fstring& args, const rutz::fstring& body);
 
   /** Causes the response handler to abort the trial if an invalid
       responses is seen. This is the default behavior. */

@@ -39,8 +39,8 @@
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
+#include "util/fstring.h"
 #include "util/ref.h"
-#include "util/strings.h"
 
 #include <cstdio>
 #include <iostream>
@@ -51,6 +51,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using rutz::fstring;
 
 namespace WindowSystem
 {

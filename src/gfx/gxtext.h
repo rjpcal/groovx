@@ -34,8 +34,8 @@
 
 #include "gfx/gxshapekit.h"
 
+#include "util/fstring.h"
 #include "util/sharedptr.h"
-#include "util/strings.h"
 
 class GxFont;
 
@@ -69,10 +69,10 @@ public:
   static const FieldMap& classFields();
 
   /// Change the text string to \a text.
-  void setText(const fstring& text);
+  void setText(const rutz::fstring& text);
 
   /// Get the current text string.
-  const fstring& getText() const;
+  const rutz::fstring& getText() const;
 
   /// Change the stroke width of the font to \a width.
   void setStrokeWidth(int width);
@@ -81,10 +81,10 @@ public:
   int getStrokeWidth() const;
 
   /// Set the font used to render this text.
-  void setFont(fstring name);
+  void setFont(rutz::fstring name);
 
   /// Get the name of the font used to render this text.
-  fstring getFont() const;
+  rutz::fstring getFont() const;
 
 protected:
   virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
@@ -93,7 +93,7 @@ protected:
 
 private:
   rutz::shared_ptr<GxFont> itsFont;
-  fstring itsText;
+  rutz::fstring itsText;
   int itsStrokeWidth;
 };
 

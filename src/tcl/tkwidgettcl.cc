@@ -36,7 +36,7 @@
 #include "tcl/tclpkg.h"
 #include "tcl/tkwidget.h"
 
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include "util/trace.h"
 

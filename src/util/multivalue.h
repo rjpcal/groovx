@@ -43,7 +43,7 @@ public:
   virtual ~TMultiValue();
 
   /// Get a string describing the underlying native type.
-  virtual fstring getNativeTypeName() const = 0;
+  virtual rutz::fstring getNativeTypeName() const = 0;
 
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);

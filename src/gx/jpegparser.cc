@@ -132,8 +132,8 @@ DOTRACE("Jpeg::load");
 
   if (aux.infile == 0)
     {
-      throw rutz::error(fstring("couldn't open '", filename,
-                                "' for reading"), SRC_POS);
+      throw rutz::error(rutz::fstring("couldn't open '", filename,
+                                      "' for reading"), SRC_POS);
     }
 
 

@@ -35,7 +35,10 @@
 #include "util/refcounted.h"
 #include "util/uid.h"
 
-class fstring;
+namespace rutz
+{
+  class fstring;
+}
 
 namespace Util
 {
@@ -74,7 +77,7 @@ public:
   /** The result is a demangled version of \c typeid(*this).name(), which
       should very closely resemble the way the object was declared in
       source code. */
-  fstring realTypename() const;
+  rutz::fstring realTypename() const;
 
   /// Returns the (apparent) typename of the full object.
   /** The default implementation just returns realTypename(). However,
@@ -82,10 +85,10 @@ public:
       choose to have objTypename() return something besides the
       realTypename(), in order to masquerade as a different type of
       object.  */
-  virtual fstring objTypename() const;
+  virtual rutz::fstring objTypename() const;
 
   /// Returns a short string describing the object by its typename and id.
-  fstring uniqueName() const;
+  rutz::fstring uniqueName() const;
 
 private:
   Util::UID itsId;

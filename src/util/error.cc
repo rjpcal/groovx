@@ -35,7 +35,7 @@
 #include "util/error.h"
 
 #include "util/backtrace.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <cstdlib>
 #include <new>
@@ -70,7 +70,8 @@ DOTRACE("rutz::error::error()");
     }
 }
 
-rutz::error::error(const fstring& msg, const rutz::file_pos& pos) :
+rutz::error::error(const rutz::fstring& msg,
+                   const rutz::file_pos& pos) :
   std::exception(),
   m_msg(msg),
   m_file_pos(pos),
@@ -114,9 +115,9 @@ DOTRACE("rutz::error::~error");
 
 const char* rutz::error::what() const throw()
 {
-  m_what = fstring("at ", m_file_pos.m_file_name,
-                   ":", m_file_pos.m_line_no, ":\n",
-                   m_msg);
+  m_what = rutz::fstring("at ", m_file_pos.m_file_name,
+                         ":", m_file_pos.m_line_no, ":\n",
+                         m_msg);
   return m_what.c_str();
 }
 

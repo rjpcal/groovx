@@ -34,7 +34,7 @@
 
 #include "util/time.h"
 
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <sys/resource.h>
 #include <time.h>
@@ -60,7 +60,7 @@ rutz::time rutz::time::sys_rusage() throw()
   return rutz::time(ru.ru_stime);
 }
 
-fstring rutz::time::format(const char* formatcode) const
+rutz::fstring rutz::time::format(const char* formatcode) const
 {
   const time_t t = time_t(m_timeval.tv_sec);
 
@@ -70,7 +70,7 @@ fstring rutz::time::format(const char* formatcode) const
 
   std::size_t count = strftime(buf, 512, formatcode, tt);
 
-  return fstring(char_range(&buf[0], count));
+  return rutz::fstring(rutz::char_range(&buf[0], count));
 }
 
 static const char vcid_time_cc[] = "$Header$";

@@ -72,7 +72,7 @@ public:
   virtual int lastResponse() const;
 
   /// Returns a string naming the current element, plus a count of completed elements.
-  virtual fstring vxInfo() const;
+  virtual rutz::fstring vxInfo() const;
 
   /// Halt the current child element.
   virtual void vxHalt() const;

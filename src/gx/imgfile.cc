@@ -46,6 +46,8 @@
 
 #include "util/trace.h"
 
+using rutz::fstring;
+
 namespace
 {
   fstring tolower(const char* inp)

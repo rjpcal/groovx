@@ -39,9 +39,12 @@ namespace Util
   template <class T> class SoftRef;
 }
 
-class Toglet;
+namespace rutz
+{
+  class fstring;
+}
 
-class fstring;
+class Toglet;
 
 //  #######################################################
 //  =======================================================
@@ -74,7 +77,7 @@ public:
   virtual int lastResponse() const = 0;
 
   /// Get a string describing the object and/or its current state.
-  virtual fstring vxInfo() const = 0;
+  virtual rutz::fstring vxInfo() const = 0;
 
   /// Run this element with a reference to its parent.
   virtual void vxRun(Element& parent) = 0;

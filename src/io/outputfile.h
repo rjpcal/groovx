@@ -34,8 +34,8 @@
 
 #include "io/io.h"
 
+#include "util/fstring.h"
 #include "util/sharedptr.h"
-#include "util/strings.h"
 
 #ifdef HAVE_IOSFWD
 #include <iosfwd>
@@ -61,10 +61,10 @@ public:
   virtual void writeTo(IO::Writer& writer) const;
 
   /// Get the name of the file that will be written to.
-  fstring getFilename() const;
+  rutz::fstring getFilename() const;
 
   /// Set the name of the file that will be written to.
-  void setFilename(fstring fname);
+  void setFilename(rutz::fstring fname);
 
   /// Check whether this object currently has a valid, writable stream.
   bool hasStream() const;
@@ -73,7 +73,7 @@ public:
   STD_IO::ostream& stream();
 
 private:
-  fstring itsFilename;
+  rutz::fstring itsFilename;
   rutz::shared_ptr<STD_IO::ostream> itsStream;
 };
 

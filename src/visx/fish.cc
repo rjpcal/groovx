@@ -47,8 +47,8 @@
 
 #include "util/arrays.h"
 #include "util/error.h"
+#include "util/fstring.h"
 #include "util/ref.h"
-#include "util/strings.h"
 
 #include <fstream>
 
@@ -56,6 +56,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using rutz::fstring;
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -166,8 +166,10 @@ public:
 
   virtual void end();
 
-  virtual void drawRasterText(const fstring& text, const GxRasterFont& font);
-  virtual void drawVectorText(const fstring& text, const GxVectorFont& font);
+  virtual void drawRasterText(const rutz::fstring& text,
+                              const GxRasterFont& font);
+  virtual void drawVectorText(const rutz::fstring& text,
+                              const GxVectorFont& font);
 
   virtual void flushOutput();
 

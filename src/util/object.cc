@@ -35,7 +35,7 @@
 #include "util/object.h"
 
 #include "util/demangle.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <typeinfo>
 
@@ -61,22 +61,22 @@ Util::UID Util::Object::id() const throw()
   return itsId;
 }
 
-fstring Util::Object::realTypename() const
+rutz::fstring Util::Object::realTypename() const
 {
 DOTRACE("Util::Object::realTypename");
   return rutz::demangled_name(typeid(*this));
 }
 
-fstring Util::Object::objTypename() const
+rutz::fstring Util::Object::objTypename() const
 {
 DOTRACE("Util::Object::objTypename");
   return realTypename();
 }
 
-fstring Util::Object::uniqueName() const
+rutz::fstring Util::Object::uniqueName() const
 {
 DOTRACE("Util::Object::uniqueName");
-  return fstring(objTypename(), "(", id(), ")");
+  return rutz::fstring(objTypename(), "(", id(), ")");
 }
 
 static const char vcid_object_cc[] = "$Header$";

@@ -40,7 +40,10 @@ namespace rutz
   class file_pos;
 }
 
-class fstring;
+namespace rutz
+{
+  class fstring;
+}
 
 class GxRasterFont;
 class GxVectorFont;
@@ -382,10 +385,12 @@ public:
   virtual void end() = 0;
 
   /// Render text with the given raster font.
-  virtual void drawRasterText(const fstring& text, const GxRasterFont& font) = 0;
+  virtual void drawRasterText(const rutz::fstring& text,
+                              const GxRasterFont& font) = 0;
 
   /// Render text with the given vector font.
-  virtual void drawVectorText(const fstring& text, const GxVectorFont& font) = 0;
+  virtual void drawVectorText(const rutz::fstring& text,
+                              const GxVectorFont& font) = 0;
 
   /// Flush all pending drawing requests; swap buffers if double-buffering.
   virtual void flushOutput() = 0;

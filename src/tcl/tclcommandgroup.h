@@ -36,11 +36,10 @@ typedef struct Tcl_Obj Tcl_Obj;
 struct Tcl_Interp;
 typedef void* ClientData;
 
-class fstring;
-
 namespace rutz
 {
-  struct file_pos;
+  class file_pos;
+  class fstring;
   template <class T> class shared_ptr;
 }
 
@@ -66,17 +65,17 @@ public:
 
   /// Find the named command, making a new one if necessary.
   static CommandGroup* make(Tcl::Interp& interp,
-                            const fstring& cmd_name,
+                            const rutz::fstring& cmd_name,
                             const rutz::file_pos& src_pos);
 
   /// Add the given Tcl::Command to this group's overload list.
   void add(rutz::shared_ptr<Tcl::Command> p);
 
   /// Get this group's fully namespace-qualified command name.
-  fstring cmdName() const;
+  rutz::fstring cmdName() const;
 
   /// Returns a string giving the command's proper usage, including overloads.
-  fstring usage() const;
+  rutz::fstring usage() const;
 
   int rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw();
 
@@ -86,7 +85,8 @@ private:
   Impl* const rep;
 
   /// Private constructor since clients should use CommandGroup::make().
-  CommandGroup(Tcl::Interp& interp, const fstring& cmd_name,
+  CommandGroup(Tcl::Interp& interp,
+               const rutz::fstring& cmd_name,
                const rutz::file_pos& src_pos);
 
   /// Private destructor since destruction is automated by Tcl.

@@ -32,8 +32,8 @@
 #ifndef IOPROXY_H_DEFINED
 #define IOPROXY_H_DEFINED
 
+#include "util/fstring.h"
 #include "util/ref.h"
-#include "util/strings.h"
 
 #include "io/io.h"
 
@@ -74,7 +74,7 @@ public:
   virtual VersionId serialVersionId() const
     { return itsReferand->C::serialVersionId(); }
 
-  virtual fstring objTypename() const
+  virtual rutz::fstring objTypename() const
     { return rutz::demangled_name(typeid(C)); }
 
 private:
@@ -114,7 +114,7 @@ public:
   virtual VersionId serialVersionId() const
     { return itsReferand->C::serialVersionId(); }
 
-  virtual fstring objTypename() const
+  virtual rutz::fstring objTypename() const
     { return rutz::demangled_name(typeid(C)); }
 
 private:

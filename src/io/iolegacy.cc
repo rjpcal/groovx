@@ -35,9 +35,9 @@
 #include "io/iolegacy.h"
 
 #include "util/error.h"
+#include "util/fstring.h"
 #include "util/objmgr.h"
 #include "util/ref.h"
-#include "util/strings.h"
 #include "util/value.h"
 
 #include <cctype>
@@ -47,6 +47,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using rutz::fstring;
 
 using Util::Ref;
 using Util::SoftRef;

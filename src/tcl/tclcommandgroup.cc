@@ -39,8 +39,8 @@
 #include "tcl/tclsafeinterp.h"
 
 #include "util/fileposition.h"
+#include "util/fstring.h"
 #include "util/sharedptr.h"
-#include "util/strings.h"
 
 #include <list>
 #include <tcl.h>
@@ -48,6 +48,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using rutz::fstring;
 
 namespace
 {

@@ -32,7 +32,10 @@
 #ifndef DEBUG_H_DEFINED
 #define DEBUG_H_DEFINED
 
-class fstring;
+namespace rutz
+{
+  class fstring;
+}
 
 namespace rutz {namespace debug
 {
@@ -49,7 +52,7 @@ namespace rutz {namespace debug
   void eval (const char* what, int level, const char* where, int line_no, bool nl, double expr) throw();
   void eval (const char* what, int level, const char* where, int line_no, bool nl, const char* expr) throw();
   void eval (const char* what, int level, const char* where, int line_no, bool nl, void* expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, fstring expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, rutz::fstring expr) throw();
 
   void panic_aux         (const char* what, const char* where, int line_no) throw();
   void assert_aux        (const char* what, const char* where, int line_no) throw();

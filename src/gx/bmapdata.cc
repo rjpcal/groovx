@@ -392,8 +392,8 @@ DOTRACE("Gfx::BmapData::makeScrambled");
 
   if (rep->bitsPerPixel != 8 && rep->bitsPerPixel != 24)
     {
-      throw rutz::error(fstring("unknown bits-per-pixel value: ",
-                                rep->bitsPerPixel), SRC_POS);
+      throw rutz::error(rutz::fstring("unknown bits-per-pixel value: ",
+                                      rep->bitsPerPixel), SRC_POS);
     }
 
   const int bytes_per_pixel = rep->bitsPerPixel/8;

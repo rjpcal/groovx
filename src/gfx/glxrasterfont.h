@@ -41,7 +41,7 @@
 #include "tcl/tcllistobj.h"
 
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <cctype>
 #include <cstdio>
@@ -61,7 +61,7 @@ public:
   GlxRasterFont(const char* n);
   virtual ~GlxRasterFont() throw();
 
-  static fstring pickXFont(const char* spec);
+  static rutz::fstring pickXFont(const char* spec);
 
   virtual const char* fontName() const;
 
@@ -76,7 +76,7 @@ public:
 
 private:
   XFontStruct* itsFontInfo;
-  fstring itsFontName;
+  rutz::fstring itsFontName;
   unsigned int itsListBase;
   unsigned int itsListCount;
 };
@@ -98,7 +98,7 @@ DOTRACE("GlxRasterFont::GlxRasterFont");
         throw rutz::error("couldn't open connection to X server", SRC_POS);
     }
 
-  fstring xname = pickXFont(fontname);
+  rutz::fstring xname = pickXFont(fontname);
 
   dbg_eval_nl(2, xname.c_str());
   dbg_eval_nl(2, xname);
@@ -109,7 +109,7 @@ DOTRACE("GlxRasterFont::GlxRasterFont");
 
   if (itsFontInfo == 0)
     {
-      throw rutz::error(fstring("couldn't load X font '", xname, "'"), SRC_POS);
+      throw rutz::error(rutz::fstring("couldn't load X font '", xname, "'"), SRC_POS);
     }
 
   dbg_eval_nl(2, itsFontInfo->fid);
@@ -123,7 +123,7 @@ DOTRACE("GlxRasterFont::GlxRasterFont");
   if (itsListBase==0)
     {
       XFreeFontInfo(NULL, itsFontInfo, 1);
-      throw rutz::error(fstring("couldn't allocate GL display lists"), SRC_POS);
+      throw rutz::error(rutz::fstring("couldn't allocate GL display lists"), SRC_POS);
     }
 
   glXUseXFont(itsFontInfo->fid,
@@ -151,29 +151,29 @@ DOTRACE("GlxRasterFont::~GlxRasterFont");
   XFreeFontInfo(NULL, itsFontInfo, 1);
 }
 
-fstring GlxRasterFont::pickXFont(const char* spec)
+rutz::fstring GlxRasterFont::pickXFont(const char* spec)
 {
 DOTRACE("GlxRasterFont::pickXFont");
 
   if (isdigit(spec[0]))
     {
       // e.g. 8x13, 9x15
-      return fstring(spec);
+      return rutz::fstring(spec);
     }
   else if (spec[0] == '-')
     {
       // e.g. a full X font name "-adobe-..."
-      return fstring(spec);
+      return rutz::fstring(spec);
     }
   else
     {
       const char* foundry = "*";
-      fstring     family  = "helvetica";
+      rutz::fstring family= "helvetica";
       const char* weight  = "medium"; // black, bold, demibold, light, medium, regular
       const char* slant   = "r"; // 'i', 'o', 'r'
       const char* width   = "normal"; // condensed, normal
       const char* style   = "*"; // could by '', 'ja', 'ko', 'medium', 'sans'
-      fstring     pxlsize = "12";
+      rutz::fstring pxlsize= "12";
       const char* ptsize  = "*";
       const char* resx    = "*"; // could be 72, 75, 100
       const char* resy    = "*"; // could be 72, 75, 100
@@ -182,7 +182,7 @@ DOTRACE("GlxRasterFont::pickXFont");
       const char* rgstry  = "*"; // e.g. iso8859
       const char* encdng  = "*";
 
-      fstring     mods    = "";
+      rutz::fstring mods  = "";
 
       // Parse the spec as a Tcl list. This is useful for font names with
       // embedded spaces, such that the spec needs quotes or
@@ -229,7 +229,7 @@ DOTRACE("GlxRasterFont::pickXFont");
                rgstry,
                encdng);
       dbg_eval_nl(2, buf);
-      return fstring(buf);
+      return rutz::fstring(buf);
     }
 }
 

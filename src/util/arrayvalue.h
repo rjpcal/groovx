@@ -32,7 +32,7 @@
 #ifndef ARRAYVALUE_H_DEFINED
 #define ARRAYVALUE_H_DEFINED
 
-#include "util/strings.h"
+#include "util/fstring.h"
 #include "util/value.h"
 
 #include <iomanip>
@@ -44,12 +44,12 @@ class TArrayValue : public Value
 {
 public:
   TArrayValue() : itsArray() {}
-  TArrayValue(const fstring& s) { setFstring(s); }
+  TArrayValue(const rutz::fstring& s) { setFstring(s); }
   virtual ~TArrayValue() {}
 
-  virtual fstring getNativeTypeName() const
+  virtual rutz::fstring getNativeTypeName() const
   {
-    return fstring("TArrayValue");
+    return rutz::fstring("TArrayValue");
   }
 
   virtual void printTo(STD_IO::ostream& os) const

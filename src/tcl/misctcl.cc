@@ -42,8 +42,8 @@
 
 #include "util/backtrace.h"
 #include "util/error.h"
+#include "util/fstring.h"
 #include "util/rand.h"
-#include "util/strings.h"
 
 #include <unistd.h>
 
@@ -59,14 +59,14 @@ namespace
       ::usleep(usecs);
   }
 
-  fstring backTrace()
+  rutz::fstring backTrace()
   {
     const rutz::backtrace& bt = rutz::error::last_backtrace();
 
     return bt.format();
   }
 
-  fstring cmdUsage(Tcl::Context& ctx)
+  rutz::fstring cmdUsage(Tcl::Context& ctx)
   {
     const char* name = ctx.getValFromArg<const char*>(1);
     Tcl::CommandGroup* cmd =
@@ -75,7 +75,7 @@ namespace
     if (cmd == 0)
       throw rutz::error("no such Tcl::CommandGroup", SRC_POS);
 
-    fstring result(name, " resolves to ", cmd->cmdName(), "\n");
+    rutz::fstring result(name, " resolves to ", cmd->cmdName(), "\n");
     result.append(cmd->usage());
     return result;
   }
@@ -83,7 +83,7 @@ namespace
   unsigned long get_default_seed() { return rutz::default_rand_seed; }
   void set_default_seed(unsigned long x) { rutz::default_rand_seed = x; }
 
-  fstring tcl_valuetype(Tcl::ObjPtr obj)
+  rutz::fstring tcl_valuetype(Tcl::ObjPtr obj)
   {
     return obj.typeName();
   }

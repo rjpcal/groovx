@@ -41,10 +41,10 @@
 
 #include "util/cstrstream.h"
 #include "util/error.h"
+#include "util/fstring.h"
 #include "util/gzstreambuf.h"
 #include "util/ref.h"
 #include "util/sharedptr.h"
-#include "util/strings.h"
 #include "util/value.h"
 
 #include <istream>
@@ -54,6 +54,7 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using rutz::fstring;
 using rutz::shared_ptr;
 
 using Util::Ref;
@@ -126,7 +127,7 @@ namespace
           }
       } // while loop
 
-    return fstring(char_range(&buffer[0], buffer.size()));
+    return fstring(rutz::char_range(&buffer[0], buffer.size()));
   }
 }
 

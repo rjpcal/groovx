@@ -38,7 +38,7 @@
 
 #include "util/backtrace.h"
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <iostream>
 #include <tk.h>
@@ -83,10 +83,10 @@ private:
   const char* itsStartupFileName;
   const char* itsArgv0;
   Tcl_Channel itsInChannel;
-  fstring itsCommand;   // Build lines of tty input into Tcl commands.
+  rutz::fstring itsCommand; // Build lines of tty input into Tcl commands.
   bool itsGotPartial;
   bool isItInteractive; // True if input is a terminal-like device.
-  fstring itsCommandLine; // Entire command-line as a string
+  rutz::fstring itsCommandLine; // Entire command-line as a string
 
   // Function members
 
@@ -138,7 +138,7 @@ public:
 
   const char* const* argv() const { return itsArgv; }
 
-  fstring commandLine() const { return itsCommandLine; }
+  rutz::fstring commandLine() const { return itsCommandLine; }
 
 #ifdef WITH_READLINE
   static void readlineLineComplete(char* line);
@@ -279,9 +279,9 @@ DOTRACE("Tcl::MainImpl::prompt");
   else
     {
 #ifdef WITH_READLINE
-      fstring text(itsArgv0, " ", historyNext(), ">>> ");
+      rutz::fstring text(itsArgv0, " ", historyNext(), ">>> ");
 #else
-      fstring text(itsArgv0, " ", historyNext(), "> ");
+      rutz::fstring text(itsArgv0, " ", historyNext(), "> ");
 #endif
 
       doPrompt(text.c_str(), text.length());
@@ -551,7 +551,7 @@ DOTRACE("Tcl::MainImpl::run");
           // ensure errorInfo is set properly:
           itsSafeInterp.addErrorInfo("");
 
-          const fstring bt = rutz::error::last_backtrace().format();
+          const rutz::fstring bt = rutz::error::last_backtrace().format();
 
           std::cerr << itsSafeInterp.getGlobalVar<const char*>("errorInfo")
                     << "\n" << bt << "\nError in startup script\n";
@@ -639,7 +639,7 @@ DOTRACE("Tcl::Main::argv");
   return Tcl::MainImpl::get()->argv();
 }
 
-fstring Tcl::Main::commandLine()
+rutz::fstring Tcl::Main::commandLine()
 {
 DOTRACE("Tcl::Main::commandLine");
   return Tcl::MainImpl::get()->commandLine();

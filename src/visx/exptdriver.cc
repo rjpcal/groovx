@@ -48,10 +48,10 @@
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
+#include "util/fstring.h"
 #include "util/iter.h"
 #include "util/log.h"
 #include "util/ref.h"
-#include "util/strings.h"
 
 #include "visx/tlistutils.h"
 
@@ -64,6 +64,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using rutz::fstring;
 
 rutz::tracer ExptDriver::tracer;
 

@@ -36,7 +36,7 @@
 
 #include "util/arrays.h"
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <cerrno> // for ::errno
 #include <cstdio> // for ::rename(), ::remove()
@@ -52,8 +52,8 @@ namespace
 {
   void throwErrno(const char* where, const rutz::file_pos& pos)
   {
-    throw rutz::error(fstring("in \"", where, "\": ",
-                              ::strerror(errno)), pos);
+    throw rutz::error(rutz::fstring("in \"", where, "\": ",
+                                    ::strerror(errno)), pos);
   }
 
   class ErrnoSaver
@@ -103,7 +103,7 @@ DOTRACE("unixcall::remove");
     throwErrno("unixcall::remove", SRC_POS);
 }
 
-fstring unixcall::getcwd()
+rutz::fstring unixcall::getcwd()
 {
 DOTRACE("unixcall::getcwd");
 
@@ -125,7 +125,7 @@ DOTRACE("unixcall::getcwd");
         }
     }
 
-  return fstring(&buf[0]);
+  return rutz::fstring(&buf[0]);
 }
 
 static const char vcid_system_cc[] = "$Header$";

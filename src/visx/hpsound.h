@@ -37,7 +37,7 @@
 #include "io/writer.h"
 
 #include "util/algo.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <Alib.h>
 
@@ -57,7 +57,7 @@ namespace
 
     dbg_eval_nl(3, buf);
 
-    throw rutz::error(fstring("HP Audio Error: ", buf), SRC_POS);
+    throw rutz::error(rutz::fstring("HP Audio Error: ", buf), SRC_POS);
 
     // we'll never get here, but we need to placate the compiler
     return 0;

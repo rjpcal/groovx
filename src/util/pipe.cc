@@ -35,7 +35,7 @@
 #include "util/pipe.h"
 
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include "util/debug.h"
 DBG_REGISTER
@@ -107,7 +107,7 @@ namespace
       case 'w': return false;
       }
 
-    throw rutz::error(fstring("invalid read/write mode '", m, "'"),
+    throw rutz::error(rutz::fstring("invalid read/write mode '", m, "'"),
                       SRC_POS);
     return false; // "can't happen"
   }

@@ -120,7 +120,7 @@ namespace
         if (text_labels)
           {
             Ref<GxText> label(GxText::make());
-            label->setText(fstring(objids[i]));
+            label->setText(rutz::fstring(objids[i]));
             label->setAlignmentMode(GxAligner::CENTER_ON_CENTER);
             label->setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
             label->setHeight(0.1);
@@ -150,9 +150,10 @@ namespace
     return sep;
   }
 
-  fstring gsubst(const fstring& in, char match, const char* replace)
+  rutz::fstring gsubst(const rutz::fstring& in,
+                       char match, const char* replace)
   {
-    fstring result;
+    rutz::fstring result;
     for (const char* p = in.c_str(); *p != '\0'; ++p)
       {
         if (*p == match)
@@ -492,8 +493,8 @@ Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
   STD_IO::ifstream ifs(objid_file);
 
   if (ifs.fail())
-    throw rutz::error(fstring("couldn't open '", objid_file,
-                              "' for reading"), SRC_POS);
+    throw rutz::error(rutz::fstring("couldn't open '", objid_file,
+                                    "' for reading"), SRC_POS);
 
   const int BUF_SIZE = 200;
   char line[BUF_SIZE];

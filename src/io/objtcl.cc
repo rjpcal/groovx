@@ -101,8 +101,8 @@ namespace
     STD_IO::ofstream ofs(filename);
     if (ofs.fail())
       {
-        throw rutz::error(fstring("error opening file: ", filename),
-                          SRC_POS);
+        throw rutz::error(rutz::fstring("error opening file: ",
+                                        filename), SRC_POS);
       }
 
     IO::LegacyWriter writer(ofs, use_bases);
@@ -123,8 +123,8 @@ namespace
   void dbRelease(Util::UID id) { ObjDb::theDb().release(id); }
   void dbClearOnExit() { ObjDb::theDb().clearOnExit(); }
 
-  // This is just here to select between the const char* + fstring
-  // versions of newObj().
+  // This is just here to select between the const char* +
+  // rutz::fstring versions of newObj().
   SoftRef<Util::Object> objNew(const char* type)
   {
     return Util::ObjMgr::newObj(type);

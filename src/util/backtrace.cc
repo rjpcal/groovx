@@ -34,8 +34,8 @@
 
 #include "backtrace.h"
 
+#include "util/fstring.h"
 #include "util/staticstack.h"
-#include "util/strings.h"
 
 #include <cmath> // for log10()
 #include <cstdio> // for snprintf(), fprintf()
@@ -156,11 +156,11 @@ void rutz::backtrace::print(STD_IO::ostream& os) const throw()
   os << std::flush;
 }
 
-fstring rutz::backtrace::format() const
+rutz::fstring rutz::backtrace::format() const
 {
-  if (rep->vec.size() == 0) return fstring();
+  if (rep->vec.size() == 0) return rutz::fstring();
 
-  fstring result;
+  rutz::fstring result;
 
   const int LINELEN = 256;
   char line[LINELEN];

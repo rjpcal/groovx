@@ -34,8 +34,8 @@
 
 #include "io/io.h"
 
+#include "util/fstring.h"
 #include "util/sharedptr.h"
-#include "util/strings.h"
 
 namespace Util
 {
@@ -117,7 +117,7 @@ public:
   const char* getFile() const;
 
 private:
-  fstring itsFilename;
+  rutz::fstring itsFilename;
   rutz::shared_ptr<SoundRep> itsRep;
 };
 

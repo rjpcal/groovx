@@ -37,7 +37,7 @@
 #include "io/writer.h"
 
 #include "util/arrays.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <dmedia/audio.h>
 #include <dmedia/audiofile.h>
@@ -86,7 +86,7 @@ DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
   AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
   if (audiofile == AF_NULL_FILEHANDLE)
     {
-      throw rutz::error(fstring("couldn't open sound file ", filename),
+      throw rutz::error(rutz::fstring("couldn't open sound file ", filename),
                         SRC_POS);
     }
 
@@ -97,8 +97,8 @@ DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
   const int numChannels = afGetChannels(audiofile, AF_DEFAULT_TRACK);
   if (numChannels == -1)
     {
-      throw rutz::error(fstring("error reading the number of channels "
-                                "in sound file ", filename), SRC_POS);
+      throw rutz::error(rutz::fstring("error reading the number of channels "
+                                      "in sound file ", filename), SRC_POS);
     }
   alSetChannels(itsAudioConfig, numChannels);
 
@@ -106,8 +106,8 @@ DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
   itsFrameCount = afGetFrameCount(audiofile, AF_DEFAULT_TRACK);
   if (itsFrameCount < 0)
     {
-      throw rutz::error(fstring("error reading the frame count "
-                                "in sound file ", filename), SRC_POS);
+      throw rutz::error(rutz::fstring("error reading the frame count "
+                                      "in sound file ", filename), SRC_POS);
     }
 
   // Sample format and width
@@ -146,14 +146,14 @@ DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
 
   if (readResult == -1)
     {
-      throw rutz::error(fstring("error reading sound data "
-                                "from file ", filename), SRC_POS);
+      throw rutz::error(rutz::fstring("error reading sound data "
+                                      "from file ", filename), SRC_POS);
     }
 
   if (closeResult == -1)
     {
-      throw rutz::error(fstring("error closing sound file ", filename),
-                        SRC_POS);
+      throw rutz::error(rutz::fstring("error closing sound file ",
+                                      filename), SRC_POS);
     }
 }
 

@@ -34,7 +34,7 @@
 
 #include "gfx/gbcolor.h"
 
-#include "util/strings.h"
+#include "util/fstring.h"
 
 GbColor::GbColor(double v) :
   Gfx::RgbaColor(v),
@@ -52,12 +52,16 @@ GbColor::~GbColor() {}
 // Value interface
 //
 
-fstring GbColor::getNativeTypeName() const
+rutz::fstring GbColor::getNativeTypeName() const
 {
-  static fstring name("GbColor"); return name;
+  static rutz::fstring name("GbColor");
+  return name;
 }
 
-const double* GbColor::constBegin() const { return Gfx::RgbaColor::data(); }
+const double* GbColor::constBegin() const
+{
+  return Gfx::RgbaColor::data();
+}
 
 static const char vcid_gbcolor_cc[] = "$Header$";
 #endif // !GBCOLOR_CC_DEFINED

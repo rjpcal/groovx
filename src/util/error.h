@@ -33,7 +33,7 @@
 #define ERROR_H_DEFINED
 
 #include "util/fileposition.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <exception>
 
@@ -56,7 +56,7 @@ public:
   error(const rutz::file_pos& pos);
 
   /// Construct with an error message.
-  error(const fstring& msg, const rutz::file_pos& pos);
+  error(const rutz::fstring& msg, const rutz::file_pos& pos);
 
   /// Copy constructor.
   error(const error& other) throw();
@@ -78,16 +78,16 @@ public:
 
 protected:
   /// Reset the error message.
-  void set_msg(const fstring& new_msg) throw() { m_msg = new_msg; }
+  void set_msg(const rutz::fstring& new_msg) throw() { m_msg = new_msg; }
 
   /// Get the (un-decorated) error message.
-  const fstring& get_msg() const throw() { return m_msg; }
+  const rutz::fstring& get_msg() const throw() { return m_msg; }
 
 private:
   error& operator=(const error& other);
 
-  fstring                m_msg; // holds the user-provided info
-  mutable fstring        m_what; // holds m_msg plus decoration
+  rutz::fstring          m_msg; // holds the user-provided info
+  mutable rutz::fstring  m_what; // holds m_msg plus decoration
   rutz::file_pos         m_file_pos;
   const rutz::backtrace* m_backtrace;
 };

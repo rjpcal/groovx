@@ -52,7 +52,7 @@ public:
   /// Get the underlying color value.
   const Gfx::RgbaColor& color() const { return *this; }
 
-  virtual fstring getNativeTypeName() const;
+  virtual rutz::fstring getNativeTypeName() const;
 
   virtual const double* constBegin() const;
 };

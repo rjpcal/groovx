@@ -46,6 +46,13 @@ DBG_REGISTER
 
 using rutz::shared_ptr;
 
+InvalidIdError::InvalidIdError(Util::UID id,
+                               const rutz::file_pos& pos)
+  :
+  rutz::error(rutz::fstring("attempted to access "
+                            "invalid object '", id, "'"), pos)
+{}
+
 InvalidIdError::~InvalidIdError() throw() {}
 
 ///////////////////////////////////////////////////////////////////////
@@ -167,9 +174,7 @@ public:
       MapType::iterator itr = itsPtrMap.find(id);
       if (!isValidItr(itr))
         {
-          throw InvalidIdError(fstring("attempted to access "
-                                       "invalid object '", id, "'"),
-                               SRC_POS);
+          throw InvalidIdError(id, SRC_POS);
         }
 
       return (*itr).second.get();

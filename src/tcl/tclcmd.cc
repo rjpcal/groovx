@@ -37,8 +37,8 @@
 #include "tcl/tclcommandgroup.h"
 #include "tcl/tclsafeinterp.h"
 
+#include "util/fstring.h"
 #include "util/sharedptr.h"
-#include "util/strings.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -116,7 +116,7 @@ public:
   // These are set once per command object
   shared_ptr<Tcl::Callback> callback;
   shared_ptr<Tcl::Dispatcher> dispatcher;
-  const fstring usage;
+  const rutz::fstring usage;
   const unsigned int objcMin;
   const unsigned int objcMax;
   const bool exactObjc;
@@ -193,7 +193,7 @@ bool Tcl::Command::rejectsObjc(unsigned int objc) const
   return !allowsObjc(objc);
 }
 
-fstring Tcl::Command::usageString() const
+rutz::fstring Tcl::Command::usageString() const
 {
 DOTRACE("Tcl::Command::usageString");
   return rep->usage;

@@ -41,8 +41,10 @@ void rutz::throw_bad_cast(const std::type_info& to,
                           const std::type_info& from,
                           const rutz::file_pos& pos)
 {
-  throw rutz::error(fstring("failed cast to ", rutz::demangled_name(to),
-                            " from ", rutz::demangled_name(from)), pos);
+  throw rutz::error(rutz::fstring("failed cast to ",
+                                  rutz::demangled_name(to),
+                                  " from ",
+                                  rutz::demangled_name(from)), pos);
 }
 
 static const char vcid_stderror_cc[] = "$Header$";

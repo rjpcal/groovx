@@ -42,13 +42,14 @@ namespace IO
 /// Utilities for reading sequences from a \c IO::Reader.
 namespace ReadUtils
 {
-  fstring makeElementNameString(const fstring& seq_name,
-                                int element_num);
+  rutz::fstring makeElementNameString(const rutz::fstring& seq_name,
+                                      int element_num);
 
-  fstring makeSeqCountString(const fstring& seq_name);
+  rutz::fstring makeSeqCountString(const rutz::fstring& seq_name);
 
   /// Get the number of elements in the stored sequence \a seq_name.
-  inline int readSequenceCount(IO::Reader& reader, const fstring& seq_name)
+  inline int readSequenceCount(IO::Reader& reader,
+                               const rutz::fstring& seq_name)
     {
       int count = reader.readInt(makeSeqCountString(seq_name));
       if (0 > count)
@@ -63,7 +64,8 @@ namespace ReadUtils
       avoid reading the value twice (this may be important if the
       reader does not support random access to the attributes). */
   template <class T, class Inserter>
-  inline void readValueSeq(IO::Reader& reader, const fstring& seq_name,
+  inline void readValueSeq(IO::Reader& reader,
+                           const rutz::fstring& seq_name,
                            Inserter inserter, int known_count = -1)
     {
       int count = (known_count == -1) ?
@@ -84,7 +86,8 @@ namespace ReadUtils
       we avoid reading the value twice (this may be important if the
       reader does not support random access to the attributes). */
   template <class T, class Inserter>
-  inline void readValueObjSeq(IO::Reader& reader, const fstring& seq_name,
+  inline void readValueObjSeq(IO::Reader& reader,
+                              const rutz::fstring& seq_name,
                               Inserter inserter, int known_count = -1)
     {
       int count = (known_count == -1) ?
@@ -105,7 +108,8 @@ namespace ReadUtils
       we avoid reading the value twice (this may be important if the
       reader does not support random access to the attributes). */
   template <class C, class Inserter>
-  inline void readObjectSeq(IO::Reader& reader, const fstring& seq_name,
+  inline void readObjectSeq(IO::Reader& reader,
+                            const rutz::fstring& seq_name,
                             Inserter inserter, int known_count = -1)
     {
       int count = (known_count == -1) ?

@@ -32,7 +32,7 @@
 #ifndef QUICKTIMESOUND_H_DEFINED
 #define QUICKTIMESOUND_H_DEFINED
 
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <Carbon/Carbon.h>
 #include <QuickTime/Movies.h>
@@ -65,7 +65,7 @@ DOTRACE("QuickTimeSoundRep::QuickTimeSoundRep");
                             &ref, 0);
 
   if (noErr != err)
-    throw rutz::error(fstring("error in FSPathMakeRef: ", err),
+    throw rutz::error(rutz::fstring("error in FSPathMakeRef: ", err),
                       SRC_POS);
 
   // (2) Get an FSSpec from the FSRef
@@ -75,14 +75,14 @@ DOTRACE("QuickTimeSoundRep::QuickTimeSoundRep");
                          NULL, NULL, &spec, NULL);
 
   if (noErr != err)
-    throw rutz::error(fstring("error in FSGetCatalogInfo: ", err),
+    throw rutz::error(rutz::fstring("error in FSGetCatalogInfo: ", err),
                       SRC_POS);
 
   // (3) Get a movie file descriptor from the FSSpec
   err = OpenMovieFile(&spec, &itsFileRefNum, fsRdPerm);
 
   if (noErr != err)
-    throw rutz::error(fstring("error in OpenMovieFile: ", err),
+    throw rutz::error(rutz::fstring("error in OpenMovieFile: ", err),
                       SRC_POS);
 
   // (4) Get a movie object from the movie file
@@ -92,7 +92,7 @@ DOTRACE("QuickTimeSoundRep::QuickTimeSoundRep");
   if (noErr != err)
     {
       CloseMovieFile(itsFileRefNum);
-      throw rutz::error(fstring("error in NewMovieFromFile: ", err),
+      throw rutz::error(rutz::fstring("error in NewMovieFromFile: ", err),
                         SRC_POS);
     }
 }

@@ -34,17 +34,17 @@
 
 #include "util/objmgr.h"
 
+#include "util/fstring.h"
 #include "util/objfactory.h"
-#include "util/strings.h"
 
 #include "util/trace.h"
 
 Util::SoftRef<Util::Object> Util::ObjMgr::newObj(const char* type)
 {
-  return newObj(fstring(type));
+  return newObj(rutz::fstring(type));
 }
 
-Util::SoftRef<Util::Object> Util::ObjMgr::newObj(const fstring& type)
+Util::SoftRef<Util::Object> Util::ObjMgr::newObj(const rutz::fstring& type)
 {
 DOTRACE("Util::ObjMgr::newObj(const fstring&)");
   return SoftRef<Object>(ObjFactory::theOne().new_checked_object(type));

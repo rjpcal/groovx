@@ -38,8 +38,8 @@
 #include "tcl/tcllistobj.h"
 #include "tcl/tclsafeinterp.h"
 
+#include "util/fstring.h"
 #include "util/sharedptr.h"
-#include "util/strings.h"
 
 #include <tcl.h>
 #include <cctype>
@@ -101,7 +101,7 @@ namespace
       Tcl_FindNamespace(interp.intp(), from, 0, TCL_GLOBAL_ONLY);
     Tcl_Export(interp.intp(), namesp, "*", /*resultListFirst*/ false);
 #else
-    fstring cmd("namespace eval ", from, " { namespace export * }");
+    rutz::fstring cmd("namespace eval ", from, " { namespace export * }");
     interp.eval(cmd);
 #endif
   }
@@ -111,7 +111,7 @@ namespace
                   const char* pattern)
   {
   DOTRACE("exportInto");
-    fstring cmd("namespace eval ", to, " { namespace import ::");
+    rutz::fstring cmd("namespace eval ", to, " { namespace import ::");
     cmd.append(from, "::", pattern, " }");
 
     interp.eval(cmd);
@@ -120,7 +120,7 @@ namespace
   Tcl::List getCommandList(Tcl::Interp& interp, const char* namesp)
   {
     Tcl::ObjPtr saveresult = interp.getResult<Tcl::ObjPtr>();
-    fstring cmd("info commands ::", namesp, "::*");
+    rutz::fstring cmd("info commands ::", namesp, "::*");
     interp.eval(cmd);
     Tcl::List cmdlist = interp.getResult<Tcl::List>();
     interp.setResult(saveresult);

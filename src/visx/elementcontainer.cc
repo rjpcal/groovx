@@ -141,13 +141,15 @@ DOTRACE("ElementContainer::lastResponse");
   return prev_element->lastResponse();
 }
 
-fstring ElementContainer::vxInfo() const
+rutz::fstring ElementContainer::vxInfo() const
 {
 DOTRACE("ElementContainer::vxInfo");
-  if (isComplete()) return fstring("complete");
+  if (isComplete()) return rutz::fstring("complete");
 
-  fstring msg("current element ", currentElement()->uniqueName(),
-              ", completed ", numCompleted(), " of ", numElements());
+  rutz::fstring msg("current element ",
+                    currentElement()->uniqueName(),
+                    ", completed ", numCompleted(),
+                    " of ", numElements());
 
   return msg;
 }
@@ -254,7 +256,7 @@ DOTRACE("ElementContainer::vxReset");
 
   for (unsigned int i = 0; i < rep->elements.size(); ++i)
     {
-      Util::log(fstring("resetting element", i));
+      Util::log(rutz::fstring("resetting element", i));
       rep->elements[i]->vxReset();
     }
 

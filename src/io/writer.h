@@ -33,7 +33,7 @@
 #define WRITER_H_DEFINED
 
 #include "util/fileposition.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include "io/iodecls.h"
 
@@ -129,7 +129,7 @@ public:
   void writeValue(const char* name, double val)
   { writeDouble(name, val); }
 
-  void writeValue(const char* name, const fstring& val)
+  void writeValue(const char* name, const rutz::fstring& val)
   { writeCstring(name, val.c_str()); }
 
   void writeValue(const char* name, const Value& value)

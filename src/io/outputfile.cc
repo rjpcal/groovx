@@ -55,7 +55,7 @@ OutputFile::~OutputFile() throw() {}
 
 void OutputFile::readFrom(IO::Reader& reader)
 {
-  fstring fname;
+  rutz::fstring fname;
   reader.readValue("filename", fname);
 
   setFilename(fname);
@@ -66,12 +66,12 @@ void OutputFile::writeTo(IO::Writer& writer) const
   writer.writeValue("filename", itsFilename);
 }
 
-fstring OutputFile::getFilename() const
+rutz::fstring OutputFile::getFilename() const
 {
   return itsFilename;
 }
 
-void OutputFile::setFilename(fstring fname)
+void OutputFile::setFilename(rutz::fstring fname)
 {
   if (fname.is_empty())
     {
@@ -82,8 +82,8 @@ void OutputFile::setFilename(fstring fname)
   shared_ptr<STD_IO::ostream> s(new STD_IO::ofstream(fname.c_str()));
 
   if (s->fail())
-    throw rutz::error(fstring("couldn't open '", fname,
-                              "' for writing"), SRC_POS);
+    throw rutz::error(rutz::fstring("couldn't open '", fname,
+                                    "' for writing"), SRC_POS);
 
   itsStream.swap(s);
   itsFilename = fname;

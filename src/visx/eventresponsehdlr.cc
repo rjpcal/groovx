@@ -45,11 +45,11 @@
 #include "tcl/tclsafeinterp.h"
 
 #include "util/fileposition.h"
+#include "util/fstring.h"
 #include "util/log.h"
 #include "util/ref.h"
 #include "util/sharedptr.h"
 #include "util/scopedptr.h"
-#include "util/strings.h"
 
 #include "visx/feedbackmap.h"
 #include "visx/sound.h"
@@ -60,6 +60,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using rutz::fstring;
 
 ///////////////////////////////////////////////////////////////////////
 //

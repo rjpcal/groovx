@@ -65,7 +65,7 @@ IO::ReadVersionError::ReadVersionError(const char* classname,
                                        const rutz::file_pos& pos) :
   rutz::error(pos)
 {
-  fstring m;
+  rutz::fstring m;
   m.append("IO::ReadVersionError: in ", classname,
            ", serial version ", attempted_id, " is not supported. ");
   m.append("The lowest supported version is ", lowest_supported_id,
@@ -96,12 +96,12 @@ DOTRACE("IO::Reader::ensureReadVersionId");
   return actual_version;
 }
 
-void IO::Reader::defaultReadRawData(const fstring& name,
+void IO::Reader::defaultReadRawData(const rutz::fstring& name,
                                     rutz::byte_array& data)
 {
 DOTRACE("IO::Reader::defaultReadRawData");
 
-  fstring encoded = readStringImpl(name);
+  rutz::fstring encoded = readStringImpl(name);
   rutz::base64_decode(encoded.c_str(), encoded.length(),
                       data);
 }

@@ -37,6 +37,8 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+using rutz::fstring;
+
 namespace
 {
   fstring uniqName()

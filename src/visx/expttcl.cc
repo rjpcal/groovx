@@ -39,12 +39,14 @@
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
+#include "util/fstring.h"
 #include "util/ref.h"
-#include "util/strings.h"
 
 #include "visx/exptdriver.h"
 
 #include "util/trace.h"
+
+using rutz::fstring;
 
 namespace
 {

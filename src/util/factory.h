@@ -39,10 +39,10 @@
 
 #include <typeinfo>
 
-class fstring;
-
 namespace rutz
 {
+  class fstring;
+
   /**
    *
    * \c rutz::creator_base is a template class that defines a single
@@ -110,7 +110,7 @@ namespace rutz
   };
 
 
-  ///////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
   /**
    *
    * \c rutz::factory can create objects from an inheritance hierarchy
@@ -123,7 +123,7 @@ namespace rutz
    * rutz::factory.
    *
    **/
-  ///////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////
 
   template <class base_t>
   class factory : public rutz::factory_base
@@ -171,7 +171,7 @@ namespace rutz
     /** Returns a new object of a given type. If the given type has
         not been registered with the factory, a null pointer is
         returned. */
-    base_t new_object(const fstring& type)
+    base_t new_object(const rutz::fstring& type)
     {
       rutz::creator_base<base_t>* creator =
         m_map.get_ptr_for_key(type);
@@ -183,7 +183,7 @@ namespace rutz
     /** Returns a new object of a given type. If the given type has
         not been registered with the factory, an exception is
         thrown. */
-    base_t new_checked_object(const fstring& type)
+    base_t new_checked_object(const rutz::fstring& type)
     {
       rutz::creator_base<base_t>* creator =
         m_map.get_ptr_for_key(type);

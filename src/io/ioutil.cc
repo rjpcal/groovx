@@ -42,9 +42,9 @@
 
 #include "util/cstrstream.h"
 #include "util/error.h"
+#include "util/fstring.h"
 #include "util/ref.h"
 #include "util/sharedptr.h"
-#include "util/strings.h"
 
 #include <iostream>
 #include <sstream>
@@ -53,6 +53,7 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using rutz::fstring;
 using rutz::shared_ptr;
 
 fstring IO::writeLGX(Util::Ref<IO::IoObject> obj)

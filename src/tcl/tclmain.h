@@ -32,7 +32,10 @@
 #ifndef TCLMAIN_H_DEFINED
 #define TCLMAIN_H_DEFINED
 
-class fstring;
+namespace rutz
+{
+  class fstring;
+}
 
 namespace Tcl
 {
@@ -63,7 +66,7 @@ public:
   static const char* const* argv();
 
   /// Get the whole command-line as a single string.
-  static fstring commandLine();
+  static rutz::fstring commandLine();
 
 private:
   Main(const Main&);

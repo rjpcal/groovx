@@ -40,9 +40,9 @@
 #include "io/writer.h"
 
 #include "util/arrays.h"
+#include "util/fstring.h"
 #include "util/gzstreambuf.h"
 #include "util/ref.h"
-#include "util/strings.h"
 #include "util/value.h"
 
 #include <ostream>

@@ -33,8 +33,8 @@
 #define DEMANGLE_CXXFILT_H_DEFINED
 
 #include "util/error.h"
+#include "util/fstring.h"
 #include "util/pipe.h"
-#include "util/strings.h"
 
 #include <string>
 
@@ -48,14 +48,15 @@ namespace
   {
     DOTRACE("demangle_cxxfilt");
 
-    fstring command("c++filt ", mangled.c_str());
+    rutz::fstring command("c++filt ", mangled.c_str());
 
     rutz::shell_pipe pipe(command.c_str(), "r");
 
     if (pipe.is_closed())
       {
-        throw rutz::error(fstring("while demangling '", mangled.c_str(),
-                                  "': couldn't open pipe to c++filt"),
+        throw rutz::error(rutz::fstring("while demangling '",
+                                        mangled.c_str(),
+                                        "': couldn't open pipe to c++filt"),
                           SRC_POS);
       }
 

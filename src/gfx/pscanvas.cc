@@ -85,7 +85,8 @@ public:
     itsPrimPtr(0)
   {
     if (!itsFstream.is_open())
-      raiseError(fstring("couldn't open '", filename, "' for writing"),
+      raiseError(rutz::fstring("couldn't open '",
+                               filename, "' for writing"),
                  SRC_POS);
 
     itsStates.push_back(State());
@@ -594,9 +595,9 @@ public:
     itsFstream << t.x() << " " << t.y() << " ";
   }
 
-  void raiseError(const fstring& msg, const rutz::file_pos& pos)
+  void raiseError(const rutz::fstring& msg, const rutz::file_pos& pos)
   {
-    throw rutz::error(fstring("PSCanvas error: ", msg), pos);
+    throw rutz::error(rutz::fstring("PSCanvas error: ", msg), pos);
   }
 
   void beginPrimitive(Primitive* ptr, const char* comment)
@@ -1077,14 +1078,14 @@ DOTRACE("Gfx::PSCanvas::end");
   rep->endPrimitive();
 }
 
-void Gfx::PSCanvas::drawRasterText(const fstring& /*text*/,
+void Gfx::PSCanvas::drawRasterText(const rutz::fstring& /*text*/,
                                    const GxRasterFont& /*font*/)
 {
 DOTRACE("Gfx::PSCanvas::drawRasterText");
   throw rutz::error("PSCanvas::drawRasterText not implemented", SRC_POS);
 }
 
-void Gfx::PSCanvas::drawVectorText(const fstring& /*text*/,
+void Gfx::PSCanvas::drawVectorText(const rutz::fstring& /*text*/,
                                    const GxVectorFont& /*font*/)
 {
 DOTRACE("Gfx::PSCanvas::drawVectorText");

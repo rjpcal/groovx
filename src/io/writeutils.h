@@ -45,15 +45,15 @@ namespace IO
 namespace WriteUtils
 {
 
-  fstring makeElementNameString(const fstring& seq_name,
-                                int element_num);
+  rutz::fstring makeElementNameString(const rutz::fstring& seq_name,
+                                      int element_num);
 
-  fstring makeSeqCountString(const fstring& seq_name);
+  rutz::fstring makeSeqCountString(const rutz::fstring& seq_name);
 
   /** A generic interface for handling containers, sequences, etc. of
       value types. */
   template <class Itr>
-  void writeValueSeq(IO::Writer& writer, const fstring& name,
+  void writeValueSeq(IO::Writer& writer, const rutz::fstring& name,
                      Itr begin, Itr end, bool skip_count=false)
     {
       if (!skip_count)
@@ -76,7 +76,7 @@ namespace WriteUtils
   /** A generic interface for handling containers, sequences, etc. of
       objects of Value subtypes */
   template <class Itr>
-  void writeValueObjSeq(IO::Writer& writer, const fstring& name,
+  void writeValueObjSeq(IO::Writer& writer, const rutz::fstring& name,
                         Itr begin, Itr end, bool skip_count=false)
     {
       if (!skip_count)
@@ -98,7 +98,7 @@ namespace WriteUtils
 
   /// A generic interface for handling containers, sequences, etc. of objects
   template <class Itr>
-  void writeObjectSeq(IO::Writer& writer, const fstring& name,
+  void writeObjectSeq(IO::Writer& writer, const rutz::fstring& name,
                       Itr begin, Itr end, bool skip_count=false)
     {
       if (!skip_count)

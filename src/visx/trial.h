@@ -116,14 +116,14 @@ public:
   void clearObjs();
 
   /// Returns a standard set of descriptive information.
-  /** This is here mostly for legacy reasons; this function used to be the
-      implementation of vxInfo(). */
-  fstring stdInfo() const;
+  /** This is here mostly for legacy reasons; this function used to be
+      the implementation of vxInfo(). */
+  rutz::fstring stdInfo() const;
 
   /// Set the contents of what will be returned from vxInfo().
-  /** If setInfo() is called with an empty string, then vxInfo() will by
-      default return the result of stdInfo() instead. */
-  void setInfo(fstring info);
+  /** If setInfo() is called with an empty string, then vxInfo() will
+      by default return the result of stdInfo() instead. */
+  void setInfo(rutz::fstring info);
 
   //
   // Element interface
@@ -137,7 +137,7 @@ public:
   virtual int lastResponse() const;
 
   /// Overridden from Element.
-  virtual fstring vxInfo() const;
+  virtual rutz::fstring vxInfo() const;
 
   virtual void vxRun(Element& parent);
 

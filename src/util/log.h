@@ -32,7 +32,10 @@
 #ifndef LOG_H_DEFINED
 #define LOG_H_DEFINED
 
-class fstring;
+namespace rutz
+{
+  class fstring;
+}
 
 namespace Util
 {
@@ -42,8 +45,8 @@ namespace Util
   {
     void reset();
 
-    void addScope(const fstring& name);
-    void removeScope(const fstring& name);
+    void addScope(const rutz::fstring& name);
+    void removeScope(const rutz::fstring& name);
 
     /// Add a scope named after the given object's type + id.
     void addObjScope(const Util::Object& obj);
@@ -52,14 +55,14 @@ namespace Util
     void removeObjScope(const Util::Object& obj);
 
     /// Specify the name of a file to which log info should be appended.
-    void setLogFilename(const fstring& filename);
+    void setLogFilename(const rutz::fstring& filename);
 
     /// Specify whether to copy log output to stdout (default = yes).
     void setCopyToStdout(bool shouldcopy);
   }
 
   void log(const char* msg);
-  void log(const fstring& msg);
+  void log(const rutz::fstring& msg);
 }
 
 static const char vcid_log_h[] = "$Header$";

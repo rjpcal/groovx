@@ -35,7 +35,7 @@
 #include "mtx.h"
 
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <algorithm>
 #include <iostream>
@@ -49,6 +49,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using rutz::fstring;
 
 namespace
 {

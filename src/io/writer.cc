@@ -37,7 +37,7 @@
 #include "util/base64.h"
 #include "util/bytearray.h" // for use with rutz::base64_encode()
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -66,7 +66,7 @@ IO::WriteVersionError::WriteVersionError(const char* classname,
                                          const rutz::file_pos& pos) :
   rutz::error(pos)
 {
-  fstring m;
+  rutz::fstring m;
   m.append("IO::WriteVersionError: in ", classname,
            ", serial version ", attempted_id, " is not supported. ");
   m.append("The lowest supported version is ", lowest_supported_id,

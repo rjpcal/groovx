@@ -59,7 +59,9 @@ void operator delete(void* space)
 }
 #endif
 
-#include "util/strings.h"
+#include "util/fstring.h"
+
+using rutz::fstring;
 
 template <class T>
 const char* sformat_partial(char x, fstring& str, const char* format,

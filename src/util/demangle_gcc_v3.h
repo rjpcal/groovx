@@ -61,25 +61,25 @@ namespace
         return demangled;
       }
 
-    fstring msg("while demangling '", mangled.c_str(), "': ");
+    rutz::fstring msg("while demangling '", mangled.c_str(), "': ");
 
     switch (status)
       {
       case -1:
-        throw rutz::error(fstring(msg, "memory allocation error"),
+        throw rutz::error(rutz::fstring(msg, "memory allocation error"),
                           SRC_POS);
         break;
       case -2:
-        throw rutz::error(fstring(msg, "invalid mangled name"),
+        throw rutz::error(rutz::fstring(msg, "invalid mangled name"),
                           SRC_POS);
         break;
       case -3:
-        throw rutz::error(fstring(msg, "invalid arguments (e.g. "
-                                  "buf non-NULL and length NULL'"),
+        throw rutz::error(rutz::fstring(msg, "invalid arguments (e.g. "
+                                        "buf non-NULL and length NULL'"),
                           SRC_POS);
         break;
       default:
-        throw rutz::error(fstring(msg, "unknown error code"), SRC_POS);
+        throw rutz::error(rutz::fstring(msg, "unknown error code"), SRC_POS);
       }
 
     ASSERT(false);

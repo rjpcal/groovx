@@ -48,6 +48,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using rutz::fstring;
+
 namespace
 {
   const IO::VersionId GTEXT_SERIAL_VERSION_ID = 3;

@@ -229,8 +229,8 @@ Util::Ref<GxNode> GxSeparator::getChild(ChildId index) const
 DOTRACE("GxSeparator::getChild");
   if (index >= rep->children.size())
     {
-      throw rutz::error(fstring("GxSeparator has no child with index '",
-                                index, "'"), SRC_POS);
+      throw rutz::error(rutz::fstring("GxSeparator has no child with "
+                                      "index '", index, "'"), SRC_POS);
     }
 
   return rep->children[index];

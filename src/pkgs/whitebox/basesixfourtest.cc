@@ -36,8 +36,8 @@
 
 #include "util/base64.h"
 #include "util/bytearray.h"
+#include "util/fstring.h"
 #include "util/rand.h"
-#include "util/strings.h"
 
 #include <cstring> // for memcmp()
 
@@ -45,11 +45,11 @@
 
 namespace
 {
-  fstring makeString(const rutz::byte_array& src)
+  rutz::fstring makeString(const rutz::byte_array& src)
   {
-    return fstring
-      ((char_range(reinterpret_cast<const char*>(&src.vec[0]),
-                   src.vec.size())));
+    return rutz::fstring
+      ((rutz::char_range(reinterpret_cast<const char*>(&src.vec[0]),
+                         src.vec.size())));
   }
 
   void testBase64EncodeDecode1()

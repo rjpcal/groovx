@@ -34,10 +34,10 @@
 
 #include "util/log.h"
 
+#include "util/fstring.h"
 #include "util/object.h"
 #include "util/sharedptr.h"
 #include "util/stopwatch.h"
-#include "util/strings.h"
 
 #include <algorithm>
 #include <fstream>
@@ -47,6 +47,8 @@
 #include <vector>
 
 #include "util/trace.h"
+
+using rutz::fstring;
 
 namespace
 {

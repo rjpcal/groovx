@@ -33,7 +33,7 @@
 #define READER_H_DEFINED
 
 #include "util/fileposition.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include "io/iodecls.h"
 
@@ -86,22 +86,22 @@ public:
   virtual IO::VersionId readSerialVersionId() = 0;
 
   /// Read the \c char attribute associated with the tag \a name.
-  virtual char readChar(const fstring& name) = 0;
+  virtual char readChar(const rutz::fstring& name) = 0;
 
   /// Read the \c int attribute associated with the tag \a name.
-  virtual int readInt(const fstring& name) = 0;
+  virtual int readInt(const rutz::fstring& name) = 0;
 
   /// Read the \c bool attribute associated with the tag \a name.
-  virtual bool readBool(const fstring& name) = 0;
+  virtual bool readBool(const rutz::fstring& name) = 0;
 
   /// Read the \c double attribute associated with the tag \a name.
-  virtual double readDouble(const fstring& name) = 0;
+  virtual double readDouble(const rutz::fstring& name) = 0;
 
   /// Read the \c Value attribute associated with the tag \a name.
-  virtual void readValueObj(const fstring& name, Value& value) = 0;
+  virtual void readValueObj(const rutz::fstring& name, Value& value) = 0;
 
   /// Read the raw data array associated with the tag \a name.
-  virtual void readRawData(const fstring& name, rutz::byte_array& data) = 0;
+  virtual void readRawData(const rutz::fstring& name, rutz::byte_array& data) = 0;
 
   /** @name Overloaded read functions
 
@@ -111,28 +111,28 @@ public:
   */
   //@{
 
-  void readValue(const fstring& name, char& ret)
+  void readValue(const rutz::fstring& name, char& ret)
   { ret = readChar(name); }
 
-  void readValue(const fstring& name, int& ret)
+  void readValue(const rutz::fstring& name, int& ret)
   { ret = readInt(name); }
 
-  void readValue(const fstring& name, unsigned int& ret)
+  void readValue(const rutz::fstring& name, unsigned int& ret)
   { ret = readInt(name); }
 
-  void readValue(const fstring& name, unsigned long& ret)
+  void readValue(const rutz::fstring& name, unsigned long& ret)
   { ret = readInt(name); }
 
-  void readValue(const fstring& name, bool& ret)
+  void readValue(const rutz::fstring& name, bool& ret)
   { ret = readBool(name); }
 
-  void readValue(const fstring& name, double& ret)
+  void readValue(const rutz::fstring& name, double& ret)
   { ret = readDouble(name); }
 
-  void readValue(const fstring& name, fstring& ret)
+  void readValue(const rutz::fstring& name, rutz::fstring& ret)
   { ret = readStringImpl(name); }
 
-  void readValue(const fstring& name, Value& ret)
+  void readValue(const rutz::fstring& name, Value& ret)
   { readValueObj(name, ret); }
 
   //@}
@@ -140,18 +140,18 @@ public:
   /** Get a \c Util::Ref associated with the tag \a name. A new object
       of the appropriate type will be created and inserted into the \c
       ObjDb, if necessary. */
-  virtual Util::Ref<IO::IoObject> readObject(const fstring& name) = 0;
+  virtual Util::Ref<IO::IoObject> readObject(const rutz::fstring& name) = 0;
 
   /** Get a \c SoftRef associated with the tag \a name. If no such
       object exists, a null object is returned; otherwise, a new
       object of the appropriate type will be created and inserted into
       the \c ObjDb, if necessary. */
-  virtual Util::SoftRef<IO::IoObject> readMaybeObject(const fstring& name) = 0;
+  virtual Util::SoftRef<IO::IoObject> readMaybeObject(const rutz::fstring& name) = 0;
 
   /** Restore the state of the IO object \a obj, associated with the
       tag \a name. The \c Reader will not create a new object, but
       will use the IO* provided here. */
-  virtual void readOwnedObject(const fstring& name,
+  virtual void readOwnedObject(const rutz::fstring& name,
                                Util::Ref<IO::IoObject> obj) = 0;
 
   /** Read the named base class into the IO object \a obj, which
@@ -159,7 +159,7 @@ public:
       class part of the object. In particular, \a obj's virtual
       functions must NOT call the fully derived versions. This effect
       can be best accomplished with an \c IO::IoProxy. */
-  virtual void readBaseClass(const fstring& baseClassName,
+  virtual void readBaseClass(const rutz::fstring& baseClassName,
                              Util::Ref<IO::IoObject> basePart) = 0;
 
   /** Restore an entire object hierarchy, starting with the root
@@ -171,10 +171,10 @@ public:
 
 protected:
   /// Read the string attribute associated with the tag \a name.
-  virtual fstring readStringImpl(const fstring& name) = 0;
+  virtual rutz::fstring readStringImpl(const rutz::fstring& name) = 0;
 
   /// Base64 implementation of readRawData() for use by subclasses.
-  void defaultReadRawData(const fstring& name, rutz::byte_array& data);
+  void defaultReadRawData(const rutz::fstring& name, rutz::byte_array& data);
 };
 
 static const char vcid_reader_h[] = "$Header$";

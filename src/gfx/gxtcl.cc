@@ -105,9 +105,9 @@ namespace GxTcl
     return obj->getBoundingBox(Gfx::Canvas::current());
   }
 
-  fstring gxsepFields()
+  rutz::fstring gxsepFields()
   {
-    static fstring result =
+    static rutz::fstring result =
       "{addChildren 0 10 1 {NEW_GROUP STRING NO_GET}} "
       "{removeChild 0 10 1 {STRING NO_GET}} "
       "{children 0 20 1 {STRING NO_SET}} "

@@ -40,10 +40,10 @@
 
 #include "util/demangle.h"
 #include "util/error.h"
+#include "util/fstring.h"
 #include "util/gzstreambuf.h"
 #include "util/ref.h"
 #include "util/sharedptr.h"
-#include "util/strings.h"
 #include "util/value.h"
 
 #include <cstring>           // for strcmp()
@@ -58,6 +58,7 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using rutz::fstring;
 using rutz::shared_ptr;
 
 using Util::Ref;

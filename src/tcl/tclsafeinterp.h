@@ -41,7 +41,10 @@
 struct Tcl_Interp;
 typedef struct Tcl_Obj Tcl_Obj;
 
-class fstring;
+namespace rutz
+{
+  class fstring;
+}
 
 namespace Tcl
 {
@@ -96,7 +99,7 @@ public:
       evaluation produces an error. If strategy is IGNORE_ERROR, then
       a return value of true indicates a successful evaluation, and a
       return value of false indicates an error during evaluation. */
-  bool eval(const fstring& code, ErrorStrategy strategy = THROW_ERROR);
+  bool eval(const rutz::fstring& code, ErrorStrategy strategy = THROW_ERROR);
 
   /// Evaluates code.
   /** If strategy is THROW_ERROR, then an exception is thrown if the
@@ -114,7 +117,7 @@ public:
   // Result
   void resetResult() const;
   void appendResult(const char* msg) const;
-  void appendResult(const fstring& msg) const;
+  void appendResult(const rutz::fstring& msg) const;
 
   template <class T>
   T getResult() const
@@ -157,7 +160,7 @@ public:
   bool hasCommand(const char* cmd_name) const;
   void deleteCommand(const char* cmd_name);
 
-  fstring getProcBody(const char* proc_name);
+  rutz::fstring getProcBody(const char* proc_name);
   void createProc(const char* namesp, const char* proc_name,
                   const char* args, const char* body);
   void deleteProc(const char* namesp, const char* proc_name);

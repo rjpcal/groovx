@@ -34,8 +34,8 @@
 
 #include "tcl/tclpkg.h"
 
+#include "util/fstring.h"
 #include "util/log.h"
-#include "util/strings.h"
 
 #include "util/debug.h"
 DBG_REGISTER

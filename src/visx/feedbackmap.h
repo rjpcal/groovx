@@ -37,7 +37,7 @@
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <vector>
 
@@ -50,10 +50,10 @@ public:
     itsUseFeedback(true), itsRep(), itsItems(), isItDirty(true) {}
 
   /// Get the string representation for serialization.
-  const fstring& rep() const { return itsRep; }
+  const rutz::fstring& rep() const { return itsRep; }
 
   /// Set from a string representation for serialization.
-  void set(const fstring& new_rep)
+  void set(const rutz::fstring& new_rep)
   {
     itsRep = new_rep;
     isItDirty = true;
@@ -135,7 +135,7 @@ public:
   bool itsUseFeedback; ///< Whether any feedback should be used at all
 
 private:
-  fstring itsRep;
+  rutz::fstring itsRep;
   mutable std::vector<Item> itsItems;
   mutable bool isItDirty;
 };

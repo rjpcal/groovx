@@ -52,7 +52,7 @@ public:
 
   virtual ~Response() throw();
 
-  virtual fstring getNativeTypeName() const;
+  virtual rutz::fstring getNativeTypeName() const;
 
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);

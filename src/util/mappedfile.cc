@@ -35,7 +35,7 @@
 #include "mappedfile.h"
 
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <cerrno>
 #include <cstring>     // for strerror()
@@ -53,16 +53,16 @@ rutz::mapped_file::mapped_file(const char* filename)
 
   if (stat(filename, &m_statbuf) == -1)
     {
-      fstring msg("stat() failed for file ", filename, ":\n",
-                  strerror(errno), "\n");
+      rutz::fstring msg("stat() failed for file ", filename, ":\n",
+                        strerror(errno), "\n");
       throw rutz::error(msg, SRC_POS);
     }
 
   m_fileno = open(filename, O_RDONLY);
   if (m_fileno == -1)
     {
-      fstring msg("open() failed for file ", filename, ":\n",
-                  strerror(errno), "\n");
+      rutz::fstring msg("open() failed for file ", filename, ":\n",
+                        strerror(errno), "\n");
       throw rutz::error(msg, SRC_POS);
     }
 
@@ -71,8 +71,8 @@ rutz::mapped_file::mapped_file(const char* filename)
 
   if (m_mem == (void*)-1)
     {
-      fstring msg("mmap() failed for file ", filename, ":\n",
-                  strerror(errno), "\n");
+      rutz::fstring msg("mmap() failed for file ", filename, ":\n",
+                        strerror(errno), "\n");
       throw rutz::error(msg, SRC_POS);
     }
 }

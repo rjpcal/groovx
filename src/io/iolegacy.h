@@ -61,28 +61,28 @@ public:
 
   virtual IO::VersionId readSerialVersionId();
 
-  virtual char readChar(const fstring& name);
-  virtual int readInt(const fstring& name);
-  virtual bool readBool(const fstring& name);
-  virtual double readDouble(const fstring& name);
-  virtual void readValueObj(const fstring& name, Value& value);
+  virtual char readChar(const rutz::fstring& name);
+  virtual int readInt(const rutz::fstring& name);
+  virtual bool readBool(const rutz::fstring& name);
+  virtual double readDouble(const rutz::fstring& name);
+  virtual void readValueObj(const rutz::fstring& name, Value& value);
 
-  virtual void readRawData(const fstring& name, rutz::byte_array& data)
+  virtual void readRawData(const rutz::fstring& name, rutz::byte_array& data)
   { defaultReadRawData(name, data); }
 
-  virtual Util::Ref    <IO::IoObject>      readObject(const fstring& name);
-  virtual Util::SoftRef<IO::IoObject> readMaybeObject(const fstring& name);
+  virtual Util::Ref    <IO::IoObject>      readObject(const rutz::fstring& name);
+  virtual Util::SoftRef<IO::IoObject> readMaybeObject(const rutz::fstring& name);
 
-  virtual void readOwnedObject(const fstring& name,
+  virtual void readOwnedObject(const rutz::fstring& name,
                                Util::Ref<IO::IoObject> obj);
 
-  virtual void readBaseClass(const fstring& baseClassName,
+  virtual void readBaseClass(const rutz::fstring& baseClassName,
                              Util::Ref<IO::IoObject> basePart);
 
   virtual Util::Ref<IO::IoObject> readRoot(IO::IoObject* root=0);
 
 protected:
-  virtual fstring readStringImpl(const fstring& name);
+  virtual rutz::fstring readStringImpl(const rutz::fstring& name);
 
 private:
   LegacyReader(const LegacyReader&);

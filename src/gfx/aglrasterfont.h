@@ -42,7 +42,7 @@
 
 #include "util/cstrstream.h"
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <cctype>
 #include <cstdio>
@@ -85,7 +85,7 @@ public:
   virtual int rasterHeight() const;
 
 private:
-  fstring itsFontName;
+  rutz::fstring itsFontName;
   FontInfo itsFontInfo;
   AppleFontSpec itsFontSpec;
   unsigned int itsListBase;
@@ -111,7 +111,7 @@ DOTRACE("AglRasterFont::AglRasterFont");
 
   if (itsListBase==0)
     {
-      throw rutz::error(fstring("couldn't allocate GL display lists"),
+      throw rutz::error(rutz::fstring("couldn't allocate GL display lists"),
                         SRC_POS);
     }
 
@@ -179,8 +179,8 @@ DOTRACE("AglRasterFont::getFontId");
   GetFNum(pstring, &fnum);
 
   if (fnum == 0)
-    throw rutz::error(fstring("couldn't get Apple Font ID "
-                              "for font '", name, "'"),
+    throw rutz::error(rutz::fstring("couldn't get Apple Font ID "
+                                    "for font '", name, "'"),
                       SRC_POS);
 
   return GLint(fnum);
@@ -203,8 +203,8 @@ DOTRACE("AglRasterFont::pickAppleFont");
       int n = sscanf(spec, "%dx%d", &w, &h);
 
       if (n != 2)
-        throw rutz::error(fstring("couldn't parse fontspec '",
-                                  spec, "' as '[width]x[height]"),
+        throw rutz::error(rutz::fstring("couldn't parse fontspec '",
+                                        spec, "' as '[width]x[height]"),
                           SRC_POS);
 
       result.fontID = getFontId("Courier");
@@ -222,8 +222,8 @@ DOTRACE("AglRasterFont::pickAppleFont");
                      family, weight, slant, pxlsize);
 
       if (n != 4)
-        throw rutz::error(fstring("couldn't parse fontspec '", spec,
-                                  "' (expected 4 conversions, got ", n, ")"),
+        throw rutz::error(rutz::fstring("couldn't parse fontspec '", spec,
+                                        "' (expected 4 conversions, got ", n, ")"),
                           SRC_POS);
 
       result.fontID = getFontId(family);
@@ -243,8 +243,8 @@ DOTRACE("AglRasterFont::pickAppleFont");
           int n2 = sscanf(pxlsize, "%d", &ipxlsize);
 
           if (n2 != 1)
-            throw rutz::error(fstring("couldn't parse pixel size "
-                                      "from '", pxlsize, "'"),
+            throw rutz::error(rutz::fstring("couldn't parse pixel size "
+                                            "from '", pxlsize, "'"),
                               SRC_POS);
         }
 

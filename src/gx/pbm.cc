@@ -38,9 +38,9 @@
 #include "gx/vec2.h"
 
 #include "util/error.h"
+#include "util/fstring.h"
 #include "util/gzstreambuf.h"
 #include "util/sharedptr.h"
-#include "util/strings.h"
 
 #ifdef HAVE_IOSTREAM
 #  include <iostream>
@@ -64,8 +64,8 @@ namespace
       case 24: return 6; // RGB
       }
 
-    throw rutz::error(fstring("invalid Pbm bit depth value: ", depth),
-                      SRC_POS);
+    throw rutz::error(rutz::fstring("invalid Pbm bit depth value: ",
+                                    depth), SRC_POS);
 
     ASSERT(0); return 0; // can't get here
   }
@@ -79,7 +79,7 @@ namespace
       case 3: case 6: return 24; // RGB
       }
 
-    throw rutz::error(fstring("invalid Pbm mode value: ", mode),
+    throw rutz::error(rutz::fstring("invalid Pbm mode value: ", mode),
                       SRC_POS);
 
     ASSERT(0); return 0; // can't happen
@@ -203,8 +203,8 @@ DOTRACE("Pbm::load");
   int c = is.get();
   if (c != 'P')
     {
-      throw rutz::error(fstring("bad magic number while "
-                                "reading pnm file: ", c), SRC_POS);
+      throw rutz::error(rutz::fstring("bad magic number while "
+                                      "reading pnm file: ", c), SRC_POS);
     }
 
   int mode;

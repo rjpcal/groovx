@@ -38,11 +38,10 @@
 class ostream;
 #endif
 
-class fstring;
-
 namespace rutz
 {
   class backtrace;
+  class fstring;
   class prof;
 }
 
@@ -90,7 +89,7 @@ public:
   void print(STD_IO::ostream& os) const throw();
 
   /// Generate a human-readable string representation of the backtrace.
-  fstring format() const;
+  rutz::fstring format() const;
 
 private:
   struct impl;

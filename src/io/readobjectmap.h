@@ -36,7 +36,10 @@
 
 #include <map>
 
-class fstring;
+namespace rutz
+{
+  class fstring;
+}
 
 namespace Util
 {
@@ -65,7 +68,7 @@ namespace IO
     // This will create an object for the id if one has not yet been
     // created, then return the object for that id.
     inline
-    Util::Ref<IO::IoObject> fetchObject(const fstring& type, Util::UID id);
+    Util::Ref<IO::IoObject> fetchObject(const rutz::fstring& type, Util::UID id);
 
     inline
     void assignObjectForId(Util::UID id, Util::Ref<IO::IoObject> object);
@@ -78,9 +81,9 @@ namespace IO
 #include "io/io.h"
 
 #include "util/error.h"
+#include "util/fstring.h"
 #include "util/objmgr.h"
 #include "util/ref.h"
-#include "util/strings.h"
 
 inline
 IO::ObjectMap::ObjectMap() : itsMap() {}
@@ -92,8 +95,9 @@ IO::ObjectMap::getObject(Util::UID id)
   MapType::const_iterator itr = itsMap.find(id);
   if ( itr == itsMap.end() )
     {
-      throw rutz::error(fstring("no object was found "
-                                "for the given id:", id), SRC_POS);
+      throw rutz::error(rutz::fstring("no object was found "
+                                      "for the given id:", id),
+                        SRC_POS);
     }
 
   return (*itr).second;
@@ -101,7 +105,7 @@ IO::ObjectMap::getObject(Util::UID id)
 
 inline
 Util::Ref<IO::IoObject>
-IO::ObjectMap::fetchObject(const fstring& type, Util::UID id)
+IO::ObjectMap::fetchObject(const rutz::fstring& type, Util::UID id)
 {
   MapType::const_iterator itr = itsMap.find(id);
 
@@ -127,7 +131,7 @@ void IO::ObjectMap::assignObjectForId(Util::UID id,
   // See if an object has already been created for this id
   if ( itr != itsMap.end() )
     {
-      fstring msg;
+      rutz::fstring msg;
       msg.append("object has already been created\n");
       msg.append("\ttype: ", object->objTypename().c_str(), "\n");
       msg.append("\tid: ", id);

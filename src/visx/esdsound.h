@@ -37,7 +37,7 @@
 #include "io/writer.h"
 
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <esd.h>
 
@@ -59,7 +59,7 @@ public:
   virtual void play();
 
 private:
-  fstring itsFilename;
+  rutz::fstring itsFilename;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -81,16 +81,16 @@ DOTRACE("EsdSoundRep::EsdSoundRep");
 
   if (audiofile == AF_NULL_FILEHANDLE)
     {
-      throw rutz::error(fstring("couldn't open sound file '",
-                                filename, "'"), SRC_POS);
+      throw rutz::error(rutz::fstring("couldn't open sound file '",
+                                      filename, "'"), SRC_POS);
     }
 
   int closeResult = afCloseFile(audiofile);
 
   if (closeResult == -1)
     {
-      throw rutz::error(fstring("error closing sound file '",
-                                filename, "'"), SRC_POS);
+      throw rutz::error(rutz::fstring("error closing sound file '",
+                                      filename, "'"), SRC_POS);
     }
 
   itsFilename = filename;
@@ -106,9 +106,10 @@ DOTRACE("EsdSoundRep::play");
     {
       int res = esd_play_file("", itsFilename.c_str(), 1);
       if (res == 0)
-        throw rutz::error(fstring("error while attempting to play "
-                                  "sound file:\n  '",
-                                  itsFilename.c_str(), "'"), SRC_POS);
+        throw rutz::error(rutz::fstring("error while attempting to "
+                                        "play sound file:\n  '",
+                                        itsFilename.c_str(), "'"),
+                          SRC_POS);
     }
 }
 

@@ -35,7 +35,7 @@
 #include "util/value.h"
 
 #include "util/cstrstream.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <sstream>
 
@@ -67,9 +67,9 @@ DOTRACE("Value::getCstring");
   return result.c_str();
 }
 
-fstring Value::getFstring() const
+rutz::fstring Value::getFstring() const
 {
-  return fstring(getCstring());
+  return rutz::fstring(getCstring());
 }
 
 void Value::setCstring(const char* str)
@@ -79,7 +79,7 @@ DOTRACE("Value::setCstring");
   scanFrom(ist);
 }
 
-void Value::setFstring(fstring val)
+void Value::setFstring(rutz::fstring val)
 {
   setCstring(val.c_str());
 }

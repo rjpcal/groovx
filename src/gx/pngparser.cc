@@ -134,7 +134,8 @@ DOTRACE("PngParser::parse");
   int is_png = !png_sig_cmp(header, 0, nheader);
   if (!is_png)
     {
-      throw rutz::error(fstring(filename, " is not a PNG image file"),
+      throw rutz::error(rutz::fstring(filename,
+                                      " is not a PNG image file"),
                         SRC_POS);
     }
 
@@ -184,9 +185,9 @@ DOTRACE("PngParser::parse");
       break;
 
     default:
-      throw rutz::error(fstring("bit-depth '", bit_depth,
-                                "' is not supported for PNG images "
-                                "(must be 8- or 16-bit)"),
+      throw rutz::error(rutz::fstring("bit-depth '", bit_depth,
+                                      "' is not supported for PNG images "
+                                      "(must be 8- or 16-bit)"),
                         SRC_POS);
     }
 
@@ -287,8 +288,8 @@ int getColorType(const Gfx::BmapData& data)
     case 24: return PNG_COLOR_TYPE_RGB;
     case 32: return PNG_COLOR_TYPE_RGB_ALPHA;
     default:
-      throw rutz::error(fstring("unknown bitsPerPixel value: ",
-                                data.bitsPerPixel()), SRC_POS);
+      throw rutz::error(rutz::fstring("unknown bitsPerPixel value: ",
+                                      data.bitsPerPixel()), SRC_POS);
     }
   return 0; // can't happen, but placate compiler
 }
@@ -300,8 +301,8 @@ DOTRACE("PngWriter::write");
   itsFile = fopen(filename, "wb");
   if (itsFile == 0)
     {
-      throw rutz::error(fstring("couldn't open file '",
-                                filename, "' for png writing"), SRC_POS);
+      throw rutz::error(rutz::fstring("couldn't open file '",
+                                      filename, "' for png writing"), SRC_POS);
     }
 
   itsPngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);

@@ -39,10 +39,10 @@
 
 #include "util/algo.h"
 #include "util/fileposition.h"
+#include "util/fstring.h"
 #include "util/object.h"
 #include "util/sharedptr.h"
 #include "util/stderror.h"
-#include "util/strings.h"
 #include "util/traits.h"
 #include "util/value.h"
 
@@ -99,10 +99,12 @@ public:
 
   /// Read the value of the given object's referred-to field from the IO::Reader.
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader& reader, const fstring& name) const = 0;
+                             IO::Reader& reader,
+                             const rutz::fstring& name) const = 0;
   /// Write the value of the given object's referred-to field to the IO::Writer.
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer& writer, const fstring& name) const = 0;
+                            IO::Writer& writer,
+                            const rutz::fstring& name) const = 0;
 };
 
 namespace
@@ -203,7 +205,8 @@ public:
 
   /// Read the value of the given object's pointed-to data member.
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader& reader, const fstring& name) const
+                             IO::Reader& reader,
+                             const rutz::fstring& name) const
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
@@ -212,7 +215,8 @@ public:
 
   /// Write the value of the given object's pointed-to data member.
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer& writer, const fstring& name) const
+                            IO::Writer& writer,
+                            const rutz::fstring& name) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
@@ -274,7 +278,8 @@ public:
 
   /// Read the value of the given object's pointed-to data member.
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader& reader, const fstring& name) const
+                             IO::Reader& reader,
+                             const rutz::fstring& name) const
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
@@ -287,7 +292,8 @@ public:
 
   /// Write the value of the given object's pointed-to data member.
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer& writer, const fstring& name) const
+                            IO::Writer& writer,
+                            const rutz::fstring& name) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
@@ -320,7 +326,7 @@ public:
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
-    fstring sval = new_val.template as<fstring>();
+    rutz::fstring sval = new_val.template as<rutz::fstring>();
 
     dereference(cobj, itsValueMember).setFstring(sval);
   }
@@ -335,7 +341,8 @@ public:
   }
 
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader& reader, const fstring& name) const
+                             IO::Reader& reader,
+                             const rutz::fstring& name) const
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
@@ -343,7 +350,8 @@ public:
   }
 
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer& writer, const fstring& name) const
+                            IO::Writer& writer,
+                            const rutz::fstring& name) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
@@ -395,7 +403,8 @@ public:
   }
 
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader& reader, const fstring& name) const
+                             IO::Reader& reader,
+                             const rutz::fstring& name) const
   {
     if (itsSetter == 0) FieldAux::throwNotAllowed("read", SRC_POS);
 
@@ -409,7 +418,8 @@ public:
   }
 
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer& writer, const fstring& name) const
+                            IO::Writer& writer,
+                            const rutz::fstring& name) const
   {
     if (itsGetter == 0) FieldAux::throwNotAllowed("write", SRC_POS);
 
@@ -432,12 +442,12 @@ public:
 class Field
 {
 private:
-  const fstring itsName;
-  rutz::shared_ptr<FieldImpl> itsFieldImpl;
-  const fstring itsDefaultValue;
-  const fstring itsMin;
-  const fstring itsMax;
-  const fstring itsRes;
+  const rutz::fstring itsName;
+  const rutz::shared_ptr<FieldImpl> itsFieldImpl;
+  const rutz::fstring itsDefaultValue;
+  const rutz::fstring itsMin;
+  const rutz::fstring itsMax;
+  const rutz::fstring itsRes;
   unsigned int itsFlags;
 
 public:
@@ -500,9 +510,9 @@ public:
 
   /// Construct using a ValueFieldImpl.
   template <class C, class V>
-  Field(const fstring& name, ValueType, V C::* value_ptr,
-        const fstring& def, const fstring& min,
-        const fstring& max, const fstring& res,
+  Field(const rutz::fstring& name, ValueType, V C::* value_ptr,
+        const rutz::fstring& def, const rutz::fstring& min,
+        const rutz::fstring& max, const rutz::fstring& res,
         unsigned int flags=0) :
     itsName(name),
     itsFieldImpl(new ValueFieldImpl<C,V>(value_ptr)),
@@ -515,7 +525,7 @@ public:
 
   /// Construct using a pointer-to-member-data.
   template <class T, class PM>
-  Field(const fstring& name, PM memptr,
+  Field(const rutz::fstring& name, PM memptr,
         const T& def, const T& min, const T& max, const T& res,
         unsigned int flags=0) :
     itsName(name),
@@ -532,7 +542,9 @@ public:
 
   /// Construct using a getter/setter pair of pointers-to-member-functions.
   template <class C, class T>
-  Field(const fstring& name, T (C::* getter)() const, void (C::* setter)(T),
+  Field(const rutz::fstring& name,
+        T (C::* getter)() const,
+        void (C::* setter)(T),
         const T& def, const T& min, const T& max, const T& res,
         unsigned int flags=0) :
     itsName(name),
@@ -545,16 +557,16 @@ public:
   {}
 
   /// Get the Field's name.
-  const fstring& name() const { return itsName; }
+  const rutz::fstring& name() const { return itsName; }
   /// Get the Field's default value.
-  const fstring& defaultValue() const { return itsDefaultValue; }
+  const rutz::fstring& defaultValue() const { return itsDefaultValue; }
 
   /// Get the Field's minimum value (only for numeric fields).
-  const fstring& min() const { return itsMin; }
+  const rutz::fstring& min() const { return itsMin; }
   /// Get the Field's maximum value (only for numeric fields).
-  const fstring& max() const { return itsMax; }
+  const rutz::fstring& max() const { return itsMax; }
   /// Get the Field's value quantization step (only for numeric fields).
-  const fstring& res() const { return itsRes; }
+  const rutz::fstring& res() const { return itsRes; }
 
   /// Set the value of this field for \a obj.
   void setValue(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
@@ -570,14 +582,16 @@ public:
 
   /// Read this field for \a obj from \a reader.
   void readValueFrom(FieldContainer* obj,
-                     IO::Reader& reader, const fstring& name) const
+                     IO::Reader& reader,
+                     const rutz::fstring& name) const
   {
     itsFieldImpl->readValueFrom(obj, reader, name);
   }
 
   /// Write this field for \a obj to \a writer.
   void writeValueTo(const FieldContainer* obj,
-                    IO::Writer& writer, const fstring& name) const
+                    IO::Writer& writer,
+                    const rutz::fstring& name) const
   {
     itsFieldImpl->writeValueTo(obj, writer, name);
   }
@@ -637,7 +651,7 @@ public:
   /// Look up the field associated with the given name.
   /** Parent FieldMap objects will be searched recursively. An exception
       will be thrown if the named field is not found. */
-  const Field& field(const fstring& name) const;
+  const Field& field(const rutz::fstring& name) const;
 
   /// Iterator type
   typedef rutz::fwd_iter<const Field> Iterator;
@@ -682,12 +696,12 @@ public:
   void setFieldMap(const FieldMap& fields);
 
   /// Get the value associated with the named field.
-  Tcl::ObjPtr getField(const fstring& name) const;
+  Tcl::ObjPtr getField(const rutz::fstring& name) const;
   /// Get the value associated with the given field.
   Tcl::ObjPtr getField(const Field& field) const;
 
   /// Set the value associated with the named field.
-  void setField(const fstring& name, const Tcl::ObjPtr& new_val);
+  void setField(const rutz::fstring& name, const Tcl::ObjPtr& new_val);
   /// Set the value associated with the given field.
   void setField(const Field& field, const Tcl::ObjPtr& new_val);
 

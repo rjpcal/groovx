@@ -40,9 +40,9 @@
 #include "io/writer.h"
 #include "io/writeutils.h"
 
+#include "util/fstring.h"
 #include "util/log.h"
 #include "util/ref.h"
-#include "util/strings.h"
 
 #define DYNAMIC_TRACE_EXPR Block::tracer.status()
 #include "util/trace.h"

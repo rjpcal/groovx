@@ -168,17 +168,17 @@ public:
   typedef void (Trial::* CallbackType)();
 
   /// Overridden to return the typename that was passed to the constructor.
-  virtual fstring objTypename() const;
+  virtual rutz::fstring objTypename() const;
 
   /// Make a new event bound to a given Trial member function.
   static TrialMemFuncEvent* make(CallbackType callback,
-                                 const fstring& type,
+                                 const rutz::fstring& type,
                                  unsigned int msec = 0);
 
 protected:
   /// Constructor.
   TrialMemFuncEvent(CallbackType callback,
-                    const fstring& type,
+                    const rutz::fstring& type,
                     unsigned int msec = 0);
 
   /// Virtual destructor.
@@ -188,7 +188,7 @@ protected:
 
 private:
   CallbackType itsCallback;
-  fstring itsTypename;
+  rutz::fstring itsTypename;
 };
 
 //  #######################################################
@@ -287,10 +287,10 @@ public:
   virtual void writeTo(IO::Writer& writer) const;
 
   /// Get a string containing the Tcl callback script.
-  fstring getCallback() const;
+  rutz::fstring getCallback() const;
 
   /// Set the Tcl callback script to be triggered.
-  void setCallback(const fstring& script);
+  void setCallback(const rutz::fstring& script);
 
 private:
   Util::Ref<Tcl::ProcWrapper> itsCallback;

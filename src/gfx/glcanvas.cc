@@ -242,7 +242,7 @@ DOTRACE("GLCanvas::throwIfError");
     {
       const char* msg =
         reinterpret_cast<const char*>(gluErrorString(status));
-      throw rutz::error(fstring("GL error: ", msg, " ", where), pos);
+      throw rutz::error(rutz::fstring("GL error: ", msg, " ", where), pos);
     }
 }
 
@@ -797,7 +797,8 @@ DOTRACE("GLCanvas::end");
   glEnd();
 }
 
-void GLCanvas::drawRasterText(const fstring& text, const GxRasterFont& font)
+void GLCanvas::drawRasterText(const rutz::fstring& text,
+                              const GxRasterFont& font)
 {
 DOTRACE("GLCanvas::drawRasterText");
 
@@ -840,7 +841,8 @@ DOTRACE("GLCanvas::drawRasterText");
     }
 }
 
-void GLCanvas::drawVectorText(const fstring& text, const GxVectorFont& font)
+void GLCanvas::drawVectorText(const rutz::fstring& text,
+                              const GxVectorFont& font)
 {
 DOTRACE("GLCanvas::drawVectorText");
 

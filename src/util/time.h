@@ -38,10 +38,9 @@
 //   long           tv_usec;  /* and microseconds */
 // };
 
-class fstring;
-
 namespace rutz
 {
+  class fstring;
   class time;
 }
 
@@ -290,7 +289,8 @@ public:
       %%     A literal `%' character.
 
   */
-  fstring format(const char* formatstring = "%a %b %d %H:%M:%S %Z %Y") const;
+  rutz::fstring format(const char* formatstring
+                       = "%a %b %d %H:%M:%S %Z %Y") const;
 
 private:
   /// Avoid overflow/underflow in the timeval's microseconds field.

@@ -39,7 +39,10 @@ class istream;
 class ostream;
 #endif
 
-class fstring;
+namespace rutz
+{
+  class fstring;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -64,7 +67,7 @@ public:
   virtual ~Value();
 
   /// Return a string giving the name of the native type.
-  virtual fstring getNativeTypeName() const = 0;
+  virtual rutz::fstring getNativeTypeName() const = 0;
 
   /// Write the value to an \c STD_IO::ostream.
   virtual void printTo(STD_IO::ostream& os) const = 0;
@@ -77,16 +80,16 @@ public:
       result of this function is only valid until the next call.*/
   const char* getCstring() const;
 
-  /// Get an \c fstring representation of the value.
-  fstring getFstring() const;
+  /// Get an \c rutz::fstring representation of the value.
+  rutz::fstring getFstring() const;
 
   /** Set the value from a C-style string (\c char*) representation,
       by building a string stream from \a val and calling scanFrom()
       with it. */
   void setCstring(const char* val);
 
-  /// Set the value from an fstring. Calls the setCstring().
-  void setFstring(fstring val);
+  /// Set the value from an rutz::fstring. Calls the setCstring().
+  void setFstring(rutz::fstring val);
 };
 
 ///////////////////////////////////////////////////////////////////////

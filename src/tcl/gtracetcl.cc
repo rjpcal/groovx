@@ -35,7 +35,7 @@
 #include "tcl/tclpkg.h"
 
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <sstream>
 
@@ -45,17 +45,17 @@ DBG_REGISTER
 
 namespace
 {
-  fstring profSummary()
+  rutz::fstring profSummary()
   {
     std::ostringstream oss;
     rutz::prof::print_all_prof_data(oss);
-    return fstring(oss.str().c_str());
+    return rutz::fstring(oss.str().c_str());
   }
 
   void setOneLevel(int key, int level)
   {
     if (key < 0 || key >= rutz::debug::MAX_KEYS)
-      throw rutz::error(fstring("no such debug key '", key, "'"),
+      throw rutz::error(rutz::fstring("no such debug key '", key, "'"),
                         SRC_POS);
 
     // else...
@@ -66,7 +66,7 @@ namespace
   {
     const int key = rutz::debug::lookup_key(fname);
     if (key == -1)
-      throw rutz::error(fstring("no debug key for file '", fname, "'"),
+      throw rutz::error(rutz::fstring("no debug key for file '", fname, "'"),
                         SRC_POS);
 
     ASSERT(key >= 0 && key < rutz::debug::MAX_KEYS);

@@ -36,7 +36,7 @@
 
 #include "util/demangle.h"
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <exception>
 #include <tcl.h>
@@ -45,6 +45,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using rutz::fstring;
 
 namespace
 {

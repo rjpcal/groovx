@@ -34,7 +34,7 @@
 
 #include "visx/kbdresponsehdlr.h"
 
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include "util/trace.h"
 

@@ -44,15 +44,15 @@ DBG_REGISTER
 
 namespace
 {
-  Tcl_RegExp getCheckedRegexp(const Tcl::ObjPtr& patternObj)
+  Tcl_RegExp getCheckedRegexp(const Tcl::ObjPtr& patrn)
   {
     const int flags = 0;
     // OK to pass Tcl_Interp*==0
-    Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patternObj.obj(), flags);
+    Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patrn.obj(), flags);
     if (!regexp)
       {
-        throw rutz::error(fstring("error getting a Tcl_RegExp from '",
-                                  Tcl_GetString(patternObj.obj()), "'"),
+        throw rutz::error(rutz::fstring("error getting a regexp from '",
+                                        Tcl_GetString(patrn.obj()), "'"),
                           SRC_POS);
       }
     return regexp;

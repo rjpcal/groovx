@@ -39,7 +39,7 @@
 #include "tcl/tclobjptr.h"
 
 #include "util/error.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 #include "util/value.h"
 
 #include <limits>
@@ -48,6 +48,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using rutz::fstring;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -274,7 +276,7 @@ DOTRACE("Tcl::fromTcl(fstring*)");
 
   ASSERT(length >= 0);
 
-  return fstring(char_range(text, (unsigned int) length));
+  return fstring(rutz::char_range(text, (unsigned int) length));
 }
 
 Tcl::Dict Tcl::fromTcl(Tcl_Obj* obj, Tcl::Dict*)

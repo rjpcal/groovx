@@ -43,8 +43,8 @@
 
 #include "tcl/tclmain.h"
 
+#include "util/fstring.h"
 #include "util/ref.h"
-#include "util/strings.h"
 
 #include <tk.h>
 
@@ -149,11 +149,11 @@ DOTRACE("Toglet::Impl::cClassCreateProc");
 namespace
 {
   // the main window can be specified with either PARENT = "" or "."
-  fstring PARENT = "";
+  rutz::fstring PARENT = "";
 
   const char* widgetName(Util::UID id)
   {
-    static fstring buf;
+    static rutz::fstring buf;
     buf = PARENT;
     buf.append(".togl_private");
     buf.append(int(id));

@@ -50,11 +50,13 @@
 
 #include "util/bytearray.h"
 #include "util/cstrstream.h"
+#include "util/fstring.h"
 #include "util/mappedfile.h"
 #include "util/sharedptr.h"
-#include "util/strings.h"
 
 #include "util/trace.h"
+
+using rutz::fstring;
 
 namespace
 {
@@ -72,7 +74,8 @@ namespace
 class ImageUpdater : public Gfx::BmapData::UpdateFunc
 {
 public:
-  ImageUpdater(const fstring& filename, fstring& owner_filename,
+  ImageUpdater(const fstring& filename,
+               fstring& owner_filename,
                bool contrast, bool vertical) :
     itsFilename(filename),
     itsOwnerFilename(owner_filename),

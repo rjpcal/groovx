@@ -34,7 +34,7 @@
 
 #include "visx/response.h"
 
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <iostream>
 
@@ -52,10 +52,10 @@ const int Response::IGNORE;
 
 Response::~Response() throw() {}
 
-fstring Response::getNativeTypeName() const
+rutz::fstring Response::getNativeTypeName() const
 {
 DOTRACE("Response::getNativeTypeName");
-  static fstring name("Response"); return name;
+  static rutz::fstring name("Response"); return name;
 }
 
 void Response::printTo(STD_IO::ostream& os) const

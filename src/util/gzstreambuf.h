@@ -35,10 +35,10 @@
 #include <iostream>
 #include <zlib.h>
 
-class fstring;
-
 namespace rutz
 {
+  class fstring;
+
   template <class T> class shared_ptr;
 
   /// A std::streambuf implementation that handles gzip-encoded data.
@@ -78,7 +78,7 @@ namespace rutz
   /** Opens a file for writing. An exception will be thrown if the
       specified file cannot be opened. The output file will be
       gz-compressed if the filename ends with ".gz". */
-  shared_ptr<std::ostream> ogzopen(const fstring& filename,
+  shared_ptr<std::ostream> ogzopen(const rutz::fstring& filename,
                                    std::ios::openmode flags =
                                    std::ios::openmode(0));
 
@@ -91,7 +91,7 @@ namespace rutz
       specified file cannot be opened. If the file is gz-compressed,
       this will be automagically detected regardless of the filename
       extension. */
-  shared_ptr<std::istream> igzopen(const fstring& filename,
+  shared_ptr<std::istream> igzopen(const rutz::fstring& filename,
                                    std::ios::openmode flags =
                                    std::ios::openmode(0));
 

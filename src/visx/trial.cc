@@ -41,11 +41,11 @@
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
+#include "util/fstring.h"
 #include "util/iter.h"
 #include "util/log.h"
 #include "util/ref.h"
 #include "util/scopedptr.h"
-#include "util/strings.h"
 
 #include "visx/response.h"
 #include "visx/responsehandler.h"
@@ -57,6 +57,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using rutz::fstring;
 
 using Util::Ref;
 using Util::SoftRef;

@@ -36,7 +36,7 @@
 DBG_REGISTER
 
 #include "util/backtrace.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -94,7 +94,7 @@ EVAL_IMPL(float);
 EVAL_IMPL(double);
 EVAL_IMPL(const char*);
 EVAL_IMPL(void*);
-EVAL_IMPL(fstring);
+EVAL_IMPL(rutz::fstring);
 
 void rutz::debug::panic_aux(const char* what, const char* where, int line_no) throw()
 {

@@ -42,7 +42,7 @@
 #include "io/writer.h"
 
 #include "util/algo.h"
-#include "util/strings.h"
+#include "util/fstring.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
