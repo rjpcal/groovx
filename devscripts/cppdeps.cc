@@ -319,15 +319,25 @@ cppdeps::get_direct_includes(const string& filename)
   const char* fptr = static_cast<const char*>(f.memory());
   const char* const stop = fptr + f.length();
 
+  // need to keep track of a separate location where we can backup in case
+  // we see a partial but eventually failed match
+  const char* mark = fptr;
+
   for ( ; fptr < stop; ++fptr)
     {
-      while (*fptr != '#' && fptr < stop)
+      fptr = mark; // backup to site of previously failed match
+
+      while (fptr < stop && *fptr != '#')
         ++fptr;
 
       if (fptr >= stop)
         break;
 
+      // assert(*fptr == '#');
+
       ++fptr;
+
+      mark = fptr; // note point of current match for backup purposes
 
       while (isspace(*fptr) && fptr < stop)
         ++fptr;
