@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Mon Nov  8 11:09:45 1999
+// written: Thu Nov 11 12:27:43 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,6 +121,8 @@ private:
 public:
   void writeObject(const string& name, const IO* obj);
 
+  void writeOwnedObject(const string& name, const IO* obj);
+
   template <class T>
   void writeBasicType(const string& name, T val) {
 	 vector<char> buf(32 + name.length());
@@ -207,6 +209,13 @@ DOTRACE("AsciiStreamWriter::Impl::writeObject");
   itsAttribs.push_back(&buf[0]);
 }
 
+void AsciiStreamWriter::Impl::writeOwnedObject(
+  const string& name, const IO* obj
+  ) {
+DOTRACE("AsciiStreamWriter::Impl::writeOwnedObject");
+  writeObject(name, obj); 
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // AsciiStreamWriter member definitions
@@ -284,6 +293,10 @@ DOTRACE("AsciiStreamWriter::writeValueObj");
 
 void AsciiStreamWriter::writeObject(const string& name, const IO* obj) {
   itsImpl.writeObject(name, obj);
+}
+
+void AsciiStreamWriter::writeOwnedObject(const string& name, const IO* obj) {
+  itsImpl.writeOwnedObject(name, obj);
 }
 
 void AsciiStreamWriter::writeRoot(const IO* root) {
