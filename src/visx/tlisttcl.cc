@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Fri Nov 10 17:27:04 2000
+// written: Mon Dec 11 15:42:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,10 @@
 
 #include "gx/gxnode.h"
 
-#include "tcl/listpkg.h"
+#include "io/iditem.h"
+
 #include "tcl/tclcmd.h"
+#include "tcl/tclpkg.h"
 
 #include "util/arrays.h"
 
@@ -331,10 +333,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class TlistTcl::TlistPkg : public Tcl::PtrListPkg<Trial> {
+class TlistTcl::TlistPkg : public Tcl::TclPkg {
 public:
   TlistPkg(Tcl_Interp* interp) :
-	 Tcl::PtrListPkg<Trial>(interp, "Tlist", "$Revision$")
+	 Tcl::TclPkg(interp, "Tlist", "$Revision$")
   {
 	 addCommand( new CreatePreviewCmd(interp, "Tlist::createPreview") );
 
