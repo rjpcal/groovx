@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:32:56 2002
-// written: Sun Aug  4 19:37:10 2002
+// written: Tue Sep 17 17:16:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -148,87 +148,6 @@ DOTRACE("X11Util::hackInstallColormap");
 
       current = parent;
     }
-}
-
-/*
- * A replacement for XAllocColor.  This function should never
- * fail to allocate a color.  When XAllocColor fails, we return
- * the nearest matching color.  If we have to allocate many colors
- * this function isn't too efficient; the XQueryColors() could be
- * done just once.
- * Written by Michael Pichler, Brian Paul, Mark Kilgard
- * Input:  dpy - X display
- *         cmap - X colormap
- *         cmapSize - size of colormap
- */
-unsigned long
-X11Util::noFaultXAllocColor(Display* dpy, Colormap cmap, int cmapSize,
-                            float red, float green, float blue)
-{
-DOTRACE("X11Util::noFaultXAllocColor");
-
-  XColor xcol;
-  xcol.red   = short(red   * 65535.0);
-  xcol.green = short(green * 65535.0);
-  xcol.blue  = short(blue  * 65535.0);
-
-  // First try just using XAllocColor.
-  if (XAllocColor(dpy, cmap, &xcol))
-    {
-      return xcol.pixel;
-    }
-
-  // Retrieve color table entries.
-  XColor* const ctable = new XColor[cmapSize];
-  {
-    for (int i = 0; i < cmapSize; ++i)
-      {
-        ctable[i].pixel = i;
-      }
-  }
-  XQueryColors(dpy, cmap, ctable, cmapSize);
-
-  // Find best match.
-  int bestmatch = -1;
-  double mindist = 0.0; // 3*2^16^2 exceeds long int precision.
-
-  {
-    for (int i = 0; i < cmapSize; ++i)
-      {
-        double dr = (double) xcol.red - (double) ctable[i].red;
-        double dg = (double) xcol.green - (double) ctable[i].green;
-        double db = (double) xcol.blue - (double) ctable[i].blue;
-        double dist = dr * dr + dg * dg + db * db;
-        if (bestmatch < 0 || dist < mindist)
-          {
-            bestmatch = i;
-            mindist = dist;
-          }
-      }
-  }
-
-  // Return result.
-  XColor subColor;
-  subColor.red = ctable[bestmatch].red;
-  subColor.green = ctable[bestmatch].green;
-  subColor.blue = ctable[bestmatch].blue;
-
-  delete [] ctable;
-
-  // Try to allocate the closest match color.  This should only fail if the
-  // cell is read/write.  Otherwise, we're incrementing the cell's reference
-  // count.
-  if (!XAllocColor(dpy, cmap, &subColor))
-    {
-      // do this to work around a problem reported by Frank Ortega
-      subColor.pixel = (unsigned long) bestmatch;
-      subColor.red   = ctable[bestmatch].red;
-      subColor.green = ctable[bestmatch].green;
-      subColor.blue  = ctable[bestmatch].blue;
-      subColor.flags = DoRed | DoGreen | DoBlue;
-    }
-
-  return subColor.pixel;
 }
 
 static const char vcid_x11util_cc[] = "$Header$";
