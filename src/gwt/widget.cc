@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Thu May 10 12:04:44 2001
+// written: Fri May 11 20:47:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,6 +92,9 @@ public:
   { itsDrawNode = node.handle(); }
 
 private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
   GWT::Widget* itsOwner;
   PtrHandle<GxNode> itsDrawNode;
   PtrHandle<GxNode> itsUndrawNode;

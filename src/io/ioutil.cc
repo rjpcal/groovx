@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Thu May 10 12:04:42 2001
+// written: Fri May 11 20:46:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ DOTRACE("Tcl::StringifyCmd::invoke");
 
   try {
 	 IO::LegacyWriter writer(ost);
-	 writer.writeRoot(&(getIO()));
+	 writer.writeRoot(&io);
 	 ost << '\0';
   }
   catch (IO::IoError& err) {

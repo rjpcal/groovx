@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu May 10 12:04:44 2001
+// written: Fri May 11 20:44:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,6 +80,7 @@ public:
 	 itsRh(-1),
 	 itsTh(0),
 	 itsState(INACTIVE),
+	 itsWidget(0),
 	 itsBlock(0)
 	 {}
 
@@ -215,7 +216,7 @@ DOTRACE("Trial::Impl::readFrom");
 
   itsState = INACTIVE;
 
-  int svid = reader->ensureReadVersionId("Trial", 4, "Try grsh0.8a4");
+  reader->ensureReadVersionId("Trial", 4, "Try grsh0.8a4");
 
   itsGxNodes.clear();
 
@@ -600,7 +601,7 @@ DOTRACE("Trial::Impl::trRecordResponse");
 void Trial::Impl::installSelf(GWT::Widget& widget) const {
 DOTRACE("Trial::Impl::installSelf");
 
-  if (itsCurrentNode >= 0 && itsCurrentNode < itsGxNodes.size())
+  if (itsCurrentNode >= 0 && (unsigned int)itsCurrentNode < itsGxNodes.size())
 	 widget.setDrawable(IdItem<GxNode>(itsGxNodes[itsCurrentNode]));
 }
 
