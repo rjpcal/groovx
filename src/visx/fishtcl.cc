@@ -3,7 +3,7 @@
 // fishtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 12:00:53 1999
-// written: Tue Oct 17 11:53:46 2000
+// written: Fri Oct 20 18:15:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ public:
 protected:
   virtual void invoke() {
 	 if (objc() == 1) {
-		Fish* p = new Fish();
+		Fish* p = Fish::make();
 		ItemWithId<GrObj> obj(p, ItemWithId<GrObj>::INSERT);
 		returnInt(obj.id());
 	 }
@@ -40,7 +40,7 @@ protected:
 		const char* coord_file = arg(2).getCstring();
 		int index = arg(3).getInt();
 		
-		Fish* p = new Fish(spline_file, coord_file, index);
+		Fish* p = Fish::makeFromFiles(spline_file, coord_file, index);
 		
 		ItemWithId<GrObj> obj(p, ItemWithId<GrObj>::INSERT);
 		returnInt(obj.id());
@@ -66,7 +66,7 @@ int Fish_Init(Tcl_Interp* interp) {
 
   Tcl::TclPkg* pkg = new FishTcl::FishPkg(interp);
 
-  FactoryRegistrar<IO::IoObject, Fish>::registerWith(IO::IoFactory::theOne());
+  IO::IoFactory::theOne().registerCreatorFunc(&Fish::make);
 
   return pkg->initStatus();
 }
