@@ -29,7 +29,6 @@
 #endif
 
 #include "error.h"
-#include "gfxattribs.h"
 #include "glcanvas.h"
 #include "tclevalcmd.h"
 
@@ -97,19 +96,16 @@ DOTRACE("ToglConfig::ToglConfig");
   
   setUnitAngle(unit_angle);
 
-  GfxAttribs::setFlagsIf(GfxAttribs::RGBA_FLAG,
-								 getIntParam("rgba"));
-  GfxAttribs::setFlagsIf(GfxAttribs::PRIVATE_CMAP_FLAG,
-								 getIntParam("privatecmap"));
-  GfxAttribs::setFlagsIf(GfxAttribs::DOUBLE_BUFFER_FLAG,
-								 getIntParam("double"));
+  itsUsingRgba = (getIntParam("rgba") != 0);
+  itsHasPrivateCmap = (getIntParam("privatecmap") != 0);
+  itsIsDoubleBuffered = (getIntParam("double") != 0);
 
-  if (GfxAttribs::isTrue(GfxAttribs::RGBA_FLAG)) {
+  if ( itsUsingRgba ) {
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glClearColor(0.0, 0.0, 0.0, 1.0);
   }
   else { // not using rgba
-    if (GfxAttribs::isTrue(GfxAttribs::PRIVATE_CMAP_FLAG)) {
+    if ( itsHasPrivateCmap ) {
       glClearIndex(0);
       glIndexi(1);
     }
@@ -504,7 +500,7 @@ DOTRACE("ToglConfig::writeEpsFile");
   {
 	 // Set fore/background colors to extremes for the purposes of EPS
 	 // rendering
-	 if ( GfxAttribs::usingRgba() ) {
+	 if ( itsUsingRgba ) {
 		glColor4d(0.0, 0.0, 0.0, 1.0);
 		glClearColor(1.0, 1.0, 1.0, 1.0);
 	 }
