@@ -90,7 +90,7 @@ void Block::readFrom(IO::Reader& reader)
 {
 DOTRACE("Block::readFrom");
 
-  int svid = reader.ensureReadVersionId("Block", 1, "Try grsh0.8a3");
+  int svid = reader.ensureReadVersionId("Block", 1, "Try groovx0.8a3");
 
   ElementContainer::legacyReadElements(reader, "trialSeq");
 
@@ -113,7 +113,7 @@ void Block::writeTo(IO::Writer& writer) const
 DOTRACE("Block::writeTo");
 
   writer.ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 2,
-                              "Try grsh0.8a7");
+                              "Try groovx0.8a7");
 
   ElementContainer::legacyWriteElements(writer, "trialSeq");
 

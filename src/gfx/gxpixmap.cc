@@ -214,7 +214,7 @@ void GxPixmap::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxPixmap::readFrom");
 
-  int svid = reader.ensureReadVersionId("GxPixmap", 2, "Try grsh0.8a7");
+  int svid = reader.ensureReadVersionId("GxPixmap", 2, "Try groovx0.8a7");
 
   reader.readValue("filename", rep->itsFilename);
   reader.readValue("zoomX", rep->itsZoom.x());
@@ -249,7 +249,7 @@ void GxPixmap::writeTo(IO::Writer& writer) const
 DOTRACE("GxPixmap::writeTo");
 
   writer.ensureWriteVersionId("GxPixmap", BITMAP_SERIAL_VERSION_ID, 4,
-                              "Try grsh0.8a7");
+                              "Try groovx0.8a7");
 
   writer.writeValue("filename", rep->itsFilename);
   writer.writeValue("zoomX", rep->itsZoom.x());

@@ -261,7 +261,7 @@ void MorphyFace::readFrom(IO::Reader& reader)
 {
 DOTRACE("MorphyFace::readFrom");
 
-  reader.ensureReadVersionId("MorphyFace", 1, "Try grsh0.8a4");
+  reader.ensureReadVersionId("MorphyFace", 1, "Try groovx0.8a4");
 
   readFieldsFrom(reader, classFields());
 
@@ -274,7 +274,7 @@ void MorphyFace::writeTo(IO::Writer& writer) const
 DOTRACE("MorphyFace::writeTo");
 
   writer.ensureWriteVersionId("MorphyFace", MFACE_SERIAL_VERSION_ID, 1,
-                              "Try grsh0.8a4");
+                              "Try groovx0.8a4");
 
   writeFieldsTo(writer, classFields());
 

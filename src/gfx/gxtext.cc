@@ -97,7 +97,7 @@ void GxText::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxText::readFrom");
 
-  reader.ensureReadVersionId("GxText", 2, "Try grsh0.8a4");
+  reader.ensureReadVersionId("GxText", 2, "Try groovx0.8a4");
 
   reader.readValue("text", itsText);
   reader.readValue("strokeWidth", itsStrokeWidth);
@@ -111,7 +111,7 @@ void GxText::writeTo(IO::Writer& writer) const
 DOTRACE("GxText::writeTo");
 
   writer.ensureWriteVersionId("GxText", GTEXT_SERIAL_VERSION_ID, 2,
-                              "Try grsh0.8a4");
+                              "Try groovx0.8a4");
 
   writer.writeValue("text", itsText);
   writer.writeValue("strokeWidth", itsStrokeWidth);

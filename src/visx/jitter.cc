@@ -88,7 +88,7 @@ void Jitter::readFrom(IO::Reader& reader)
 {
 DOTRACE("Jitter::readFrom");
 
-  reader.ensureReadVersionId("Jitter", 2, "Try grsh0.8a4");
+  reader.ensureReadVersionId("Jitter", 2, "Try groovx0.8a4");
 
   reader.readValue("jitterX", itsXJitter);
   reader.readValue("jitterY", itsYJitter);
@@ -103,7 +103,7 @@ void Jitter::writeTo(IO::Writer& writer) const
 DOTRACE("Jitter::writeTo");
 
   writer.ensureWriteVersionId("Jitter", JITTER_SERIAL_VERSION_ID, 2,
-                              "Try grsh0.8a4");
+                              "Try groovx0.8a4");
 
   writer.writeValue("jitterX", itsXJitter);
   writer.writeValue("jitterY", itsYJitter);

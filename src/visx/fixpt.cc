@@ -99,7 +99,7 @@ void FixPt::readFrom(IO::Reader& reader)
 {
 DOTRACE("FixPt::readFrom");
 
-  reader.ensureReadVersionId("FixPt", 2, "Try grsh0.8a4");
+  reader.ensureReadVersionId("FixPt", 2, "Try groovx0.8a4");
 
   readFieldsFrom(reader, classFields());
 
@@ -112,7 +112,7 @@ void FixPt::writeTo(IO::Writer& writer) const
 DOTRACE("FixPt::writeTo");
 
   writer.ensureWriteVersionId("FixPt", FIXPT_SERIAL_VERSION_ID, 2,
-                              "Try grsh0.8a4");
+                              "Try groovx0.8a4");
 
   writeFieldsTo(writer, classFields());
 

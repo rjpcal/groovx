@@ -636,7 +636,7 @@ AC_ARG_WITH(htmldoc,
 	    [AC_HELP_STRING([--with-htmldoc=DIR],
 			    [specify where to install html documentation])],
 	    ,
-	    with_htmldoc=${HOME}/www/grsh)
+	    with_htmldoc=${HOME}/www/groovx)
 
 AC_MSG_RESULT($with_htmldoc)
 

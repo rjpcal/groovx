@@ -169,7 +169,7 @@ DOTRACE("GxTransform::readFrom");
     }
   else
     {
-      reader.ensureReadVersionId("GxTransform", 1, "Try grsh0.8a4");
+      reader.ensureReadVersionId("GxTransform", 1, "Try groovx0.8a4");
 
       readFieldsFrom(reader, classFields());
     }
@@ -180,7 +180,7 @@ void GxTransform::writeTo(IO::Writer& writer) const
 DOTRACE("GxTransform::writeTo");
 
   writer.ensureWriteVersionId("GxTransform", POS_SERIAL_VERSION_ID, 1,
-                               "Try grsh0.8a4");
+                               "Try groovx0.8a4");
 
   writeFieldsTo(writer, classFields());
 }

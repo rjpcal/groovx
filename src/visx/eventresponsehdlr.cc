@@ -300,7 +300,7 @@ void EventResponseHdlr::readFrom(IO::Reader& reader)
 DOTRACE("EventResponseHdlr::readFrom");
 
   const int svid = reader.ensureReadVersionId("EventResponseHdlr", 0,
-                                              "Try grsh0.8a7");
+                                              "Try groovx0.8a7");
 
   rep->becomeInactive();
 
@@ -332,7 +332,7 @@ void EventResponseHdlr::writeTo(IO::Writer& writer) const
 DOTRACE("EventResponseHdlr::writeTo");
 
   writer.ensureWriteVersionId("EventResponseHdlr", ERH_SERIAL_VERSION_ID, 2,
-                              "Try grsh0.8a7");
+                              "Try groovx0.8a7");
 
   writer.writeValue("feedbackMap", rep->itsFeedbackMap.rep());
   writer.writeValue("useFeedback", rep->itsFeedbackMap.itsUseFeedback);

@@ -170,7 +170,7 @@ void ExptDriver::readFrom(IO::Reader& reader)
 {
 DOTRACE("ExptDriver::readFrom");
 
-  int svid = reader.ensureReadVersionId("ExptDriver", 3, "Try grsh0.8a3");
+  int svid = reader.ensureReadVersionId("ExptDriver", 3, "Try groovx0.8a3");
 
   reader.readValue("hostname", rep->hostname);
   reader.readValue("subject", rep->subject);
@@ -202,7 +202,7 @@ void ExptDriver::writeTo(IO::Writer& writer) const
 DOTRACE("ExptDriver::writeTo");
 
   writer.ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 4,
-                              "Try grsh0.8a7");
+                              "Try groovx0.8a7");
 
   writer.writeValue("hostname", rep->hostname);
   writer.writeValue("subject", rep->subject);

@@ -222,7 +222,7 @@ DOTRACE("Trial::readFrom");
 
   rep->becomeInactive();
 
-  const int svid = reader.ensureReadVersionId("Trial", 4, "Try grsh0.8a4");
+  const int svid = reader.ensureReadVersionId("Trial", 4, "Try groovx0.8a4");
 
   rep->gxNodes.clear();
   IO::ReadUtils::readObjectSeq<GxNode>
@@ -248,7 +248,7 @@ void Trial::writeTo(IO::Writer& writer) const
 DOTRACE("Trial::writeTo");
 
   writer.ensureWriteVersionId("Trial", TRIAL_SERIAL_VERSION_ID, 5,
-                              "Try grsh0.8a3");
+                              "Try groovx0.8a3");
 
   IO::WriteUtils::writeObjectSeq(writer, "gxObjects",
                                  rep->gxNodes.begin(), rep->gxNodes.end());

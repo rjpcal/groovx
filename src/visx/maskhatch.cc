@@ -102,7 +102,7 @@ void MaskHatch::readFrom(IO::Reader& reader)
 {
 DOTRACE("MaskHatch::readFrom");
 
-  reader.ensureReadVersionId("MaskHatch", 2, "Try grsh0.8a4");
+  reader.ensureReadVersionId("MaskHatch", 2, "Try groovx0.8a4");
 
   readFieldsFrom(reader, classFields());
 
@@ -115,7 +115,7 @@ void MaskHatch::writeTo(IO::Writer& writer) const
 DOTRACE("MaskHatch::writeTo");
 
   writer.ensureWriteVersionId("MaskHatch", MASKHATCH_SERIAL_VERSION_ID, 2,
-                              "Try grsh0.8a4");
+                              "Try groovx0.8a4");
 
   writeFieldsTo(writer, classFields());
 

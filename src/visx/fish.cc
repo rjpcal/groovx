@@ -302,7 +302,7 @@ void Fish::readFrom(IO::Reader& reader)
 {
 DOTRACE("Fish::readFrom");
 
-  reader.ensureReadVersionId("Fish", 3, "Try grsh0.8a7");
+  reader.ensureReadVersionId("Fish", 3, "Try groovx0.8a7");
 
   readFieldsFrom(reader, classFields());
 
@@ -315,7 +315,7 @@ void Fish::writeTo(IO::Writer& writer) const
 DOTRACE("Fish::writeTo");
 
   writer.ensureWriteVersionId("Fish", FISH_SERIAL_VERSION_ID, 3,
-                              "Try grsh0.8a7");
+                              "Try groovx0.8a7");
 
   writeFieldsTo(writer, classFields());
 

@@ -138,7 +138,7 @@ void Gabor::readFrom(IO::Reader& reader)
 {
 DOTRACE("Gabor::readFrom");
 
-  reader.ensureReadVersionId("Gabor", 1, "Try grsh0.8a4");
+  reader.ensureReadVersionId("Gabor", 1, "Try groovx0.8a4");
 
   readFieldsFrom(reader, classFields());
 
@@ -151,7 +151,7 @@ void Gabor::writeTo(IO::Writer& writer) const
 DOTRACE("Gabor::writeTo");
 
   writer.ensureWriteVersionId("Gabor", GABOR_SERIAL_VERSION_ID, 1,
-                              "Try grsh0.8a4");
+                              "Try groovx0.8a4");
 
   writeFieldsTo(writer, classFields());
 

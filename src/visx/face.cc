@@ -132,7 +132,7 @@ void Face::readFrom(IO::Reader& reader)
 {
 DOTRACE("Face::readFrom");
 
-  reader.ensureReadVersionId("Face", 1, "Try grsh0.8a4");
+  reader.ensureReadVersionId("Face", 1, "Try groovx0.8a4");
 
   readFieldsFrom(reader, classFields());
 
@@ -145,7 +145,7 @@ void Face::writeTo(IO::Writer& writer) const
 DOTRACE("Face::writeTo");
 
   writer.ensureWriteVersionId("Face", FACE_SERIAL_VERSION_ID, 1,
-                              "Try grsh0.8a4");
+                              "Try groovx0.8a4");
 
   writeFieldsTo(writer, classFields());
 

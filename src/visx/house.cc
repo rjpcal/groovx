@@ -268,7 +268,7 @@ void House::readFrom(IO::Reader& reader)
 {
 DOTRACE("House::readFrom");
 
-  reader.ensureReadVersionId("House", 2, "Try grsh0.8a4");
+  reader.ensureReadVersionId("House", 2, "Try groovx0.8a4");
 
   readFieldsFrom(reader, classFields());
 
@@ -281,7 +281,7 @@ void House::writeTo(IO::Writer& writer) const
 DOTRACE("House::writeTo");
 
   writer.ensureWriteVersionId("House", HOUSE_SERIAL_VERSION_ID, 2,
-                              "Try grsh0.8a4");
+                              "Try groovx0.8a4");
 
   writeFieldsTo(writer, classFields());
 

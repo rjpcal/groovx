@@ -140,7 +140,7 @@ public:
 
   virtual void readFrom(IO::Reader& reader)
   {
-    int svid = reader.ensureReadVersionId("CompatBitmap", 2, "Try grsh0.8a4");
+    int svid = reader.ensureReadVersionId("CompatBitmap", 2, "Try groovx0.8a4");
 
     if (isGL && svid <= 2)
       {

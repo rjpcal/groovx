@@ -345,7 +345,7 @@ DOTRACE("main");
 
       // specifies a file to be 'source'd upon startup
       interp.setGlobalVar("tcl_rcFileName",
-                          Tcl::toTcl("./grsh_startup.tcl"));
+                          Tcl::toTcl("./groovx_startup.tcl"));
 
       app.run();
       return 0;
