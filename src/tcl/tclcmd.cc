@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Fri Jul 13 12:23:49 2001
+// written: Wed Jul 18 13:02:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -194,7 +194,7 @@ public:
 
     result.append("\t").append(itsCmdName);
 
-    if (itsUsage)
+    if (itsUsage && *itsUsage != '\0')
       {
         result.append(" ").append(itsUsage);
       }
@@ -307,7 +307,7 @@ private:
 
   void appendFullUsage(Tcl_Obj* result)
     {
-      if (itsUsage)
+      if (itsUsage && *itsUsage != '\0')
         {
           Tcl_AppendStringsToObj(result,
                                  "\"", const_cast<char*>(itsCmdName.c_str()),
