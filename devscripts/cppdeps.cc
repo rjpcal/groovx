@@ -541,6 +541,12 @@ cppdeps::get_direct_includes(const string& src_fname)
 
       const int include_length = fptr - include_name;
 
+      // include_name and include_length together specify the piece of text
+      // inside the #include "..." or #include <...> -- we need to keep
+      // track of include_length because include_name is not
+      // null-terminated, since it's just pointing into the middle of some
+      // mmap'ed file
+
       if (resolve_one(include_name, include_length, src_fname,
                       dirname_without_slash, m_user_ipath, vec))
         continue;
