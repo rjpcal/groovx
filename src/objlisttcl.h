@@ -2,8 +2,7 @@
 // objlisttcl.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 12:55:43 1999
-static const char vcid_objlisttcl_h[] = "$Id$";
+// written: Sat Mar 13 12:43:11 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef OBJLISTTCL_H_DEFINED
@@ -37,4 +36,5 @@ namespace ObjlistTcl {
   Tcl_PackageInitProc Objlist_Init;
 }
 
+static const char vcid_objlisttcl_h[] = "$Id$";
 #endif // !OBJLISTTCL_H_DEFINED
