@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Wed Aug  8 20:16:40 2001
+// written: Fri Aug 17 14:06:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,30 +46,22 @@ void operator delete(void* space)
 }
 #endif
 
-#include "tcl/tcllistobj.h"
-#include "util/strings.h"
+#include "itertcl.h"
+
+#include "util/slink_list.h"
 
 namespace HookTcl
 {
-  void hook(Tcl::Context& ctx)
+  slink_list<int> vec;
+
+  Util::FwdIter<int> hook()
   {
-    Tcl::List result;
+    vec.clear();
 
-    fstring f("foo");
-    result.append(f);
+    for (int i = 0; i < 20; ++i)
+      vec.push_front(i);
 
-    f.append("bar");
-    result.append(f);
-
-    f.append(42);
-    result.append(f);
-
-    f.append(fstring("fstr"));
-    result.append(f);
-
-    result.append(f.length());
-
-    ctx.setResult(result);
+    return Util::FwdIter<int>(vec.begin(), vec.end());
   }
 
   size_t memUsage() { return TOTAL; }
@@ -80,7 +72,7 @@ public:
   HookPkg(Tcl_Interp* interp) :
     Tcl::Pkg(interp, "Hook", "$Revision$")
   {
-    defVecRaw( "::hook", 0, "variable", HookTcl::hook );
+    def( "::hook", "variable", HookTcl::hook );
     def( "::memUsage", 0, HookTcl::memUsage );
   }
 };
