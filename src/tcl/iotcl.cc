@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Fri Nov 10 17:03:56 2000
+// written: Thu Nov 30 16:44:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -164,6 +164,9 @@ public:
 
 	 addCommand( new IoNewCmd(interp, TclPkg::makePkgCmdName("new")));
 	 addCommand( new IoDeleteCmd(interp, TclPkg::makePkgCmdName("delete")));
+
+	 TclPkg::eval("proc new {args} { eval IO::new $args }");
+	 TclPkg::eval("proc delete {args} { eval IO::delete $args }");
   }
 
   virtual IO::IoObject& getIoFromId(int id) {
