@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Fri Jun  1 14:20:13 2001
+// written: Fri Jun  8 14:01:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ public:
   /** Reimplemented from \c GrObj in order to catch changes to \c
       currentPart and \c currentEndPt, so that we can reseat the
       referents of \endPt_Part and endPt_Bkpt, respectively. */
-  virtual void receiveStateChangeMsg(const Observable* obj);
+  virtual void receiveStateChangeMsg(const Util::Observable* obj);
 
   ////////////////
   // properties //

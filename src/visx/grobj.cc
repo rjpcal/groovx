@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Jun  1 14:21:34 2001
+// written: Fri Jun  8 14:02:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -280,12 +280,12 @@ DOTRACE("GrObj::setUnRenderMode");
   sendStateChangeMsg();
 }
 
-void GrObj::receiveStateChangeMsg(const Observable* obj) {
+void GrObj::receiveStateChangeMsg(const Util::Observable* obj) {
 DOTRACE("GrObj::receiveStateChangeMsg");
   DebugEval((void*)this);
   DebugEval((void*)dynamic_cast<GrObj*>(this));
-  DebugEval((void*)dynamic_cast<Observer*>(this));
-  DebugEval((void*)dynamic_cast<Observable*>(this));
+  DebugEval((void*)dynamic_cast<Util::Observer*>(this));
+  DebugEval((void*)dynamic_cast<Util::Observable*>(this));
   DebugEvalNL((void*)obj);
   if (obj == this) {
 	 DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
@@ -293,7 +293,7 @@ DOTRACE("GrObj::receiveStateChangeMsg");
   }
 }
 
-void GrObj::receiveDestroyMsg(const Observable*) {
+void GrObj::receiveDestroyMsg(const Util::Observable*) {
 DOTRACE("GrObj::receiveDestroyMsg");
   // Do nothing since the only Observable that 'this' is watching is
   // itself

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Fri Jun  1 14:17:19 2001
+// written: Fri Jun  8 14:02:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -283,7 +283,7 @@ DOTRACE("Fish::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-void Fish::receiveStateChangeMsg(const Observable* obj) {
+void Fish::receiveStateChangeMsg(const Util::Observable* obj) {
 DOTRACE("Fish::receiveStateChangeMsg");
 //    if (obj == &currentPart) {
 //    } 

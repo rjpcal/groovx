@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Jun  5 10:56:51 2001
+// written: Fri Jun  8 13:59:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -353,8 +353,8 @@ public:
       are not met, in which case the scaling mode is unchanged. */
   void setUnRenderMode(GrObjRenderMode mode);
 
-  virtual void receiveStateChangeMsg(const Observable* obj);
-  virtual void receiveDestroyMsg(const Observable* obj);
+  virtual void receiveStateChangeMsg(const Util::Observable* obj);
+  virtual void receiveDestroyMsg(const Util::Observable* obj);
 
 
   ///////////////////////////////////////////////////////////////////////
