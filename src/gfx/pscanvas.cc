@@ -109,13 +109,13 @@ public:
     itsFstream << "showpage\n";
   }
 
-  State& state()
+  State& current_state()
   {
     ASSERT(itsStates.size() > 0);
     return itsStates.back();
   }
 
-  const State& state() const
+  const State& current_state() const
   {
     ASSERT(itsStates.size() > 0);
     return itsStates.back();
@@ -364,7 +364,7 @@ public:
     if (comment != 0 && comment[0] != '\0')
       itsFstream << " % " << comment;
     itsFstream << '\n';
-    itsStates.push_back(state());
+    itsStates.push_back(current_state());
   }
 
   void grestore()
@@ -375,17 +375,17 @@ public:
 
   void translate(const vec3d& v)
   {
-    state().txform.translate(v);
+    current_state().txform.translate(v);
   }
 
   void scale(const vec3d& v)
   {
-    state().txform.scale(v);
+    current_state().txform.scale(v);
   }
 
   void rotate(const vec3d& axis, double angle)
   {
-    state().txform.rotate(axis, angle);
+    current_state().txform.rotate(axis, angle);
   }
 
   // NOTE: these next four functions must be non-templates in order to avoid
@@ -423,7 +423,7 @@ public:
 
   void renderpolygon()
   {
-    if (state().polygonFill)
+    if (current_state().polygonFill)
       fill();
     else
       stroke();
@@ -514,7 +514,7 @@ public:
 
   void setlinewidth(double w)
   {
-    state().lineWidth = w;
+    current_state().lineWidth = w;
 
     indent(); push1(w); itsFstream << "setlinewidth\n";
   }
@@ -592,13 +592,13 @@ public:
 
   void pushxy(const vec2d& v)
   {
-    vec2d t = state().txform.apply_to(v);
+    vec2d t = current_state().txform.apply_to(v);
     itsFstream << t.x() << " " << t.y() << " ";
   }
 
   void pushxy(const vec3d& v)
   {
-    vec3d t = state().txform.apply_to(v);
+    vec3d t = current_state().txform.apply_to(v);
     itsFstream << t.x() << " " << t.y() << " ";
   }
 
@@ -782,7 +782,7 @@ void Gfx::PSCanvas::setPolygonFill(bool on)
 {
 DOTRACE("Gfx::PSCanvas::setPolygonFill");
 
-  rep->state().polygonFill = on;
+  rep->current_state().polygonFill = on;
 }
 
 void Gfx::PSCanvas::setPointSize(double /*size*/)
@@ -867,13 +867,13 @@ DOTRACE("Gfx::PSCanvas::rotate");
 void Gfx::PSCanvas::transform(const geom::txform& tx)
 {
 DOTRACE("Gfx::PSCanvas::transform");
-  rep->state().txform.transform(tx);
+  rep->current_state().txform.transform(tx);
 }
 
 void Gfx::PSCanvas::loadMatrix(const geom::txform& tx)
 {
 DOTRACE("Gfx::PSCanvas::loadMatrix");
-  rep->state().txform = tx;
+  rep->current_state().txform = tx;
 }
 
 
@@ -921,7 +921,7 @@ DOTRACE("Gfx::PSCanvas::drawRect");
   rep->lineto(r.top_right());
   rep->lineto(r.top_left());
   rep->closepath();
-  if (rep->state().polygonFill)
+  if (rep->current_state().polygonFill)
     rep->fill();
   else
     rep->stroke();
