@@ -86,7 +86,7 @@ namespace
 namespace Dlist
 {
 
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // This command takes two lists as arguments, and uses the integers in
   // the second (index) list to return a permutation of the elements in
@@ -97,7 +97,7 @@ namespace Dlist
   // returns
   //      7 3 5
   //
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List choose(Tcl::List source_list, Tcl::List index_list)
   {
@@ -117,11 +117,11 @@ namespace Dlist
     return result;
   }
 
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // Cyclically shift the elements of the list leftward by n steps.
   //
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List cycle_left(Tcl::List source_list, unsigned int n)
   {
@@ -145,11 +145,11 @@ namespace Dlist
     return result;
   }
 
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // Cyclically shift the elements of the list rightward by n steps.
   //
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List cycle_right(Tcl::List source_list, unsigned int n)
   {
@@ -161,25 +161,25 @@ namespace Dlist
     return cycle_left(source_list, source_list.length() - n);
   }
 
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // Returns the n'th element of the list; generates an error if n is
   // out of range.
   //
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::ObjPtr index(Tcl::List source_list, unsigned int n)
   {
     return source_list.at(n);
   }
 
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // This command takes as its argument a single list containing only
   // integers, and returns a list in which each element is the logical
   // negation of its corresponding element in the source list.
   //
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List not_(Tcl::List source_list)
   {
@@ -200,12 +200,12 @@ namespace Dlist
     return result;
   }
 
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // this command produces a list of ones of the length specified by its
   // lone argument
   //
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List ones(unsigned int num_ones)
   {
@@ -215,12 +215,12 @@ namespace Dlist
     return result;
   }
 
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // This commmand returns a single element chosen at random
   // from the source list
   //
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::ObjPtr pickone(Tcl::List source_list)
   {
@@ -232,12 +232,12 @@ namespace Dlist
     return source_list.at(rutz::rand_range(0u, source_list.length()));
   }
 
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // this command produces an ordered list of all integers between begin
   // and end, inclusive.
   //
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List range(int begin, int end, int step)
   {
@@ -265,12 +265,12 @@ namespace Dlist
     return result;
   }
 
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // Make a series of linearly spaced values between (and including) two
   // endpoints
   //
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List linspace(double begin, double end, unsigned int npts)
   {
@@ -312,7 +312,7 @@ namespace Dlist
                               power);
   }
 
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // generate a complete/pure permutation of the numbers 0..N-1
   // the result is such that:
@@ -324,7 +324,7 @@ namespace Dlist
   // result that satisfies the constraints of this algorithm, without being
   // random at all!
   //
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List permute_maximal(unsigned int N)
   {
@@ -404,12 +404,12 @@ namespace Dlist
     return Tcl::List(); // can't happen, but placate compiler
   }
 
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // generate a random permutation of the numbers 0..N-1 such that:
   //   result[i] != i         for all i
   //
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List permute_moveall(unsigned int N)
   {
@@ -466,12 +466,12 @@ namespace Dlist
     return result;
   }
 
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // this command produces a list of random numbers each between min and
   // max, and of the given
   //
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List rand(double min, double max, unsigned int N)
   {
@@ -487,7 +487,7 @@ namespace Dlist
     return result;
   }
 
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // This command taks two lists as arguments. Each element from the
   // first (source) list is appended to the result multiple times; the
@@ -499,7 +499,7 @@ namespace Dlist
   // returns
   //      4 5 5 6 6 6
   //
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List repeat(Tcl::List source_list, Tcl::List times_list)
   {
@@ -517,12 +517,12 @@ namespace Dlist
     return result;
   }
 
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // Return a new list containing the elements of the source list in
   // reverse order.
   //
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List reverse(Tcl::List src)
   {
@@ -535,13 +535,13 @@ namespace Dlist
     return result;
   }
 
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // This command takes two lists as arguments, using the binary flags
   // in the second (flags) list to choose which elements from the first
   // (source) list should be appended to the output list
   //
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List select(Tcl::List source_list, Tcl::List flags_list)
   {
@@ -569,11 +569,11 @@ namespace Dlist
     return result;
   }
 
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // dlist::shuffle
   //
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List shuffle(Tcl::List src, int seed)
   {
@@ -594,12 +594,12 @@ namespace Dlist
     return result;
   }
 
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // Shuffle an input list through a random permutation such that no
   // element remains in its initial position.
   //
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List shuffle_moveall(Tcl::List src)
   {
@@ -607,11 +607,11 @@ namespace Dlist
     return Dlist::choose(src, permutation);
   }
 
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // Shuffle an input list through a maximal permutation.
   //
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List shuffle_maximal(Tcl::List src)
   {
@@ -619,11 +619,11 @@ namespace Dlist
     return Dlist::choose(src, permutation);
   }
 
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // dlist::slice
   //
-  //---------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List slice(Tcl::List src, unsigned int slice)
   {
@@ -640,13 +640,13 @@ namespace Dlist
     return result;
   }
 
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // this command sums the numbers in a list, trying to return an int
   // result if possible, but returning a double result if any doubles
   // are found in the source list
   //
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::ObjPtr sum(Tcl::List source_list)
   {
@@ -683,12 +683,12 @@ namespace Dlist
       return Tcl::toTcl(dsum);
   }
 
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
   //
   // this command produces a list of zeros of the length specified by its
   // lone argument
   //
-  //--------------------------------------------------------------------
+  //---------------------------------------------------------
 
   Tcl::List zeros(unsigned int num_zeros)
   {
