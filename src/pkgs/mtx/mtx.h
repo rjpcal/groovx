@@ -538,6 +538,162 @@ private:
   data_holder* ref_;
 };
 
+
+//  ###################################################################
+//  ===================================================================
+
+//  Iterator templates for iterating over two-dimensional data
+
+/// Index-based iterator for Mtx class.
+template <class M, class T>
+class index_iterator_base
+{
+  M* m_src;
+  int m_index;
+
+public:
+  index_iterator_base(M* m, int e) : m_src(m), m_index(e) {}
+
+  typedef std::random_access_iterator_tag iterator_category;
+
+  typedef T            value_type;
+  typedef ptrdiff_t    difference_type;
+  typedef T*           pointer;
+  typedef T&           reference;
+
+  index_iterator_base end() const { return index_iterator_base(m_src, m_src->nelems()); }
+
+  bool has_more() const { return m_index < m_src->nelems(); }
+
+private:
+  // Need this pair of overloads to distinguish between const and
+  // non-const M types, so that we can call either at() or at_nc()
+  // as appropriate.
+  template <class MM>
+  static reference get_at(MM* m, int e) { return m->at_nc(e); }
+
+  template <class MM>
+  static reference get_at(const MM* m, int e) { return m->at(e); }
+
+public:
+  reference operator*() const { return get_at(m_src, m_index); }
+
+  // Comparison
+
+  bool operator==(const index_iterator_base& other) const { return m_index == other.m_index; }
+
+  bool operator!=(const index_iterator_base& other) const { return m_index != other.m_index; }
+
+  bool operator<(const index_iterator_base& other) const { return m_index < other.m_index; }
+
+  difference_type operator-(const index_iterator_base& other) const
+  { return m_index - other.m_index; }
+
+  // Increment/Decrement
+
+  index_iterator_base& operator++() { ++m_index; return *this; }
+  index_iterator_base& operator--() { --m_index; return *this; }
+
+  index_iterator_base operator++(int) { return index_iterator_base(m_src, m_index++); }
+  index_iterator_base operator--(int) { return index_iterator_base(m_src, m_index--); }
+
+  index_iterator_base& operator+=(int x) { m_index += x; return *this; }
+  index_iterator_base& operator-=(int x) { m_index -= x; return *this; }
+
+  index_iterator_base operator+(int x) const { return index_iterator_base(m_src, m_index+x); }
+  index_iterator_base operator-(int x) const { return index_iterator_base(m_src, m_index-x); }
+};
+
+/// Column-major iterator for Mtx class.
+template <class T>
+class colmaj_iterator_base
+{
+  int m_rowgap;
+  int m_rowstride;
+  T* m_ptr;
+  T* m_current_end;
+
+public:
+
+  typedef std::forward_iterator_tag iterator_category;
+
+  typedef T            value_type;
+  typedef ptrdiff_t    difference_type;
+  typedef T*           pointer;
+  typedef T&           reference;
+
+  colmaj_iterator_base(int rg, int rs, T* ptr) :
+    m_rowgap(rg),
+    m_rowstride(rs),
+    m_ptr(ptr),
+    m_current_end(m_ptr+(m_rowstride-m_rowgap))
+  {}
+
+  T& operator*() const { return *m_ptr; }
+
+  colmaj_iterator_base& operator++()
+  {
+    if (++m_ptr == m_current_end)
+      {
+        m_ptr += m_rowgap;
+        m_current_end += m_rowstride;
+      }
+    return *this;
+  }
+
+  bool operator==(const colmaj_iterator_base& other) const
+  { return m_ptr == other.m_ptr; }
+
+  bool operator!=(const colmaj_iterator_base& other) const
+  { return m_ptr != other.m_ptr; }
+};
+
+/// Row-major iterator for Mtx class.
+template <class T>
+class rowmaj_iterator_base
+{
+  int m_stride;
+  T* m_current_start;
+  T* m_ptr;
+  T* m_current_end;
+
+public:
+
+  typedef std::forward_iterator_tag iterator_category;
+
+  typedef T            value_type;
+  typedef ptrdiff_t    difference_type;
+  typedef T*           pointer;
+  typedef T&           reference;
+
+  rowmaj_iterator_base(int s, int ncols, T* ptr) :
+    m_stride(s),
+    m_current_start(ptr),
+    m_ptr(ptr),
+    m_current_end(m_ptr+(ncols*s))
+  {}
+
+  T& operator*() const { return *m_ptr; }
+
+  rowmaj_iterator_base& operator++()
+  {
+    m_ptr += m_stride;
+    if (m_ptr == m_current_end)
+      {
+        ++m_current_start;
+        ++m_current_end;
+        m_ptr = m_current_start;
+      }
+    return *this;
+  }
+
+  bool operator==(const rowmaj_iterator_base& other) const
+  { return m_ptr == other.m_ptr; }
+
+  bool operator!=(const rowmaj_iterator_base& other) const
+  { return m_ptr != other.m_ptr; }
+};
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -564,18 +720,6 @@ protected:
   mtx_base(const mtx_specs& specs, const Data& data);
 
   ~mtx_base();
-
-  const double& at(int i) const
-  {
-    RC_less(i+offset(), data_.storage_length());
-    return data_.storage()[i+offset()];
-  }
-
-  double& at_nc(int i)
-  {
-    RC_less(i+offset(), data_.storage_length());
-    return data_.storage_nc()[i+offset()];
-  }
 
   ptrdiff_t offset_from_storage(int r, int c) const
   { return RCR_leq(mtx_specs::offset_from_storage(r, c), data_.storage_length()); }
@@ -608,6 +752,18 @@ public:
 
   const mtx_shape& shape() const { return specs().shape(); }
   const mtx_specs& specs() const { return *this; }
+
+  const double& at(int i) const
+  {
+    RC_less(i+offset(), data_.storage_length());
+    return data_.storage()[i+offset()];
+  }
+
+  double& at_nc(int i)
+  {
+    RC_less(i+offset(), data_.storage_length());
+    return data_.storage_nc()[i+offset()];
+  }
 
 #ifdef APPLY_IMPL
 #  error macro error
@@ -657,71 +813,10 @@ public:
   // Iterators
   //
 
-  /// Index-based iterator for Mtx class.
-  template <class M, class T>
-  class iter_base
-  {
-    M* m_src;
-    int m_index;
+  // Index-based iteration
 
-  public:
-    iter_base(M* m, int e) : m_src(m), m_index(e) {}
-
-    typedef std::random_access_iterator_tag iterator_category;
-
-    typedef T            value_type;
-    typedef ptrdiff_t    difference_type;
-    typedef T*           pointer;
-    typedef T&           reference;
-
-    iter_base end() const { return iter_base(m_src, m_src->nelems()); }
-
-    bool has_more() const { return m_index < m_src->nelems(); }
-
-  private:
-    // Need this pair of overloads to distinguish between const and
-    // non-const M types, so that we can call either at() or at_nc()
-    // as appropriate.
-    template <class MM>
-    static reference get_at(MM* m, int e) { return m->at_nc(e); }
-
-    template <class MM>
-    static reference get_at(const MM* m, int e) { return m->at(e); }
-
-  public:
-    reference operator*() const { return get_at(m_src, m_index); }
-
-    // Comparison
-
-    bool operator==(const iter_base& other) const { return m_index == other.m_index; }
-
-    bool operator!=(const iter_base& other) const { return m_index != other.m_index; }
-
-    bool operator<(const iter_base& other) const { return m_index < other.m_index; }
-
-    difference_type operator-(const iter_base& other) const
-      { return m_index - other.m_index; }
-
-    // Increment/Decrement
-
-    iter_base& operator++() { ++m_index; return *this; }
-    iter_base& operator--() { --m_index; return *this; }
-
-    iter_base operator++(int) { return iter_base(m_src, m_index++); }
-    iter_base operator--(int) { return iter_base(m_src, m_index--); }
-
-    iter_base& operator+=(int x) { m_index += x; return *this; }
-    iter_base& operator-=(int x) { m_index -= x; return *this; }
-
-    iter_base operator+(int x) const { return iter_base(m_src, m_index+x); }
-    iter_base operator-(int x) const { return iter_base(m_src, m_index-x); }
-  };
-
-//   friend class iter_base<mtx_base, double>;
-//   friend class iter_base<const mtx_base, const double>;
-
-  typedef iter_base<mtx_base, double> iterator;
-  typedef iter_base<const mtx_base, const double> const_iterator;
+  typedef index_iterator_base<mtx_base, double> iterator;
+  typedef index_iterator_base<const mtx_base, const double> const_iterator;
 
   iterator begin_nc() { return iterator(this, 0); }
   iterator end_nc() { return iterator(this, nelems()); }
@@ -729,53 +824,10 @@ public:
   const_iterator begin() const { return const_iterator(this, 0); }
   const_iterator end() const { return const_iterator(this, nelems()); }
 
+  // Column-major iteration
 
-  /// Column-major iterator for Mtx class.
-  template <class T>
-  class colmaj_iter_base
-  {
-    int m_rowgap;
-    int m_rowstride;
-    T* m_ptr;
-    T* m_current_end;
-
-  public:
-
-    typedef std::forward_iterator_tag iterator_category;
-
-    typedef T            value_type;
-    typedef ptrdiff_t    difference_type;
-    typedef T*           pointer;
-    typedef T&           reference;
-
-    colmaj_iter_base(int rg, int rs, T* ptr) :
-      m_rowgap(rg),
-      m_rowstride(rs),
-      m_ptr(ptr),
-      m_current_end(m_ptr+(m_rowstride-m_rowgap))
-    {}
-
-    T& operator*() const { return *m_ptr; }
-
-    colmaj_iter_base& operator++()
-    {
-      if (++m_ptr == m_current_end)
-        {
-          m_ptr += m_rowgap;
-          m_current_end += m_rowstride;
-        }
-      return *this;
-    }
-
-    bool operator==(const colmaj_iter_base& other) const
-    { return m_ptr == other.m_ptr; }
-
-    bool operator!=(const colmaj_iter_base& other) const
-    { return m_ptr != other.m_ptr; }
-  };
-
-  typedef colmaj_iter_base<double> colmaj_iter;
-  typedef colmaj_iter_base<const double> const_colmaj_iter;
+  typedef colmaj_iterator_base<double> colmaj_iter;
+  typedef colmaj_iterator_base<const double> const_colmaj_iter;
 
   colmaj_iter colmaj_begin_nc()
   { return colmaj_iter(rowgap(), rowstride(), address_nc(0,0)); }
@@ -789,55 +841,10 @@ public:
   const_colmaj_iter colmaj_end() const
   { return const_colmaj_iter(rowgap(), rowstride(), end_address(0,ncols())); }
 
+  // Row-major iteration
 
-  /// Row-major iterator for Mtx class.
-  template <class T>
-  class rowmaj_iter_base
-  {
-    int m_stride;
-    T* m_current_start;
-    T* m_ptr;
-    T* m_current_end;
-
-  public:
-
-    typedef std::forward_iterator_tag iterator_category;
-
-    typedef T            value_type;
-    typedef ptrdiff_t    difference_type;
-    typedef T*           pointer;
-    typedef T&           reference;
-
-    rowmaj_iter_base(int s, int ncols, T* ptr) :
-      m_stride(s),
-      m_current_start(ptr),
-      m_ptr(ptr),
-      m_current_end(m_ptr+(ncols*s))
-    {}
-
-    T& operator*() const { return *m_ptr; }
-
-    rowmaj_iter_base& operator++()
-    {
-      m_ptr += m_stride;
-      if (m_ptr == m_current_end)
-        {
-          ++m_current_start;
-          ++m_current_end;
-          m_ptr = m_current_start;
-        }
-      return *this;
-    }
-
-    bool operator==(const rowmaj_iter_base& other) const
-    { return m_ptr == other.m_ptr; }
-
-    bool operator!=(const rowmaj_iter_base& other) const
-    { return m_ptr != other.m_ptr; }
-  };
-
-  typedef rowmaj_iter_base<double> rowmaj_iter;
-  typedef rowmaj_iter_base<const double> const_rowmaj_iter;
+  typedef rowmaj_iterator_base<double> rowmaj_iter;
+  typedef rowmaj_iterator_base<const double> const_rowmaj_iter;
 
   rowmaj_iter rowmaj_begin_nc()
   { return rowmaj_iter(rowstride(), ncols(), address_nc(0,0)); }
