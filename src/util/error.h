@@ -3,7 +3,7 @@
 // error.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 22 14:59:47 1999
-// written: Wed Nov 10 12:15:08 1999
+// written: Wed Feb 16 15:05:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,27 +16,44 @@
 #define STRING_DEFINED
 #endif
 
-/// The base class for all error classes
+/**
+ *
+ * \c Error is the base class for all error classes.
+ *
+ **/
+
 class Error {
 public:
-  ///
+  /// Default constructor.
   Error();
-  ///
+  /// Virtual constructor ensures correct destruction of subclasses.
   virtual ~Error();
 };
 
-/// A simple error class that carries a string message describing the error.
+
+
+/**
+ *
+ * \c ErrorWithMsg is a simple error class that carries a string
+ * message describing the error.
+ *
+ **/
+
 class ErrorWithMsg : public virtual Error {
 public:
-  ///
+  /// Default construct with an empty message string.
   ErrorWithMsg() : Error() {}
-  ///
-  ErrorWithMsg(const string& str);
-  ///
+
+  /// Construct with an informative message \a errorMessage.
+  ErrorWithMsg(const string& errorMessage);
+
+  /// Get a string describing the error.
   virtual const string& msg() const;
+
 protected:
-  ///
-  virtual void setMsg(const string& str);
+  /// Change the informative message to \a newMessage.
+  virtual void setMsg(const string& newMessage);
+
 private:
   string itsInfo;
 };
