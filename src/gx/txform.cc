@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 21 14:00:54 2002
-// written: Tue Nov 19 18:12:35 2002
+// written: Wed Nov 20 10:32:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,6 +108,16 @@ DOTRACE("Gfx::Txform::Txform(tx, scl, rot)");
 
 void Gfx::Txform::translate(const Vec3<double>& t)
 {
+DOTRACE("Gfx::Txform::translate");
+
+#if 0
+  /*                     brute force
+
+              | m0 m4 m8  m12 |   |  1  0  0 tx |
+     result = | m1 m5 m9  m13 | * |  0  1  0 ty |
+              | m2 m6 m10 m14 |   |  0  0  1 tz |
+              | m3 m7 m11 m15 |   |  0  0  0  1 |
+  */
   Txform old_mtx(*this);
 
   double tm[16];
@@ -117,10 +127,33 @@ void Gfx::Txform::translate(const Vec3<double>& t)
   tm[3] = 0.0; tm[7] = 0.0; tm[11] = 0.0; tm[15] = 1.0;
 
   mul_mtx_4x4(old_mtx.data, tm, this->data);
+#else
+  /*                 optimized
+
+              | m0 m4 m8  m0*tx+m4*ty+m8*tz+m12  |
+     result = | m1 m5 m9  m1*tx+m5*ty+m9*tz+m13  |
+              | m2 m6 m10 m2*tx+m6*ty+m10*tz+m14 |
+              | m3 m7 m11 m3*tx+m7*ty+m11*tz+m15 |
+  */
+  data[12] += t.x()*data[0] + t.y()*data[4] + t.z()*data[8];
+  data[13] += t.x()*data[1] + t.y()*data[5] + t.z()*data[9];
+  data[14] += t.x()*data[2] + t.y()*data[6] + t.z()*data[10];
+  data[15] += t.x()*data[3] + t.y()*data[7] + t.z()*data[11];
+#endif
 }
 
 void Gfx::Txform::scale(const Vec3<double>& s)
 {
+DOTRACE("Gfx::Txform::scale");
+
+#if 0
+  /*                brute force
+
+              | m0 m4 m8  m12 |   | sx  0  0  0 |
+     result = | m1 m5 m9  m13 | * |  0 sy  0  0 |
+              | m2 m6 m10 m14 |   |  0  0 sz  0 |
+              | m3 m7 m11 m15 |   |  0  0  0  1 |
+  */
   Txform old_mtx(*this);
 
   double sm[16];
@@ -130,10 +163,33 @@ void Gfx::Txform::scale(const Vec3<double>& s)
   sm[3] = 0.0;   sm[7] = 0.0;    sm[11] = 0.0;   sm[15] = 1.0;
 
   mul_mtx_4x4(old_mtx.data, sm, this->data);
+#else
+  /*                 optimized
+
+              | sx*m0 sy*m4 sz*m8  m12 |
+     result = | sx*m1 sy*m5 sz*m9  m13 |
+              | sx*m2 sy*m6 sz*m10 m14 |
+              | sx*m3 sy*m7 sz*m11 m15 |
+  */
+  data[0] *= s.x();
+  data[1] *= s.x();
+  data[2] *= s.x();
+  data[3] *= s.x();
+  data[4] *= s.y();
+  data[5] *= s.y();
+  data[6] *= s.y();
+  data[7] *= s.y();
+  data[8] *= s.z();
+  data[9] *= s.z();
+  data[10] *= s.z();
+  data[11] *= s.z();
+#endif
 }
 
 void Gfx::Txform::transform(const Gfx::Txform& other)
 {
+DOTRACE("Gfx::Txform::transform");
+
   Txform old_mtx(*this);
 
   mul_mtx_4x4(old_mtx.data, other.data, this->data);
