@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:39:48 2001
-// written: Wed Nov 13 10:55:11 2002
+// written: Wed Nov 13 12:27:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,9 @@ public:
   {}
 
   virtual ~GLCacheNode();
+
+  virtual void readFrom(IO::Reader* /*reader*/) {};
+  virtual void writeTo(IO::Writer* /*writer*/) const {};
 
   virtual void draw(Gfx::Canvas& canvas) const;
 

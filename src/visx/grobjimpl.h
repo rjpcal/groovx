@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Wed Nov 13 10:55:11 2002
+// written: Wed Nov 13 12:27:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,6 +33,9 @@ public:
   GrObjNode(GrObj* obj) : Gnode(), itsObj(obj) {}
 
   virtual ~GrObjNode() {}
+
+  virtual void readFrom(IO::Reader* /*reader*/) {};
+  virtual void writeTo(IO::Writer* /*writer*/) const {};
 
   virtual void draw(Gfx::Canvas& canvas) const
   { itsObj->grRender(canvas); }

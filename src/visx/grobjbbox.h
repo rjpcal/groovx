@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Wed Nov 13 10:55:11 2002
+// written: Wed Nov 13 12:27:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,9 @@ public:
 
   void setPixelBorder(int pixels) { itsPixelBorder = pixels; }
   int pixelBorder() const { return itsPixelBorder; }
+
+  virtual void readFrom(IO::Reader* /*reader*/) {};
+  virtual void writeTo(IO::Writer* /*writer*/) const {};
 
   virtual void draw(Gfx::Canvas& canvas) const;
 

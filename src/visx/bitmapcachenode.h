@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Wed Nov 13 10:55:11 2002
+// written: Wed Nov 13 12:27:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,9 @@ public:
   void invalidate();
 
   void saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const;
+
+  virtual void readFrom(IO::Reader* /*reader*/) {};
+  virtual void writeTo(IO::Writer* /*writer*/) const {};
 
   virtual void draw(Gfx::Canvas& canvas) const;
 

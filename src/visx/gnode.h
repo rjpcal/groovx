@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 13:36:59 2001
-// written: Wed Nov 13 10:54:25 2002
+// written: Wed Nov 13 12:29:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,27 +29,18 @@ namespace Gfx
 class Gnode : public GxNode
 {
 private:
-  Util::SoftRef<Gnode> itsChild;
-
-protected:
-  Gnode* child() const { return itsChild.get(); }
+  Util::SoftRef<GxNode> itsChild;
 
 public:
   Gnode() : itsChild() {}
 
-  Gnode(Util::SoftRef<Gnode> child) : itsChild(child) {}
+  Gnode(Util::SoftRef<GxNode> child) : itsChild(child) {}
 
   virtual ~Gnode();
 
-  void setChild(Util::SoftRef<Gnode> child) { itsChild = child; }
+  const Util::SoftRef<GxNode>& child() const { return itsChild; }
 
-  virtual void readFrom(IO::Reader* /*reader*/) {};
-  virtual void writeTo(IO::Writer* /*writer*/) const {};
-
-  virtual void getBoundingCube(Gfx::Box<double>& cube,
-                               Gfx::Canvas& canvas) const = 0;
-
-  virtual void draw(Gfx::Canvas& canvas) const = 0;
+  void setChild(Util::SoftRef<GxNode> child) { itsChild = child; }
 };
 
 static const char vcid_gnode_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Wed Nov 13 10:55:11 2002
+// written: Wed Nov 13 12:27:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -123,6 +123,9 @@ public:
   {
     return Util::max(scaledWidth(canvas), scaledHeight(canvas));
   }
+
+  virtual void readFrom(IO::Reader* /*reader*/) {};
+  virtual void writeTo(IO::Writer* /*writer*/) const {};
 
   virtual void draw(Gfx::Canvas& canvas) const;
 
