@@ -261,8 +261,11 @@ namespace
       os << name << "(objref:" << itsType << ") id=" << itsId << "\n";
     }
 
-    Ref<IO::IoObject> getObject()
+    SoftRef<IO::IoObject> getObject()
     {
+      if (itsId == 0)
+        return SoftRef<IO::IoObject>();
+      // else...
       return itsObjects->getObject(itsId);
     }
 
