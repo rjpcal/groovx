@@ -79,7 +79,7 @@ proc testRemoveCmd { objname } {
     upvar $objname this
 
     set cmdname "${this(listname)}::remove"
-    set usage "wrong \# args: should be \"$cmdname item_id\""
+    set usage "wrong \# args: should be \"$cmdname item_id\\(s\\)\""
     set testname "${this(packagename)}-${cmdname}"
 
 	 eval ::test $testname {"too few args"} {"
