@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Jun 13 17:48:19 2001
+// written: Fri Jun 15 17:41:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,11 +98,6 @@ namespace {
       }
   }
 
-  void dummyEventProc(ClientData clientData, XEvent* eventPtr) {
-  DOTRACE("dummyEventProc");
-    DebugEvalNL(clientData);
-  }
-
   void setIntParam(Togl* togl, const char* param, int val) {
     const int BUF_SIZE = 256;
     char buf[BUF_SIZE];
@@ -125,7 +120,7 @@ Toglet::Toglet(Tcl_Interp* interp,
                int config_argc, char** config_argv,
                bool pack,
                double dist, double unit_angle) :
-  GWT::Widget(),
+  Tcl::TkWidget(),
   itsCanvas(new GLCanvas),
   itsTogl(new Togl(interp, widgetName(id()), config_argc, config_argv)),
   itsViewingDistance(dist),
@@ -165,9 +160,6 @@ DOTRACE("Toglet::Toglet");
   }
 
   Tk_Window tkwin = itsTogl->tkWin();
-  Tk_CreateEventHandler(tkwin, ButtonPressMask, dummyEventProc,
-                        static_cast<void*>(this));
-
   XBmapRenderer::initClass(tkwin);
 
   if (pack) {
@@ -190,18 +182,17 @@ DOTRACE("Toglet::~Toglet");
   itsTogl->setClientData(static_cast<ClientData>(0));
   itsTogl->setReshapeFunc(0);
   itsTogl->setDisplayFunc(0);
-
-  Tk_Window tkwin = itsTogl->tkWin();
-  if (tkwin != 0)
-    {
-      Tk_DeleteEventHandler(tkwin, ButtonPressMask, dummyEventProc,
-                            static_cast<void*>(this));
-    }
 }
 
 ///////////////
 // accessors //
 ///////////////
+
+Tk_Window Toglet::tkWin() const {
+DOTRACE("Toglet::tkWin");
+
+  return itsTogl->tkWin();
+}
 
 double Toglet::getFixedScale() const {
 DOTRACE("Toglet::getFixedScale");

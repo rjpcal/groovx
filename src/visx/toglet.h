@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu Jun 14 14:54:58 2001
+// written: Fri Jun 15 17:39:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,8 +21,8 @@
 #include "rect.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(WIDGET_H_DEFINED)
-#include "gwt/widget.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TKWIDGET_H_DEFINED)
+#include "tcl/tkwidget.h"
 #endif
 
 struct Togl;
@@ -43,12 +43,14 @@ typedef unsigned long Window;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Toglet : public GWT::Widget {
+class Toglet : public Tcl::TkWidget {
 protected:
   Toglet(Tcl_Interp* interp,
              int config_argc=0, char** config_argv=0,
              bool pack=true,
              double dist=30.0, double unit_angle=2.05);
+
+  virtual Tk_Window tkWin() const;
 
 public:
   // types
