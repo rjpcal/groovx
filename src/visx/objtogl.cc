@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri Jul 23 13:50:13 1999
+// written: Fri Jul 23 13:58:26 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -30,7 +30,7 @@
 #include "tclitempkg.h"
 #include "toglconfig.h"
 
-#define LOCAL_TRACE
+#define NO_TRACE
 #include "trace.h"
 #include "debug.h"
 
