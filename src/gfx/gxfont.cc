@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 12 18:35:02 2002
-// written: Tue Nov 12 18:41:44 2002
+// written: Tue Nov 12 18:44:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,6 +63,7 @@ DOTRACE("GxFont::GxFont");
 
   if (rep->listBase==0)
     {
+      XFreeFontInfo(NULL, rep->fontInfo, 1);
       throw Util::Error(fstring("couldn't allocate GL display lists"));
     }
 
