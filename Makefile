@@ -47,14 +47,17 @@ FILTER :=
 MAKEDEP := $(SCRIPTS)/makedep
 ifeq ($(ARCH),hp9000s700)
 	CC := time aCC
-	FILTER := |& sed -e '/Warning.*opt.aCC.include./,/\^\^*/d' \
-		-e '/Warning.*usr.include./,/\^\^*/d'
-	ARCH_FLAGS := +w +W818,655,392,495,469,361,749,416 -DACC_COMPILER -DHP9000S700
-	DEPOPTIONS := -I/opt/aCC/include -I/usr -I/opt/aCC/include/iostream \
-	 -I/opt/graphics/OpenGL/include -I/cit/rjpeters/include -I./src
+#	FILTER := |& sed -e '/Warning.*opt.aCC.include./,/\^\^*/d' \
+#		-e '/Warning.*usr.include./,/\^\^*/d'
+	FILTER := 
+	ARCH_FLAGS := +w +W829,740,8006,818,655,392,495,469,361,749,416 -DACC_COMPILER -DHP9000S700
+	DEPOPTIONS := -DACC_COMPILER -DHP9000S700 \
+		-I/opt/aCC/include -I/usr -I/opt/aCC/include/iostream \
+		-I/opt/graphics/OpenGL/include -I/cit/rjpeters/include -I./src \
+		-I./scripts/spoofdep
 endif
 ifeq ($(ARCH),irix6)
-	CC := time g++
+	CC := time /cit/rjpeters/gcc-2.95.1/bin/g++
 # This filter removes warnings that are triggered by standard library files
 	FILTER := |& sed \
 		-e '/g++-3.*warning/d;' \
@@ -63,6 +66,9 @@ ifeq ($(ARCH),irix6)
 		-e '/g++-3.*At top level/d;' \
 		-e '/g++-3.*In instantiation of/,/instantiated from here/d'
 	ARCH_FLAGS := -Wall -W -Wsign-promo -Weffc++ -DGCC_COMPILER -DIRIX6
+	DEPOPTIONS := -DGCC_COMPILER -DIRIX6 \
+		-I/cit/rjpeters/gcc/include/g++-3 -I/cit/rjpeters/include -I./src \
+		-I./scripts/spoofdep
 endif
 
 #-------------------------------------------------------------------------
@@ -75,15 +81,15 @@ ifeq ($(ARCH),hp9000s700)
 	DEBUG_OPTIONS := +O1 +Z +p
 	DEBUG_LINK_OPTIONS := -Wl,-B,immediate -Wl,+vallcompatwarnings
 
-	PROD_OPTIONS := +O3 +Z +p
+	PROD_OPTIONS := +O2 +Z +p
 	PROD_LINK_OPTIONS := -Wl,+vallcompatwarnings
 endif
 ifeq ($(ARCH),irix6)
-	DEBUG_OPTIONS := -O1
+	DEBUG_OPTIONS := -g -O0
 	DEBUG_LINK_OPTIONS :=
 
 	PROD_OPTIONS := -O3
-	PROD_LINK_OPTIONS := 
+	PROD_LINK_OPTIONS :=
 endif
 
 #-------------------------------------------------------------------------
@@ -130,7 +136,7 @@ ifeq ($(ARCH),irix6)
 	OPENGL_LIB_DIR :=
 	AUDIO_LIB_DIR :=
 	AUDIO_LIB := -laudio -laudiofile
-	RPATH_DIR := -Wl,-rpath,$(HOME)/grsh/$(ARCH)
+	RPATH_DIR := -Wl,-rpath,$(LIB)
 endif
 
 LIB_DIRS :=  -L$(LIB) \
@@ -140,17 +146,18 @@ LIB_DIRS :=  -L$(LIB) \
 	$(RPATH_DIR)
 
 LIBRARIES := \
-	-ltogl -lGLU -lGL \
+	-lGLU -lGL \
 	-ltk -ltcl -lXmu \
 	-lX11 -lXext \
 	-lm $(AUDIO_LIB)
-
 
 #-------------------------------------------------------------------------
 #
 # List of object files
 #
 #-------------------------------------------------------------------------
+
+GRSH_MAIN_OBJ := $(OBJ)/grshAppInit.do
 
 GRSH_STATIC_OBJS := \
 	$(OBJ)/bitmap.do \
@@ -163,7 +170,6 @@ GRSH_STATIC_OBJS := \
 	$(OBJ)/glcanvas.do \
 	$(OBJ)/glbmaprenderer.do \
 	$(OBJ)/grobjimpl.do \
-	$(OBJ)/grshAppInit.do \
 	$(OBJ)/gtext.do \
 	$(OBJ)/house.do \
 	$(OBJ)/jitter.do \
@@ -173,6 +179,7 @@ GRSH_STATIC_OBJS := \
 	$(OBJ)/position.do \
 	$(OBJ)/tclgl.do \
 	$(OBJ)/tlistwidget.do \
+	$(OBJ)/togl/togl.do \
 	$(OBJ)/toglconfig.do \
 	$(OBJ)/xbitmap.do \
 	$(OBJ)/xbmaprenderer.do \
@@ -186,7 +193,6 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/bmapdata.do \
 	$(OBJ)/bmaprenderer.do \
 	$(OBJ)/cloneface.do \
-	$(OBJ)/demangle.do \
 	$(OBJ)/eventresponsehdlr.do \
 	$(OBJ)/experiment.do \
 	$(OBJ)/exptdriver.do \
@@ -223,7 +229,6 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/soundtcl.do \
 	$(OBJ)/subject.do \
 	$(OBJ)/subjecttcl.do \
-	$(OBJ)/system.do \
 	$(OBJ)/thlist.do \
 	$(OBJ)/thtcl.do \
 	$(OBJ)/timinghandler.do \
@@ -232,10 +237,12 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/tlisttcl.do \
 	$(OBJ)/tlistutils.do \
 	$(OBJ)/trial.do \
+	$(OBJ)/trialbase.do \
 	$(OBJ)/trialevent.do \
 	$(OBJ)/trialtcl.do \
-	$(OBJ)/value.do \
 	$(OBJ)/voidptrlist.do \
+
+APPWORKS_OBJS := \
 	$(OBJ)/gwt/canvas.do \
 	$(OBJ)/gwt/widget.do \
 	$(OBJ)/io/asciistreamreader.do \
@@ -248,12 +255,16 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/io/readutils.do \
 	$(OBJ)/io/writer.do \
 	$(OBJ)/io/writeutils.do \
+	$(OBJ)/system/demangle.do \
+	$(OBJ)/system/system.do \
 	$(OBJ)/util/error.do \
+	$(OBJ)/util/errorhandler.do \
 	$(OBJ)/util/observable.do \
 	$(OBJ)/util/observer.do \
 	$(OBJ)/util/serialport.do \
 	$(OBJ)/util/strings.do \
 	$(OBJ)/util/trace.do \
+	$(OBJ)/util/value.do \
 
 TCLWORKS_OBJS := \
 	$(OBJ)/tcl/listpkg.do \
@@ -279,21 +290,29 @@ DEBUG_TARGET := $(HOME)/bin/$(ARCH)/testsh
 
 DEBUG_DEFS := -DPROF -DASSERT -DINVARIANT -DTEST
 
+DEBUG_GRSH_MAIN_OBJ := $(GRSH_MAIN_OBJ)
 DEBUG_GRSH_STATIC_OBJS := $(GRSH_STATIC_OBJS)
 DEBUG_GRSH_DYNAMIC_OBJS := $(GRSH_DYNAMIC_OBJS)
 DEBUG_TCLWORKS_OBJS := $(TCLWORKS_OBJS)
+DEBUG_APPWORKS_OBJS := $(APPWORKS_OBJS)
 
 ifeq ($(ARCH),irix6)
 	DEBUG_LIBVISX := $(LIB)/libvisx.d.$(STATLIB_EXT)
 	DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(STATLIB_EXT)
-	ALL_DEBUG_STATLIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS)
+	DEBUG_LIBAPPWORKS := $(LIB)/libappworks.d.$(STATLIB_EXT)
+	DEBUG_AUX_OBJ :=
+	ALL_DEBUG_STATLIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS) \
+		$(DEBUG_LIBAPPWORKS)
 	ALL_DEBUG_SHLIBS :=
 endif
 ifeq ($(ARCH),hp9000s700)
 	DEBUG_LIBVISX := $(LIB)/libvisx.d.$(SHLIB_EXT)
 	DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(SHLIB_EXT)
+	DEBUG_LIBAPPWORKS := $(LIB)/libappworks.d.$(SHLIB_EXT)
+	DEBUG_AUX_OBJ := /opt/langtools/lib/end.o
 	ALL_DEBUG_STATLIBS :=
-	ALL_DEBUG_SHLIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS)
+	ALL_DEBUG_SHLIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS) \
+		$(DEBUG_LIBAPPWORKS)
 endif
 
 #-------------------------------------------------------------------------
@@ -311,19 +330,25 @@ PROD_TARGET := $(HOME)/bin/$(ARCH)/grsh$(VERSION)
 ifeq ($(ARCH),irix6)
 	PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(STATLIB_EXT)
 	PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(STATLIB_EXT)
-	ALL_PROD_STATLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS)
+	PROD_LIBAPPWORKS := $(LIB)/libappworks$(VERSION).$(STATLIB_EXT)
+	ALL_PROD_STATLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) \
+		$(PROD_LIBAPPWORKS)
 	ALL_PROD_SHLIBS :=
 endif
 ifeq ($(ARCH),hp9000s700)
 	PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(SHLIB_EXT)
 	PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(SHLIB_EXT)
+	PROD_LIBAPPWORKS := $(LIB)/libappworks$(VERSION).$(SHLIB_EXT)
 	ALL_PROD_STATLIBS :=
-	ALL_PROD_SHLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS)
+	ALL_PROD_SHLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) \
+		$(PROD_LIBAPPWORKS)
 endif
 
+PROD_GRSH_MAIN_OBJ := $(GRSH_MAIN_OBJ:.do=.o)
 PROD_GRSH_STATIC_OBJS := $(DEBUG_GRSH_STATIC_OBJS:.do=.o)
 PROD_GRSH_DYNAMIC_OBJS := $(DEBUG_GRSH_DYNAMIC_OBJS:.do=.o)
 PROD_TCLWORKS_OBJS := $(DEBUG_TCLWORKS_OBJS:.do=.o)
+PROD_APPWORKS_OBJS := $(DEBUG_APPWORKS_OBJS:.do=.o)
 
 #-------------------------------------------------------------------------
 #
@@ -337,7 +362,7 @@ ALL_PROD_OPTIONS := $(COMMON_OPTIONS) $(PROD_OPTIONS)
 ALL_DEBUG_OPTIONS := $(COMMON_OPTIONS) $(DEBUG_OPTIONS) $(DEBUG_DEFS)
 
 $(OBJ)/%.o : $(SRC)/%.cc
-	echo $(<D) >> $(LOG)/CompileStats
+	echo $< >> $(LOG)/CompileStats
 	csh -fc "($(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)) $(FILTER)"
 
 $(OBJ)/%.do : $(SRC)/%.cc
@@ -347,7 +372,9 @@ ifeq ($(EXTRA_STATISTICS),1)
 	wc -l .temp.cc
 endif
 	echo $< >> $(LOG)/CompileStats
-	$(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
+	csh -fc "($(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)) $(FILTER)"
+
+#	$(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
 
 $(SRC)/%.precc : $(SRC)/%.cc
 	$(CC) -E $< $(ALL_DEBUG_OPTIONS) > $@
@@ -365,17 +392,21 @@ $(SRC)/%.preh : $(SRC)/%.h
 testsh: $(SRC)/TAGS $(ALL_DEBUG_SHLIBS) $(DEBUG_TARGET)
 	$(DEBUG_TARGET) ./testing/grshtest.tcl
 
-$(DEBUG_TARGET): $(DEBUG_GRSH_STATIC_OBJS) $(ALL_DEBUG_STATLIBS)
+$(DEBUG_TARGET): $(DEBUG_GRSH_MAIN_OBJ) \
+		$(DEBUG_GRSH_STATIC_OBJS) $(ALL_DEBUG_STATLIBS)
 	$(CC) $(DEBUG_LINK_OPTIONS) -o $@ $(DEBUG_GRSH_STATIC_OBJS) \
-	 /opt/langtools/lib/end.o \
-	$(LIB_DIRS) -lvisx.d -ltclworks.d $(LIBRARIES) 
+	 $(DEBUG_GRSH_MAIN_OBJ) $(DEBUG_AUX_OBJ) \
+	$(LIB_DIRS) -lvisx.d -ltclworks.d -lappworks.d $(LIBRARIES) 
 
 grsh: $(SRC)/TAGS $(ALL_PROD_SHLIBS) $(PROD_TARGET)
 	$(PROD_TARGET) ./testing/grshtest.tcl
 
-$(PROD_TARGET): $(PROD_GRSH_STATIC_OBJS) $(ALL_PROD_STATLIBS)
+$(PROD_TARGET): $(PROD_GRSH_MAIN_OBJ) \
+		$(PROD_GRSH_STATIC_OBJS) $(ALL_PROD_STATLIBS)
 	$(CC) $(PROD_LINK_OPTIONS) -o $@ $(PROD_GRSH_STATIC_OBJS) \
-	$(LIB_DIRS) -lvisx$(VERSION) -ltclworks$(VERSION) $(LIBRARIES)
+	$(PROD_GRSH_MAIN_OBJ) \
+	$(LIB_DIRS) -lvisx$(VERSION) -ltclworks$(VERSION) \
+	-lappworks$(VERSION) $(LIBRARIES)
 
 #-------------------------------------------------------------------------
 #
@@ -393,6 +424,8 @@ $(DEBUG_LIBVISX):      $(DEBUG_GRSH_DYNAMIC_OBJS)
 $(PROD_LIBVISX):       $(PROD_GRSH_DYNAMIC_OBJS)
 $(DEBUG_LIBTCLWORKS):  $(DEBUG_TCLWORKS_OBJS)
 $(PROD_LIBTCLWORKS):   $(PROD_TCLWORKS_OBJS)
+$(DEBUG_LIBAPPWORKS):  $(DEBUG_APPWORKS_OBJS)
+$(PROD_LIBAPPWORKS):   $(PROD_APPWORKS_OBJS)
 
 #-------------------------------------------------------------------------
 #
@@ -404,11 +437,20 @@ ALL_SOURCES := \
 	$(wildcard $(SRC)/*.cc) \
 	$(wildcard $(SRC)/gwt/*.cc) \
 	$(wildcard $(SRC)/io/*.cc) \
+	$(wildcard $(SRC)/system/*.cc) \
+	$(wildcard $(SRC)/tcl/*.cc) \
+	$(wildcard $(SRC)/togl/*.cc) \
 	$(wildcard $(SRC)/util/*.cc) \
-	$(wildcard $(SRC)/tcl/*.cc) 
 
-ALL_HEADERS := $(SRC)/*.h $(SRC)/gwt/*.h $(SRC)/io/*.h \
-	$(SRC)/util/*.h $(SRC)/tcl/*.h
+ALL_HEADERS := \
+	$(SRC)/*.h \
+	$(SRC)/gwt/*.h \
+	$(SRC)/io/*.h \
+	$(SRC)/system/*.h \
+	$(SRC)/tcl/*.h \
+	$(SRC)/togl/*.h \
+	$(SRC)/util/*.h
+
 DEP_TEMP := $(patsubst %.cc,%.d,$(ALL_SOURCES))
 ALL_DEPS := $(subst src/,dep/,$(DEP_TEMP))
 
@@ -428,7 +470,7 @@ $(DEP)/%.d : $(SRC)/%.cc
 #include $(ALL_DEPS)
 
 alldepends: $(ALL_SOURCES) $(ALL_HEADERS)
-	$(MAKEDEP) $(DEPOPTIONS) $(ALL_SOURCES) > $@
+	$(MAKEDEP) -DNO_EXTERNAL_INCLUDE_GUARDS $(DEPOPTIONS) $(ALL_SOURCES) > $@
 
 include alldepends
 
@@ -448,11 +490,11 @@ clean:
 
 # Make clean, and also remove all debug object files
 clean_do: clean
-	rm $(OBJ)/*.do $(OBJ)/util/*.do $(OBJ)/tcl/*.do
+	rm $(OBJ)/*.do $(OBJ)/*/*.do
 
 # Make clean, and also remove all production object files
 clean_o: clean
-	rm $(OBJ)/*.o $(OBJ)/util/*.o $(OBJ)/tcl/*.o
+	rm $(OBJ)/*.o $(OBJ)/*/*.o
 
 clean_dep: clean
 	rm $(DEP)/*.d $(DEP)/util/*.d $(DEP)/tcl/*.d
@@ -472,6 +514,12 @@ count:
 # Count the number of non-commented source lines
 ncsl:
 	NCSL $(ALL_SOURCES) $(ALL_HEADERS)
+
+do_sizes:
+	ls -lR obj/$(ARCH) | grep \.do | sort -n +5 > do_sizes
+
+o_sizes:
+	ls -lR obj/$(ARCH) | grep "\.o" | sort -n +5 > o_sizes
 
 # Start emacs and load all source files and Makefile
 edit: clean
