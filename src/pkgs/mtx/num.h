@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:27:36 2001
-// written: Thu Feb 14 18:21:44 2002
+// written: Tue Feb 19 17:50:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -110,6 +110,18 @@ struct ToPow
 
   ToPow(double p_) : p(p_) {}
   double operator()(double v) { return pow(v, p); }
+};
+
+struct Min
+{
+  double operator()(double v1, double v2)
+  { return (v1 < v2) ? v1 : v2; }
+};
+
+struct Max
+{
+  double operator()(double v1, double v2)
+  { return (v1 > v2) ? v1 : v2; }
 };
 
 static const char vcid_num_h[] = "$Header$";
