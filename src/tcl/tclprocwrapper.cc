@@ -19,6 +19,22 @@
 #include "io/writer.h"
 #include "tcl/tclcode.h"
 
+namespace
+{
+  fstring uniqName()
+  {
+    static int c = 0;
+    return fstring("::ProcWrapper_UniqCmd", ++c);
+  }
+}
+
+Tcl::ProcWrapper::ProcWrapper(const Tcl::Interp& intp) :
+  itsInterp(intp.intp()),
+  itsName(uniqName()),
+  itsArgs(),
+  itsBody()
+{}
+
 Tcl::ProcWrapper::ProcWrapper(const Tcl::Interp& intp, const fstring& name) :
   itsInterp(intp.intp()),
   itsName(name),
