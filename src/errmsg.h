@@ -2,7 +2,7 @@
 // errmsg.h
 // Rob Peters
 // created: Dec-98
-// written: Wed May 12 14:02:47 1999
+// written: Tue Dec  7 18:00:25 1999
 // $Id$
 //
 // This file provides several simple inlined functions that append a
@@ -16,7 +16,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
+namespace Tcl {
 
   inline void err_message(Tcl_Interp* interp, Tcl_Obj* const objv[],
                           const char* err_msg) {
