@@ -111,7 +111,7 @@ namespace
 
     sig1.emit(); TEST_REQUIRE_EQ(v0, 6);
     sig2.emit(); TEST_REQUIRE_EQ(v0, 6);
-    sig3.emit(); TEST_REQUIRE_EQ(v0, 8);
+    sig3.emit(); TEST_REQUIRE_EQ(v0, 7);
   }
 }
 
