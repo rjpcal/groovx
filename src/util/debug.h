@@ -1,38 +1,86 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // debug.h
 // Rob Peters
 // created: Jan-99
-// written: Mon Apr 26 12:18:59 1999
+// written: Thu May 27 19:35:09 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef DEBUG_H_DEFINED
 #define DEBUG_H_DEFINED
 
 #ifdef DEBUG
-#define LOCAL_DEBUG
-#define LOCAL_ASSERT
+#  ifndef LOCAL_DEBUG
+#    define LOCAL_DEBUG
+#  endif
+#endif
+
+#if defined(TEST)
+#  ifndef LOCAL_TEST
+#    define LOCAL_TEST
+#  endif
+#endif
+
+#if defined(ASSERT) || defined(LOCAL_DEBUG)
+#  ifndef LOCAL_ASSERT
+#    define LOCAL_ASSERT
+#  endif
+#endif
+
+#if defined(INVARIANT) || defined(LOCAL_DEBUG)
+#  ifndef LOCAL_INVARIANT
+#    define LOCAL_INVARIANT
+#  endif
+#endif
+
+#if defined(CONTRACT) || defined(LOCAL_DEBUG)
+#  ifndef LOCAL_CONTRACT
+#    define LOCAL_CONTRACT
+#  endif
 #endif
 
 #ifdef LOCAL_DEBUG
 #  include <iostream.h>
 #  define DUMP_VAL1(expr) cerr << #expr << " == " << (expr) << ", ";
 #  define DUMP_VAL2(expr) cerr << #expr << " == " << (expr) << endl;
+#  define DebugEval(expr) cerr << #expr << " == " << (expr) << ", ";
+#  define DebugEvalNL(expr) cerr << #expr << " == " << (expr) << endl;
+#  define DebugPrint(str) cerr << expr << " ";
+#  define DebugPrintNL(str) cerr << str << " " << endl;
+#else
+#  define DUMP_VAL1(expr) {}
+#  define DUMP_VAL2(expr) {}
+#  define DebugEval(expr) {}
+#  define DebugEvalNL(expr) {}
+#  define DebugPrint(str) {}
+#  define DebugPrintNL(str) {}
+#endif
+
+#if defined(LOCAL_ASSERT) || defined(LOCAL_INVARIANT) || defined(LOCAL_CONTRACT)
+#  include <cassert>
 #endif
 
 #ifdef LOCAL_ASSERT
-#  include <cassert>
-#  define Assert(expr_that_must_be_true) assert((expr_that_must_be_true))
+#  define Assert(expression) assert((expression))
 #else // !LOCAL_ASSERT
 #  define Assert(x) {}
 #endif // !LOCAL_ASSERT
 
-#ifdef INVARIANT
-#  include <cassert>
-#  define Invariant(invariant) assert((invariant))
+#ifdef LOCAL_INVARIANT
+#  define Invariant(expression) assert((expression))
 #else // !INVARIANT
 #  define Invariant(x) {}
 #endif // !INVARIANT
+
+#ifdef LOCAL_CONTRACT
+#  define Precondition(expression) assert((expression))
+#  define Postcondition(expression) assert((expression))
+#else
+#  define Precondition(x) {}
+#  define Postcondition(x) {}
+#endif
 
 static const char vcid_debug_h[] = "$Id$";
 #endif // !DEBUG_H_DEFINED
