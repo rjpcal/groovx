@@ -64,13 +64,13 @@ namespace
 void Tcl::Dict::doPut(const char*, Tcl::ObjPtr)
 {
   noDictError();
-  Assert(0);
+  ASSERT(0);
 }
 
 Tcl::ObjPtr Tcl::Dict::doGet(const char*) const
 {
   noDictError();
-  Assert(0);
+  ASSERT(0);
   return Tcl::ObjPtr(); // can't happen, but placate compiler
 }
 

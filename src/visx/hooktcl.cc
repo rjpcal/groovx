@@ -173,9 +173,9 @@ DOTRACE("genericUpdateStringProc");
   GenericObj* gobj =
     static_cast<GenericObj*>(objPtr->internalRep.otherValuePtr);
 
-  Assert(gobj != 0);
+  ASSERT(gobj != 0);
 
-  Assert(objPtr->bytes == 0);
+  ASSERT(objPtr->bytes == 0);
 
   objPtr->bytes = gobj->asString();
   objPtr->length = strlen(objPtr->bytes);
@@ -252,22 +252,22 @@ public:
 
   static void info(Tcl_Obj* p)
   {
-    dbgEvalNL(3, p->typePtr ? p->typePtr->name : "");
-    dbgEvalNL(3, p->refCount);
+    dbg_eval_nl(3, p->typePtr ? p->typePtr->name : "");
+    dbg_eval_nl(3, p->refCount);
 
     convert(p);
 
     MyObj* gobj =
       static_cast<MyObj*>(p->internalRep.otherValuePtr);
 
-    dbgEvalNL(3, (void*)p);
-    dbgEvalNL(3, p->typePtr ? p->typePtr->name : "");
-    dbgEvalNL(3, p->refCount);
-    dbgEvalNL(3, p->bytes);
-    dbgEvalNL(3, p->length);
-    dbgEvalNL(3, (void*)gobj);
-    dbgEvalNL(3, gobj->value);
-    dbgEvalNL(3, MyObj::counter);
+    dbg_eval_nl(3, (void*)p);
+    dbg_eval_nl(3, p->typePtr ? p->typePtr->name : "");
+    dbg_eval_nl(3, p->refCount);
+    dbg_eval_nl(3, p->bytes);
+    dbg_eval_nl(3, p->length);
+    dbg_eval_nl(3, (void*)gobj);
+    dbg_eval_nl(3, gobj->value);
+    dbg_eval_nl(3, MyObj::counter);
   }
 
   virtual MyObj* clone() const

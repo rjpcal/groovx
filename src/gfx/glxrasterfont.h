@@ -100,25 +100,25 @@ DOTRACE("GlxRasterFont::GlxRasterFont");
 
   fstring xname = pickXFont(fontname);
 
-  dbgEvalNL(2, xname.c_str());
-  dbgEvalNL(2, xname);
+  dbg_eval_nl(2, xname.c_str());
+  dbg_eval_nl(2, xname);
 
   itsFontInfo = XLoadQueryFont( dpy, xname.c_str() );
 
-  dbgEvalNL(2, itsFontInfo);
+  dbg_eval_nl(2, itsFontInfo);
 
   if (itsFontInfo == 0)
     {
       throw Util::Error(fstring("couldn't load X font '", xname, "'"), SRC_POS);
     }
 
-  dbgEvalNL(2, itsFontInfo->fid);
+  dbg_eval_nl(2, itsFontInfo->fid);
 
-  const int first = itsFontInfo->min_char_or_byte2;    dbgEval(2, first);
-  const int last = itsFontInfo->max_char_or_byte2;     dbgEval(2, last);
+  const int first = itsFontInfo->min_char_or_byte2;    dbg_eval(2, first);
+  const int last = itsFontInfo->max_char_or_byte2;     dbg_eval(2, last);
 
-  itsListCount = last-first+1;                dbgEvalNL(2, itsListCount);
-  itsListBase = GLCanvas::genLists( last+1 ); dbgEvalNL(2, itsListBase);
+  itsListCount = last-first+1;                dbg_eval_nl(2, itsListCount);
+  itsListBase = GLCanvas::genLists( last+1 ); dbg_eval_nl(2, itsListBase);
 
   if (itsListBase==0)
     {
@@ -228,7 +228,7 @@ DOTRACE("GlxRasterFont::pickXFont");
                avgwid,
                rgstry,
                encdng);
-      dbgEvalNL(2, buf);
+      dbg_eval_nl(2, buf);
       return fstring(buf);
     }
 }
@@ -282,11 +282,14 @@ DOTRACE("GlxRasterFont::bboxOf");
       if (*text == '\0')
         break;
 
-      Assert(*text == '\n');
+      ASSERT(*text == '\n');
       ++text;
     }
 
-  dbgEval(2, lines); dbgEval(2, asc); dbgEval(2, desc); dbgEvalNL(2, maxwid);
+  dbg_eval(2, lines);
+  dbg_eval(2, asc);
+  dbg_eval(2, desc);
+  dbg_eval_nl(2, maxwid);
 
   Gfx::Rect<int> screen = bbox.screenFromWorld(Gfx::Rect<double>());
 

@@ -97,7 +97,7 @@ namespace
 IO::IoObject::IoObject() throw()
 {
 DOTRACE("IO::IoObject::IoObject");
-  dbgEvalNL(3, this);
+  dbg_eval_nl(3, this);
 }
 
 // Must be defined out of line to avoid duplication of IO's vtable

@@ -80,7 +80,7 @@ public:
   void acquireWeak() throw();
   Count releaseWeak() throw();
 
-  void debugDump() const throw();
+  void debug_dump() const throw();
 
 private:
   RefCounts(const RefCounts&) throw();

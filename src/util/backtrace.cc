@@ -61,14 +61,14 @@ rutz::backtrace::backtrace() throw() :
   rep(new (std::nothrow) impl)
 {
   if (rep == 0)
-    Panic("memory allocation failed");
+    PANIC("memory allocation failed");
 }
 
 rutz::backtrace::backtrace(const backtrace& other) throw() :
   rep(new (std::nothrow) impl(*other.rep))
 {
   if (rep == 0)
-    Panic("memory allocation failed");
+    PANIC("memory allocation failed");
 }
 
 rutz::backtrace& rutz::backtrace::operator=(const backtrace& other) throw()
@@ -90,7 +90,7 @@ rutz::backtrace& rutz::backtrace::current() throw()
       ptr = new (std::nothrow) rutz::backtrace;
 
       if (ptr == 0)
-        Panic("memory allocation failed");
+        PANIC("memory allocation failed");
     }
   return *ptr;
 }

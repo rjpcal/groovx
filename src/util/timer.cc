@@ -72,7 +72,7 @@ DOTRACE("Util::Timer::schedule");
   // Note the time when the current scheduling request was made.
   itsStopWatch.restart();
 
-  dbgEvalNL(3, itsMsecDelay);
+  dbg_eval_nl(3, itsMsecDelay);
 
   // Note that the returned token might be null for one reason or
   // another (e.g. if the scheduler decides to run the callback
@@ -94,11 +94,11 @@ void Util::Timer::dummyCallback(void* clientData)
 DOTRACE("Util::Timer::dummyCallback");
   Util::Timer* timer = static_cast<Util::Timer*>(clientData);
 
-  Assert(timer != 0);
+  ASSERT(timer != 0);
 
   timer->itsToken.reset(0);
 
-  dbgEvalNL(3, timer->itsStopWatch.elapsed().msec());
+  dbg_eval_nl(3, timer->itsStopWatch.elapsed().msec());
 
   // NOTE: make sure we re-schedule a repeating event BEFORE we
   // emit the signal and trigger the callbacks; this way, it's
@@ -109,7 +109,7 @@ DOTRACE("Util::Timer::dummyCallback");
       // can't allow a timer callback that is both repeating and
       // immediate (delay == 0), otherwise we fall into an
       // infinite loop
-      Assert(timer->itsMsecDelay != 0);
+      ASSERT(timer->itsMsecDelay != 0);
       timer->schedule();
     }
 

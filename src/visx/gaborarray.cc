@@ -315,7 +315,7 @@ DOTRACE("GaborArray::updateForeg");
 
   itsBackgSeed.touch(); // to force a redo in updateBackg()
 
-  Assert(itsTotalNumber == itsForegNumber);
+  ASSERT(itsTotalNumber == itsForegNumber);
 }
 
 void GaborArray::updateBackg() const
@@ -481,8 +481,8 @@ DOTRACE("GaborArray::generateBmap");
       if      (val < 0)   { clip = true; val = 0; }
       else if (val > 255) { clip = true; val = 255; }
 
-      Assert(val >= 0);
-      Assert(val <= 255);
+      ASSERT(val >= 0);
+      ASSERT(val <= 255);
 
       *bytes++ = val;
     }

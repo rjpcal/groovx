@@ -63,7 +63,7 @@ void Gfx::Canvas::setCurrent(Gfx::Canvas& canvas)
 {
 DOTRACE("Gfx::Canvas::setCurrent");
 
-  Assert(&canvas != 0);
+  ASSERT(&canvas != 0);
 
   appCanvas = &canvas;
 }
@@ -185,7 +185,7 @@ DOTRACE("Gfx::Canvas::drawNurbsCurve");
 
   unsigned int nctrl = pts.size();
 
-  Assert(nctrl > 4);
+  ASSERT(nctrl > 4);
 
   unsigned int nbz = nctrl - 3;
 

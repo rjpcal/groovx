@@ -207,7 +207,7 @@ DOTRACE("XMLWriter::writeObject");
 
   if (obj.isValid())
     {
-      Assert(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
+      ASSERT(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
 
       if (alreadyWritten(obj))
         {

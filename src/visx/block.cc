@@ -121,7 +121,7 @@ DOTRACE("Block::writeTo");
 const Util::SoftRef<Toglet>& Block::getWidget() const
 {
 DOTRACE("Block::getWidget");
-  Precondition( itsParent != 0 );
+  PRECONDITION( itsParent != 0 );
   return itsParent->getWidget();
 }
 
@@ -131,7 +131,7 @@ DOTRACE("Block::vxRun");
 
   if ( isComplete() ) return;
 
-  Precondition( &e != 0 );
+  PRECONDITION( &e != 0 );
 
   Util::log( vxInfo() );
 
@@ -155,7 +155,7 @@ DOTRACE("Block::vxAllChildrenFinished");
   // Release our current parent, then pass control onto it.
   Element* p = itsParent;
   itsParent = 0;
-  Assert( p != 0 );
+  ASSERT( p != 0 );
   p->vxReturn(CHILD_OK);
 }
 

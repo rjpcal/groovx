@@ -107,7 +107,7 @@ namespace
         ptr = new (std::nothrow) prof_list;
 
         if (ptr == 0)
-          Panic("memory allocation failed");
+          PANIC("memory allocation failed");
       }
     return *ptr;
   }
@@ -217,7 +217,7 @@ double rutz::prof::avg_self_time() const throw()
 
 void rutz::prof::print_prof_data(FILE* file) const throw()
 {
-  Assert(file != 0);
+  ASSERT(file != 0);
 
   fprintf(file, "%10ld %6u %10ld %10ld %s\n",
           long(avg_self_time()), count(),

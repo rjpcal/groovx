@@ -135,7 +135,7 @@ DOTRACE("rutz::base64_encode");
         }
     }
 
-  Assert(i >= 0 && i <= 2);
+  ASSERT(i >= 0 && i <= 2);
 
   if (i == 1)
     {
@@ -225,7 +225,7 @@ DOTRACE("rutz::base64_decode");
         throw Util::Error("invalid character within base64 string", SRC_POS);
     }
 
-  Assert(i != 1); // can't happen; this would be an extra 6 bits
+  ASSERT(i != 1); // can't happen; this would be an extra 6 bits
                   // encoded, implying zero extra bits decoded
 
   if (i == 2)

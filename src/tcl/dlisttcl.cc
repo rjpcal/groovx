@@ -112,7 +112,7 @@ namespace Dlist
         result.append(source_list.at(index));
       }
 
-    Assert(result.length() == index_list.length());
+    ASSERT(result.length() == index_list.length());
 
     return result;
   }
@@ -195,7 +195,7 @@ namespace Dlist
           result.append(zero);
       }
 
-    Assert(result.length() == source_list.length());
+    ASSERT(result.length() == source_list.length());
 
     return result;
   }
@@ -384,7 +384,7 @@ namespace Dlist
                 throw Util::Error("snafu in permutation distance computation", SRC_POS);
               }
 
-            dbgEvalNL(3, c);
+            dbg_eval_nl(3, c);
 
             Tcl::List result;
 
@@ -426,7 +426,7 @@ namespace Dlist
         while (v == i || used[v])
           v = rutz::rand_range(0u, N);
 
-        Assert(v < N);
+        ASSERT(v < N);
 
         used[v] = true;
         slots[i] = v;
@@ -441,7 +441,7 @@ namespace Dlist
           break;
         }
 
-    Assert(lastslot != N);
+    ASSERT(lastslot != N);
 
     if (lastslot == N)
       {
@@ -631,7 +631,7 @@ namespace Dlist
         result.append(sub.at(slice));
       }
 
-    Assert(result.length() == src.length());
+    ASSERT(result.length() == src.length());
 
     return result;
   }

@@ -66,7 +66,7 @@ namespace
 
     throw Util::Error(fstring("invalid Pbm bit depth value: ", depth), SRC_POS);
 
-    Assert(0); return 0; // can't get here
+    ASSERT(0); return 0; // can't get here
   }
 
   int bitDepthForMode(int mode)
@@ -80,7 +80,7 @@ namespace
 
     throw Util::Error(fstring("invalid Pbm mode value: ", mode), SRC_POS);
 
-    Assert(0); return 0; // can't happen
+    ASSERT(0); return 0; // can't happen
   }
 
   void parsePbmMode1(STD_IO::istream& is, Gfx::BmapData& data)
@@ -94,7 +94,7 @@ namespace
 
     while (is.peek() != EOF && position < byte_count)
       {
-        dbgEval(3, position);
+        dbg_eval(3, position);
 
         is >> val;
         data.bytesPtr()[position] = (val == 0) ? 0 : 255;
@@ -116,7 +116,7 @@ namespace
 
     while (is.peek() != EOF && position < byte_count)
       {
-        dbgEval(3, position);
+        dbg_eval(3, position);
 
         is >> val;
         data.bytesPtr()[position] = static_cast<unsigned char>(val * scale);
@@ -128,7 +128,7 @@ namespace
   void parsePbmMode456(STD_IO::istream& is, Gfx::BmapData& data)
   {
   DOTRACE("parsePbmMode456");
-    dbgEvalNL(3, data.byteCount());
+    dbg_eval_nl(3, data.byteCount());
     is.read(reinterpret_cast<char*>(data.bytesPtr()), data.byteCount());
     unsigned int numread = is.gcount();
     if (numread < data.byteCount())
@@ -203,7 +203,7 @@ DOTRACE("Pbm::load");
   int mode;
 
   is >> mode;
-  dbgEvalNL(3, mode);
+  dbg_eval_nl(3, mode);
 
   int bit_depth = bitDepthForMode(mode);
 
@@ -218,8 +218,8 @@ DOTRACE("Pbm::load");
 
   Gfx::Vec2<int> extent;
 
-  is >> extent.x(); dbgEval(3, extent.x());
-  is >> extent.y(); dbgEvalNL(3, extent.y());
+  is >> extent.x(); dbg_eval(3, extent.x());
+  is >> extent.y(); dbg_eval_nl(3, extent.y());
 
   int max_grey = 1;
 
@@ -228,7 +228,7 @@ DOTRACE("Pbm::load");
       is >> max_grey;
     }
 
-  dbgEvalNL(3, max_grey);
+  dbg_eval_nl(3, max_grey);
 
   // read one more character of whitespace from the stream after MaxGrey
   c = is.get();
@@ -244,7 +244,7 @@ DOTRACE("Pbm::load");
     case 1:                 parsePbmMode1(is, new_data); break;
     case 2: case 3:         parsePbmMode23(is, new_data, max_grey); break;
     case 4: case 5: case 6: parsePbmMode456(is, new_data); break;
-    default: Assert(false); break;
+    default: ASSERT(false); break;
     }
 
   data.swap(new_data);

@@ -97,11 +97,11 @@ namespace
             modifiers.insert(0, " unsigned");
             break;
           default:
-            Assert(0);
+            ASSERT(0);
           }
         str.erase(pos, 1);
       }
-    dbgEvalNL(3, str.c_str());
+    dbg_eval_nl(3, str.c_str());
 
     modifiers.append(array_dims);
 
@@ -139,8 +139,8 @@ namespace
         str.insert(pos, "void"); pos += 4;
         break;
       default:
-        dbgEvalNL(3, typecode);
-        Assert(0);
+        dbg_eval_nl(3, typecode);
+        ASSERT(0);
         break;
       }
   }
@@ -151,7 +151,7 @@ std::string demangle_impl(const std::string& in)
 DOTRACE("demangle_impl");
   std::string out=in;
 
-  dbgEvalNL(3, out.c_str());
+  dbg_eval_nl(3, out.c_str());
 
   bool isTemplate = false;
 
@@ -169,8 +169,8 @@ DOTRACE("demangle_impl");
         {
           out.erase(0, 1);
           num_levels = munchInt(out, 0);
-          dbgEvalNL(3, num_levels);
-          Assert(out[0] == '_');
+          dbg_eval_nl(3, num_levels);
+          ASSERT(out[0] == '_');
           out.erase(0, 1);
         }
       else
@@ -192,7 +192,7 @@ DOTRACE("demangle_impl");
         }
     }
 
-  dbgEvalNL(3, out.c_str());
+  dbg_eval_nl(3, out.c_str());
 
   if (out[pos] == 't')
     {
@@ -206,7 +206,7 @@ DOTRACE("demangle_impl");
         {
           out.erase(pos, 1);
         }
-      dbgEvalNL(3, out.c_str());
+      dbg_eval_nl(3, out.c_str());
     }
   else
     {
@@ -217,17 +217,17 @@ DOTRACE("demangle_impl");
       // Insert left bracket
       out.insert(pos++, 1, '<');
 
-      dbgEvalNL(3, out.c_str());
+      dbg_eval_nl(3, out.c_str());
 
       int num_parameters = munchInt(out, pos);;
 
       for (int n = 0; n < num_parameters; ++n)
         {
           // Template parameters must start with 'Z'
-          Assert( out[pos] == 'Z' );
+          ASSERT( out[pos] == 'Z' );
           out.erase(pos, 1);
 
-          dbgEvalNL(3, out.c_str());
+          dbg_eval_nl(3, out.c_str());
 
           // Get the parameter name:
           std::string modifiers = readModifiers(out, pos);
@@ -253,14 +253,14 @@ DOTRACE("demangle_impl");
               out.insert(pos++, 1, ' ');
             }
 
-          dbgEvalNL(3, out.c_str());
+          dbg_eval_nl(3, out.c_str());
         }
 
       // Insert right bracket
       out.insert(pos++, 1, '>');
     }
 
-  dbgEvalNL(3, out.c_str());
+  dbg_eval_nl(3, out.c_str());
 
   return out;
 }

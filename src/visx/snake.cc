@@ -312,7 +312,7 @@ GaborArrayElement Snake::getElement(int n) const
 {
 DOTRACE("Snake::getElement");
 
-  Assert(n < itsLength);
+  ASSERT(n < itsLength);
 
   GaborArrayElement result;
 

@@ -260,7 +260,7 @@ DOTRACE("Gabor::getBmapData");
 
           const double gabor = 0.5*sin_x*gauss_xy*itsContrast + 0.5;
 
-          Assert( bytes < bytes_end );
+          ASSERT( bytes < bytes_end );
 
           if ( itsColorMode == GRAYSCALE )
             {

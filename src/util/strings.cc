@@ -126,19 +126,19 @@ void string_rep::make_unique(string_rep*& rep)
 
   rep = new_rep;
 
-  Postcondition(new_rep->m_refcount == 1);
+  POSTCONDITION(new_rep->m_refcount == 1);
 }
 
 char* string_rep::uniq_data() throw()
 {
-  Precondition(m_refcount <= 1);
+  PRECONDITION(m_refcount <= 1);
 
   return m_text;
 }
 
 void string_rep::uniq_clear() throw()
 {
-  Precondition(m_refcount <= 1);
+  PRECONDITION(m_refcount <= 1);
 
   m_length = 0;
   add_terminator();
@@ -164,16 +164,16 @@ void string_rep::add_terminator() throw()
 
 void string_rep::uniq_set_length(std::size_t length) throw()
 {
-  Precondition(m_refcount <= 1);
-  Precondition(length+1 < m_capacity);
+  PRECONDITION(m_refcount <= 1);
+  PRECONDITION(length+1 < m_capacity);
   m_length = length;
   add_terminator();
 }
 
 void string_rep::uniq_append(std::size_t length, const char* text)
 {
-  Precondition(m_refcount <= 1);
-  Precondition(text != 0);
+  PRECONDITION(m_refcount <= 1);
+  PRECONDITION(text != 0);
 
   if (m_length + length + 1 <= m_capacity)
     {
@@ -187,13 +187,13 @@ void string_rep::uniq_append(std::size_t length, const char* text)
       uniq_append(length, text);
     }
 
-  Postcondition(m_length+1 <= m_capacity);
-  Postcondition(m_text[m_length] == '\0');
+  POSTCONDITION(m_length+1 <= m_capacity);
+  POSTCONDITION(m_text[m_length] == '\0');
 }
 
 void string_rep::uniq_realloc(std::size_t capacity)
 {
-  Precondition(m_refcount <= 1);
+  PRECONDITION(m_refcount <= 1);
 
   string_rep new_rep(rutz::max(m_capacity*2 + 32, capacity), 0);
 
@@ -210,16 +210,16 @@ void string_rep::uniq_reserve(std::size_t capacity)
     uniq_realloc(capacity);
 }
 
-void string_rep::debugDump() const throw()
+void string_rep::debug_dump() const throw()
 {
-  dbgEvalNL(0, (void*)this);
-  dbgEvalNL(0, m_refcount);
-  dbgEvalNL(0, m_length);
-  dbgEvalNL(0, (void*)m_text);
-  dbgEvalNL(0, m_text);
+  dbg_eval_nl(0, (void*)this);
+  dbg_eval_nl(0, m_refcount);
+  dbg_eval_nl(0, m_length);
+  dbg_eval_nl(0, (void*)m_text);
+  dbg_eval_nl(0, m_text);
   for (unsigned int i = 0; i < m_length; ++i)
-    dbgPrint(0, (void*)(int)m_text[i]);
-  dbgPrintNL(0, "");
+    dbg_print(0, (void*)(int)m_text[i]);
+  dbg_print_nl(0, "");
 }
 
 //---------------------------------------------------------------------
@@ -231,7 +231,7 @@ void string_rep::debugDump() const throw()
 void fstring::init_empty()
 {
 DOTRACE("fstring::init_empty");
-  Precondition(m_rep == 0);
+  PRECONDITION(m_rep == 0);
 
   m_rep = string_rep::make(0, 0);
 
@@ -241,7 +241,7 @@ DOTRACE("fstring::init_empty");
 void fstring::init_range(char_range r)
 {
 DOTRACE("fstring::init");
-  Precondition(m_rep == 0);
+  PRECONDITION(m_rep == 0);
 
   m_rep = string_rep::make(r.len, r.text);
 
@@ -267,7 +267,7 @@ fstring::~fstring() throw()
 {
 DOTRACE("fstring::~fstring");
 
-  dbgDump(7, *this);
+  dbg_dump(7, *this);
 
   if (m_rep->decr_ref_count() == 0)
     m_rep = (string_rep*)0xdeadbeef;
@@ -365,7 +365,7 @@ void fstring::do_append(const fstring& s) { append_range(s.c_str(), s.length());
   const int SZ = 64;                            \
   char buf[SZ];                                 \
   int n = snprintf(buf, SZ, fmt, (val));        \
-  Assert(n > 0 && n < SZ);                      \
+  ASSERT(n > 0 && n < SZ);                      \
   append_range(&buf[0], std::size_t(n))
 
 void fstring::do_append(bool x)          { APPEND("%d", int(x)); }
@@ -475,10 +475,10 @@ DOTRACE("fstring::readline");
   m_rep->add_terminator();
 }
 
-void fstring::debugDump() const throw()
+void fstring::debug_dump() const throw()
 {
-  dbgEvalNL(0, (void*)this);
-  m_rep->debugDump();
+  dbg_eval_nl(0, (void*)this);
+  m_rep->debug_dump();
 }
 
 static const char vcid_strings_cc[] = "$Header$";

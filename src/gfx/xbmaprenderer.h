@@ -97,8 +97,8 @@ DOTRACE("XBmapRenderer::doRender");
   // Calculate GL window coordinates of lower left corner of image
   Gfx::Vec2<int> screen_pos = canvas.screenFromWorld(world_pos);
 
-  dbgEval(3, world_pos.x()); dbgEval(3, world_pos.y());
-  dbgEval(3, screen_pos.x()); dbgEvalNL(3, screen_pos.y());
+  dbg_eval(3, world_pos.x()); dbg_eval(3, world_pos.y());
+  dbg_eval(3, screen_pos.x()); dbg_eval_nl(3, screen_pos.y());
 
   // Calculate GL window coordinates for upper left corner of image
   screen_pos.y() += data.height();

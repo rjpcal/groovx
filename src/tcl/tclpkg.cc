@@ -175,7 +175,7 @@ public:
   {
     DOTRACE("Tcl::Pkg-exitHandler");
     Tcl::Pkg* pkg = static_cast<Tcl::Pkg*>(clientData);
-    dbgEvalNL(3, pkg->namespName());
+    dbg_eval_nl(3, pkg->namespName());
     delete pkg;
   }
 };

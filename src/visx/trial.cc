@@ -84,7 +84,7 @@ namespace
       th(t),
       status(Element::CHILD_OK)
     {
-      Precondition(parent != 0);
+      PRECONDITION(parent != 0);
       Util::Log::addObjScope(*trial);
     }
 
@@ -161,7 +161,7 @@ public:
 
   void installCurrentNode() const
   {
-    Precondition( isActive() );
+    PRECONDITION( isActive() );
     if (activeState->widget.isValid() && currentNode < gxNodes.size())
       {
         activeState->widget->setDrawable(gxNodes[currentNode]);
@@ -273,7 +273,7 @@ DOTRACE("Trial::writeTo");
 
 const SoftRef<Toglet>& Trial::getWidget() const
 {
-  Precondition( rep->isActive() );
+  PRECONDITION( rep->isActive() );
   return rep->activeState->widget;
 }
 
@@ -367,8 +367,8 @@ DOTRACE("Trial::avgRespTime");
     {
       sum += ii->msec();
 
-      dbgEval(3, sum);
-      dbgEvalNL(3, sum/rep->responses.size());
+      dbg_eval(3, sum);
+      dbg_eval_nl(3, sum/rep->responses.size());
     }
   return (rep->responses.size() > 0) ? double(sum)/rep->responses.size() : 0.0;
 }
@@ -460,11 +460,11 @@ void Trial::vxRun(Element& parent)
 {
 DOTRACE("Trial::vxRun");
 
-  Precondition(&parent != 0);
+  PRECONDITION(&parent != 0);
 
   SoftRef<Toglet> widget = parent.getWidget();
 
-  Precondition(widget.isValid());
+  PRECONDITION(widget.isValid());
 
   if ( rep->rh.isInvalid() || rep->th.isInvalid() )
     {
@@ -486,7 +486,7 @@ double Trial::trElapsedMsec()
 {
 DOTRACE("Trial::trElapsedMsec");
 
-  Precondition( rep->isActive() );
+  PRECONDITION( rep->isActive() );
 
   return rep->activeState->th->getElapsedMsec();
 }
@@ -495,7 +495,7 @@ void Trial::trAbortTrial()
 {
 DOTRACE("Trial::trAbortTrial");
 
-  Precondition( rep->isActive() );
+  PRECONDITION( rep->isActive() );
 
   Util::log("trAbortTrial");
 
@@ -507,14 +507,14 @@ DOTRACE("Trial::trAbortTrial");
 void Trial::vxReturn(ChildStatus /*s*/)
 {
   // FIXME
-  Assert(false);
+  ASSERT(false);
 }
 
 void Trial::trEndTrial()
 {
 DOTRACE("Trial::trEndTrial");
 
-  Precondition( rep->isActive() );
+  PRECONDITION( rep->isActive() );
 
   Util::log("Trial::trEndTrial");
 
@@ -557,14 +557,14 @@ void Trial::trProcessResponse(Response& response)
 {
 DOTRACE("Trial::trProcessResponse");
 
-  Precondition( rep->isActive() );
+  PRECONDITION( rep->isActive() );
 
   Util::log("trProcessResponse");
 
   rep->responses.push_back(response);
 
-  dbgEval(3, rep->correctResponse);
-  dbgEvalNL(3, response.val());
+  dbg_eval(3, rep->correctResponse);
+  dbg_eval_nl(3, response.val());
 
   rep->activeState->th->thResponseSeen();
 
@@ -653,7 +653,7 @@ void Trial::trAllowResponses()
 {
 DOTRACE("Trial::trAllowResponses");
 
-  Precondition( rep->isActive() );
+  PRECONDITION( rep->isActive() );
 
   Util::log("trAllowResponses");
 
@@ -665,7 +665,7 @@ void Trial::trDenyResponses()
 {
 DOTRACE("Trial::trDenyResponses");
 
-  Precondition( rep->isActive() );
+  PRECONDITION( rep->isActive() );
 
   Util::log("trDenyResponses");
 

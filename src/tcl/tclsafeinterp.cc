@@ -312,7 +312,7 @@ DOTRACE("Tcl::Interp::getObjGlobalVar");
 void Tcl::Interp::linkInt(const char* varName, int* addr, bool readOnly)
 {
 DOTRACE("Tcl::Interp::linkInt");
-  dbgEvalNL(3, varName);
+  dbg_eval_nl(3, varName);
 
   fstring temp = varName;
 
@@ -327,7 +327,7 @@ DOTRACE("Tcl::Interp::linkInt");
 void Tcl::Interp::linkDouble(const char* varName, double* addr, bool readOnly)
 {
 DOTRACE("Tcl::Interp::linkDouble");
-  dbgEvalNL(3, varName);
+  dbg_eval_nl(3, varName);
 
   fstring temp = varName;
 
@@ -342,7 +342,7 @@ DOTRACE("Tcl::Interp::linkDouble");
 void Tcl::Interp::linkBoolean(const char* varName, int* addr, bool readOnly)
 {
 DOTRACE("Tcl::Interp::linkBoolean");
-  dbgEvalNL(3, varName);
+  dbg_eval_nl(3, varName);
 
   fstring temp = varName;
 
@@ -366,7 +366,7 @@ DOTRACE("Tcl::Interp::handleLiveException");
     }
   catch (std::exception& err)
     {
-      dbgPrintNL(3, "caught (std::exception&)");
+      dbg_print_nl(3, "caught (std::exception&)");
 
       if (hasInterp())
         {
@@ -388,7 +388,7 @@ DOTRACE("Tcl::Interp::handleLiveException");
     }
   catch (...)
     {
-      dbgPrintNL(3, "caught (...)");
+      dbg_print_nl(3, "caught (...)");
 
       if (hasInterp())
         {

@@ -90,7 +90,7 @@ DOTRACE("demangled_name");
   std::pair<Cache::iterator, bool> result =
     nameCache.insert(Cache::value_type(mangled, demangled));
 
-  Assert(result.second == true);
+  ASSERT(result.second == true);
 
   return (*result.first).second.c_str();
 }

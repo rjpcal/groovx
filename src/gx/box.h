@@ -199,11 +199,11 @@ public:
     merge(r.topRight());
   }
 
-  void debugDump() const
+  void debug_dump() const
   {
-    dbgEval(0, xx0); dbgEvalNL(0, xx1);
-    dbgEval(0, yy0); dbgEvalNL(0, yy1);
-    dbgEval(0, zz0); dbgEvalNL(0, zz1);
+    dbg_eval(0, xx0); dbg_eval_nl(0, xx1);
+    dbg_eval(0, yy0); dbg_eval_nl(0, yy1);
+    dbg_eval(0, zz0); dbg_eval_nl(0, zz1);
   }
 };
 

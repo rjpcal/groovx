@@ -127,11 +127,11 @@ DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
 
   alSetParams(AL_DEFAULT_DEVICE, &pv, 1);
 
-  dbgEval(3, numChannels);
-  dbgEval(3, itsFrameCount);
-  dbgEval(3, sampleWidth);
-  dbgEval(3, bytesPerSample);
-  dbgEvalNL(3, samplingRate);
+  dbg_eval(3, numChannels);
+  dbg_eval(3, itsFrameCount);
+  dbg_eval(3, sampleWidth);
+  dbg_eval(3, bytesPerSample);
+  dbg_eval_nl(3, samplingRate);
 
   // Allocate space for the sound samples
   itsSamples.resize(itsFrameCount*numChannels*bytesPerSample);
@@ -169,7 +169,7 @@ DOTRACE("IrixAudioSoundRep::play");
   if (itsSamples.size() == 0) return;
 
   ALport audioPort = alOpenPort("Sound::play", "w", itsAudioConfig);
-  dbgEvalNL(3, (void*) audioPort);
+  dbg_eval_nl(3, (void*) audioPort);
   if (audioPort == 0)
     {
       throw Util::Error("error opening an audio port during Sound::play", SRC_POS);

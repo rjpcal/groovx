@@ -46,20 +46,20 @@ DBG_REGISTER
 
 namespace
 {
-  bool lineComplete = true;
-  int nextDebugKey = 0;
+  bool debug_line_complete = true;
+  int debug_next_key = 0;
 }
 
-unsigned char Debug::keyLevels[Debug::MAX_KEYS];
-const char*   Debug::keyFilenames[Debug::MAX_KEYS];
+unsigned char rutz::debug::key_levels[rutz::debug::MAX_KEYS];
+const char*   rutz::debug::key_filenames[rutz::debug::MAX_KEYS];
 
 #define EVAL_IMPL(T)                                            \
-void Debug::Eval(const char* what, int level,                   \
-                 const char* where, int line_no,                \
-                 bool nl, T expr) throw()                       \
+void rutz::debug::eval(const char* what, int level,             \
+                       const char* where, int line_no,          \
+                       bool nl, T expr) throw()                 \
 {                                                               \
   STD_IO::cerr.exceptions(STD_IO::ios::goodbit);                \
-  if (lineComplete)                                             \
+  if (debug_line_complete)                                      \
     {                                                           \
       STD_IO::cerr << "[" << level << "] "                      \
                    << where << ":" << line_no << ": ";          \
@@ -72,12 +72,12 @@ void Debug::Eval(const char* what, int level,                   \
   if (nl)                                                       \
     {                                                           \
       STD_IO::cerr << "\n";                                     \
-      lineComplete = true;                                      \
+      debug_line_complete = true;                               \
     }                                                           \
   else                                                          \
     {                                                           \
       STD_IO::cerr << ", ";                                     \
-      lineComplete = false;                                     \
+      debug_line_complete = false;                              \
     }                                                           \
 }
 
@@ -96,64 +96,64 @@ EVAL_IMPL(const char*);
 EVAL_IMPL(void*);
 EVAL_IMPL(fstring);
 
-void Debug::PanicImpl(const char* what, const char* where, int line_no) throw()
+void rutz::debug::panic_aux(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Panic (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
   rutz::backtrace::current().print();
   abort();
 }
 
-void Debug::AssertImpl(const char* what, const char* where, int line_no) throw()
+void rutz::debug::assert_aux(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Assertion failed (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
   rutz::backtrace::current().print();
   abort();
 }
 
-void Debug::PreconditionImpl(const char* what, const char* where, int line_no) throw()
+void rutz::debug::precondition_aux(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Precondition failed (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
   rutz::backtrace::current().print();
   abort();
 }
 
-void Debug::PostconditionImpl(const char* what, const char* where, int line_no) throw()
+void rutz::debug::postcondition_aux(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Postcondition failed (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
   rutz::backtrace::current().print();
   abort();
 }
 
-void Debug::InvariantImpl(const char* what, const char* where, int line_no) throw()
+void rutz::debug::invariant_aux(const char* what, const char* where, int line_no) throw()
 {
   fprintf(stderr, "Invariant failed (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
   rutz::backtrace::current().print();
   abort();
 }
 
-int Debug::createKey(const char* filename)
+int rutz::debug::create_key(const char* filename)
 {
-  int key = nextDebugKey;
-  keyFilenames[key] = filename;
-  if (nextDebugKey < (MAX_KEYS-1))
-    ++nextDebugKey;
+  int key = debug_next_key;
+  key_filenames[key] = filename;
+  if (debug_next_key < (MAX_KEYS-1))
+    ++debug_next_key;
   return key;
 }
 
-int Debug::lookupKey(const char* filename)
+int rutz::debug::lookup_key(const char* filename)
 {
-  for (int i = 0; i < nextDebugKey; ++i)
+  for (int i = 0; i < debug_next_key; ++i)
     {
-      if (strcmp(keyFilenames[i], filename) == 0)
+      if (strcmp(key_filenames[i], filename) == 0)
         return i;
     }
   return -1;
 }
 
-void Debug::setGlobalLevel(int lev)
+void rutz::debug::set_global_level(int lev)
 {
   for (int i = 0; i < MAX_KEYS; ++i)
-    keyLevels[i] = (unsigned char) lev;
+    key_levels[i] = (unsigned char) lev;
 }
 
 static const char vcid_debug_cc[] = "$Header$";

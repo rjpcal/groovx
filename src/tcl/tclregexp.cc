@@ -81,7 +81,7 @@ bool Tcl::RegExp::matchesString(const char* str)
     return true;
 
   default: // "can't happen"
-    Assert(false);
+    ASSERT(false);
   }
 
   return false;

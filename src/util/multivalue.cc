@@ -79,7 +79,7 @@ DOTRACE("TMultiValue<T>::scanFrom");
   while (dat < end)
     {
       is >> *dat;
-      dbgEvalNL(3, *dat);
+      dbg_eval_nl(3, *dat);
       ++dat;
       if (dat < end)
         {

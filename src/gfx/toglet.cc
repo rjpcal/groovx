@@ -171,7 +171,7 @@ Toglet::Toglet(bool pack, bool topLevel) :
 {
 DOTRACE("Toglet::Toglet");
 
-  dbgEvalNL(3, this);
+  dbg_eval_nl(3, this);
 
   // Get the window mapped onscreen. NOTE -- we need to make these calls
   // here, rather than in Impl's constructor. Why? Because some of these
@@ -212,7 +212,7 @@ Toglet::~Toglet() throw()
 {
 DOTRACE("Toglet::~Toglet");
 
-  dbgEvalNL(3, (void*)this);
+  dbg_eval_nl(3, (void*)this);
 
   delete rep;
 }
@@ -243,7 +243,7 @@ DOTRACE("Toglet::getCurrent");
 void Toglet::setCurrent(Util::SoftRef<Toglet> toglet)
 {
 DOTRACE("Toglet::setCurrent");
-  dbgEval(1, toglet.id());
+  dbg_eval(1, toglet.id());
   toglet->makeCurrent();
 }
 

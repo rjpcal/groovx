@@ -111,7 +111,7 @@ namespace WriteUtils
 
       while (begin != end)
         {
-          dbgEval(4, count); dbgEvalNL(4, (*begin)->id());
+          dbg_eval(4, count); dbg_eval_nl(4, (*begin)->id());
 
           writer.writeObject(makeElementNameString(name, count).c_str(),
                              Util::SoftRef<const IO::IoObject>(*begin));

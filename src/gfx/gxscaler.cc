@@ -208,7 +208,7 @@ void GxScaler::getBoundingCube(Gfx::Bbox& bbox) const
 
   bbox.pop();
 
-  dbgDump(2, bbox.cube());
+  dbg_dump(2, bbox.cube());
 }
 
 static const char vcid_gxscaler_cc[] = "$Header$";

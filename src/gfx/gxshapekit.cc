@@ -77,7 +77,7 @@ public:
   virtual void getBoundingCube(Gfx::Bbox& bbox) const
   {
     itsObj->grGetBoundingBox(bbox);
-    dbgDump(2, bbox.cube());
+    dbg_dump(2, bbox.cube());
   }
 };
 

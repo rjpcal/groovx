@@ -127,7 +127,7 @@ DOTRACE("GLCanvas::screenFromWorld(Gfx::Vec2)");
                current_mv_matrix, current_proj_matrix, current_viewport,
                &temp_screen_x, &temp_screen_y, &dummy_z);
 
-  dbgEval(3, status);
+  dbg_eval(3, status);
 
   if (status == GL_FALSE)
     throw Util::Error("GLCanvas::screenFromWorld(): gluProject error",
@@ -157,7 +157,7 @@ DOTRACE("GLCanvas::worldFromScreen(Gfx::Vec2)");
                  current_mv_matrix, current_proj_matrix, current_viewport,
                  &world_pos.x(), &world_pos.y(), &dummy_z);
 
-  dbgEval(3, status);
+  dbg_eval(3, status);
 
   if (status == GL_FALSE)
     throw Util::Error("GLCanvas::worldFromScreen(): gluUnProject error",
@@ -259,14 +259,14 @@ void GLCanvas::pushAttribs(const char* /*comment*/)
 {
 DOTRACE("GLCanvas::pushAttribs");
   glPushAttrib(GL_ALL_ATTRIB_BITS);
-  dbgEvalNL(3, attribStackDepth());
+  dbg_eval_nl(3, attribStackDepth());
 }
 
 void GLCanvas::popAttribs()
 {
 DOTRACE("GLCanvas::popAttribs");
   glPopAttrib();
-  dbgEvalNL(3, attribStackDepth());
+  dbg_eval_nl(3, attribStackDepth());
 }
 
 void GLCanvas::drawOnFrontBuffer()
@@ -391,15 +391,15 @@ void GLCanvas::viewport(int x, int y, int w, int h)
 DOTRACE("GLCanvas::viewport");
 
   glViewport(x, y, w, h);
-  dbgEval(2, x); dbgEval(2, y); dbgEval(2, w); dbgEvalNL(2, h);
+  dbg_eval(2, x); dbg_eval(2, y); dbg_eval(2, w); dbg_eval_nl(2, h);
   if (GET_DBG_LEVEL() >= 8)
     {
       GLint viewport[4];
       glGetIntegerv(GL_VIEWPORT, viewport);
-      dbgEval(2, viewport[0]);
-      dbgEval(2, viewport[1]);
-      dbgEval(2, viewport[2]);
-      dbgEvalNL(2, viewport[3]);
+      dbg_eval(2, viewport[0]);
+      dbg_eval(2, viewport[1]);
+      dbg_eval(2, viewport[2]);
+      dbg_eval_nl(2, viewport[3]);
     }
 }
 
@@ -811,7 +811,7 @@ DOTRACE("GLCanvas::drawRasterText");
       while (p[len] != '\0' && p[len] != '\n')
         ++len;
 
-      dbgEval(3, len); dbgEvalNL(3, p);
+      dbg_eval(3, len); dbg_eval_nl(3, p);
 
       rasterPos( Vec2d(0.0, 0.0) );
       if (line > 0)
@@ -832,7 +832,7 @@ DOTRACE("GLCanvas::drawRasterText");
         break;
 
       // else...
-      Assert(*p == '\n');
+      ASSERT(*p == '\n');
       ++p;
       ++line;
     }
@@ -856,7 +856,7 @@ DOTRACE("GLCanvas::drawVectorText");
       while (p[len] != '\0' && p[len] != '\n')
         ++len;
 
-      dbgEval(3, len); dbgEvalNL(3, p);
+      dbg_eval(3, len); dbg_eval_nl(3, p);
 
       glPushMatrix();
 
@@ -874,7 +874,7 @@ DOTRACE("GLCanvas::drawVectorText");
         break;
 
       // else...
-      Assert(*p == '\n');
+      ASSERT(*p == '\n');
       ++p;
       ++line;
     }

@@ -86,7 +86,7 @@ DOTRACE("MaskHatch::MaskHatch");
   setFieldMap(MaskHatch::classFields());
 
   setAlignmentMode(GxAligner::CENTER_ON_CENTER);
-  dbgEval(3, getAlignmentMode());
+  dbg_eval(3, getAlignmentMode());
 }
 
 MaskHatch::~MaskHatch() throw()

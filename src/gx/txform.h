@@ -60,7 +60,7 @@ public:
 
   const double* colMajorData() const { return data; }
 
-  void debugDump() const;
+  void debug_dump() const;
 
 private:
   double data[16];

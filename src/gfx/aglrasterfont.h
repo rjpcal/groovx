@@ -347,7 +347,7 @@ DOTRACE("AglRasterFont::bboxOf");
         {
           int widthOfChar = CharWidth(text[i]);
           wid += widthOfChar;
-          dbgEval(4, text[i]); dbgEvalNL(4, widthOfChar);
+          dbg_eval(4, text[i]); dbg_eval_nl(4, widthOfChar);
         }
 #endif
       text += len;
@@ -359,14 +359,18 @@ DOTRACE("AglRasterFont::bboxOf");
       if (*text == '\0')
         break;
 
-      Assert(*text == '\n');
+      ASSERT(*text == '\n');
       ++text;
     }
 
-  dbgEval(2, numer.h); dbgEvalNL(2, numer.v);
-  dbgEval(2, denom.h); dbgEvalNL(2, denom.v);
+  dbg_eval(2, numer.h); dbg_eval_nl(2, numer.v);
+  dbg_eval(2, denom.h); dbg_eval_nl(2, denom.v);
 
-  dbgEval(2, lines); dbgEval(2, itsFontInfo.widMax); dbgEval(2, asc); dbgEval(2, desc); dbgEvalNL(2, maxwid);
+  dbg_eval(2, lines);
+  dbg_eval(2, itsFontInfo.widMax);
+  dbg_eval(2, asc);
+  dbg_eval(2, desc);
+  dbg_eval_nl(2, maxwid);
 
   Gfx::Rect<int> screen = bbox.screenFromWorld(Gfx::Rect<double>());
 

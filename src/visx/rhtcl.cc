@@ -104,7 +104,7 @@ namespace
             {
               if ( n >= 'A' && n <= 'H' )
                 {
-                  dbgEvalNL(3, (n-'A'));
+                  dbg_eval_nl(3, (n-'A'));
 
                   Tk_FakeWin* tkwin = reinterpret_cast<Tk_FakeWin*>(
                                          Tk_MainWindow(source->itsInterp));

@@ -53,11 +53,11 @@ void GxCamera::reshape(Gfx::Canvas& canvas, int w, int h)
 {
 DOTRACE("GxCamera::reshape");
 
-  dbgEval(3, itsWidth); dbgEvalNL(3, itsHeight);
+  dbg_eval(3, itsWidth); dbg_eval_nl(3, itsHeight);
 
   itsWidth = w; itsHeight = h;
 
-  dbgEval(3, itsWidth); dbgEvalNL(3, itsHeight);
+  dbg_eval(3, itsWidth); dbg_eval_nl(3, itsHeight);
 
   // NOTE: We must call draw() here in order to make sure that e.g. the
   // right viewport() gets set. Without the draw() call, the potential
@@ -115,7 +115,7 @@ void GxPerspectiveCamera::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxPerspectiveCamera::draw");
 
-  dbgEval(2, width()); dbgEvalNL(2, height());
+  dbg_eval(2, width()); dbg_eval_nl(2, height());
 
   canvas.viewport(0, 0, width(), height());
 
@@ -246,7 +246,7 @@ void GxFixedScaleCamera::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxFixedScaleCamera::draw");
 
-  dbgEval(3, width()); dbgEvalNL(3, height());
+  dbg_eval(3, width()); dbg_eval_nl(3, height());
   canvas.viewport(0, 0, width(), height());
 
   orthoFixed(canvas, width(), height(), itsPixelsPerUnit);

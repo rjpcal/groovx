@@ -233,7 +233,7 @@ DOTRACE("ExptDriver::getWidget");
 void ExptDriver::vxRun(Element& /*parent*/)
 {
 DOTRACE("currentElement");
-  /* FIXME */ Assert(false);
+  /* FIXME */ ASSERT(false);
 }
 
 void ExptDriver::vxEndTrialHook()
@@ -250,7 +250,7 @@ DOTRACE("ExptDriver::vxEndTrialHook");
        rep->autosaveFile.is_empty() )
     return;
 
-  dbgEvalNL(3, rep->autosaveFile.c_str());
+  dbg_eval_nl(3, rep->autosaveFile.c_str());
   IO::saveGVX(Util::Ref<IO::IoObject>(this), rep->autosaveFile);
 }
 

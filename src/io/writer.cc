@@ -86,7 +86,7 @@ int IO::Writer::ensureWriteVersionId(const char* name,
     throw IO::WriteVersionError(name, actual_version,
                                 lowest_supported_version, msg, pos);
 
-  Assert(actual_version >= lowest_supported_version);
+  ASSERT(actual_version >= lowest_supported_version);
 
   return actual_version;
 }

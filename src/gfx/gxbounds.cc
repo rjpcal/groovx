@@ -61,7 +61,7 @@ DOTRACE("GxBounds::getBoundingCube");
 
   bbox.push();
 
-  dbgEval(3, itsPercentBorder);
+  dbg_eval(3, itsPercentBorder);
 
   const double s = 1.0 + itsPercentBorder/100.0;
 
@@ -71,7 +71,7 @@ DOTRACE("GxBounds::getBoundingCube");
 
   bbox.pop();
 
-  dbgDump(2, bbox.cube());
+  dbg_dump(2, bbox.cube());
 }
 
 void GxBounds::draw(Gfx::Canvas& canvas) const

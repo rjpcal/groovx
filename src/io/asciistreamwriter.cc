@@ -261,7 +261,7 @@ DOTRACE("AsciiStreamWriter::writeObject");
 
   if (obj.isValid())
     {
-      Assert(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
+      ASSERT(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
 
       type = obj->objTypename();
       id = itsIdMap.get(obj->id());

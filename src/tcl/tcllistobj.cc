@@ -70,7 +70,7 @@ DOTRACE("Tcl::List::split");
       throw Util::Error("couldn't split Tcl list", SRC_POS);
     }
 
-  Assert(count >= 0);
+  ASSERT(count >= 0);
   itsLength = (unsigned int) count;
 }
 
@@ -98,7 +98,7 @@ DOTRACE("Tcl::List::at");
   if (index >= itsLength)
     throw Util::Error("index was out of range in Tcl list access", SRC_POS);
 
-  dbgEval(3, index); dbgEvalNL(3, itsElements[index]);
+  dbg_eval(3, index); dbg_eval_nl(3, itsElements[index]);
 
   return itsElements[index];
 }
@@ -113,7 +113,7 @@ DOTRACE("Tcl::List::getLength");
       throw Util::Error("couldn't get list length of Tcl object", SRC_POS);
     }
 
-  Assert(len >= 0);
+  ASSERT(len >= 0);
 
   return (unsigned int) len;
 }

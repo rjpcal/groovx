@@ -143,13 +143,13 @@ public:
     Lock(Impl* impl) :
       itsTarget(impl)
     {
-      Assert(itsTarget->isItEmitting == false);
+      ASSERT(itsTarget->isItEmitting == false);
       itsTarget->isItEmitting = true;
     }
 
     ~Lock()
     {
-      Assert(itsTarget->isItEmitting == true);
+      ASSERT(itsTarget->isItEmitting == true);
       itsTarget->isItEmitting = false;
     }
   };
@@ -177,9 +177,9 @@ DOTRACE("Util::SignalBase::doEmit");
            ii != end;
            /* incr in loop */)
         {
-          dbgEval(3, typeid(**ii).name());
-          dbgEvalNL(3, (*ii)->dbg_RefCount());
-          dbgEvalNL(3, (*ii)->exists());
+          dbg_eval(3, typeid(**ii).name());
+          dbg_eval_nl(3, (*ii)->dbg_RefCount());
+          dbg_eval_nl(3, (*ii)->exists());
           if ((*ii)->exists())
             {
               (*ii)->doCall(params);
@@ -202,7 +202,7 @@ DOTRACE("Util::SignalBase::doDisconnect");
 
   rep->slots.remove(SlotRef(slot.get(), Util::PRIVATE));
 
-  dbgEvalNL(3, rep->slots.size());
+  dbg_eval_nl(3, rep->slots.size());
 }
 
 void Util::SignalBase::doConnect(Util::SoftRef<Util::SlotBase> slot)
@@ -212,7 +212,7 @@ DOTRACE("Util::SignalBase::doConnect");
 
   rep->slots.push_back(SlotRef(slot.get(), Util::PRIVATE));
 
-  dbgEvalNL(3, rep->slots.size());
+  dbg_eval_nl(3, rep->slots.size());
 }
 
 ///////////////////////////////////////////////////////////////////////

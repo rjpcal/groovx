@@ -129,7 +129,7 @@ namespace
 
     void push(int v)
     {
-      Assert(next < MAXSIZE);
+      ASSERT(next < MAXSIZE);
       data[next++] = v;
     }
 
@@ -176,15 +176,15 @@ namespace
     {
       push( GLX_RGBA );
       push( GLX_RED_SIZE );
-      push( rbits );          dbgEval(3, rbits);
+      push( rbits );          dbg_eval(3, rbits);
       push( GLX_GREEN_SIZE );
-      push( gbits );          dbgEval(3, gbits);
+      push( gbits );          dbg_eval(3, gbits);
       push( GLX_BLUE_SIZE );
-      push( bbits );          dbgEvalNL(3, bbits);
+      push( bbits );          dbg_eval_nl(3, bbits);
       if (abits > 0)
         {
           push( GLX_ALPHA_SIZE );
-          push( abits );      dbgEvalNL(3, abits);
+          push( abits );      dbg_eval_nl(3, abits);
         }
     }
 
@@ -292,16 +292,16 @@ DOTRACE("GlxWrapper::GlxWrapper");
       throw Util::Error("couldn't find a matching visual", SRC_POS);
     }
 
-  dbgEvalNL(3, (void*)itsVisInfo->visualid);
-  dbgEvalNL(3, itsVisInfo->depth);
-  dbgEvalNL(3, itsVisInfo->bits_per_rgb);
+  dbg_eval_nl(3, (void*)itsVisInfo->visualid);
+  dbg_eval_nl(3, itsVisInfo->depth);
+  dbg_eval_nl(3, itsVisInfo->bits_per_rgb);
 
   itsContext = glXCreateContext(itsDisplay,
                                 itsVisInfo,
                                 share ? share->itsContext : None,
                                 opts.indirect ? GL_FALSE : GL_TRUE);
 
-  dbgEvalNL(3, itsContext);
+  dbg_eval_nl(3, itsContext);
 
   if (itsContext == 0)
     {

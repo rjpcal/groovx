@@ -516,11 +516,11 @@ DOTRACE("MorphyFace::grGetBoundingBox");
   double top_width = xbezier_top.evalMax();
   double bottom_width = xbezier_bottom.evalMax();
 
-  dbgEval(3, top_width);   dbgEvalNL(3, bottom_width);
+  dbg_eval(3, top_width);   dbg_eval_nl(3, bottom_width);
 
   double max_width = rutz::max(1.0, rutz::max(top_width, bottom_width));
 
-  dbgEvalNL(3, max_width);
+  dbg_eval_nl(3, max_width);
 
   rect.left()   = -max_width      * itsFaceWidth * (1 + itsHairWidth);
   rect.right()  =  max_width      * itsFaceWidth * (1 + itsHairWidth);

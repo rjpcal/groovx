@@ -303,12 +303,12 @@ Vec3d Gfx::Txform::applyTo(const Vec3d& input) const
     : Vec3d(0.0, 0.0, 0.0);
 }
 
-void Gfx::Txform::debugDump() const
+void Gfx::Txform::debug_dump() const
 {
-  dbgPrint(0, data[0]); dbgPrint(0, data[4]); dbgPrint(0, data[8]); dbgPrintNL(0, data[12]);
-  dbgPrint(0, data[1]); dbgPrint(0, data[5]); dbgPrint(0, data[9]); dbgPrintNL(0, data[13]);
-  dbgPrint(0, data[2]); dbgPrint(0, data[6]); dbgPrint(0, data[10]); dbgPrintNL(0, data[14]);
-  dbgPrint(0, data[3]); dbgPrint(0, data[7]); dbgPrint(0, data[11]); dbgPrintNL(0, data[15]);
+  dbg_print(0, data[0]); dbg_print(0, data[4]); dbg_print(0, data[8]); dbg_print_nl(0, data[12]);
+  dbg_print(0, data[1]); dbg_print(0, data[5]); dbg_print(0, data[9]); dbg_print_nl(0, data[13]);
+  dbg_print(0, data[2]); dbg_print(0, data[6]); dbg_print(0, data[10]); dbg_print_nl(0, data[14]);
+  dbg_print(0, data[3]); dbg_print(0, data[7]); dbg_print(0, data[11]); dbg_print_nl(0, data[15]);
 }
 
 static const char vcid_txform_cc[] = "$Header$";

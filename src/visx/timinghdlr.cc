@@ -104,7 +104,7 @@ public:
       case FROM_ABORT:    return abortEvents;
       }
 
-    Assert(false);
+    ASSERT(false);
 
     return abortEvents; // but we'll never get here
   }
@@ -261,7 +261,7 @@ namespace
 void TimingHdlr::Impl::scheduleAll(EventGroup& events)
 {
 DOTRACE("TimingHdlr::Impl::scheduleAll");
-  Precondition(trial != 0);
+  PRECONDITION(trial != 0);
 
   // In order to ensure that events get scheduled in the proper order, even if
   // the whole event loop is getting bogged down, we do two things: (1) sort

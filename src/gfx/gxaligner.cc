@@ -118,7 +118,7 @@ DOTRACE("GxAligner::getBoundingCube");
 
   bbox.drawRect(bounds);
 
-  dbgDump(2, bbox.cube());
+  dbg_dump(2, bbox.cube());
 }
 
 static const char vcid_gxaligner_cc[] = "$Header$";

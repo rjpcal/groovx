@@ -34,61 +34,62 @@
 
 class fstring;
 
-namespace Debug
+namespace rutz {namespace debug
 {
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, bool expr) throw();
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, char expr) throw();
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned char expr) throw();
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, short expr) throw();
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned short expr) throw();
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, int expr) throw();
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned int expr) throw();
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, long expr) throw();
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned long expr) throw();
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, float expr) throw();
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, double expr) throw();
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, const char* expr) throw();
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, void* expr) throw();
-  void Eval (const char* what, int level, const char* where, int line_no, bool nl, fstring expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, bool expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, char expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned char expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, short expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned short expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, int expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned int expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, long expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned long expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, float expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, double expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, const char* expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, void* expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, fstring expr) throw();
 
-  void PanicImpl         (const char* what, const char* where, int line_no) throw();
-  void AssertImpl        (const char* what, const char* where, int line_no) throw();
-  void PreconditionImpl  (const char* what, const char* where, int line_no) throw();
-  void PostconditionImpl (const char* what, const char* where, int line_no) throw();
-  void InvariantImpl     (const char* what, const char* where, int line_no) throw();
+  void panic_aux         (const char* what, const char* where, int line_no) throw();
+  void assert_aux        (const char* what, const char* where, int line_no) throw();
+  void precondition_aux  (const char* what, const char* where, int line_no) throw();
+  void postcondition_aux (const char* what, const char* where, int line_no) throw();
+  void invariant_aux     (const char* what, const char* where, int line_no) throw();
 
   const int MAX_KEYS = 1024;
 
-  extern unsigned char keyLevels[MAX_KEYS];
-  extern const char* keyFilenames[MAX_KEYS];
+  extern unsigned char key_levels[MAX_KEYS];
+  extern const char* key_filenames[MAX_KEYS];
 
-  int createKey(const char* filename);
+  int create_key(const char* filename);
 
   /// Get the debug key associated with the given filename.
   /** Returns -1 if the filename is not registered. */
-  int lookupKey(const char* filename);
+  int lookup_key(const char* filename);
 
-  void setGlobalLevel(int lev);
-}
+  void set_global_level(int lev);
+}}
 
-#define Panic(message) Debug::PanicImpl(message, __FILE__, __LINE__)
+#define PANIC(message) rutz::debug::panic_aux(message, __FILE__, __LINE__)
 
-// Like Assert(), but can't ever be turned off.
-#define AbortIf(expr) \
-      do { if ( expr ) { Debug::PanicImpl(#expr, __FILE__, __LINE__); } } while (0)
+// Like ASSERT(), but can't ever be turned off.
+#define ABORT_IF(expr) \
+      do { if ( expr ) { rutz::debug::panic_aux(#expr, __FILE__, __LINE__); } } while (0)
 
 #define CONCAT(x, y) x ## y
 
-#define DO_DBG_REGISTER(ext)                                            \
-static const int CONCAT(DEBUG_KEY, ext) = Debug::createKey(__FILE__);   \
-                                                                        \
-static inline int CONCAT(dbgLevel, ext) ()                              \
-{                                                                       \
-  return Debug::keyLevels[CONCAT(DEBUG_KEY, ext)];                      \
+#define DO_DBG_REGISTER(ext)                                    \
+static const int CONCAT(DEBUG_KEY, ext) =                       \
+  rutz::debug::create_key(__FILE__);                            \
+                                                                \
+static inline int CONCAT(dbg_level_, ext) ()                    \
+{                                                               \
+  return rutz::debug::key_levels[CONCAT(DEBUG_KEY, ext)];       \
 }
 
 #define DBG_REGISTER DO_DBG_REGISTER(1)
-#define GET_DBG_LEVEL dbgLevel1
+#define GET_DBG_LEVEL dbg_level_1
 
 static const char vcid_debug_h[] = "$Header$";
 
@@ -105,44 +106,44 @@ static const char vcid_debug_h[] = "$Header$";
 #if   !defined(DEBUG_H_2)
 #      define  DEBUG_H_2
 #      define  DBG_REGISTER DO_DBG_REGISTER(2)
-#      define  GET_DBG_LEVEL dbgLevel2
+#      define  GET_DBG_LEVEL dbg_level_2
 #elif !defined(DEBUG_H_3)
 #      define  DEBUG_H_3
 #      define  DBG_REGISTER DO_DBG_REGISTER(3)
-#      define  GET_DBG_LEVEL dbgLevel3
+#      define  GET_DBG_LEVEL dbg_level_3
 #elif !defined(DEBUG_H_4)
 #      define  DEBUG_H_4
 #      define  DBG_REGISTER DO_DBG_REGISTER(4)
-#      define  GET_DBG_LEVEL dbgLevel4
+#      define  GET_DBG_LEVEL dbg_level_4
 #elif !defined(DEBUG_H_5)
 #      define  DEBUG_H_5
 #      define  DBG_REGISTER DO_DBG_REGISTER(5)
-#      define  GET_DBG_LEVEL dbgLevel5
+#      define  GET_DBG_LEVEL dbg_level_5
 #elif !defined(DEBUG_H_6)
 #      define  DEBUG_H_6
 #      define  DBG_REGISTER DO_DBG_REGISTER(6)
-#      define  GET_DBG_LEVEL dbgLevel6
+#      define  GET_DBG_LEVEL dbg_level_6
 #elif !defined(DEBUG_H_7)
 #      define  DEBUG_H_7
 #      define  DBG_REGISTER DO_DBG_REGISTER(7)
-#      define  GET_DBG_LEVEL dbgLevel7
+#      define  GET_DBG_LEVEL dbg_level_7
 #elif !defined(DEBUG_H_8)
 #      define  DEBUG_H_8
 #      define  DBG_REGISTER DO_DBG_REGISTER(8)
-#      define  GET_DBG_LEVEL dbgLevel8
+#      define  GET_DBG_LEVEL dbg_level_8
 #else
 #      error "debug.h included too many times!"
 #endif
 
-#undef dbgEval
-#undef dbgEvalNL
-#undef dbgPrint
-#undef dbgPrintNL
+#undef dbg_eval
+#undef dbg_eval_nl
+#undef dbg_print
+#undef dbg_print_nl
 
-#undef Assert
-#undef Invariant
-#undef Precondition
-#undef Postcondition
+#undef ASSERT
+#undef INVARIANT
+#undef PRECONDITION
+#undef POSTCONDITION
 
 #endif // DEBUG_H_DEFINED
 
@@ -151,28 +152,28 @@ static const char vcid_debug_h[] = "$Header$";
 //
 
 #if !defined(NO_DEBUG)
-#  define dbgEval(lev, x)    do { if (GET_DBG_LEVEL() >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, false, x); } while (0)
-#  define dbgEvalNL(lev, x)  do { if (GET_DBG_LEVEL() >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, true, x); } while (0)
-#  define dbgPrint(lev, x)   do { if (GET_DBG_LEVEL() >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, false, x); } while (0)
-#  define dbgPrintNL(lev, x) do { if (GET_DBG_LEVEL() >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, true, x); } while (0)
-#  define dbgDump(lev, x)    do { if (GET_DBG_LEVEL() >= lev) { Debug::Eval(#x, lev, __FILE__, __LINE__, true, "..."); (x).debugDump(); } } while (0)
+#  define dbg_eval(lev, x)     do { if (GET_DBG_LEVEL() >= lev) rutz::debug::eval(#x, lev, __FILE__, __LINE__, false, x); } while (0)
+#  define dbg_eval_nl(lev, x)  do { if (GET_DBG_LEVEL() >= lev) rutz::debug::eval(#x, lev, __FILE__, __LINE__, true, x); } while (0)
+#  define dbg_print(lev, x)    do { if (GET_DBG_LEVEL() >= lev) rutz::debug::eval(0, lev, __FILE__, __LINE__, false, x); } while (0)
+#  define dbg_print_nl(lev, x) do { if (GET_DBG_LEVEL() >= lev) rutz::debug::eval(0, lev, __FILE__, __LINE__, true, x); } while (0)
+#  define dbg_dump(lev, x)     do { if (GET_DBG_LEVEL() >= lev) { rutz::debug::eval(#x, lev, __FILE__, __LINE__, true, "..."); (x).debug_dump(); } } while (0)
 
-#  define Assert(expr)        do { if ( !(expr) ) Debug::AssertImpl(#expr, __FILE__, __LINE__); } while(0)
-#  define Invariant(expr)     do { if ( !(expr) ) Debug::InvariantImpl(#expr, __FILE__, __LINE__); } while(0)
-#  define Precondition(expr)  do { if ( !(expr) ) Debug::PreconditionImpl(#expr, __FILE__, __LINE__); } while(0)
-#  define Postcondition(expr) do { if ( !(expr) ) Debug::PostconditionImpl(#expr, __FILE__, __LINE__); } while(0)
+#  define ASSERT(expr)        do { if ( !(expr) ) rutz::debug::assert_aux(#expr, __FILE__, __LINE__); } while(0)
+#  define INVARIANT(expr)     do { if ( !(expr) ) rutz::debug::invariant_aux(#expr, __FILE__, __LINE__); } while(0)
+#  define PRECONDITION(expr)  do { if ( !(expr) ) rutz::debug::precondition_aux(#expr, __FILE__, __LINE__); } while(0)
+#  define POSTCONDITION(expr) do { if ( !(expr) ) rutz::debug::postcondition_aux(#expr, __FILE__, __LINE__); } while(0)
 
 #else // defined(NO_DEBUG)
 
-#  define dbgEval(lev, x)     do {} while (0)
-#  define dbgEvalNL(lev, x)   do {} while (0)
-#  define dbgPrint(lev, x)    do {} while (0)
-#  define dbgPrintNL(lev, x)  do {} while (0)
-#  define dbgDump(lev, expr)  do {} while (0)
+#  define dbg_eval(lev, x)     do {} while (0)
+#  define dbg_eval_nl(lev, x)  do {} while (0)
+#  define dbg_print(lev, x)    do {} while (0)
+#  define dbg_print_nl(lev, x) do {} while (0)
+#  define dbg_dump(lev, expr)  do {} while (0)
 
-#  define Assert(x)        do {} while (0)
-#  define Invariant(x)     do {} while (0)
-#  define Precondition(x)  do {} while (0)
-#  define Postcondition(x) do {} while (0)
+#  define ASSERT(x)        do {} while (0)
+#  define INVARIANT(x)     do {} while (0)
+#  define PRECONDITION(x)  do {} while (0)
+#  define POSTCONDITION(x) do {} while (0)
 
 #endif

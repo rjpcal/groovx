@@ -176,7 +176,7 @@ Util::ExecPipe::~ExecPipe() throw()
 
 STD_IO::iostream& Util::ExecPipe::stream() throw()
 {
-  Assert(strm != 0);
+  ASSERT(strm != 0);
   return *strm;
 }
 

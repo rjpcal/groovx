@@ -75,7 +75,7 @@ public:
   void pop() throw()
   {
     if (sz == 0)
-      Panic("underflow in static_stack::pop");
+      PANIC("underflow in static_stack::pop");
     --sz;
   }
 

@@ -94,7 +94,7 @@ public:
 void FieldMap::init(const Field* begin, const Field* end,
                     const FieldMap* parent)
 {
-  Assert(rep == 0);
+  ASSERT(rep == 0);
   rep = new Impl(begin, end, parent);
 }
 

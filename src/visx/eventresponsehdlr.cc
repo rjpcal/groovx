@@ -130,7 +130,7 @@ public:
       itsBindingScript(script),
       itsResponseCount(0)
     {
-      Precondition((erh != 0) && (widget.isValid()) && (&trial != 0));
+      PRECONDITION((erh != 0) && (widget.isValid()) && (&trial != 0));
       attend();
     }
 
@@ -204,7 +204,7 @@ public:
                                      const char* event_info)
   {
     EventResponseHdlr::Impl* rep = erh->rep;
-    Precondition( rep->isActive() );
+    PRECONDITION( rep->isActive() );
 
     rep->itsState->handleResponse(rep, event_info);
   }
@@ -417,13 +417,13 @@ unsigned int EventResponseHdlr::getMaxResponses() const
 void EventResponseHdlr::rhBeginTrial(Util::SoftRef<Toglet> widget,
                                      Trial& trial) const
 {
-  Precondition( rep->isInactive() );
+  PRECONDITION( rep->isInactive() );
 
   rep->itsInterp.clearEventQueue();
 
   rep->becomeActive(widget, trial);
 
-  Postcondition( rep->isActive() );
+  POSTCONDITION( rep->isActive() );
 }
 
 void EventResponseHdlr::rhAbortTrial() const
@@ -440,7 +440,7 @@ void EventResponseHdlr::rhEndTrial() const
       rep->becomeInactive();
     }
 
-  Postcondition( rep->isInactive() );
+  POSTCONDITION( rep->isInactive() );
 }
 
 void EventResponseHdlr::rhHaltExpt() const
@@ -451,7 +451,7 @@ void EventResponseHdlr::rhHaltExpt() const
       rep->becomeInactive();
     }
 
-  Postcondition( rep->isInactive() );
+  POSTCONDITION( rep->isInactive() );
 }
 
 void EventResponseHdlr::rhAllowResponses(Util::SoftRef<Toglet> widget,
@@ -459,14 +459,14 @@ void EventResponseHdlr::rhAllowResponses(Util::SoftRef<Toglet> widget,
 {
   rep->becomeActive(widget, trial);
 
-  Postcondition( rep->isActive() );
+  POSTCONDITION( rep->isActive() );
 }
 
 void EventResponseHdlr::rhDenyResponses() const
 {
   rep->becomeInactive();
 
-  Postcondition( rep->isInactive() );
+  POSTCONDITION( rep->isInactive() );
 }
 
 static const char vcid_eventresponsehdlr_cc[] = "$Header$";

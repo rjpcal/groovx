@@ -40,12 +40,12 @@ DBG_REGISTER
 rutz::free_list_base::free_list_base(std::size_t size_check) :
   m_node_list(0), m_size_check(size_check)
 {
-  Assert(m_size_check >= sizeof(node));
+  ASSERT(m_size_check >= sizeof(node));
 }
 
 void* rutz::free_list_base::allocate(std::size_t bytes)
 {
-  Assert(bytes == m_size_check);
+  ASSERT(bytes == m_size_check);
   if (m_node_list == 0)
     return ::operator new(bytes);
   node* node = m_node_list;

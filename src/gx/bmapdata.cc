@@ -66,13 +66,14 @@ public:
     rowOrder(TOP_FIRST),
     updater()
   {
-    Precondition(extent.x() >= 0); Precondition(extent.y() >= 0);
+    PRECONDITION(extent.x() >= 0);
+    PRECONDITION(extent.y() >= 0);
 
     // If extent.x() is 0, this is still OK, since -1/8 --> -1, so the
     // whole thing goes to 0
     int bytes_per_row = (extent.x()*bits_per_pixel - 1)/8 + 1;
 
-    Assert(bytes_per_row >= 0);
+    ASSERT(bytes_per_row >= 0);
 
     unsigned int num_bytes = bytes_per_row * extent.y();
 
@@ -225,7 +226,7 @@ unsigned int Gfx::BmapData::byteCount() const
 DOTRACE("Gfx::BmapData::byteCount");
   updateIfNeeded();
 
-  Assert(rep->bytes.size() == rep->bytesPerRow() * rep->extent.y());
+  ASSERT(rep->bytes.size() == rep->bytesPerRow() * rep->extent.y());
 
   return rep->byteCount();
 }
@@ -456,7 +457,7 @@ DOTRACE("Gfx::BmapData::makeScrambled");
                   }
               else
                 {
-                  Assert(0);
+                  ASSERT(0);
                 }
             }
           else

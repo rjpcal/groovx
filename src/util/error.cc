@@ -57,7 +57,7 @@ Util::Error::Error(const FilePosition& pos) :
 {
 DOTRACE("Util::Error::Error()");
 
-  dbgDump(4, itsInfo);
+  dbg_dump(4, itsInfo);
 
   if (last == 0)
     last = new rutz::backtrace(*itsBackTrace);
@@ -78,7 +78,7 @@ Util::Error::Error(const fstring& msg, const FilePosition& pos) :
 {
 DOTRACE("Util::Error::Error(fstring)");
 
-  dbgDump(4, itsInfo);
+  dbg_dump(4, itsInfo);
 
   if (last == 0)
     last = new rutz::backtrace(*itsBackTrace);
@@ -99,7 +99,7 @@ Util::Error::Error(const Util::Error& other) throw() :
 {
 DOTRACE("Util::Error::Error(copy)");
 
-  dbgDump(4, itsInfo);
+  dbg_dump(4, itsInfo);
 
   if (other.itsBackTrace != 0)
     itsBackTrace =

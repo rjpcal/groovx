@@ -111,7 +111,7 @@ private:
 public:
   static void create(int argc, char** argv)
   {
-    Assert(theMainImpl == 0);
+    ASSERT(theMainImpl == 0);
 
     theMainImpl = new MainImpl(argc, argv);
     Tcl_CreateExitHandler(exitHandler, static_cast<ClientData>(0));
@@ -301,7 +301,7 @@ void Tcl::MainImpl::readlineLineComplete(char* line)
 {
 DOTRACE("Tcl::MainImpl::readlineLineComplete");
 
-  dbgEvalNL(3, line);
+  dbg_eval_nl(3, line);
 
   rl_callback_handler_remove();
 
@@ -365,11 +365,11 @@ DOTRACE("Tcl::MainImpl::handleLine");
       return;
     }
 
-  Assert(line != 0);
+  ASSERT(line != 0);
 
   itsCommand.append(line, "\n");
 
-  dbgEvalNL(3, itsCommand.c_str());
+  dbg_eval_nl(3, itsCommand.c_str());
 
   if (itsCommand.length() > 0 &&
       Tcl_CommandComplete(itsCommand.c_str()))
@@ -419,9 +419,9 @@ DOTRACE("Tcl::MainImpl::execCommand");
   const int status = 0;
 #endif
 
-  dbgEvalNL(3, itsCommand.c_str());
-  dbgEvalNL(3, expansion);
-  dbgEvalNL(3, status);
+  dbg_eval_nl(3, itsCommand.c_str());
+  dbg_eval_nl(3, expansion);
+  dbg_eval_nl(3, status);
 
   // status: -1 --> error
   //          0 --> no expansions occurred
@@ -479,7 +479,7 @@ DOTRACE("Tcl::MainImpl::execCommand");
           trimmed[len-1] = c;
 #endif
 
-          dbgEvalNL(3, itsSafeInterp.getResult<const char*>());
+          dbg_eval_nl(3, itsSafeInterp.getResult<const char*>());
 
           should_display_result =
             ((itsSafeInterp.getResult<const char*>())[0] != '\0') &&

@@ -55,7 +55,7 @@ namespace
     static char buf[128];
     AGetErrorText(audio, errEvent->error_code, buf, 127);
 
-    dbgEvalNL(3, buf);
+    dbg_eval_nl(3, buf);
 
     throw Util::Error(fstring("HP Audio Error: ", buf), SRC_POS);
 

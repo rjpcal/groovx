@@ -91,7 +91,7 @@ void Tcl::TimerSchedulerToken::dummyCallback(void* token) throw()
 {
   TimerSchedulerToken* tok = static_cast<TimerSchedulerToken*>(token);
 
-  Assert(tok != 0);
+  ASSERT(tok != 0);
 
   try
     {

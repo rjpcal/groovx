@@ -100,7 +100,7 @@ DOTRACE("GxCache::draw");
       if (glcanvas->isList(itsDisplayList))
         {
           glcanvas->callList(itsDisplayList);
-          dbgEvalNL(3, itsDisplayList);
+          dbg_eval_nl(3, itsDisplayList);
         }
       else
         {

@@ -88,15 +88,15 @@ Util::RefCounts::~RefCounts() throw()
 {
 DOTRACE("Util::RefCounts::~RefCounts");
 
-  if (itsStrong > 0) Panic("RefCounts object destroyed before strong refcount fell to 0");
-  if (itsWeak > 0) Panic("RefCounts object destroyed before weak refcount fell to 0");
+  if (itsStrong > 0) PANIC("RefCounts object destroyed before strong refcount fell to 0");
+  if (itsWeak > 0) PANIC("RefCounts object destroyed before weak refcount fell to 0");
 }
 
 void Util::RefCounts::acquireWeak() throw()
 {
 DOTRACE("Util::RefCounts::acquireWeak");
 
-  if (itsWeak == REFCOUNT_MAX) Panic("weak refcount overflow");
+  if (itsWeak == REFCOUNT_MAX) PANIC("weak refcount overflow");
 
   ++itsWeak;
 }
@@ -105,13 +105,13 @@ Util::RefCounts::Count Util::RefCounts::releaseWeak() throw()
 {
 DOTRACE("Util::RefCounts::releaseWeak");
 
-  if (itsWeak == 0) Panic("weak refcount already 0 in releaseWeak()");
+  if (itsWeak == 0) PANIC("weak refcount already 0 in releaseWeak()");
 
   const Count result = --itsWeak;
 
   if (itsWeak == 0)
     {
-      if (itsStrong > 0) Panic("weak refcount fell to 0 before strong refcount");
+      if (itsStrong > 0) PANIC("weak refcount fell to 0 before strong refcount");
       delete this;
     }
 
@@ -122,8 +122,8 @@ void Util::RefCounts::acquireStrong() throw()
 {
 DOTRACE("Util::RefCounts::acquireStrong");
 
-  if (itsVolatile) Panic("attempt to use strong refcount with volatile object");
-  if (itsStrong == REFCOUNT_MAX) Panic("strong refcount overflow");
+  if (itsVolatile) PANIC("attempt to use strong refcount with volatile object");
+  if (itsStrong == REFCOUNT_MAX) PANIC("strong refcount overflow");
 
   ++itsStrong;
 }
@@ -132,9 +132,9 @@ Util::RefCounts::Count Util::RefCounts::releaseStrong() throw()
 {
 DOTRACE("Util::RefCounts::releaseStrong");
 
-  if (itsVolatile) Panic("attempt to use strong refcount with volatile object");
-  if (itsStrong == 0) Panic("strong refcount already 0 in releaseStrong()");
-  if (itsWeak == 0) Panic("weak refcount prematurely fell to 0");
+  if (itsVolatile) PANIC("attempt to use strong refcount with volatile object");
+  if (itsStrong == 0) PANIC("strong refcount already 0 in releaseStrong()");
+  if (itsWeak == 0) PANIC("weak refcount prematurely fell to 0");
 
   return --itsStrong;
 }
@@ -143,17 +143,17 @@ void Util::RefCounts::releaseStrongNoDelete() throw()
 {
 DOTRACE("Util::RefCounts::releaseStrongNoDelete");
 
-  if (itsStrong == 0) Panic("strong refcount already 0 in releaseStrongNoDelete()");
+  if (itsStrong == 0) PANIC("strong refcount already 0 in releaseStrongNoDelete()");
 
   --itsStrong;
 }
 
-void Util::RefCounts::debugDump() const throw()
+void Util::RefCounts::debug_dump() const throw()
 {
-  dbgEvalNL(0, this);
-  dbgEvalNL(0, itsStrong);
-  dbgEvalNL(0, itsWeak);
-  dbgEvalNL(0, itsOwnerAlive);
+  dbg_eval_nl(0, this);
+  dbg_eval_nl(0, itsStrong);
+  dbg_eval_nl(0, itsWeak);
+  dbg_eval_nl(0, itsOwnerAlive);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -178,7 +178,7 @@ Util::RefCounted::RefCounted() :
   itsRefCounts(new Util::RefCounts)
 {
 DOTRACE("Util::RefCounted::RefCounted");
-  dbgPrint(7, "RefCounted ctor"); dbgEvalNL(7, this);
+  dbg_print(7, "RefCounted ctor"); dbg_eval_nl(7, this);
 
   itsRefCounts->acquireWeak();
 }
@@ -186,15 +186,15 @@ DOTRACE("Util::RefCounted::RefCounted");
 Util::RefCounted::~RefCounted() throw()
 {
 DOTRACE("Util::RefCounted::~RefCounted");
-  dbgPrint(7, "RefCounted dtor"); dbgEvalNL(7, this);
-  dbgDump(7, *itsRefCounts);
+  dbg_print(7, "RefCounted dtor"); dbg_eval_nl(7, this);
+  dbg_dump(7, *itsRefCounts);
 
   // Must guarantee that (strong-count == 0) when the refcounted object is
   // destroyed. Without that guarantee, weak references will be messed up,
   // since they'll think that the object is still alive (i.e. strong
   // refcount > 0) when it actually is already destroyed.
   if (itsRefCounts->itsStrong > 0)
-    Panic("RefCounted object destroyed before strong refcount dropped to 0");
+    PANIC("RefCounted object destroyed before strong refcount dropped to 0");
 
   itsRefCounts->itsOwnerAlive = false;
   itsRefCounts->releaseWeak();
@@ -204,10 +204,10 @@ void Util::RefCounted::markAsVolatile() throw()
 {
 DOTRACE("Util::RefCounted::markAsVolatile");
   if (itsRefCounts->itsStrong > 0)
-    Panic("can't make volatile object that already has strong refs");
+    PANIC("can't make volatile object that already has strong refs");
 
   if (itsRefCounts->itsVolatile)
-    Panic("object already marked as volatile");
+    PANIC("object already marked as volatile");
 
   itsRefCounts->itsVolatile = true;
 }
@@ -221,7 +221,7 @@ void Util::RefCounted::decrRefCount() const throw()
 {
   if (itsRefCounts->releaseStrong() == 0)
     {
-      dbgEvalNL(3, typeid(*this).name());
+      dbg_eval_nl(3, typeid(*this).name());
       delete this;
     }
 }

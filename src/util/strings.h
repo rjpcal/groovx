@@ -120,7 +120,7 @@ public:
 
   void uniq_reserve(std::size_t capacity);
 
-  void debugDump() const throw();
+  void debug_dump() const throw();
 
 private:
   unsigned int m_refcount;
@@ -397,7 +397,7 @@ public:
   bool operator!=(const fstring& rhs) const throw() { return !equals(rhs); }
 
   /// Dump contents for debugging.
-  void debugDump() const throw();
+  void debug_dump() const throw();
 
 private:
   void do_append(char c);

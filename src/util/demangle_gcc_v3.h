@@ -54,7 +54,7 @@ DOTRACE("demangle_impl");
 
   if (status == 0)
     {
-      Assert(demangled != 0);
+      ASSERT(demangled != 0);
       return demangled;
     }
 
@@ -76,7 +76,7 @@ DOTRACE("demangle_impl");
       throw Util::Error(fstring(msg, "unknown error code"), SRC_POS);
     }
 
-  Assert(false);
+  ASSERT(false);
   return "can't happen"; // can't happen, but placate compiler
 }
 

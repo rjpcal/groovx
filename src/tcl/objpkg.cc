@@ -95,8 +95,8 @@ namespace
          itr.isValid();
          /* increment done in loop body */)
       {
-        dbgEval(3, (*itr)->id());
-        dbgDump(3, *(*itr)->refCounts());
+        dbg_eval(3, (*itr)->id());
+        dbg_dump(3, *(*itr)->refCounts());
 
         if (caster->isMyType((*itr).getWeak()) && (*itr)->isUnshared())
           {

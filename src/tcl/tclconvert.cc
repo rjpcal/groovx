@@ -108,7 +108,7 @@ DOTRACE("Tcl::fromTcl(int*)");
 
   static Tcl_ObjType* const intType = Tcl_GetObjType("int");
 
-  Assert(intType != 0);
+  ASSERT(intType != 0);
 
   SafeUnshared safeobj(obj, intType);
 
@@ -145,7 +145,7 @@ DOTRACE("Tcl::fromTcl(long*)");
 
   static Tcl_ObjType* const wideIntType = Tcl_GetObjType("wideInt");
 
-  Assert(wideIntType != 0);
+  ASSERT(wideIntType != 0);
 
   SafeUnshared safeobj(obj, wideIntType);
 
@@ -182,7 +182,7 @@ DOTRACE("Tcl::fromTcl(unsigned long*)");
 
   static Tcl_ObjType* const wideIntType = Tcl_GetObjType("wideInt");
 
-  Assert(wideIntType != 0);
+  ASSERT(wideIntType != 0);
 
   SafeUnshared safeobj(obj, wideIntType);
 
@@ -218,7 +218,7 @@ DOTRACE("Tcl::fromTcl(bool*)");
 
   static Tcl_ObjType* const booleanType = Tcl_GetObjType("boolean");
 
-  Assert(booleanType != 0);
+  ASSERT(booleanType != 0);
 
   SafeUnshared safeobj(obj, booleanType);
 
@@ -238,7 +238,7 @@ DOTRACE("Tcl::fromTcl(double*)");
 
   static Tcl_ObjType* const doubleType = Tcl_GetObjType("double");
 
-  Assert(doubleType != 0);
+  ASSERT(doubleType != 0);
 
   SafeUnshared safeobj(obj, doubleType);
 
@@ -272,7 +272,7 @@ DOTRACE("Tcl::fromTcl(fstring*)");
 
   char* text = Tcl_GetStringFromObj(obj, &length);
 
-  Assert(length >= 0);
+  ASSERT(length >= 0);
 
   return fstring(char_range(text, (unsigned int) length));
 }

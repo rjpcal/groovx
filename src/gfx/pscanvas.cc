@@ -103,13 +103,13 @@ public:
 
   State& state()
   {
-    Assert(itsStates.size() > 0);
+    ASSERT(itsStates.size() > 0);
     return itsStates.back();
   }
 
   const State& state() const
   {
-    Assert(itsStates.size() > 0);
+    ASSERT(itsStates.size() > 0);
     return itsStates.back();
   }
 
@@ -513,7 +513,7 @@ public:
 
   void setdash(unsigned short bit_pattern)
   {
-    dbgEvalNL(3, (void*) int(bit_pattern));
+    dbg_eval_nl(3, (void*) int(bit_pattern));
 
     bool prev_bit = (0x8000 & bit_pattern);
 

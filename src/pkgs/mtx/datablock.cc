@@ -64,13 +64,13 @@ namespace
     data_block(new double[length], length)
   {
     DOTRACE("shared_data_block::shared_data_block");
-    dbgEval(3, this); dbgEvalNL(3, m_storage);
+    dbg_eval(3, this); dbg_eval_nl(3, m_storage);
   }
 
   shared_data_block::~shared_data_block()
   {
     DOTRACE("shared_data_block::~shared_data_block");
-    dbgEval(3, this); dbgEvalNL(3, m_storage);
+    dbg_eval(3, this); dbg_eval_nl(3, m_storage);
     delete [] m_storage;
   }
 
@@ -106,7 +106,7 @@ void* data_block::operator new(size_t bytes)
 {
 DOTRACE("data_block::operator new");
 
-  Assert(bytes == sizeof(data_block));
+  ASSERT(bytes == sizeof(data_block));
   if (fs_free_list == 0)
     return ::operator new(bytes);
   FreeNode* node = fs_free_list;
@@ -210,7 +210,7 @@ void data_block::make_unique(data_block*& rep)
 
     rep = rep_copy;
 
-    Postcondition(rep->m_refcount == 1);
+    POSTCONDITION(rep->m_refcount == 1);
   }
 }
 

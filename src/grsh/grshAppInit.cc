@@ -216,11 +216,11 @@ PackageInfo DELAYED_PKGS[] =
   {
     switch (signum)
       {
-        case SIGSEGV: Panic("Segmentation fault (SIGSEGV)");
-        case SIGFPE:  Panic("Floating point exception (SIGFPE)");
-        case SIGBUS:  Panic("Bus error (SIGBUS)");
+        case SIGSEGV: PANIC("Segmentation fault (SIGSEGV)");
+        case SIGFPE:  PANIC("Floating point exception (SIGFPE)");
+        case SIGBUS:  PANIC("Bus error (SIGBUS)");
       }
-    Assert(0);
+    ASSERT(0);
   }
 
 } // end anonymous namespace
@@ -253,7 +253,7 @@ DOTRACE("main");
           if (strcmp(argv[i], "-dbglevel") == 0)
             {
               if (argv[i+1] != 0)
-                Debug::setGlobalLevel( atoi(argv[i+1]) );
+                rutz::debug::set_global_level( atoi(argv[i+1]) );
             }
           else if (strcmp(argv[i], "-gtrace") == 0)
             {

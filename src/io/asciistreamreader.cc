@@ -187,14 +187,14 @@ private:
   template <class T>
   T readBasicType(const fstring& name)
   {
-    dbgEvalNL(3, name);
+    dbg_eval_nl(3, name);
 
     AttribMap::Attrib a = currentAttribs().get(name);
     rutz::icstrstream ist(a.value.c_str());
 
     T return_val;
     ist >> return_val;
-    dbgEval(3, a.value); dbgEvalNL(3, return_val);
+    dbg_eval(3, a.value); dbg_eval_nl(3, return_val);
 
     if (ist.fail())
       throwAttrError(name, a.value, SRC_POS);
@@ -265,13 +265,13 @@ DOTRACE("AsciiStreamReader::readDouble");
 fstring AsciiStreamReader::readStringImpl(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readStringImpl");
-  dbgEvalNL(3, name);
+  dbg_eval_nl(3, name);
 
   AttribMap::Attrib a = currentAttribs().get(name);
   rutz::icstrstream ist(a.value.c_str());
 
   int len;
-  ist >> len;                     dbgEvalNL(3, len);
+  ist >> len;                     dbg_eval_nl(3, len);
   ist.get(); // ignore one char of whitespace after the length
 
   if (len < 0)
@@ -288,14 +288,14 @@ DOTRACE("AsciiStreamReader::readStringImpl");
       throwAttrError(name, a.value, SRC_POS);
     }
 
-  dbgEval(3, a.value); dbgEvalNL(3, new_string);
+  dbg_eval(3, a.value); dbg_eval_nl(3, new_string);
   return new_string;
 }
 
 void AsciiStreamReader::readValueObj(const fstring& name, Value& value)
 {
 DOTRACE("AsciiStreamReader::readValueObj");
-  dbgEvalNL(3, name);
+  dbg_eval_nl(3, name);
 
   AttribMap::Attrib a = currentAttribs().get(name);
 
@@ -306,7 +306,7 @@ Ref<IO::IoObject>
 AsciiStreamReader::readObject(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readObject");
-  dbgEvalNL(3, name);
+  dbg_eval_nl(3, name);
   return Ref<IO::IoObject>(readMaybeObject(name));
 }
 
@@ -314,7 +314,7 @@ SoftRef<IO::IoObject>
 AsciiStreamReader::readMaybeObject(const fstring& name)
 {
 DOTRACE("AsciiStreamReader::readMaybeObject");
-  dbgEvalNL(3, name);
+  dbg_eval_nl(3, name);
 
   AttribMap::Attrib attrib = currentAttribs().get(name);
 
@@ -335,7 +335,7 @@ void AsciiStreamReader::readOwnedObject(const fstring& name,
                                         Ref<IO::IoObject> obj)
 {
 DOTRACE("AsciiStreamReader::readOwnedObject");
-  dbgEvalNL(3, name);
+  dbg_eval_nl(3, name);
 
   AttribMap::Attrib a = currentAttribs().get(name);
   rutz::icstrstream ist(a.value.c_str());
@@ -352,7 +352,7 @@ void AsciiStreamReader::readBaseClass(const fstring& baseClassName,
                                       Ref<IO::IoObject> basePart)
 {
 DOTRACE("AsciiStreamReader::readBaseClass");
-  dbgEvalNL(3, baseClassName);
+  dbg_eval_nl(3, baseClassName);
   readOwnedObject(baseClassName, basePart);
 }
 
@@ -373,7 +373,7 @@ DOTRACE("AsciiStreamReader::readRoot");
   while ( itsBuf.peek() != EOF )
     {
       itsBuf >> type >> id >> equal >> bracket;
-      dbgEval(3, type); dbgEvalNL(3, id);
+      dbg_eval(3, type); dbg_eval_nl(3, id);
 
       if ( itsBuf.fail() )
         {
@@ -434,7 +434,7 @@ DOTRACE("AsciiStreamReader::inflateObject");
   // Check if there is a version id in the stream
   if (buf.peek() == 'v')
     {
-      int ch = buf.get();  Assert(ch == 'v');
+      int ch = buf.get();  ASSERT(ch == 'v');
       buf >> svid;
       if ( buf.fail() )
         throw Util::Error("input failed while reading "
@@ -445,7 +445,7 @@ DOTRACE("AsciiStreamReader::inflateObject");
 
   // Get the attribute count
   int attrib_count;
-  buf >> attrib_count;    dbgEvalNL(3, attrib_count);
+  buf >> attrib_count;    dbg_eval_nl(3, attrib_count);
 
   if (attrib_count < 0)
     {
@@ -466,7 +466,7 @@ DOTRACE("AsciiStreamReader::inflateObject");
 
   for (int i = 0; i < attrib_count; ++i)
     {
-      buf >> type >> name >> equal;   dbgEval(3, type); dbgEvalNL(3, name);
+      buf >> type >> name >> equal;   dbg_eval(3, type); dbg_eval_nl(3, name);
 
       if ( buf.fail() )
         {

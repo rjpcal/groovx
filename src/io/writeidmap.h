@@ -63,7 +63,7 @@ namespace IO
         }
 
       // else...
-      Assert((*itr).second != 0);
+      ASSERT((*itr).second != 0);
       return (*itr).second;
     }
 

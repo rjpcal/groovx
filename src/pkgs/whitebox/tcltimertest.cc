@@ -59,7 +59,7 @@ namespace
   void v1_callback()
   {
     v1 -= 1;
-    Assert(tp1 != 0);
+    ASSERT(tp1 != 0);
     if (v1 < -3) tp1->cancel();
   }
 
@@ -111,8 +111,8 @@ namespace
         ++loops;
       }
 
-    dbgEvalNL(3, loops);
-    dbgEvalNL(3, events);
+    dbg_eval_nl(3, loops);
+    dbg_eval_nl(3, events);
 
     TEST_REQUIRE_EQ(v0, 1);
     TEST_REQUIRE_EQ(v1, -4);

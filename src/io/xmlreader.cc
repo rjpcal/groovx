@@ -87,7 +87,7 @@ namespace
                               eltype, "> element with name: ", elname),
                       pos);
 
-    Assert(0);
+    ASSERT(0);
     return 0; // can't happen
   }
 
@@ -244,14 +244,14 @@ namespace
           invalidAttr("id", eltype, name, SRC_POS);
         }
 
-      Assert(itsId >= 0);
+      ASSERT(itsId >= 0);
 
       if (itsType.empty())
         {
           invalidAttr("type", eltype, name, SRC_POS);
         }
 
-      Assert(!itsType.empty());
+      ASSERT(!itsType.empty());
     }
 
     virtual ~ObjrefElement() {}
@@ -291,7 +291,7 @@ namespace
         {
           invalidAttr("version", eltype, name, SRC_POS);
         }
-      Assert(itsVersion >= 0);
+      ASSERT(itsVersion >= 0);
     }
 
     virtual ~GroupElement() throw() {}
@@ -321,7 +321,7 @@ namespace
       return itsVersion;
     }
 
-    virtual char readChar(const fstring& /*name*/) { Assert(0); return '\0'; }
+    virtual char readChar(const fstring& /*name*/) { ASSERT(0); return '\0'; }
 
     virtual int readInt(const fstring& name)
     {
@@ -381,7 +381,7 @@ namespace
 
     virtual Ref<IO::IoObject> readRoot(IO::IoObject* /*root*/)
     {
-      Assert(0); return Ref<IO::IoObject>((IO::IoObject*)0);
+      ASSERT(0); return Ref<IO::IoObject>((IO::IoObject*)0);
     }
 
     void inflate(IO::IoObject& obj)
@@ -529,7 +529,7 @@ namespace
 
     const char* name = findAttr(attr, "name", el, "(noname)", SRC_POS);
 
-    Assert(name != 0);
+    ASSERT(name != 0);
 
     ElPtr elp = makeElement(el, attr, name, itsObjects);
 
@@ -542,19 +542,19 @@ namespace
 
     if (GET_DBG_LEVEL() >= 3)
       {
-        dbgEval(3, itsElCount);
-        dbgEval(3, el);
-        dbgEval(3, name);
-        dbgEval(3, elp.get());
-        dbgEvalNL(3, itsStack.size());
+        dbg_eval(3, itsElCount);
+        dbg_eval(3, el);
+        dbg_eval(3, name);
+        dbg_eval(3, elp.get());
+        dbg_eval_nl(3, itsStack.size());
       }
   }
 
   void TreeBuilder::elementEnd(const char* /*el*/)
   {
     --itsEndCount;
-    Assert(itsStack.size() > 0);
-    Assert(itsStack.back().get() != 0);
+    ASSERT(itsStack.size() > 0);
+    ASSERT(itsStack.back().get() != 0);
     itsStack.back()->finish();
     itsStack.pop_back();
     --itsDepth;
@@ -562,8 +562,8 @@ namespace
 
   void TreeBuilder::characterData(const char* text, int length)
   {
-    Assert(itsStack.size() > 0);
-    Assert(itsStack.back().get() != 0);
+    ASSERT(itsStack.size() > 0);
+    ASSERT(itsStack.back().get() != 0);
     itsStack.back()->characterData(text, length);
   }
 

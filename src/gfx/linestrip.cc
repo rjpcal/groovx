@@ -79,7 +79,7 @@ DOTRACE("Gfx::LineStrip::begin");
       throw Util::Error("LineStrip::end() not called before LineStrip::begin()", SRC_POS);
     }
 
-  Assert(canvas == 0);
+  ASSERT(canvas == 0);
 
   canvas = &c;
   width = w;
@@ -116,7 +116,7 @@ DOTRACE("Gfx::LineStrip::end");
 
   if (pts.size() == 0) return;
 
-  Assert(canvas != 0);
+  ASSERT(canvas != 0);
 
   if (join)
     drawJoinedLineStrip();

@@ -81,7 +81,7 @@ void XmlParser::elementStartC(void* data, const char* el, const char** attr)
 {
 DOTRACE("XmlParser::elementStartC");
   XmlParser* p = static_cast<XmlParser*>(data);
-  Assert(p != 0);
+  ASSERT(p != 0);
   p->elementStart(el, attr);
 }
 
@@ -89,7 +89,7 @@ void XmlParser::elementEndC(void* data, const char* el)
 {
 DOTRACE("XmlParser::elementEndC");
   XmlParser* p = static_cast<XmlParser*>(data);
-  Assert(p != 0);
+  ASSERT(p != 0);
   p->elementEnd(el);
 }
 
@@ -97,7 +97,7 @@ void XmlParser::characterDataC(void* data, const char* text, int length)
 {
 DOTRACE("XmlParser::characterDataC");
   XmlParser* p = static_cast<XmlParser*>(data);
-  Assert(p != 0);
+  ASSERT(p != 0);
   p->characterData(text, length);
 }
 
@@ -127,11 +127,11 @@ DOTRACE("XmlParser::parse");
 
       if (GET_DBG_LEVEL() >= 3)
         {
-          dbgEval(3, buf);
-          dbgEval(3, itsBufSize);
-          dbgEval(3, len);
-          dbgEval(3, peek);
-          dbgEvalNL(3, done);
+          dbg_eval(3, buf);
+          dbg_eval(3, itsBufSize);
+          dbg_eval(3, len);
+          dbg_eval(3, peek);
+          dbg_eval_nl(3, done);
         }
 
       // alternate: use XML_Parse(itsParser, itsBuf, len, done) if we have

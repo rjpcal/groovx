@@ -668,7 +668,7 @@ namespace
 
     listBase = glGenLists(128);
 
-    dbgEvalNL(3, listBase);
+    dbg_eval_nl(3, listBase);
 
     glNewList(listBase + 'A', GL_COMPILE); drawLetter(Adata); glEndList();
     glNewList(listBase + 'B', GL_COMPILE); drawLetter(Bdata); glEndList();

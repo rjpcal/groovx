@@ -122,7 +122,7 @@ int ElementContainer::trialType() const
 DOTRACE("ElementContainer::trialType");
   if (isComplete()) return -1;
 
-  dbgEvalNL(3, currentElement()->trialType());
+  dbg_eval_nl(3, currentElement()->trialType());
 
   return currentElement()->trialType();
 }
@@ -130,8 +130,8 @@ DOTRACE("ElementContainer::trialType");
 int ElementContainer::lastResponse() const
 {
 DOTRACE("ElementContainer::lastResponse");
-  dbgEval(9, rep->sequencePos);
-  dbgEvalNL(9, rep->elements.size());
+  dbg_eval(9, rep->sequencePos);
+  dbg_eval_nl(9, rep->elements.size());
 
   if (rep->sequencePos == 0 ||
       rep->elements.size() == 0) return -1;
@@ -164,7 +164,7 @@ void ElementContainer::vxReturn(ChildStatus s)
 {
 DOTRACE("ExptDriver::vxReturn");
 
-  Precondition( !isComplete() );
+  PRECONDITION( !isComplete() );
 
   switch (s)
     {
@@ -204,12 +204,12 @@ DOTRACE("ExptDriver::vxReturn");
       break;
 
     default:
-      Assert(false);
+      ASSERT(false);
     }
 
-  dbgEval(3, numCompleted());
-  dbgEval(3, numElements());
-  dbgEvalNL(3, isComplete());
+  dbg_eval(3, numCompleted());
+  dbg_eval(3, numElements());
+  dbg_eval_nl(3, isComplete());
 
   // Now, after (possibly) adjusting our sequence counter, see if we have
   // still have additional elements to run...
@@ -228,7 +228,7 @@ DOTRACE("ExptDriver::vxReturn");
 void ElementContainer::vxUndo()
 {
 DOTRACE("ElementContainer::vxUndo");
-  dbgEval(3, rep->sequencePos);
+  dbg_eval(3, rep->sequencePos);
 
   // FIXME how to know whether we should back up our own sequence, or
   // whether our child just backs up in its own sequence?
@@ -239,7 +239,7 @@ DOTRACE("ElementContainer::vxUndo");
   // Move the counter back to the previous element...
   --rep->sequencePos;
 
-  Assert(rep->sequencePos < rep->elements.size());
+  ASSERT(rep->sequencePos < rep->elements.size());
 
   // ...and undo that element
   currentElement()->vxUndo();
@@ -345,8 +345,8 @@ bool ElementContainer::isComplete() const
 {
 DOTRACE("ElementContainer::isComplete");
 
-  dbgEval(9, rep->sequencePos);
-  dbgEvalNL(9, rep->elements.size());
+  dbg_eval(9, rep->sequencePos);
+  dbg_eval_nl(9, rep->elements.size());
 
   return (rep->sequencePos >= rep->elements.size());
 }

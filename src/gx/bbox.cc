@@ -93,13 +93,13 @@ Gfx::Bbox Gfx::Bbox::peer() const
 
 void Gfx::Bbox::push()
 {
-  Assert(rep->txforms.size() >= 1);
+  ASSERT(rep->txforms.size() >= 1);
   rep->txforms.push_back(rep->txforms.back());
 }
 
 void Gfx::Bbox::pop()
 {
-  Assert(rep->txforms.size() > 1);
+  ASSERT(rep->txforms.size() > 1);
   rep->txforms.pop_back();
 }
 
@@ -141,7 +141,7 @@ void Gfx::Bbox::transform(const Txform& m)
 {
   rep->txforms.back().transform(m);
 
-  dbgDump(2, rep->txforms.back());
+  dbg_dump(2, rep->txforms.back());
 }
 
 void Gfx::Bbox::vertex2(const Vec2d& v)

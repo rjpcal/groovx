@@ -151,8 +151,8 @@ public:
 
           if ((*it).second.isValid())
             {
-              dbgEvalNL(3, typeid(*(*it).second).name());
-              dbgEvalNL(3, (*it).second->id());
+              dbg_eval_nl(3, typeid(*(*it).second).name());
+              dbg_eval_nl(3, (*it).second->id());
             }
 
           itsPtrMap.erase(it);
@@ -175,7 +175,7 @@ public:
 
   void insertObj(Util::Object* ptr, bool strong)
     {
-      Precondition(ptr != 0);
+      PRECONDITION(ptr != 0);
 
       // Check if the object is already in the map
       MapType::iterator existing_site = itsPtrMap.find(ptr->id());
@@ -183,7 +183,7 @@ public:
         {
           // Make sure the existing object is the same as the object
           // that we're trying to insert
-          Assert( (*existing_site).second.get() == ptr );
+          ASSERT( (*existing_site).second.get() == ptr );
         }
 
       const int new_id = ptr->id();
@@ -319,7 +319,7 @@ DOTRACE("ObjDb::release");
 void ObjDb::purge()
 {
 DOTRACE("ObjDb::clear");
-  dbgEvalNL(3, typeid(*this).name());
+  dbg_eval_nl(3, typeid(*this).name());
   rep->purge();
 }
 

@@ -81,12 +81,12 @@ TrialEvent::~TrialEvent() throw()
 {
 DOTRACE("TrialEvent::~TrialEvent");
 
-  dbgEval(3, itsTotalOffset);
-  dbgEval(3, itsTotalError);
-  dbgEval(3, itsInvokeCount);
+  dbg_eval(3, itsTotalOffset);
+  dbg_eval(3, itsTotalError);
+  dbg_eval(3, itsInvokeCount);
   double averageError =
     itsInvokeCount ? itsTotalError/itsInvokeCount : 0.0;
-  dbgEvalNL(3, averageError);
+  dbg_eval_nl(3, averageError);
 }
 
 void TrialEvent::readFrom(IO::Reader& reader)
@@ -405,7 +405,7 @@ unsigned int MultiEvent::addEvent(Util::Ref<TrialEvent> event)
 {
 DOTRACE("MultiEvent::addEvent");
   itsEvents.push_back(event);
-  Assert(itsEvents.size() >= 1);
+  ASSERT(itsEvents.size() >= 1);
   return itsEvents.size() - 1;
 }
 

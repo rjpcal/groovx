@@ -54,22 +54,22 @@ namespace
 
   void setOneLevel(int key, int level)
   {
-    if (key < 0 || key >= Debug::MAX_KEYS)
+    if (key < 0 || key >= rutz::debug::MAX_KEYS)
       throw Util::Error(fstring("no such debug key '", key, "'"), SRC_POS);
 
     // else...
-    Debug::keyLevels[key] = level;
+    rutz::debug::key_levels[key] = level;
   }
 
   void setOneLevelc(const char* fname, int level)
   {
-    const int key = Debug::lookupKey(fname);
+    const int key = rutz::debug::lookup_key(fname);
     if (key == -1)
       throw Util::Error(fstring("no debug key for file '", fname, "'"), SRC_POS);
 
-    Assert(key >= 0 && key < Debug::MAX_KEYS);
+    ASSERT(key >= 0 && key < rutz::debug::MAX_KEYS);
 
-    Debug::keyLevels[key] = level;
+    rutz::debug::key_levels[key] = level;
   }
 }
 
@@ -83,10 +83,10 @@ DOTRACE("Gtrace_Init");
   pkg->def("::gtrace", "", &rutz::trace::get_global_trace, SRC_POS);
   pkg->def("maxDepth", "level", &rutz::trace::set_max_level, SRC_POS);
   pkg->def("maxDepth", "", &rutz::trace::get_max_level, SRC_POS);
-  pkg->def("::dbglevelg", "global_level", &Debug::setGlobalLevel, SRC_POS);
+  pkg->def("::dbglevelg", "global_level", &rutz::debug::set_global_level, SRC_POS);
   pkg->def("::dbglevel", "key level", &setOneLevel, SRC_POS);
   pkg->def("::dbglevelc", "filename level", &setOneLevelc, SRC_POS);
-  pkg->def("::dbgkey", "filename", &Debug::lookupKey, SRC_POS);
+  pkg->def("::dbgkey", "filename", &rutz::debug::lookup_key, SRC_POS);
 
   PKG_RETURN;
 }

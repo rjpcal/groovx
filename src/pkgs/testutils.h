@@ -48,7 +48,7 @@ namespace
   void testRequireImpl(bool expr, const char* exprString,
                        const FilePosition& pos)
   {
-    dbgPrint(3, exprString); dbgEvalNL(3, expr);
+    dbg_print(3, exprString); dbg_eval_nl(3, expr);
     if (!expr)
       throw Util::Error(fstring(pos.fileName, ":", pos.lineNo, ":\n"
                                 "\texpected: ", exprString, "\n"), pos);
@@ -61,8 +61,8 @@ namespace
                          const char* exprString2,
                          const FilePosition& pos)
   {
-    dbgPrint(3, exprString1); dbgEvalNL(3, expr1);
-    dbgPrint(3, exprString2); dbgEvalNL(3, expr2);
+    dbg_print(3, exprString1); dbg_eval_nl(3, expr1);
+    dbg_print(3, exprString2); dbg_eval_nl(3, expr2);
     if (!(expr1 == expr2))
       {
         fstring msg(pos.fileName, ":", pos.lineNo, ": failed test:\n");
@@ -88,9 +88,9 @@ namespace
                              const char* exprString2,
                              const FilePosition& pos)
   {
-    dbgPrint(3, exprString1); dbgEvalNL(3, expr1);
-    dbgPrint(3, exprString2); dbgEvalNL(3, expr2);
-    dbgEvalNL(3, tol);
+    dbg_print(3, exprString1); dbg_eval_nl(3, expr1);
+    dbg_print(3, exprString2); dbg_eval_nl(3, expr2);
+    dbg_eval_nl(3, tol);
     if (!approxEq(expr1, expr2, tol))
       {
         fstring msg(pos.fileName, ":", pos.lineNo, ": failed test:\n");

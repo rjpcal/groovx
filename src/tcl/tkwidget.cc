@@ -387,7 +387,7 @@ DOTRACE("TkWidgImpl::cEventCallback");
             DOTRACE("TkWidget::cEventCallback-DestroyNotify");
 
             // Idiot-check that we don't have recursive destroy calls
-            Assert(!widg->rep->shutdownRequested);
+            ASSERT(!widg->rep->shutdownRequested);
 
             widg->rep->shutdownRequested = true;
 
@@ -535,13 +535,13 @@ Tcl::Interp& Tcl::TkWidget::interp() const
 
 Tk_Window Tcl::TkWidget::tkWin() const
 {
-  Assert(rep->tkWin != 0);
+  ASSERT(rep->tkWin != 0);
   return rep->tkWin;
 }
 
 const char* Tcl::TkWidget::pathname() const
 {
-  Assert(rep->tkWin != 0);
+  ASSERT(rep->tkWin != 0);
   return Tk_PathName(rep->tkWin);
 }
 
@@ -549,7 +549,7 @@ double Tcl::TkWidget::pixelsPerInch() const
 {
 DOTRACE("Tcl::TkWidget::pixelsPerInch");
 
-  Assert(rep->tkWin != 0);
+  ASSERT(rep->tkWin != 0);
 
   Screen* scr = Tk_Screen(rep->tkWin);
   const int screen_pixel_width = WidthOfScreen(scr);
@@ -559,7 +559,7 @@ DOTRACE("Tcl::TkWidget::pixelsPerInch");
 
   const double screen_ppi = screen_pixel_width / screen_inch_width;
 
-  dbgEvalNL(3, screen_ppi);
+  dbg_eval_nl(3, screen_ppi);
   return screen_ppi;
 }
 

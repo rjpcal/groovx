@@ -164,8 +164,8 @@ int Tcl::CommandGroup::Impl::cInvokeCallback(
 {
   CommandGroup* c = static_cast<CommandGroup*>(clientData);
 
-  Assert(c != 0);
-  Assert(interp == c->rep->interp.intp());
+  ASSERT(c != 0);
+  ASSERT(interp == c->rep->interp.intp());
 
   return c->rawInvoke(s_objc, objv);
 }
@@ -175,7 +175,7 @@ void Tcl::CommandGroup::Impl::cDeleteCallback(
 {
 DOTRACE("Tcl::CommandGroup::Impl::cDeleteCallback");
   CommandGroup* c = static_cast<CommandGroup*>(clientData);
-  Assert(c != 0);
+  ASSERT(c != 0);
   delete c;
 }
 
@@ -184,7 +184,7 @@ void Tcl::CommandGroup::Impl::cExitCallback(
 {
 DOTRACE("Tcl::CommandGroup::cExitCallback");
   CommandGroup* c = static_cast<CommandGroup*>(clientData);
-  Assert(c != 0);
+  ASSERT(c != 0);
   Tcl_DeleteCommandFromToken(c->rep->interp.intp(), c->rep->cmdToken);
 }
 
@@ -238,8 +238,8 @@ DOTRACE("Tcl::CommandGroup::CommandGroup");
   // part of Impl's or CommandGroups's constructor.
   Tcl_CmdInfo info;
   const int result = Tcl_GetCommandInfoFromToken(rep->cmdToken, &info);
-  Assert(result == 1);
-  Assert(info.isNativeObjectProc == 1);
+  ASSERT(result == 1);
+  ASSERT(info.isNativeObjectProc == 1);
   info.objClientData = static_cast<ClientData>(this);
   info.objProc = &Impl::cInvokeCallback;
   info.deleteData = static_cast<ClientData>(this);
@@ -363,16 +363,16 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
 
   // Should always be at least one since there is always the
   // command-name itself as the first argument.
-  Assert(s_objc >= 1);
+  ASSERT(s_objc >= 1);
 
   if (GET_DBG_LEVEL() > 1)
     {
       for (int argi = 0; argi < s_objc; ++argi)
         {
           const char* arg = Tcl_GetString(objv[argi]);
-          dbgPrint(1, argi);
-          dbgPrint(1, " argv = ");
-          dbgPrintNL(1, arg);
+          dbg_print(1, argi);
+          dbg_print(1, " argv = ");
+          dbg_print_nl(1, arg);
         }
     }
 
@@ -396,7 +396,7 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
           if (GET_DBG_LEVEL() > 1)
             {
               const char* result = rep->interp.getResult<const char*>();
-              dbgEvalNL(1, result);
+              dbg_eval_nl(1, result);
             }
           return TCL_OK;
         }

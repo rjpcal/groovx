@@ -110,7 +110,7 @@ namespace
 
     void push(GLint v)
     {
-      Assert(next < MAXSIZE);
+      ASSERT(next < MAXSIZE);
       data[next++] = v;
     }
 
@@ -157,15 +157,15 @@ namespace
     {
       push( AGL_RGBA );
       push( AGL_RED_SIZE );
-      push( rbits );          dbgEval(3, rbits);
+      push( rbits );          dbg_eval(3, rbits);
       push( AGL_GREEN_SIZE );
-      push( gbits );          dbgEval(3, gbits);
+      push( gbits );          dbg_eval(3, gbits);
       push( AGL_BLUE_SIZE );
-      push( bbits );          dbgEvalNL(3, bbits);
+      push( bbits );          dbg_eval_nl(3, bbits);
       if (abits > 0)
         {
           push( AGL_ALPHA_SIZE );
-          push( abits );      dbgEvalNL(3, abits);
+          push( abits );      dbg_eval_nl(3, abits);
         }
     }
 
@@ -325,7 +325,7 @@ DOTRACE("AglWrapper::bitsPerPixel");
     throw Util::Error("couldn't get Apple-OpenGL pixel size attribute",
                       SRC_POS);
 
-  Assert(value > 0);
+  ASSERT(value > 0);
 
   return static_cast<unsigned int>(value);
 }
@@ -342,10 +342,10 @@ DOTRACE("AglWrapper::makeCurrent");
       WindowRef macWindow = GetWindowFromPort(drawable);
       Rect rectPort;
       GetWindowPortBounds (macWindow, &rectPort);
-      dbgEval(0, rectPort.right);
-      dbgEvalNL(0, rectPort.left);
-      dbgEval(0, rectPort.bottom);
-      dbgEvalNL(0, rectPort.top);
+      dbg_eval(0, rectPort.right);
+      dbg_eval_nl(0, rectPort.left);
+      dbg_eval(0, rectPort.bottom);
+      dbg_eval_nl(0, rectPort.top);
     }
 
   int status1 = aglSetDrawable(itsContext, drawable);
@@ -385,7 +385,7 @@ Window AglWrapper::makeTkRealWindow(Tk_Window tkwin, Window parent,
 {
 DOTRACE("AglWrapper::makeTkRealWindow");
 
-  Assert(false); // FIXME
+  ASSERT(false); // FIXME
   (void) tkwin;
   (void) parent;
   (void) width;

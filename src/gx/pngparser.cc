@@ -200,17 +200,17 @@ DOTRACE("PngParser::parse");
   const int width = png_get_image_width(itsPngPtr, itsInfoPtr);
   const int height = png_get_image_height(itsPngPtr, itsInfoPtr);
 
-  dbgEval(3, width); dbgEvalNL(3, height);
+  dbg_eval(3, width); dbg_eval_nl(3, height);
 
   const int row_bytes = png_get_rowbytes(itsPngPtr, itsInfoPtr);
 
-  dbgEvalNL(3, row_bytes);
+  dbg_eval_nl(3, row_bytes);
 
   const int nchannels = png_get_channels(itsPngPtr, itsInfoPtr);
 
-  dbgEvalNL(3, nchannels);
+  dbg_eval_nl(3, nchannels);
 
-  Assert(row_bytes == width*nchannels);
+  ASSERT(row_bytes == width*nchannels);
 
   Gfx::BmapData new_data(Gfx::Vec2<int>(width, height),
                          nchannels*8, // bits_per_pixel

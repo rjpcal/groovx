@@ -85,7 +85,7 @@ namespace range_checking
 void range_checking::raise_exception(const fstring& msg,
                                      const char* f, int ln)
 {
-  dbgPrintNL(3, msg);
+  dbg_print_nl(3, msg);
   fstring errmsg;
   errmsg.append("range check failed in file '", f, "' at line #");
   errmsg.append(ln, ": ", msg);
@@ -260,7 +260,7 @@ DOTRACE("slice::get_sort_order");
 
   for (int i = 0; i < nelems(); ++i)
     {
-      Assert(buf[i].index < static_cast<unsigned int>(nelems()));
+      ASSERT(buf[i].index < static_cast<unsigned int>(nelems()));
       index.at(0,i) = buf[i].index;
     }
 

@@ -148,7 +148,7 @@ DOTRACE("Tcl::Command::make");
   CommandGroup* const group =
     Tcl::CommandGroup::make(interp, cmd_name, src_pos);
 
-  Assert(group != 0);
+  ASSERT(group != 0);
 
   shared_ptr<Command> cmd( new Command(callback,
                                        cmd_name, usage,

@@ -97,7 +97,7 @@ DOTRACE("Sound_Init");
         }
       catch (std::exception& err)
         {
-          dbgPrintNL(3, "error creating sounds during startup");
+          dbg_print_nl(3, "error creating sounds during startup");
           intp.appendResult("SoundPkg: ");
           intp.appendResult(err.what());
           pkg->setInitStatusError();
