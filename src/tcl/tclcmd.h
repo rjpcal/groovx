@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Mar 15 19:45:13 2000
+// written: Thu Mar 16 10:43:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,6 +48,7 @@ template <class T>
 class ListIterator {
 public:
   typedef T value_type;
+  typedef int difference_type;
 
   enum Pos { BEGIN, END };
 
@@ -65,10 +66,18 @@ public:
   ListIterator operator++(int)
 	 { ListIterator temp(*this); ++itsIndex; return temp; }
 
-  bool operator==(const ListIterator& other)
+  difference_type operator-(const ListIterator& other) const
+	 {
+		if (this->itsIndex > other.itsIndex)
+		  return int(this->itsIndex - other.itsIndex);
+		else
+		  return -(int(other.itsIndex - this->itsIndex));
+	 }
+
+  bool operator==(const ListIterator& other) const
 	 { return (itsIndex == other.itsIndex && itsList == other.itsList); }
 
-  bool operator!=(const ListIterator& other)
+  bool operator!=(const ListIterator& other) const
 	 { return (itsIndex != other.itsIndex || itsList != other.itsList); }
 
 private:
