@@ -11,4 +11,4 @@ package require Maskhatch
 
 source ${::TEST_DIR}/gxshapekit_test.tcl
 
-GxShapeKit::testSubclass Maskhatch MaskHatch
+GxShapeKit::testSubclass MaskHatch

@@ -11,7 +11,7 @@ package require Fixpt
 
 source ${::TEST_DIR}/gxshapekit_test.tcl
 
-GxShapeKit::testSubclass Fixpt FixPt
+GxShapeKit::testSubclass FixPt
 
 ### Obj::new FixPt ###
 test "FixptTcl-Obj::new FixPt" "normal create" {

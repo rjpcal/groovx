@@ -11,4 +11,4 @@ package require Fish
 
 source ${::TEST_DIR}/gxshapekit_test.tcl
 
-GxShapeKit::testSubclass Fish Fish
+GxShapeKit::testSubclass Fish

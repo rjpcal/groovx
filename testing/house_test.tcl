@@ -11,4 +11,4 @@ package require House
 
 source ${::TEST_DIR}/gxshapekit_test.tcl
 
-GxShapeKit::testSubclass House House
+GxShapeKit::testSubclass House

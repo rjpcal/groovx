@@ -21,7 +21,7 @@ variable TEST_DEFINED 1
 variable BASE_CLASS_TESTED 0
 
 namespace export testSubclass
-proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
+proc testSubclass { subclass {objid -1} } {
 
     variable BASE_CLASS_TESTED
 
@@ -39,7 +39,7 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
     }
 
     if { $objid > 0 } {
-        ::testReadWrite $package $objid
+        ::testReadWrite $subclass $objid
     }
 
     # class::type
@@ -119,5 +119,4 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
 }
 # end namespace GxShapeKit
 
-GxShapeKit::testSubclass Gxshapekit
-
+GxShapeKit::testSubclass GxShapeKit

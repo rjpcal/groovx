@@ -15,7 +15,7 @@ source ${::TEST_DIR}/gxshapekit_test.tcl
 
 set ::TEXT [Obj::new GxText]
 GxText::text $::TEXT "GxText"
-GxShapeKit::testSubclass GxText GxText $::TEXT
+GxShapeKit::testSubclass GxText $::TEXT
 
 
 set TEXT -1
