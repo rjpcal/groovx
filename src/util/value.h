@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Thu Mar  9 17:19:37 2000
+// written: Fri Mar 10 01:00:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -165,6 +165,14 @@ public:
   /// Construct with an initial value \a val.
   TValue(const T& val) : itsVal(val) {}
 
+  /// Copy constructor.
+  TValue(const TValue& other) :
+	 Value(), itsVal(other.itsVal) {}
+
+  /// Assignment operator.
+  TValue& operator=(const TValue& other)
+	 { itsVal = other.itsVal; return *this; }
+
   /// Virtual destructor.
   virtual ~TValue ();
 
@@ -221,11 +229,12 @@ public:
   TValuePtr(T& valRef) : itsValPtr(&valRef) {}
 
   /// Copy constructor.
-  TValuePtr(const TValuePtr& other) : itsValPtr(other.itsValPtr) {}
+  TValuePtr(const TValuePtr& other) :
+	 Value(), itsValPtr(other.itsValPtr) {}
 
   /// Assignment operator.
   TValuePtr& operator=(const TValuePtr& other)
-	 { itsValPtr = other.itsValPtr; }
+	 { itsValPtr = other.itsValPtr; return *this; }
 
   /// Virtual destructor.
   virtual ~TValuePtr();
