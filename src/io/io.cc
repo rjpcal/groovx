@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Oct 13 11:05:26 1999
+// written: Wed Oct 13 17:35:46 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,6 +65,9 @@ DOTRACE("IO::readTypename");
   string name;
   is >> name;
 
+  DebugEval(name); DebugPrintNL("");
+  DebugEvalNL(is.peek());
+
   // If we aren't checking, then we can skip the rest of the routine.
   if (!doCheck) return;
   
@@ -88,6 +91,7 @@ DOTRACE("IO::readTypename");
 	 DebugEvalNL(end_pos);
 	 
 	 if (name == candidate) {
+		DebugEval(is.peek());
 		DebugPrintNL("found a name match");
 		return;
 	 }
