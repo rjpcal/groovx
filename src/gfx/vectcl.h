@@ -38,8 +38,6 @@
 #include "tcl/tclconvert.h"
 #include "tcl/tcllistobj.h"
 
-#include "util/error.h"
-
 namespace Tcl
 {
   /// Conversion routine for Tcl object to geom::vec2.
