@@ -21,8 +21,6 @@
 #include "util/utilfwd.h"
 #endif
 
-namespace IO { class IoObject; }
-
 /**
  *
  * InvalidIdError is an exception class that will be thrown from
@@ -88,7 +86,7 @@ public:
 
 	 int getId() const;
 
-	 IO::IoObject* getObject() const;
+	 Util::Object* getObject() const;
   };
 
   class IdIterator : public Iterator {
@@ -104,7 +102,7 @@ public:
   public:
 	 PtrIterator(const Iterator& other) : Iterator(other) {}
 
-	 IO::IoObject* operator*() const { return getObject(); }
+	 Util::Object* operator*() const { return getObject(); }
   };
 
   Iterator begin() const;
@@ -182,16 +180,16 @@ public:
       objects. */
   void clearOnExit();
 
-  /** Return the \c IO::IoObject* at the index given by \a id. Checks
+  /** Return the \c Util::Object* at the index given by \a id. Checks
 		first if \a id is a valid index, and throws an \c InvalidIdError
 		if it is not. */
-  IO::IoObject* getCheckedPtrBase(Util::UID id) throw (InvalidIdError);
+  Util::Object* getCheckedPtrBase(Util::UID id) throw (InvalidIdError);
 
   /** Add ptr at the next available location, and return the index
 		where it was inserted. If necessary, the list will be expanded
 		to make room for the ptr. The PtrList now assumes control of the
 		memory management for the object *ptr. */
-  void insertPtrBase(IO::IoObject* ptr);
+  void insertPtrBase(Util::Object* ptr);
 
 private:
   IoDb(const IoDb&);

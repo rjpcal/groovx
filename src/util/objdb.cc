@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Jun  5 10:41:04 2001
+// written: Wed Jun  6 15:55:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,11 @@
 #ifndef IODB_CC_DEFINED
 #define IODB_CC_DEFINED
 
-#include "io/iodb.h"
-
-#include "io/io.h"
-#include "io/readutils.h"
-#include "io/writeutils.h"
+#include "util/iodb.h"
 
 #include "system/demangle.h"
 
+#include "util/object.h"
 #include "util/ptrhandle.h"
 
 #include <typeinfo>
@@ -52,7 +49,7 @@ private:
 
 public:
 
-  typedef PtrHandle<IO::IoObject> IoPtrHandle;
+  typedef PtrHandle<Util::Object> IoPtrHandle;
 
   typedef std::map<Util::UID, IoPtrHandle> MapType;
   MapType itsPtrMap;
@@ -123,7 +120,7 @@ public:
   void clearAll()
     { itsPtrMap.clear(); }
 
-  IO::IoObject* getCheckedPtrBase(Util::UID id) throw (InvalidIdError)
+  Util::Object* getCheckedPtrBase(Util::UID id) throw (InvalidIdError)
 	 {
 		MapType::iterator itr = itsPtrMap.find(id);
 		if (itr == itsPtrMap.end()) {
@@ -136,7 +133,7 @@ public:
 		return (*itr).second.get();
 	 }
 
-  void insertPtrBase(IO::IoObject* ptr)
+  void insertPtrBase(Util::Object* ptr)
 	 {
 		Precondition(ptr != 0);
 
@@ -221,7 +218,7 @@ int IoDb::Iterator::getId() const
   return (*(itsImpl->itsIter)).first;
 }
 
-IO::IoObject* IoDb::Iterator::getObject() const
+Util::Object* IoDb::Iterator::getObject() const
 {
   return (*(itsImpl->itsIter)).second.get();
 }
@@ -296,12 +293,12 @@ DOTRACE("IoDb::clearOnExit");
   itsImpl->clearAll(); 
 }
 
-IO::IoObject* IoDb::getCheckedPtrBase(Util::UID id) throw (InvalidIdError) {
+Util::Object* IoDb::getCheckedPtrBase(Util::UID id) throw (InvalidIdError) {
 DOTRACE("IoDb::getCheckedPtrBase");
   return itsImpl->getCheckedPtrBase(id);
 }
 
-void IoDb::insertPtrBase(IO::IoObject* ptr) {
+void IoDb::insertPtrBase(Util::Object* ptr) {
 DOTRACE("IoDb::insertPtrBase");
 
   itsImpl->insertPtrBase(ptr);
