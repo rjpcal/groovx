@@ -131,7 +131,7 @@ ifeq ($(COMPILER),MIPSpro)
 	CXXFLAGS += -n32 -ptused -no_prelink \
 		-no_auto_include -LANG:std -LANG:exceptions=ON 
 
-	DEFS += -DMIPSPRO_COMPILER -DSTD_IO= -DPRESTANDARD_IOSTREAMS
+	DEFS += -DMIPSPRO_COMPILER
 
 	CPPFLAGS += -I$(HOME)/local/$(ARCH)/include/cppheaders
 
@@ -151,7 +151,6 @@ endif
 ifeq ($(COMPILER),g++2)
 	CXX := time g++2
 	CXXFLAGS += -Wall -W -Wsign-promo
-	DEFS += -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
 	ifeq ($(MODE),debug)
 		CXXFLAGS += -g -O1
@@ -175,10 +174,8 @@ endif
 
 ifeq ($(COMPILER),g++3)
 	CXX := time g++-3
-# Filter the compiler output...
-	WARNINGS := -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings
-	CXXFLAGS += $(WARNINGS)
-	DEFS += -DSTD_IO=std
+
+	CXXFLAGS += -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings
 
 	ifeq ($(MODE),debug)
 		CXXFLAGS += -O1 -g

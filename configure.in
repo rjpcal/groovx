@@ -25,6 +25,32 @@ AC_PATH_XTRA
 
 AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream dmedia/audio.h Alib.h esd.h])
 
+AC_MSG_CHECKING([whether c++ compiler supports standard iostreams])
+
+AC_TRY_COMPILE([#include <iostream>], [std::ios_base* p;],
+		AC_MSG_RESULT(yes),
+		[AC_DEFINE(PRESTANDARD_IOSTREAMS, 1) AC_MSG_RESULT(no)])
+
+have_std_io=no
+
+AC_MSG_CHECKING([whether iostreams are in std namespace])
+
+AC_TRY_COMPILE([#include <iostream>], [std::iostream* p;],
+		have_std_io=yes)
+
+if test $have_std_io = no; then
+   AC_TRY_COMPILE([#include <iostream.h>], [std::iostream* p;],
+		   have_std_io=yes)
+fi
+
+AC_MSG_RESULT($have_std_io)
+
+if test $have_std_io = yes; then
+   AC_DEFINE(STD_IO, std)
+else
+   AC_DEFINE(STD_IO, [])
+fi
+
 dnl AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
