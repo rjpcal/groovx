@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Tue Oct 24 12:40:33 2000
+// written: Tue Oct 24 15:41:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -225,9 +225,9 @@ DOTRACE("TlistUtils::readFromObjidsOnly");
 	 istrstream ist(line);
 	 Trial* t = Trial::make();
 	 t->readFromObjidsOnly(ist, offset);
-    tlist.insert(Tlist::Ptr(t));
+	 ItemWithId<TrialBase> trialinsert(t, ItemWithId<TrialBase>::INSERT);
     ++trial;
-  }                          
+  }
   if (is.bad()) throw IO::InputError("TlistUtils::readFromObjids");
 
   // Return the number of trials that were loaded.
