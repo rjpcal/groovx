@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Wed Sep 25 19:03:35 2002
+// written: Thu Nov 21 18:01:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,8 +44,8 @@ public:
 
   void destroyWidget();
 
-  int width() const;
-  int height() const;
+  virtual int width() const;
+  virtual int height() const;
   void setWidth(int w);
   void setHeight(int h);
 
@@ -60,8 +60,6 @@ public:
   void pack();
 
   virtual void displayCallback() = 0;
-
-  virtual void reshapeCallback() = 0;
 
   /// Default version is a no-op.
   virtual void timerCallback();
