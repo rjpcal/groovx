@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Mon Aug 13 14:37:47 2001
+// written: Mon Aug 13 15:32:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -171,8 +171,16 @@ DOTRACE("GLCanvas::drawPixels");
     }
   else if (data.bitsPerPixel() == 8)
     {
-      glDrawPixels(data.width(), data.height(), GL_COLOR_INDEX, GL_UNSIGNED_BYTE,
-                   static_cast<GLvoid*>(data.bytesPtr()));
+      if (isRgba())
+        {
+          glDrawPixels(data.width(), data.height(), GL_LUMINANCE,
+                       GL_UNSIGNED_BYTE, static_cast<GLvoid*>(data.bytesPtr()));
+        }
+      else
+        {
+          glDrawPixels(data.width(), data.height(), GL_COLOR_INDEX,
+                       GL_UNSIGNED_BYTE, static_cast<GLvoid*>(data.bytesPtr()));
+        }
     }
   else if (data.bitsPerPixel() == 1)
     {
@@ -186,8 +194,8 @@ DOTRACE("GLCanvas::drawPixels");
           glPixelMapfv(GL_PIXEL_MAP_I_TO_A, 2, simplemap);
         }
 
-      glDrawPixels(data.width(), data.height(), GL_COLOR_INDEX, GL_BITMAP,
-                   static_cast<GLvoid*>(data.bytesPtr()));
+      glDrawPixels(data.width(), data.height(), GL_COLOR_INDEX,
+                   GL_BITMAP, static_cast<GLvoid*>(data.bytesPtr()));
     }
 }
 
