@@ -283,17 +283,10 @@ bool operator<(const dependency& i1, const dependency& i2)
     #include. */
 class cppdeps
 {
-  vector<string> m_user_ipath;
-  vector<string> m_sys_ipath;
-  vector<string> m_literal_exts;
-  vector<string> m_src_files;
-  string m_objdir;
-
-  typedef vector<dependency> dep_list_t;
-
+private:
+  // Typedefs and enums
+  typedef vector<dependency>      dep_list_t;
   typedef map<string, dep_list_t> dep_map_t;
-  dep_map_t m_nested_includes;
-  dep_map_t m_direct_includes;
 
   enum parse_state
     {
@@ -302,11 +295,6 @@ class cppdeps
       COMPLETE = 2
     };
 
-  map<string, parse_state> m_parse_states;
-
-  bool m_check_sys_includes;
-  bool m_quiet;
-
   enum output_mode
     {
       MAKEFILE_DEPS,
@@ -314,14 +302,27 @@ class cppdeps
       NESTED_INCLUDE_TREE
     };
 
-  output_mode m_output_mode;
+  // Member variables
+  vector<string>           m_user_ipath;
+  vector<string>           m_sys_ipath;
+  vector<string>           m_literal_exts;
+  vector<string>           m_src_files;
+  vector<string>           m_obj_exts;
+  string                   m_objdir;
+  bool                     m_check_sys_includes;
+  bool                     m_quiet;
+  output_mode              m_output_mode;
 
-  string m_strip_prefix;
+  dep_map_t                m_nested_includes;
+  dep_map_t                m_direct_includes;
 
-  const time_t m_start_time;  // so we can check to see if any source
-                              // files have timestamps in the future
+  map<string, parse_state> m_parse_states;
 
-  vector<string> m_obj_exts;
+  string                   m_strip_prefix;
+
+  const time_t             m_start_time;  // so we can check to see if
+                                          // any source files have
+                                          // timestamps in the future
 
 public:
   cppdeps(int argc, char** argv);
