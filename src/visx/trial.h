@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Wed May 23 18:48:04 2001
+// written: Tue Jun  5 10:41:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ public:
 
   void add(int objid, int posid);
 
-  void addNode(IO::UID id);
+  void addNode(Util::UID id);
 
   void trNextNode();
 

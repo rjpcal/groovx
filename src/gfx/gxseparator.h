@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Fri May 11 20:51:40 2001
+// written: Tue Jun  5 10:41:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,10 +49,10 @@ public:
 
   typedef unsigned int ChildId;
 
-  ChildId addChild(IO::UID ioUid);
-  void insertChild(IO::UID ioUid, ChildId at_index);
+  ChildId addChild(Util::UID ioUid);
+  void insertChild(Util::UID ioUid, ChildId at_index);
   void removeChildId(ChildId index);
-  void removeChildUid(IO::UID ioUid);
+  void removeChildUid(Util::UID ioUid);
 
   int numChildren() const;
   IdItem<GxNode> getChild(ChildId index) const;

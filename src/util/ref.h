@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Sat Jun  2 15:47:06 2001
+// written: Tue Jun  5 10:41:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,16 +17,16 @@
 #include "util/error.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
+#include "util/object.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRHANDLE_H_DEFINED)
 #include "util/ptrhandle.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRAITS_H_DEFINED)
 #include "util/traits.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
-#include "io/iodecls.h"
 #endif
 
 
@@ -43,8 +43,8 @@ template <class T> class MaybeIdItem;
 ///////////////////////////////////////////////////////////////////////
 
 namespace IdItemUtils {
-  bool isValidId(IO::UID id);
-  IO::IoObject* getCheckedItem(IO::UID id);
+  bool isValidId(Util::UID id);
+  IO::IoObject* getCheckedItem(Util::UID id);
 
   void insertItem(IO::IoObject* obj);
 
@@ -56,7 +56,7 @@ namespace IdItemUtils {
 #endif
 
   template <class T>
-  inline T* getCastedItem(IO::UID id)
+  inline T* getCastedItem(Util::UID id)
   {
 	 IO::IoObject* obj = getCheckedItem(id);
 	 T& t = DYNCAST<T&>(*obj);
@@ -68,7 +68,7 @@ namespace IdItemUtils {
 #endif
 
   template <>
-  inline IO::IoObject* getCastedItem<IO::IoObject>(IO::UID id)
+  inline IO::IoObject* getCastedItem<IO::IoObject>(Util::UID id)
   { return getCheckedItem(id); }
 }
 
@@ -91,7 +91,7 @@ private:
 public:
   // Default destructor, copy constructor, operator=() are fine
 
-  explicit IdItem(IO::UID id) : itsHandle(IdItemUtils::getCastedItem<T>(id)) {}
+  explicit IdItem(Util::UID id) : itsHandle(IdItemUtils::getCastedItem<T>(id)) {}
 
   explicit IdItem(T* ptr) : itsHandle(ptr)
     { IdItemUtils::insertItem(ptr); }
@@ -116,7 +116,7 @@ public:
   T* get()        const { return itsHandle.get(); }
 
   PtrHandle<T> handle() const { return itsHandle; }
-  IO::UID id() const { return itsHandle->id(); }
+  Util::UID id() const { return itsHandle->id(); }
 };
 
 template <class To, class Fr>
@@ -149,7 +149,7 @@ template <class T>
 class MaybeIdItem {
 private:
   mutable NullablePtrHandle<T> itsHandle;
-  IO::UID itsId;
+  Util::UID itsId;
 
   void insertItem()
   {
@@ -160,7 +160,7 @@ private:
 public:
   MaybeIdItem() : itsHandle(0), itsId(0) {}
 
-  explicit MaybeIdItem(IO::UID id_) : itsHandle(0), itsId(id_) {}
+  explicit MaybeIdItem(Util::UID id_) : itsHandle(0), itsId(id_) {}
 
   explicit MaybeIdItem(T* master) : itsHandle(master), itsId(0)
   {
@@ -241,7 +241,7 @@ public:
   bool isValid() const { attemptRefresh(); return itsHandle.isValid(); }
 
   NullablePtrHandle<T> handle() const { attemptRefresh(); return itsHandle; }
-  IO::UID id() const { return itsId; }
+  Util::UID id() const { return itsId; }
 };
 
 template <class To, class Fr>

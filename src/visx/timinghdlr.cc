@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Sat May 19 15:52:49 2001
+// written: Tue Jun  5 10:39:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -190,7 +190,7 @@ DOTRACE("TimingHdlr::getEvent");
   default:
 	 break;
   }  
-  return IdItem<TrialEvent>(IO::UID(0)); // will raise an exception
+  return IdItem<TrialEvent>(Util::UID(0)); // will raise an exception
 }
 
 int TimingHdlr::getElapsedMsec() const {

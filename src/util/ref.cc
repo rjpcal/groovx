@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Oct 27 17:07:31 2000
-// written: Sat Jun  2 15:44:27 2001
+// written: Tue Jun  5 10:40:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,11 +17,11 @@
 
 #include "io/iodb.h"
 
-bool IdItemUtils::isValidId(IO::UID id) {
+bool IdItemUtils::isValidId(Util::UID id) {
   return IoDb::theDb().isValidId(id);
 }
 
-IO::IoObject* IdItemUtils::getCheckedItem(IO::UID id) {
+IO::IoObject* IdItemUtils::getCheckedItem(Util::UID id) {
   return IoDb::theDb().getCheckedPtrBase(id);
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Sat Jun  2 15:43:34 2001
+// written: Tue Jun  5 10:41:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ public:
 
   typedef PtrHandle<IO::IoObject> IoPtrHandle;
 
-  typedef std::map<IO::UID, IoPtrHandle> MapType;
+  typedef std::map<Util::UID, IoPtrHandle> MapType;
   MapType itsPtrMap;
 
   Impl(IoDb* owner) :
@@ -65,21 +65,21 @@ public:
   int count() const
 	 { return itsPtrMap.size(); }
 
-  bool isValidId(IO::UID id) const
+  bool isValidId(Util::UID id) const
 	 {
 		DebugEval(id);
 		MapType::const_iterator itr = itsPtrMap.find(id);
 		return ( (itr != itsPtrMap.end()) );
 	 }
 
-  void release(IO::UID id)
+  void release(Util::UID id)
 	 {
 		MapType::iterator itr = itsPtrMap.find(id);
 
 		itsPtrMap.erase(itr);
 	 }
 
-  void remove(IO::UID id)
+  void remove(Util::UID id)
 	 {
 		MapType::iterator itr = itsPtrMap.find(id);
 		if (itr == itsPtrMap.end()) return;
@@ -123,7 +123,7 @@ public:
   void clearAll()
     { itsPtrMap.clear(); }
 
-  IO::IoObject* getCheckedPtrBase(IO::UID id) throw (InvalidIdError)
+  IO::IoObject* getCheckedPtrBase(Util::UID id) throw (InvalidIdError)
 	 {
 		MapType::iterator itr = itsPtrMap.find(id);
 		if (itr == itsPtrMap.end()) {
@@ -263,17 +263,17 @@ DOTRACE("IoDb::count");
   return itsImpl->count();
 }
 
-bool IoDb::isValidId(IO::UID id) const {
+bool IoDb::isValidId(Util::UID id) const {
 DOTRACE("IoDb::isValidId");
   return itsImpl->isValidId(id);
 }
 
-void IoDb::remove(IO::UID id) {
+void IoDb::remove(Util::UID id) {
 DOTRACE("IoDb::remove");
   itsImpl->remove(id);
 }
 
-void IoDb::release(IO::UID id) {
+void IoDb::release(Util::UID id) {
 DOTRACE("IoDb::release");
   itsImpl->release(id);
 }
@@ -296,7 +296,7 @@ DOTRACE("IoDb::clearOnExit");
   itsImpl->clearAll(); 
 }
 
-IO::IoObject* IoDb::getCheckedPtrBase(IO::UID id) throw (InvalidIdError) {
+IO::IoObject* IoDb::getCheckedPtrBase(Util::UID id) throw (InvalidIdError) {
 DOTRACE("IoDb::getCheckedPtrBase");
   return itsImpl->getCheckedPtrBase(id);
 }

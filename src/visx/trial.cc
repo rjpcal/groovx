@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat Jun  2 09:17:18 2001
+// written: Tue Jun  5 10:40:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -207,7 +207,7 @@ public:
 
   void add(int objid, int posid);
 
-  void addNode(IO::UID id)
+  void addNode(Util::UID id)
   {
 	 IdItem<GxNode> obj(id);
 	 try {
@@ -683,7 +683,7 @@ double Trial::avgRespTime() const
 void Trial::add(int objid, int posid)
   { itsImpl->add(objid, posid); }
 
-void Trial::addNode(IO::UID id)
+void Trial::addNode(Util::UID id)
   { itsImpl->addNode(id); }
 
 void Trial::trNextNode()

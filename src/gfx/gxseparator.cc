@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Sat May 19 15:52:49 2001
+// written: Tue Jun  5 10:40:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ DOTRACE("GxSeparator::writeTo");
 											itsImpl->itsChildren.end());
 }
 
-GxSeparator::ChildId GxSeparator::addChild(IO::UID ioUid) {
+GxSeparator::ChildId GxSeparator::addChild(Util::UID ioUid) {
 DOTRACE("GxSeparator::addChild");
 
   IdItem<GxNode> item(ioUid);
@@ -105,7 +105,7 @@ DOTRACE("GxSeparator::addChild");
   return (itsImpl->itsChildren.size() - 1);
 }
 
-void GxSeparator::insertChild(IO::UID ioUid, ChildId at_index) {
+void GxSeparator::insertChild(Util::UID ioUid, ChildId at_index) {
 DOTRACE("GxSeparator::insertChild");
 
   IdItem<GxNode> item(ioUid);
@@ -125,7 +125,7 @@ DOTRACE("GxSeparator::removeChildId");
 	 itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
 }
 
-void GxSeparator::removeChildUid(IO::UID io_uid) {
+void GxSeparator::removeChildUid(Util::UID io_uid) {
 DOTRACE("GxSeparator::removeChildUid");
   for(Impl::VecType::iterator
 		  itr = itsImpl->itsChildren.begin(),
