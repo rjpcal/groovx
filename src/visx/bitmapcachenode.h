@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Mon Aug 13 12:15:35 2001
+// written: Tue Aug 14 12:59:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,9 +61,7 @@ private:
       return result;
     }
 
-  // This function updates the cached bitmap, and returns a true if
-  // the bitmap was actually recached, and false if nothing was done.
-  bool recacheBitmap(Gfx::Canvas& canvas) const;
+  void recacheBitmap(Gfx::Canvas& canvas) const;
 };
 
 static const char vcid_bitmapcachenode_h[] = "$Header$";
