@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Mon Jun  7 14:10:50 1999
+// written: Thu Jun 24 11:24:24 1999
 // $Id$
 //
 // This file defines the IO abstract interface. This interface
@@ -26,6 +26,10 @@
 #ifndef CMATH_DEFINED
 #include <cmath>
 #define CMATH_DEFINED
+#endif
+
+#ifndef ERROR_H_DEFINED
+#include "error.h"
 #endif
 
 class istream; class ostream;
@@ -86,51 +90,48 @@ int gCharCount(T val);
 //
 ///////////////////////////////////////////////////////////////////////
 
-class IoError {
+class IoError : public ErrorWithMsg {
 public:
-  IoError() : itsInfo() {}
+  IoError();
   IoError(const string& str);
   IoError(const type_info& ti);
-  virtual const string& info() { return itsInfo; }
 protected:
-  void setInfo(const string& str);
-  void setInfo(const type_info& ti);
-private:
-  string itsInfo;
+  virtual void setMsg(const string& str);
+  virtual void setMsg(const type_info& ti);
 };
 
 class InputError : public IoError {
 public:
   InputError() : IoError() {}
-  InputError(const string& str) { setInfo(str); }
-  InputError(const type_info& ti) { setInfo(ti); }
+  InputError(const string& str) { setMsg(str); }
+  InputError(const type_info& ti) { setMsg(ti); }
 };
 
 class OutputError : public IoError {
 public:
   OutputError() : IoError() {}
-  OutputError(const string& str) { setInfo(str); }
-  OutputError(const type_info& ti) { setInfo(ti); }
+  OutputError(const string& str) { setMsg(str); }
+  OutputError(const type_info& ti) { setMsg(ti); }
 };
 
 class IoLogicError : public IoError {
 public:
   IoLogicError() : IoError() {}
-  IoLogicError(const string& str) { setInfo(str); }
-  IoLogicError(const type_info& ti) { setInfo(ti); }
+  IoLogicError(const string& str) { setMsg(str); }
+  IoLogicError(const type_info& ti) { setMsg(ti); }
 };
 
 class IoValueError : public IoError {
 public:
   IoValueError() : IoError() {}
-  IoValueError(const string& str) { setInfo(str); }
-  IoValueError(const type_info& ti) { setInfo(ti); }
+  IoValueError(const string& str) { setMsg(str); }
+  IoValueError(const type_info& ti) { setMsg(ti); }
 };
 
 class IoFilenameError : public IoError {
 public:
   IoFilenameError() : IoError() {}
-  IoFilenameError(const string& filename) { setInfo(filename); }
+  IoFilenameError(const string& filename) { setMsg(filename); }
 };
 
 static const char vcid_io_h[] = "$Header$";
