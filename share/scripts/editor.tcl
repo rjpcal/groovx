@@ -25,21 +25,59 @@ package require Iwidgets
 itcl::class FieldControls {
 	 private variable itsObjType
 	 private variable itsNames
+	 private variable itsFrame
 	 private variable itsControls
 	 private variable itsCachedValues
 
-	 constructor {objtype} {
+	 constructor {parent objtype setCallback} {
 		  set itsObjType $objtype
 		  set itsNames [list]
 		  foreach field [${objtype}::allFields] {
 				lappend itsNames [lindex $field 0]
 				set itsCachedValues($field) 0
 		  }
+
+		  set itsFrame [frame $parent.fields]
+
+		  set currentframe ""
+
+		  foreach field [${objtype}::allFields] {
+				set name [lindex $field 0]
+				set lower [lindex $field 1]
+				set upper [lindex $field 2]
+				set step [lindex $field 3]
+				set flags [lindex $field 4]
+
+				set startsnewgroup [expr [lsearch $flags NEW_GROUP] != -1]
+				set transient [expr [lsearch $flags TRANSIENT] != -1]
+
+				if {$startsnewgroup} {
+					 set currentframe [frame $itsFrame.$name]
+					 pack $currentframe -side left -fill y -expand yes
+				}
+
+				set pane $currentframe
+
+				scale $pane.$name -label $name -from $lower -to $upper \
+						  -resolution $step -bigincrement $step \
+						  -digits [string length $step] \
+						  -repeatdelay 500 -repeatinterval 250 \
+						  -orient horizontal \
+						  -command "$setCallback $name"
+
+				if {$transient} {
+					 $pane.$name configure -fg blue
+				}
+
+				pack $pane.$name -side top
+
+				set itsControls($name) $pane.$name
+		  }
 	 }
 
 	 public method names {} { return $itsNames }
 
-	 public method addControl {name path} { set itsControls($name) $path }
+	 public method getFrame {} { return $itsFrame }
 
 	 public method getControl {name} { return $itsControls($name) }
 
@@ -210,46 +248,13 @@ itcl::class Editor {
 		  if { ![info exists itsControlsArray($objtype)] } {
 				$itsPanes insert 0 $objtype
 
-				set fieldFrame [frame [$itsPanes childsite $objtype].fields]
+				set parent [$itsPanes childsite $objtype]
 
-				set currentframe ""
+				set itsControlsArray($objtype) \
+						  [FieldControls #auto $parent $objtype \
+						  [itcl::code $this setAttrib]]
 
-				set itsControlsArray($objtype) [FieldControls #auto $objtype]
-
-				foreach field [${objtype}::allFields] {
-					 set name [lindex $field 0]
-					 set lower [lindex $field 1]
-					 set upper [lindex $field 2]
-					 set step [lindex $field 3]
-					 set flags [lindex $field 4]
-
-					 set startsnewgroup [expr [lsearch $flags NEW_GROUP] != -1]
-					 set transient [expr [lsearch $flags TRANSIENT] != -1]
-
-					 if {$startsnewgroup} {
-						  set currentframe [frame $fieldFrame.$name]
-						  pack $currentframe -side left -fill y -expand yes
-					 }
-
-					 set pane $currentframe
-
-					 scale $pane.$name -label $name -from $lower -to $upper \
-								-resolution $step -bigincrement $step \
-								-digits [string length $step] \
-								-repeatdelay 500 -repeatinterval 250 \
-								-orient horizontal \
-								-command [itcl::code $this setAttrib $name]
-
-					 if {$transient} {
-						  $pane.$name configure -fg blue
-					 }
-
-					 pack $pane.$name -side top
-
-					 $itsControlsArray($objtype) addControl $name $pane.$name
-				}
-
-				pack $fieldFrame -fill y -side left
+				pack [$itsControlsArray($objtype) getFrame] -fill y -side left
 		  }
 
 		  if { ![string equal $itsObjType $objtype] } {
