@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Fri Oct 20 17:42:43 2000
+// written: Mon Oct 23 11:58:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,8 +23,8 @@
 #include "trialbase.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRLIST_H_DEFINED)
-#include "ptrlist.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITEMWITHID_H_DEFINED)
+#include "itemwithid.h"
 #endif
 
 namespace GWT {
