@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Oct 20 18:14:12 1999
+// written: Mon Nov 15 16:40:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -155,7 +155,6 @@ protected:
 	 double raw_parcel_side = sqrt(parcel_area);
 	 
 	 int num_cols = int(world_width/raw_parcel_side) + 1;
-	 //	 int num_rows = 1 + (objids.size()-1)/num_cols;
 
 	 double parcel_side = world_width/num_cols;
 
@@ -167,8 +166,7 @@ protected:
 		if (x_step == num_cols) { x_step = 0; ++y_step; }
 
 		GrObj* obj = ObjList::theObjList().getCheckedPtr(objids[i]);
-		bool haveBB = obj->getBoundingBox(bbxs[i].l, bbxs[i].t,
-													 bbxs[i].r, bbxs[i].b);
+		bool haveBB = obj->getBoundingBox(bbxs[i]);
 
 		if ( !haveBB ) {
 		  throw TclError("all objects must have bounding boxes");
