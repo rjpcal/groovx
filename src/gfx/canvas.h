@@ -3,7 +3,7 @@
 // canvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Nov 15 18:00:27 1999
-// written: Mon Dec  6 15:48:38 1999
+// written: Mon Dec  6 19:53:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,8 @@ template <class V> class Point;
 template <class V> class Rect;
 
 class Canvas {
-protected:
-  virtual ~Canvas();
 public:
+  virtual ~Canvas();
 
   static Canvas& theCanvas();
 
