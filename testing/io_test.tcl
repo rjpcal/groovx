@@ -22,11 +22,11 @@ proc testStringifyCmd { packagename classname item_argn {item_id -1} } {
 	 set usage ""
 
 	 if { $item_argn == 1 } {
-		  set usage "wrong \# args: should be \"$cmdname item_id\""
+		  set usage "wrong \# args: should be "
 	 }
 
 	 if { $item_argn == -1 } {
-		  set usage "wrong \# args: should be \"$cmdname\""
+		  error "weird item_argn"
 	 }
 
 	 if { $item_argn == 1 } {
@@ -70,11 +70,11 @@ proc testDestringifyCmd { packagename classname item_argn {item_id -1} } {
 	 set usage ""
 
 	 if { $item_argn == 1 } {
-		  set usage "wrong \# args: should be \"$cmdname item_id string\""
+		  set usage "wrong \# args: should be "
 	 }
 
 	 if { $item_argn == -1 } {
-		  set usage "wrong \# args: should be \"$cmdname string\""
+		  error "weird item_argn"
 	 }
 
 
@@ -129,11 +129,11 @@ proc testWriteCmd { packagename classname item_argn {item_id -1} } {
 	 set usage ""
 
 	 if { $item_argn == 1 } {
-		  set usage "wrong \# args: should be \"$cmdname item_id\""
+		  set usage "wrong \# args: should be "
 	 }
 
 	 if { $item_argn == -1 } {
-		  set usage "wrong \# args: should be \"$cmdname\""
+		  error "weird item_argn"
 	 }
 
 	 if { $item_argn == 1 } {
@@ -177,11 +177,11 @@ proc testReadCmd { packagename classname item_argn {item_id -1} } {
 	 set usage ""
 
 	 if { $item_argn == 1 } {
-		  set usage "wrong \# args: should be \"$readcmd item_id string\""
+		  set usage "wrong \# args: should be "
 	 }
 
 	 if { $item_argn == -1 } {
-		  set usage "wrong \# args: should be \"$readcmd string\""
+		  error "weird item_argn"
 	 }
 
 

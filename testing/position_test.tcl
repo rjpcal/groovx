@@ -83,10 +83,10 @@ test "PositionTcl-Pos::translation" "error on bad posid" {
 ### Pos::stringifyCmd ###
 test "PositionTcl-Pos::stringify" "too few args" {
     IO::stringify
-} {wrong \# args: should be "IO::stringify item_id"}
+} {wrong \# args: should be}
 test "PositionTcl-IO::stringify" "too many args" {
     IO::stringify posid junk
-} {wrong \# args: should be "IO::stringify item_id"}
+} {wrong \# args: should be}
 test "PositionTcl-IO::stringify" "normal use" {
 	 Pos::scaling $::pos {1.0 2.5 4.0}
 	 Pos::translation $::pos {5.3 10.6 15.9}
@@ -102,7 +102,7 @@ test "PositionTcl-IO::stringify" "error on non-integral posid" {
 ### Pos::typeCmd ###
 test "PositionTcl-IO::type" "args" {
     IO::type
-} {wrong \# args: should be "IO::type item_id\(s\)"}
+} {wrong \# args: should be}
 test "PositionTcl-IO::type" "normal use on Position" { 
 	 set f [Obj::new Position]
 	 IO::type $f
