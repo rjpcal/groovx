@@ -24,6 +24,7 @@
 #include <unistd.h>
 
 #ifdef WITH_READLINE
+#  include <cstdlib> // for malloc/free
 #  include <readline/readline.h>
 #  include <readline/history.h>
 #endif
