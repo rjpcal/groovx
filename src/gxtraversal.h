@@ -2,10 +2,10 @@
 //
 // gxtraversal.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 23:42:45 2000
-// written: Fri Nov 10 17:05:57 2000
+// written: Thu May 10 12:04:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // gbvec.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Sat Dec  2 09:21:40 2000
+// written: Thu May 10 12:04:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

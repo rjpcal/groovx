@@ -2,10 +2,10 @@
 //
 // bitmaprep.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Nov 10 17:04:02 2000
+// written: Thu May 10 12:04:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

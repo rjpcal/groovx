@@ -2,10 +2,10 @@
 //
 // house.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:15 1999
-// written: Mon Nov 13 22:09:58 2000
+// written: Thu May 10 12:04:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // glbmaprenderer.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:52:41 1999
-// written: Fri Nov 10 17:04:00 2000
+// written: Thu May 10 12:04:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

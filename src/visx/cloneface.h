@@ -2,10 +2,10 @@
 //
 // cloneface.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:25 1999
-// written: Tue Nov 14 21:38:26 2000
+// written: Thu May 10 12:04:41 2001
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional

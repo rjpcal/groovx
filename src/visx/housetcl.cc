@@ -2,10 +2,10 @@
 //
 // housetcl.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 15:14:19 1999
-// written: Mon Nov 13 22:15:17 2000
+// written: Thu May 10 12:04:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

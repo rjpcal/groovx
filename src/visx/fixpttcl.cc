@@ -2,10 +2,10 @@
 //
 // fixpttcl.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Nov 13 11:45:10 2000
+// written: Thu May 10 12:04:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

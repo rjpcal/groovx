@@ -2,10 +2,10 @@
 //
 // bitmaptcl.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Mon Dec 11 14:29:48 2000
+// written: Thu May 10 12:04:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

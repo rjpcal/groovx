@@ -2,10 +2,10 @@
 //
 // grobjimpl.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Fri Nov 10 17:03:53 2000
+// written: Thu May 10 12:04:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // facetcl.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Tue Nov 14 21:38:06 2000
+// written: Thu May 10 12:04:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // gtexttcl.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 12:30:38 1999
-// written: Mon Dec 11 14:29:48 2000
+// written: Thu May 10 12:04:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

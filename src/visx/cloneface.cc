@@ -2,10 +2,10 @@
 //
 // cloneface.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:26 1999
-// written: Thu Nov 16 01:18:20 2000
+// written: Thu May 10 12:04:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

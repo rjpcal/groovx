@@ -2,10 +2,10 @@
 //
 // experiment.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:50:51 1999
-// written: Fri Nov 10 17:04:01 2000
+// written: Thu May 10 12:04:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

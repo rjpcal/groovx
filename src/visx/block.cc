@@ -2,10 +2,10 @@
 //
 // block.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Nov 28 15:30:06 2000
+// written: Thu May 10 12:04:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
