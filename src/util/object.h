@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun  5 10:23:15 2001
-// written: Tue Jun  5 10:30:50 2001
+// written: Tue Jun  5 10:39:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,16 +13,13 @@
 #ifndef OBJECT_H_DEFINED
 #define OBJECT_H_DEFINED
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
+#include "util/utilfwd.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REFCOUNTED_H_DEFINED)
 #include "util/refcounted.h"
 #endif
-
-namespace Util
-{
-  class Object;
-
-  typedef unsigned long UID;
-}
 
 
 ///////////////////////////////////////////////////////////////////////
