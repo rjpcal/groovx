@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Thu Nov 21 17:14:38 2002
+// written: Thu Nov 21 18:02:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -173,6 +173,7 @@ DOTRACE("GWT::Widget::Impl::render");
       Gfx::MatrixSaver msaver(canvas);
       Gfx::AttribSaver asaver(canvas);
 
+      itsCamera->reshape(itsOwner->width(), itsOwner->height());
       itsCamera->draw(canvas);
       itsDrawNode->draw(canvas);
       itsUndrawNode = itsDrawNode;
