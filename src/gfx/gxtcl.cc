@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Mon Nov  4 18:56:30 2002
+// written: Thu Nov 14 17:34:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,11 +16,13 @@
 #include "gfx/gxcolor.h"
 #include "gfx/gxcylinder.h"
 #include "gfx/gxdrawstyle.h"
+#include "gfx/gxemptynode.h"
 #include "gfx/gxlighting.h"
 #include "gfx/gxline.h"
 #include "gfx/gxmaterial.h"
 #include "gfx/gxnode.h"
 #include "gfx/gxpointset.h"
+#include "gfx/gxscaler.h"
 #include "gfx/gxseparator.h"
 #include "gfx/gxsphere.h"
 #include "gfx/pscanvas.h"
@@ -151,6 +153,24 @@ DOTRACE("Gx_Init");
   Tcl::defCreator<GxPointSet>(pkg10);
 
   status = pkg10->combineStatus(status);
+
+  Tcl::Pkg* pkg11 = new Tcl::Pkg(interp, "GxScaler", "$Revision$");
+  Tcl::defCreator<GxScaler>(pkg11);
+  pkg11->defAttrib("child", &GxScaler::child, &GxScaler::setChild);
+  pkg11->defAttrib("mode", &GxScaler::getMode, &GxScaler::setMode);
+  pkg11->defAttrib("width", &GxScaler::scaledWidth, &GxScaler::setWidth);
+  pkg11->defAttrib("height", &GxScaler::scaledHeight, &GxScaler::setHeight);
+  pkg11->defAttrib("maxDim", &GxScaler::scaledMaxDim, &GxScaler::setMaxDim);
+  pkg11->defAttrib("aspect", &GxScaler::aspectRatio, &GxScaler::setAspectRatio);
+  pkg11->defAttrib("widthFactor", &GxScaler::widthFactor, &GxScaler::setWidthFactor);
+  pkg11->defAttrib("heightFactor", &GxScaler::heightFactor, &GxScaler::setHeightFactor);
+
+  status = pkg11->combineStatus(status);
+
+  Tcl::Pkg* pkg12 = new Tcl::Pkg(interp, "GxEmptyNode", "$Revision$");
+  Tcl::defCreator<GxEmptyNode>(pkg12);
+
+  status = pkg12->combineStatus(status);
 
   return status;
 }
