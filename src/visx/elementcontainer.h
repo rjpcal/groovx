@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  5 16:43:50 2002
-// written: Thu Dec  5 17:24:18 2002
+// written: Thu Dec  5 18:03:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,6 +55,9 @@ public:
   /// Halt the current child element.
   virtual void vxHalt() const;
 
+  /// Delegates partially on to vxAllChildrenFinished().
+  virtual void vxChildFinished(ChildStatus s);
+
   /// Undo the previous element.
   /** The state of the experiment is restored to what it was just prior to
       the beginning of the most recent successfully completed
@@ -102,7 +105,7 @@ public:
   bool isComplete() const;
 
 protected:
-  void childFinishedHelper(Element::ChildStatus s);
+  virtual void vxAllChildrenFinished() = 0;
 
   void ensureNotComplete() const;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 17:35:09 2002
+// written: Thu Dec  5 18:01:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,9 +83,8 @@ public:
   /// End the current trial normally, and move on to the next trial.
   virtual void vxEndTrialHook();
 
-  /** Attempt to start the next element, or stop the experiment if there
-      are no more element. */
-  virtual void vxChildFinished(ChildStatus s);
+  /// Stop the experiment since all child elements are finished.
+  virtual void vxAllChildrenFinished();
 
   //////////////////////////////
   // Accessors + Manipulators //

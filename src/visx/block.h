@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Thu Dec  5 17:34:12 2002
+// written: Thu Dec  5 18:00:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,8 +71,9 @@ public:
   /// Prepares the Block to start the next element. */
   virtual void vxEndTrialHook();
 
-  /// Start the next element, or pass back to the parent if the block is finished.
-  virtual void vxChildFinished(ChildStatus s);
+protected:
+  /// Pass control back to the parent since all child elements are finished.
+  virtual void vxAllChildrenFinished();
 
 private:
   Block(const Block&);

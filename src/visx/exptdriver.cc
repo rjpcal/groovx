@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 17:53:08 2002
+// written: Thu Dec  5 18:01:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -248,29 +248,20 @@ DOTRACE("ExptDriver::vxEndTrialHook");
   IO::saveASW(Util::Ref<IO::IoObject>(this), rep->autosaveFile);
 }
 
-void ExptDriver::vxChildFinished(ChildStatus s)
+void ExptDriver::vxAllChildrenFinished()
 {
-DOTRACE("ExptDriver::vxChildFinished");
+DOTRACE("ExptDriver::vxAllChildrenFinished");
 
-  childFinishedHelper(s);
+  Util::log( "experiment complete" );
 
-  if ( isComplete() )
-    {
-      Util::log( "experiment complete" );
+  addLogInfo("Experiment complete.");
 
-      addLogInfo("Experiment complete.");
+  storeData();
 
-      storeData();
+  Util::log( fstring("Expt::doWhenComplete") );
+  rep->doWhenComplete->invoke(""); // Call the user-defined callback
 
-      Util::log( fstring("Expt::doWhenComplete") );
-      rep->doWhenComplete->invoke(""); // Call the user-defined callback
-
-      Util::Log::removeScope("Expt");
-    }
-  else
-    {
-      currentElement()->vxRun(*this);
-    }
+  Util::Log::removeScope("Expt");
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  5 16:43:54 2002
-// written: Thu Dec  5 17:33:14 2002
+// written: Thu Dec  5 18:04:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -142,6 +142,71 @@ DOTRACE("ElementContainer::vxHalt");
     currentElement()->vxHalt();
 }
 
+void ElementContainer::vxChildFinished(ChildStatus s)
+{
+DOTRACE("ExptDriver::vxChildFinished");
+
+  Precondition( !isComplete() );
+
+  switch (s)
+    {
+    case Element::CHILD_OK:
+      // Move on to the next element.
+      ++rep->sequencePos;
+      break;
+
+    case Element::CHILD_REPEAT:
+      {
+        // Add a repeat of the current element to the sequence and reshuffle
+        addElement(currentElement(), 1);
+        std::random_shuffle
+          (rep->elements.begin()+rep->sequencePos+1, rep->elements.end());
+
+        // Move on to the next element.
+        ++rep->sequencePos;
+      }
+      break;
+
+    case Element::CHILD_ABORTED:
+      {
+        // Remember the element that we are about to abort so we can
+        // store it at the end of the sequence.
+        Ref<Element> aborted_element = currentElement();
+
+        // Erase the aborted element from the sequence. Subsequent elements
+        // will slide up to fill in the gap.
+        rep->elements.erase(rep->elements.begin()+rep->sequencePos);
+
+        // Add the aborted element to the back of the sequence.
+        rep->elements.push_back(aborted_element);
+
+        // Don't need to increment sequencePos here since the new trial
+        // has "slid into place" by the reshuffling we've just done.
+      }
+      break;
+
+    default:
+      Assert(false);
+    }
+
+  dbgEval(3, numCompleted());
+  dbgEval(3, numElements());
+  dbgEvalNL(3, isComplete());
+
+  // Now, after (possibly) adjusting our sequence counter, see if we have
+  // still have additional elements to run...
+  if ( isComplete() )
+    {
+      vxAllChildrenFinished();
+    }
+  else
+    {
+      Util::log( status() );
+
+      currentElement()->vxRun(*this);
+    }
+}
+
 void ElementContainer::vxUndo()
 {
 DOTRACE("ElementContainer::vxUndo");
@@ -266,55 +331,6 @@ DOTRACE("ElementContainer::isComplete");
   dbgEvalNL(9, rep->elements.size());
 
   return (rep->sequencePos >= rep->elements.size());
-}
-
-void ElementContainer::childFinishedHelper(Element::ChildStatus s)
-{
-DOTRACE("ElementContainer::childFinishedHelper");
-  switch (s)
-    {
-    case Element::CHILD_OK:
-      // Move on to the next element.
-      ++rep->sequencePos;
-      break;
-
-    case Element::CHILD_REPEAT:
-      {
-        // Add a repeat of the current element to the sequence and reshuffle
-        addElement(currentElement(), 1);
-        std::random_shuffle
-          (rep->elements.begin()+rep->sequencePos+1, rep->elements.end());
-
-        // Move on to the next element.
-        ++rep->sequencePos;
-      }
-      break;
-
-    case Element::CHILD_ABORTED:
-      {
-        // Remember the element that we are about to abort so we can
-        // store it at the end of the sequence.
-        Ref<Element> aborted_element = currentElement();
-
-        // Erase the aborted element from the sequence. Subsequent elements
-        // will slide up to fill in the gap.
-        rep->elements.erase(rep->elements.begin()+rep->sequencePos);
-
-        // Add the aborted element to the back of the sequence.
-        rep->elements.push_back(aborted_element);
-
-        // Don't need to increment sequencePos here since the new trial
-        // has "slid into place" by the reshuffling we've just done.
-      }
-      break;
-
-    default:
-      Assert(false);
-    }
-
-  dbgEval(3, numCompleted());
-  dbgEval(3, numElements());
-  dbgEvalNL(3, isComplete());
 }
 
 void ElementContainer::ensureNotComplete() const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Dec  5 17:07:33 2002
+// written: Thu Dec  5 18:03:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -150,29 +150,15 @@ DOTRACE("Block::vxEndTrialHook");
     itsParent->vxEndTrialHook();
 }
 
-void Block::vxChildFinished(ChildStatus s)
+void Block::vxAllChildrenFinished()
 {
-DOTRACE("Block::vxChildFinished");
-  Assert( !isComplete() );
+DOTRACE("Block::vxAllChildrenFinished");
 
-  childFinishedHelper(s);
-
-  // Now, after (possibly) adjusting our sequence counter, see if we have
-  // still have additional elements to run...
-  if ( !isComplete() )
-    {
-      Util::log( status() );
-
-      currentElement()->vxRun(*this);
-    }
-  else
-    {
-      // Release our current parent, then pass control onto it.
-      Element* p = itsParent;
-      itsParent = 0;
-      Assert( p != 0 );
-      p->vxChildFinished(CHILD_OK);
-    }
+  // Release our current parent, then pass control onto it.
+  Element* p = itsParent;
+  itsParent = 0;
+  Assert( p != 0 );
+  p->vxChildFinished(CHILD_OK);
 }
 
 static const char vcid_block_cc[] = "$Header$";
