@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar 12 12:27:16 2001
+// written: Tue Mar 13 16:59:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,33 @@
 #include "num.h"
 
 class Mtx;
+
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// ElemProxy class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+
+class ElemProxy {
+  Mtx& m;
+  int i;
+public:
+  ElemProxy(Mtx& m_, int i_) : m(m_), i(i_) {}
+
+  double& operator=(double d);
+  operator double();
+};
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// ConstSlice class definition
+//
+///////////////////////////////////////////////////////////////////////
+
 
 class ConstSlice {
 private:
@@ -35,20 +62,14 @@ public:
   ConstSlice(const double* d, int s, int n) :
 	 itsData(const_cast<double*>(d)), itsStride(s), itsNelems(n) {}
 
-  ConstSlice() : itsData(0), itsStride(0), itsNelems(0) {}
+  // Forms a dummy empty slice
+  ConstSlice();
 
   ConstSlice(const ConstSlice& other) :
 	 itsData(other.itsData),
 	 itsStride(other.itsStride),
 	 itsNelems(other.itsNelems)
   {}
-
-  void rebind(const ConstSlice& other)
-  {
-	 itsData = other.itsData;
-	 itsStride = other.itsStride;
-	 itsNelems = other.itsNelems;
-  }
 
   //
   // Data access
@@ -123,6 +144,14 @@ public:
     { return ConstIterator(address(itsNelems), itsStride); }
 };
 
+
+///////////////////////////////////////////////////////////////////////
+//
+// Slice class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+
 class Slice : public ConstSlice {
   friend class Mtx;
 
@@ -131,8 +160,6 @@ class Slice : public ConstSlice {
 public:
   Slice(double* d, int s, int n) :
 	 ConstSlice(d,s,n) {}
-
-  Slice() : ConstSlice() {}
 
   double& operator[](int i) { return *(address(i)); }
 
@@ -195,9 +222,22 @@ public:
     { return Iterator(address(itsNelems), itsStride); }
 };
 
+
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// Mtx class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+
 typedef struct mxArray_tag mxArray;
 
 class Mtx {
+public:
+  enum StoragePolicy { COPY, BORROW };
+
 private:
   template <class T>
   static void doswap(T& t1, T& t2)
@@ -212,23 +252,15 @@ private:
 	 doswap(start_, other.start_);
   }
 
-  Mtx(const Mtx& other, int column /* zero-based */) :
-	 block_(other.block_),
-	 mrows_(other.mrows_),
-	 ncols_(1),
-	 start_(other.start_ + (other.mrows_*column))
-  {
-	 block_->incrRefCount();
-  }
-
-public:
-  enum StoragePolicy { COPY, BORROW };
-
-private:
   // Sets up an appropriate DataBlock and increments its reference count
   void initialize(double* data, int mrows, int ncols, StoragePolicy s = COPY);
 
 public:
+
+  //
+  // Constructors
+  //
+
   Mtx(mxArray* a, StoragePolicy s = COPY);
 
   Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY)
@@ -236,8 +268,7 @@ public:
 
   Mtx(int mrows, int ncols);
 
-  Mtx(const ConstSlice& s)
-    { initialize(s.itsData, s.nelems(), 1, BORROW); }
+  Mtx(const ConstSlice& s);
 
   Mtx(const Mtx& other) :
 	 block_(other.block_),
@@ -258,13 +289,25 @@ public:
 
   mxArray* makeMxArray() const;
 
+
+  //
+  // I/O
+  //
+
   void print() const;
 
-  double& at(int row, int col) { return start_[index(row, col)]; }
+
+  //
+  // Data access
+  //
+
+  friend class ElemProxy;
+
+  ElemProxy at(int row, int col) { return ElemProxy(*this, index(row, col)); }
 
   double at(int row, int col) const { return start_[index(row, col)]; }
 
-  double& at(int elem) { return start_[elem]; }
+  ElemProxy at(int elem) { return ElemProxy(*this, elem); }
 
   double at(int elem) const { return start_[elem]; }
 
@@ -278,7 +321,9 @@ public:
 
   int ncols() const { return ncols_; }
 
-  Mtx columnSubMtx(int column) const { return Mtx(*this, column); }
+  //
+  // Slices, submatrices
+  //
 
   Slice row(int r)
     { return Slice(address(r,0), mrows_, ncols_); }
@@ -312,6 +357,8 @@ public:
   void leftMultAndAssign(const ConstSlice& vec, Slice& result) const;
 
 private:
+  void makeUnique();
+
   int index(int row, int col) const { return row + (col*mrows_); }
   double* address(int row, int col) { return start_ + index(row, col); }
   const double* address(int row, int col) const { return start_ + index(row, col); }
@@ -322,6 +369,17 @@ private:
   double* start_;
 };
 
+///////////////////////////////////////////////////////////////////////
+//
+// Inline member function definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+
+inline double& ElemProxy::operator=(double d)
+{ m.makeUnique(); double& r = m.start_[i]; r = d; return r; }
+
+inline ElemProxy::operator double() { return m.start_[i]; }
 
 static const char vcid_keanu_h[] = "$Header$";
 #endif // !KEANU_H_DEFINED

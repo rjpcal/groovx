@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Mar 13 12:28:54 2001
+// written: Tue Mar 13 16:57:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,8 +19,18 @@
 
 #include "libmatlb.h"
 
-#define NO_TRACE
+#define LOCAL_TRACE
 #include "trace.h"
+
+namespace {
+  double dummyData = 0.0;
+}
+
+ConstSlice::ConstSlice() :
+  itsData(&dummyData),
+  itsStride(1),
+  itsNelems(0)
+{}
 
 Slice& Slice::operator=(const ConstSlice& other)
 {
@@ -66,13 +76,19 @@ Mtx::Mtx(int mrows, int ncols) :
   ncols_(ncols),
   start_(block_->itsData)
 {
-DOTRACE("Mtx::Mtx");
   block_->incrRefCount();
 }  
 
+Mtx::Mtx(const ConstSlice& s)
+{
+  if (s.itsStride != 1)
+	 throw ErrorWithMsg("can't initialize Mtx from Slice with stride != 1");
+
+  initialize(s.itsData, s.nelems(), 1, BORROW);
+}
+
 Mtx::~Mtx()
 {
-DOTRACE("Mtx::~Mtx");
   block_->decrRefCount();
 }
 
@@ -128,6 +144,16 @@ void Mtx::leftMultAndAssign(const ConstSlice& vec, Slice& result) const
 
   for (int col = 0; col < ncols_; ++col)
 	 result[col] = Slice::dot(vec, this->column(col));
+}
+
+void Mtx::makeUnique()
+{
+  if ( !block_->isUnique() )
+	 {
+		ptrdiff_t offset = start_ - block_->itsData;
+		DataBlock::makeUnique(block_);
+		start_ = block_->itsData + offset;
+	 }
 }
 
 static const char vcid_mtx_cc[] = "$Header$";
