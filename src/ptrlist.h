@@ -28,7 +28,9 @@
  * which it holds pointers. The pointers are accessed by integer
  * indices into the PtrList. There are no operations on the capacity
  * of PtrList; any necessary resizing is done when necessary in an
- * insert call.
+ * insert call. PtrList is what Jeff Alger (in C++ for Real
+ * Programmers) calls a "teenage mutable serializable indexed ninja
+ * collection".
  *
  **/
 ///////////////////////////////////////////////////////////////////////
