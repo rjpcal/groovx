@@ -3,7 +3,7 @@
 // serialport.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 29 13:46:11 2000
-// written: Wed Mar 29 13:51:07 2000
+// written: Wed Mar 29 16:43:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,16 +32,35 @@ DOTRACE("Util::SerialPort::SerialPort");
   if (itsFiledes != -1) {
 	 struct termios ti;
 
-	 tcgetattr( filedes(), &ti );
+	 if ( tcgetattr( filedes(), &ti ) == -1 )
+		{ close(); return; }
 
+	 // input modes:
+	 //   ignore BREAK condition on input,
+	 //   ignore framing errors and parity errors
 	 ti.c_iflag = IGNBRK | IGNPAR;
-	 ti.c_oflag = 0x0;
-	 ti.c_cflag = CS8 | CLOCAL | B9600 | CREAD;
-	 ti.c_lflag = 0;
-	 ti.c_cc[VTIME] = 0;
-	 ti.c_cc[VMIN]  = 1;
 
-	 tcsetattr( filedes(), TCSANOW, &ti);
+	 // output modes:
+	 //   none
+	 ti.c_oflag = 0x0;
+
+	 // control modes:
+	 //    character size 8
+	 //    ignore modem control lines
+	 //    baud rate 9600
+	 //    enable receiver
+	 ti.c_cflag = CS8 | CLOCAL | B9600 | CREAD;
+
+	 // local modes:
+	 //    none
+	 ti.c_lflag = 0;
+
+	 // control characters
+	 ti.c_cc[VTIME] = 0;			  // intercharacter timer
+	 ti.c_cc[VMIN]  = 1;			  // minimum number of characters to be read
+
+	 if ( tcsetattr( filedes(), TCSANOW, &ti) == -1 )
+		{ close(); return; }
 
 	 itsStream.attach(filedes());
   }
@@ -53,7 +72,7 @@ DOTRACE("Util::SerialPort::SerialPort");
 int Util::SerialPort::close(){
 DOTRACE("Util::SerialPort::close");
   if ( !itsClosed ) {
-	 itsStream.close();
+	 itsStream.detach();
 	 itsExitStatus = ::close(itsFiledes);
 	 itsClosed = true;
   }
