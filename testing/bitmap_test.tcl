@@ -49,7 +49,7 @@ test "BitmapTcl-Bitmap::loadPbm" "normal use" {
 	 Bitmap::loadPbm $::BITMAP $::PBMFILE
 	 Bitmap::flipVertical $::BITMAP
 	 Bitmap::flipContrast $::BITMAP
-	 Bitmap::center $::BITMAP
+	 GrObj::alignmentMode $::BITMAP $GrObj::CENTER_ON_CENTER
 } {^$}
 test "BitmapTcl-Bitmap::loadPbm" "error on non-existent file" {
 	 exec rm -rf $::TEST_DIR/nonexistent_file
@@ -113,51 +113,36 @@ test "BitmapTcl-Bitmap::flipVertical" "normal use" {
 	 return "[expr { $count1 == $count2 }] $count1 $count2"
 } {^1}
 
-### Bitmap::centerCmd ###
-test "BitmapTcl-Bitmap::center" "too few args" {
-	 Bitmap::center
-} {^wrong \# args: should be "Bitmap::center item_id\(s\)"$}
-test "BitmapTcl-Bitmap::center" "too many args" {
-	 Bitmap::center $::BITMAP junk
-} {^wrong \# args: should be "Bitmap::center item_id\(s\)"$}
-test "BitmapTcl-Bitmap::center" "normal use" {
-	 Bitmap::center $::BITMAP
-} {^$}
-
-### Bitmap::rasterX/YCmd ###
-test "BitmapTcl-Bitmap::rasterX/Y" "too few args" {
-	 Bitmap::rasterX
+### Bitmap::rasterPos ###
+test "BitmapTcl-Bitmap::rasterPos" "too few args" {
+	 Bitmap::rasterPos
 } {^wrong \# args: should be}
-test "BitmapTcl-Bitmap::rasterX/Y" "too many args" {
-	 Bitmap::rasterY $::BITMAP 3.5 junk
+test "BitmapTcl-Bitmap::rasterPos" "too many args" {
+	 Bitmap::rasterPos $::BITMAP 3.5 junk
 } {^wrong \# args: should be}
-test "BitmapTcl-Bitmap::rasterX/Y" "normal use" {
-	 Bitmap::rasterX $::BITMAP 1.2
-	 Bitmap::rasterY $::BITMAP 3.67
-	 return "[Bitmap::rasterX $::BITMAP] [Bitmap::rasterY $::BITMAP]"
+test "BitmapTcl-Bitmap::rasterPos" "normal use" {
+	 Bitmap::rasterPos $::BITMAP {1.2 3.67}
+	 return "[Bitmap::rasterPos $::BITMAP]"
 } {^1\.2 3\.67$}
 
-### Bitmap::zoomX/YCmd ###
-test "BitmapTcl-Bitmap::zoomX/Y" "too few args" {
-	 Bitmap::zoomX
+### Bitmap::zoomCmd ###
+test "BitmapTcl-Bitmap::zoom" "too few args" {
+	 Bitmap::zoom
 } {^wrong \# args: should be}
-test "BitmapTcl-Bitmap::zoomX/Y" "too many args" {
-	 Bitmap::zoomY $::BITMAP 1.0 junk
+test "BitmapTcl-Bitmap::zoom" "too many args" {
+	 Bitmap::zoom $::BITMAP 1.0 junk
 } {^wrong \# args: should be}
-test "BitmapTcl-Bitmap::zoomX/Y" "normal use" {
+test "BitmapTcl-Bitmap::zoom" "normal use" {
 	 GLBitmap::usingGlBitmap $::BITMAP no
 
-	 Bitmap::rasterX $::BITMAP 0.0
-	 Bitmap::rasterY $::BITMAP 0.0
+	 Bitmap::rasterPos $::BITMAP {0.0 0.0}
 
-	 Bitmap::zoomX $::BITMAP 0.5
-	 Bitmap::zoomY $::BITMAP 0.5
+	 Bitmap::zoom $::BITMAP {0.5 0.5}
 	 clearscreen
 	 show $::BITMAP_TRIAL
 	 set count1 [pixelCheckSum]
 	 
-	 Bitmap::zoomX $::BITMAP 1.0
-	 Bitmap::zoomY $::BITMAP 1.0
+	 Bitmap::zoom $::BITMAP {1.0 1.0}
 	 clearscreen
 	 show $::BITMAP_TRIAL
 	 set count2 [pixelCheckSum]
