@@ -3,7 +3,7 @@
 // stringfwd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Mar  3 12:32:58 2000
-// written: Sat Mar  4 04:45:58 2000
+// written: Mon Mar  6 16:21:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ template< class charT, class traits, class Allocator > class basic_string;
 typedef basic_string<char, string_char_traits<char>, allocator> string;
 
 #else
-// #  include <string>
+#  include <string>
 #endif
 
 static const char vcid_stringfwd_h[] = "$Header$";
