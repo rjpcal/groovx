@@ -3,7 +3,7 @@
 // id.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu May 27 18:29:58 1999
-// written: Tue Jun  1 18:53:22 1999
+// written: Tue Oct 12 10:44:33 1999
 // $Id$
 //
 // This file defines a template iterator/object-id class. These are
@@ -56,8 +56,12 @@ public:
   // Unchecked access into its container
   T* get() const;
 
-  friend istream& operator>>(istream& is, Id& id);
-  friend ostream& operator<<(ostream& os, const Id& id);
+  template <class T1, class C1> 
+  friend istream& operator>>(istream& is, Id<T1, C1>& id);
+
+  template <class T2, class C2>
+  friend ostream& operator<<(ostream& os, const Id<T2, C2>& id);
+
 private:
   int itsIndex;
 };
