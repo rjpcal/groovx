@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Thu May 17 10:31:35 2001
+// written: Thu May 17 11:52:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -289,13 +289,11 @@ public:
   }
 };
 
-class IoDbPkg : public CTclItemPkg<IoDb>,
-					 public IoFetcher {
+class IoDbPkg : public CTclItemPkg<IoDb> {
 public:
   IoDbPkg(Tcl_Interp* interp) :
 	 CTclItemPkg<IoDb>(interp, "IoDb", "$Revision$", 0)
   {
-	 TclItemPkg::addIoCommands(this);
 	 declareCAction("clear", &IoDb::clear);
 	 declareCAction("purge", &IoDb::purge);
 	 addCommand( new IoTcl::LoadObjectsCmd(interp, "IoDb::loadObjects") );
@@ -306,9 +304,6 @@ public:
     {
 		IoDb::theDb().clearOnExit();
 	 }
-
-  IO::IoObject& getIoFromId(int)
-    { return dynamic_cast<IO::IoObject&>(IoDb::theDb()); }
 
   IoDb* getCItemFromId(int)
     { return &(IoDb::theDb()); }
