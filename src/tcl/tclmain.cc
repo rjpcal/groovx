@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Thu Sep  5 16:49:47 2002
+// written: Thu Sep  5 17:09:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,8 +43,9 @@ private:
 
   fstring itsCommand;         /* Used to assemble lines of terminal input
                                * into Tcl commands. */
-  Tcl_DString itsLine;        /* Used to read the next line from the
-                               * terminal input. */
+
+  bool itsGotPartial;
+
   int isItInteractive;        /* Non-zero means standard input is a
                                * terminal-like device.  Zero means it's
                                * a file. */
@@ -53,6 +54,10 @@ private:
 
   void defaultPrompt(bool partial);
   void prompt(bool partial);
+
+  int grabInput();
+
+  void execCommand();
 
   static void stdinProc(ClientData /*clientData*/, int /*mask*/);
 
@@ -78,14 +83,6 @@ public:
 
 Tcl::MainImpl* Tcl::MainImpl::theMainImpl = 0;
 
-namespace
-{
-  typedef struct ThreadSpecificData {
-  } ThreadSpecificData;
-
-  Tcl_ThreadDataKey dataKey;
-}
-
 //---------------------------------------------------------------------
 //
 // Tcl::MainImpl::MainImpl()
@@ -96,13 +93,12 @@ Tcl::MainImpl::MainImpl(int argc, char** argv) :
   itsSafeInterp(Tcl_CreateInterp()),
   itsStartupFileName(0),
   itsInChannel(0),
-  itsCommand()
+  itsCommand(),
+  itsGotPartial(false)
 {
 DOTRACE("Tcl::MainImpl::MainImpl");
 
   Tcl_FindExecutable(argv[0]);
-
-  Tcl_DStringInit(&itsLine);
 
   isItInteractive = isatty(0);
 
@@ -213,6 +209,95 @@ void Tcl::MainImpl::prompt(bool partial)
 
 //---------------------------------------------------------------------
 //
+// Pull any new characters in from the input stream. Returns the number of
+// characters read from the input stream.
+//
+//---------------------------------------------------------------------
+
+int Tcl::MainImpl::grabInput()
+{
+DOTRACE("Tcl::MainImpl::grabInput");
+
+  Tcl_DString line;
+
+  Tcl_DStringInit(&line);
+
+  int count = Tcl_Gets(itsInChannel, &line);
+
+  if (count < 0)
+    {
+      if (!itsGotPartial)
+        {
+          if (isItInteractive)
+            {
+              Tcl_Exit(0);
+            }
+          else
+            {
+              Tcl_DeleteChannelHandler(itsInChannel,
+                                       &stdinProc, (ClientData) 0);
+            }
+        }
+    }
+
+  else if (count > 0)
+    {
+      itsCommand.append(Tcl_DStringValue(&line), "\n");
+    }
+
+  Tcl_DStringFree(&line);
+
+  return count;
+}
+
+//---------------------------------------------------------------------
+//
+// Executes a complete command string in the Tcl interpreter.
+//
+//---------------------------------------------------------------------
+
+void Tcl::MainImpl::execCommand()
+{
+DOTRACE("Tcl::MainImpl::execCommand");
+
+  /*
+   * Disable the stdin channel handler while evaluating the command;
+   * otherwise if the command re-enters the event loop we might
+   * process commands from stdin before the current command is
+   * finished.  Among other things, this will trash the text of the
+   * command being evaluated.
+   */
+
+  Tcl_CreateChannelHandler(itsInChannel, 0, &stdinProc, (ClientData) 0);
+
+  int code = Tcl_RecordAndEval(interp(), itsCommand.c_str(), TCL_EVAL_GLOBAL);
+
+  itsInChannel = Tcl_GetStdChannel(TCL_STDIN);
+
+  if (itsInChannel)
+    {
+      Tcl_CreateChannelHandler(itsInChannel, TCL_READABLE,
+                               &stdinProc, (ClientData) 0);
+    }
+
+  itsCommand = "";
+
+  if (Tcl_GetStringResult(interp())[0] != '\0')
+    {
+      if ((code != TCL_OK) || isItInteractive)
+        {
+          Tcl_Channel outChan = Tcl_GetStdChannel(TCL_STDOUT);
+          if (outChan)
+            {
+              Tcl_WriteObj(outChan, Tcl_GetObjResult(interp()));
+              Tcl_WriteChars(outChan, "\n", 1);
+            }
+        }
+    }
+}
+
+//---------------------------------------------------------------------
+//
 // This procedure is invoked by the event dispatcher whenever standard
 // input becomes readable.  It grabs the next line of input characters,
 // adds them to a command being assembled, and executes the command if it's
@@ -222,86 +307,26 @@ void Tcl::MainImpl::prompt(bool partial)
 
 void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
 {
-  static int gotPartial = 0;
-
   Tcl::MainImpl* rep = Tcl::MainImpl::get();
 
-  Tcl_Interp* interp = rep->interp();
+  if (rep->grabInput() <= 0)
+    return;
 
-  int count = Tcl_Gets(rep->itsInChannel, &rep->itsLine);
-
-  if (count < 0)
+  if (Tcl_CommandComplete(rep->itsCommand.c_str()))
     {
-      if (!gotPartial)
-        {
-          if (rep->isItInteractive)
-            {
-              Tcl_Exit(0);
-            }
-          else
-            {
-              Tcl_DeleteChannelHandler(rep->itsInChannel,
-                                       &stdinProc, (ClientData) 0);
-            }
-          return;
-        }
-    }
-
-  rep->itsCommand.append(Tcl_DStringValue(&rep->itsLine), "\n");
-  Tcl_DStringFree(&rep->itsLine);
-  if (!Tcl_CommandComplete(rep->itsCommand.c_str()))
-    {
-      gotPartial = 1;
+      rep->itsGotPartial = false;
+      rep->execCommand();
     }
   else
     {
-      gotPartial = 0;
-
-      /*
-       * Disable the stdin channel handler while evaluating the command;
-       * otherwise if the command re-enters the event loop we might
-       * process commands from stdin before the current command is
-       * finished.  Among other things, this will trash the text of the
-       * command being evaluated.
-       */
-
-      Tcl_CreateChannelHandler(rep->itsInChannel, 0,
-                               &stdinProc, (ClientData) 0);
-      int code = Tcl_RecordAndEval(interp, rep->itsCommand.c_str(),
-                                   TCL_EVAL_GLOBAL);
-
-      rep->itsInChannel = Tcl_GetStdChannel(TCL_STDIN);
-      if (rep->itsInChannel)
-        {
-          Tcl_CreateChannelHandler(rep->itsInChannel, TCL_READABLE,
-                                   &stdinProc, (ClientData) 0);
-        }
-
-      rep->itsCommand = "";
-
-      if (Tcl_GetStringResult(interp)[0] != '\0')
-        {
-          if ((code != TCL_OK) || (rep->isItInteractive))
-            {
-              Tcl_Channel outChan = Tcl_GetStdChannel(TCL_STDOUT);
-              if (outChan)
-                {
-                  Tcl_WriteObj(outChan, Tcl_GetObjResult(interp));
-                  Tcl_WriteChars(outChan, "\n", 1);
-                }
-            }
-        }
+      rep->itsGotPartial = true;
     }
-
-  /*
-   * Output a prompt.
-   */
 
   if (rep->isItInteractive)
     {
-      rep->prompt(gotPartial);
+      rep->prompt(rep->itsGotPartial);
     }
-  Tcl_ResetResult(interp);
+  Tcl_ResetResult(rep->interp());
 }
 
 //---------------------------------------------------------------------
