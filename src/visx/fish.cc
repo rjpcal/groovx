@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Aug 29 12:07:48 2001
+// written: Wed Aug 29 12:48:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,9 @@
 
 #include "fish.h"
 
+#include "gfx/canvas.h"
 #include "gfx/rect.h"
+#include "gfx/rgbacolor.h"
 #include "gfx/vec3.h"
 
 #include "io/ioproxy.h"
@@ -46,6 +48,8 @@ namespace
   int dummy=0; // We need a dummy int to attach various CPtrField's
 
   const IO::VersionId FISH_SERIAL_VERSION_ID = 2;
+
+  typedef Gfx::Vec3<GLfloat> Pt3;
 }
 
 Util::Tracer Fish::tracer;
@@ -68,8 +72,7 @@ struct Fish::FishPart
 
   dynamic_block<GLfloat> itsKnots;
 
-  dynamic_block<GLfloat> itsCoefs0;
-  dynamic_block<GLfloat> itsCoefs1;
+  dynamic_block<Pt3> itsCoefs;
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -87,8 +90,8 @@ struct Fish::EndPt
 {
   int itsPart;
   int itsBkpt;
-  float itsX[2];
-  float itsY[2];
+  Pt3 itsPt0;
+  Pt3 itsPt1;
 };
 
 
@@ -184,81 +187,82 @@ DOTRACE("Fish::restoreToDefault");
   itsFishParts[2].itsKnots.assign(array_begin(def_knots), array_end(def_knots));
   itsFishParts[3].itsKnots.assign(array_begin(def_knots), array_end(def_knots));
 
-  // coefficients 0
-  static GLfloat coefs0_0[] =
+  static Pt3 coefs0[] =
   {
-    -0.2856, -0.2140, -0.2176, -0.0735, 0.0168, 0.1101, 0.3049, 0.0953, 0.1597
+    Pt3(-0.2856,  0.2915, 0.0),
+    Pt3(-0.2140,  0.2866, 0.0),
+    Pt3(-0.2176,  0.2863, 0.0),
+    Pt3(-0.0735,  0.4670, 0.0),
+    Pt3( 0.0168,  0.3913, 0.0),
+    Pt3( 0.1101,  0.3071, 0.0),
+    Pt3( 0.3049,  0.1048, 0.0),
+    Pt3( 0.0953,  0.1800, 0.0),
+    Pt3( 0.1597,  0.1538, 0.0),
   };
-  static GLfloat coefs0_1[] =
-  {
-    0.2915, 0.2866, 0.2863, 0.4670, 0.3913, 0.3071, 0.1048, 0.1800, 0.1538
-  };
-  itsFishParts[0].itsCoefs0.assign(array_begin(coefs0_0), array_end(coefs0_0));
-  itsFishParts[0].itsCoefs1.assign(array_begin(coefs0_1), array_end(coefs0_1));
 
-  // coefficients 1
-  static GLfloat coefs1_0[] =
+  static Pt3 coefs1[] =
   {
-    0.1597, 0.2992, 0.2864, 0.7837, 0.4247, 0.6362, 0.3379, 0.3137, 0.1573
+    Pt3( 0.1597,  0.1538, 0.0),
+    Pt3( 0.2992,  0.1016, 0.0),
+    Pt3( 0.2864,  0.1044, 0.0),
+    Pt3( 0.7837,  0.1590, 0.0),
+    Pt3( 0.4247,  0.0155, 0.0),
+    Pt3( 0.6362, -0.3203, 0.0),
+    Pt3( 0.3379, -0.0706, 0.0),
+    Pt3( 0.3137,  0.0049, 0.0),
+    Pt3( 0.1573, -0.0401, 0.0),
   };
-  static GLfloat coefs1_1[] =
-  {
-    0.1538, 0.1016, 0.1044, 0.1590, 0.0155, -0.3203, -0.0706, 0.0049, -0.0401
-  };
-  itsFishParts[1].itsCoefs0.assign(array_begin(coefs1_0), array_end(coefs1_0));
-  itsFishParts[1].itsCoefs1.assign(array_begin(coefs1_1), array_end(coefs1_1));
 
-  // coefficients 2
-  static GLfloat coefs2_0[] =
+  static Pt3 coefs2[] =
   {
-    0.1573, 0.2494, 0.1822, -0.0208, -0.0632, -0.1749, -0.1260, -0.3242, -0.2844
+    Pt3( 0.1573, -0.0401, 0.0),
+    Pt3( 0.2494, -0.0294, 0.0),
+    Pt3( 0.1822, -0.0877, 0.0),
+    Pt3(-0.0208, -0.3236, 0.0),
+    Pt3(-0.0632, -0.3412, 0.0),
+    Pt3(-0.1749, -0.1120, 0.0),
+    Pt3(-0.1260, -0.4172, 0.0),
+    Pt3(-0.3242, -0.1818, 0.0),
+    Pt3(-0.2844, -0.1840, 0.0),
   };
-  static GLfloat coefs2_1[] =
-  {
-    -0.0401, -0.0294, -0.0877, -0.3236, -0.3412, -0.1120, -0.4172, -0.1818, -0.1840
-  };
-  itsFishParts[2].itsCoefs0.assign(array_begin(coefs2_0), array_end(coefs2_0));
-  itsFishParts[2].itsCoefs1.assign(array_begin(coefs2_1), array_end(coefs2_1));
 
-  // coefficients 3
-  static GLfloat coefs3_0[] =
+  static Pt3 coefs3[] =
   {
-    -0.2844, -0.3492, -0.4554, -0.6135, -0.7018, -0.5693, -0.4507, -0.3393, -0.2856
+    Pt3(-0.2844, -0.1840, 0.0),
+    Pt3(-0.3492, -0.1834, 0.0),
+    Pt3(-0.4554, -0.1489, 0.0),
+    Pt3(-0.6135, -0.0410, 0.0),
+    Pt3(-0.7018,  0.0346, 0.0),
+    Pt3(-0.5693,  0.1147, 0.0),
+    Pt3(-0.4507,  0.2227, 0.0),
+    Pt3(-0.3393,  0.2737, 0.0),
+    Pt3(-0.2856,  0.2915, 0.0),
   };
-  static GLfloat coefs3_1[] =
-  {
-    -0.1840, -0.1834, -0.1489, -0.0410, 0.0346, 0.1147, 0.2227, 0.2737, 0.2915
-  };
-  itsFishParts[3].itsCoefs0.assign(array_begin(coefs3_0), array_end(coefs3_0));
-  itsFishParts[3].itsCoefs1.assign(array_begin(coefs3_1), array_end(coefs3_1));
+
+  itsFishParts[0].itsCoefs.assign(array_begin(coefs0), array_end(coefs0));
+  itsFishParts[1].itsCoefs.assign(array_begin(coefs1), array_end(coefs1));
+  itsFishParts[2].itsCoefs.assign(array_begin(coefs2), array_end(coefs2));
+  itsFishParts[3].itsCoefs.assign(array_begin(coefs3), array_end(coefs3));
 
   itsEndPts[0].itsPart = 1;
   itsEndPts[0].itsBkpt = 6;
-  itsEndPts[0].itsX[0] = 0.2380;
-  itsEndPts[0].itsX[1] = -0.0236;
-  itsEndPts[0].itsY[0] = 0.3416;
-  itsEndPts[0].itsY[1] = 0.2711;
+  itsEndPts[0].itsPt0.set(0.2380, 0.3416, 0.0);
+  itsEndPts[0].itsPt1.set(-0.0236, 0.2711, 0.0);
 
   itsEndPts[1].itsPart = 2;
   itsEndPts[1].itsBkpt = 5;
-  itsEndPts[1].itsX[0] = 0.6514;
-  itsEndPts[1].itsX[1] = 0.2433;
-  itsEndPts[1].itsY[0] = -0.0305;
-  itsEndPts[1].itsY[1] = 0.0523;
+  itsEndPts[1].itsPt0.set(0.6514, -0.0305, 0.0);
+  itsEndPts[1].itsPt1.set(0.2433, 0.0523, 0.0);
 
   itsEndPts[2].itsPart = 3;
   itsEndPts[2].itsBkpt = 6;
-  itsEndPts[2].itsX[0] = -0.2121;
-  itsEndPts[2].itsX[1] = -0.1192;
-  itsEndPts[2].itsY[0] = 0.0083;
-  itsEndPts[2].itsY[1] = -0.2925;
+  itsEndPts[2].itsPt0.set(-0.2121, 0.0083, 0.0);
+  itsEndPts[2].itsPt1.set(-0.1192, -0.2925, 0.0);
 
   itsEndPts[3].itsPart = 4;
   itsEndPts[3].itsBkpt = 5;
-  itsEndPts[3].itsX[0] = -0.7015;
-  itsEndPts[3].itsX[1] = -0.7022;
-  itsEndPts[3].itsY[0] = 0.1584;
-  itsEndPts[3].itsY[1] = -0.1054;
+  itsEndPts[3].itsPt0.set(-0.7015, 0.1584, 0.0);
+  itsEndPts[3].itsPt1.set(-0.7022, -0.1054, 0.0);
 
   itsCoords[0] = itsCoords[1] = itsCoords[2] = itsCoords[3] = 0.0;
 }
@@ -314,7 +318,7 @@ DOTRACE("Fish::readSplineFile");
   int k, splnb, endptnb;
   fstring dummy;
 
-  // reads in the spline knots and coefficient
+  // read in the spline knots and coefficient
   STD_IO::ifstream ifs(splinefile);
   if (ifs.fail())
     {
@@ -330,7 +334,7 @@ DOTRACE("Fish::readSplineFile");
       int nknots;
       ifs >> dummy >> nknots;
 
-      // allocates space and reads in the successive knots
+      // allocate space and read in the successive knots
       itsFishParts[i].itsKnots.resize(nknots);
       for (j = 0; j < itsFishParts[i].itsKnots.size(); ++j)
         {
@@ -341,21 +345,24 @@ DOTRACE("Fish::readSplineFile");
       int ncoefs;
       ifs >> dummy >> ncoefs;
 
-      // allocates space and reads in the successive coefficients
+      // allocate space and read in the successive coefficients
+      itsFishParts[i].itsCoefs.resize(ncoefs);
       {
-        itsFishParts[i].itsCoefs0.resize(ncoefs);
-
         for (k = 0; k < ncoefs; ++k)
           {
-            ifs >> itsFishParts[i].itsCoefs0[k];
+            ifs >> itsFishParts[i].itsCoefs[k].x();
           }
       }
       {
-        itsFishParts[i].itsCoefs1.resize(ncoefs);
-
         for (k = 0; k < ncoefs; ++k)
           {
-            ifs >> itsFishParts[i].itsCoefs1[k];
+            ifs >> itsFishParts[i].itsCoefs[k].y();
+          }
+      }
+      {
+        for (k = 0; k < ncoefs; ++k)
+          {
+            itsFishParts[i].itsCoefs[k].z() = 0.0;
           }
       }
 
@@ -377,8 +384,8 @@ DOTRACE("Fish::readSplineFile");
       ifs >> dummy >> dummy;
 
       // x&y coordinates
-      ifs >> itsEndPts[i].itsX[0] >> itsEndPts[i].itsX[1]
-          >> itsEndPts[i].itsY[0] >> itsEndPts[i].itsY[1];
+      ifs >> itsEndPts[i].itsPt0.x() >> itsEndPts[i].itsPt1.x()
+          >> itsEndPts[i].itsPt0.y() >> itsEndPts[i].itsPt1.y();
 
       if (ifs.fail())
         {
@@ -430,7 +437,7 @@ DOTRACE("Fish::grGetBoundingBox");
   return bbox;
 }
 
-void Fish::grRender(Gfx::Canvas&) const
+void Fish::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("Fish::grRender");
   // Create and configure the NURBS object
@@ -443,21 +450,20 @@ DOTRACE("Fish::grRender");
   gluNurbsProperty(theNurb, GLU_U_STEP, 200);
   gluNurbsProperty(theNurb, GLU_V_STEP, 200);
 
+  Gfx::RgbaColor colors[4] =
+  {
+    Gfx::RgbaColor(1.0, 0.0, 0.0, 1.0),
+    Gfx::RgbaColor(0.0, 1.0, 0.0, 1.0),
+    Gfx::RgbaColor(0.0, 0.0, 1.0, 1.0),
+    Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0)
+  };
+
   // Loop over fish parts
   for (int i = 0; i < 4; ++i)
     {
-      int totcoefs = 3*(itsFishParts[i].itsCoefs0.size());
+      canvas.setColor(colors[i]);
 
-      fixed_block<Gfx::Vec3<GLfloat> > ctrlpnts(totcoefs);
-
-      {
-        for (size_t j = 0; j < itsFishParts[i].itsCoefs0.size(); ++j)
-          {
-            ctrlpnts.at(j).x() = itsFishParts[i].itsCoefs0[j];
-            ctrlpnts.at(j).y() = itsFishParts[i].itsCoefs1[j];
-            ctrlpnts.at(j).z() = 0.0;
-          }
-      }
+      dynamic_block<Pt3> ctrlpnts(itsFishParts[i].itsCoefs);
 
       // Fix up the coefficients at the end points
       for (int j = 0; j < 4; ++j)
@@ -469,10 +475,10 @@ DOTRACE("Fish::grRender");
 
               float alpha = 0.5*(1-itsCoords[j]);
               float beta  = 0.5*(1+itsCoords[j]);
-              GLfloat x = alpha*itsEndPts[j].itsX[0] + beta*itsEndPts[j].itsX[1];
-              GLfloat y = alpha*itsEndPts[j].itsY[0] + beta*itsEndPts[j].itsY[1];
-              ctrlpnts.at(bkpt).x() = x;
-              ctrlpnts.at(bkpt).y() = y;
+
+              Pt3 pt = itsEndPts[j].itsPt0 * alpha + itsEndPts[j].itsPt1 * beta;
+
+              ctrlpnts.at(bkpt) = pt;
             }
         }
 
