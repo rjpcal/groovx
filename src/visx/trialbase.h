@@ -46,6 +46,7 @@ public:
   virtual int trialType() const = 0;
   virtual int lastResponse() const = 0;
   virtual const char* description() const = 0;
+  virtual Util::WeakRef<GWT::Widget> getWidget() const = 0;
 
   // manipulators
   virtual void undoLastResponse() = 0;
