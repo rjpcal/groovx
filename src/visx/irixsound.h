@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Thu Oct 14 11:49:11 1999
+// written: Fri Oct 15 13:20:39 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,11 @@
 #ifndef IRIXSOUND_CC_DEFINED
 #define IRIXSOUND_CC_DEFINED
 
+#include <dmedia/audio.h>
+#include <dmedia/audiofile.h>
 #include <fstream.h>				  // to check if files exist
+#include <unistd.h>
+#include <vector>
 
 #define NO_TRACE
 #include "trace.h"
@@ -26,8 +30,6 @@
 
 namespace {
   const string ioTag = "IrixAudioSound";
-
-  bool haveAudio = false;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -49,21 +51,52 @@ public:
 
 class IrixAudioSound : public Sound {
 public:
-  IrixAudioSound(const string& filename) 
-	 { setFile(filename); }
-  virtual ~IrixAudioSound() {}
+  IrixAudioSound(const string& filename);
+  virtual ~IrixAudioSound();
 
   virtual void serialize(ostream& os, IOFlag flag) const;
   virtual void deserialize(istream& is, IOFlag flag);
   virtual int charCount() const;
   
-  virtual void play() { /* do nothing */ }
+  virtual void play();
   virtual void setFile(const string& filename);
   virtual const string& getFile() const { return itsFilename; }
 
 private:
   string itsFilename;
+
+  ALconfig itsAudioConfig;
+  int itsNumChannels;
+  AFframecount itsFrameCount;
+  int itsSampleFormat;
+  int itsSampleWidth;
+  int itsBytesPerSample;
+  vector<unsigned char> itsSamples;
 };
+
+IrixAudioSound::IrixAudioSound(const string& filename) :
+  itsAudioConfig(alNewConfig()),
+  itsNumChannels(0),
+  itsFrameCount(0),
+  itsSampleFormat(0),
+  itsSampleWidth(0),
+  itsBytesPerSample(0),
+  itsSamples()
+{
+DOTRACE("IrixAudioSound::IrixAudioSound");
+  if (itsAudioConfig == 0) {
+	 throw SoundError("error creating an ALconfig while creating Sound");
+  }
+
+  setFile(filename);
+}
+
+IrixAudioSound::~IrixAudioSound() {
+DOTRACE("IrixAudioSound::~IrixAudioSound");
+  if (itsAudioConfig != 0) {
+	 alFreeConfig(itsAudioConfig);
+  }
+}
 
 void IrixAudioSound::serialize(ostream& os, IOFlag flag) const {
 DOTRACE("IrixAudioSound::serialize");
@@ -99,6 +132,32 @@ DOTRACE("IrixAudioSound::charCount");
 			 +5); // fudge factor
 }
 
+void IrixAudioSound::play() {
+DOTRACE("IrixAudioSound::play");
+  if (itsSamples.size() == 0) return;
+
+  ALport audioPort = alOpenPort("Sound::play", "w", itsAudioConfig);
+  DebugEvalNL((void*) audioPort);
+  if (audioPort == 0) {
+	 throw SoundError("error opening an audio port during Sound::play");
+  }
+
+  int writeResult =
+	 alWriteFrames(audioPort, static_cast<void*>(&itsSamples[0]), itsFrameCount);
+  if (writeResult == -1) {
+	 throw SoundError("error writing to the audio port during Sound::play");
+  }
+
+  while (alGetFilled(audioPort) > 0) {
+	 usleep(5000);
+  }
+
+  int closeResult = alClosePort(audioPort);
+  if (closeResult == -1) {
+	 throw SoundError("error closing the audio port during Sound::play");
+  }
+}
+
 void IrixAudioSound::setFile(const string& filename) {
 DOTRACE("IrixAudioSound::setFile");
   ifstream ifs(filename.c_str());
@@ -106,6 +165,76 @@ DOTRACE("IrixAudioSound::setFile");
 	 throw SoundFilenameError(filename);
   }
   ifs.close();
+
+  // Open itsFilename as an audio file for reading. We pass a NULL
+  // AFfilesetup to indicate that file setup parameters should be
+  // taken from the file itself.
+  AFfilehandle audiofile = afOpenFile(filename.c_str(),
+												  "r", (AFfilesetup) 0);
+  if (audiofile == AF_NULL_FILEHANDLE) {
+	 throw SoundError("couldn't open sound file " + itsFilename);
+  }
+
+  // We don't actually set itsFilename to the new value until we are
+  // sure that the file exists and is readable as a sound file.
+  itsFilename = filename;
+
+  // Having reset the filename, we are past the point of no return, so
+  // we dump any old data that were in itsSamples.
+  itsSamples.resize(0);
+
+  // Read important parameters from the audio file, and use them to
+  // set the corresponding parameters in itsAudioConfig.
+
+  // Number of audio channels (i.e. mono == 1, stereo == 2)
+  itsNumChannels = afGetChannels(audiofile, AF_DEFAULT_TRACK);
+  if (itsNumChannels == -1) {
+	 throw SoundError("error reading the number of channels in sound file " +
+							itsFilename);
+  }
+  alSetChannels(itsAudioConfig, itsNumChannels);
+
+  // Frame count
+  itsFrameCount = afGetFrameCount(audiofile, AF_DEFAULT_TRACK);
+  if (itsFrameCount < 0) {
+	 throw SoundError("error reading the frame count in sound file " +
+							itsFilename);
+  }
+
+  // Sample format and sample width
+  afGetSampleFormat(audiofile, AF_DEFAULT_TRACK,
+						  &itsSampleFormat, &itsSampleWidth);
+  alSetSampFmt(itsAudioConfig, itsSampleFormat);
+  alSetWidth(itsAudioConfig, itsSampleWidth);
+
+  itsBytesPerSample = (itsSampleWidth + 7)/8;
+
+  DebugEval(itsNumChannels);
+  DebugEval(itsFrameCount);
+  DebugEval(itsSampleWidth);
+  DebugEval(itsBytesPerSample);
+
+  // Allocate space for the sound samples
+  itsSamples.resize(itsFrameCount*itsNumChannels*itsBytesPerSample);
+
+  int readResult = afReadFrames(audiofile, AF_DEFAULT_TRACK,
+										  static_cast<void*>(&itsSamples[0]),
+										  itsFrameCount);
+  DebugEvalNL(readResult);
+
+  int closeResult = afCloseFile(audiofile);
+
+  // If the read failed, we dump any data stored in itsSamples
+  if (readResult == -1) {
+	 itsSamples.resize(0);
+	 throw SoundError("error reading sound data from file " + itsFilename);
+  }
+
+  // If the close failed, we keep the data that were read, but report
+  // the error
+  if (closeResult == -1) {
+	 throw SoundError("error closing sound file " + itsFilename);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -116,12 +245,12 @@ DOTRACE("IrixAudioSound::setFile");
 
 bool Sound::initSound() {
 DOTRACE("Sound::initSound");
-  return false;
+  return true;
 }
 
 bool Sound::haveSound() {
 DOTRACE("Sound::haveSound");
-  return haveAudio;
+  return true;
 }
 
 void Sound::closeSound() {
