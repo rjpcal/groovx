@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu Mar  9 17:11:03 2000
+// written: Fri Mar 10 10:58:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,6 +52,10 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 class EventResponseHdlr::Impl {
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
 public:
   Impl(EventResponseHdlr* owner, const char* input_response_map);
   ~Impl();
@@ -220,6 +224,16 @@ private:
     RegExp_ResponseVal(Tcl_RegExp rx = 0, int rv = -1) :
 		itsRegexp(rx), itsRespVal(rv)
 		{}
+
+	 RegExp_ResponseVal(const RegExp_ResponseVal& other) :
+		itsRegexp(other.itsRegexp), itsRespVal(other.itsRespVal)
+		{}
+
+	 RegExp_ResponseVal& operator=(const RegExp_ResponseVal& other)
+		{
+		  itsRegexp = other.itsRegexp; itsRespVal = other.itsRespVal;
+		  return *this;
+		}
 
 	 bool matchesString(Tcl_Interp* interp,
 							  const char* string_to_match) throw(ErrorWithMsg)
