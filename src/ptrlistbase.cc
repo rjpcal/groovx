@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// voidptrlist.cc
+// ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
 // written: Mon Oct  9 19:48:58 2000
@@ -8,10 +8,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef VOIDPTRLIST_CC_DEFINED
-#define VOIDPTRLIST_CC_DEFINED
+#ifndef PTRLISTBASE_CC_DEFINED
+#define PTRLISTBASE_CC_DEFINED
 
-#include "voidptrlist.h"
+#include "ptrlistbase.h"
 
 #include "masterptr.h"
 
@@ -105,11 +105,11 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// VoidPtrList::Impl definition
+// PtrListBase::Impl definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class VoidPtrList::Impl {
+class PtrListBase::Impl {
 public:
   Impl(int size) :
 	 itsFirstVacant(0),
@@ -130,28 +130,28 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// VoidPtrList member definitions
+// PtrListBase member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-VoidPtrList::VoidPtrList(int size) :
+PtrListBase::PtrListBase(int size) :
   itsImpl(new Impl(size))
 {
-DOTRACE("VoidPtrList::VoidPtrList");
+DOTRACE("PtrListBase::PtrListBase");
 }
 
-VoidPtrList::~VoidPtrList() {
-DOTRACE("VoidPtrList::~VoidPtrList");
+PtrListBase::~PtrListBase() {
+DOTRACE("PtrListBase::~PtrListBase");
   delete itsImpl; 
 }
 
-int VoidPtrList::capacity() const {
-DOTRACE("VoidPtrList::capacity");
+int PtrListBase::capacity() const {
+DOTRACE("PtrListBase::capacity");
   return itsImpl->itsPtrVec.size(); 
 }
 
-int VoidPtrList::count() const {
-DOTRACE("VoidPtrList::count");
+int PtrListBase::count() const {
+DOTRACE("PtrListBase::count");
   // Count the number of null pointers. In the STL call count, we must
   // cast the value (NULL) so that template deduction treats it as a
   // pointer rather than an int. Then return the number of non-null
@@ -170,8 +170,8 @@ DOTRACE("VoidPtrList::count");
   return num_non_null;
 }
 
-bool VoidPtrList::isValidId(int id) const {
-DOTRACE("VoidPtrList::isValidId");
+bool PtrListBase::isValidId(int id) const {
+DOTRACE("PtrListBase::isValidId");
 
   DebugEval(id);
   DebugEval(id>=0);
@@ -182,8 +182,8 @@ DOTRACE("VoidPtrList::isValidId");
 			  itsImpl->itsPtrVec[id].masterPtr()->isValid() );
 }
 
-void VoidPtrList::remove(int id) {
-DOTRACE("VoidPtrList::remove");
+void PtrListBase::remove(int id) {
+DOTRACE("PtrListBase::remove");
   if (!isValidId(id)) return;
 
   if ( itsImpl->itsPtrVec[id].masterPtr()->isShared() )
@@ -195,8 +195,8 @@ DOTRACE("VoidPtrList::remove");
   if (itsImpl->itsFirstVacant > id) itsImpl->itsFirstVacant = id;
 }
 
-void VoidPtrList::release(int id) {
-DOTRACE("VoidPtrList::release");
+void PtrListBase::release(int id) {
+DOTRACE("PtrListBase::release");
   if (!isValidId(id)) return;
 
   itsImpl->itsPtrVec[id] = VoidPtrHandle(new NullMasterPtr);
@@ -205,8 +205,8 @@ DOTRACE("VoidPtrList::release");
   if (itsImpl->itsFirstVacant > id) itsImpl->itsFirstVacant = id;
 }
 
-void VoidPtrList::clear() {
-DOTRACE("VoidPtrList::clear");
+void PtrListBase::clear() {
+DOTRACE("PtrListBase::clear");
   DebugEvalNL(typeid(*this).name());
   for (size_t i = 0; i < itsImpl->itsPtrVec.size(); ++i) {
 	 DebugEval(i);
@@ -219,31 +219,31 @@ DOTRACE("VoidPtrList::clear");
   itsImpl->itsFirstVacant = 0;
 }
 
-MasterPtrBase* VoidPtrList::getVoidPtr(int id) const throw () {
-DOTRACE("VoidPtrList::getVoidPtr");
+MasterPtrBase* PtrListBase::getPtrBase(int id) const throw () {
+DOTRACE("PtrListBase::getPtrBase");
   return itsImpl->itsPtrVec[id].masterPtr();
 }
 
-MasterPtrBase* VoidPtrList::getCheckedVoidPtr(int id) const throw (InvalidIdError) {
-DOTRACE("VoidPtrList::getCheckedVoidPtr");
+MasterPtrBase* PtrListBase::getCheckedPtrBase(int id) const throw (InvalidIdError) {
+DOTRACE("PtrListBase::getCheckedPtrBase");
   if ( !isValidId(id) ) {
 	 InvalidIdError err("attempt to access invalid id '");
 	 err.appendNumber(id);
 	 err.appendMsg("' in ", demangle_cstr(typeid(*this).name()));
 	 throw err;
   }
-  return getVoidPtr(id);
+  return getPtrBase(id);
 }
 
-int VoidPtrList::insertVoidPtr(MasterPtrBase* ptr) {
-DOTRACE("VoidPtrList::insertVoidPtr");
+int PtrListBase::insertPtrBase(MasterPtrBase* ptr) {
+DOTRACE("PtrListBase::insertPtrBase");
   int new_site = itsImpl->itsFirstVacant;
-  insertVoidPtrAt(new_site, ptr);
+  insertPtrBaseAt(new_site, ptr);
   return new_site;              // return the id of the inserted void*
 }
 
-void VoidPtrList::insertVoidPtrAt(int id, MasterPtrBase* ptr) {
-DOTRACE("VoidPtrList::insertVoidPtrAt");
+void PtrListBase::insertPtrBaseAt(int id, MasterPtrBase* ptr) {
+DOTRACE("PtrListBase::insertPtrBaseAt");
   DebugEval(id); DebugEvalNL(ptr->ptr());
   if (id < 0) return;
 
@@ -291,28 +291,28 @@ DOTRACE("VoidPtrList::insertVoidPtrAt");
   DebugEvalNL(itsImpl->itsFirstVacant);
 }
 
-void VoidPtrList::afterInsertHook(int /* id */, MasterPtrBase* /* ptr */) {
-DOTRACE("VoidPtrList::afterInsertHook");
+void PtrListBase::afterInsertHook(int /* id */, MasterPtrBase* /* ptr */) {
+DOTRACE("PtrListBase::afterInsertHook");
 }
 
-int& VoidPtrList::firstVacant() {
+int& PtrListBase::firstVacant() {
   return itsImpl->itsFirstVacant;
 }
 
-const int& VoidPtrList::firstVacant() const {
+const int& PtrListBase::firstVacant() const {
   return itsImpl->itsFirstVacant;
 }
 
-unsigned int VoidPtrList::voidVecSize() const {
-DOTRACE("VoidPtrList::voidVecEnd");
+unsigned int PtrListBase::baseVecSize() const {
+DOTRACE("PtrListBase::baseVecSize");
   return itsImpl->itsPtrVec.size();
 }
 
-void VoidPtrList::voidVecResize(unsigned int new_size) {
-DOTRACE("VoidPtrList::voidVecResize");
+void PtrListBase::baseVecResize(unsigned int new_size) {
+DOTRACE("PtrListBase::baseVecResize");
   if ( new_size > itsImpl->itsPtrVec.size() )
 	 itsImpl->itsPtrVec.resize(new_size, VoidPtrHandle());
 }
 
-static const char vcid_voidptrlist_cc[] = "$Header$";
-#endif // !VOIDPTRLIST_CC_DEFINED
+static const char vcid_ptrlistbase_cc[] = "$Header$";
+#endif // !PTRLISTBASE_CC_DEFINED

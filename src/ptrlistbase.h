@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// voidptrlist.h
+// ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
 // written: Mon Oct  9 09:12:39 2000
@@ -8,8 +8,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef VOIDPTRLIST_H_DEFINED
-#define VOIDPTRLIST_H_DEFINED
+#ifndef PTRLISTBASE_H_DEFINED
+#define PTRLISTBASE_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
@@ -20,7 +20,7 @@ class MasterPtrBase;
 /**
  *
  * InvalidIdError is an exception class that will be thrown from
- * VoidPtrList if an attempt to use an invalid id is made in a checked
+ * PtrListBase if an attempt to use an invalid id is made in a checked
  * function.
  *
  **/
@@ -38,22 +38,22 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * VoidPtrList provides a non-typesafe implementation of a container
- * that stores pointers and owns them. VoidPtrList delegates the
+ * PtrListBase provides a non-typesafe implementation of a container
+ * that stores pointers and owns them. PtrListBase delegates the
  * destruction of its contained objects to its subclasses by way of
  * destroyPtr().
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class VoidPtrList {
+class PtrListBase {
 protected:
   /// Construct a PtrList with an initial reserve capacity of 'size'
-  VoidPtrList(int size);
+  PtrListBase(int size);
 
 public:
   ///
-  virtual ~VoidPtrList();
+  virtual ~PtrListBase();
 
   /** Returns the size of the internal array. The number returned also
 		refers to the one-past-the-end index into the PtrList. */
@@ -70,7 +70,7 @@ public:
       iterator \a itr. **/
   template <class Iterator>
   void insertValidIds(Iterator itr) const {
-	 for (unsigned int i = 0, end = voidVecSize();
+	 for (unsigned int i = 0, end = baseVecSize();
 			i < end;
 			++i) {
 		if (isValidId(i)) 
@@ -96,43 +96,43 @@ protected:
   /** Return the \c void* at the index given by \a id.  There is no
 		range-check performed; this must be done by the client with
 		\c isValidId(). */
-  MasterPtrBase* getVoidPtr(int id) const throw ();
+  MasterPtrBase* getPtrBase(int id) const throw ();
 
-  /** Like \c getVoidPtr(), but checks first if \a id is a valid index,
+  /** Like \c getPtrBase(), but checks first if \a id is a valid index,
 		and throws an \c InvalidIdError if it is not. */
-  MasterPtrBase* getCheckedVoidPtr(int id) const throw (InvalidIdError);
+  MasterPtrBase* getCheckedPtrBase(int id) const throw (InvalidIdError);
 
   /** Add ptr at the next available location, and return the index
 		where it was inserted. If necessary, the list will be expanded
 		to make room for the ptr. The PtrList now assumes control of the
 		memory management for the object *ptr. */
-  int insertVoidPtr(MasterPtrBase* ptr);
+  int insertPtrBase(MasterPtrBase* ptr);
 
   /** Add obj at index 'id', destroying any the object was previously
 		pointed to from that that location. The list will be expanded if
 		'id' exceeds the size of the list. If id is < 0, the function
 		returns without effect. */
-  void insertVoidPtrAt(int id, MasterPtrBase* ptr);
+  void insertPtrBaseAt(int id, MasterPtrBase* ptr);
 
   /** This function will be called after every insertion into the
-      VoidPtrList. The default implementation is a no-op. */
+      PtrListBase. The default implementation is a no-op. */
   virtual void afterInsertHook(int id, MasterPtrBase* ptr);
 
 protected:
   int& firstVacant();
   const int& firstVacant() const;
 
-  unsigned int voidVecSize() const;
+  unsigned int baseVecSize() const;
 
-  void voidVecResize(unsigned int new_size);
+  void baseVecResize(unsigned int new_size);
 
 private:
-  VoidPtrList(const VoidPtrList&);
-  VoidPtrList& operator=(const VoidPtrList&);
+  PtrListBase(const PtrListBase&);
+  PtrListBase& operator=(const PtrListBase&);
 
   class Impl;
   Impl* const itsImpl;
 };
 
-static const char vcid_voidptrlist_h[] = "$Header$";
-#endif // !VOIDPTRLIST_H_DEFINED
+static const char vcid_ptrlistbase_h[] = "$Header$";
+#endif // !PTRLISTBASE_H_DEFINED
