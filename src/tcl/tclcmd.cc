@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Tue Nov 14 13:13:19 2000
+// written: Tue Dec 12 15:03:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,7 +124,7 @@ Tcl::TclCmd::TclCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
 DOTRACE("Tcl::TclCmd::TclCmd");
   Tcl_CreateObjCommand(interp,
 							  const_cast<char *>(cmd_name),
-							  dummyInvoke,
+							  invokeCallback,
 							  static_cast<ClientData> (this),
 							  (Tcl_CmdDeleteProc*) NULL);
 }
@@ -401,9 +401,9 @@ DOTRACE("Tcl::TclCmd::lappendCstring");
   if (cmd_result != TCL_OK) throw TclError();
 }
 
-int Tcl::TclCmd::dummyInvoke(ClientData clientData, Tcl_Interp* interp,
-									  int objc, Tcl_Obj *const objv[]) {
-DOTRACE("Tcl::TclCmd::dummyInvoke");
+int Tcl::TclCmd::invokeCallback(ClientData clientData, Tcl_Interp* interp,
+										  int objc, Tcl_Obj *const objv[]) {
+DOTRACE("Tcl::TclCmd::invokeCallback");
 
   TclCmd* theCmd = static_cast<TclCmd*>(clientData);
 
