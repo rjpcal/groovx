@@ -34,9 +34,16 @@
 
 #include "datablock.h"
 
+#include "util/error.h"
+
+#include <algorithm>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
+
+#ifdef WITH_MATLAB
+#include <matrix.h>
+#endif
 
 #include "util/debug.h"
 DBG_REGISTER
@@ -212,6 +219,124 @@ void data_block::make_unique(data_block*& rep)
 
     POSTCONDITION(rep->m_refcount == 1);
   }
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// data_holder member functions
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace
+{
+  data_block* new_data_block(int mrows, int ncols,
+                             mtx_policies::init_policy p)
+  {
+    if (p == mtx_policies::ZEROS)
+      return data_block::make_zeros(mrows*ncols);
+    // else...
+    return data_block::make_uninitialized(mrows*ncols);
+  }
+
+  data_block* new_data_block(double* data,
+                             int mrows, int ncols,
+                             mtx_policies::storage_policy s)
+  {
+    switch (s)
+      {
+      case mtx_policies::BORROW:
+        return data_block::make_borrowed(data, mrows*ncols);
+
+      case mtx_policies::REFER:
+        return data_block::make_referred(data, mrows*ncols);
+
+      case mtx_policies::COPY:
+      default:
+        break;
+      }
+
+    return data_block::make_data_copy(data, mrows*ncols);
+  }
+
+#ifdef WITH_MATLAB
+  data_block* new_data_block(mxArray* a,
+                             mtx_policies::storage_policy s)
+  {
+    if (!mxIsDouble(a))
+      throw rutz::error("cannot construct a mtx "
+                        "with a non-'double' mxArray", SRC_POS);
+
+    return new_data_block(mxGetPr(a), mxGetM(a), mxGetN(a), s);
+  }
+
+  data_block* new_data_block(const mxArray* a,
+                             mtx_policies::storage_policy s)
+  {
+    if (!mxIsDouble(a))
+      throw rutz::error("cannot construct a mtx "
+                        "with a non-'double' mxArray", SRC_POS);
+
+    if (s != mtx_policies::BORROW && s != mtx_policies::COPY)
+      throw rutz::error("cannot construct a mtx from a const mxArray* "
+                        "unless the storage_policy is COPY or BORROW",
+                        SRC_POS);
+
+    return new_data_block(mxGetPr(a), mxGetM(a), mxGetN(a), s);
+  }
+#endif
+}
+
+data_holder::data_holder(double* data, int mrows, int ncols, storage_policy s) :
+  m_data(new_data_block(data, mrows, ncols, s))
+{
+  m_data->incr_refcount();
+}
+
+data_holder::data_holder(int mrows, int ncols, init_policy p) :
+  m_data(new_data_block(mrows, ncols, p))
+{
+  m_data->incr_refcount();
+}
+
+#ifdef WITH_MATLAB
+data_holder::data_holder(mxArray* a, storage_policy s) :
+  m_data(new_data_block(a, s))
+{
+  m_data->incr_refcount();
+}
+
+data_holder::data_holder(const mxArray* a, storage_policy s) :
+  m_data(new_data_block(a, s))
+{
+  m_data->incr_refcount();
+}
+#endif
+
+data_holder::data_holder(const data_holder& other) :
+  m_data(other.m_data)
+{
+  m_data->incr_refcount();
+}
+
+data_holder::~data_holder()
+{
+  m_data->decr_refcount();
+}
+
+void data_holder::swap(data_holder& other)
+{
+  std::swap(m_data, other.m_data);
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// data_ref_holder definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+void data_ref_holder::swap(data_ref_holder& other)
+{
+  std::swap(ref_, other.ref_);
 }
 
 static const char vcid_datablock_cc[] = "$Header$";

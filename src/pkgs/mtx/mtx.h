@@ -40,9 +40,6 @@
 
 typedef struct mxArray_tag mxArray;
 
-class data_holder;
-class data_ref_holder;
-
 //  #######################################################
 //  =======================================================
 /// range-checking infrastructure
@@ -341,17 +338,6 @@ public:
 
 //  #######################################################
 //  =======================================================
-/// Aggregation of initialization and storage policy enums.
-
-struct mtx_policies
-{
-  enum init_policy { ZEROS, NO_INIT };
-  enum storage_policy { COPY, BORROW, REFER };
-};
-
-
-//  #######################################################
-//  =======================================================
 /// mtx_shape class holds number-of-rows/number-of-columns info.
 
 class mtx_shape
@@ -459,89 +445,6 @@ private:
   int m_rowstride;
   static const int m_colstride = 1;
   ptrdiff_t m_offset;
-};
-
-
-//  #######################################################
-//  =======================================================
-/// data_holder enforces the ref-counting semantics of data_block
-
-class data_holder : public mtx_policies
-{
-public:
-  /// Construct with a data array, dimensions, and storage policy.
-  data_holder(double* data, int mrows, int ncols, storage_policy s);
-
-  /// Construct empty with dimensions and an init policy.
-  data_holder(int mrows, int ncols, init_policy p);
-
-  /// Construct from a matlab array and a storage policy.
-  data_holder(mxArray* a, storage_policy s);
-
-  /** With a const mxArray*, only BORROW or COPY are allowed as
-      storage policies, in order to preserve const-correctness. */
-  data_holder(const mxArray* a, storage_policy s);
-
-  /// Copy constructor.
-  data_holder(const data_holder& other);
-
-  /// Destructor.
-  ~data_holder();
-
-  /// Swap contents with another data_holder.
-  void swap(data_holder& other);
-
-  /// Make a unique copy of our data block if needed.
-  void make_unique() { data_block::make_unique(m_data); }
-
-  /// Get a pointer to const underlying data.
-  const double* storage() const { return m_data->data(); }
-
-  /// Get a pointer to non-const underlying data.
-  double* storage_nc() { make_unique(); return m_data->data_nc(); }
-
-  /// Get the allocated length of underlying data array.
-  int storage_length() const { return m_data->length(); }
-
-private:
-  data_holder& operator=(const data_holder&); // not allowed
-
-  data_block* m_data;
-};
-
-
-//  #######################################################
-//  =======================================================
-/// data_ref_holder acts like a reference to a data_holder
-
-class data_ref_holder : public mtx_policies
-{
-public:
-  /// Construct with a pointee.
-  data_ref_holder(data_holder* ref) : ref_(ref) {}
-
-  /// Copy constructor.
-  data_ref_holder(const data_ref_holder& other) : ref_(other.ref_) {}
-
-  /// Destructor.
-  ~data_ref_holder() {}
-
-  /// Swap contents with another data_ref_holder.
-  void swap(data_ref_holder& other);
-
-  /// Get a pointer to const underlying data.
-  const double* storage() const { return ref_->storage(); }
-
-  /// Get a pointer to non-const underlying data.
-  double* storage_nc() { return ref_->storage_nc(); }
-
-  /// Get the allocated length of underlying data array.
-  int storage_length() const { return ref_->storage_length(); }
-
-private:
-  data_ref_holder& operator=(const data_ref_holder&); // not allowed
-
-  data_holder* ref_;
 };
 
 
