@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Thu Nov 21 12:58:58 2002
+// written: Thu Nov 21 15:48:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -368,6 +368,36 @@ DOTRACE("GLCanvas::enableAntialiasing");
     }
 }
 
+
+
+void GLCanvas::viewport(int x, int y, int w, int h)
+{
+DOTRACE("GLCanvas::viewport");
+
+  glViewport(x, y, w, h);
+}
+
+void GLCanvas::orthographic(const Gfx::Rect<double>& bounds,
+                            double zNear, double zFar)
+{
+DOTRACE("GLCanvas::orthographic");
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(bounds.left(), bounds.right(),
+          bounds.bottom(), bounds.top(),
+          zNear, zFar);
+}
+
+void GLCanvas::perspective(double fovy, double aspect,
+                           double zNear, double zFar)
+{
+DOTRACE("GLCanvas::perspective");
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluPerspective(fovy, aspect, zNear, zFar);
+}
 
 
 void GLCanvas::pushMatrix()
