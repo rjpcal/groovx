@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Feb 19 18:02:19 2002
+// written: Tue Feb 19 18:09:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -555,48 +555,39 @@ DOTRACE("Mtx::assign_MMmul");
     }
 }
 
+namespace
+{
+  template <class Op>
+  Mtx unaryOp(const Mtx& src, Op op)
+  {
+    Mtx result(src.mrows(), src.ncols(), Mtx::NO_INIT);
+
+    std::transform(src.begin(), src.end(),
+                   result.begin_nc(),
+                   op);
+
+    return result;
+  }
+}
+
 Mtx operator+(const Mtx& m, double x)
 {
-  Mtx result(m.mrows(), m.ncols(), Mtx::NO_INIT);
-
-  std::transform(m.begin(), m.end(),
-                 result.begin_nc(),
-                 std::bind2nd(std::plus<double>(), x));
-
-  return result;
+  return unaryOp(m, std::bind2nd(std::plus<double>(), x));
 }
 
 Mtx operator-(const Mtx& m, double x)
 {
-  Mtx result(m.mrows(), m.ncols(), Mtx::NO_INIT);
-
-  std::transform(m.begin(), m.end(),
-                 result.begin_nc(),
-                 std::bind2nd(std::minus<double>(), x));
-
-  return result;
+  return unaryOp(m, std::bind2nd(std::minus<double>(), x));
 }
 
 Mtx operator*(const Mtx& m, double x)
 {
-  Mtx result(m.mrows(), m.ncols(), Mtx::NO_INIT);
-
-  std::transform(m.begin(), m.end(),
-                 result.begin_nc(),
-                 std::bind2nd(std::multiplies<double>(), x));
-
-  return result;
+  return unaryOp(m, std::bind2nd(std::multiplies<double>(), x));
 }
 
 Mtx operator/(const Mtx& m, double x)
 {
-  Mtx result(m.mrows(), m.ncols(), Mtx::NO_INIT);
-
-  std::transform(m.begin(), m.end(),
-                 result.begin_nc(),
-                 std::bind2nd(std::divides<double>(), x));
-
-  return result;
+  return unaryOp(m, std::bind2nd(std::divides<double>(), x));
 }
 
 
