@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Thu Jun 24 19:21:13 1999
+// written: Tue Jun 29 18:35:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,9 +14,10 @@
 #include <tcl.h>
 
 #include "blocklist.h"
-#include "expt.h"
+#include "block.h"
 #include "tclcmd.h"
 #include "tclitempkg.h"
+#include "listpkg.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -25,8 +26,8 @@
 
 namespace BlockTcl {
   class BlockCmd;
+  class AddTrialsCmd;
   class InitCmd;
-  class BlockListPkg;
   class BlockPkg;
 }
 
@@ -42,9 +43,33 @@ public:
 	 TclCmd(interp, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() {
-	 Expt* p = new Expt();
+	 Block* p = new Block();
 	 int blockid = BlockList::theBlockList().insert(p);
 	 returnInt(blockid);
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// BlockTcl::AddTrialsCmd --
+//
+//---------------------------------------------------------------------
+
+class BlockTcl::AddTrialsCmd : public TclItemCmd<Block> {
+public:
+  AddTrialsCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<Block>(pkg, cmd_name, 
+							"block_id ?first_trial=-1 last_trial=-1 repeat=1?",
+							2, 5, false) {}
+protected:
+  virtual void invoke() {
+	 Block* block = getItem();
+
+	 int first_trial = (objc() < 3) ? -1 : getIntFromArg(2);
+	 int last_trial  = (objc() < 4) ? -1 : getIntFromArg(3);
+	 int repeat      = (objc() < 5) ?  1 : getIntFromArg(4);
+
+	 block->addTrials(first_trial, last_trial, repeat);
   }
 };
 
@@ -54,18 +79,19 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class BlockTcl::InitCmd : public TclItemCmd<Expt> {
+class BlockTcl::InitCmd : public TclItemCmd<Block> {
 public:
   InitCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Expt>(pkg, cmd_name, "block_id repeat rand_seed", 4, 4) {}
+	 TclItemCmd<Block>(pkg, cmd_name, "block_id repeat rand_seed", 4, 4) {}
 protected:
   virtual void invoke() {
-	 Expt* block = getItem();
+	 Block* block = getItem();
 
 	 int repeat = getIntFromArg(2);
 	 int rand_seed = getIntFromArg(3);
 	 
-	 block->init(repeat, rand_seed);
+	 block->addTrials(-1, -1, repeat);
+	 block->shuffle(rand_seed);
   }
 };
 
@@ -75,55 +101,45 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class BlockTcl::BlockPkg : public CTclIoItemPkg<Expt> {
+class BlockTcl::BlockPkg : public CTclIoItemPkg<Block> {
 public:
   BlockPkg(Tcl_Interp* interp) :
-	 CTclIoItemPkg<Expt>(interp, "Block", "1.1")
+	 CTclIoItemPkg<Block>(interp, "Block", "1.1")
   {
 	 addCommand( new BlockCmd(interp, "Block::block") );
 
 	 addCommand( new InitCmd(this, "Block::init") );
 
-	 declareGetter("currentTrialType",
-						new CGetter<Expt, int>(&Expt::currentTrialType));
-	 declareGetter("isComplete",
-						new CGetter<Expt, bool>(&Expt::isComplete));
-	 declareGetter("numCompleted",
-						new CGetter<Expt, int>(&Expt::numCompleted));
-	 declareGetter("numTrials",
-						new CGetter<Expt, int>(&Expt::numTrials));
-	 declareGetter("prevResponse",
-						new CGetter<Expt, int>(&Expt::prevResponse));
-	 declareGetter("trialDescription",
-						new CGetter<Expt, const char*>(&Expt::trialDescription));
-	 declareGetter("currentTrial",
-						new CGetter<Expt, int>(&Expt::currentTrial));
+	 addCommand( new AddTrialsCmd(this, "Block::addTrials") );
 
-	 declareAction("undoPrevTrial", new CAction<Expt>(&Expt::undoPrevTrial));
+	 declareSetter("shuffle", new CSetter<Block, int>(&Block::shuffle),
+						"item_id rand_seed");
+
+	 declareAction("reset", new CAction<Block>(&Block::reset));
+
+	 declareGetter("currentTrialType",
+						new CGetter<Block, int>(&Block::currentTrialType));
+	 declareGetter("isComplete",
+						new CGetter<Block, bool>(&Block::isComplete));
+	 declareGetter("numCompleted",
+						new CGetter<Block, int>(&Block::numCompleted));
+	 declareGetter("numTrials",
+						new CGetter<Block, int>(&Block::numTrials));
+	 declareGetter("prevResponse",
+						new CGetter<Block, int>(&Block::prevResponse));
+	 declareGetter("trialDescription",
+						new CGetter<Block, const char*>(&Block::trialDescription));
+	 declareGetter("currentTrial",
+						new CGetter<Block, int>(&Block::currentTrial));
+
+	 declareAction("undoPrevTrial", new CAction<Block>(&Block::undoPrevTrial));
 
 	 declareAttrib("verbose",
-						new CAttrib<Expt, bool>(&Expt::getVerbose,
-														&Expt::setVerbose));
-	 
-	 int result = Tcl_Eval(interp,
-		  "namespace eval Expt {\n"
-		  "  proc currentTrial {} { return [Block::currentTrial 0] }\n"
-		  "  proc currentTrialType {} { return [Block::currentTrialType 0] }\n"
-		  "  proc isComplete {} { return [Block::isComplete 0] }\n"
-		  "  proc numCompleted {} { return [Block::numCompleted 0] }\n"
-		  "  proc numTrials {} { return [Block::numTrials 0] }\n"
-		  "  proc prevResponse {} { return [Block::prevResponse 0] }\n"
-		  "  proc trialDescription {} { return [Block::trialDescription 0] }\n"
-		  "  proc verbose args { \n"
-		  "      if { [llength $args] == 0 } { return [Block::verbose 0] \n"
-        "      } else { Block::verbose 0 [lindex $args 0] }}"
-		  "}\n");
-
-	 DebugEvalNL(result);
-	 DebugEvalNL(Tcl_GetStringResult(interp));
+						new CAttrib<Block, bool>(&Block::getVerbose,
+														&Block::setVerbose));
   }
 
-  virtual Expt* getCItemFromId(int id) {
+  virtual Block* getCItemFromId(int id) {
 	 if ( !BlockList::theBlockList().isValidId(id) ) {
 		throw TclError("invalid block id");
 	 }
@@ -141,15 +157,16 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class BlockTcl::BlockListPkg : public CTclIoItemPkg<BlockList> {
+namespace BlockListTcl {
+  class BlockListPkg;
+}
+
+class BlockListTcl::BlockListPkg : public ListPkg<BlockList> {
 public:
   BlockListPkg(Tcl_Interp* interp) :
-	 CTclIoItemPkg<BlockList>(interp, "BlockList", "1.1", 0)
+	 ListPkg<BlockList>(interp, "BlockList", "3.0")
   {
-	 BlockList::theBlockList().insertAt(0, new Expt());
-
-	 declareGetter("count", new CGetter<BlockList, int>(&BlockList::count));
-	 declareAction("reset", new CAction<BlockList>(&BlockList::clear));
+	 BlockList::theBlockList().insertAt(0, new Block());
   }
   
   virtual IO& getIoFromId(int) { return BlockList::theBlockList(); }
@@ -170,8 +187,8 @@ extern "C" Tcl_PackageInitProc Block_Init;
 int Block_Init(Tcl_Interp* interp) {
 DOTRACE("Block_Init");
 
-  new BlockTcl::BlockListPkg(interp);
   new BlockTcl::BlockPkg(interp);
+  new BlockListTcl::BlockListPkg(interp);
 
   return TCL_OK;
 }
