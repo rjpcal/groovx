@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Tue Mar  7 15:46:39 2000
+// written: Wed Mar  8 12:26:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -142,10 +142,6 @@ PropertyInfoBase::~PropertyInfoBase()
 PropertyInfoBase& PropertyInfoBase::operator=(const PropertyInfoBase& other)
 {
   *itsImpl = *(other.itsImpl);
-}
-
-const string& PropertyInfoBase::name() const {
-  return itsImpl->name;
 }
 
 const char* PropertyInfoBase::name_cstr() const {
