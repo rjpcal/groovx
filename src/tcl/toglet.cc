@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu May 15 16:57:33 2003
+// written: Fri May 16 12:27:49 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -54,6 +54,11 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
+
+namespace
+{
+  Util::SoftRef<Toglet> theCurrentToglet;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -113,7 +118,8 @@ Window Toglet::Impl::cClassCreateProc(Tk_Window tkwin,
                                       Window parent,
                                       ClientData clientData) throw()
 {
-  Toglet::Impl* rep = static_cast<Toglet::Impl*>(clientData);
+  Toglet* toglet = static_cast<Toglet*>(clientData);
+  Toglet::Impl* rep = toglet->rep;
 
   Display* dpy = Tk_Display(tkwin);
 
@@ -165,22 +171,6 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
 
   XSelectInput(dpy, win, ALL_EVENTS_MASK);
 
-  // Bind the context to the window and make it the current context
-  rep->canvas->makeCurrent(win);
-
-  if (rep->canvas->isRgba())
-    {
-      DOTRACE("GlxWrapper::GlxWrapper::rgbaFlag");
-      rep->canvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
-      rep->canvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
-    }
-  else
-    {
-      // FIXME use XBlackPixel(), XWhitePixel() here?
-      rep->canvas->setColorIndex(0);
-      rep->canvas->setClearColorIndex(1);
-    }
-
   return win;
 }
 
@@ -230,11 +220,36 @@ DOTRACE("Toglet::Toglet");
   // pointing anywhere meaningful (will be either NULL or garbage).
 
   Tk_GeometryRequest(rep->tkWin, this->width(), this->height());
-  Tk_SetClassProcs(rep->tkWin, &toglProcs, static_cast<ClientData>(rep));
+  Tk_SetClassProcs(rep->tkWin, &toglProcs, static_cast<ClientData>(this));
   Tk_MakeWindowExist(rep->tkWin);
   Tk_MapWindow(rep->tkWin);
 
+  // Bind the context to the window and make it the current context
+  this->makeCurrent();
+
+  if (rep->canvas->isRgba())
+    {
+      DOTRACE("GlxWrapper::GlxWrapper::rgbaFlag");
+      rep->canvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
+      rep->canvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
+    }
+  else
+    {
+      // FIXME use XBlackPixel(), XWhitePixel() here?
+      rep->canvas->setColorIndex(0);
+      rep->canvas->setClearColorIndex(1);
+    }
+
   if (pack) Tcl::TkWidget::pack();
+}
+
+Toglet::~Toglet()
+{
+DOTRACE("Toglet::~Toglet");
+
+  dbgEvalNL(3, (void*)this);
+
+  delete rep;
 }
 
 Toglet* Toglet::make()
@@ -264,13 +279,17 @@ DOTRACE("Toglet::makeToplevel");
   return p;
 }
 
-Toglet::~Toglet()
+Util::SoftRef<Toglet> Toglet::getCurrent()
 {
-DOTRACE("Toglet::~Toglet");
+DOTRACE("Toglet::getCurrent");
+  return theCurrentToglet;
+}
 
-  dbgEvalNL(3, (void*)this);
-
-  delete rep;
+void Toglet::setCurrent(Util::SoftRef<Toglet> toglet)
+{
+DOTRACE("Toglet::setCurrent");
+  dbgEval(1, toglet.id());
+  toglet->makeCurrent();
 }
 
 void Toglet::defaultParent(const char* pathname)
@@ -289,6 +308,7 @@ DOTRACE("Toglet::getCanvas");
 void Toglet::makeCurrent() const
 {
   rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
+  theCurrentToglet = Util::SoftRef<Toglet>(const_cast<Toglet*>(this));
 }
 
 void Toglet::displayCallback()
@@ -323,6 +343,7 @@ void Toglet::render()
 
 void Toglet::fullRender()
 {
+  makeCurrent();
   rep->scene->fullRender();
 }
 

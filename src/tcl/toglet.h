@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu May 15 16:56:32 2003
+// written: Fri May 16 12:27:22 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -45,6 +45,7 @@ namespace Gfx
 namespace Util
 {
   template <class T> class Ref;
+  template <class T> class SoftRef;
 }
 
 // ####################################################################
@@ -58,6 +59,8 @@ protected:
 
 public:
 
+  virtual ~Toglet();
+
   /// Returns a new Toglet object.
   /** Note that the object will be "volatile" -- it manages its own
       lifetime. */
@@ -68,7 +71,11 @@ public:
       lifetime. */
   static Toglet* makeToplevel();
 
-  virtual ~Toglet();
+  /// Find the Toglet that most recently had makeCurrent() called for it.
+  static Util::SoftRef<Toglet> getCurrent();
+
+  /// Equivalent to calling toglet->makeCurrent().
+  static void setCurrent(Util::SoftRef<Toglet> toglet);
 
   virtual bool isNotShareable() const { return true; }
 

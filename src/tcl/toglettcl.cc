@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Fri May 16 11:21:39 2003
+// written: Fri May 16 14:04:20 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -55,22 +55,6 @@
 
 namespace
 {
-  SoftRef<Toglet> theWidget;
-
-  void setCurrentTogl(SoftRef<Toglet> toglet)
-  {
-    DOTRACE("<toglettcl.cc>::setCurrentTogl");
-
-    theWidget = toglet;
-
-    toglet->makeCurrent();
-  }
-
-  SoftRef<Toglet> getCurrentTogl()
-  {
-    return theWidget;
-  }
-
   Tcl::List dumpCmap(SoftRef<Toglet> toglet, unsigned int start, unsigned end)
   {
     if (start > 255 || end > 255)
@@ -101,7 +85,7 @@ namespace
 
   bool inited()
   {
-    return theWidget.isValid();
+    return Toglet::getCurrent().isValid();
   }
 
   // Make a specified GxNode the widget's current drawable, and draw
@@ -130,8 +114,8 @@ public:
     Tcl::defGenericObjCmds<Toglet>(this);
 
     def( "bind", "event_sequence binding_script", &Toglet::bind );
-    def( "currentToglet", "toglet_id", &setCurrentTogl );
-    def( "currentToglet", 0, &getCurrentTogl );
+    def( "current", "toglet_id", &Toglet::setCurrent );
+    def( "current", 0, &Toglet::getCurrent );
     def( "defaultParent", "parent", &Toglet::defaultParent );
     def( "dumpCmap", "toglet_id start_index end_index", &dumpCmap );
     def( "dumpCmap", "toglet_id", &dumpCmapAll );
@@ -159,7 +143,7 @@ public:
 
     defAction("hook", &Tcl::TkWidget::hook);
 
-    setCurrentTogl(SoftRef<Toglet>(Toglet::make()));
+    Toglet::make();
 
     Pkg::eval("proc clearscreen {} { Togl::clearscreen }\n"
               "proc see {id} { Togl::see $id }\n"
@@ -167,20 +151,20 @@ public:
 
     Pkg::eval("foreach cmd [info commands ::Toglet::*] {\n"
               "  namespace eval ::Togl {\n"
-              "    proc [namespace tail $cmd] {args} \" eval $cmd \\[Toglet::currentToglet\\] \\$args \""
+              "    proc [namespace tail $cmd] {args} \" eval $cmd \\[Toglet::current\\] \\$args \""
               "  }\n"
               "}\n"
               "namespace eval ::Togl { namespace export * }"
               );
 
-    Pkg::eval("Expt::widget [Toglet::currentToglet]");
+    Pkg::eval("Expt::widget [Toglet::current]");
   }
 
   virtual ~TogletPkg()
   {
-    if (theWidget.isValid())
+    if (Toglet::getCurrent().isValid())
       {
-        theWidget->setVisibility(false);
+        Toglet::getCurrent()->setVisibility(false);
       }
   }
 };
