@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 10:17:40 2003
+// written: Tue May 13 10:25:24 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -83,14 +83,14 @@ DOTRACE("GaborArray::GaborArray");
 
   setAlignmentMode(GxAligner::CENTER_ON_CENTER);
 
-  rebuild();
+  update();
 }
 
 void GaborArray::saveImage(const char* filename) const
 {
 DOTRACE("GaborArray::saveImage");
 
-  updateBmap();
+  update();
 
   ImgFile::save(filename, *itsBmap);
 }
@@ -117,14 +117,16 @@ void GaborArray::grRender(Canvas& canvas) const
 {
 DOTRACE("GaborArray::grRender");
 
-  updateBmap();
+  update();
 
   canvas.drawPixels(*itsBmap, Vec2d(0.0, 0.0), Vec2d(1.0, 1.0));
 }
 
-void GaborArray::rebuild()
+void GaborArray::update() const
 {
-DOTRACE("GaborArray::rebuild");
+DOTRACE("GaborArray::update");
+
+  if (itsBmap.get() != 0) return;
 
   Snake snake(itsForegNumber, itsForegSpacing);
 
@@ -151,11 +153,6 @@ DOTRACE("GaborArray::rebuild");
 
   printf(" FOREG_NUMBER %d    PATCH_NUMBER %d    TOTAL_NUMBER %d\n",
           snake.getLength(), insideNumber, totalNumber);
-}
-
-void GaborArray::updateBmap() const
-{
-DOTRACE("GaborArray::updateBmap");
 
   fixed_block<double> win(itsSize.x()*itsSize.y());
 
@@ -208,7 +205,7 @@ DOTRACE("GaborArray::updateBmap");
   itsBmap.swap(result);
 }
 
-bool GaborArray::tryPush(const Element& e)
+bool GaborArray::tryPush(const Element& e) const
 {
   if (tooClose(e.pos, -1)) return false;
 
@@ -226,7 +223,7 @@ bool GaborArray::tryPush(const Element& e)
   return true;
 }
 
-bool GaborArray::tooClose(const Vec2d& v, int except)
+bool GaborArray::tooClose(const Vec2d& v, int except) const
 {
   for (int n = 0; n < totalNumber; ++n)
     {
@@ -240,7 +237,7 @@ bool GaborArray::tooClose(const Vec2d& v, int except)
   return false;
 }
 
-int GaborArray::insideElements(const Snake& snake)
+int GaborArray::insideElements(const Snake& snake) const
 {
 DOTRACE("GaborArray::insideElements");
 
@@ -282,7 +279,7 @@ DOTRACE("GaborArray::insideElements");
   return count;
 }
 
-void GaborArray::hexGridElements()
+void GaborArray::hexGridElements() const
 {
 DOTRACE("GaborArray::hexGridElements");
 
@@ -311,7 +308,7 @@ DOTRACE("GaborArray::hexGridElements");
     }
 }
 
-void GaborArray::fillElements()
+void GaborArray::fillElements() const
 {
 DOTRACE("GaborArray::fillElements");
 
@@ -332,7 +329,7 @@ DOTRACE("GaborArray::fillElements");
   printf(" %d elements, ave spacing %f\n", totalNumber, backgAveSpacing);
 }
 
-void GaborArray::jitterElement()
+void GaborArray::jitterElement() const
 {
 DOTRACE("GaborArray::jitterElement");
 
