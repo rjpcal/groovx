@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Mon Jan 28 11:53:30 2002
+// written: Mon Jan 28 13:03:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -242,7 +242,7 @@ DOTRACE("Tcl::Interp::getProcBody");
 
       Tcl::Code cmd(cmd_obj, Tcl::Code::IGNORE_ERRORS);
 
-      if (cmd.invoke(intp()))
+      if (cmd.invoke(*this))
         {
           fstring result = getResult(TypeCue<const char*>());
           resetResult();
@@ -285,7 +285,30 @@ DOTRACE("Tcl::Interp::createProc");
     proc_cmd_str.append(" }");
 
   Tcl::Code proc_cmd(proc_cmd_str, Tcl::Code::THROW_EXCEPTION);
-  proc_cmd.invoke(intp());
+  proc_cmd.invoke(*this);
+}
+
+void Tcl::Interp::deleteProc(const char* namesp, const char* proc_name)
+{
+DOTRACE("Tcl::Interp::deleteProc");
+
+  Tcl::ObjPtr cmd_str;
+
+  cmd_str.append("rename ");
+
+  if (namesp && (*namesp != '\0'))
+    {
+      cmd_str.append(namesp);
+      cmd_str.append("::");
+    }
+
+  cmd_str.append(proc_name);
+
+  // by renaming to the empty string "", we delete the Tcl proc
+  cmd_str.append(" \"\"");
+
+  Tcl::Code cmd(cmd_str, Tcl::Code::THROW_EXCEPTION);
+  cmd.invoke(*this);
 }
 
 void Tcl::Interp::handleError(const char* msg) const
