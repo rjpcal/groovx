@@ -37,12 +37,12 @@
 #include "io/writer.h"
 
 #include "util/arrays.h"
+#include "util/gzstreambuf.h"
 #include "util/ref.h"
 #include "util/strings.h"
 #include "util/value.h"
 
-#include <iostream>
-#include <fstream>
+#include <ostream>
 #include <set>
 
 #include "util/trace.h"
@@ -123,7 +123,7 @@ private:
 
   void writeEscaped(const char* text);
 
-  STD_IO::ofstream* itsFstream;
+  shared_ptr<STD_IO::ostream> itsOwnedStream;
   STD_IO::ostream& itsBuf;
   std::set<Util::UID> itsWrittenObjects;
   int itsIndentLevel;
@@ -136,7 +136,7 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 XMLWriter::XMLWriter(STD_IO::ostream& os) :
-  itsFstream(0),
+  itsOwnedStream(0),
   itsBuf(os),
   itsWrittenObjects(),
   itsIndentLevel(0)
@@ -145,19 +145,17 @@ DOTRACE("XMLWriter::XMLWriter");
 }
 
 XMLWriter::XMLWriter(const char* filename) :
-  itsFstream(new STD_IO::ofstream(filename)),
-  itsBuf(*itsFstream),
+  itsOwnedStream(Util::ogzopen(filename)),
+  itsBuf(*itsOwnedStream),
   itsWrittenObjects(),
   itsIndentLevel(0)
 {
 DOTRACE("XMLWriter::XMLWriter(const char*)");
-  if (itsFstream->fail()) throw IO::FilenameError(filename);
 }
 
 XMLWriter::~XMLWriter () throw()
 {
 DOTRACE("XMLWriter::~XMLWriter");
-  delete itsFstream;
 }
 
 void XMLWriter::writeChar(const char* name, char val)

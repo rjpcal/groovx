@@ -40,7 +40,6 @@
 
 #include "util/cstrstream.h"
 #include "util/error.h"
-#include "util/gzstreambuf.h"
 #include "util/pointers.h"
 #include "util/ref.h"
 #include "util/strings.h"
@@ -51,16 +50,6 @@
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER;
-
-namespace
-{
-  template <class Reader>
-  void streamRead(Util::Ref<IO::IoObject> obj, STD_IO::istream& is)
-  {
-    Reader reader(is);
-    reader.readRoot(obj.get());
-  }
-}
 
 fstring IO::stringify(Util::Ref<IO::IoObject> obj)
 {
@@ -76,7 +65,8 @@ void IO::destringify(Util::Ref<IO::IoObject> obj, const char* buf)
 {
   Util::icstrstream ist(buf);
 
-  streamRead<IO::LegacyReader>(obj, ist);
+  IO::LegacyReader reader(ist);
+  reader.readRoot(obj.get());
 }
 
 fstring IO::write(Util::Ref<IO::IoObject> obj)
@@ -107,35 +97,27 @@ fstring IO::writeXML(Util::Ref<IO::IoObject> obj)
   return fstring(ost.str().c_str());
 }
 
-void IO::saveASW(Util::Ref<IO::IoObject> obj, fstring filename)
+void IO::saveASW(Util::Ref<IO::IoObject> obj, fstring fname)
 {
-  shared_ptr<STD_IO::ostream> os(Util::ogzopen(filename));
-
-  shared_ptr<IO::Writer> writer = IO::makeAsciiStreamWriter(*os);
+  shared_ptr<IO::Writer> writer = IO::makeAsciiStreamWriter(fname.c_str());
   writer->writeRoot(obj.get());
 }
 
-void IO::loadASR(Util::Ref<IO::IoObject> obj, fstring filename)
+void IO::loadASR(Util::Ref<IO::IoObject> obj, fstring fname)
 {
-  shared_ptr<STD_IO::istream> is(Util::igzopen(filename));
-
-  shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(*is);
+  shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(fname.c_str());
   reader->readRoot(obj.get());
 }
 
 void IO::saveXML(Util::Ref<IO::IoObject> obj, fstring filename)
 {
-  shared_ptr<STD_IO::ostream> os(Util::ogzopen(filename));
-
-  shared_ptr<IO::Writer> writer = IO::makeXMLWriter(*os);
+  shared_ptr<IO::Writer> writer = IO::makeXMLWriter(filename.c_str());
   writer->writeRoot(obj.get());
 }
 
-Util::Ref<IO::IoObject> IO::retrieveASR(fstring filename)
+Util::Ref<IO::IoObject> IO::retrieveASR(fstring fname)
 {
-  shared_ptr<STD_IO::istream> is(Util::igzopen(filename));
-
-  shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(*is);
+  shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(fname.c_str());
   return reader->readRoot();
 }
 

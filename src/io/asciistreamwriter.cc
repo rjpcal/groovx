@@ -37,12 +37,12 @@
 #include "io/writer.h"
 
 #include "util/arrays.h"
+#include "util/gzstreambuf.h"
 #include "util/ref.h"
 #include "util/strings.h"
 #include "util/value.h"
 
-#include <iostream>
-#include <fstream>
+#include <ostream>
 #include <string>
 #include <set>
 
@@ -128,7 +128,7 @@ protected:
   virtual void writeCstring(const char* name, const char* val);
 
 private:
-  STD_IO::ofstream* itsFstream;
+  shared_ptr<STD_IO::ostream> itsOwnedStream;
   STD_IO::ostream& itsBuf;
   std::set<SoftRef<const IO::IoObject> > itsToHandle;
   std::set<SoftRef<const IO::IoObject> > itsWrittenObjects;
@@ -193,7 +193,7 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 AsciiStreamWriter::AsciiStreamWriter(STD_IO::ostream& os) :
-  itsFstream(0),
+  itsOwnedStream(0),
   itsBuf(os),
   itsToHandle(),
   itsWrittenObjects()
@@ -202,8 +202,8 @@ DOTRACE("AsciiStreamWriter::AsciiStreamWriter");
 }
 
 AsciiStreamWriter::AsciiStreamWriter(const char* filename) :
-  itsFstream(new STD_IO::ofstream(filename)),
-  itsBuf(*itsFstream),
+  itsOwnedStream(Util::ogzopen(filename)),
+  itsBuf(*itsOwnedStream),
   itsToHandle(),
   itsWrittenObjects()
 {
@@ -213,7 +213,6 @@ DOTRACE("AsciiStreamWriter::AsciiStreamWriter(const char*)");
 AsciiStreamWriter::~AsciiStreamWriter () throw()
 {
 DOTRACE("AsciiStreamWriter::~AsciiStreamWriter");
-  delete itsFstream;
 }
 
 void AsciiStreamWriter::writeChar(const char* name, char val)

@@ -38,6 +38,7 @@
 #include "util/arrays.h"
 #include "util/cstrstream.h"
 #include "util/error.h"
+#include "util/gzstreambuf.h"
 #include "util/objmgr.h"
 #include "util/pointers.h"
 #include "util/ref.h"
@@ -45,7 +46,7 @@
 #include "util/strings.h"
 #include "util/value.h"
 
-#include <iostream>
+#include <istream>
 #include <map>
 #include <list>
 
@@ -284,6 +285,7 @@ class AsciiStreamReader : public IO::Reader
 {
 public:
   AsciiStreamReader(STD_IO::istream& is);
+  AsciiStreamReader(const char* filename);
 
   virtual ~AsciiStreamReader() throw();
 
@@ -310,6 +312,7 @@ protected:
   virtual fstring readStringImpl(const fstring& name);
 
 private:
+  shared_ptr<STD_IO::istream> itsOwnedStream;
   STD_IO::istream& itsBuf;
   IO::ObjectMap itsObjects;
   slink_list<shared_ptr<AttribMap> > itsAttribs;
@@ -350,11 +353,22 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-AsciiStreamReader::AsciiStreamReader (STD_IO::istream& is) :
-  itsBuf(is), itsObjects(), itsAttribs()
+AsciiStreamReader::AsciiStreamReader(STD_IO::istream& is) :
+  itsOwnedStream(0),
+  itsBuf(is),
+  itsObjects(),
+  itsAttribs()
 {
 DOTRACE("AsciiStreamReader::AsciiStreamReader");
-  // nothing
+}
+
+AsciiStreamReader::AsciiStreamReader(const char* filename) :
+  itsOwnedStream(Util::igzopen(filename)),
+  itsBuf(*itsOwnedStream),
+  itsObjects(),
+  itsAttribs()
+{
+DOTRACE("AsciiStreamReader::AsciiStreamReader");
 }
 
 AsciiStreamReader::~AsciiStreamReader () throw()
@@ -629,12 +643,10 @@ shared_ptr<IO::Reader> IO::makeAsciiStreamReader(STD_IO::istream& os)
   return make_shared( new AsciiStreamReader(os) );
 }
 
-#if 0
 shared_ptr<IO::Reader> IO::makeAsciiStreamReader(const char* filename)
 {
   return make_shared( new AsciiStreamReader(filename) );
 }
-#endif
 
 static const char vcid_asciistreamreader_cc[] = "$Header$";
 #endif // !ASCIISTREAMREADER_CC_DEFINED
