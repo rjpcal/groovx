@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Tue May 25 13:49:59 1999
+// written: Wed May 26 20:40:11 1999
 // $Id$
 //
 // This file defines the IO abstract interface. This interface
@@ -49,15 +49,15 @@ public:
   static const IOFlag TYPENAME   = 1 << 0; // The class's name is written/read
   static const IOFlag BASES      = 1 << 1; // The class's bases is written/read
 
-  virtual ~IO();
+  virtual ~IO() = 0;
   virtual void serialize(ostream& os, IOFlag flag) const = 0;
   virtual void deserialize(istream& is, IOFlag flag) = 0;
 
   virtual int charCount() const = 0;
 };
 
-inline int charCountInt(int i) { return int(ceil(log10(double(i)))); }
-inline int charCountDouble(double d) { return 15; }
+int charCountInt(int i);
+int charCountDouble(double d);
 
 ///////////////////////////////////////////////////////////////////////
 //
