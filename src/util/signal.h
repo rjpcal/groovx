@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Wed Mar 19 12:45:36 2003
+// written: Wed Mar 19 13:10:48 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,6 +44,15 @@ public:
 };
 #endif
 
+//  ###################################################################
+//  ===================================================================
+
+/// The base class for all slot classes.
+
+/** Slots can be triggered from a Signal by calling connect() on that
+    Signal. Thereafter, the slot will be called whenever that signal emits
+    a message. */
+
 class SlotBase : public virtual Util::Object
 {
 public:
@@ -65,11 +74,7 @@ public:
 //  ###################################################################
 //  ===================================================================
 
-/// Slot implements the Slot design pattern along with Signal.
-
-/** An Slot can be triggered by a Signal by calling connect() on that
-    Signal. Thereafter, the Slot will be called whenever that signal emits
-    a message. */
+/// A zero-argument slot class.
 
 class Slot0 : public SlotBase
 {
@@ -93,7 +98,7 @@ public:
 //  ###################################################################
 //  ===================================================================
 
-/// SlotAdapter helps build a Slot from a target object and a member function.
+/// A mem-func adapter for zer-argument slots.
 
 template <class C, class MF>
 class SlotAdapter0 : public Slot0
@@ -128,12 +133,19 @@ inline Util::SoftRef<Slot0> Slot0::make(C* obj, MF mf)
 //  ###################################################################
 //  ===================================================================
 
+/// A one-argument call data wrapper.
+
 template <class P1>
 struct CallData1
 {
   CallData1(P1 i1) : p1(i1) {}
   P1 p1;
 };
+
+//  ###################################################################
+//  ===================================================================
+
+/// A slot with one argument.
 
 template <class P1>
 class Slot1 : public SlotBase
@@ -157,6 +169,11 @@ public:
     call(data->p1);
   }
 };
+
+//  ###################################################################
+//  ===================================================================
+
+/// A mem-func adapter for slots with one argument.
 
 template <class P1, class C, class MF>
 class SlotAdapter1 : public Slot1<P1>
@@ -195,6 +212,11 @@ inline Util::SoftRef<Slot1<P1> > Slot1<P1>::make(C* obj, MF mf)
 
 /// SignalBase provides basic implementation for Signal.
 
+/** Classes that need to notify others of changes should hold an
+    appropriate signal object by value, and call emit() when it is
+    necessary to notify observers of the change. In turn, emit() will \c
+    call all of the Slot's that are observing this Signal. */
+
 class SignalBase : public Util::VolatileObject
 {
 protected:
@@ -221,12 +243,7 @@ private:
 //  ###################################################################
 //  ===================================================================
 
-/// Signal implements the Slot design pattern along with Slot.
-
-/** Classes that need to notify others of changes should hold a
-    Util::Signal object by value, and call Signal::emit() when it is
-    necessary to notify observers of the change. In turn, emit() will \c
-    call all of the Slot's that are observing this Signal. */
+/// A zero-argument signal.
 
 class Signal0 : public SignalBase
 {
@@ -267,6 +284,11 @@ private:
   Util::Ref<Util::Slot0> slotEmitSelf;
 };
 
+
+//  ###################################################################
+//  ===================================================================
+
+/// A one-argument signal.
 
 template <class P1>
 class Signal1 : public SignalBase

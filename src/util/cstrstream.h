@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Mar  7 13:12:33 2003
-// written: Wed Mar 19 12:45:33 2003
+// written: Wed Mar 19 13:04:26 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,6 +33,7 @@ namespace Util
   class icstrstream;
 }
 
+/// An input streambuf that reads from c-style strings.
 class Util::icstrbuf : public STD_IO::streambuf
 {
 private:
@@ -52,8 +53,12 @@ public:
     setg(itsBuf, itsBuf, itsBuf + itsLen);
   }
 
+  /// Destructor.
   ~icstrbuf() { delete [] itsBuf; }
 
+  /// Underflow operation.
+  /** Since there's no "external data source", if we've come to the end of
+      our current buffer, then we're just plain out of data. */
   virtual int underflow()
   {
     if (gptr() < egptr())
@@ -61,17 +66,17 @@ public:
         return *gptr();
       }
 
-    // There's no "external data source", so if we've come to the end of
-    // the buffer, then we're just out of data.
     return EOF;
   }
 };
 
+/// An input stream class based on icstrbuf.
 class Util::icstrstream : public STD_IO::istream
 {
 private:
   icstrbuf itsBuf;
 public:
+  /// Construct using the given char array as the input buffer.
   icstrstream(const char* s) : STD_IO::istream(&itsBuf), itsBuf(s) {}
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Wed Mar 19 12:45:56 2003
+// written: Wed Mar 19 13:02:25 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@ namespace GWT
 
   enum EventStatus { HANDLED, NOT_HANDLED };
 
+  /// A mouse button-press event.
   struct ButtonPressEvent
   {
     unsigned int button;
@@ -29,6 +30,7 @@ namespace GWT
     int y;
   };
 
+  /// A keypress event.
   struct KeyPressEvent
   {
     const char* keys;
@@ -38,14 +40,9 @@ namespace GWT
   };
 }
 
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * GWT::Widget is the base widget class.
- *
- **/
-///////////////////////////////////////////////////////////////////////
+//  ###################################################################
+//  ===================================================================
+/// GWT::Widget is the base widget class.
 
 class GWT::Widget : public virtual Util::Object
 {
@@ -59,6 +56,7 @@ public:
   Util::Signal1<const ButtonPressEvent&> sigButtonPressed;
   Util::Signal1<const KeyPressEvent&> sigKeyPressed;
 
+  /// Take the keyboard focus.
   virtual void takeFocus() = 0;
 
 private:

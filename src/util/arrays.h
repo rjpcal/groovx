@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Wed Mar 19 12:45:41 2003
+// written: Wed Mar 19 13:34:05 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,66 +24,72 @@ namespace Util
   class out_of_range {};
 }
 
-
+/// Get a pointer to the beginning of a C-style array.
 template<class T, std::size_t N>
 T* array_begin(T (&array)[N])
 {
   return &array[0];
 }
 
+/// Get a pointer to the one-past-the-end of a C-style array.
 template<class T, std::size_t N>
 T* array_end(T (&array)[N])
 {
   return &array[0]+N;
 }
 
+/// Get a pointer to the beginning of a C-style const array.
 template<class T, std::size_t N>
 const T* array_begin(T const (&array)[N])
 {
   return &array[0];
 }
 
+/// Get a pointer to the one-past-the-end of a C-style const array.
 template<class T, std::size_t N>
 const T* array_end(T const (&array)[N])
 {
   return &array[0]+N;
 }
 
-///////////////////////////////////////////////////////////////////////
-/**
- * \c static_block is a simple wrapper around a C-style array that
- * provides an STL-style container interface, including both checked
- * and unchecked access, as well as access to the container's size
- * with the \c size() member function.
- **/
-///////////////////////////////////////////////////////////////////////
+
+//  ###################################################################
+//  ===================================================================
+
+/// A simple wrapper around a C-style array.
+/** \c static_block provides an STL-style container interface, including
+    both checked and unchecked access, as well as access to the container's
+    size with the \c size() member function. */
 
 template <class T, size_t N>
 struct static_block
 {
+  typedef T value_type;                     ///< STL value type.
 
-  typedef T value_type;
+  typedef T* pointer;                       ///< STL pointer type.
+  typedef const T* const_pointer;           ///< STL const pointer type.
+  typedef T& reference ;                    ///< STL reference type.
+  typedef const T& const_reference;         ///< STL const reference type.
 
-  typedef T* pointer;
-  typedef const T* const_pointer;
-  typedef T& reference;
-  typedef const T& const_reference;
+  typedef pointer iterator;                 ///< STL iterator type.
+  typedef const_pointer const_iterator;     ///< STL const iterator type.
 
-  typedef pointer iterator;
-  typedef const_pointer const_iterator;
+  typedef size_t size_type;                 ///< STL size type.
+  typedef ptrdiff_t difference_type;        ///< STL iterator difference type.
 
-  typedef size_t size_type;
-  typedef ptrdiff_t difference_type;
+  iterator begin() { return data; }         ///< Iterator to array start.
+  iterator end() { return data+N; }         ///< Iterator to array one-past-the-end.
 
-  iterator begin() { return data; }
-  iterator end() { return data+N; }
+  const_iterator begin() const { return data; } ///< Const iterator to array start.
+  const_iterator end() const { return data+N; } ///< Const iterator to array one-past-the-end.
 
-  const_iterator begin() const { return data; }
-  const_iterator end() const { return data+N; }
-
+  /// Unchecked non-const array index.
   reference operator[](size_type n) { return data[n]; }
+
+  /// Unchecked const array index.
   const_reference operator[](size_type n) const { return data[n]; }
 
+  /// Checked non-const array index (Util::out_of_range thrown on bounds error).
   reference at(size_type n)
     {
       if ( n >= N )
@@ -91,6 +97,7 @@ struct static_block
       return data[n];
     }
 
+  /// Checked const array index (Util::out_of_range thrown on bounds error).
   const_reference at(size_type n) const
     {
       if ( n >= N )
@@ -98,12 +105,17 @@ struct static_block
       return data[n];
     }
 
+  /// Size of array.
   size_type size() const { return N; }
 
+  /// Maximum size of array type.
   size_type max_size() const { return size_type(-1) / sizeof(T); }
 
+  /// Query whether size is zero.
   bool is_empty() const { return (N == 0); }
 
+  /// Swap data with another array.
+  /** This requires an element-by-element swap. */
   void swap(static_block& other)
     {
       Util::swap2(*this, other);
@@ -113,13 +125,11 @@ struct static_block
 };
 
 
-///////////////////////////////////////////////////////////////////////
-/**
- * \c fixed_block is a simple wrapper for a dynamically allocated array
- * whose size is fixed at construction. Copying and assignment are not
- * allowed.
- **/
-///////////////////////////////////////////////////////////////////////
+//  ###################################################################
+//  ===================================================================
+
+/// A simple wrapper for a dynamic array whose size is fixed at construction.
+/** Copying and assignment are not  allowed. */
 
 template <class T>
 class fixed_block
@@ -143,38 +153,45 @@ private:
     }
 
 public:
+  typedef T value_type;                     ///< STL value type.
 
-  typedef T value_type;
+  typedef T* pointer;                       ///< STL pointer type.
+  typedef const T* const_pointer;           ///< STL const pointer type.
+  typedef T& reference ;                    ///< STL reference type.
+  typedef const T& const_reference;         ///< STL const reference type.
 
-  typedef T* pointer;
-  typedef const T* const_pointer;
-  typedef T& reference;
-  typedef const T& const_reference;
+  typedef pointer iterator;                 ///< STL iterator type.
+  typedef const_pointer const_iterator;     ///< STL const iterator type.
 
-  typedef pointer iterator;
-  typedef const_pointer const_iterator;
+  typedef size_t size_type;                 ///< STL size type.
+  typedef ptrdiff_t difference_type;        ///< STL iterator difference type.
 
-  typedef size_t size_type;
-  typedef ptrdiff_t difference_type;
-
+  /// Construct with a given size.
   fixed_block(size_type n) : N(n), data(new T[N]) {}
+
+  /// Destructor.
   ~fixed_block() { delete [] data; }
 
+  /// Construct by copying from a given iterator range.
   template <class Itr>
   fixed_block(Itr itr, Itr end) : N(end-itr), data(new T[N])
     {
       assign(itr, end);
     }
 
-  iterator begin() { return data; }
-  iterator end() { return data+N; }
+  iterator begin() { return data; }         ///< Iterator to array start.
+  iterator end() { return data+N; }         ///< Iterator to array one-past-the-end.
 
-  const_iterator begin() const { return data; }
-  const_iterator end() const { return data+N; }
+  const_iterator begin() const { return data; } ///< Const iterator to array start.
+  const_iterator end() const { return data+N; } ///< Const iterator to array one-past-the-end.
 
+  /// Unchecked non-const array index.
   reference operator[](size_type n) { return data[n]; }
+
+  /// Unchecked const array index.
   const_reference operator[](size_type n) const { return data[n]; }
 
+  /// Checked non-const array index (Util::out_of_range thrown on bounds error).
   reference at(size_type n)
     {
       if ( n >= N )
@@ -182,6 +199,7 @@ public:
       return data[n];
     }
 
+  /// Checked const array index (Util::out_of_range thrown on bounds error).
   const_reference at(size_type n) const
     {
       if ( n >= N )
@@ -189,12 +207,18 @@ public:
       return data[n];
     }
 
+  /// Size of array.
   size_type size() const { return N; }
 
+  /// Maximum size of array type.
   size_type max_size() const { return size_type(-1) / sizeof(T); }
 
+  /// Query whether size is zero.
   bool is_empty() const { return (N == 0); }
 
+  /// Swap with another fixed_block.
+  /** This is fast since it only requires swapping the interal pointers to
+      the dynamically-allocated arrays; no element-wise swap is needed. */
   void swap(fixed_block& other)
     {
       Util::swap2(N,    other.N);
@@ -207,31 +231,39 @@ private:
 };
 
 
-///////////////////////////////////////////////////////////////////////
-/**
- *  shared_array extends shared_ptr to arrays. The array pointed to is
- *  deleted when the last shared_array pointing to it is destroyed or
- *  reset.
- **/
-///////////////////////////////////////////////////////////////////////
+//  ###################################################################
+//  ===================================================================
+
+/// A reference-counted smart pointer for arrays.
+
+/** The array pointed to is deleted when the last shared_array pointing to
+    it is destroyed or reset. */
 
 template<typename T>
 class shared_array
 {
 public:
+  /// The pointed-to type.
   typedef T element_type;
 
+  /// Construct with the given array pointer.
+  /** Ownership is now unconditionally transferred to the shared_array. If
+      the shared_array constructor causes an exception, the pointed-to
+      array will be destroyed. */
   explicit shared_array(T* p =0) : px(p)
   {
     try { pn = new long(1); }  // fix: prevent leak if new throws
     catch (...) { delete [] p; throw; }
   }
 
-  shared_array(const shared_array& r) : px(r.px)  // never throws
+  /// Copy constructor.
+  shared_array(const shared_array& r) : px(r.px) throw()
   { ++*(pn = r.pn); }
 
+  /// Destructor.
   ~shared_array() { dispose(); }
 
+  /// Assignment oeprator.
   shared_array& operator=(const shared_array& r)
   {
     if (pn != r.pn)
@@ -241,8 +273,9 @@ public:
         ++*(pn = r.pn);
       }
     return *this;
-  } // operator=
+  }
 
+  /// Reset to point to a new array.
   void reset(T* p=0)
   {
     if ( px == p ) return;  // fix: self-assignment safe
@@ -260,13 +293,20 @@ public:
     px = p;
   } // reset
 
-  T* get() const                     { return px; }  // never throws
-  T& operator[](std::size_t i) const { return px[i]; }  // never throws
+  /// Get a pointer to the pointed-to array.
+  T* get() const                     throw() { return px; }
 
-  long use_count() const             { return *pn; }  // never throws
-  bool unique() const                { return *pn == 1; }  // never throws
+  /// Index into the pointed-to array.
+  T& operator[](std::size_t i) const throw() { return px[i]; }
 
-  void swap(shared_array<T>& other)  // never throws
+  /// Get the reference count of the shared array.
+  long use_count() const             throw() { return *pn; }
+
+  /// Query whether the shared array is uniquely owned (i.e. refcount == 1).
+  bool unique() const                throw() { return *pn == 1; }
+
+  /// Swap pointees with another shared_array.
+  void swap(shared_array<T>& other) throw()
   { Util::swap2(px,other.px); Util::swap2(pn,other.pn); }
 
 private:
@@ -278,49 +318,51 @@ private:
 
 };  // shared_array
 
+/// Equality for shared_array objects; returns true if both have the same pointee.
 template<typename T>
   inline bool operator==(const shared_array<T>& a, const shared_array<T>& b)
     { return a.get() == b.get(); }
 
+/// Inequality for shared_array objects; returns true if each has different pointees.
 template<typename T>
   inline bool operator!=(const shared_array<T>& a, const shared_array<T>& b)
     { return a.get() != b.get(); }
 
 
-///////////////////////////////////////////////////////////////////////
-/**
- * \c dynamic_block is a simple wrapper for a dynamically allocated
- * array whose size may change with \c resize(). Copy construction and
- * copy assignment are allowed.
- **/
-///////////////////////////////////////////////////////////////////////
+
+//  ###################################################################
+//  ===================================================================
+
+/// A wrapper for a dynamically allocated array whose size may be changed.
 
 template <class T>
 class dynamic_block
 {
 public:
+  typedef T value_type;                     ///< STL value type.
 
-  typedef T value_type;
+  typedef T* pointer;                       ///< STL pointer type.
+  typedef const T* const_pointer;           ///< STL const pointer type.
+  typedef T& reference ;                    ///< STL reference type.
+  typedef const T& const_reference;         ///< STL const reference type.
 
-  typedef T* pointer;
-  typedef const T* const_pointer;
-  typedef T& reference;
-  typedef const T& const_reference;
+  typedef pointer iterator;                 ///< STL iterator type.
+  typedef const_pointer const_iterator;     ///< STL const iterator type.
 
-  typedef pointer iterator;
-  typedef const_pointer const_iterator;
+  typedef size_t size_type;                 ///< STL size type.
+  typedef ptrdiff_t difference_type;        ///< STL iterator difference type.
 
-  typedef size_t size_type;
-  typedef ptrdiff_t difference_type;
-
+  /// Construct with a given size.
   dynamic_block(size_type n = 0) : N(n), data(new T[N]) {}
 
+  /// Copy construct.
   dynamic_block(const dynamic_block<T>& other) :
     N(other.N), data(new T[N])
     {
       assign_varsize(other, *this);
     }
 
+  /// Assignment operator.
   dynamic_block<T>& operator=(const dynamic_block<T>& other)
     {
       dynamic_block temp(other);
@@ -328,17 +370,22 @@ public:
       return *this;
     }
 
+  /// Destructor.
   ~dynamic_block() { delete [] data; }
 
-  iterator begin() { return data; }
-  iterator end() { return data+N; }
+  iterator begin() { return data; }         ///< Iterator to array start.
+  iterator end() { return data+N; }         ///< Iterator to array one-past-the-end.
 
-  const_iterator begin() const { return data; }
-  const_iterator end() const { return data+N; }
+  const_iterator begin() const { return data; } ///< Const iterator to array start.
+  const_iterator end() const { return data+N; } ///< Const iterator to array one-past-the-end.
 
+  /// Unchecked non-const array index.
   reference operator[](size_type n) { return data[n]; }
+
+  /// Unchecked const array index.
   const_reference operator[](size_type n) const { return data[n]; }
 
+  /// Checked non-const array index (Util::out_of_range thrown on bounds error).
   reference at(size_type n)
     {
       if ( n >= N )
@@ -346,6 +393,7 @@ public:
       return data[n];
     }
 
+  /// Checked const array index (Util::out_of_range thrown on bounds error).
   const_reference at(size_type n) const
     {
       if ( n >= N )
@@ -353,18 +401,25 @@ public:
       return data[n];
     }
 
+  /// Size of array.
   size_type size() const { return N; }
 
+  /// Maximum size of array type.
   size_type max_size() const { return size_type(-1) / sizeof(T); }
 
+  /// Query whether size is zero.
   bool is_empty() const { return (N == 0); }
 
+  /// Swap with another dynamic_block.
+  /** This is fast since it only requires swapping the interal pointers to
+      the dynamically-allocated arrays; no element-wise swap is needed. */
   void swap(dynamic_block& other)
     {
       Util::swap2(N,    other.N);
       Util::swap2(data, other.data);
     }
 
+  /// Resize to a new size.
   void resize(size_type new_size)
     {
       dynamic_block temp(new_size);
@@ -372,6 +427,7 @@ public:
       this->swap(temp);
     }
 
+  /// Assign from a given iterator range.
   template <class RandomAccessIterator>
   void assign(RandomAccessIterator start, RandomAccessIterator finish)
     {
@@ -392,6 +448,7 @@ public:
     }
 
 private:
+  /// Assign one dynamic_block to another whose sizes may differ.
   static void assign_varsize(const dynamic_block& b_from, dynamic_block& b_to)
     {
       const_iterator from = b_from.begin();

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Nov 12 18:34:57 2002
-// written: Wed Mar 19 12:46:01 2003
+// written: Wed Mar 19 13:12:04 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@ namespace Gfx
   template <class V> class Rect;
 }
 
+/// An abstract class for fonts.
 class GxFont
 {
 public:

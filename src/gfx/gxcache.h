@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 14:03:23 2002
-// written: Wed Mar 19 12:46:03 2003
+// written: Wed Mar 19 13:06:19 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "gfx/gxbin.h"
 
+/// A node for caching with OpenGL display lists.
 class GxCache : public GxBin
 {
 public:
@@ -43,20 +44,30 @@ public:
   static const Mode GLCOMPILE = 2;
 
 
+  /// Construct with a given child object.
   GxCache(Util::SoftRef<GxNode> child);
 
+  /// Virtual destructor.
   virtual ~GxCache();
 
+  /// FIXME
   virtual void readFrom(IO::Reader* /*reader*/) {};
+
+  /// FIXME
   virtual void writeTo(IO::Writer* /*writer*/) const {};
 
+  /// Draw using the current draw mode.
   virtual void draw(Gfx::Canvas& canvas) const;
 
   virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
+  /// Invalidate any current cache.
   void invalidate();
 
+  /// Get the current drawing mode.
   Mode getMode() const { return itsMode; }
+
+  /// Set the current drawing mode.
   void setMode(Mode new_mode);
 
 private:
