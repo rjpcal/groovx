@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Feb 27 17:49:17 2002
+// written: Wed Feb 27 17:58:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -404,7 +404,7 @@ public:
   { return offsetFromStart(elem%mrows(), elem/mrows()); }
 
   ptrdiff_t offsetFromStorage(int row, int col) const
-  { return RCR_less(offset_ + offsetFromStart(row, col), storageLength()); }
+  { return RCR_leq(offset_ + offsetFromStart(row, col), storageLength()); }
 
   double* address_nc(int row, int col)
   { return storage_nc() + offsetFromStorage(row, col); }
@@ -603,12 +603,11 @@ public:
     const double* itsCurrentEnd;
 
   public:
-    colmaj_iter(const Mtx& m, bool at_end = false) :
-      itsRowgap(m.itsImpl.rowgap()),
-      itsRowstride(m.itsImpl.rowstride()),
-      itsPtr(&*(m.columnIter(0)) +
-             (at_end ? (m.ncols() * itsRowstride) : 0)),
-      itsCurrentEnd(itsPtr+m.mrows())
+    colmaj_iter(int rg, int rs, const double* ptr) :
+      itsRowgap(rg),
+      itsRowstride(rs),
+      itsPtr(ptr),
+      itsCurrentEnd(itsPtr+(itsRowstride-itsRowgap))
     {}
 
     const double& operator*() const { return *itsPtr; }
@@ -630,8 +629,13 @@ public:
     { return itsPtr != other.itsPtr; }
   };
 
-  colmaj_iter colmaj_begin() const { return colmaj_iter(*this); }
-  colmaj_iter colmaj_end() const { return colmaj_iter(*this, true); }
+  colmaj_iter colmaj_begin() const
+  { return colmaj_iter(itsImpl.rowgap(), itsImpl.rowstride(),
+                       itsImpl.address(0,0)); }
+
+  colmaj_iter colmaj_end() const
+  { return colmaj_iter(itsImpl.rowgap(), itsImpl.rowstride(),
+                       itsImpl.address(0,ncols())); }
 
   //
   // Data access
