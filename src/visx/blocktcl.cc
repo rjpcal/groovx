@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Jun  6 15:56:57 2001
+// written: Wed Jun  6 19:45:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,11 +16,11 @@
 #include "block.h"
 #include "trialbase.h"
 
-#include "io/iofactory.h"
-
 #include "tcl/ioitempkg.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tracertcl.h"
+
+#include "util/objfactory.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -103,7 +103,7 @@ DOTRACE("Block_Init");
 
   Tcl::TclPkg* pkg = new BlockTcl::BlockPkg(interp);
 
-  IO::IoFactory::theOne().registerCreatorFunc(&Block::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&Block::make);
 
   return pkg->initStatus();
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 12 17:45:52 2000
-// written: Thu May 10 12:04:37 2001
+// written: Wed Jun  6 19:44:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "io/io.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOFACTORY_H_DEFINED)
-#include "io/iofactory.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJFACTORY_H_DEFINED)
+#include "util/objfactory.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOITEMPKG_H_DEFINED)
@@ -51,7 +51,7 @@ public:
 	 IoItemPkg<C>(interp, name, version)
   {
 	 declareAllFields(this, C::classFields());
-	 IO::IoFactory::theOne().registerCreatorFunc(&C::make);
+	 Util::ObjFactory::theOne().registerCreatorFunc(&C::make);
   }
 };
 

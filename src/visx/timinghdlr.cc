@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed Jun  6 15:54:58 2001
+// written: Wed Jun  6 19:55:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,13 +17,13 @@
 
 #include "trialevent.h"
 
-#include "io/iomgr.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
 #include "util/error.h"
 #include "util/iditem.h"
 #include "util/minivec.h"
+#include "util/objmgr.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -234,8 +234,9 @@ int TimingHdlr::addEventByName(const char* event_type, TimePoint timepoint,
 										 int msec_delay) {
 DOTRACE("TimingHdlr::addEventByName");
 
-  try { 
-	 IdItem<TrialEvent> event_item(IO::IoMgr::newTypedIO<TrialEvent>(event_type));
+  try {
+	 IdItem<TrialEvent> event_item(
+                         Util::ObjMgr::newTypedObj<TrialEvent>(event_type));
 
 	 event_item->setDelay(msec_delay);
 	 return addEvent(event_item, timepoint);

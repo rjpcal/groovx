@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Thu May 10 12:04:44 2001
+// written: Wed Jun  6 19:45:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,9 @@
 #include "gx/gxnode.h"
 #include "gx/gxseparator.h"
 
-#include "io/iofactory.h"
-
 #include "tcl/ioitempkg.h"
+
+#include "util/objfactory.h"
 
 #include "util/trace.h"
 
@@ -90,7 +90,7 @@ public:
 		declareCGetter("numChildren", &GxSeparator::numChildren);
 		declareCSetter("removeChildId", &GxSeparator::removeChildId);
 		declareCSetter("removeChildUid", &GxSeparator::removeChildUid);
-		IO::IoFactory::theOne().registerCreatorFunc(&GxSeparator::make);
+		Util::ObjFactory::theOne().registerCreatorFunc(&GxSeparator::make);
 	 }
 };
 

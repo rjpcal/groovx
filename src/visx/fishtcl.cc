@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Thu May 17 10:23:52 2001
+// written: Wed Jun  6 19:45:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,11 +15,11 @@
 
 #include "fish.h"
 
-#include "io/iofactory.h"
-
 #include "tcl/fieldpkg.h"
 #include "tcl/ioitempkg.h"
 #include "tcl/tracertcl.h"
+
+#include "util/objfactory.h"
 
 namespace FishTcl {
   class FishCmd;
@@ -64,7 +64,7 @@ int Fish_Init(Tcl_Interp* interp) {
 
   Tcl::TclPkg* pkg = new FishTcl::FishPkg(interp);
 
-  IO::IoFactory::theOne().registerCreatorFunc(&Fish::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&Fish::make);
 
   return pkg->initStatus();
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Sun May 27 15:35:52 2001
+// written: Wed Jun  6 19:45:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,11 +18,10 @@
 #include "kbdresponsehdlr.h"
 #include "nullresponsehdlr.h"
 
-#include "io/iofactory.h"
-
 #include "tcl/ioitempkg.h"
 #include "tcl/tracertcl.h"
 
+#include "util/objfactory.h"
 #include "util/serialport.h"
 
 #include <tk.h>
@@ -239,9 +238,9 @@ DOTRACE("Rh_Init");
 
   new SerialRhTcl::SerialRhPkg(interp);
 
-  IO::IoFactory::theOne().registerCreatorFunc(&EventResponseHdlr::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&KbdResponseHdlr::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&NullResponseHdlr::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&EventResponseHdlr::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&KbdResponseHdlr::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&NullResponseHdlr::make);
 
   return TCL_OK;
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Sun May 27 15:39:45 2001
+// written: Wed Jun  6 19:45:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,10 +18,10 @@
 #include "responsehandler.h"
 #include "timinghdlr.h"
 
-#include "io/iofactory.h"
-
 #include "tcl/ioitempkg.h"
 #include "tcl/tracertcl.h"
+
+#include "util/objfactory.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -102,7 +102,7 @@ DOTRACE("Trial_Init");
 
   Tcl::TclPkg* pkg = new TrialTcl::TrialPkg(interp);
 
-  IO::IoFactory::theOne().registerCreatorFunc(&Trial::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&Trial::make);
 
   return pkg->initStatus();
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jun  6 09:53:12 2001
+// written: Wed Jun  6 19:45:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,10 +17,10 @@
 #include "timinghdlr.h"
 #include "trialevent.h"
 
-#include "io/iofactory.h"
-
 #include "tcl/ioitempkg.h"
 #include "tcl/tclcmd.h"
+
+#include "util/objfactory.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -125,20 +125,20 @@ extern "C"
 int Th_Init(Tcl_Interp* interp) {
 DOTRACE("Th_Init");
 
-  IO::IoFactory::theOne().registerCreatorFunc(&TimingHdlr::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&TimingHandler::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&TimingHdlr::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&TimingHandler::make);
 
-  IO::IoFactory::theOne().registerCreatorFunc(&AbortTrialEvent::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&DrawEvent::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&UndrawEvent::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&EndTrialEvent::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&NextNodeEvent::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&AllowResponsesEvent::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&DenyResponsesEvent::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&SwapBuffersEvent::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&RenderBackEvent::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&RenderFrontEvent::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&ClearBufferEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&AbortTrialEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&DrawEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&UndrawEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&EndTrialEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&NextNodeEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&AllowResponsesEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&DenyResponsesEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&SwapBuffersEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&RenderBackEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&RenderFrontEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&ClearBufferEvent::make);
 
   Tcl::TclPkg* pkg1 = new ThTcl::ThPkg(interp);
   Tcl::TclPkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);

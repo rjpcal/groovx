@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 14:58:40 1999
-// written: Thu May 10 12:04:46 2001
+// written: Wed Jun  6 19:45:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,9 @@
 
 #include "jitter.h"
 
-#include "io/iofactory.h"
-
 #include "tcl/ioitempkg.h"
+
+#include "util/objfactory.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -76,7 +76,7 @@ DOTRACE("Jitter_Init");
 
   Tcl::TclPkg* pkg = new JitterTcl::JitterPkg(interp);
 
-  IO::IoFactory::theOne().registerCreatorFunc(&Jitter::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&Jitter::make);
 
   return pkg->initStatus();
 }

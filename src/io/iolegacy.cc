@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Wed Jun  6 15:54:58 2001
+// written: Wed Jun  6 19:55:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,8 @@
 
 #include "io/iolegacy.h"
 
-#include "io/iomgr.h"
-
 #include "util/iditem.h"
+#include "util/objmgr.h"
 #include "util/strings.h"
 #include "util/value.h"
 
@@ -254,7 +253,7 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
 		return MaybeIdItem<IO::IoObject>();
 	 }
 
-  IdItem<IO::IoObject> obj(IO::IoMgr::newIO(type));
+  IdItem<IO::IoObject> obj(Util::ObjMgr::newTypedObj<IO::IoObject>(type));
   DebugEvalNL(obj->ioTypename());
 
   itsImpl->inflateObject(name, obj);

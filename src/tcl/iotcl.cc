@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jun  6 15:56:57 2001
+// written: Wed Jun  6 19:56:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 
 #include "io/io.h"
 #include "io/iolegacy.h"
-#include "io/iomgr.h"
 
 #include "system/demangle.h"
 
@@ -25,6 +24,7 @@
 #include "tcl/tclpkg.h"
 
 #include "util/iodb.h"
+#include "util/objmgr.h"
 
 #include <fstream.h>
 #include <typeinfo>
@@ -165,7 +165,7 @@ protected:
 
 	 if (objc() < 3)
 		{
-		  IdItem<IO::IoObject> item(IO::IoMgr::newIO(type));
+		  IdItem<Util::Object> item(Util::ObjMgr::newObj(type));
 		  returnInt(item.id());
 		}
 	 else
@@ -173,7 +173,7 @@ protected:
 		  int array_size = getIntFromArg(2);
 		  while (array_size-- > 0)
 			 {
-				IdItem<IO::IoObject> item(IO::IoMgr::newIO(type));
+				IdItem<Util::Object> item(Util::ObjMgr::newObj(type));
 				lappendVal(item.id());
 			 }
 		}

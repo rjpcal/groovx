@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 12:30:38 1999
-// written: Thu May 10 12:04:47 2001
+// written: Wed Jun  6 19:45:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,9 @@
 
 #include "gtext.h"
 
-#include "io/iofactory.h"
-
 #include "tcl/ioitempkg.h"
+
+#include "util/objfactory.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -57,7 +57,7 @@ DOTRACE("Gtext_Init");
 
   Tcl::TclPkg* pkg = new GtextTcl::GtextPkg(interp); 
 
-  IO::IoFactory::theOne().registerCreatorFunc(&Gtext::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&Gtext::make);
 
   return pkg->initStatus();
 }

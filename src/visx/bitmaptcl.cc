@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Thu May 10 12:04:49 2001
+// written: Wed Jun  6 19:45:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,7 @@
 #include "glbitmap.h"
 #include "xbitmap.h"
 
-#include "io/iofactory.h"
-
+#include "util/objfactory.h"
 #include "util/strings.h"
 
 #include "tcl/ioitempkg.h"
@@ -249,8 +248,8 @@ DOTRACE("Bitmap_Init");
   new GLBitmapTcl::GLBitmapPkg(interp);
   new XBitmapTcl::XBitmapPkg(interp);
 
-  IO::IoFactory::theOne().registerCreatorFunc(&GLBitmap::make);
-  IO::IoFactory::theOne().registerCreatorFunc(&XBitmap::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&GLBitmap::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&XBitmap::make);
 
   return TCL_OK;
 }

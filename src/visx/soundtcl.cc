@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Sun May 27 06:53:23 2001
+// written: Wed Jun  6 19:45:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,11 +16,10 @@
 #include "application.h"
 #include "sound.h"
 
-#include "io/iofactory.h"
-
 #include "tcl/ioitempkg.h"
 #include "tcl/tcllink.h"
 
+#include "util/objfactory.h"
 #include "util/strings.h"
 
 #include <tcl.h>
@@ -130,7 +129,7 @@ DOTRACE("Sound_Init");
 
   Tcl::TclPkg* pkg = new SoundTcl::SoundPkg(interp);
 
-  IO::IoFactory::theOne().registerCreatorFunc(&Sound::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&Sound::make);
 
   return pkg->initStatus();
 }
