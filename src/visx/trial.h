@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Sat Oct  7 17:25:03 2000
+// written: Mon Oct 16 18:28:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,10 @@
 #include "trialbase.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRLIST_H_DEFINED)
+#include "ptrlist.h"
+#endif
+
 namespace GWT {
   class Canvas;
   class Widget;
@@ -30,6 +34,8 @@ namespace GWT {
 
 namespace Util { class ErrorHandler; }
 
+class GrObj;
+class Position;
 class Block;
 class Response;
 
@@ -45,8 +51,9 @@ public:
   // nested types //
   //////////////////
 
-  struct IdPair : public Value {
-	 IdPair(int o = 0, int p = 0) : objid(o), posid(p) {}
+  class IdPair : public Value {
+  public:
+	 IdPair(int o = 0, int p = 0);
 	 virtual ~IdPair();
 
 	 virtual Value* clone() const;
@@ -56,8 +63,18 @@ public:
 	 virtual void printTo(STD_IO::ostream& os) const;
 	 virtual void scanFrom(STD_IO::istream& is);
 
-	 int objid;
-	 int posid;
+	 int objid() const { return itsGrObj.id(); }
+	 int posid() const { return itsPosition.id(); }
+
+	 NullableItemWithId<GrObj>& obj() { return itsGrObj; }
+	 NullableItemWithId<Position>& pos() { return itsPosition; }
+
+	 const NullableItemWithId<GrObj>& obj() const { return itsGrObj; }
+	 const NullableItemWithId<Position>& pos() const { return itsPosition; }
+
+  private:
+	 NullableItemWithId<GrObj> itsGrObj;
+	 NullableItemWithId<Position> itsPosition;
   };
 
   //////////////

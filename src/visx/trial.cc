@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Oct 16 12:46:28 2000
+// written: Mon Oct 16 19:21:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #include "trial.h"
 
 #include "block.h"
-#include "objlist.h"
-#include "poslist.h"
 #include "grobj.h"
 #include "position.h"
 #include "response.h"
@@ -195,6 +193,12 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
+Trial::IdPair::IdPair(int o, int p) :
+  itsGrObj(o), itsPosition(p)
+{
+DOTRACE("undoLastResponse");
+}
+
 Trial::IdPair::~IdPair() {}
 
 Value* Trial::IdPair::clone() const {
@@ -215,12 +219,16 @@ DOTRACE("Trial::IdPair::getNativeTypeName");
 
 void Trial::IdPair::printTo(STD_IO::ostream& os) const {
 DOTRACE("Trial::IdPair::printTo");
-  os << objid << " " << posid;
+  os << itsGrObj.id() << " " << itsPosition.id();
 }
 
 void Trial::IdPair::scanFrom(STD_IO::istream& is) {
 DOTRACE("Trial::IdPair::scanFrom");
+  int objid=-1;
+  int posid=-1; 
   is >> objid >> posid;
+  itsGrObj = NullableItemWithId<GrObj>(objid);
+  itsPosition = NullableItemWithId<Position>(posid);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -389,17 +397,15 @@ DOTRACE("Trial::Impl::description");
   ost << "trial type == " << trialType()
       << ", objs ==";
   for (size_t i = 0; i < itsIdPairs.size(); ++i) {
-    ost << " " << itsIdPairs[i].objid;
+    ost << " " << itsIdPairs[i].objid();
   }
   ost << ", categories ==";
   for (size_t j = 0; j < itsIdPairs.size(); ++j) {
-    DebugEvalNL(itsIdPairs[j].objid);
+    DebugEvalNL(itsIdPairs[j].objid());
 
-    ObjList::SharedPtr obj =
-		ObjList::theObjList().getCheckedPtr(itsIdPairs[j].objid);
-    Assert(obj.get() != 0);
+    Assert(itsIdPairs[j].obj().get() != 0);
 
-    ost << " " << obj->getCategory();
+    ost << " " << itsIdPairs[j].obj()->getCategory();
   }
   ost << '\0';
 
@@ -509,6 +515,7 @@ DOTRACE("Trial::Impl::trDoTrial");
 
 int Trial::Impl::trElapsedMsec() {
 DOTRACE("Trial::Impl::trElapsedMsec");
+  if ( itsState == INACTIVE ) return -1;
   if ( !assertIdsOrHalt() ) return -1;
 
   return timingHdlr().getElapsedMsec();
@@ -625,23 +632,19 @@ DOTRACE("Trial::Impl::trUndrawTrial");
 void Trial::Impl::trDraw(GWT::Canvas& canvas, bool flush) const {
 DOTRACE("Trial::Impl::trDraw");
   for (size_t i = 0; i < itsIdPairs.size(); ++i) {
-    ObjList::SharedPtr obj =
-		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
-    PosList::SharedPtr pos =
-		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
 
-    DebugEval(itsIdPairs[i].objid);
-    DebugEvalNL(obj.get());
-    DebugEval(itsIdPairs[i].posid);
-    DebugEvalNL(pos.get());
+    DebugEval(itsIdPairs[i].objid());
+    DebugEvalNL((void*)itsIdPairs[i].obj().get());
+    DebugEval(itsIdPairs[i].posid());
+    DebugEvalNL((void*)itsIdPairs[i].pos().get());
 
-	 Assert(obj.get() != 0);
-	 Assert(pos.get() != 0);
+	 Assert(itsIdPairs[i].obj().get() != 0);
+	 Assert(itsIdPairs[i].pos().get() != 0);
 
 	 { 
 		GWT::Canvas::StateSaver state(canvas);
-		pos->go();
-		obj->draw(canvas);
+		itsIdPairs[i].pos()->go();
+		itsIdPairs[i].obj()->draw(canvas);
 	 }
   }
 
@@ -651,18 +654,14 @@ DOTRACE("Trial::Impl::trDraw");
 void Trial::Impl::trUndraw(GWT::Canvas& canvas, bool flush) const {
 DOTRACE("Trial::Impl::trUndraw");
   for (size_t i = 0; i < itsIdPairs.size(); ++i) {
-    ObjList::SharedPtr obj =
-		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
-    PosList::SharedPtr pos =
-		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
 
-	 Assert(obj.get() != 0);
-	 Assert(pos.get() != 0);
+	 Assert(itsIdPairs[i].obj().get() != 0);
+	 Assert(itsIdPairs[i].pos().get() != 0);
 
 	 {
 		GWT::Canvas::StateSaver state(canvas);
-		pos->rego();
-		obj->undraw(canvas);
+		itsIdPairs[i].pos()->rego();
+		itsIdPairs[i].obj()->undraw(canvas);
 	 }
   }
 
