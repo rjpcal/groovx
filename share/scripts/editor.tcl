@@ -172,7 +172,7 @@ itcl::class Editor {
 
 				set currentframe $fieldFrame
 
-				foreach field [${objtype}::fields]  {
+				foreach field [${objtype}::allFields]  {
 					 set name [lindex $field 0]
 					 set lower [lindex $field 1]
 					 set upper [lindex $field 2]
