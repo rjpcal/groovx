@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Fri Jul  5 12:53:00 2002
+// written: Fri Jul  5 14:24:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include "gfx/gxline.h"
 #include "gfx/gxnode.h"
 #include "gfx/gxseparator.h"
+#include "gfx/gxsphere.h"
 #include "gfx/pscanvas.h"
 
 #include "tcl/fieldpkg.h"
@@ -119,6 +120,12 @@ DOTRACE("Gx_Init");
   Tcl::defCreator<GxCylinder>(pkg6);
 
   status = pkg6->combineStatus(status);
+
+  Tcl::Pkg* pkg7 = new Tcl::Pkg(interp, "GxSphere", "$Revision$");
+  Tcl::defFieldContainer<GxSphere>(pkg7);
+  Tcl::defCreator<GxSphere>(pkg7);
+
+  status = pkg7->combineStatus(status);
 
   return status;
 }
