@@ -91,16 +91,18 @@ public:
   static Window cClassCreateProc(Tk_Window tkwin,
                                  Window parent,
                                  ClientData clientData) throw();
+
+  static Tk_ClassProcs classProcs;
 };
 
-
-Tk_ClassProcs toglProcs =
+Tk_ClassProcs Toglet::Impl::classProcs =
   {
     sizeof(Tk_ClassProcs),
     (Tk_ClassWorldChangedProc*) 0,
     Toglet::Impl::cClassCreateProc,
     (Tk_ClassModalProc*) 0,
   };
+
 
 //---------------------------------------------------------------------
 //
@@ -224,7 +226,7 @@ DOTRACE("Toglet::Toglet");
   // pointing anywhere meaningful (will be either NULL or garbage).
 
   Tk_GeometryRequest(rep->tkWin, DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
-  Tk_SetClassProcs(rep->tkWin, &toglProcs, static_cast<ClientData>(this));
+  Tk_SetClassProcs(rep->tkWin, &Impl::classProcs, static_cast<ClientData>(this));
   Tk_MakeWindowExist(rep->tkWin);
   Tk_MapWindow(rep->tkWin);
 

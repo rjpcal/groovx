@@ -122,12 +122,11 @@ public:
   void animate(unsigned int framesPerSecond);
 
 
-  class Impl;
-
 private:
   Toglet(const Toglet&); // no copy constructor
   Toglet& operator=(const Toglet&); // no assignment operator
 
+  class Impl;
   Impl* const rep;
 };
 
