@@ -623,8 +623,12 @@ DOTRACE("Tcl::TkWidget::grabKeyboard");
   // is completely finished processing the EnterNotify event.
   Tcl_DoWhenIdle(TkWidgImpl::cTakeFocusCallback,
                  static_cast<ClientData>(this));
+
+#elif defined(GL_PLATFORM_AGL)
+  // don't need to do anything to grab keyboard with Mac OS X Aqua
+
 #else
-  throw Util::Error("TkWidget::grabKeyboard not supported");
+#  error no GL_PLATFORM macro defined
 #endif
 }
 
@@ -634,8 +638,12 @@ DOTRACE("Tcl::TkWidget::ungrabKeyboard");
 
 #if defined(GL_PLATFORM_GLX)
   XUngrabKeyboard(Tk_Display(rep->tkWin), CurrentTime);
+
+#elif defined(GL_PLATFORM_AGL)
+  // don't need to do anything to (un)grab keyboard with Mac OS X Aqua
+
 #else
-  throw Util::Error("TkWidget::ungrabKeyboard not supported");
+#  error no GL_PLATFORM macro defined
 #endif
 }
 
