@@ -61,7 +61,7 @@ public:
   void unsetGlobalVar(const char* var_name) const;
 
   // Events
-  void clearEventQueue() const;
+  static void clearEventQueue();
 
 private:
   void handleError(const char* msg) const;
