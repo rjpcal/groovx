@@ -228,6 +228,7 @@ public:
   {
 	 Mtx temp(other);
 	 this->itsImpl.swap(temp.itsImpl);
+	 return *this;
   }
 
   mxArray* makeMxArray() const;
@@ -308,7 +309,16 @@ public:
   //
 
   void apply(double func(double))
-    { itsImpl.apply(func); }
+  {
+	 makeUnique();
+	 itsImpl.apply(func);
+  }
+
+  void setAll(double x)
+  {
+	 makeUnique();
+	 itsImpl.setAll(x);
+  }
 
   // result = vec * mtx;
   static void VMmul_assign(const Slice& vec, const Mtx& mtx,
@@ -423,30 +433,57 @@ private:
 	 const double* address(int row, int col) const
       { return storage_->itsData + offset_ + offsetFromStart(row, col); }
 
-	 void apply(double func(double))
-    {
-		double* p = storage_->itsData + offset_;
-		unsigned int gap = rowgap();
+#ifdef APPLY_IMPL
+#  error macro error
+#else
+	 // This workaround is required because compilers don't seem to be
+	 // able to accept both functors as well as function pointers as
+	 // template arguments to a single apply() template
+#  define APPLY_IMPL \
+ \
+		double* p = storage_->itsData + offset_; \
+		unsigned int gap = rowgap(); \
+ \
+		if (gap == 0) \
+		  { \
+			 double* end = p + nelems(); \
+			 for (; p < end; ++p) \
+				*p = func(*p); \
+		  } \
+		else \
+		  { \
+			 for (int c = 0; c < ncols(); ++c) \
+				{ \
+				  for (int r = 0; r < mrows(); ++r) \
+					 { \
+						*p = func(*p); \
+						++p; \
+					 } \
+				  p += gap; \
+				} \
+		  }
 
-		if (gap == 0)
-		  {
-			 double* end = p + nelems();
-			 for (; p < end; ++p)
-				*p = func(*p);
-		  }
-		else
-		  {
-			 for (int c = 0; c < ncols(); ++c)
-				{
-				  for (int r = 0; r < mrows(); ++r)
-					 {
-						*p = func(*p);
-						++p;
-					 }
-				  p += gap;
-				}
-		  }
-    }
+	 template <class F>
+	 void apply(F func)
+	 {
+		APPLY_IMPL
+	 }
+
+	 void apply(double func(double))
+	 {
+		APPLY_IMPL
+	 }
+
+#  undef APPLY_IMPL
+#endif // APPLY_IMPL
+
+	 struct Setter {
+		double v;
+		Setter(double v_) : v(v_) {}
+		double operator()(double) { return v; }
+	 };
+
+	 void setAll(double x) { apply(Setter(x)); }
 
 	 void makeUnique();
 
