@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu May 15 16:24:42 2003
+// written: Thu May 15 16:39:35 2003
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -25,7 +25,8 @@
 #include "util/error.h"
 #include "util/strings.h"
 
-#include <cstdlib>
+#include <cstdlib> // for atoi()
+#include <cstring> // for strcmp()
 #include <exception>
 #include <iostream>
 #include <tk.h>
@@ -161,6 +162,19 @@ DOTRACE("main");
 
   try
     {
+      for (int i = 0; i < argc; ++i)
+        {
+          if (strcmp(argv[i], "-dbglevel") == 0)
+            {
+              if (argv[i+1] != 0)
+                Debug::level = atoi(argv[i+1]);
+            }
+          else if (strcmp(argv[i], "-gtrace") == 0)
+            {
+              Util::Trace::setGlobalTrace(true);
+            }
+        }
+
       appArgc = argc;
       appArgv = argv;
 
