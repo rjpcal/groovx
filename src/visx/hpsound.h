@@ -32,7 +32,9 @@
 #ifndef HPSOUND_H_DEFINED
 #define HPSOUND_H_DEFINED
 
-#include "util/algo.h"
+#include "media/soundrep.h"
+
+#include "util/error.h"
 #include "util/fstring.h"
 
 #include <Alib.h>

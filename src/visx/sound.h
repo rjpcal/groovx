@@ -37,26 +37,12 @@
 #include "util/fstring.h"
 #include "util/sharedptr.h"
 
+class SoundRep;
+
 namespace Nub
 {
   template <class T> class Ref;
 }
-
-/// SoundRep is provides a trivial platform-independent sound interface.
-/** Different concrete subclasses are defined elsewhere to encapsulate
-    different platform-dependent sound APIs. */
-class SoundRep
-{
-public:
-  virtual ~SoundRep() throw();
-
-  virtual void play() = 0;
-
-protected:
-  /// Checks that the filename points to a readable file.
-  /** Throws an exception in case of any failure. */
-  static void checkFilename(const char* filename);
-};
 
 /// Sound is a generic interface to playable sound snippets.
 class Sound : public IO::IoObject

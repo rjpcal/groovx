@@ -34,7 +34,6 @@
 
 #include "visx/sound.h"
 
-#include "io/ioerror.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -88,12 +87,6 @@ DOTRACE("Sound::newPlatformSoundRep(dummysound)");
 
 #endif
 
-#ifdef HAVE_FSTREAM
-#include <fstream>            // to check if files exist
-#else
-#include <fstream.h>
-#endif
-
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
@@ -102,23 +95,6 @@ namespace
 {
   Nub::SoftRef<Sound> theOkSound;
   Nub::SoftRef<Sound> theErrSound;
-}
-
-SoundRep::~SoundRep() throw() {}
-
-void SoundRep::checkFilename(const char* filename)
-{
-DOTRACE("SoundRep::checkFilename");
-
-  if (filename == 0 || filename[0] == '\0')
-    throw rutz::error("invalid filename", SRC_POS);
-
-  STD_IO::ifstream ifs(filename);
-
-  if (ifs.fail())
-    {
-      throw IO::FilenameError(filename, SRC_POS);
-    }
 }
 
 void Sound::setOkSound(Nub::Ref<Sound> ok_sound)

@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// dummysound.h
+// soundrep.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 2004-2004
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Tue Oct 12 13:03:47 1999
+// created: Wed Oct 20 11:53:57 2004
 // commit: $Id$
 //
 // --------------------------------------------------------------------
@@ -29,34 +29,24 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef DUMMYSOUND_H_DEFINED
-#define DUMMYSOUND_H_DEFINED
+#ifndef SOUNDREP_H_DEFINED
+#define SOUNDREP_H_DEFINED
 
-#include "media/soundrep.h"
-
-#include "util/trace.h"
-
-/// DummySoundRep is a stub implementation of the SoundRep interface.
-class DummySoundRep : public SoundRep
+/// SoundRep is provides a trivial platform-independent sound interface.
+/** Different concrete subclasses are defined elsewhere to encapsulate
+    different platform-dependent sound APIs. */
+class SoundRep
 {
 public:
-  /// Construct from a sound file (but all we do is see if the file exists).
-  DummySoundRep(const char* filename = 0);
+  virtual ~SoundRep() throw();
 
-  /// Play the sound (but this is a no-op for DummySound).
-  virtual void play();
+  virtual void play() = 0;
+
+protected:
+  /// Checks that the filename points to a readable file.
+  /** Throws an exception in case of any failure. */
+  static void checkFilename(const char* filename);
 };
 
-DummySoundRep::DummySoundRep(const char* filename)
-{
-DOTRACE("DummySoundRep::DummySoundRep");
-  SoundRep::checkFilename(filename);
-}
-
-void DummySoundRep::play()
-{
-DOTRACE("DummySoundRep::play");
-}
-
-static const char vcid_dummysound_h[] = "$Header$";
-#endif // !DUMMYSOUND_H_DEFINED
+static const char vcid_soundrep_h[] = "$Header$";
+#endif // !SOUNDREP_H_DEFINED

@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// dummysound.h
+// soundrep.cc
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 2004-2004
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Tue Oct 12 13:03:47 1999
+// created: Wed Oct 20 11:54:23 2004
 // commit: $Id$
 //
 // --------------------------------------------------------------------
@@ -29,34 +29,37 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef DUMMYSOUND_H_DEFINED
-#define DUMMYSOUND_H_DEFINED
+#ifndef SOUNDREP_CC_DEFINED
+#define SOUNDREP_CC_DEFINED
 
-#include "media/soundrep.h"
+#include "soundrep.h"
+
+#include "util/ioerror.h"
+
+#ifdef HAVE_FSTREAM
+#include <fstream>            // to check if files exist
+#else
+#include <fstream.h>
+#endif
 
 #include "util/trace.h"
 
-/// DummySoundRep is a stub implementation of the SoundRep interface.
-class DummySoundRep : public SoundRep
-{
-public:
-  /// Construct from a sound file (but all we do is see if the file exists).
-  DummySoundRep(const char* filename = 0);
+SoundRep::~SoundRep() throw() {}
 
-  /// Play the sound (but this is a no-op for DummySound).
-  virtual void play();
-};
-
-DummySoundRep::DummySoundRep(const char* filename)
+void SoundRep::checkFilename(const char* filename)
 {
-DOTRACE("DummySoundRep::DummySoundRep");
-  SoundRep::checkFilename(filename);
+DOTRACE("SoundRep::checkFilename");
+
+  if (filename == 0 || filename[0] == '\0')
+    throw rutz::error("invalid filename", SRC_POS);
+
+  STD_IO::ifstream ifs(filename);
+
+  if (ifs.fail())
+    {
+      throw rutz::filename_error(filename, SRC_POS);
+    }
 }
 
-void DummySoundRep::play()
-{
-DOTRACE("DummySoundRep::play");
-}
-
-static const char vcid_dummysound_h[] = "$Header$";
-#endif // !DUMMYSOUND_H_DEFINED
+static const char vcid_soundrep_cc[] = "$Header$";
+#endif // !SOUNDREP_CC_DEFINED

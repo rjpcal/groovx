@@ -32,7 +32,10 @@
 #ifndef IRIXSOUND_H_DEFINED
 #define IRIXSOUND_H_DEFINED
 
+#include "media/soundrep.h"
+
 #include "util/arrays.h"
+#include "util/error.h"
 #include "util/fstring.h"
 
 #include <dmedia/audio.h>

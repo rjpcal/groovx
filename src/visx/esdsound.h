@@ -32,6 +32,8 @@
 #ifndef ESDSOUND_H_DEFINED
 #define ESDSOUND_H_DEFINED
 
+#include "media/soundrep.h"
+
 #include "util/error.h"
 #include "util/fstring.h"
 

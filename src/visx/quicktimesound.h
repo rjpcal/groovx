@@ -32,6 +32,9 @@
 #ifndef QUICKTIMESOUND_H_DEFINED
 #define QUICKTIMESOUND_H_DEFINED
 
+#include "media/soundrep.h"
+
+#include "util/error.h"
 #include "util/fstring.h"
 
 #include <Carbon/Carbon.h>
