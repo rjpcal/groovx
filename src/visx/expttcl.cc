@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Dec  1 14:46:58 1999
+// written: Wed Dec  1 15:42:31 1999
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -270,11 +270,12 @@ protected:
 class ExptTcl::ExptPkg : public CTclIoItemPkg<ExptDriver> {
 public:
   ExptPkg(Tcl_Interp* interp) :
-	 CTclIoItemPkg<ExptDriver>(interp, "Expt", "2.7", 0)
+	 CTclIoItemPkg<ExptDriver>(interp, "Expt", "2.7", 0),
+	 itsExptDriver()
   {
   DOTRACE("ExptPkg::ExptPkg");
 
-	 ExptDriver::theExptDriver().setInterp(interp);
+	 itsExptDriver.setInterp(interp);
 	 
 	 addCommand( new BeginCmd(this, "Expt::begin") );
 	 addCommand( new PauseCmd(this, "Expt::pause") );
@@ -292,11 +293,14 @@ public:
 	 declareCAction("storeData", &ExptDriver::storeData);
   }
 
-  virtual IO& getIoFromId(int) { return ExptDriver::theExptDriver(); }
+  virtual IO& getIoFromId(int) { return itsExptDriver; }
 
   virtual ExptDriver* getCItemFromId(int) {
-	 return &ExptDriver::theExptDriver();
+	 return &itsExptDriver;
   }
+
+private:
+  ExptDriver itsExptDriver;
 };
 
 //---------------------------------------------------------------------
