@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 12:52:24 2002
+// written: Mon Mar  4 12:57:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -347,6 +347,28 @@ public:
     offset_(other.offset_)
   {}
 
+  int length() const { return (mrows_ > ncols_) ? mrows_ : ncols_; }
+  int nelems() const { return mrows_*ncols_; }
+
+  int mrows() const { return mrows_; }
+  int rowstride() const { return rowstride_; }
+
+  int ncols() const { return ncols_; }
+  int colstride() const { return colstride_; }
+
+  unsigned int rowgap() const { return rowstride_ - mrows_; }
+
+  int offsetFromStart(int row, int col) const
+  {
+    RC_inHalfOpen(row, 0, mrows_);
+    RC_inHalfOpen(col, 0, ncols_);
+    return row + (col*rowstride_);
+  }
+
+  int offsetFromStart(int elem) const
+  { return offsetFromStart(elem%mrows(), elem/mrows()); }
+
+protected:
   int mrows_;
   int rowstride_;
   int ncols_;
@@ -388,15 +410,6 @@ public:
 
   ~MtxImpl();
 
-  int length() const { return (mrows_ > ncols_) ? mrows_ : ncols_; }
-  int nelems() const { return mrows_*ncols_; }
-
-  int mrows() const { return mrows_; }
-  int rowstride() const { return rowstride_; }
-
-  int ncols() const { return ncols_; }
-  int colstride() const { return colstride_; }
-
   const double& at(int i) const
   {
     RC_less(i+offset_, storageLength());
@@ -413,16 +426,6 @@ public:
 
   void selectRows(const RowRange& rng);
   void selectCols(const ColRange& rng);
-
-  int offsetFromStart(int row, int col) const
-  {
-    RC_inHalfOpen(row, 0, mrows_);
-    RC_inHalfOpen(col, 0, ncols_);
-    return row + (col*rowstride_);
-  }
-
-  int offsetFromStart(int elem) const
-  { return offsetFromStart(elem%mrows(), elem/mrows()); }
 
   ptrdiff_t offsetFromStorage(int row, int col) const
   { return RCR_leq(offset_ + offsetFromStart(row, col), storageLength()); }
@@ -483,7 +486,6 @@ public:
   double* storage_nc() { makeUnique(); return datablock_->data_nc(); }
 
   int storageLength() const { return datablock_->length(); }
-  unsigned int rowgap() const { return rowstride_ - mrows_; }
 
 private:
   DataBlock* datablock_;
