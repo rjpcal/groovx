@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Thu Oct 14 13:22:18 1999
+// written: Fri Oct 15 19:49:38 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,9 +58,14 @@ IO::~IO() {
 DOTRACE("IO::~IO");
 }
 
-unsigned long IO::id() {
+unsigned long IO::id() const {
 DOTRACE("IO::id");
  return itsId;
+}
+
+string IO::ioTypename() const {
+DOTRACE("IO::ioTypename");
+  return demangle(typeid(*this).name());
 }
 
 int IO::eatWhitespace(istream& is) {

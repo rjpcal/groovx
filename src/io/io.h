@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Thu Oct 14 13:20:15 1999
+// written: Fri Oct 15 19:49:01 1999
 // $Id$
 //
 // This file defines the IO abstract interface. This interface
@@ -64,7 +64,13 @@ public:
   virtual int charCount() const = 0;
 
   // Returns a unique id for this object
-  unsigned long id();
+  unsigned long id() const;
+
+  // Returns a string specifying the typename of the actual
+  // object. The implementation provided by IO returns a demangled
+  // version of typeid(*this).name(), which should very closely
+  // resemble the way the object was declared in source code.
+  virtual string ioTypename() const;
 
   // This function removes all whitespace characters from the istream,
   // until the first non-whitespace character is seen. It returns the
