@@ -345,6 +345,9 @@ EXECUTABLE := $(exec_prefix)/bin/groovx$(PACKAGE_VERSION)
 $(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(STATIC_OBJS) $(ALL_STATLIBS)
 	time $(CXX) -o $@ $(STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
 
+$(exec_prefix)/bin/groovx: $(EXECUTABLE)
+	ln -s -f $(^F) $@
+
 .PHONY: build install_scripts install check all
 
 # Have to put these components in a strict dependence hierarchy, since some
@@ -352,10 +355,18 @@ $(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(STATIC_OBJS) $(ALL_STATLIBS)
 # order in the dependency list. Thus any specific ordering requirements
 # must be reflected explicitly in target-dependency relationships.
 
-build: TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
+build:						\
+TAGS						\
+$(ALL_SHLIBS)					\
+$(PKG_LIBS)					\
+$(EXECUTABLE)
 
-install: install-scripts install-audio build $(VISX_LIB_DIR)/pkgIndex.tcl
-	ln -s -f groovx$(PACKAGE_VERSION) $(exec_prefix)/bin/groovx
+install:					\
+install-scripts					\
+install-audio					\
+build						\
+$(VISX_LIB_DIR)/pkgIndex.tcl			\
+$(exec_prefix)/bin/groovx
 
 check: install
 	$(EXECUTABLE) ./testing/grshtest.tcl
