@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Tue Feb  8 15:29:45 2000
+// written: Thu Feb 17 12:36:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,11 +27,10 @@
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * The Face class is derived from GrObj. Face provides the
- * functionality needed to display Brunswick faces parameterized by
- * nose length, mouth height, eye height, and eye separation.
+ * \c Face is a \c GrObj subclass designed for rendering Brunswik
+ * faces. The faces are parameterized by nose length, mouth height,
+ * eye height, and eye separation.
  *
- * @short Subclass of GrObj for drawing Brunswik faces.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -41,63 +40,64 @@ public:
   // creators //
   //////////////
 
-  ///
+  /// Construct with initial values for the Brunswik face parameters.
   Face (double eh=0.6, double es=0.4, double nl=0.4, double mh=-0.8, int categ=0);
 
-  ///
+  /// Construct from an \c istream using \c deserialize().
   Face (istream &is, IOFlag flag);
 
-  ///
+  /// Virtual destructor.
   virtual ~Face ();
 
-  /**Write the face to a stream using the format:
+  /** Write the face to a stream using the format:
 	  
-	  [Face] category eyeHgt eyeDist noseLen mouthHgt */
+	   <tt>[Face] category eyeHgt eyeDist noseLen mouthHgt</tt> */
   virtual void serialize(ostream &os, IOFlag flag) const;
 
-  /**Read the face from a stream using the format:
+  /** Read the face from a stream using the format:
 	  
-	  [Face] category eyeHgt eyeDist noseLen mouthHgt */
+	   <tt>[Face] category eyeHgt eyeDist noseLen mouthHgt</tt> */
   virtual void deserialize(istream &is, IOFlag flag);
   
-  ///
   virtual int charCount() const;
 
-  ///
   virtual void readFrom(Reader* reader);
-  ///
   virtual void writeTo(Writer* writer) const;
 
   ////////////////
   // properties //
   ////////////////
 
-  ///
+  /// Info about a \c Face property.
   typedef PropertyInfo<Face> PInfo;
-  ///
+
+  /// Return a collection of info about all \c Face properties.
   static const vector<PInfo>& getPropertyInfos();
 
-  ///
+  /** The category of the face. The semantics of \a category are
+      defined by the client. */
   CTProperty<Face, int> category;
 
-  ///
+  /// The height of the eyes above the vertical midline of the face.
   CTProperty<Face, double> eyeHeight;
-  ///
+
+  /// The distance between the centers of the eyes.
   CTProperty<Face, double> eyeDistance;
-  ///
+
+  /// The length of the nose.
   CTProperty<Face, double> noseLength;
-  ///
+
+  /// The (negative) height of the mouth below the vertical midline of the face.
   CTProperty<Face, double> mouthHeight;
 
   ///////////////
   // accessors //
   ///////////////
 
-  ///
   virtual int getCategory() const { return category.getNative(); }
 
 protected:
-  /// Returns an array of Bezier control points for face outline
+  /// Returns an array of Bezier control points for face outline.
   virtual const double* getCtrlPnts() const;
 
   /// Returns the aspect ratio of eye outline.
@@ -111,17 +111,15 @@ protected:
   //////////////////
 
 public:
-  ///
   virtual void setCategory(int val) { category.setNative(val); }
 
-  ///
   protected: virtual void grGetBoundingBox(Rect<double>& bounding_box,
 														 int& border_pixels) const;
 
   protected: virtual bool grHasBoundingBox() const;
 
-  /** This overrides GrObj pure virtual function. It renders a face
-		with the appropriate parameters. */
+  /** Reimplements the \c GrObj pure virtual function. It renders a
+		face with the appropriate parameters. */
   protected: virtual void grRender(Canvas& canvas) const; 
 
 private:
@@ -134,9 +132,7 @@ private:
   /// assignment operator not to be used
   Face& operator=(const Face&);
 
-  ///
   void makeIoList(vector<IO *>& vec);
-  ///
   void makeIoList(vector<const IO *>& vec) const;
 };
 

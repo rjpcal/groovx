@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Wed Feb 16 11:47:01 2000
+// written: Thu Feb 17 12:40:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -221,6 +221,7 @@ public:
 template <class Base, class Derived>
 class FactoryRegistrar {
 protected:
+  /// Default constructor protected so that clients don't instantiate this class.
   FactoryRegistrar();
 
 public:
