@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Mon Sep 27 11:27:20 1999
+// written: Tue Oct 12 10:37:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,8 @@
 
 #include "block.h"
 
+#include <algorithm>
+#include <functional>
 #include <iostream.h>
 #include <strstream.h>
 #include <string>
