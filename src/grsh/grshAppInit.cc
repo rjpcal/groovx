@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Fri Mar 21 09:17:52 2003
+// written: Mon May  5 16:39:38 2003
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -113,7 +113,6 @@ PackageInfo IMMEDIATE_PKGS[] =
 PackageInfo DELAYED_PKGS[] = {};
 #endif
 
-const char*  appLibEnvVar = "GRSH_LIB_DIR";
 int          appArgc      = 0;
 char**       appArgv      = 0;
 
@@ -147,7 +146,7 @@ const char* Grsh::libraryDirectory()
 {
 DOTRACE("Grsh::libraryDirectory");
 
-  return System::theSystem().getenv(appLibEnvVar);
+  return System::theSystem().getenv("GRSH_LIB_DIR");
 }
 
 ///////////////////////////////////////////////////////////////////////
