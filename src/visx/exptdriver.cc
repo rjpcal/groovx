@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Mon Jul 16 13:28:57 2001
+// written: Mon Jul 16 15:00:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,9 @@
 #include "system/system.h"
 
 #include "tcl/convert.h"
-#include "tcl/tclerror.h"
 #include "tcl/tclcode.h"
+#include "tcl/tclerror.h"
+#include "tcl/tclutil.h"
 
 #include "util/error.h"
 #include "util/errorhandler.h"
@@ -40,7 +41,6 @@
 #include "util/stopwatch.h"
 #include "util/strings.h"
 
-#include <tcl.h>
 #include <sys/time.h>
 
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
@@ -91,8 +91,6 @@ public:
   //////////////////////
 
 private:
-  bool doesDoUponCompletionExist() const;
-
   void updateDoUponCompletionBody() const;
 
   void recreateDoUponCompletionProc() const;
@@ -229,7 +227,7 @@ public:
 private:
   ExptDriver* itsOwner;
 
-  Tcl_Interp* itsInterp;
+  Tcl::SafeInterp itsInterp;
 
   WeakRef<GWT::Widget> itsWidget;
 
@@ -295,53 +293,37 @@ DOTRACE("ExptDriver::Impl::Impl");
   }
 
   addLogInfo(cmd_line.c_str());
-
-  Tcl_Preserve(itsInterp);
 }
 
-ExptDriver::Impl::~Impl() {
+ExptDriver::Impl::~Impl()
+{
 DOTRACE("ExptDriver::Impl::~Impl");
-//   Tcl_Release(itsInterp);
-}
-
-bool ExptDriver::Impl::doesDoUponCompletionExist() const {
-DOTRACE("ExptDriver::Impl::doesDoUponCompletionExist");
-  Tcl_ResetResult(itsInterp);
-
-  if (!safeTclGlobalEval("llength [  namespace eval ::Expt "
-                         "            {info procs doUponCompletion}  ]"))
-    {
-      return false;
-    }
-
-  try {
-    int llength = Tcl::Convert<int>::fromTcl(Tcl_GetObjResult(itsInterp));
-    return (llength > 0);
-  }
-  catch (...) {
-    itsErrHandler.handleMsg("error reading result in doesDoUponCompletionExist");
-  }
-
-  return false;
 }
 
 void ExptDriver::Impl::updateDoUponCompletionBody() const {
 DOTRACE("ExptDriver::Impl::updateDoUponCompletionBody");
-  if (doesDoUponCompletionExist()) {
-    Tcl_ResetResult(itsInterp);
+  if (itsInterp.hasCommand("Expt::doUponCompletion"))
+    {
+      itsInterp.resetResult();
 
-    if (!safeTclGlobalEval("info body Expt::doUponCompletion"))
-      {
-        itsDoUponCompletionBody = "";
-        throw IO::OutputError("couldn't get the proc body for Expt::doUponCompletion");
-      }
+      Tcl::Code cmd("info body Expt::doUponCompletion", &itsErrHandler);
 
-    itsDoUponCompletionBody = Tcl_GetStringResult(itsInterp);
-    Tcl_ResetResult(itsInterp);
-  }
-  else {
-    itsDoUponCompletionBody = "";
-  }
+      if (cmd.invoke(itsInterp))
+        {
+          itsDoUponCompletionBody = itsInterp.getResult(TypeCue<const char*>());
+          itsInterp.resetResult();
+        }
+      else
+        {
+          itsDoUponCompletionBody = "";
+          throw IO::OutputError("couldn't get the proc body "
+                                "for Expt::doUponCompletion");
+        }
+    }
+  else
+    {
+      itsDoUponCompletionBody = "";
+    }
 }
 
 void ExptDriver::Impl::recreateDoUponCompletionProc() const {
@@ -428,25 +410,13 @@ DOTRACE("ExptDriver::Impl::gotoNextValidBlock");
   return false;
 }
 
-bool ExptDriver::Impl::safeTclGlobalEval(const char* script) const {
-DOTRACE("ExptDriver::Impl::safeTclGlobalEval");
-  fixed_string temp_buf = script;
-
-  int tclresult = Tcl_GlobalEval(itsInterp, temp_buf.data());
-
-  if (tclresult == TCL_OK) return true;
-
-  // else...
-  dynamic_string msg = "error while evaluating "; msg += script;
-  itsErrHandler.handleMsg(msg.c_str());
-  return false;
-}
-
 void ExptDriver::Impl::doUponCompletion() const {
 DOTRACE("ExptDriver::Impl::doUponCompletion");
-  if (doesDoUponCompletionExist()) {
-    safeTclGlobalEval("Expt::doUponCompletion");
-  }
+  if (itsInterp.hasCommand("Expt::doUponCompletion"))
+    {
+      Tcl::Code cmd("Expt::doUponCompletion", &itsErrHandler);
+      cmd.invoke(itsInterp);
+    }
 }
 
 void ExptDriver::Impl::noteElapsedTime() const {
@@ -462,16 +432,13 @@ DOTRACE("ExptDriver::Impl::getCurrentTimeDateString");
                                  Tcl::Code::THROW_EXCEPTION);
 
   dateStringCmd.invoke(itsInterp);
-  date_out = Tcl_GetStringResult(itsInterp);
+  date_out = itsInterp.getResult(TypeCue<const char*>());;
 }
 
-void ExptDriver::Impl::getHostname(fixed_string& hostname_out) const {
+void ExptDriver::Impl::getHostname(fixed_string& hostname_out) const
+{
 DOTRACE("ExptDriver::Impl::getHostname");
-  char* temp = Tcl_GetVar2(itsInterp, "env", "HOST",
-                           TCL_GLOBAL_ONLY|TCL_LEAVE_ERR_MSG);;
-
-  if (temp == 0) { throw Tcl::TclError(); }
-  hostname_out = temp;
+  hostname_out = itsInterp.getGlobalVar(TypeCue<const char*>(), "env", "HOST");
 }
 
 void ExptDriver::Impl::getSubjectKey(fixed_string& subjectkey_out) const {
@@ -484,7 +451,7 @@ DOTRACE("ExptDriver::Impl::getSubjectKey");
   subjectKeyCmd.invoke(itsInterp);
 
   // Get the result, and remove an optional leading 'human_', if present
-  const char* key = Tcl_GetStringResult(itsInterp);
+  const char* key = itsInterp.getResult(TypeCue<const char*>());
   if ( strncmp(key, "human_", 6) == 0 ) {
     key += 6;
   }
@@ -505,18 +472,20 @@ DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 
   uniqueFilenameCmd.invoke(itsInterp);
 
-  dynamic_string current_result = Tcl_GetStringResult(itsInterp);
+  dynamic_string current_result = itsInterp.getResult(TypeCue<const char*>());
 
-  if (current_result.equals(previous_result)) {
-    ++tag[0];
-    if (tag[0] > 'z') tag[0] = 'a';
+  if (current_result.equals(previous_result))
+    {
+      ++tag[0];
+      if (tag[0] > 'z') tag[0] = 'a';
 
-    current_result.append(tag);
-  }
-  else {
-    previous_result = current_result;
-    tag[0] = 'a';
-  }
+      current_result.append(tag);
+    }
+  else
+    {
+      previous_result = current_result;
+      tag[0] = 'a';
+    }
 
   return current_result;
 }
@@ -734,7 +703,6 @@ DOTRACE("ExptDriver::Impl::write");
 
 void ExptDriver::Impl::storeData() {
 DOTRACE("ExptDriver::Impl::storeData");
-  Precondition(itsInterp != 0);
 
   edHaltExpt();
 
