@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Mar 15 18:35:59 2000
+// written: Wed Mar 15 19:18:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,10 @@
 
 #ifndef TCLERROR_H_DEFINED
 #include "tcl/tclerror.h"
+#endif
+
+#ifdef HP9000S700
+#define BROKEN_TEMPLATE_FRIEND
 #endif
 
 struct Tcl_Interp;
@@ -119,7 +123,12 @@ public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~TclCmd();
 
+#ifndef BROKEN_TEMPLATE_FRIEND
 protected:
+#else
+public:
+#endif
+
   /** This is overridden by subclasses to implement the specific
       functionality for the command that is represented. */
   virtual void invoke() = 0;
@@ -331,6 +340,44 @@ protected:
 		++begin;
 	 }
   }
+
+  /** \c ResultAppender is an inserter (as well as an output iterator)
+      that appends elements of type \c T to the result of the \c
+      TclCmd with which it is initialized. */
+  template <class T>
+  class ResultAppender {
+  public:
+	 /// Construct with a \c TclCmd whose result should be appended to.
+	 ResultAppender(TclCmd* aCmd) :
+		itsCmd(aCmd) {}
+	 /// Copy constructor.
+	 ResultAppender(const ResultAppender& other) :
+		itsCmd(other.itsCmd) {}
+	 /// Assignment operator.
+	 ResultAppender& operator=(const ResultAppender& other)
+		{ itsCmd = other.itsCmd; return *this; }
+
+	 /// Output assignment: \a val will be appended to the \c TclCmd's result.
+	 ResultAppender& operator=(const T& val)
+		{ itsCmd->lappendVal(val); return *this; }
+
+	 /// Dereference.
+	 ResultAppender& operator*() { return *this; }
+	 /// Pre-increment.
+	 ResultAppender& operator++() { return *this; }
+	 /// Post-increment.
+	 ResultAppender& operator++(int) { return *this; }
+
+  private:
+	 TclCmd* itsCmd;
+  };
+
+  template <class T> friend class ResultAppender;
+
+  /// Return a \c ResultAppender of the given type for this \c TclCmd.
+  template <class T>
+  ResultAppender<T> resultAppender(T* /*dummy*/=0)
+	 { return ResultAppender<T>(this); }
 
 protected:
   Tcl_Interp* interp() { return itsInterp; }
