@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Wed Jul 11 14:02:41 2001
+// written: Wed Jul 11 14:09:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ private:
 
   void invalidate() { itsElements = 0; itsLength = 0; }
 
-  Tcl::ObjPtr itsList;
+  mutable Tcl::ObjPtr itsList;
   mutable Tcl_Obj** itsElements;
   mutable unsigned int itsLength;
 };
