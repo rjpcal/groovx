@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Aug 13 12:09:16 2001
+// written: Thu Aug 16 11:18:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,14 +136,24 @@ public:
   void widenByStep(V step) { ll -= step; rr += step; }
   void heightenByStep(V step) { bb -= step; tt += step; }
 
-  void isVoid() const { return (tt == bb) || (ll == rr); }
+  void isVoid() const { return (tt <= bb) || (rr <= ll); }
 
   void unionize(const Rect<double>& other)
   {
-    ll = Util::min(ll, other.ll);
-    rr = Util::max(rr, other.rr);
-    bb = Util::min(bb, other.bb);
-    tt = Util::max(tt, other.tt);
+    if (!other.isVoid())
+      {
+        if (this->isVoid())
+          {
+            operator=(other);
+          }
+        else
+          {
+            ll = Util::min(ll, other.ll);
+            rr = Util::max(rr, other.rr);
+            bb = Util::min(bb, other.bb);
+            tt = Util::max(tt, other.tt);
+          }
+      }
   }
 
   V& left() { return ll; }
