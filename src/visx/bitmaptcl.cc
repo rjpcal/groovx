@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Tue Nov 30 19:05:24 1999
+// written: Wed Dec  1 10:28:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "xbitmap.h"
 #include "iomgr.h"
 #include "objlist.h"
+#include "objtogl.h"
 #include "listitempkg.h"
 #include "system.h"
 #include "tclcmd.h"
@@ -39,14 +40,6 @@ namespace BitmapTcl {
   class GrabScreenRectCmd;
   class GrabWorldRectCmd;
   class BitmapPkg;
-}
-
-namespace GLBitmapTcl {
-  class GLBitmapPkg;
-}
-
-namespace XBitmapTcl {
-  class XBitmapPkg;
 }
 
 //---------------------------------------------------------------------
@@ -300,6 +293,16 @@ public:
   }
 };
 
+///////////////////////////////////////////////////////////////////////
+//
+// GLBitmapTcl --
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace GLBitmapTcl {
+  class GLBitmapPkg;
+}
+
 class GLBitmapTcl::GLBitmapPkg : public ListItemPkg<GLBitmap, ObjList> {
 public:
   GLBitmapPkg(Tcl_Interp* interp) :
@@ -311,12 +314,47 @@ public:
   }
 };
 
-class XBitmapTcl::XBitmapPkg : public ListItemPkg<XBitmap, ObjList> {
+///////////////////////////////////////////////////////////////////////
+//
+// XBitmapTcl --
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace XBitmapTcl {
+  class XBitmapCmd;
+  class XBitmapPkg;
+}
+
+class XBitmapTcl::XBitmapCmd : public TclCmd {
+public:
+  XBitmapCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 TclCmd(interp, cmd_name, NULL, 1, 1),
+	 itsAlreadyInited(false)
+	 {}
+protected:
+  virtual void invoke() {
+	 if ( !itsAlreadyInited ) {
+		XBitmap::initClass(ObjTogl::theToglConfig());
+		itsAlreadyInited = true;
+	 }
+
+	 XBitmap* p = new XBitmap();
+
+	 int objid = ObjList::theObjList().insert(p);
+	 returnInt(objid);
+  }
+private:
+  bool itsAlreadyInited;
+};
+
+class XBitmapTcl::XBitmapPkg : public AbstractListItemPkg<XBitmap, ObjList> {
 public:
   XBitmapPkg(Tcl_Interp* interp) :
-	 ListItemPkg<XBitmap, ObjList>(interp, ObjList::theObjList(),
-											  "XBitmap", "1.1")
-  {}
+	 AbstractListItemPkg<XBitmap, ObjList>(interp, ObjList::theObjList(),
+														"XBitmap", "$Revision$")
+  {
+	 addCommand( new XBitmapCmd(interp, "XBitmap::XBitmap") );
+  }
 };
 
 //---------------------------------------------------------------------
