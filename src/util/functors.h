@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Sep  7 15:07:16 2001
-// written: Wed Sep 25 18:58:12 2002
+// written: Mon Nov 25 13:08:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -348,6 +348,117 @@ namespace Util
   inline MemFunctor<MF> memFunc(MF mf)
   {
     return mf;
+  }
+
+
+// ####################################################################
+/// Factory function for free functions.
+
+  template <class Fptr>
+  inline Fptr
+  buildFunctor(Fptr f)
+  {
+    return f;
+  }
+
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 0-arg member functions.
+
+  template <class R, class C>
+  inline MemFunctor<R (C::*)()>
+  buildFunctor(R (C::*mf)())
+  {
+    return MemFunctor<R (C::*)()>(mf);
+  }
+
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 0-arg member functions.
+
+  template <class R, class C>
+  inline MemFunctor<R (C::*)() const>
+  buildFunctor(R (C::*mf)() const)
+  {
+    return MemFunctor<R (C::*)() const>(mf);
+  }
+
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 1-arg member functions.
+
+  template <class R, class C, class P1>
+  inline MemFunctor<R (C::*)(P1)>
+  buildFunctor(R (C::*mf)(P1))
+  {
+    return MemFunctor<R (C::*)(P1)>(mf);
+  }
+
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 1-arg member functions.
+
+  template <class R, class C, class P1>
+  inline MemFunctor<R (C::*)(P1) const>
+  buildFunctor(R (C::*mf)(P1) const)
+  {
+    return MemFunctor<R (C::*)(P1) const>(mf);
+  }
+
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 2-arg member functions.
+
+  template <class R, class C, class P1, class P2>
+  inline MemFunctor<R (C::*)(P1, P2)>
+  buildFunctor(R (C::*mf)(P1,P2))
+  {
+    return MemFunctor<R (C::*)(P1, P2)>(mf);
+  }
+
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 2-arg member functions.
+
+  template <class R, class C, class P1, class P2>
+  inline MemFunctor<R (C::*)(P1, P2) const>
+  buildFunctor(R (C::*mf)(P1,P2) const)
+  {
+    return MemFunctor<R (C::*)(P1, P2) const>(mf);
+  }
+
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 3-arg member functions.
+
+  template <class R, class C, class P1, class P2, class P3>
+  inline MemFunctor<R (C::*)(P1, P2, P3)>
+  buildFunctor(R (C::*mf)(P1,P2,P3))
+  {
+    return MemFunctor<R (C::*)(P1, P2, P3)>(mf);
+  }
+
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 3-arg member functions.
+
+  template <class R, class C, class P1, class P2, class P3>
+  inline MemFunctor<R (C::*)(P1, P2, P3) const>
+  buildFunctor(R (C::*mf)(P1,P2,P3) const)
+  {
+    return MemFunctor<R (C::*)(P1, P2, P3) const>(mf);
+  }
+
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 4-arg member functions.
+
+  template <class R, class C, class P1, class P2, class P3, class P4>
+  inline MemFunctor<R (C::*)(P1, P2, P3, P4)>
+  buildFunctor(R (C::*mf)(P1,P2,P3,P4))
+  {
+    return MemFunctor<R (C::*)(P1, P2, P3, P4)>(mf);
+  }
+
+// ####################################################################
+/// Factory function for making Tcl::Functor's from 4-arg member functions.
+
+  template <class R, class C, class P1, class P2, class P3, class P4>
+  inline MemFunctor<R (C::*)(P1, P2, P3, P4) const>
+  buildFunctor(R (C::*mf)(P1,P2,P3,P4) const)
+  {
+    return MemFunctor<R (C::*)(P1, P2, P3, P4) const>(mf);
   }
 
 
