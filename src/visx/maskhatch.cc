@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Thu Aug 23 09:44:31 2001
+// written: Tue Aug 28 09:31:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,16 +22,11 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include <cstring>
-#include <GL/gl.h>
-
-#define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
 
 namespace
 {
-
   const IO::VersionId MASKHATCH_SERIAL_VERSION_ID = 2;
 }
 
@@ -130,43 +125,41 @@ DOTRACE("MaskHatch::grRender");
 
   canvas.setLineWidth(itsLineWidth);
 
-  glBegin(GL_LINES);
-  {
-    for (int i = 0; i < itsNumLines; ++i)
-      {
-        GLdouble position = double(i)/itsNumLines;
+  Gfx::Canvas::LinesBlock b(canvas);
 
-        // horizontal line
-        glVertex2d(0.0, position);
-        glVertex2d(1.0, position);
+  for (int i = 0; i < itsNumLines; ++i)
+    {
+      double position = double(i)/itsNumLines;
 
-        // vertical line
-        glVertex2d(position, 0.0);
-        glVertex2d(position, 1.0);
+      // horizontal line
+      canvas.vertex2(Gfx::Vec2<double>(0.0, position));
+      canvas.vertex2(Gfx::Vec2<double>(1.0, position));
 
-        // lines with slope = 1
-        glVertex2d(0.0, position);
-        glVertex2d(1.0-position, 1.0);
+      // vertical line
+      canvas.vertex2(Gfx::Vec2<double>(position, 0.0));
+      canvas.vertex2(Gfx::Vec2<double>(position, 1.0));
 
-        glVertex2d(position, 0.0);
-        glVertex2d(1.0, 1.0-position);
+      // lines with slope = 1
+      canvas.vertex2(Gfx::Vec2<double>(0.0, position));
+      canvas.vertex2(Gfx::Vec2<double>(1.0-position, 1.0));
 
-        // lines with slope = -1
-        glVertex2d(0.0, 1.0-position);
-        glVertex2d(1.0-position, 0.0);
+      canvas.vertex2(Gfx::Vec2<double>(position, 0.0));
+      canvas.vertex2(Gfx::Vec2<double>(1.0, 1.0-position));
 
-        glVertex2d(position, 1.0);
-        glVertex2d(1.0, position);
-      }
+      // lines with slope = -1
+      canvas.vertex2(Gfx::Vec2<double>(0.0, 1.0-position));
+      canvas.vertex2(Gfx::Vec2<double>(1.0-position, 0.0));
 
-    // final closing lines
-    glVertex2d(0.0, 1.0);
-    glVertex2d(1.0, 1.0);
+      canvas.vertex2(Gfx::Vec2<double>(position, 1.0));
+      canvas.vertex2(Gfx::Vec2<double>(1.0, position));
+    }
 
-    glVertex2d(1.0, 0.0);
-    glVertex2d(1.0, 1.0);
-  }
-  glEnd();
+  // final closing lines
+  canvas.vertex2(Gfx::Vec2<double>(0.0, 1.0));
+  canvas.vertex2(Gfx::Vec2<double>(1.0, 1.0));
+
+  canvas.vertex2(Gfx::Vec2<double>(1.0, 0.0));
+  canvas.vertex2(Gfx::Vec2<double>(1.0, 1.0));
 }
 
 static const char vcid_maskhatch_cc[] = "$Header$";
