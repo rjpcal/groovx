@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Sat Dec  4 04:15:10 1999
+// written: Mon Dec  6 15:10:19 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ DOTRACE("TlistUtils::createPreview");
   int x_step = -1;
   int y_step = 0;
 
-  for (int i = 0; i < objids.size(); ++i) {
+  for (size_t i = 0; i < objids.size(); ++i) {
 	 ++x_step;
 	 if (x_step == num_cols) { x_step = 0; ++y_step; }
 
@@ -128,7 +128,7 @@ DOTRACE("TlistUtils::makeSingles");
   // This loop runs through all valid objid's and does two things: 
   // 1) it adds the objid and the given posid to the trial
   // 2) it sets the Trial's type to the category of its single GrObj
-  for (int i=0; i < vec.size(); ++i) {
+  for (size_t i=0; i < vec.size(); ++i) {
 	 int id = vec[i];
 	 if ( !tlist.isValidId(id) ) {
 		tlist.insertAt(id, new Trial);
@@ -158,8 +158,8 @@ DOTRACE("TlistUtils::makePairs");
   // 2) it sets the Trial's type to zero if the objids are different, and to
   //    one if the objids are the same.
   int trialid = 0;
-  for (int i = 0; i < vec.size(); ++i) {
-	 for (int j = 0; j < vec.size(); ++j) {
+  for (size_t i = 0; i < vec.size(); ++i) {
+	 for (size_t j = 0; j < vec.size(); ++j) {
 		if ( !tlist.isValidId(trialid) ) {
 		  tlist.insertAt(trialid, new Trial);
 		}
@@ -212,17 +212,17 @@ DOTRACE("TlistUtils::makeTriads");
 	 {2, 0, 1},
 	 {2, 1, 0} };
   
-  int num_objs = vec.size();
+  size_t num_objs = vec.size();
   int base_triad[3];
     
   int trial = 0;
 
 	 // loops over i,j,k construct all possible base triads
-  for (int i = 0; i < num_objs-2; ++i) {
+  for (size_t i = 0; i < num_objs-2; ++i) {
 	 base_triad[0] = vec[i];
-	 for (int j = i+1; j < num_objs; ++j) {
+	 for (size_t j = i+1; j < num_objs; ++j) {
 		base_triad[1] = vec[j];
-		for (int k = j+1; k < num_objs; ++k) {
+		for (size_t k = j+1; k < num_objs; ++k) {
 		  base_triad[2] = vec[k];
 
 		  DebugEval(i); DebugEval(j); DebugEval(k); DebugEvalNL(trial);
@@ -277,7 +277,7 @@ DOTRACE("TlistUtils::makeSummaryTrial");
 
   Trial* t = tlist.getPtr(trialid);
 
-  for (int i=0; i < objids.size(); ++i) {
+  for (size_t i=0; i < objids.size(); ++i) {
 	 int row = i / num_cols;
 	 int col = i % num_cols;
 	 Position* p = new Position;
@@ -315,7 +315,7 @@ DOTRACE("TlistUtils::writeResponses");
   
   ofs.setf(ios::fixed);
   ofs.precision(2);
-  for (int i = 0; i < trialids.size(); ++i) {
+  for (size_t i = 0; i < trialids.size(); ++i) {
 	 const Trial& t = *(tlist.getPtr(trialids[i]));
 	 ofs << setw(wid) << trialids[i];
 	 ofs << setw(wid) << t.numResponses();
@@ -335,7 +335,7 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
 	 
   ofstream ofs(filename);
 	 
-  for (int i = 0; i < trialids.size(); ++i) {
+  for (size_t i = 0; i < trialids.size(); ++i) {
 	 const Trial& t = *(tlist.getPtr(trialids[i]));
 		
 	 // Use this to make sure we don't round down when we should round up.
@@ -402,11 +402,11 @@ DOTRACE("TlistUtils::writeMatlab");
 	 
   ofs.setf(ios::fixed);
   ofs.precision(2);
-  for (int i = 0; i < trialids.size(); ++i) {
+  for (size_t i = 0; i < trialids.size(); ++i) {
 	 const Trial& t = *(tlist.getPtr(trialids[i]));
 	 Trial::ObjGrp objs = t.objs();
 	 
-	 for (int j = 0; j < objs.size(); ++j) {
+	 for (size_t j = 0; j < objs.size(); ++j) {
 		ofs << objs[j].objid << ' ';
 	 }
 		

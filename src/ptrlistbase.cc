@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Dec  1 15:39:13 1999
+// written: Mon Dec  6 15:10:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ DOTRACE("VoidPtrList::isValidId");
   DebugEvalNL(id<itsVec.size());
   DebugEvalNL(itsVec[id] != NULL);
 
-  return ( id >= 0 && id < itsVec.size() && itsVec[id] != NULL ); 
+  return ( id >= 0 && size_t(id) < itsVec.size() && itsVec[id] != NULL ); 
 }
 
 void VoidPtrList::remove(int id) {
@@ -95,7 +95,7 @@ DOTRACE("VoidPtrList::remove");
 
 void VoidPtrList::clear() {
 DOTRACE("VoidPtrList::clear");
-  for (int i = 0; i < itsVec.size(); ++i) {
+  for (size_t i = 0; i < itsVec.size(); ++i) {
 	 DebugEval(i); DebugEvalNL(itsVec.size());
 	 destroyPtr(itsVec[i]);
 	 itsVec[i] = NULL;
@@ -131,10 +131,10 @@ void VoidPtrList::insertVoidPtrAt(int id, void* ptr) {
 DOTRACE("VoidPtrList::insertVoidPtrAt");
   if (id < 0) return;
 
-  if (id >= itsVec.capacity()) {
+  if (size_t(id) >= itsVec.capacity()) {
 	 itsVec.reserve(id+RESERVE_CHUNK);
   }
-  if (id >= itsVec.size()) {
+  if (size_t(id) >= itsVec.size()) {
     itsVec.resize(id+1, NULL);
   }
 
@@ -156,7 +156,7 @@ DOTRACE("VoidPtrList::insertVoidPtrAt");
 
   // make sure itsFirstVacant is up-to-date
   while ( (itsVec[itsFirstVacant] != NULL) &&
-          (++itsFirstVacant < itsVec.size()) );
+          (size_t(++itsFirstVacant) < itsVec.size()) );
 
   afterInsertHook(id, ptr);
 }
