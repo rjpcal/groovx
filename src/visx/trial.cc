@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Oct 20 17:43:26 2000
+// written: Mon Oct 23 17:11:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const IO::VersionId TRIAL_SERIAL_VERSION_ID = 1;
+  const IO::VersionId TRIAL_SERIAL_VERSION_ID = 2;
 
   const string_literal ioTag("Trial");
 }
@@ -69,9 +69,33 @@ private:
 public:
   enum TrialState { ACTIVE, INACTIVE };
 
+  class IdPair : public Value {
+  public:
+	 IdPair(int o = 0, int p = 0) : itsObjid(o), itsPosid(p) {}
+	 virtual ~IdPair() {}
+
+	 virtual Value* clone() const { return new IdPair(*this); }
+	 virtual Type getNativeType() const { return Value::UNKNOWN; }
+	 virtual const char* getNativeTypeName() const { return "Trial::IdPair"; }
+
+	 virtual void printTo(STD_IO::ostream& os) const
+		{ os << itsObjid << " " << itsPosid; }
+
+	 virtual void scanFrom(STD_IO::istream& is)
+		{ is >> itsObjid >> itsPosid; }
+
+	 int objid() const { return itsObjid; }
+	 int posid() const { return itsPosid; }
+
+  private:
+	 int itsObjid;
+	 int itsPosid;
+  };
+
   Impl(Trial*) :
 	 itsCorrectResponse(Response::ALWAYS_CORRECT),
-	 itsIdPairs(),
+	 itsGrObjs(),
+	 itsPositions(),
 	 itsResponses(),
 	 itsType(-1),
 	 itsRhId(0),
@@ -83,7 +107,10 @@ public:
 
 private:
   int itsCorrectResponse;
-  std::vector<IdPair> itsIdPairs;
+
+  std::vector<NullableItemWithId<GrObj> > itsGrObjs;
+  std::vector<NullableItemWithId<Position> > itsPositions;
+
   std::vector<Response> itsResponses;
   int itsType;
   int itsRhId;
@@ -150,8 +177,8 @@ public:
   int getCorrectResponse() const { return itsCorrectResponse; }
   int getResponseHandler() const;
   int getTimingHdlr() const;
-  Trial::IdPairItr beginIdPairs() const;
-  Trial::IdPairItr endIdPairs() const;
+  Trial::GrObjItr beginGrObjs() const;
+  Trial::GrObjItr endGrObjs() const;
   int trialType() const;
   const char* description() const;
   int lastResponse() const;
@@ -185,50 +212,6 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Trial::IdPair member functions
-//
-///////////////////////////////////////////////////////////////////////
-
-Trial::IdPair::IdPair(int o, int p) :
-  itsGrObj(o), itsPosition(p)
-{
-DOTRACE("undoLastResponse");
-}
-
-Trial::IdPair::~IdPair() {}
-
-Value* Trial::IdPair::clone() const {
-DOTRACE("Trial::IdPair::clone");
-
-  return new IdPair(*this);
-}
-
-Value::Type Trial::IdPair::getNativeType() const {
-DOTRACE("Trial::IdPair::getNativeType");
-  return Value::UNKNOWN;
-}
-
-const char* Trial::IdPair::getNativeTypeName() const {
-DOTRACE("Trial::IdPair::getNativeTypeName");
-  return "Trial::IdPair";
-}
-
-void Trial::IdPair::printTo(STD_IO::ostream& os) const {
-DOTRACE("Trial::IdPair::printTo");
-  os << itsGrObj.id() << " " << itsPosition.id();
-}
-
-void Trial::IdPair::scanFrom(STD_IO::istream& is) {
-DOTRACE("Trial::IdPair::scanFrom");
-  int objid=-1;
-  int posid=-1; 
-  is >> objid >> posid;
-  itsGrObj = NullableItemWithId<GrObj>(objid);
-  itsPosition = NullableItemWithId<Position>(posid);
-}
-
-///////////////////////////////////////////////////////////////////////
-//
 // Trial::Impl member definitions
 //
 ///////////////////////////////////////////////////////////////////////
@@ -238,14 +221,48 @@ DOTRACE("Trial::Impl::readFrom");
 
   itsState = INACTIVE;
 
-  itsIdPairs.clear();
-  IO::ReadUtils::template readValueObjSeq<IdPair>(reader, "idPairs",
-									  std::back_inserter(itsIdPairs));
+  IO::VersionId svid = reader->readSerialVersionId();
+
+  itsGrObjs.clear();
+  itsPositions.clear();
+
+  if (svid >= 2)
+	 {
+		std::vector<GrObj*> grobjs;
+		IO::ReadUtils::template readObjectSeq<GrObj>(
+							reader, "grobjs", std::back_inserter(grobjs));
+
+		for (int i=0; i < grobjs.size(); ++i)
+		  itsGrObjs.push_back(
+                     NullableItemWithId<GrObj>(grobjs[i]));
+
+		std::vector<Position*> positions;
+		IO::ReadUtils::template readObjectSeq<Position>(
+							reader, "positions", std::back_inserter(positions));
+
+		for (int j = 0; j < positions.size(); ++j)
+		  itsPositions.push_back(
+						   NullableItemWithId<Position>(positions[j]));
+	 }
+  else
+	 {
+		std::vector<IdPair> idpairs;
+		IO::ReadUtils::template readValueObjSeq<IdPair>(reader, "idPairs",
+									  std::back_inserter(idpairs));
+
+		for (int i = 0; i < idpairs.size(); ++i)
+		  {
+			 itsGrObjs.push_back(
+             NullableItemWithId<GrObj>(idpairs[i].objid()));
+			 itsPositions.push_back(
+             NullableItemWithId<Position>(idpairs[i].posid()));
+		  }
+	 }
+
   itsResponses.clear();
   IO::ReadUtils::template readValueObjSeq<Response>(reader, "responses",
 									  std::back_inserter(itsResponses));
 
-  IO::VersionId svid = reader->readSerialVersionId();
   if (svid >= 1)
 	 reader->readValue("correctResponse", itsCorrectResponse);
   else
@@ -259,8 +276,37 @@ DOTRACE("Trial::Impl::readFrom");
 void Trial::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("Trial::Impl::writeTo");
 
-  IO::WriteUtils::writeValueObjSeq(writer, "idPairs",
-										 itsIdPairs.begin(), itsIdPairs.end());
+  if (TRIAL_SERIAL_VERSION_ID >= 2)
+	 {
+		std::vector<const GrObj*> grobjs;
+		for (int i=0; i < itsGrObjs.size(); ++i)
+		  grobjs.push_back(itsGrObjs[i].get());
+
+		IO::WriteUtils::writeObjectSeq(writer, "grobjs",
+												 grobjs.begin(), grobjs.end());
+
+		std::vector<const Position*> positions;
+		for (int j = 0; j < itsPositions.size(); ++j)
+		  positions.push_back(itsPositions[j].get());
+
+		IO::WriteUtils::writeObjectSeq(writer, "positions",
+												 positions.begin(), positions.end());
+	 }
+  else
+	 {
+		std::vector<IdPair> idpairs;
+
+		Invariant(itsGrObjs.size() == itsPositions.size());
+
+		for (int i = 0; i < itsGrObjs.size(); ++i)
+		  {
+			 idpairs.push_back(IdPair(itsGrObjs[i].id(), itsPositions[i].id()));
+		  }
+
+		IO::WriteUtils::writeValueObjSeq(writer, "idPairs",
+										 idpairs.begin(), idpairs.end());
+	 }
+
   IO::WriteUtils::writeValueObjSeq(writer, "responses",
 										 itsResponses.begin(), itsResponses.end());
 
@@ -324,14 +370,14 @@ DOTRACE("Trial::Impl::getTimingHdlr");
   return itsThId;
 }
 
-Trial::IdPairItr Trial::Impl::beginIdPairs() const {
+Trial::GrObjItr Trial::Impl::beginGrObjs() const {
 DOTRACE("Trial::Impl::beginIdPairs");
-  return &itsIdPairs[0];
+  return &itsGrObjs[0];
 }
 
-Trial::IdPairItr Trial::Impl::endIdPairs() const {
+Trial::GrObjItr Trial::Impl::endGrObjs() const {
 DOTRACE("Trial::Impl::endIdPairs");
-  return beginIdPairs() + itsIdPairs.size();
+  return beginGrObjs() + itsGrObjs.size();
 }
 
 int Trial::Impl::trialType() const {
@@ -348,17 +394,19 @@ DOTRACE("Trial::Impl::description");
   
   ost << "trial type == " << trialType()
       << ", objs ==";
-  for (size_t i = 0; i < itsIdPairs.size(); ++i) {
-    ost << " " << itsIdPairs[i].objid();
+  for (size_t i = 0; i < itsGrObjs.size(); ++i) {
+    ost << " " << itsGrObjs[i].id();
   }
+
   ost << ", categories ==";
-  for (size_t j = 0; j < itsIdPairs.size(); ++j) {
-    DebugEvalNL(itsIdPairs[j].objid());
+  for (size_t j = 0; j < itsGrObjs.size(); ++j) {
+    DebugEvalNL(itsGrObjs[j].id());
 
-    Assert(itsIdPairs[j].obj().get() != 0);
+    Assert(itsGrObjs[j].get() != 0);
 
-    ost << " " << itsIdPairs[j].obj()->getCategory();
+    ost << " " << itsGrObjs[j]->getCategory();
   }
+
   ost << '\0';
 
   return buf;
@@ -405,12 +453,16 @@ DOTRACE("Trial::Impl::avgRespTime");
 
 void Trial::Impl::add(int objid, int posid) {
 DOTRACE("Trial::Impl::add");
-  itsIdPairs.push_back(IdPair(objid, posid));
+  itsGrObjs.push_back(NullableItemWithId<GrObj>(objid));
+  itsPositions.push_back(NullableItemWithId<Position>(posid));
+
+  Invariant(itsGrObjs.size() == itsPositions.size());
 }
 
 void Trial::Impl::clearObjs() {
 DOTRACE("Trial::Impl::clearObjs");
-  itsIdPairs.clear(); 
+  itsGrObjs.clear(); 
+  itsPositions.clear();
 }
 
 void Trial::Impl::setType(int t) {
@@ -583,20 +635,23 @@ DOTRACE("Trial::Impl::trUndrawTrial");
 
 void Trial::Impl::trDraw(GWT::Canvas& canvas, bool flush) const {
 DOTRACE("Trial::Impl::trDraw");
-  for (size_t i = 0; i < itsIdPairs.size(); ++i) {
 
-    DebugEval(itsIdPairs[i].objid());
-    DebugEvalNL((void*)itsIdPairs[i].obj().get());
-    DebugEval(itsIdPairs[i].posid());
-    DebugEvalNL((void*)itsIdPairs[i].pos().get());
+  Invariant(itsGrObjs.size() == itsPositions.size());
 
-	 Assert(itsIdPairs[i].obj().get() != 0);
-	 Assert(itsIdPairs[i].pos().get() != 0);
+  for (size_t i = 0; i < itsGrObjs.size(); ++i) {
+
+    DebugEval(itsGrObjs[i].id());
+    DebugEvalNL((void*)itsGrObjs[i].get());
+    DebugEval(itsPositions[i].id());
+    DebugEvalNL((void*)itsPositions[i].get());
+
+	 Assert(itsGrObjs[i].get() != 0);
+	 Assert(itsPositions[i].get() != 0);
 
 	 { 
 		GWT::Canvas::StateSaver state(canvas);
-		itsIdPairs[i].pos()->go();
-		itsIdPairs[i].obj()->draw(canvas);
+		itsPositions[i]->go();
+		itsGrObjs[i]->draw(canvas);
 	 }
   }
 
@@ -605,15 +660,18 @@ DOTRACE("Trial::Impl::trDraw");
 
 void Trial::Impl::trUndraw(GWT::Canvas& canvas, bool flush) const {
 DOTRACE("Trial::Impl::trUndraw");
-  for (size_t i = 0; i < itsIdPairs.size(); ++i) {
 
-	 Assert(itsIdPairs[i].obj().get() != 0);
-	 Assert(itsIdPairs[i].pos().get() != 0);
+  Invariant(itsGrObjs.size() == itsPositions.size());
+
+  for (size_t i = 0; i < itsGrObjs.size(); ++i) {
+
+	 Assert(itsGrObjs[i].get() != 0);
+	 Assert(itsPositions[i].get() != 0);
 
 	 {
 		GWT::Canvas::StateSaver state(canvas);
-		itsIdPairs[i].pos()->rego();
-		itsIdPairs[i].obj()->undraw(canvas);
+		itsPositions[i]->rego();
+		itsGrObjs[i]->undraw(canvas);
 	 }
   }
 
@@ -678,11 +736,11 @@ int Trial::getResponseHandler() const
 int Trial::getTimingHdlr() const
   { return itsImpl->getTimingHdlr(); }
 
-Trial::IdPairItr Trial::beginIdPairs() const
-  { return itsImpl->beginIdPairs(); }
+Trial::GrObjItr Trial::beginGrObjs() const
+  { return itsImpl->beginGrObjs(); }
 
-Trial::IdPairItr Trial::endIdPairs() const
-  { return itsImpl->endIdPairs(); }
+Trial::GrObjItr Trial::endGrObjs() const
+  { return itsImpl->endGrObjs(); }
 
 int Trial::trialType() const
   { return itsImpl->trialType(); }
