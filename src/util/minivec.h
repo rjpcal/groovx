@@ -3,7 +3,7 @@
 // minivec.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 31 11:01:16 2000
-// written: Tue Oct 31 11:23:34 2000
+// written: Tue Oct 31 11:28:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,12 +94,6 @@ namespace MVUtils {
 	 }
 }
 
-
-class OutOfRange : public ErrorWithMsg {
-public:
-  OutOfRange (const char* msg) : ErrorWithMsg(msg) {;}
-  virtual ~OutOfRange () { ; }
-};
 
 template <class T>
 class minivec {
@@ -304,13 +298,13 @@ public:
   
   reference       at (size_type n)               
     { 
-		if (n >= size()) throw OutOfRange("index out of range");
+		if (n >= size()) throw ErrorWithMsg("index out of range");
       return *(begin() + n); 
     }
 
   const_reference at (size_type n)         const 
     { 
-		if (n >= size()) throw OutOfRange("index out of range");
+		if (n >= size()) throw ErrorWithMsg("index out of range");
       return *(begin() + n); 
     }
 
