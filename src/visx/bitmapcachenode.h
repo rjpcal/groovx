@@ -24,6 +24,8 @@ class BitmapRep;
 
 class Gnode;
 
+class GrObjImpl;
+
 class GrObjRenderer {
 public:
   GrObjRenderer();
