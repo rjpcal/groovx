@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Jul 19 09:39:50 2001
+// written: Wed Aug  8 10:45:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,11 +26,17 @@ class ostream;
 template <class T> class shared_ptr;
 
 class BmapRenderer;
+
+template <class V> class Point;
 template <class V> class Rect;
 
-namespace GWT { class Canvas; }
+namespace GWT
+{
+  class Canvas;
+}
 
-namespace IO {
+namespace IO
+{
   class Reader;
   class Writer;
 }
@@ -157,6 +163,9 @@ public:
 
   /// Get the image's height in pixels.
   int height() const;
+
+  /// Get the image's extent (x-width, y-height) in pixels.
+  Point<int> extent() const;
 
   /// Get the x value of the location of the image's lower left corner.
   double getRasterX() const;
