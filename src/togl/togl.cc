@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Jun 18 10:15:55 2002
+// written: Tue Jun 18 10:30:53 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -198,8 +198,6 @@ private:
   int setupOverlay();
   void issueConfigureNotify();
   void checkDblBufferSnafu();
-  void setupEpsMaps();
-  void freeEpsMaps();
 
 public:
 
@@ -260,11 +258,7 @@ public:
 
   /* for DumpToEpsFile: Added by Miguel A. de Riera Pasenau 10.01.1997 */
   XVisualInfo* itsVisInfo;    /* Visual info of the current */
-  /* context needed for DumpToEpsFile */
-  GLfloat* itsEpsRedMap;      /* Index2RGB Maps for Color index modes */
-  GLfloat* itsEpsGreenMap;
-  GLfloat* itsEpsBlueMap;
-  GLint itsEpsMapSize;              /* = Number of indices in our Togl */
+                              /* context needed for DumpToEpsFile */
 
   unsigned int itsBitsPerPixel;
 };
@@ -1111,12 +1105,6 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsOverlayIsMapped(0),
   itsVisInfo(0),
 
-  /* for EPS Output */
-  itsEpsRedMap(NULL),
-  itsEpsGreenMap(NULL),
-  itsEpsBlueMap(NULL),
-  itsEpsMapSize(0),
-
   itsBitsPerPixel(0)
 {
 DOTRACE("Togl::Impl::Impl");
@@ -1429,11 +1417,6 @@ DOTRACE("Togl::Impl::allocColor");
                       Tk_Visual(itsTkWin)->map_entries, &xcol, &exact );
 
 
-  /* for EPS output */
-  itsEpsRedMap[ xcol.pixel] = xcol.red / 65535.0;
-  itsEpsGreenMap[ xcol.pixel] = xcol.green / 65535.0;
-  itsEpsBlueMap[ xcol.pixel] = xcol.blue / 65535.0;
-
   return xcol.pixel;
 }
 
@@ -1480,11 +1463,6 @@ DOTRACE("Togl::Impl::setColor");
   xcol.flags = DoRed | DoGreen | DoBlue;
 
   XStoreColor( itsDisplay, colormap(), &xcol );
-
-  /* for EPS output */
-  itsEpsRedMap[xcol.pixel] = xcol.red / 65535.0;
-  itsEpsGreenMap[xcol.pixel] = xcol.green / 65535.0;
-  itsEpsBlueMap[xcol.pixel] = xcol.blue / 65535.0;
 }
 
 
@@ -1708,16 +1686,9 @@ int Togl::Impl::dumpToEpsFile(const char* filename, int inColor,
 {
 DOTRACE("Togl::Impl::dumpToEpsFile");
 
-  if ( !itsRgbaFlag)
-    {
-      glPixelMapfv( GL_PIXEL_MAP_I_TO_R, itsEpsMapSize, itsEpsRedMap);
-      glPixelMapfv( GL_PIXEL_MAP_I_TO_G, itsEpsMapSize, itsEpsGreenMap);
-      glPixelMapfv( GL_PIXEL_MAP_I_TO_B, itsEpsMapSize, itsEpsBlueMap);
-    }
-
   user_redraw(itsOwner);
 
-  glReadBuffer( GL_FRONT); // by default it read GL_BACK in double buffer mode
+  glReadBuffer(GL_FRONT); // by default it read GL_BACK in double buffer mode
 
   glFlush();
 
@@ -1884,9 +1855,6 @@ DOTRACE("Togl::Impl::makeWindowExist");
   // Check for a single/double buffering snafu
   checkDblBufferSnafu();
 
-  // for EPS Output
-  setupEpsMaps();
-
   return TCL_OK;
 }
 
@@ -1992,9 +1960,6 @@ DOTRACE("Togl::Impl::buildAttribList");
           attrib_list[attrib_count++] = GLX_ALPHA_SIZE;
           attrib_list[attrib_count++] = itsAlphaSize;  DebugEvalNL(itsAlphaSize);
         }
-
-      /* for EPS Output */
-      freeEpsMaps();
     }
   else
     {
@@ -2394,38 +2359,6 @@ DOTRACE("Togl::Impl::checkDblBufferSnafu");
           glDrawBuffer( GL_FRONT );
         }
     }
-}
-
-void Togl::Impl::setupEpsMaps()
-{
-DOTRACE("Togl::Impl::setupEpsMaps");
-  if ( !itsRgbaFlag )
-    {
-      GLint index_bits;
-      glGetIntegerv( GL_INDEX_BITS, &index_bits );
-
-      int index_size = 1 << index_bits;
-      if ( itsEpsMapSize != index_size )
-        {
-          if ( itsEpsRedMap) free( ( char *)itsEpsRedMap);
-          if ( itsEpsGreenMap) free( ( char *)itsEpsGreenMap);
-          if ( itsEpsBlueMap) free( ( char *)itsEpsBlueMap);
-          itsEpsMapSize = index_size;
-          itsEpsRedMap = ( GLfloat *)calloc( index_size, sizeof( GLfloat));
-          itsEpsGreenMap = ( GLfloat *)calloc( index_size, sizeof( GLfloat));
-          itsEpsBlueMap = ( GLfloat *)calloc( index_size, sizeof( GLfloat));
-        }
-    }
-}
-
-void Togl::Impl::freeEpsMaps()
-{
-DOTRACE("Togl::Impl::freeEpsMaps");
-  if (itsEpsRedMap) free( ( char *)itsEpsRedMap);
-  if (itsEpsGreenMap) free( ( char *)itsEpsGreenMap);
-  if (itsEpsBlueMap) free( ( char *)itsEpsBlueMap);
-  itsEpsRedMap = itsEpsGreenMap = itsEpsBlueMap = NULL;
-  itsEpsMapSize = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////
