@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Fri Jul 13 10:04:14 2001
+// written: Mon Jul 16 13:28:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@
 
 #include "tcl/convert.h"
 #include "tcl/tclerror.h"
-#include "tcl/tclevalcmd.h"
+#include "tcl/tclcode.h"
 
 #include "util/error.h"
 #include "util/errorhandler.h"
@@ -352,8 +352,7 @@ DOTRACE("ExptDriver::Impl::recreateDoUponCompletionProc");
     proc_cmd_str += itsDoUponCompletionBody;
     proc_cmd_str += "} }";
 
-    Tcl::TclEvalCmd proc_cmd(proc_cmd_str.c_str(),
-                             Tcl::TclEvalCmd::THROW_EXCEPTION);
+    Tcl::Code proc_cmd(proc_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
     proc_cmd.invoke(itsInterp);
   }
   catch (Tcl::TclError& err) {
@@ -459,8 +458,8 @@ DOTRACE("ExptDriver::Impl::noteElapsedTime");
 
 void ExptDriver::Impl::getCurrentTimeDateString(fixed_string& date_out) const {
 DOTRACE("ExptDriver::Impl::getCurrentTimeDateString");
-  static Tcl::TclEvalCmd dateStringCmd("clock format [clock seconds]",
-                                       Tcl::TclEvalCmd::THROW_EXCEPTION);
+  static Tcl::Code dateStringCmd("clock format [clock seconds]",
+                                 Tcl::Code::THROW_EXCEPTION);
 
   dateStringCmd.invoke(itsInterp);
   date_out = Tcl_GetStringResult(itsInterp);
@@ -479,8 +478,8 @@ void ExptDriver::Impl::getSubjectKey(fixed_string& subjectkey_out) const {
 DOTRACE("ExptDriver::Impl::getSubjectKey");
 
   // Get the subject's initials as the tail of the current directory
-  static Tcl::TclEvalCmd subjectKeyCmd("file tail [pwd]",
-                                       Tcl::TclEvalCmd::THROW_EXCEPTION);
+  static Tcl::Code subjectKeyCmd("file tail [pwd]",
+                                 Tcl::Code::THROW_EXCEPTION);
 
   subjectKeyCmd.invoke(itsInterp);
 
@@ -497,9 +496,9 @@ dynamic_string ExptDriver::Impl::makeUniqueFileExtension() const {
 DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 
   // Format the current time into a unique filename extension
-  static Tcl::TclEvalCmd uniqueFilenameCmd(
+  static Tcl::Code uniqueFilenameCmd(
         "clock format [clock seconds] -format %H%M%d%b%Y",
-        Tcl::TclEvalCmd::THROW_EXCEPTION);
+        Tcl::Code::THROW_EXCEPTION);
 
   static dynamic_string previous_result = "";
   static char tag[2] = {'a', '\0'};

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Fri Jun 22 09:06:55 2001
+// written: Mon Jul 16 13:28:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "glcanvas.h"
 #include "xbmaprenderer.h"
 
-#include "tcl/tclevalcmd.h"
+#include "tcl/tclcode.h"
 
 #include "togl/togl.h"
 
@@ -106,7 +106,7 @@ namespace {
 
     fixed_string buf(builder.c_str());
 
-    Tcl::TclEvalCmd cmd(buf.data(), Tcl::TclEvalCmd::THROW_EXCEPTION);
+    Tcl::Code cmd(buf.data(), Tcl::Code::THROW_EXCEPTION);
     cmd.invoke(togl->interp());
   }
 }
@@ -167,8 +167,7 @@ DOTRACE("Toglet::Toglet");
     dynamic_string pack_cmd_str = "pack ";
     pack_cmd_str += pathname();
     pack_cmd_str += " -side left -expand 1 -fill both; update";
-    Tcl::TclEvalCmd pack_cmd(pack_cmd_str.c_str(),
-                             Tcl::TclEvalCmd::THROW_EXCEPTION);
+    Tcl::Code pack_cmd(pack_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
     pack_cmd.invoke(interp);
   }
 
@@ -301,8 +300,7 @@ DebugPrintNL("Toglet::destroyWidget");
     dynamic_string destroy_cmd_str = "destroy ";
     destroy_cmd_str += pathname();
 
-    Tcl::TclEvalCmd destroy_cmd(destroy_cmd_str.c_str(),
-                                Tcl::TclEvalCmd::BACKGROUND_ERROR);
+    Tcl::Code destroy_cmd(destroy_cmd_str.c_str(), Tcl::Code::BACKGROUND_ERROR);
     destroy_cmd.invoke(itsTogl->interp());
   }
 }
@@ -453,8 +451,7 @@ DOTRACE("Toglet::bind");
   cmd_str.append( event_sequence ).append(" ");
   cmd_str.append( script );
 
-  Tcl::TclEvalCmd cmd(cmd_str.c_str(),
-                      Tcl::TclEvalCmd::THROW_EXCEPTION);
+  Tcl::Code cmd(cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
 #ifdef ACC_COMPILER
   try {
 #endif
@@ -589,8 +586,7 @@ DOTRACE("Toglet::takeFocus");
   dynamic_string cmd_str = "focus -force ";
   cmd_str.append( pathname() );
 
-  Tcl::TclEvalCmd cmd(cmd_str.c_str(),
-                      Tcl::TclEvalCmd::THROW_EXCEPTION);
+  Tcl::Code cmd(cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
 #ifdef ACC_COMPILER
   try {
 #endif

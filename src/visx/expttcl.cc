@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Sun Jul 15 17:35:38 2001
+// written: Mon Jul 16 14:01:01 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -25,10 +25,10 @@
 
 #include "system/system.h"
 
-#include "tcl/tclitempkg.h"
 #include "tcl/objfunctor.h"
-#include "tcl/tclevalcmd.h"
+#include "tcl/tclcode.h"
 #include "tcl/tclitempkg.h"
+#include "tcl/tclutil.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
@@ -98,11 +98,11 @@ namespace ExptTcl
     expt->edBeginExpt();
   }
 
-  Tcl::TclEvalCmd thePauseMsgCmd(
+  Tcl::Code thePauseMsgCmd(
             "tk_messageBox -default ok -icon info "
             "-title \"Pause\" -type ok "
             "-message \"Experiment paused. Click OK to continue.\";\n",
-            Tcl::TclEvalCmd::THROW_EXCEPTION);
+            Tcl::Code::THROW_EXCEPTION);
 
   // Tell the ExptDriver to halt the experiment, then pop up a pause
   // window. When the user dismisses the window, the experiment will
@@ -116,9 +116,7 @@ namespace ExptTcl
 
     thePauseMsgCmd.invoke(ctx.interp());
 
-    // Clear the event queue
-    while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
-      { }
+    Tcl::SafeInterp::clearEventQueue();
 
     GWT::Widget& widget = ed->getWidget();
     widget.clearscreen();
@@ -133,9 +131,7 @@ namespace ExptTcl
     widget.clearscreen();
     widget.swapBuffers();
 
-    // Clear the event queue
-    while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
-      { }
+    Tcl::SafeInterp::clearEventQueue();
 
     ed->addLogInfo("Resuming experiment.");
 
@@ -175,7 +171,7 @@ public:
                         Application::theApp().argv(),
                         interp));
 
-	 Tcl::defGenericObjCmds<ExptDriver>(this);
+    Tcl::defGenericObjCmds<ExptDriver>(this);
 
     Tcl::TclItemPkg::addIoCommands();
 
@@ -185,16 +181,16 @@ public:
     def( &ExptTcl::getCurrentExpt, "currentExp", 0 );
 
     def( &ExptTcl::begin, "begin", "expt_id" );
-	 defRaw( &ExptTcl::pause, "pause", "expt_id", 1 );
+    defRaw( &ExptTcl::pause, "pause", "expt_id", 1 );
     def( &ExptTcl::setStartCommand,
-			"setStartCommand", "expt_id start_command" );
+         "setStartCommand", "expt_id start_command" );
 
     defSetter("addBlock", &ExptDriver::addBlock);
     defAttrib("autosaveFile",
-				  &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
+              &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
     defAttrib("autosavePeriod",
-				  &ExptDriver::getAutosavePeriod,
-				  &ExptDriver::setAutosavePeriod);
+              &ExptDriver::getAutosavePeriod,
+              &ExptDriver::setAutosavePeriod);
     defAction("clear", &ExptDriver::edClearExpt);
     defGetter("currentBlock", &ExptDriver::currentBlock);
     defAction("reset", &ExptDriver::edResetExpt);
