@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Oct 11 17:37:21 2000
+// written: Thu Oct 12 14:46:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -761,15 +761,14 @@ DOTRACE("EventResponseHdlr::Impl::feedback");
 
   updateFeedbacksIfNeeded();
 
-  Tcl_SetVar2Ex(itsSafeIntp.intp(), "resp_val", NULL,
-					 Tcl_NewIntObj(response), TCL_GLOBAL_ONLY);
+  itsSafeIntp.setGlobalVar("resp_val", Tcl_NewIntObj(response));
 
   bool feedbackGiven = false;
   for (size_t i = 0; i<itsFeedbacks.size() && !feedbackGiven; ++i) {
 	 feedbackGiven = itsFeedbacks[i].invokeIfTrue(itsSafeIntp);
   }
 
-  Tcl_UnsetVar(itsSafeIntp.intp(), "resp_val", 0);
+  itsSafeIntp.unsetGlobalVar("resp_val");
 }
 
 

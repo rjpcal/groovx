@@ -157,5 +157,31 @@ DOTRACE("Tcl::SafeInterp::appendResult");
   Tcl_AppendResult(itsInterp, msg);
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// Tcl::SafeInterp -- Variables
+//
+///////////////////////////////////////////////////////////////////////
+
+void Tcl::SafeInterp::setGlobalVar(const char* var_name, Tcl_Obj* var) const {
+DOTRACE("Tcl::SafeInterp::setGlobalVar");
+
+  if (Tcl_SetVar2Ex(itsInterp, const_cast<char*>(var_name), /*name2*/0,
+						  var, TCL_GLOBAL_ONLY) == 0)
+	 {
+		handleError("couldn't set global variable");
+	 }
+}
+
+void Tcl::SafeInterp::unsetGlobalVar(const char* var_name) const {
+DOTRACE("Tcl::SafeInterp::unsetGlobalVar");
+
+  if (Tcl_UnsetVar(itsInterp, const_cast<char*>(var_name),
+						 TCL_GLOBAL_ONLY) != TCL_OK)
+	 {
+		handleError("couldn't unset global variable");
+	 }
+}
+
 static const char vcid_tclutil_cc[] = "$Header$";
 #endif // !TCLUTIL_CC_DEFINED

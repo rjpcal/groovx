@@ -90,6 +90,10 @@ public:
 
   // Result
   void appendResult(const char* msg) const;
+
+  // Variables
+  void setGlobalVar(const char* var_name, Tcl_Obj* var) const;
+  void unsetGlobalVar(const char* var_name) const;
 };
 
 static const char vcid_tclutil_h[] = "$Header$";
