@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Thu Jan 31 10:16:23 2002
+// written: Sat Feb  2 17:09:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,8 +92,9 @@ DOTRACE("TrialEvent::writeTo");
   writer->writeValue("requestedDelay", itsRequestedDelay);
 }
 
-void TrialEvent::schedule(TrialBase& trial,
-                          Util::ErrorHandler& errhdlr)
+int TrialEvent::schedule(TrialBase& trial,
+                         Util::ErrorHandler& errhdlr,
+                         int minimum_msec)
 {
 DOTRACE("TrialEvent::schedule");
   // Cancel any possible previously pending invocation.
@@ -112,6 +113,7 @@ DOTRACE("TrialEvent::schedule");
   if (itsRequestedDelay <= 0)
     {
       itsIsPending = true;
+      itsActualRequest = 0;
       invokeTemplate();
     }
   // Otherwise, set up a timer that will call the invocation after the
@@ -119,12 +121,15 @@ DOTRACE("TrialEvent::schedule");
   else
     {
       itsActualRequest =
-        Util::max(itsRequestedDelay + (int)itsEstimatedOffset, 0);
+        Util::max(itsRequestedDelay + (int)itsEstimatedOffset,
+                  Util::max(minimum_msec, 0));
       itsToken = Tcl_CreateTimerHandler(itsActualRequest,
                                         dummyInvoke,
                                         static_cast<ClientData>(this));
       itsIsPending = true;
     }
+
+  return itsActualRequest;
 }
 
 void TrialEvent::cancel()

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Mon Jan 28 12:18:09 2002
+// written: Sat Feb  2 17:12:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,8 @@
 #include "util/minivec.h"
 #include "util/objmgr.h"
 #include "util/ref.h"
+
+#include <algorithm>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -237,15 +239,35 @@ DOTRACE("TimingHdlr::addEventByName");
 //
 ///////////////////////////////////////////////////////////////////////
 
+namespace
+{
+  bool cmp_delay_less(const Ref<TrialEvent>& e1, const Ref<TrialEvent>& e2)
+  {
+    return (e1->getDelay() < e2->getDelay());
+  }
+}
+
 void TimingHdlr::Impl::scheduleAll(EventGroup& events)
 {
 DOTRACE("TimingHdlr::Impl::scheduleAll");
   Precondition(itsTrial != 0);
   Precondition(itsErrorHandler != 0);
 
+  // In order to ensure that events get scheduled in the proper order, even if
+  // the whole event loop is getting bogged down, we do two things: (1) sort
+  // the collection of events according to their requested delays, and (2)
+  // keep track of the delay at which each was actually scheduled, and make
+  // sure that the next event is scheduled no sooner than that
+
+  std::stable_sort(events.begin(), events.end(), cmp_delay_less);
+
+  int minimum_delay = 0;
+
   for (size_t i = 0; i < events.size(); ++i)
     {
-      events[i]->schedule(*itsTrial, *itsErrorHandler);
+      int scheduled_delay =
+        events[i]->schedule(*itsTrial, *itsErrorHandler, minimum_delay);
+      minimum_delay = scheduled_delay+1;
     }
 }
 
