@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Mon Mar 13 19:19:31 2000
+// written: Mon Mar 13 19:32:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,10 @@
 #ifndef EXPERIMENT_H_DEFINED
 #define EXPERIMENT_H_DEFINED
 
-class Widget;
-
-class Canvas;
-
 class IO;
+class Widget;
+class Canvas;
+class Response;
 
 /// Protocol class that represents psychophysical experiments.
 class Experiment {
@@ -53,7 +52,7 @@ public:
   virtual void edResponseSeen() = 0;
   ///< Tell the Experiment that a response has occurred.
 
-  virtual void edProcessResponse(int response) = 0;
+  virtual void edProcessResponse(const Response& response) = 0;
   /**< Tell the Experiment to process a response.
 	    @param response An experiment-specific value representing the response. */
 
