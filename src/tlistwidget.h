@@ -3,7 +3,7 @@
 // tlistwidget.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:45:34 1999
-// written: Thu Oct 26 17:52:55 2000
+// written: Fri Oct 27 09:03:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,7 @@
 #include "toglconfig.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
-#include "iditem.h"
-#endif
+template <class T> class MaybeIdItem;
 
 class TrialBase;
 
