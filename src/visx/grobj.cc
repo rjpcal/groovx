@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Fri Sep 29 14:52:33 2000
+// written: Wed Oct 18 22:12:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,12 +65,15 @@ GrObj::GrObj(GrObjRenderMode render_mode,
   itsImpl(new Impl(this))
 {
 DOTRACE("GrObj::GrObj");
-  // The GrObj needs to observe itself in order to update its display
-  // list according to state changes.
-  attach(this);
+
+  DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
 
   setRenderMode(render_mode);
   setUnRenderMode(unrender_mode);
+
+  // The GrObj needs to observe itself in order to update its display
+  // list according to state changes.
+  attach(this);
 
   // This is necessary because any representations that have been
   // cached during the GrObj constructor will become invalid upon
@@ -272,7 +275,9 @@ DOTRACE("GrObj::setUnRenderMode");
 
 void GrObj::receiveStateChangeMsg(const Observable* obj) {
 DOTRACE("GrObj::receiveStateChangeMsg");
+  DebugEval((void*)this); DebugEvalNL((void*)obj);
   if (obj == this) {
+	 DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
 	 itsImpl->invalidateCaches();
   }
 }
