@@ -275,7 +275,15 @@ endif
 
 ALL_CC_OPTIONS := $(CC_SWITCHES) $(INCLUDE_PATH) $(CPP_DEFINES)
 
-$(OBJ)/%$(OBJ_EXT) : $(SRC)/%.cc
+$(OBJ)/%.o : $(SRC)/%.cc
+	@mkdir -p $(LOGS)
+	@echo $< >> $(LOGS)/CompileStats
+	@echo ""
+	$(CXX) $(ALL_CC_OPTIONS) \
+		-c $< \
+		-o $@
+
+$(OBJ)/%.do : $(SRC)/%.cc
 	@mkdir -p $(LOGS)
 	@echo $< >> $(LOGS)/CompileStats
 	@echo ""
