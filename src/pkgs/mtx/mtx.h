@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Feb 19 17:58:17 2002
+// written: Tue Feb 19 18:13:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -770,6 +770,12 @@ Mtx operator/(const Mtx& m, double x);
 
 Mtx operator+(const Mtx& m1, const Mtx& m2);
 Mtx operator-(const Mtx& m1, const Mtx& m2);
+
+// Simple element-by-element multiplication (i.e. NOT matrix multiplication)
+Mtx arr_mul(const Mtx& m1, const Mtx& m2);
+
+// Simple element-by-element division (i.e. NOT matrix division)
+Mtx arr_div(const Mtx& m1, const Mtx& m2);
 
 Mtx min(const Mtx& m1, const Mtx& m2);
 Mtx max(const Mtx& m1, const Mtx& m2);
