@@ -12,6 +12,7 @@
 #define BITMAPTCL_CC_DEFINED
 
 #include <tcl.h>
+#include <tk.h>
 #include <string>
 #include <cstring>
 #include <strstream.h>
@@ -26,6 +27,7 @@
 #include "system.h"
 #include "tclcmd.h"
 #include "tclobjlock.h"
+#include "xbmaprenderer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -321,40 +323,15 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 namespace XBitmapTcl {
-  class XBitmapCmd;
   class XBitmapPkg;
 }
 
-class XBitmapTcl::XBitmapCmd : public TclCmd {
-public:
-  XBitmapCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, NULL, 1, 1),
-	 itsAlreadyInited(false)
-	 {}
-protected:
-  virtual void invoke() {
-	 if ( !itsAlreadyInited ) {
-		XBitmap::initClass(ObjTogl::theToglConfig());
-		itsAlreadyInited = true;
-	 }
-
-	 XBitmap* p = new XBitmap();
-
-	 int objid = ObjList::theObjList().insert(p);
-	 returnInt(objid);
-  }
-private:
-  bool itsAlreadyInited;
-};
-
-class XBitmapTcl::XBitmapPkg : public AbstractListItemPkg<XBitmap, ObjList> {
+class XBitmapTcl::XBitmapPkg : public ListItemPkg<XBitmap, ObjList> {
 public:
   XBitmapPkg(Tcl_Interp* interp) :
-	 AbstractListItemPkg<XBitmap, ObjList>(interp, ObjList::theObjList(),
-														"XBitmap", "$Revision$")
-  {
-	 addCommand( new XBitmapCmd(interp, "XBitmap::XBitmap") );
-  }
+	 ListItemPkg<XBitmap, ObjList>(interp, ObjList::theObjList(),
+											 "XBitmap", "$Revision$")
+	 {}
 };
 
 //---------------------------------------------------------------------
@@ -367,6 +344,8 @@ extern "C" Tcl_PackageInitProc Bitmap_Init;
 
 int Bitmap_Init(Tcl_Interp* interp) {
 DOTRACE("Bitmap_Init");
+
+  XBmapRenderer::initClass(Tk_MainWindow(interp));
 
   new BitmapTcl::BitmapPkg(interp);
   new GLBitmapTcl::GLBitmapPkg(interp);
