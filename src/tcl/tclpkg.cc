@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Fri Nov 10 17:03:56 2000
+// written: Tue Nov 14 07:13:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,6 @@
 #include "tcl/tclcmd.h"
 #include "tcl/tclveccmds.h"
 
-#include "util/arrays.h"
 #include "util/strings.h"
 
 #include <tcl.h>
@@ -276,139 +275,6 @@ DOTRACE("Tcl::TclItemPkg::addIoCommands");
 
   addCommand( new ItemASWSaveCmd(this, fetcher, itemArgn()) );
   addCommand( new ItemASRLoadCmd(this, fetcher, itemArgn()) );
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// VecPropertyCmdBase member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-Tcl::VecPropertyCmdBase::VecPropertyCmdBase(TclItemPkg* pkg,
-														  const char* property_name) :
-  TclCmd(pkg->interp(), pkg->makePkgCmdName(property_name),
-			(pkg->itemArgn() ? "item_id(s) ?new_value(s)?" : "?new_value?"),
-			pkg->itemArgn()+1, pkg->itemArgn()+2, false),
-  itsPkg(pkg),
-  itsItemArgn(pkg->itemArgn()),
-  itsValArgn(pkg->itemArgn()+1),
-  itsObjcGet(pkg->itemArgn()+1),
-  itsObjcSet(pkg->itemArgn()+2)
-{
-DOTRACE("Tcl::VecPropertyCmdBase::VecPropertyCmdBase");
-}
-
-Tcl::VecPropertyCmdBase::~VecPropertyCmdBase() {}
-
-void Tcl::VecPropertyCmdBase::invoke() {
-DOTRACE("Tcl::VecPropertyCmdBase::invoke");
-  // Fetch the item ids
-  dynamic_block<int> ids(1); 
-
-  if (itsItemArgn) {
-	 unsigned int num_ids = getSequenceLengthOfArg(itsItemArgn);
-	 DebugEvalNL(num_ids);
-	 ids.resize(num_ids);
-	 getSequenceFromArg(itsItemArgn, &ids[0], (int*) 0);
-  }
-  else {
-	 // -1 is the cue to use the default item
-	 ids.at(0) = -1;
-  }
-
-  // If we are getting...
-  if (TclCmd::objc() == itsObjcGet) {
-	 if ( ids.size() == 0 )
-		/* return an empty Tcl result since the list of ids was empty */
-		return;
-	 else if ( ids.size() == 1 )
-		returnVal( getValFromItemId(ids[0]) );
-	 else
-		for (size_t i = 0; i < ids.size(); ++i) {
-		  lappendVal( getValFromItemId(ids[i]) );
-		}
-
-  }
-  // ... or if we are setting
-  else if (TclCmd::objc() == itsObjcSet) {
-
-	 Tcl::ListIterator<Tcl::TclValue>
-		val_itr = beginOfArg(itsValArgn, (TclValue*)0),
-		val_end = endOfArg(itsValArgn, (TclValue*)0);
-
-	 TclValue val = *val_itr;
-
-	 for (size_t i = 0; i < ids.size(); ++i) {
-		setItemIdToVal(ids[i], val);
-
-		// Only fetch a new value if there are more values to get... if
-		// we run out of values before we run out of ids, then we just
-		// keep on using the last value in the sequence of values.
-		if (val_itr != val_end)
-		  if (++val_itr != val_end)
-			 val = *val_itr;
-	 }
-  }
-  // ... or ... "can't happen"
-  else {  Assert(0);  }
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// PropertiesCmdBase member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-Tcl::PropertiesCmdBase::PropertiesCmdBase(Tcl_Interp* interp, 
-														const char* cmd_name) :
-  TclCmd(interp, cmd_name, NULL, 1, 1),
-  itsInterp(interp),
-  itsPropertyList(0)
-{
-DOTRACE("Tcl::PropertiesCmdBase::PropertiesCmdBase");
-}
-
-Tcl::PropertiesCmdBase::~PropertiesCmdBase() {}
-
-void Tcl::PropertiesCmdBase::invoke() {
-DOTRACE("Tcl::PropertiesCmdBase::invoke");
-  if (itsPropertyList == 0) {
-
-	 unsigned int num_infos = numInfos();
-
-	 fixed_block<Tcl_Obj*> elements(num_infos);
-
-	 for (size_t i = 0; i < num_infos; ++i) {
-		fixed_block<Tcl_Obj*> sub_elements(5);
-		  
-		// property name
-		sub_elements.at(0) = Tcl_NewStringObj(getName(i), -1);
-		  
-		// min value
-		TclValue min(itsInterp, getMin(i));
-		sub_elements.at(1) = min.getObj();
-		  
-		// max value
-		TclValue max(itsInterp, getMax(i));
-		sub_elements.at(2) = max.getObj();
-		  
-		// resolution value
-		TclValue res(itsInterp, getRes(i));
-		sub_elements.at(3) = res.getObj();
-		  
-		// start new group flag
-		sub_elements.at(4) = Tcl_NewBooleanObj(getStartNewGroup(i));
-		  
- 		elements.at(i) = Tcl_NewListObj(sub_elements.size(),
-												  &(sub_elements[0]));
-	 }
-
-	 itsPropertyList = Tcl_NewListObj(elements.size(), &(elements[0]));
-
-	 Tcl_IncrRefCount(itsPropertyList);
-  }
-
-  returnVal(TclValue(itsInterp, itsPropertyList));
 }
 
 static const char vcid_tclitempkg_cc[] = "$Header$";

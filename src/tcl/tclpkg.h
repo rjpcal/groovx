@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Fri Nov 10 17:04:20 2000
+// written: Tue Nov 14 07:12:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,10 +19,6 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCMD_H_DEFINED)
 #include "tcl/tclcmd.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H_DEFINED)
-#include "io/property.h"
 #endif
 
 namespace IO { class IoObject; }
@@ -283,9 +279,6 @@ public:
 	 declareAttrib(cmd_name, new CAttrib<C,T>(getterFunc, setterFunc), usage);
   }
 
-  void declareProperty(const PropertyInfo<C>& pinfo);
-  void declareAllProperties();
-
   virtual C* getCItemFromId(int id) = 0;
   virtual void* getItemFromId(int id) {
 	 return static_cast<void*>(getCItemFromId(id));
@@ -321,142 +314,6 @@ private:
 
   CTclItemPkg<C>* itsPkg;
 };
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * CVecPropertyCmd
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class VecPropertyCmdBase : public TclCmd {
-private:
-  VecPropertyCmdBase(const VecPropertyCmdBase&);
-  VecPropertyCmdBase& operator=(const VecPropertyCmdBase&);
-
-  TclItemPkg* itsPkg;
-  int itsItemArgn;
-  int itsValArgn;
-  int itsObjcGet;
-  int itsObjcSet;
-
-public:
-  VecPropertyCmdBase(TclItemPkg* pkg, const char* property_name);
-
-  virtual ~VecPropertyCmdBase();
-
-protected:
-  virtual const Value& getValFromItemId(int id) = 0;
-  virtual void setItemIdToVal(int id, const Value& value) = 0;
-
-  virtual void invoke();
-};
-
-template <class C>
-class CVecPropertyCmd : public VecPropertyCmdBase {
-public:
-  CVecPropertyCmd(CTclItemPkg<C>* pkg, const PropertyInfo<C>& pinfo) :
-	 VecPropertyCmdBase(pkg, pinfo.name_cstr()),
-	 itsPkg(pkg),
-	 itsPropInfo(pinfo)
-  {}
-
-protected:
-  virtual const Value& getValFromItemId(int id)
-	 {
-		C* item = itsPkg->getCItemFromId(id);
-		return item->get(itsPropInfo.property());
-	 }
-
-  virtual void setItemIdToVal(int id, const Value& value) 
-	 {
-		C* item = itsPkg->getCItemFromId(id);
-		item->set(itsPropInfo.property(), value);
-	 }
-
-private:
-  CVecPropertyCmd(const CVecPropertyCmd&);
-  CVecPropertyCmd& operator=(const CVecPropertyCmd&);
-
-  CTclItemPkg<C>* itsPkg;
-  const PropertyInfo<C>& itsPropInfo;
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * CPropertiesCmd
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class PropertiesCmdBase : public TclCmd {
-private:
-  PropertiesCmdBase(const PropertiesCmdBase&);
-  PropertiesCmdBase& operator=(const PropertiesCmdBase&);
-
-  Tcl_Interp* itsInterp;
-  Tcl_Obj* itsPropertyList;
-
-public:
-  PropertiesCmdBase(Tcl_Interp* interp, const char* cmd_name);
-
-  virtual ~PropertiesCmdBase();
-
-protected:
-  virtual unsigned int numInfos() = 0;
-  virtual const char* getName(unsigned int i) = 0;
-  virtual const Value& getMin(unsigned int i) = 0;
-  virtual const Value& getMax(unsigned int i) = 0;
-  virtual const Value& getRes(unsigned int i) = 0;
-  virtual bool getStartNewGroup(unsigned int i) = 0;
-  
-  virtual void invoke();
-};
-
-template <class C>
-class CPropertiesCmd : public PropertiesCmdBase {
-public:
-  CPropertiesCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 PropertiesCmdBase(interp, cmd_name) {}
-
-protected:
-  virtual unsigned int numInfos() { return C::numPropertyInfos(); }
-  virtual const char* getName(unsigned int i)
-	 { return C::getPropertyInfo(i).name_cstr(); }
-  virtual const Value& getMin(unsigned int i)
-	 { return C::getPropertyInfo(i).min(); }
-  virtual const Value& getMax(unsigned int i)
-	 { return C::getPropertyInfo(i).max(); }
-  virtual const Value& getRes(unsigned int i)
-	 { return C::getPropertyInfo(i).res(); }
-  virtual bool getStartNewGroup(unsigned int i)
-	 { return C::getPropertyInfo(i).startNewGroup(); }
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// CTclItemPkg out-of-line member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-template <class C>
-void CTclItemPkg<C>::declareProperty(const PropertyInfo<C>& pinfo) {
-  addCommand( new CVecPropertyCmd<C>(this, pinfo) );
-}
-
-
-template <class C>
-void CTclItemPkg<C>::declareAllProperties() {
-  for (unsigned int i = 0; i < C::numPropertyInfos(); ++i) {
-	 declareProperty(C::getPropertyInfo(i));
-  }
-
-  addCommand( new CPropertiesCmd<C>(TclPkg::interp(),
-												TclPkg::makePkgCmdName("properties")));
-}
-
 
 } // end namespace Tcl
 
