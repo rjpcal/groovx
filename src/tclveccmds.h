@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Fri Mar 10 01:25:02 2000
+// written: Sat Mar 11 12:21:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,10 @@ template <class T> class Attrib;
 
 class Action;
 
+
+namespace Tcl {
+  class VecActionCmd;
+}
 
 namespace Tcl {
 
@@ -146,10 +150,6 @@ private:
  *
  **/
 ///////////////////////////////////////////////////////////////////////
-
-namespace Tcl {
-  class VecActionCmd;
-}
 
 class Tcl::VecActionCmd : public Tcl::TclCmd {
 public:
