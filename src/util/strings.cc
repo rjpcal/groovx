@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Wed Jun 20 17:30:55 2001
+// written: Wed Jul 18 14:05:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -238,6 +238,17 @@ DOTRACE("fixed_string::equals(const fixed_string&)");
   return itsRep->itsText == other.itsRep->itsText ||
     ( itsRep->itsLength == other.itsRep->itsLength &&
       strcmp(itsRep->itsText, other.itsRep->itsText) == 0 );
+}
+
+bool fixed_string::ends_with(const fixed_string& ext) const
+{
+DOTRACE("fixed_string::ends_with");
+  if (ext.length() > this->length())
+    return false;
+
+  unsigned int skip = this->length() - ext.length();
+
+  return ext.equals(this->c_str() + skip);
 }
 
 //---------------------------------------------------------------------

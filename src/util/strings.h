@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Wed Jun 20 17:27:14 2001
+// written: Wed Jul 18 14:01:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,6 +91,8 @@ public:
   const char* c_str() const { return itsRep->itsText; }
   unsigned int length() const { return itsRep->itsLength; }
   bool empty() const { return (length() == 0); }
+
+  bool ends_with(const fixed_string& ext) const;
 
   //
   // Comparison operators
