@@ -238,44 +238,28 @@ public:
   void defAction(const char* cmd_name, void (C::* actionFunc) (),
                  const rutz::file_pos& src_pos)
   {
-    defVec( cmd_name, actionUsage(""), actionFunc, 1, src_pos );
+    defVec( cmd_name, actionUsage, actionFunc, 1, src_pos );
   }
 
   template <class C>
   void defAction(const char* cmd_name, void (C::* actionFunc) () const,
                  const rutz::file_pos& src_pos)
   {
-    defVec( cmd_name, actionUsage(""), actionFunc, 1, src_pos );
-  }
-
-  template <class C, class T>
-  void defGetter(const char* cmd_name, const char* usage,
-                 T (C::* getterFunc) () const,
-                 const rutz::file_pos& src_pos)
-  {
-    defVec( cmd_name, getterUsage(usage), getterFunc, 1, src_pos );
+    defVec( cmd_name, actionUsage, actionFunc, 1, src_pos );
   }
 
   template <class C, class T>
   void defGetter(const char* cmd_name, T (C::* getterFunc) () const,
                  const rutz::file_pos& src_pos)
   {
-    defVec( cmd_name, getterUsage(""), getterFunc, 1, src_pos );
-  }
-
-  template <class C, class T>
-  void defSetter(const char* cmd_name, const char* usage,
-                 void (C::* setterFunc) (T),
-                 const rutz::file_pos& src_pos)
-  {
-    defVec( cmd_name, setterUsage(usage), setterFunc, 1, src_pos );
+    defVec( cmd_name, getterUsage, getterFunc, 1, src_pos );
   }
 
   template <class C, class T>
   void defSetter(const char* cmd_name, void (C::* setterFunc) (T),
                  const rutz::file_pos& src_pos)
   {
-    defVec( cmd_name, setterUsage(""), setterFunc, 1, src_pos );
+    defVec( cmd_name, setterUsage, setterFunc, 1, src_pos );
   }
 
   template <class C, class T>
@@ -304,9 +288,9 @@ private:
       of the result. */
   const char* makePkgCmdName(const char* cmd_name);
 
-  static const char* actionUsage(const char* usage);
-  static const char* getterUsage(const char* usage);
-  static const char* setterUsage(const char* usage);
+  static const char* const actionUsage;
+  static const char* const getterUsage;
+  static const char* const setterUsage;
 
   struct Impl;
   friend struct Impl;

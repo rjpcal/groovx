@@ -210,8 +210,8 @@ DOTRACE("Obj_Init");
   pkg->defAction("incrRefCount", &Nub::Object::incrRefCount, SRC_POS);
   pkg->defAction("decrRefCount", &Nub::Object::decrRefCount, SRC_POS);
 
-  pkg->defGetter( "type", "objref(s)", &Nub::Object::objTypename, SRC_POS );
-  pkg->defGetter( "realType", "objref(s)", &Nub::Object::realTypename, SRC_POS );
+  pkg->defGetter( "type", &Nub::Object::objTypename, SRC_POS );
+  pkg->defGetter( "realType", &Nub::Object::realTypename, SRC_POS );
 
   pkg->def( "new", "typename", &objNew, SRC_POS );
   pkg->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",

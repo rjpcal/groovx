@@ -476,26 +476,9 @@ DOTRACE("Tcl::Pkg::finishInit");
     std::cerr << pkgName() << " initialized.\n";
 }
 
-const char* Tcl::Pkg::actionUsage(const char* usage)
-{
-  if (usage != 0 && *usage != 0)
-    return usage;
-  return "objref(s)";
-}
-
-const char* Tcl::Pkg::getterUsage(const char* usage)
-{
-  if (usage != 0 && *usage != 0)
-    return usage;
-  return "objref(s)";
-}
-
-const char* Tcl::Pkg::setterUsage(const char* usage)
-{
-  if (usage != 0 && *usage != 0)
-    return usage;
-  return "objref(s) new_value(s)";
-}
+const char* const Tcl::Pkg::actionUsage = "objref(s)";
+const char* const Tcl::Pkg::getterUsage = "objref(s)";
+const char* const Tcl::Pkg::setterUsage = "objref(s) new_value(s)";
 
 static const char vcid_tclpkg_cc[] = "$Header$";
 #endif // !TCLPKG_CC_DEFINED

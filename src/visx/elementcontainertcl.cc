@@ -84,7 +84,7 @@ DOTRACE("Elementcontainer_Init");
   pkg->defGetter("numCompleted", &ElementContainer::numCompleted, SRC_POS);
   pkg->defGetter("numElements", &ElementContainer::numElements, SRC_POS);
   pkg->defAction("clearElements", &ElementContainer::clearElements, SRC_POS);
-  pkg->defSetter("shuffle", "objref rand_seed", &ElementContainer::shuffle, SRC_POS);
+  pkg->defVec("shuffle", "objref(s) rand_seed", &ElementContainer::shuffle, 1, SRC_POS);
   pkg->defGetter("elements", &ElementContainer::getElements, SRC_POS);
 
   PKG_RETURN;
