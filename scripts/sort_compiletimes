@@ -1,0 +1,29 @@
+#!/bin/sh 
+# \
+exec tclsh "$0" "$@"
+
+set infile [open [lindex $argv 0] r]
+
+set contents ""
+
+set currentfile ""
+
+set output {}
+
+while { [gets $infile line] != -1 } {
+    if { [regexp {csh -fc \"\(time g\+\+3 -c (src/[^ ]+)} \
+	$line fullmatch srcfile] } {
+	    set ::currentfile $srcfile
+	} elseif { [regexp {(.\....)u } $line fullmatch units] } {
+	    if { [string length $::currentfile] } {
+		    lappend ::output "$units\t$::currentfile"
+		    set ::currentfile ""
+		}
+	}
+}
+
+set output [lsort -real -index 0 $::output]
+
+foreach l $output {
+    puts $l
+}

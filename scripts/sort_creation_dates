@@ -1,0 +1,26 @@
+#!/usr/bin/env tclsh
+
+set files $argv
+
+if { [llength $files] == 0 } {
+    puts "no input files given!"
+    exit
+}
+
+set output [eval exec grep {{// created:}} $files]
+
+set dates [split $output "\n"]
+
+set results [list]
+
+foreach d $dates {
+    set datestring [lrange $d 2 end]
+    set secs [clock scan $datestring]
+    lappend results "$secs -- $datestring -- [lindex $d 0]"
+}
+
+set sorted [lsort -integer -index 0 $results]
+
+puts [join $sorted "\n"]
+
+exit

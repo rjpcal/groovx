@@ -1,0 +1,7 @@
+#!/bin/sh 
+# \
+exec tclsh "$0" "$@"
+
+foreach f $argv {
+    puts $f
+}

@@ -1,0 +1,75 @@
+#!/bin/sh 
+# \
+exec tclsh "$0" "$@"
+
+set rawfilename "logs/CompileStats"
+set tallyfilename "logs/CompileStatsTally"
+
+proc readfile { fname } {
+	 if { ![file exists $fname] } { return }
+
+	 set f [open $fname r]
+
+	 while { [gets $f line] != -1 } {
+		  set name [lindex $line 0]
+
+		  set count 1
+		  if { [llength $line] > 1 } {
+				set count [lindex $line 1]
+		  }
+
+		  if { [info exists ::COUNTS($name)] } {
+				incr ::COUNTS($name) $count
+		  } else {
+				set ::COUNTS($name) $count
+		  }
+	 }	 
+
+	 close $f
+}
+
+proc writefile { fname } {
+	 set f [open $fname w]
+
+	 foreach name [lsort [array names ::COUNTS]] {
+		  if { ![file exists $name] } {
+				puts "warning: '$name' no longer exists"
+		  }
+		  puts $f "$name $::COUNTS($name)"
+	 }
+
+	 close $f
+}
+
+proc backup { fname } {
+	 if { [file exists $fname] } {
+		  exec mv $fname ${fname}.bkp
+	 }
+}
+
+#
+# Read data from the raw file
+#
+
+readfile $rawfilename
+
+#
+# Read data from the old tally file
+#
+
+readfile $tallyfilename
+
+#
+# Save backups of the old raw and tally files
+#
+
+backup $rawfilename
+backup $tallyfilename
+
+#
+# Save the new counts to a new tally file
+#
+
+writefile $tallyfilename
+
+exit
