@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Sep 27 16:44:23 2000
+// written: Thu Sep 28 20:36:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,8 +48,6 @@ namespace {
   template <class T>
   inline T abs(const T& val)
 	 { return (val < 0) ? -val : val; }
-
-  const string_literal ioTag("Bitmap");
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -169,11 +167,8 @@ DOTRACE("BitmapRep::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
-	 lwriter->writeTypename(ioTag.c_str());
-
-	 ostream& os = lwriter->output();
-
-	 os << itsImpl->itsFilename << '\t';
+	 lwriter->setStringMode(IO::GETLINE_TAB);
+	 writer->writeValue("itsFilename", itsImpl->itsFilename);
 
 	 writer->writeValue("rasterX", itsImpl->itsRasterX);
 	 writer->writeValue("rasterY", itsImpl->itsRasterY);
@@ -192,12 +187,8 @@ DOTRACE("BitmapRep::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
 
-	 lreader->readTypename(ioTag.c_str());
-
-	 istream& is = lreader->input();
-
-	 IO::IoObject::eatWhitespace(is);
-	 getline(is, itsImpl->itsFilename, '\t');
+	 lreader->setStringMode(IO::GETLINE_TAB);
+	 reader->readValue("itsFilename", itsImpl->itsFilename);
 
 	 reader->readValue("rasterX", itsImpl->itsRasterX);
 	 reader->readValue("rasterY", itsImpl->itsRasterY);
