@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Tue Aug 21 17:39:11 2001
+// written: Wed Aug 22 10:55:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -122,7 +122,8 @@ class Util::SlotAdapter : public Util::Slot
   Util::SoftRef<C> itsObject;
   MF itsMemFunc;
 
-  SlotAdapter(C* obj, MF mf) : itsObject(obj, Util::WEAK), itsMemFunc(mf) {}
+  SlotAdapter(C* obj, MF mf) :
+	 itsObject(obj, Util::WEAK, Util::PRIVATE), itsMemFunc(mf) {}
 
 public:
   static Util::SlotAdapter<C, MF>* make(C* obj, MF mf)
@@ -147,8 +148,9 @@ public:
 template <class C, class MF>
 inline Util::SoftRef<Util::Slot> Util::Slot::make(C* obj, MF mf)
 {
-  return Util::SoftRef<Util::Slot>
-    (Util::SlotAdapter<C, MF>::make(obj, mf));
+  return Util::SoftRef<Util::Slot>(Util::SlotAdapter<C, MF>::make(obj, mf),
+											  Util::STRONG,
+                                   Util::PRIVATE);
 };
 
 template <class C, class MF>

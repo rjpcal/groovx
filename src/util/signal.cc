@@ -155,7 +155,7 @@ void Util::Signal::connect(Util::SoftRef<Util::Slot> slot)
 DOTRACE("Util::Signal::connect");
   if (!slot.isValid()) return;
 
-  itsImpl->itsSlots.push_back(ObsRef(slot.get(), Util::WEAK));
+  itsImpl->itsSlots.push_back(ObsRef(slot.get(), Util::WEAK, Util::PRIVATE));
 
   DebugEvalNL(itsImpl->itsSlots.size());
 }
