@@ -318,11 +318,11 @@ public:
   // Reorders the slice by applying *this[i] = *this[index[i]]
   void reorder(const mtx& index);
 
-  void operator+=(double val) { apply(Add(val)); }
-  void operator-=(double val) { apply(Sub(val)); }
+  void operator+=(double val) { apply(dash::add(val)); }
+  void operator-=(double val) { apply(dash::sub(val)); }
 
-  void operator*=(double factor) { apply(Mul(factor)); }
-  void operator/=(double div) { apply(Div(div)); }
+  void operator*=(double factor) { apply(dash::mul(factor)); }
+  void operator/=(double div) { apply(dash::div(div)); }
 
   slice& operator+=(const slice& other);
   slice& operator-=(const slice& other);
@@ -761,7 +761,7 @@ public:
   // Functions
   //
 
-  void clear(double x = 0.0) { apply(Setter(x)); }
+  void clear(double x = 0.0) { apply(dash::setter(x)); }
 };
 
 
@@ -975,10 +975,10 @@ public:
 
   double mean() const { return sum() / nelems(); }
 
-  mtx& operator+=(double x) { apply(Add(x)); return *this; }
-  mtx& operator-=(double x) { apply(Sub(x)); return *this; }
-  mtx& operator*=(double fac) { apply(Mul(fac)); return *this; }
-  mtx& operator/=(double div) { apply(Div(div)); return *this; }
+  mtx& operator+=(double x) { apply(dash::add(x)); return *this; }
+  mtx& operator-=(double x) { apply(dash::sub(x)); return *this; }
+  mtx& operator*=(double fac) { apply(dash::mul(fac)); return *this; }
+  mtx& operator/=(double div) { apply(dash::div(div)); return *this; }
 
   mtx& operator+=(const mtx& other);
   mtx& operator-=(const mtx& other);

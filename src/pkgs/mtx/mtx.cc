@@ -861,13 +861,13 @@ DOTRACE("arr_div(mtx, mtx)");
 mtx min(const mtx& m1, const mtx& m2)
 {
 DOTRACE("min(mtx, mtx)");
-  return binary_op(m1, m2, Min());
+  return binary_op(m1, m2, dash::min());
 }
 
 mtx max(const mtx& m1, const mtx& m2)
 {
 DOTRACE("max(mtx, mtx)");
-  return binary_op(m1, m2, Max());
+  return binary_op(m1, m2, dash::max());
 }
 
 static const char vcid_mtx_cc[] = "$Id$ $URL$";

@@ -34,72 +34,75 @@
 
 #include <cmath>
 
-/// Functor for "multiply argument by x" operation.
-struct Mul
+namespace dash
 {
-  const double factor;                             ///< value to be multiplied
+  /// Functor for "multiply argument by x" operation.
+  struct mul
+  {
+    const double factor;                             ///< value to be multiplied
 
-  Mul(double fac) : factor(fac) {}                 ///< construct w/ value
-  double operator()(double d) { return d*factor; } ///< function-call operator
-};
+    mul(double fac) : factor(fac) {}                 ///< construct w/ value
+    double operator()(double d) { return d*factor; } ///< function-call operator
+  };
 
-/// Functor for "divide argument by x" operation.
-struct Div : public Mul
-{
-  Div(double div) : Mul(1.0/div) {}                ///< function-call operator
-};
+  /// Functor for "divide argument by x" operation.
+  struct div : public mul
+  {
+    div(double div) : mul(1.0/div) {}                ///< function-call operator
+  };
 
-/// Functor for "add x to argument" operation.
-struct Add
-{
-  const double x;                                  ///< value to be added
+  /// Functor for "add x to argument" operation.
+  struct add
+  {
+    const double x;                                  ///< value to be added
 
-  Add(double x_) : x(x_) {}                        ///< construct w/ value
-  double operator()(double d) { return d + x; }    ///< function-call operator
-};
+    add(double x_) : x(x_) {}                        ///< construct w/ value
+    double operator()(double d) { return d + x; }    ///< function-call operator
+  };
 
-/// Functor for "subtract x from argument" operation.
-struct Sub : public Add
-{
-  Sub(double x_) : Add(-x_) {}                     ///< construct w/ value
-};
+  /// Functor for "subtract x from argument" operation.
+  struct sub : public add
+  {
+    sub(double x_) : add(-x_) {}                     ///< construct w/ value
+  };
 
-/// Functor for "argument to power p" operation.
-struct ToPow
-{
-  const double p;                                  ///< power to be applied
+  /// Functor for "argument to power p" operation.
+  struct to_power
+  {
+    const double p;                                  ///< power to be applied
 
-  ToPow(double p_) : p(p_) {}                      ///< construct w/ power
-  double operator()(double v) { return pow(v, p); }///< function-call operator
-};
+    to_power(double p_) : p(p_) {}                   ///< construct w/ power
+    double operator()(double v) { return pow(v, p); }///< function-call operator
+  };
 
-/// Functor for "square of argument" operation.
-struct Square
-{
-  double operator()(double x) { return x*x; }      ///< function-call operator
-};
+  /// Functor for "square of argument" operation.
+  struct square
+  {
+    double operator()(double x) { return x*x; }      ///< function-call operator
+  };
 
-/// Functor for "minimum of two values" operation.
-struct Min
-{
-  double operator()(double v1, double v2)          ///< function-call operator
-  { return (v1 < v2) ? v1 : v2; }
-};
+  /// Functor for "minimum of two values" operation.
+  struct min
+  {
+    double operator()(double v1, double v2)          ///< function-call operator
+    { return (v1 < v2) ? v1 : v2; }
+  };
 
-/// Functor for "maximum of two values" operation.
-struct Max
-{
-  double operator()(double v1, double v2)          ///< function-call operator
-  { return (v1 > v2) ? v1 : v2; }
-};
+  /// Functor for "maximum of two values" operation.
+  struct max
+  {
+    double operator()(double v1, double v2)          ///< function-call operator
+    { return (v1 > v2) ? v1 : v2; }
+  };
 
-/// Functor for "set all elements to x" operation.
-struct Setter
-{
-  const double v;
-  Setter(double v_) : v(v_) {}
-  double operator()(double) { return v; }
-};
+  /// Functor for "set all elements to x" operation.
+  struct setter
+  {
+    const double v;
+    setter(double v_) : v(v_) {}
+    double operator()(double) { return v; }
+  };
+}
 
 static const char vcid_arithfunctor_h[] = "$Id$ $URL$";
 #endif // !ARITHFUNCTOR_H_DEFINED
