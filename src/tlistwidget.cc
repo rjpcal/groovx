@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Fri May 12 17:20:47 2000
+// written: Thu May 25 14:12:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,8 +27,10 @@ namespace {
 }
 
 
-TlistWidget::TlistWidget(Togl* togl, double dist, double unit_angle) :
-  ToglConfig(togl, dist, unit_angle),
+TlistWidget::TlistWidget(Tcl_Interp* interp, const char* pathname,
+								 int config_argc, char** config_argv,
+								 double dist, double unit_angle) :
+  ToglConfig(interp, pathname, config_argc, config_argv, dist, unit_angle),
   itsCurTrial(0),
   itsVisibility(false)
 {
