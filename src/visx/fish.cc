@@ -70,7 +70,7 @@ namespace
 {
   int dummy_int=0; // We need a dummy int to attach various CPtrField's
 
-  const IO::VersionId FISH_SERIAL_VERSION_ID = 4;
+  const IO::VersionId FISH_SVID = 4;
 
   using geom::vec2d;
   using geom::vec3f;
@@ -308,7 +308,7 @@ DOTRACE("Fish::restoreToDefault");
 IO::VersionId Fish::serialVersionId() const
 {
 DOTRACE("Fish::serialVersionId");
-  return FISH_SERIAL_VERSION_ID;
+  return FISH_SVID;
 }
 
 void Fish::readFrom(IO::Reader& reader)
@@ -328,10 +328,10 @@ void Fish::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Fish::writeTo");
 
-  writer.ensureWriteVersionId("Fish", FISH_SERIAL_VERSION_ID, 4,
+  writer.ensureWriteVersionId("Fish", FISH_SVID, 4,
                               "Try groovx0.8a7", SRC_POS);
 
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), FISH_SVID);
 
   writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }

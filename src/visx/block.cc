@@ -60,7 +60,7 @@ rutz::tracer Block::tracer;
 
 namespace
 {
-  IO::VersionId BLOCK_SERIAL_VERSION_ID = 3;
+  IO::VersionId BLOCK_SVID = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ Block::~Block() throw()
 IO::VersionId Block::serialVersionId() const
 {
 DOTRACE("Block::serialVersionId");
-  return BLOCK_SERIAL_VERSION_ID;
+  return BLOCK_SVID;
 }
 
 void Block::readFrom(IO::Reader& reader)
@@ -106,7 +106,7 @@ void Block::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Block::writeTo");
 
-  writer.ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 3,
+  writer.ensureWriteVersionId("Block", BLOCK_SVID, 3,
                               "Try groovx0.8a7", SRC_POS);
 
   writer.writeBaseClass("ElementContainer",

@@ -143,7 +143,7 @@ public:
 
 namespace
 {
-  const IO::VersionId GROBJ_SERIAL_VERSION_ID = 3;
+  const IO::VersionId GXSHAPEKIT_SVID = 3;
 }
 
 rutz::tracer GxShapeKit::tracer;
@@ -184,7 +184,7 @@ DOTRACE("GxShapeKit::~GxShapeKit");
 IO::VersionId GxShapeKit::serialVersionId() const
 {
 DOTRACE("GxShapeKit::serialVersionId");
-  return GROBJ_SERIAL_VERSION_ID;
+  return GXSHAPEKIT_SVID;
 }
 
 void GxShapeKit::readFrom(IO::Reader& reader)
@@ -200,10 +200,11 @@ void GxShapeKit::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxShapeKit::writeTo");
 
-  writer.ensureWriteVersionId("GxShapeKit", GROBJ_SERIAL_VERSION_ID, 3,
+  writer.ensureWriteVersionId("GxShapeKit",
+                              GXSHAPEKIT_SVID, 3,
                               "Try groovx0.8a7", SRC_POS);
 
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GXSHAPEKIT_SVID);
 }
 
 const FieldMap& GxShapeKit::classFields()
@@ -219,9 +220,9 @@ const FieldMap& GxShapeKit::classFields()
           false, false, true, true, Field::BOOLEAN),
     Field("scalingMode", GETSET(ScalingMode), 1, 1, 3, 1),
     Field("widthFactor", GETSET(WidthFactor), 1.0, 0.1, 10.0, 0.1,
-          Field::PRIVATE),
+          Field::PRIVATE).versions(0, 3),
     Field("heightFactor", GETSET(HeightFactor), 1.0, 0.1, 10.0, 0.1,
-          Field::PRIVATE),
+          Field::PRIVATE).versions(0, 3),
     Field("aspectRatio", GETSET(AspectRatio), 1.0, 0.1, 10.0, 0.1,
           Field::TRANSIENT),
     Field("width", GETSET(Width), 1.0, 0.1, 10.0, 0.1,

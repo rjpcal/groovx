@@ -44,6 +44,11 @@
 
 #include "util/trace.h"
 
+namespace
+{
+  const int GXCYLINDER_SVID = 0;
+}
+
 const FieldMap& GxCylinder::classFields()
 {
 DOTRACE("GxCylinder::classFields");
@@ -88,6 +93,12 @@ GxCylinder::~GxCylinder() throw()
 DOTRACE("GxCylinder::~GxCylinder");
 }
 
+IO::VersionId GxCylinder::serialVersionId() const
+{
+DOTRACE("GxCylinder::serialVersionId");
+  return GXCYLINDER_SVID;
+}
+
 void GxCylinder::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxCylinder::readFrom");
@@ -97,7 +108,7 @@ DOTRACE("GxCylinder::readFrom");
 void GxCylinder::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxCylinder::writeTo");
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GXCYLINDER_SVID);
 }
 
 /////////////

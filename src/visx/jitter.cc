@@ -50,7 +50,7 @@ DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId JITTER_SERIAL_VERSION_ID = 3;
+  const IO::VersionId JITTER_SVID = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ DOTRACE("Jitter::~Jitter");
 IO::VersionId Jitter::serialVersionId() const
 {
 DOTRACE("Jitter::serialVersionId");
-  return JITTER_SERIAL_VERSION_ID;
+  return JITTER_SVID;
 }
 
 void Jitter::readFrom(IO::Reader& reader)
@@ -105,7 +105,7 @@ void Jitter::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Jitter::writeTo");
 
-  writer.ensureWriteVersionId("Jitter", JITTER_SERIAL_VERSION_ID, 3,
+  writer.ensureWriteVersionId("Jitter", JITTER_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
 
   writer.writeValue("jitterX", itsXJitter);

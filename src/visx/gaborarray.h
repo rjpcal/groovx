@@ -95,6 +95,7 @@ public:
   /// Get GaborArray's fields.
   static const FieldMap& classFields();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader& reader);
   virtual void writeTo(IO::Writer& writer) const;
 

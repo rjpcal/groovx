@@ -50,7 +50,7 @@ DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId MASKHATCH_SERIAL_VERSION_ID = 3;
+  const IO::VersionId MASKHATCH_SVID = 3;
 }
 
 const FieldMap& MaskHatch::classFields()
@@ -95,7 +95,7 @@ DOTRACE("MaskHatch::~MaskHatch");
 IO::VersionId MaskHatch::serialVersionId() const
 {
 DOTRACE("MaskHatch::serialVersionId");
- return MASKHATCH_SERIAL_VERSION_ID;
+ return MASKHATCH_SVID;
 }
 
 void MaskHatch::readFrom(IO::Reader& reader)
@@ -115,10 +115,11 @@ void MaskHatch::writeTo(IO::Writer& writer) const
 {
 DOTRACE("MaskHatch::writeTo");
 
-  writer.ensureWriteVersionId("MaskHatch", MASKHATCH_SERIAL_VERSION_ID, 3,
+  writer.ensureWriteVersionId("MaskHatch",
+                              MASKHATCH_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
 
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), MASKHATCH_SVID);
 
   writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }

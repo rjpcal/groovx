@@ -74,7 +74,7 @@ rutz::tracer Trial::tracer;
 
 namespace
 {
-  const IO::VersionId TRIAL_SERIAL_VERSION_ID = 5;
+  const IO::VersionId TRIAL_SVID = 5;
 
   struct ActiveState
   {
@@ -220,7 +220,7 @@ DOTRACE("Trial::~Trial");
 }
 
 IO::VersionId Trial::serialVersionId() const
-  { return TRIAL_SERIAL_VERSION_ID; }
+  { return TRIAL_SVID; }
 
 void Trial::readFrom(IO::Reader& reader)
 {
@@ -254,7 +254,7 @@ void Trial::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Trial::writeTo");
 
-  writer.ensureWriteVersionId("Trial", TRIAL_SERIAL_VERSION_ID, 5,
+  writer.ensureWriteVersionId("Trial", TRIAL_SVID, 5,
                               "Try groovx0.8a3", SRC_POS);
 
   IO::WriteUtils::writeObjectSeq(writer, "gxObjects",

@@ -64,7 +64,7 @@ DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId TIMINGHDLR_SERIAL_VERSION_ID = 1;
+  const IO::VersionId TIMINGHDLR_SVID = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ DOTRACE("TimingHdlr::~TimingHdlr");
 IO::VersionId TimingHdlr::serialVersionId() const
 {
 DOTRACE("TimingHdlr::serialVersionId");
-  return TIMINGHDLR_SERIAL_VERSION_ID;
+  return TIMINGHDLR_SVID;
 }
 
 void TimingHdlr::readFrom(IO::Reader& reader)
@@ -193,7 +193,7 @@ void TimingHdlr::writeTo(IO::Writer& writer) const
 {
 DOTRACE("TimingHdlr::writeTo");
 
-  writer.ensureWriteVersionId("TimingHdlr", TIMINGHDLR_SERIAL_VERSION_ID, 1,
+  writer.ensureWriteVersionId("TimingHdlr", TIMINGHDLR_SVID, 1,
                               "Try groovx0.8a4", SRC_POS);
 
   IO::WriteUtils::writeObjectSeq(writer, "immediateEvents",

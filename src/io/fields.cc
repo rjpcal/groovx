@@ -196,9 +196,11 @@ void FieldContainer::readFieldsFrom(IO::Reader& reader,
 {
 DOTRACE("FieldContainer::readFieldsFrom");
 
+  const IO::VersionId svid = reader.readSerialVersionId();
+
   for (FieldMap::Iterator itr(fields.ioFields()); itr.is_valid(); ++itr)
     {
-      if (!itr->isTransient())
+      if (!itr->isTransient() && itr->shouldSerialize(svid))
         itr->readValueFrom(this, reader, itr->name());
     }
 
@@ -207,13 +209,14 @@ DOTRACE("FieldContainer::readFieldsFrom");
 }
 
 void FieldContainer::writeFieldsTo(IO::Writer& writer,
-                                   const FieldMap& fields) const
+                                   const FieldMap& fields,
+                                   IO::VersionId svid) const
 {
 DOTRACE("FieldContainer::writeFieldsTo");
 
   for (FieldMap::Iterator itr(fields.ioFields()); itr.is_valid(); ++itr)
     {
-      if (!itr->isTransient())
+      if (!itr->isTransient() && itr->shouldSerialize(svid))
         itr->writeValueTo(this, writer, itr->name());
     }
 }

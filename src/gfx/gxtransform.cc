@@ -51,7 +51,7 @@ DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId POS_SERIAL_VERSION_ID = 1;
+  const IO::VersionId GXTRANSFORM_SVID = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -146,7 +146,7 @@ DOTRACE("GxTransform::~GxTransform");
 IO::VersionId GxTransform::serialVersionId() const
 {
 DOTRACE("GxTransform::serialVersionId");
-  return POS_SERIAL_VERSION_ID;
+  return GXTRANSFORM_SVID;
 }
 
 void GxTransform::readFrom(IO::Reader& reader)
@@ -164,10 +164,11 @@ void GxTransform::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxTransform::writeTo");
 
-  writer.ensureWriteVersionId("GxTransform", POS_SERIAL_VERSION_ID, 1,
+  writer.ensureWriteVersionId("GxTransform",
+                              GXTRANSFORM_SVID, 1,
                                "Try groovx0.8a4", SRC_POS);
 
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GXTRANSFORM_SVID);
 }
 
 ///////////////

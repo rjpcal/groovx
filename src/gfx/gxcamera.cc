@@ -47,6 +47,13 @@
 DBG_REGISTER
 #include "util/trace.h"
 
+namespace
+{
+  const int GXPC_SVID = 0;
+  const int GXFSC_SVID = 0;
+  const int GXPPC_SVID = 0;
+}
+
 GxCamera::~GxCamera() throw() {}
 
 void GxCamera::reshape(Gfx::Canvas& canvas, int w, int h)
@@ -99,6 +106,12 @@ DOTRACE("GxPerspectiveCamera::classFields");
   return FIELD_MAP;
 }
 
+IO::VersionId GxPerspectiveCamera::serialVersionId() const
+{
+DOTRACE("GxPerspectiveCamera::serialVersionId");
+  return GXPC_SVID;
+}
+
 void GxPerspectiveCamera::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxPerspectiveCamera::readFrom");
@@ -108,7 +121,7 @@ DOTRACE("GxPerspectiveCamera::readFrom");
 void GxPerspectiveCamera::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxPerspectiveCamera::writeTo");
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GXPC_SVID);
 }
 
 void GxPerspectiveCamera::draw(Gfx::Canvas& canvas) const
@@ -212,6 +225,12 @@ DOTRACE("GxFixedScaleCamera::classFields");
   return FIELD_MAP;
 }
 
+IO::VersionId GxFixedScaleCamera::serialVersionId() const
+{
+DOTRACE("GxFixedScaleCamera::serialVersionId");
+  return GXFSC_SVID;
+}
+
 void GxFixedScaleCamera::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxFixedScaleCamera::readFrom");
@@ -221,7 +240,7 @@ DOTRACE("GxFixedScaleCamera::readFrom");
 void GxFixedScaleCamera::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxFixedScaleCamera::writeTo");
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GXFSC_SVID);
 }
 
 double GxFixedScaleCamera::getLogPixelsPerUnit() const
@@ -282,6 +301,12 @@ DOTRACE("GxPsyphyCamera::classFields");
   return FIELD_MAP;
 }
 
+IO::VersionId GxPsyphyCamera::serialVersionId() const
+{
+DOTRACE("GxPsyphyCamera::serialVersionId");
+  return GXPPC_SVID;
+}
+
 void GxPsyphyCamera::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxPsyphyCamera::readFrom");
@@ -291,7 +316,7 @@ DOTRACE("GxPsyphyCamera::readFrom");
 void GxPsyphyCamera::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxPsyphyCamera::writeTo");
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GXPPC_SVID);
 }
 
 void GxPsyphyCamera::setUnitAngle(double deg_per_unit)

@@ -64,7 +64,7 @@ using geom::vec3d;
 
 namespace
 {
-  const IO::VersionId MFACE_SERIAL_VERSION_ID = 2;
+  const IO::VersionId MFACE_SVID = 2;
 
   const unsigned int NUM_HAIR_POINTS = 15; // can't change this without
                                            // also changing "hair_widths"
@@ -268,7 +268,7 @@ DOTRACE("MorphyFace::~MorphyFace");
 IO::VersionId MorphyFace::serialVersionId() const
 {
 DOTRACE("MorphyFace::serialVersionId");
-  return MFACE_SERIAL_VERSION_ID;
+  return MFACE_SVID;
 }
 
 void MorphyFace::readFrom(IO::Reader& reader)
@@ -288,10 +288,10 @@ void MorphyFace::writeTo(IO::Writer& writer) const
 {
 DOTRACE("MorphyFace::writeTo");
 
-  writer.ensureWriteVersionId("MorphyFace", MFACE_SERIAL_VERSION_ID, 2,
+  writer.ensureWriteVersionId("MorphyFace", MFACE_SVID, 2,
                               "Try groovx0.8a4", SRC_POS);
 
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), MFACE_SVID);
 
   writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }

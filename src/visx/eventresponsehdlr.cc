@@ -72,7 +72,7 @@ using rutz::fstring;
 
 namespace
 {
-  const IO::VersionId ERH_SERIAL_VERSION_ID = 2;
+  const IO::VersionId ERH_SVID = 2;
 
   fstring uniqCmdName(const char* stem)
   {
@@ -303,7 +303,7 @@ EventResponseHdlr::~EventResponseHdlr() throw()
   { delete rep; }
 
 IO::VersionId EventResponseHdlr::serialVersionId() const
-  { return ERH_SERIAL_VERSION_ID; }
+  { return ERH_SVID; }
 
 void EventResponseHdlr::readFrom(IO::Reader& reader)
 {
@@ -330,7 +330,7 @@ void EventResponseHdlr::writeTo(IO::Writer& writer) const
 {
 DOTRACE("EventResponseHdlr::writeTo");
 
-  writer.ensureWriteVersionId("EventResponseHdlr", ERH_SERIAL_VERSION_ID, 2,
+  writer.ensureWriteVersionId("EventResponseHdlr", ERH_SVID, 2,
                               "Try groovx0.8a7", SRC_POS);
 
   writer.writeValue("feedbackMap", rep->itsFeedbackMap.rep());

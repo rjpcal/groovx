@@ -43,6 +43,11 @@
 
 #include "util/trace.h"
 
+namespace
+{
+  const int GXLIGHTING_SVID = 0;
+}
+
 const FieldMap& GxLighting::classFields()
 {
 DOTRACE("GxLighting::classFields");
@@ -99,6 +104,12 @@ GxLighting::~GxLighting() throw()
 DOTRACE("GxLighting::~GxLighting");
 }
 
+IO::VersionId GxLighting::serialVersionId() const
+{
+DOTRACE("GxLighting::serialVersionId");
+  return GXLIGHTING_SVID;
+}
+
 void GxLighting::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxLighting::readFrom");
@@ -108,7 +119,7 @@ DOTRACE("GxLighting::readFrom");
 void GxLighting::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxLighting::writeTo");
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GXLIGHTING_SVID);
 }
 
 /////////////

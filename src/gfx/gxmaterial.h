@@ -55,6 +55,7 @@ public:
   /// Virtual destructor.
   virtual ~GxMaterial() throw();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader& reader);
   virtual void writeTo(IO::Writer& writer) const;
 

@@ -63,7 +63,7 @@ using geom::vec3d;
 
 namespace
 {
-  const IO::VersionId GABOR_SERIAL_VERSION_ID = 2;
+  const IO::VersionId GABOR_SVID = 2;
 }
 
 const Gabor::ColorMode Gabor::GRAYSCALE;
@@ -137,7 +137,7 @@ DOTRACE("Gabor::~Gabor");
 IO::VersionId Gabor::serialVersionId() const
 {
 DOTRACE("Gabor::serialVersionId");
-  return GABOR_SERIAL_VERSION_ID;
+  return GABOR_SVID;
 }
 
 void Gabor::readFrom(IO::Reader& reader)
@@ -157,10 +157,10 @@ void Gabor::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Gabor::writeTo");
 
-  writer.ensureWriteVersionId("Gabor", GABOR_SERIAL_VERSION_ID, 2,
+  writer.ensureWriteVersionId("Gabor", GABOR_SVID, 2,
                               "Try groovx0.8a4", SRC_POS);
 
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GABOR_SVID);
 
   writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }

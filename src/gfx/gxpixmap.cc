@@ -66,7 +66,7 @@ namespace
 {
   const geom::vec2<double> defaultZoom(1.0, 1.0);
 
-  const IO::VersionId BITMAP_SERIAL_VERSION_ID = 5;
+  const IO::VersionId BITMAP_SVID = 5;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -220,7 +220,7 @@ DOTRACE("GxPixmap::~GxPixmap");
 IO::VersionId GxPixmap::serialVersionId() const
 {
 DOTRACE("GxPixmap::serialVersionId");
-  return BITMAP_SERIAL_VERSION_ID;
+  return BITMAP_SVID;
 }
 
 void GxPixmap::readFrom(IO::Reader& reader)
@@ -270,7 +270,7 @@ void GxPixmap::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxPixmap::writeTo");
 
-  writer.ensureWriteVersionId("GxPixmap", BITMAP_SERIAL_VERSION_ID, 5,
+  writer.ensureWriteVersionId("GxPixmap", BITMAP_SVID, 5,
                               "Try groovx0.8a7", SRC_POS);
 
   writer.writeValue("filename", rep->itsFilename);

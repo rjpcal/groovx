@@ -44,6 +44,11 @@
 
 #include "util/trace.h"
 
+namespace
+{
+  const int GXSPHERE_SVID = 0;
+}
+
 const FieldMap& GxSphere::classFields()
 {
 DOTRACE("GxSphere::classFields");
@@ -84,6 +89,12 @@ GxSphere::~GxSphere() throw()
 DOTRACE("GxSphere::~GxSphere");
 }
 
+IO::VersionId GxSphere::serialVersionId() const
+{
+DOTRACE("GxSphere::serialVersionId");
+  return GXSPHERE_SVID;
+}
+
 void GxSphere::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxSphere::readFrom");
@@ -93,7 +104,7 @@ DOTRACE("GxSphere::readFrom");
 void GxSphere::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxSphere::writeTo");
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GXSPHERE_SVID);
 }
 
 /////////////

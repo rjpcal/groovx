@@ -62,7 +62,7 @@ using geom::vec3d;
 
 namespace
 {
-  const IO::VersionId HOUSE_SERIAL_VERSION_ID = 3;
+  const IO::VersionId HOUSE_SVID = 3;
 
   void drawWindow(Gfx::Canvas& canvas, int num_vert_bars, int num_horiz_bars)
   {
@@ -267,7 +267,7 @@ DOTRACE("House::~House");
 IO::VersionId House::serialVersionId() const
 {
 DOTRACE("House::serialVersionId");
-  return HOUSE_SERIAL_VERSION_ID;
+  return HOUSE_SVID;
 }
 
 void House::readFrom(IO::Reader& reader)
@@ -287,10 +287,10 @@ void House::writeTo(IO::Writer& writer) const
 {
 DOTRACE("House::writeTo");
 
-  writer.ensureWriteVersionId("House", HOUSE_SERIAL_VERSION_ID, 3,
+  writer.ensureWriteVersionId("House", HOUSE_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
 
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), HOUSE_SVID);
 
   writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }

@@ -59,7 +59,7 @@ using geom::vec3d;
 
 namespace
 {
-  const IO::VersionId FACE_SERIAL_VERSION_ID = 2;
+  const IO::VersionId FACE_SVID = 2;
 
   const double theirNose_x = 0.0;
   const double theirMouth_x[2] = {-0.2, 0.2};
@@ -128,7 +128,7 @@ DOTRACE("Face::~Face");
 IO::VersionId Face::serialVersionId() const
 {
 DOTRACE("Face::serialVersionId");
-  return FACE_SERIAL_VERSION_ID;
+  return FACE_SVID;
 }
 
 void Face::readFrom(IO::Reader& reader)
@@ -148,10 +148,10 @@ void Face::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Face::writeTo");
 
-  writer.ensureWriteVersionId("Face", FACE_SERIAL_VERSION_ID, 2,
+  writer.ensureWriteVersionId("Face", FACE_SVID, 2,
                               "Try groovx0.8a4", SRC_POS);
 
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), FACE_SVID);
 
   writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }

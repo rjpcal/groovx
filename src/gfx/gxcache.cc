@@ -47,7 +47,7 @@ DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId GXCACHE_SERIAL_VERSION_ID = 1;
+  const IO::VersionId GXCACHE_SVID = 1;
 }
 
 GxCache::GxCache(Nub::SoftRef<GxNode> child) :
@@ -67,7 +67,7 @@ DOTRACE("GxCache::~GxCache");
 IO::VersionId GxCache::serialVersionId() const
 {
 DOTRACE("GxCache::serialVersionId");
-  return GXCACHE_SERIAL_VERSION_ID;
+  return GXCACHE_SVID;
 }
 
 void GxCache::readFrom(IO::Reader& reader)

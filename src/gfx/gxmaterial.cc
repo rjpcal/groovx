@@ -43,6 +43,11 @@
 
 #include "util/trace.h"
 
+namespace
+{
+  const int GXMATERIAL_SVID = 0;
+}
+
 const FieldMap& GxMaterial::classFields()
 {
 DOTRACE("GxMaterial::classFields");
@@ -87,6 +92,12 @@ GxMaterial::~GxMaterial() throw()
 DOTRACE("GxMaterial::~GxMaterial");
 }
 
+IO::VersionId GxMaterial::serialVersionId() const
+{
+DOTRACE("GxMaterial::serialVersionId");
+  return GXMATERIAL_SVID;
+}
+
 void GxMaterial::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxMaterial::readFrom");
@@ -96,7 +107,7 @@ DOTRACE("GxMaterial::readFrom");
 void GxMaterial::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxMaterial::writeTo");
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GXMATERIAL_SVID);
 }
 
 /////////////

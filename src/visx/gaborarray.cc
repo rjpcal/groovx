@@ -86,6 +86,8 @@ namespace
 
     media::save_image(fname, *bmap);
   }
+
+  const int GABORARRAY_SVID = 0;
 }
 
 GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
@@ -168,6 +170,12 @@ const FieldMap& GaborArray::classFields()
   return GABORARRAY_FIELDS;
 }
 
+IO::VersionId GaborArray::serialVersionId() const
+{
+DOTRACE("GaborArray::serialVersionId");
+  return GABORARRAY_SVID;
+}
+
 void GaborArray::readFrom(IO::Reader& reader)
 {
 DOTRACE("GaborArray::readFrom");
@@ -181,7 +189,7 @@ void GaborArray::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GaborArray::writeTo");
 
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GABORARRAY_SVID);
 
   writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }

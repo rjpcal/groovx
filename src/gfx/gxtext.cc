@@ -52,7 +52,7 @@ using rutz::fstring;
 
 namespace
 {
-  const IO::VersionId GTEXT_SERIAL_VERSION_ID = 3;
+  const IO::VersionId GTEXT_SVID = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ DOTRACE("GxText::~GxText");
 IO::VersionId GxText::serialVersionId() const
 {
 DOTRACE("GxText::serialVersionId");
-  return GTEXT_SERIAL_VERSION_ID;
+  return GTEXT_SVID;
 }
 
 void GxText::readFrom(IO::Reader& reader)
@@ -115,7 +115,7 @@ void GxText::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxText::writeTo");
 
-  writer.ensureWriteVersionId("GxText", GTEXT_SERIAL_VERSION_ID, 3,
+  writer.ensureWriteVersionId("GxText", GTEXT_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
 
   writer.writeValue("text", itsText);

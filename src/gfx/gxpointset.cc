@@ -44,6 +44,11 @@
 
 #include "util/trace.h"
 
+namespace
+{
+  const int GXPOINTSET_SVID = 0;
+}
+
 const FieldMap& GxPointSet::classFields()
 {
 DOTRACE("GxPointSet::classFields");
@@ -78,6 +83,12 @@ GxPointSet::~GxPointSet() throw()
 DOTRACE("GxPointSet::~GxPointSet");
 }
 
+IO::VersionId GxPointSet::serialVersionId() const
+{
+DOTRACE("GxPointSet::serialVersionId");
+  return GXPOINTSET_SVID;
+}
+
 void GxPointSet::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxPointSet::readFrom");
@@ -87,7 +98,7 @@ DOTRACE("GxPointSet::readFrom");
 void GxPointSet::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxPointSet::writeTo");
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GXPOINTSET_SVID);
 }
 
 /////////////

@@ -77,7 +77,7 @@ rutz::tracer ExptDriver::tracer;
 
 namespace
 {
-  const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 6;
+  const IO::VersionId EXPTDRIVER_SVID = 6;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ DOTRACE("ExptDriver::~ExptDriver");
 IO::VersionId ExptDriver::serialVersionId() const
 {
 DOTRACE("ExptDriver::serialVersionId");
-  return EXPTDRIVER_SERIAL_VERSION_ID;
+  return EXPTDRIVER_SVID;
 }
 
 void ExptDriver::readFrom(IO::Reader& reader)
@@ -202,7 +202,7 @@ void ExptDriver::writeTo(IO::Writer& writer) const
 {
 DOTRACE("ExptDriver::writeTo");
 
-  writer.ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 6,
+  writer.ensureWriteVersionId("ExptDriver", EXPTDRIVER_SVID, 6,
                               "Try groovx0.8a7", SRC_POS);
 
   writer.writeValue("hostname", rep->hostname);

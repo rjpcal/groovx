@@ -44,6 +44,11 @@
 
 #include "util/trace.h"
 
+namespace
+{
+  const int GXDISK_SVID = 0;
+}
+
 const FieldMap& GxDisk::classFields()
 {
 DOTRACE("GxDisk::classFields");
@@ -86,6 +91,12 @@ GxDisk::~GxDisk() throw()
 DOTRACE("GxDisk::~GxDisk");
 }
 
+IO::VersionId GxDisk::serialVersionId() const
+{
+DOTRACE("GxDisk::serialVersionId");
+  return GXDISK_SVID;
+}
+
 void GxDisk::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxDisk::readFrom");
@@ -95,7 +106,7 @@ DOTRACE("GxDisk::readFrom");
 void GxDisk::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxDisk::writeTo");
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GXDISK_SVID);
 }
 
 /////////////

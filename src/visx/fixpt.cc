@@ -55,7 +55,7 @@ DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId FIXPT_SERIAL_VERSION_ID = 3;
+  const IO::VersionId FIXPT_SVID = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ FixPt::~FixPt() throw() {}
 IO::VersionId FixPt::serialVersionId() const
 {
 DOTRACE("FixPt::serialVersionId");
-  return FIXPT_SERIAL_VERSION_ID;
+  return FIXPT_SVID;
 }
 
 void FixPt::readFrom(IO::Reader& reader)
@@ -114,10 +114,10 @@ void FixPt::writeTo(IO::Writer& writer) const
 {
 DOTRACE("FixPt::writeTo");
 
-  writer.ensureWriteVersionId("FixPt", FIXPT_SERIAL_VERSION_ID, 3,
+  writer.ensureWriteVersionId("FixPt", FIXPT_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
 
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), FIXPT_SVID);
 
   writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }

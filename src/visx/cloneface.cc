@@ -42,6 +42,11 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+namespace
+{
+  const int CLONEFACE_SVID = 0;
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // CloneFace member functions
@@ -89,6 +94,12 @@ CloneFace::~CloneFace () throw()
 DOTRACE("CloneFace::~CloneFace");
 }
 
+IO::VersionId CloneFace::serialVersionId() const
+{
+DOTRACE("CloneFace::serialVersionId");
+  return CLONEFACE_SVID;
+}
+
 void CloneFace::readFrom(IO::Reader& reader)
 {
 DOTRACE("CloneFace::readFrom");
@@ -108,7 +119,7 @@ DOTRACE("CloneFace::writeTo");
   IO::WriteUtils::writeValueSeq(writer, "ctrlPnts",
                                 itsCtrlPnts, itsCtrlPnts+24, true);
 
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), CLONEFACE_SVID);
 
   writer.writeBaseClass("Face", IO::makeConstProxy<Face>(this));
 }

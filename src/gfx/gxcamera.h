@@ -88,6 +88,7 @@ public:
   /// Get GxPerspectiveCamera's fields.
   static const FieldMap& classFields();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader& reader);
   virtual void writeTo(IO::Writer& writer) const;
 
@@ -172,6 +173,7 @@ public:
   /// Get GxFixedScaleCamera's fields.
   static const FieldMap& classFields();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader& reader);
   virtual void writeTo(IO::Writer& writer) const;
 
@@ -209,6 +211,7 @@ public:
   /// Get GxPsyphyCamera's fields.
   static const FieldMap& classFields();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader& reader);
   virtual void writeTo(IO::Writer& writer) const;
 

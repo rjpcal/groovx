@@ -46,6 +46,11 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+namespace
+{
+  const int GXLINE_SVID = 0;
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // GxLine member definitions
@@ -92,6 +97,12 @@ GxLine::~GxLine() throw()
 DOTRACE("GxLine::~GxLine");
 }
 
+IO::VersionId GxLine::serialVersionId() const
+{
+DOTRACE("GxLine::serialVersionId");
+  return GXLINE_SVID;
+}
+
 void GxLine::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxLine::readFrom");
@@ -101,7 +112,7 @@ DOTRACE("GxLine::readFrom");
 void GxLine::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxLine::writeTo");
-  writeFieldsTo(writer, classFields());
+  writeFieldsTo(writer, classFields(), GXLINE_SVID);
 }
 
 /////////////
