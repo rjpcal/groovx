@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Tue Sep 26 19:04:08 2000
+// written: Wed Sep 27 11:12:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,24 +37,18 @@ public:
 
   /// Construct with initial values for the Brunswik face parameters.
   Face (double eh=0.6, double es=0.4, double nl=0.4, double mh=-0.8, int categ=0);
-#ifdef LEGACY
-  /// Construct from an \c STD_IO::istream using \c legacyDesrlz().
-  Face (STD_IO::istream &is, IO::IOFlag flag);
-#endif
   /// Virtual destructor.
   virtual ~Face ();
 
   /** Write the face to a stream using the format:
 	  
 	   <tt>[Face] category eyeHgt eyeDist noseLen mouthHgt</tt> */
-  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void legacySrlz(IO::Writer* writer) const;
 
   /** Read the face from a stream using the format:
 	  
 	   <tt>[Face] category eyeHgt eyeDist noseLen mouthHgt</tt> */
-  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag);
-  
-  virtual int legacyCharCount() const;
+  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual unsigned long serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Tue Sep 26 18:39:46 2000
+// written: Wed Sep 27 11:42:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,9 +40,8 @@ public:
   ///
   virtual ~Property();
 
-  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag) const = 0;
-  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag) = 0;
-  virtual int legacyCharCount() const = 0;
+  virtual void legacySrlz(IO::Writer* writer) const = 0;
+  virtual void legacyDesrlz(IO::Reader* reader) = 0;
 
   virtual void readFrom(IO::Reader* reader) = 0;
   virtual void writeTo(IO::Writer* writer) const = 0;
@@ -84,9 +83,8 @@ public:
   ///
   template <class C> friend class PropFriend;
 
-  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag) const;
-  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag);
-  virtual int legacyCharCount() const;
+  virtual void legacySrlz(IO::Writer* writer) const;
+  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
@@ -230,9 +228,8 @@ public:
   ///
   void reseat(T& valRef) { itsVal.reseat(valRef); }
 
-  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag) const ;
-  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag);
-  virtual int legacyCharCount() const;
+  virtual void legacySrlz(IO::Writer* writer) const ;
+  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

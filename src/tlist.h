@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Tue Sep 26 18:39:47 2000
+// written: Wed Sep 27 11:12:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,13 +46,10 @@ public:
   static Tlist& theTlist();
 
   /// Overridden from PtrList<TrialBase> to provide compatibility with old Tlist.
-  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void legacySrlz(IO::Writer* writer) const;
 
   /// Overridden from PtrList<TrialBase> to provide compatibility with old Tlist.
-  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag);
-
-  /// Overridden from PtrList<TrialBase> to provide compatibility with old Tlist.
-  virtual int legacyCharCount() const;
+  virtual void legacyDesrlz(IO::Reader* reader);
 };
 
 static const char vcid_tlist_h[] = "$Header$";

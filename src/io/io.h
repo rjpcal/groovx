@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Tue Sep 26 18:39:46 2000
+// written: Wed Sep 27 11:09:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,13 +61,6 @@ namespace IO {
 
   /// A default separator to be used between elements in a legacySrlzd object
   const char SEP = ' ';
-
-
-  /** This template function returns the number of characters needed
-	 * to write a type using the << insertion operator. It is
-	 * instantiated * for the basic types. */
-  template<class T>
-  int gCharCount(T val);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -162,17 +155,12 @@ protected:
   /** The old-style function to send an object to a stream. Each
       subclass must implement its own formatting. \c writeTo() should
       be favored over \c legacySrlz(). */
-  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const;
+  virtual void legacySrlz(IO::Writer* writer) const;
 
   /** The old-style function to read an object from a stream. Each
       subclass must implement its own formatting. \c readFrom() should
       be favored over \c legacyDesrlz(). */
-  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag);
-
-  /** The old-style function to return an upper limit on the number of
-      characters that will be sent to a stream by \c legacySrlz(). Each
-      subclass must implement its own formatting. */
-  virtual int legacyCharCount() const;
+  virtual void legacyDesrlz(IO::Reader* reader);
 
 private:
   unsigned long itsId;

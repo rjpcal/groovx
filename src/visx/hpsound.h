@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Tue Sep 26 18:39:49 2000
+// written: Wed Sep 27 11:21:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,6 +11,7 @@
 #ifndef HPSOUND_CC_DEFINED
 #define HPSOUND_CC_DEFINED
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -75,10 +76,9 @@ public:
   HpAudioSound(const char* filename);
   virtual ~HpAudioSound();
 
-  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const;
-  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag);
-  virtual int legacyCharCount() const;
-  
+  virtual void legacySrlz(IO::Writer* writer) const;
+  virtual void legacyDesrlz(IO::Reader* reader);
+
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -125,31 +125,35 @@ DOTRACE("HpAudioSound::~HpAudioSound");
   }
 }
 
-void HpAudioSound::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+void HpAudioSound::legacySrlz(IO::Writer* writer) const {
 DOTRACE("HpAudioSound::legacySrlz");
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
-  os << itsFilename << endl;
+	 os << itsFilename << endl;
 
-  if (os.fail()) throw IO::OutputError(ioTag.c_str());
-
-  if (flag & IO::BASES) { /* no bases to deal with */ }
+	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+  }
 }
 
-void HpAudioSound::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+void HpAudioSound::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("HpAudioSound::legacyDesrlz");
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
 
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
-  getline(is, itsFilename, '\n');
+	 getline(is, itsFilename, '\n');
   
-  if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 if (is.fail()) throw IO::InputError(ioTag.c_str());
 
-  if (flag & IO::BASES) { /* no bases to deal with */ }
-
-  setFile(itsFilename.c_str());
+	 setFile(itsFilename.c_str());
+  }
 }
 
 void HpAudioSound::readFrom(IO::Reader* reader) {
@@ -164,13 +168,6 @@ DOTRACE("HpAudioSound::writeTo");
   writer->writeValue("filename", itsFilename); 
 }
 
-int HpAudioSound::legacyCharCount() const {
-DOTRACE("HpAudioSound::legacyCharCount");
-  return (ioTag.length() + 1
-			 + itsFilename.length() + 1
-			 +5); // fudge factor
-}
-  
 void HpAudioSound::play() {
 DOTRACE("HpAudioSound::play");
   if ( !theAudio ) { throw SoundError("invalid audio server connection"); }

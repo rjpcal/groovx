@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Tue Sep 26 19:12:26 2000
+// written: Wed Sep 27 12:11:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,13 @@
 
 #include "jitter.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
 #include "util/randutils.h"
 
 #include <cstring>
-#include <iostream.h>
 #include <GL/gl.h>
 
 #define NO_TRACE
@@ -51,16 +51,7 @@ Jitter::Jitter () :
 DOTRACE("Jitter::Jitter");
   // empty
 }
-#ifdef LEGACY
-Jitter::Jitter(STD_IO::istream &is, IO::IOFlag flag) : 
-  Position() ,
-  itsXJitter(0.0), itsYJitter(0.0), itsRJitter(0.0),
-  itsXShift(0.0), itsYShift(0.0), itsRShift(0.0)
-{
-DOTRACE("Jitter::Jitter");
-  legacyDesrlz(is, flag);
-}
-#endif
+
 Jitter::~Jitter () {
 DOTRACE("Jitter::~Jitter");
   // empty
@@ -71,47 +62,50 @@ DOTRACE("Jitter::~Jitter");
 // before the base class (Position), since the first thing that the
 // PosMgr virtual constructor sees must be the name of the most fully
 // derived class, in order to invoke the proper constructor.
-void Jitter::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+void Jitter::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Jitter::legacySrlz");
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  os << itsXJitter << sep
-	  << itsYJitter << sep
-	  << itsRJitter << endl;
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
-  if (os.fail()) throw IO::OutputError(ioTag);
+	 os << itsXJitter << sep
+		 << itsYJitter << sep
+		 << itsRJitter << endl;
 
-  // The base class (Position) is always legacySrlzd, regardless of flag.
-  // The typename in the base class is always used, regardless of flag.
-  Position::legacySrlz(writer, os, (flag | IO::TYPENAME));
+	 if (os.fail()) throw IO::OutputError(ioTag);
+
+	 // The base class (Position) is always legacySrlzd, regardless of flag.
+	 // The typename in the base class is always used, regardless of flag.
+	 IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+	 Position::legacySrlz(writer);
+  }
 }
 
-void Jitter::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void Jitter::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Jitter::legacyDesrlz");
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
 
-  is >> itsXJitter >> itsYJitter >> itsRJitter;
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
-  DebugEval(flag);
-  DebugEval(itsXJitter);
-  DebugEval(itsYJitter);
-  DebugEvalNL(itsRJitter);
+	 is >> itsXJitter >> itsYJitter >> itsRJitter;
 
-  if (is.fail()) throw IO::InputError(ioTag);
+	 DebugEval(flag);
+	 DebugEval(itsXJitter);
+	 DebugEval(itsYJitter);
+	 DebugEvalNL(itsRJitter);
 
-  // The base class (Position) is always legacyDesrlzd, regardless of flag.
-  // The typename in the base class is always used, regardless of flag.
-  Position::legacyDesrlz(reader, is, (flag | IO::TYPENAME));
-}
+	 if (is.fail()) throw IO::InputError(ioTag);
 
-int Jitter::legacyCharCount() const {
-  return (strlen(ioTag) + 1
-			 + IO::gCharCount<double>(itsXJitter) + 1
-			 + IO::gCharCount<double>(itsYJitter) + 1
-			 + IO::gCharCount<double>(itsRJitter) + 1
-			 + Position::legacyCharCount()
-			 + 1);// fudge factor
+	 // The base class (Position) is always legacyDesrlzd, regardless of flag.
+	 // The typename in the base class is always used, regardless of flag.
+	 IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+	 Position::legacyDesrlz(reader);
+  }
 }
 
 void Jitter::readFrom(IO::Reader* reader) {

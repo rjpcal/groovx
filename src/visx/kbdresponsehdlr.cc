@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Tue Sep 26 19:16:36 2000
+// written: Wed Sep 27 11:36:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,8 @@
 
 #include "kbdresponsehdlr.h"
 
+#include "io/iolegacy.h"
 #include "util/strings.h"
-
-#include <iostream.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -48,35 +47,35 @@ KbdResponseHdlr::KbdResponseHdlr(const char* key_resp_pairs) :
 
 KbdResponseHdlr::~KbdResponseHdlr() {}
 
-void KbdResponseHdlr::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+void KbdResponseHdlr::legacySrlz(IO::Writer* writer) const {
 DOTRACE("KbdResponseHdlr::legacySrlz");
-  if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  oldLegacySrlz(writer, os, flag);
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << IO::SEP; }
 
-  if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 oldLegacySrlz(writer);
 
-  if (flag & IO::BASES) { /* no bases to legacySrlz */ }
+	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+  }
 }
 
-void KbdResponseHdlr::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void KbdResponseHdlr::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("KbdResponseHdlr::legacyDesrlz");
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
 
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
-  oldLegacyDesrlz(reader, is, flag);
+	 oldLegacyDesrlz(reader);
 
-  setEventSequence("<KeyPress");
-  setBindingSubstitution("%K");
+	 setEventSequence("<KeyPress");
+	 setBindingSubstitution("%K");
 
-  if (is.fail()) throw IO::InputError(ioTag.c_str());
-
-  if (flag & IO::BASES) { /* no bases to legacyDesrlz */ }
-}
-
-int KbdResponseHdlr::legacyCharCount() const {
-DOTRACE("KbdResponseHdlr::legacyCharCount");
-  return ioTag.length() + 1 + oldCharCount();
+	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+  }
 }
 
 static const char vcid_kbdresponsehdlr_cc[] = "$Header$";

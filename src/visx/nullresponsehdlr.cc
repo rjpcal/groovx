@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Tue Sep 26 18:39:49 2000
+// written: Wed Sep 27 11:23:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,9 @@
 
 #include "nullresponsehdlr.h"
 
+#include "io/iolegacy.h"
+
 #include <cstring>
-#include <iostream.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -31,21 +32,24 @@ NullResponseHdlr::~NullResponseHdlr() {
 DOTRACE("NullResponseHdlr::~NullResponseHdlr");
 }
 
-void NullResponseHdlr::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+void NullResponseHdlr::legacySrlz(IO::Writer* writer) const {
 DOTRACE("NullResponseHdlr::legacySrlz");
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  if (flag & IO::TYPENAME) { os << ioTag << ' '; }
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << ' '; }
+  }
 }
 
-void NullResponseHdlr::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void NullResponseHdlr::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("NullResponseHdlr::legacyDesrlz");
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
 
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
-}
-
-int NullResponseHdlr::legacyCharCount() const {
-DOTRACE("NullResponseHdlr::legacyCharCount");
-  return strlen(ioTag) + 1;
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+  }
 }
 
 void NullResponseHdlr::readFrom(IO::Reader*) {

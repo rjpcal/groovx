@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Tue Sep 26 19:12:26 2000
+// written: Wed Sep 27 11:48:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,12 +15,12 @@
 
 #include "glbmaprenderer.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
 #include <GL/gl.h>
 #include <cstring>
-#include <iostream.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -48,15 +48,7 @@ GLBitmap::GLBitmap(const char* filename) :
 DOTRACE("GLBitmap::GLBitmap");
   init(); 
 }
-#ifdef LEGACY
-GLBitmap::GLBitmap(STD_IO::istream& is, IO::IOFlag flag) :
-  Bitmap(tempRenderer = new GLBmapRenderer()),
-  itsRenderer(tempRenderer)
-{
-DOTRACE("GLBitmap::GLBitmap");
-  legacyDesrlz(is, flag);
-}
-#endif
+
 void GLBitmap::init() {
 DOTRACE("GLBitmap::init");
   GrObj::setRenderMode(GROBJ_GL_COMPILE);
@@ -69,34 +61,44 @@ DOTRACE("GLBitmap::~GLBitmap");
   delete itsRenderer; 
 }
 
-void GLBitmap::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+void GLBitmap::legacySrlz(IO::Writer* writer) const {
 DOTRACE("GLBitmap::legacySrlz");
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  os << itsRenderer->getUsingGlBitmap() << sep;
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
-  if (os.fail()) throw IO::OutputError(ioTag);
+	 os << itsRenderer->getUsingGlBitmap() << sep;
 
-  if (flag & IO::BASES) { Bitmap::legacySrlz(writer, os, flag | IO::TYPENAME); }
+	 if (os.fail()) throw IO::OutputError(ioTag);
+
+	 if (lwriter->flags() & IO::BASES) {
+		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+		Bitmap::legacySrlz(writer);
+	 }
+  }
 }
 
-void GLBitmap::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+void GLBitmap::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("GLBitmap::legacyDesrlz");
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
-  int val;
-  is >> val;
-  itsRenderer->setUsingGlBitmap(bool(val));
+	 int val;
+	 is >> val;
+	 itsRenderer->setUsingGlBitmap(bool(val));
 
-  if (is.fail()) throw IO::InputError(ioTag);
+	 if (is.fail()) throw IO::InputError(ioTag);
 
-  if (flag & IO::BASES) { Bitmap::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
-}
-
-int GLBitmap::legacyCharCount() const {
-DOTRACE("GLBitmap::legacyCharCount");
-  return 128;
+	 if (lreader->flags() & IO::BASES) {
+		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+		Bitmap::legacyDesrlz(reader);
+	 }
+  }
 }
 
 void GLBitmap::readFrom(IO::Reader* reader) {

@@ -3,7 +3,7 @@
 // ioproxy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 22 21:41:38 2000
-// written: Tue Sep 26 19:12:26 2000
+// written: Wed Sep 27 11:17:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,14 +26,11 @@ class IoProxy : public IO::IoObject {
 public:
   IoProxy(C* ref) : itsReferand(ref) {}
 
-  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const
-	 { itsReferand->C::legacySrlz(writer, os, flag); }
+  virtual void legacySrlz(IO::Writer* writer) const
+	 { itsReferand->C::legacySrlz(writer); }
 
-  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag)
-	 { itsReferand->C::legacyDesrlz(reader, is, flag); }
-
-  virtual int legacyCharCount() const
-	 { return itsReferand->C::legacyCharCount(); }
+  virtual void legacyDesrlz(IO::Reader* reader)
+	 { itsReferand->C::legacyDesrlz(reader); }
 
   virtual void readFrom(IO::Reader* reader)
 	 { itsReferand->C::readFrom(reader); }

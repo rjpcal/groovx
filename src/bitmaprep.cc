@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Tue Sep 26 18:39:50 2000
+// written: Wed Sep 27 11:47:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "rect.h"
 
 #include "io/io.h"
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -31,7 +32,6 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <cctype>
-#include <iostream.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -163,54 +163,62 @@ DOTRACE("BitmapRep::init");
   itsImpl->itsData.clear();
 }
 
-void BitmapRep::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, int flag) const {
+void BitmapRep::legacySrlz(IO::Writer* writer) const {
 DOTRACE("BitmapRep::legacySrlz");
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
-  os << itsImpl->itsFilename << '\t';
-  os << itsImpl->itsRasterX << sep << itsImpl->itsRasterY << sep;
-  os << itsImpl->itsZoomX << sep << itsImpl->itsZoomY << sep;
-  os << itsImpl->itsUsingZoom << sep;
-  os << itsImpl->itsContrastFlip << sep;
-  os << itsImpl->itsVerticalFlip << endl;
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
 
-  if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 ostream& os = lwriter->output();
+
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
+
+	 os << itsImpl->itsFilename << '\t';
+	 os << itsImpl->itsRasterX << sep << itsImpl->itsRasterY << sep;
+	 os << itsImpl->itsZoomX << sep << itsImpl->itsZoomY << sep;
+	 os << itsImpl->itsUsingZoom << sep;
+	 os << itsImpl->itsContrastFlip << sep;
+	 os << itsImpl->itsVerticalFlip << endl;
+
+	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+  }
 }
 
-void BitmapRep::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, int flag) {
+void BitmapRep::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("BitmapRep::legacyDesrlz");
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
-  IO::IoObject::eatWhitespace(is);
-  getline(is, itsImpl->itsFilename, '\t');
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
 
-  is >> itsImpl->itsRasterX >> itsImpl->itsRasterY;
-  is >> itsImpl->itsZoomX >> itsImpl->itsZoomY;
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
-  int val;
-  is >> val;
-  itsImpl->itsUsingZoom = bool(val);
+	 IO::IoObject::eatWhitespace(is);
+	 getline(is, itsImpl->itsFilename, '\t');
 
-  is >> val;
-  itsImpl->itsContrastFlip = bool(val);
+	 is >> itsImpl->itsRasterX >> itsImpl->itsRasterY;
+	 is >> itsImpl->itsZoomX >> itsImpl->itsZoomY;
 
-  is >> val;
-  itsImpl->itsVerticalFlip = bool(val);
+	 int val;
+	 is >> val;
+	 itsImpl->itsUsingZoom = bool(val);
 
-  if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 is >> val;
+	 itsImpl->itsContrastFlip = bool(val);
 
-  if ( itsImpl->itsFilename.empty() ) {
-	 clearBytes();
+	 is >> val;
+	 itsImpl->itsVerticalFlip = bool(val);
+
+	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+
+	 if ( itsImpl->itsFilename.empty() ) {
+		clearBytes();
+	 }
+	 else {
+		queuePbmFile(itsImpl->itsFilename.c_str());
+	 }
   }
-  else {
-	 queuePbmFile(itsImpl->itsFilename.c_str());
-  }
-}
-
-int BitmapRep::legacyCharCount() const {
-DOTRACE("BitmapRep::legacyCharCount");
-  return 128;
 }
 
 void BitmapRep::readFrom(IO::Reader* reader) {

@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Tue Sep 26 19:12:26 2000
+// written: Wed Sep 27 11:48:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 
 #include "xbitmap.h"
 
+#include "io/iolegacy.h"
 #include "xbmaprenderer.h"
 
 #include <cstring>
-#include <iostream.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -50,18 +50,6 @@ DOTRACE("XBitmap::XBitmap");
   init();
 }
 
-#ifdef LEGACY
-XBitmap::XBitmap(STD_IO::istream& is, IO::IOFlag flag) :
-  Bitmap(tempRenderer = new XBmapRenderer()),
-  itsRenderer(tempRenderer)
-
-{
-DOTRACE("XBitmap::XBitmap");
-  init();
-  legacyDesrlz(is, flag);
-}
-#endif
-
 void XBitmap::init() {
 DOTRACE("XBitmap::init");
 
@@ -75,28 +63,37 @@ DOTRACE("XBitmap::~XBitmap");
   delete itsRenderer; 
 }
 
-void XBitmap::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+void XBitmap::legacySrlz(IO::Writer* writer) const {
 DOTRACE("XBitmap::legacySrlz");
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
-  if (os.fail()) throw IO::OutputError(ioTag);
+	 if (os.fail()) throw IO::OutputError(ioTag);
 
-  if (flag & IO::BASES) { Bitmap::legacySrlz(writer, os, flag | IO::TYPENAME); }
+	 if (lwriter->flags() & IO::BASES) {
+		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+		Bitmap::legacySrlz(writer);
+	 }
+  }
 }
 
-void XBitmap::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+void XBitmap::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("XBitmap::legacyDesrlz");
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
-  if (is.fail()) throw IO::InputError(ioTag);
+	 if (is.fail()) throw IO::InputError(ioTag);
 
-  if (flag & IO::BASES) { Bitmap::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
-}
-
-int XBitmap::legacyCharCount() const {
-DOTRACE("XBitmap::legacyCharCount");
-  return 128;
+	 if (lreader->flags() & IO::BASES) {
+		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+		Bitmap::legacyDesrlz(reader);
+	 }
+  }
 }
 
 static const char vcid_xbitmap_cc[] = "$Header$";

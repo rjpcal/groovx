@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Tue Sep 26 19:12:26 2000
+// written: Wed Sep 27 11:41:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 
 #include "timinghandler.h"
 
+#include "io/iolegacy.h"
 #include "trialevent.h"
 
 #include <cstring>
-#include <iostream.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -52,30 +52,37 @@ TimingHandler::~TimingHandler() {
 DOTRACE("TimingHandler::~TimingHandler");
 }
 
-void TimingHandler::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+void TimingHandler::legacySrlz(IO::Writer* writer) const {
 DOTRACE("TimingHandler::legacySrlz");
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
   
-  if (true || (flag & IO::BASES)) { TimingHdlr::legacySrlz(writer, os, flag|IO::TYPENAME); }
+	 {
+		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+		TimingHdlr::legacySrlz(writer);
+	 }
 
-  if (os.fail()) throw IO::OutputError(ioTag);
+	 if (os.fail()) throw IO::OutputError(ioTag);
+  }
 }
 
-void TimingHandler::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void TimingHandler::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("TimingHandler::legacyDesrlz");
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
-  if (true || (flag & IO::BASES)) { TimingHdlr::legacyDesrlz(reader, is, flag|IO::TYPENAME); }
+	 {
+		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+		TimingHdlr::legacyDesrlz(reader);
+	 }
 
-  if (is.fail()) throw IO::InputError(ioTag);
-}
-
-int TimingHandler::legacyCharCount() const {
-DOTRACE("TimingHandler::legacyCharCount"); 
-  return (strlen(ioTag) + 1
-			 + TimingHdlr::legacyCharCount()
-			 + 1); // fudge factor
+	 if (is.fail()) throw IO::InputError(ioTag);
+  }
 }
 
 void TimingHandler::readFrom(IO::Reader* reader) {

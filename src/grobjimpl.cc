@@ -3,7 +3,7 @@
 // grobjimpl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:57 2000
-// written: Sat Sep 23 15:32:26 2000
+// written: Wed Sep 27 11:23:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include "grobjimpl.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -21,7 +22,6 @@
 #include "util/error.h"
 #include "util/janitor.h"
 
-#include <iostream.h>           // for serialize
 #include <GL/gl.h>
 #include <GL/glu.h>
 
@@ -391,89 +391,70 @@ GrObj::Impl::~Impl() {
 DOTRACE("GrObj::Impl::~Impl");
 }
 
-void GrObj::Impl::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("GrObj::Impl::serialize");
+void GrObj::Impl::legacySrlz(IO::Writer* writer) const {
+DOTRACE("GrObj::Impl::legacySrlz");
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  DebugEvalNL(flag & IO::TYPENAME); 
+	 DebugEvalNL(lwriter->flags() & IO::TYPENAME); 
 
-  if (flag & IO::TYPENAME) { os << "GrObj" << IO::SEP; }
+	 if (lwriter->flags() & IO::TYPENAME) { os << "GrObj" << IO::SEP; }
 
-  os << itsCategory << IO::SEP;
+	 os << itsCategory << IO::SEP;
 
-  os << itsRenderer.getMode() << IO::SEP;
-  os << itsUnRenderer.itsMode << IO::SEP;
+	 os << itsRenderer.getMode() << IO::SEP;
+	 os << itsUnRenderer.itsMode << IO::SEP;
 
-  os << itsBB.itsIsVisible << IO::SEP;
+	 os << itsBB.itsIsVisible << IO::SEP;
 
-  os << itsScaler.getMode() << IO::SEP;
-  os << itsScaler.itsWidthFactor << IO::SEP;
-  os << itsScaler.itsHeightFactor << IO::SEP;
+	 os << itsScaler.getMode() << IO::SEP;
+	 os << itsScaler.itsWidthFactor << IO::SEP;
+	 os << itsScaler.itsHeightFactor << IO::SEP;
 
-  os << itsAligner.itsMode << IO::SEP;
-  os << itsAligner.itsCenterX << IO::SEP;
-  os << itsAligner.itsCenterY << endl;  
+	 os << itsAligner.itsMode << IO::SEP;
+	 os << itsAligner.itsCenterX << IO::SEP;
+	 os << itsAligner.itsCenterY << endl;  
 
-  if (os.fail()) throw IO::OutputError("GrObj");
-
-  if (flag & IO::BASES) { /* no bases to serialize */ }
+	 if (os.fail()) throw IO::OutputError("GrObj");
+  }
 }
 
-void GrObj::Impl::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("GrObj::Impl::deserialize");
+void GrObj::Impl::legacyDesrlz(IO::Reader* reader) {
+DOTRACE("GrObj::Impl::legacyDesrlz");
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
 
-  DebugEvalNL(flag & IO::TYPENAME); 
+	 DebugEvalNL(lreader->flags() & IO::TYPENAME); 
 
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, "GrObj"); }
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, "GrObj"); }
 
-  int temp;
+	 int temp;
 
-  is >> itsCategory; if (is.fail()) throw IO::InputError("after GrObj::itsCategory");
+	 is >> itsCategory; if (is.fail()) throw IO::InputError("after GrObj::itsCategory");
 
-  is >> temp; itsRenderer.setMode(temp, this);
-  if (is.fail()) throw IO::InputError("after GrObj::itsRenderer.itsMode");
+	 is >> temp; itsRenderer.setMode(temp, this);
+	 if (is.fail()) throw IO::InputError("after GrObj::itsRenderer.itsMode");
 
-  is >> itsUnRenderer.itsMode; if (is.fail()) throw IO::InputError("after GrObj::itsUnRenderer.itsMode");
+	 is >> itsUnRenderer.itsMode; if (is.fail()) throw IO::InputError("after GrObj::itsUnRenderer.itsMode");
 
-  is >> temp; if (is.fail()) throw IO::InputError("after GrObj::temp"); itsBB.itsIsVisible = bool(temp);
+	 is >> temp; if (is.fail()) throw IO::InputError("after GrObj::temp"); itsBB.itsIsVisible = bool(temp);
 
-  is >> temp; itsScaler.setMode(temp, this);
-  if (is.fail()) throw IO::InputError("after GrObj::itsScaler.itsMode");
+	 is >> temp; itsScaler.setMode(temp, this);
+	 if (is.fail()) throw IO::InputError("after GrObj::itsScaler.itsMode");
 
-  is >> itsScaler.itsWidthFactor; if (is.fail()) throw IO::InputError("after GrObj::itsScaler.itsWidthFactor");
-  is >> itsScaler.itsHeightFactor; if (is.fail()) throw IO::InputError("after GrObj::itsScaler.itsHeightFactor");
+	 is >> itsScaler.itsWidthFactor; if (is.fail()) throw IO::InputError("after GrObj::itsScaler.itsWidthFactor");
+	 is >> itsScaler.itsHeightFactor; if (is.fail()) throw IO::InputError("after GrObj::itsScaler.itsHeightFactor");
 
-  is >> itsAligner.itsMode; if (is.fail()) throw IO::InputError("after GrObj::itsAligner.itsMode");
-  is >> itsAligner.itsCenterX; if (is.fail()) throw IO::InputError("after GrObj::itsAligner.itsCenterX");
-  is >> itsAligner.itsCenterY; if (is.fail()) throw IO::InputError("after GrObj::itsAligner.itsCenterY");
+	 is >> itsAligner.itsMode; if (is.fail()) throw IO::InputError("after GrObj::itsAligner.itsMode");
+	 is >> itsAligner.itsCenterX; if (is.fail()) throw IO::InputError("after GrObj::itsAligner.itsCenterX");
+	 is >> itsAligner.itsCenterY; if (is.fail()) throw IO::InputError("after GrObj::itsAligner.itsCenterY");
 
-  invalidateCaches();
+	 invalidateCaches();
 
-  if (is.fail()) throw IO::InputError("GrObj");
-
-  if (flag & IO::BASES) { /* no bases to deserialize */ }
-}
-
-int GrObj::Impl::charCount() const {
-DOTRACE("GrObj::Impl::charCount");
-  int count = 
-	 IO::gCharCount("GrObj") + 1
-	 + IO::gCharCount(itsCategory) + 1
-	 
-	 + IO::gCharCount(itsRenderer.getMode()) + 1
-	 + IO::gCharCount(itsUnRenderer.itsMode) + 1
-	 
-	 + IO::gCharCount(itsBB.itsIsVisible) + 1
-	 
-	 + IO::gCharCount(itsScaler.getMode()) + 1
-	 + IO::gCharCount(itsScaler.itsWidthFactor) + 1
-	 + IO::gCharCount(itsScaler.itsHeightFactor) + 1
-	 
-	 + IO::gCharCount(itsAligner.itsMode) + 1
-	 + IO::gCharCount(itsAligner.itsCenterX) + 1
-	 + IO::gCharCount(itsAligner.itsCenterY) + 1
-	 + 5; // fudge factor
-  DebugEvalNL(count);
-  return count;
+	 if (is.fail()) throw IO::InputError("GrObj");
+  }
 }
 
 void GrObj::Impl::readFrom(IO::Reader* reader) {

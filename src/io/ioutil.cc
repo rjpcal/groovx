@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Sat Sep 23 15:32:24 2000
+// written: Wed Sep 27 10:18:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,11 +39,11 @@ void Tcl::StringifyCmd::invoke() {
 DOTRACE("Tcl::StringifyCmd::invoke");
   IO::IoObject& io = getIO();
 
-  int buf_size = io.charCount();
+  int buf_size = io.ioCharCount();
 
   // Give ourselves a little extra space above what is returned by
-  // io.charCount, so we have a chance to detect underestimates by
-  // charCount.
+  // ioCharCount, so we have a chance to detect underestimates by
+  // ioCharCount.
   fixed_block<char> buf(buf_size+32);
 
   ostrstream ost(&(buf[0]), buf_size+20);
@@ -52,7 +52,7 @@ DOTRACE("Tcl::StringifyCmd::invoke");
   DebugEval(buf_size);
 
   try {
-	 getIO().serialize(ost, IO::BASES|IO::TYPENAME);
+	 getIO().ioSerialize(ost, IO::BASES|IO::TYPENAME);
 	 ost << '\0';
 	 int chars_used = strlen(&(buf[0]));
 	 DebugEvalNL(chars_used);
@@ -87,7 +87,7 @@ DOTRACE("Tcl::DestringifyCmd::invoke");
   istrstream ist(buf);
 
   try {
-	 getIO().deserialize(ist, IO::BASES|IO::TYPENAME);
+	 getIO().ioDeserialize(ist, IO::BASES|IO::TYPENAME);
   }
   catch (IO::IoError& err) {
 	 throw TclError(err.msg_cstr());

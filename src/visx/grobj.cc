@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Tue Sep 26 19:12:26 2000
+// written: Wed Sep 27 11:17:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,20 +77,7 @@ DOTRACE("GrObj::GrObj");
   // return to the derived class constructor.
   sendStateChangeMsg();
 }
-#ifdef LEGACY
-// read the object's state from an input stream. The input stream must
-// already be open and connected to an appropriate file.
-GrObj::GrObj(STD_IO::istream& is, IO::IOFlag flag) :
-  itsImpl(new Impl(this))
-{
-DOTRACE("GrObj::GrObj(STD_IO::istream&)");
-  legacyDesrlz(is, flag);
 
-  attach(this);
-
-  sendStateChangeMsg();
-}
-#endif
 // GrObj destructor
 GrObj::~GrObj() {
 DOTRACE("GrObj::~GrObj");
@@ -100,15 +87,15 @@ DOTRACE("GrObj::~GrObj");
 
 // write the object's state to an output stream. The output stream must
 // already be open and connected to an appropriate file.
-void GrObj::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+void GrObj::legacySrlz(IO::Writer* writer) const {
 DOTRACE("GrObj::legacySrlz");
-  itsImpl->legacySrlz(writer, os, flag);
+  itsImpl->legacySrlz(writer);
 }
 
-void GrObj::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+void GrObj::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("GrObj::legacyDesrlz");
 
-  itsImpl->legacyDesrlz(reader, is, flag); 
+  itsImpl->legacyDesrlz(reader); 
   sendStateChangeMsg();
 }
 
@@ -127,11 +114,6 @@ DOTRACE("GrObj::readFrom");
 void GrObj::writeTo(IO::Writer* writer) const {
 DOTRACE("GrObj::writeTo");
   itsImpl->writeTo(writer);
-}
-
-int GrObj::legacyCharCount() const {
-DOTRACE("GrObj::legacyCharCount");
-  return itsImpl->legacyCharCount();
 }
 
 ///////////////

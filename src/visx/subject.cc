@@ -3,7 +3,7 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Tue Sep 26 19:07:33 2000
+// written: Wed Sep 27 11:23:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,7 @@
 
 #include "subject.h"
 
-#include <iostream.h>
-
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -51,43 +50,34 @@ DOTRACE("Subject::Subject");
 Subject::~Subject() {
 DOTRACE("Subject::~Subject");
 }
-#ifdef LEGACY
-Subject::Subject(STD_IO::istream &is, IO::IOFlag flag) :
-  itsName(""), itsDirectory("")
-{
-DOTRACE("Subject::Subject");
-  legacyDesrlz(is, flag);
-}
-#endif
-void Subject::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+
+void Subject::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Subject::legacySrlz");
-  if (flag & IO::BASES) { /* there are no bases to legacyDesrlz */ }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+	 os << itsName << endl;
+	 os << itsDirectory << endl;
 
-  os << itsName << endl;
-  os << itsDirectory << endl;
-
-  if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+  }
 }
 
-void Subject::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void Subject::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Subject::legacyDesrlz");
-  if (flag & IO::BASES) { /* there are no bases to legacyDesrlz */ }
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
-  getline(is, itsName, '\n');
-  getline(is, itsDirectory, '\n');
+	 getline(is, itsName, '\n');
+	 getline(is, itsDirectory, '\n');
 
-  if (is.fail()) throw IO::InputError(ioTag.c_str());
-}
-
-int Subject::legacyCharCount() const {
-  return (ioTag.length() + 1
-			 + itsName.length() + 1
-			 + itsDirectory.length() + 1
-			 + 5);// fudge factor
+	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+  }
 }
 
 void Subject::readFrom(IO::Reader* reader) {

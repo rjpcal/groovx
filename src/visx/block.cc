@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Sat Sep 23 15:32:26 2000
+// written: Wed Sep 27 11:28:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "tlist.h"
 #include "trialbase.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/readutils.h"
 #include "io/writer.h"
@@ -27,7 +28,6 @@
 #include "util/strings.h"
 
 #include <algorithm>
-#include <iostream.h>
 #include <strstream.h>
 #include <vector>
 
@@ -45,16 +45,6 @@
 namespace {
   Tlist& theTlist = Tlist::theTlist();
   const string_literal ioTag("Block");
-
-  int charCountVecInt(const std::vector<int>& vec) {
-	 int count = IO::gCharCount<int>(vec.size()) + 1;
-	 for (size_t i = 0; i < vec.size(); ++i) {
-		count += IO::gCharCount<int>(vec[i]);
-		++count;
-	 }
-	 count += 5;// fudge factor
-	 return count;
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -183,73 +173,70 @@ DOTRACE("Block::removeAllTrials");
   itsImpl->itsCurrentTrialId = -1;
 }
 
-void Block::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("Block::serialize");
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+void Block::legacySrlz(IO::Writer* writer) const {
+DOTRACE("Block::legacySrlz");
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
-  // itsImpl->itsTrialSequence
-  os << itsImpl->itsTrialSequence.size() << sep << sep;
-  for (size_t i = 0; i < itsImpl->itsTrialSequence.size(); ++i) {
-	 os << itsImpl->itsTrialSequence[i] << sep;
+	 // itsImpl->itsTrialSequence
+	 os << itsImpl->itsTrialSequence.size() << sep << sep;
+	 for (size_t i = 0; i < itsImpl->itsTrialSequence.size(); ++i) {
+		os << itsImpl->itsTrialSequence[i] << sep;
+	 }
+	 os << endl;
+	 // itsImpl->itsRandSeed
+	 os << itsImpl->itsRandSeed << endl;
+	 // itsImpl->itsCurTrialSeqIdx
+	 os << itsImpl->itsCurTrialSeqIdx << endl;
+	 // itsImpl->itsVerbose
+	 os << itsImpl->itsVerbose << endl;
+
+	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
   }
-  os << endl;
-  // itsImpl->itsRandSeed
-  os << itsImpl->itsRandSeed << endl;
-  // itsImpl->itsCurTrialSeqIdx
-  os << itsImpl->itsCurTrialSeqIdx << endl;
-  // itsImpl->itsVerbose
-  os << itsImpl->itsVerbose << endl;
-
-  if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
-void Block::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("Block::deserialize");
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+void Block::legacyDesrlz(IO::Reader* reader) {
+DOTRACE("Block::legacyDesrlz");
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
   
-  // itsImpl->itsTrialSequence
-  int size;
-  is >> size;
-  if (size < 0) {
-	 throw IO::InputError("VecInt saw negative value for size");
-  }
-  itsImpl->itsTrialSequence.resize(size, 0);
-  for (int i = 0; i < size; ++i) {
-	 is >> itsImpl->itsTrialSequence[i];
-  }
-  if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 // itsImpl->itsTrialSequence
+	 int size;
+	 is >> size;
+	 if (size < 0) {
+		throw IO::InputError("VecInt saw negative value for size");
+	 }
+	 itsImpl->itsTrialSequence.resize(size, 0);
+	 for (int i = 0; i < size; ++i) {
+		is >> itsImpl->itsTrialSequence[i];
+	 }
+	 if (is.fail()) throw IO::InputError(ioTag.c_str());
 
-  // itsImpl->itsRandSeed
-  is >> itsImpl->itsRandSeed;
+	 // itsImpl->itsRandSeed
+	 is >> itsImpl->itsRandSeed;
 
-  // itsImpl->itsCurTrialSeqIdx
-  is >> itsImpl->itsCurTrialSeqIdx;
-  if (itsImpl->itsCurTrialSeqIdx < 0 ||
-		size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
-	 throw IO::ValueError(ioTag.c_str());
-  }
-  itsImpl->updateCurrentTrial();
+	 // itsImpl->itsCurTrialSeqIdx
+	 is >> itsImpl->itsCurTrialSeqIdx;
+	 if (itsImpl->itsCurTrialSeqIdx < 0 ||
+		  size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
+		throw IO::ValueError(ioTag.c_str());
+	 }
+	 itsImpl->updateCurrentTrial();
 
   // itsImpl->itsVerbose
-  int val;
-  is >> val;
-  itsImpl->itsVerbose = bool(val);
+	 int val;
+	 is >> val;
+	 itsImpl->itsVerbose = bool(val);
 
-  is.ignore(1, '\n');
-  if (is.fail()) throw IO::InputError(ioTag.c_str());
-}
-
-int Block::charCount() const {
-  return (ioTag.length() + 1
-			 + charCountVecInt(itsImpl->itsTrialSequence) + 1
-			 + IO::gCharCount<int>(itsImpl->itsRandSeed) + 1
-			 + IO::gCharCount<int>(itsImpl->itsCurTrialSeqIdx) + 1
-			 + IO::gCharCount<bool>(itsImpl->itsVerbose) + 1
-			 + 5); //fudge factor
+	 is.ignore(1, '\n');
+	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+  }
 }
 
 void Block::readFrom(IO::Reader* reader) {

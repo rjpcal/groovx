@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Tue Sep 26 19:12:26 2000
+// written: Wed Sep 27 11:47:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,11 +15,11 @@
 
 #include "rect.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
 #include <GL/gl.h>
-#include <iostream.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -669,50 +669,47 @@ DOTRACE("Gtext::Gtext(const char*)");
   GrObj::setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
   GrObj::setHeight(1.0);
 }
-#ifdef LEGACY
-Gtext::Gtext(STD_IO::istream& is, IO::IOFlag flag) :
-  GrObj(GROBJ_GL_COMPILE, GROBJ_SWAP_FORE_BACK),
-  itsText(""),
-  itsStrokeWidth(2),
-  itsListBase(0)
-{
-DOTRACE("Gtext::Gtext(STD_IO::istream&, IO::IOFlag)");
-  legacyDesrlz(is, flag);
-}
-#endif
+
 Gtext::~Gtext() {
 DOTRACE("Gtext::~Gtext");
 }
 
-void Gtext::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+void Gtext::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Gtext::legacySrlz");
 
-  if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  os << itsText << endl;
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << IO::SEP; }
 
-  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
+	 os << itsText << endl;
+
+	 if (lwriter->flags() & IO::BASES) {
+		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+		GrObj::legacySrlz(writer);
+	 }
+  }
 }
 
-void Gtext::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void Gtext::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Gtext::legacyDesrlz");
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); } 
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); } 
 
-  if ( IO::SEP == is.peek() ) { is.get(); }
+	 if ( IO::SEP == is.peek() ) { is.get(); }
 
-  getline(is, itsText, '\n');
+	 getline(is, itsText, '\n');
 
-  if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 if (is.fail()) throw IO::InputError(ioTag.c_str());
 
-  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
-}
-
-int Gtext::legacyCharCount() const {
-DOTRACE("Gtext::legacyCharCount");
-  return (ioTag.length() + 1
-			 + itsText.length() + 1
-			 + GrObj::legacyCharCount()
-			 + 1); // fudge factor
+	 if (lreader->flags() & IO::BASES) {
+		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+		GrObj::legacyDesrlz(reader);
+	 }
+  }
 }
 
 void Gtext::readFrom(IO::Reader* reader) {

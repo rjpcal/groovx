@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Sep 26 19:12:26 2000
+// written: Wed Sep 27 11:48:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,12 +15,12 @@
 
 #include "rect.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
 #include <cstring>
 #include <GL/gl.h>
-#include <iostream.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -63,23 +63,35 @@ DOTRACE("MaskHatch::~MaskHatch ");
   
 }
 
-void MaskHatch::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+void MaskHatch::legacySrlz(IO::Writer* writer) const {
 DOTRACE("MaskHatch::legacySrlz");
-  if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
-  if (os.fail()) throw IO::OutputError(ioTag);
-  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
+
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << IO::SEP; }
+	 if (os.fail()) throw IO::OutputError(ioTag);
+
+	 if (lwriter->flags() & IO::BASES) {
+		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+		GrObj::legacySrlz(writer);
+	 }
+  }
 }
 
-void MaskHatch::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void MaskHatch::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("MaskHatch::legacyDesrlz");
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
-  if (is.fail()) throw IO::InputError(ioTag);
-  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
-}
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+	 if (is.fail()) throw IO::InputError(ioTag);
 
-int MaskHatch::legacyCharCount() const {
-DOTRACE("MaskHatch::legacyCharCount");
-  return strlen(ioTag) + 1 + GrObj::legacyCharCount();
+	 if (lreader->flags() & IO::BASES) {
+		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+		GrObj::legacyDesrlz(reader);
+	 }
+  }
 }
 
 void MaskHatch::readFrom(IO::Reader* reader) {

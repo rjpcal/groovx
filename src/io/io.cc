@@ -3,7 +3,7 @@
 // Io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Sat Sep 23 16:19:12 2000
+// written: Wed Sep 27 11:54:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "io/io.h"
 
 #include "io/writer.h"
+#include "io/iolegacy.h"
 
 #include "system/demangle.h"
 
@@ -77,9 +78,27 @@ IO::IoObject::~IoObject() {
 DOTRACE("IO::IoObject::~IoObject");
 }
 
-void IO::IoObject::serialize(STD_IO::ostream&, IO::IOFlag) const {}
-void IO::IoObject::deserialize(STD_IO::istream&, IO::IOFlag) {}
-int IO::IoObject::charCount() const { return 0; }
+void IO::IoObject::ioSerialize(STD_IO::ostream& os, IO::IOFlag flag) const {
+DOTRACE("IO::IoObject::ioSerialize");
+  LegacyWriter writer(os, flag);
+  legacySrlz(&writer);
+}
+
+void IO::IoObject::ioDeserialize(STD_IO::istream& is, IO::IOFlag flag) {
+DOTRACE("IO::IoObject::ioDeserialize");
+  LegacyReader reader(is, flag);
+  legacyDesrlz(&reader);
+}
+
+int IO::IoObject::ioCharCount() const {
+DOTRACE("IO::IoObject::ioCharCount");
+  ostrstream ost;
+  ioSerialize(ost, IO::TYPENAME|IO::BASES);
+  return strlen(ost.str());
+}
+
+void IO::IoObject::legacySrlz(IO::Writer* writer) const {}
+void IO::IoObject::legacyDesrlz(IO::Reader* reader) {}
 
 unsigned int IO::IoObject::ioAttribCount() const {
 DOTRACE("IO::IoObject::ioAttribCount");
@@ -165,37 +184,6 @@ DOTRACE("IO::IoObject::readTypename");
   err.appendMsg(first_candidate.c_str());
   throw err;
 }
-
-///////////////////////////////////////////////////////////////////////
-//
-// Global charCount functions
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace IO {
-
-template<class T>
-int gCharCount(T val) {
-  static const int BUF_SIZE = 64;
-  static char buf[BUF_SIZE];
-  ostrstream ost(buf, BUF_SIZE);
-  ost << val << '\0';
-  return strlen(buf);
-}
-
-// Explicit instantiations
-template int gCharCount<int>(int val);
-template int gCharCount<bool>(bool val);
-template int gCharCount<char>(char val);
-template int gCharCount<double>(double val);
-
-// Specializations for string types
-template <> int gCharCount(const char* val)   { return strlen(val); }
-template <> int gCharCount(char* val)         { return strlen(val); }
-template <> int gCharCount(std::string val)        { return val.length(); }
-template <> int gCharCount(const std::string& val) { return val.length(); }
-
-} // end namespace IO
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -3,7 +3,7 @@
 // cloneface.h
 // Rob Peters
 // created: Thu Apr 29 09:19:25 1999
-// written: Tue Sep 26 19:03:02 2000
+// written: Wed Sep 27 11:12:29 2000
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional
@@ -35,16 +35,11 @@ class CloneFace : public Face {
 public:
   /// Default constructor.
   CloneFace();
-#ifdef LEGACY
-  /// Construct by deserializing from a stream.
-  CloneFace(STD_IO::istream &is, IO::IOFlag flag);
-#endif
   /// Virtual destructor.
   virtual ~CloneFace();
   
-  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const;
-  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag);
-  virtual int legacyCharCount() const;
+  virtual void legacySrlz(IO::Writer* writer) const;
+  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

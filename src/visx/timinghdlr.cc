@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Tue Sep 26 19:12:00 2000
+// written: Wed Sep 27 11:53:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,12 +16,9 @@
 #include "trialevent.h"
 
 #include "io/iomgr.h"
+#include "io/iolegacy.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
-
-#ifdef PRESTANDARD_IOSTREAMS
-#include <iostream.h>
-#endif
 
 #include <cstring>
 #include <vector>
@@ -88,11 +85,9 @@ private:
 public:
   void deleteAll(std::vector<TrialEvent*>& events);
 
-  void legacySrlzVec(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag,
-						  const std::vector<TrialEvent*>& vec);
+  void legacySrlzVec(IO::Writer* writer, const std::vector<TrialEvent*>& vec);
 
-  void legacyDesrlzVec(STD_IO::istream& is, IO::IOFlag flag,
-							 std::vector<TrialEvent*>& vec);
+  void legacyDesrlzVec(IO::Reader* reader, std::vector<TrialEvent*>& vec);
 
   // Delegand functions
   void thHaltExpt();
@@ -134,44 +129,41 @@ DOTRACE("TimingHdlr::~TimingHdlr");
   delete itsImpl;
 }
 
-void TimingHdlr::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+void TimingHdlr::legacySrlz(IO::Writer* writer) const {
 DOTRACE("TimingHdlr::legacySrlz");
-  if (flag & IO::BASES) { /* no bases to legacySrlz */ }
-
-  if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << IO::SEP; }
   
-  os << itsImpl->itsDummyAutosavePeriod << IO::SEP;
+	 os << itsImpl->itsDummyAutosavePeriod << IO::SEP;
 
-  itsImpl->legacySrlzVec(writer, os, flag, itsImpl->itsImmediateEvents);
-  itsImpl->legacySrlzVec(writer, os, flag, itsImpl->itsStartEvents);
-  itsImpl->legacySrlzVec(writer, os, flag, itsImpl->itsResponseEvents);
-  itsImpl->legacySrlzVec(writer, os, flag, itsImpl->itsAbortEvents);
+	 itsImpl->legacySrlzVec(writer, itsImpl->itsImmediateEvents);
+	 itsImpl->legacySrlzVec(writer, itsImpl->itsStartEvents);
+	 itsImpl->legacySrlzVec(writer, itsImpl->itsResponseEvents);
+	 itsImpl->legacySrlzVec(writer, itsImpl->itsAbortEvents);
 
-  if (os.fail()) throw IO::OutputError(ioTag);
+	 if (os.fail()) throw IO::OutputError(ioTag);
+  }
 }
 
-void TimingHdlr::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void TimingHdlr::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("TimingHdlr::legacyDesrlz");
-  if (flag & IO::BASES) { /* no bases to legacyDesrlz */ }
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
-  is >> itsImpl->itsDummyAutosavePeriod;
-  DebugEvalNL(itsImpl->itsDummyAutosavePeriod);
+	 is >> itsImpl->itsDummyAutosavePeriod;
+	 DebugEvalNL(itsImpl->itsDummyAutosavePeriod);
 
-  itsImpl->legacyDesrlzVec(is, flag, itsImpl->itsImmediateEvents);
-  itsImpl->legacyDesrlzVec(is, flag, itsImpl->itsStartEvents);
-  itsImpl->legacyDesrlzVec(is, flag, itsImpl->itsResponseEvents);
-  itsImpl->legacyDesrlzVec(is, flag, itsImpl->itsAbortEvents);
+	 itsImpl->legacyDesrlzVec(reader, itsImpl->itsImmediateEvents);
+	 itsImpl->legacyDesrlzVec(reader, itsImpl->itsStartEvents);
+	 itsImpl->legacyDesrlzVec(reader, itsImpl->itsResponseEvents);
+	 itsImpl->legacyDesrlzVec(reader, itsImpl->itsAbortEvents);
 
-  if (is.fail()) throw IO::InputError(ioTag);
-}
-
-int TimingHdlr::legacyCharCount() const {
-DOTRACE("TimingHdlr::legacyCharCount"); 
-
-  // XXX not implemented!
-
-  return 256; 
+	 if (is.fail()) throw IO::InputError(ioTag);
+  }
 }
 
 unsigned long TimingHdlr::serialVersionId() const {
@@ -306,30 +298,38 @@ DOTRACE("TimingHdlr::addEventByName");
 
 
 void TimingHdlr::Impl::legacySrlzVec(IO::Writer* writer,
-												 STD_IO::ostream& os, IO::IOFlag flag,
 												 const std::vector<TrialEvent*>& vec) {
-  os << vec.size() << IO::SEP;
-  for (size_t i = 0; i < vec.size(); ++i) {
-	 vec[i]->legacySrlz(writer, os, flag);
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
+	 os << vec.size() << IO::SEP;
+	 for (size_t i = 0; i < vec.size(); ++i) {
+		vec[i]->legacySrlz(writer);
+	 }
   }
 }
 
-void TimingHdlr::Impl::legacyDesrlzVec(STD_IO::istream& is, IO::IOFlag flag,
+void TimingHdlr::Impl::legacyDesrlzVec(IO::Reader* reader,
 													std::vector<TrialEvent*>& vec) {
-  deleteAll(vec);
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 deleteAll(vec);
 
-  size_t size; is >> size; DebugEvalNL(size);
+	 size_t size; is >> size; DebugEvalNL(size);
 
-  const int SIZE_SANITY_CHECK = 1000;
+	 const int SIZE_SANITY_CHECK = 1000;
 
-  if (size > SIZE_SANITY_CHECK) throw IO::LogicError(ioTag);
+	 if (size > SIZE_SANITY_CHECK) throw IO::LogicError(ioTag);
 
-  vec.resize(size);
+	 vec.resize(size);
 
-  for (size_t i = 0; i < size; ++i) {
-	 TrialEvent* e = dynamic_cast<TrialEvent*>(IO::IoMgr::newIO(is, flag));
-	 if (!e) throw IO::InputError(ioTag);
-	 vec[i] = e;
+	 for (size_t i = 0; i < size; ++i) {
+		TrialEvent* e =
+		  dynamic_cast<TrialEvent*>(IO::IoMgr::newIO(is, lreader->flags()));
+		if (!e) throw IO::InputError(ioTag);
+		vec[i] = e;
+	 }
   }
 }
 

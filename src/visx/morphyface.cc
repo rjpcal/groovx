@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Sep 26 19:12:26 2000
+// written: Wed Sep 27 11:48:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,13 +21,13 @@
 #include "rect.h"
 
 #include "io/ioproxy.h"
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
 #include "gwt/canvas.h"
 
 #include <cstring>
-#include <iostream.h>           // for legacySrlz
 #include <GL/gl.h>
 #include <GL/glu.h>
 
@@ -350,54 +350,7 @@ MorphyFace::MorphyFace() :
 DOTRACE("MorphyFace::MorphyFace");
   Invariant(check());
 }
-#ifdef LEGACY
-// read the object's state from an input stream. The input stream must
-// already be open and connected to an appropriate file.
-MorphyFace::MorphyFace(STD_IO::istream& is, IO::IOFlag flag) :
-  GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),
 
-  category(0),
-
-  faceWidth(2.75), 
-  topWidth(1.15),
-  bottomWidth(1.0),
-  topHeight(3.8),
-  bottomHeight(-3.0),
-
-  hairWidth(0.20),
-  hairStyle(0),
-
-  eyeYpos(0.375),
-  eyeDistance(2.25),
-  eyeHeight(0.9),
-  eyeAspectRatio(1.555556),
-
-  pupilXpos(0.0),
-  pupilYpos(0.0),
-  pupilSize(0.6),
-  pupilDilation(0.5),
-
-  eyebrowXpos(0.0),
-  eyebrowYpos(0.5),
-  eyebrowCurvature(0.8),
-  eyebrowAngle(-5),
-  eyebrowThickness(2.0),
-
-  noseXpos(0.0),
-  noseYpos(-0.825),
-  noseLength(0.75),
-  noseWidth(1.5),
-
-  mouthXpos(0.0),
-  mouthYpos(-2.0),
-  mouthWidth(2.5),
-  mouthCurvature(0.6)
-{
-DOTRACE("MorphyFace::MorphyFace(STD_IO::istream&, IO::IOFlag)");
-  legacyDesrlz(is, flag);
-  Invariant(check());
-}
-#endif
 MorphyFace::~MorphyFace() {
 DOTRACE("MorphyFace::~MorphyFace");
   // nothing to do
@@ -405,99 +358,102 @@ DOTRACE("MorphyFace::~MorphyFace");
 
 // Writes the object's state to an output stream. The output stream
 // must already be open and connected to an appropriate file.
-void MorphyFace::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+void MorphyFace::legacySrlz(IO::Writer* writer) const {
 DOTRACE("MorphyFace::legacySrlz");
-  Invariant(check());
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 Invariant(check());
+	 ostream& os = lwriter->output();
 
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
-  // version
-  os << "@1" << sep;
+	 // version
+	 os << "@1" << sep;
 
-  os << '{' << sep;
+	 os << '{' << sep;
 
-  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 (this->*IO_MEMBERS[i]).legacySrlz(writer, os, flag);
+	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		(this->*IO_MEMBERS[i]).legacySrlz(writer);
+	 }
+
+	 os << '}' << endl;
+	 if (os.fail()) throw IO::OutputError(ioTag);
+
+	 if (lwriter->flags() & IO::BASES) {
+		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+		GrObj::legacySrlz(writer);
+	 }
   }
-
-  os << '}' << endl;
-  if (os.fail()) throw IO::OutputError(ioTag);
-
-  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
 }
 
-void MorphyFace::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void MorphyFace::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("MorphyFace::legacyDesrlz");
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
-  IO::IoObject::eatWhitespace(is);
-  int version = 0;
+	 IO::IoObject::eatWhitespace(is);
+	 int version = 0;
 
-  if ( is.peek() == '@' ) {
-	 int c = is.get();
-	 Assert(c == '@');
+	 if ( is.peek() == '@' ) {
+		int c = is.get();
+		Assert(c == '@');
 
-	 is >> version;
-	 DebugEvalNL(version);
-  }
-
-  if (version == 0) {
-	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		(this->*IO_MEMBERS[i]).legacyDesrlz(reader, is, flag);
+		is >> version;
+		DebugEvalNL(version);
 	 }
-  }
-  else if (version == 1) {
-	 char brace;
-	 is >> brace;
-	 if (brace != '{') {
-		IO::LogicError err(ioTag); err.appendMsg(" missing left-brace");
+
+	 if (version == 0) {
+		for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		  (this->*IO_MEMBERS[i]).legacyDesrlz(reader);
+		}
+	 }
+	 else if (version == 1) {
+		char brace;
+		is >> brace;
+		if (brace != '{') {
+		  IO::LogicError err(ioTag); err.appendMsg(" missing left-brace");
+		  throw err;
+		}
+
+		for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		  (this->*IO_MEMBERS[i]).legacyDesrlz(reader);
+		}
+
+		is >> brace;
+		if (brace != '}') {
+		  IO::LogicError err(ioTag); err.appendMsg(" missing right-brace");
+		  throw err;
+		}
+	 }
+	 else {
+		IO::LogicError err(ioTag); err.appendMsg(" unknown version");
 		throw err;
 	 }
 
-	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		(this->*IO_MEMBERS[i]).legacyDesrlz(reader, is, flag);
+	 // Mysterious bug in HP compiler (aCC) requires the following
+	 // contorted code; if the exception is not first caught in this
+	 // function, then re-thrown, it causes a bus error when compiled
+	 // with optimization on, although there is no problem with
+	 // optimization off. Somehow adding the catch and re-throw avoids
+	 // the problem, without changing the program's behavior.
+	 try {
+		if (is.fail()) throw IO::InputError(ioTag);
+	 }
+	 catch (IO::IoError&) { 
+		throw;
+	 }
+	 Invariant(check());
+
+	 if (lreader->flags() & IO::BASES) {
+		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+		GrObj::legacyDesrlz(reader);
 	 }
 
-	 is >> brace;
-	 if (brace != '}') {
-		IO::LogicError err(ioTag); err.appendMsg(" missing right-brace");
-		throw err;
-	 }
+	 sendStateChangeMsg();
   }
-  else {
-	 IO::LogicError err(ioTag); err.appendMsg(" unknown version");
-	 throw err;
-  }
-
-  // Mysterious bug in HP compiler (aCC) requires the following
-  // contorted code; if the exception is not first caught in this
-  // function, then re-thrown, it causes a bus error when compiled
-  // with optimization on, although there is no problem with
-  // optimization off. Somehow adding the catch and re-throw avoids
-  // the problem, without changing the program's behavior.
-  try {
-	 if (is.fail()) throw IO::InputError(ioTag);
-  }
-  catch (IO::IoError&) { 
-	 throw;
-  }
-  Invariant(check());
-
-  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
-
-  sendStateChangeMsg();
-}
-
-int MorphyFace::legacyCharCount() const {
-DOTRACE("MorphyFace::legacyCharCount");
-  return (strlen(ioTag) + 1
-			 + 3 // version
-			 + 2 // brace
-			 + 128 // params
-			 + 2 // brace
-			 + GrObj::legacyCharCount()
-			 + 1);//fudge factor
 }
 
 unsigned long MorphyFace::serialVersionId() const {

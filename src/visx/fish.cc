@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue Sep 26 19:12:27 2000
+// written: Wed Sep 27 11:48:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "rect.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -271,54 +272,54 @@ DOTRACE("Fish::~Fish");
   delete [] itsEndPts;
 }
 
-void Fish::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+void Fish::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Fish::legacySrlz");
 
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 (this->*IO_MEMBERS[i]).legacySrlz(writer, os, flag);
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
+
+	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		(this->*IO_MEMBERS[i]).legacySrlz(writer);
+	 }
+
+	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+
+	 if (lwriter->flags() & IO::BASES) {
+		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+		GrObj::legacySrlz(writer);
+	 }
   }
-
-  if (os.fail()) throw IO::OutputError(ioTag.c_str());
-
-  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }  
 }
 
-void Fish::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+void Fish::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Fish::legacyDesrlz");
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
-  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 (this->*IO_MEMBERS[i]).legacyDesrlz(reader, is, flag);
+	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		(this->*IO_MEMBERS[i]).legacyDesrlz(reader);
+	 }
+
+	 try {
+		if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 }
+	 catch (IO::IoError&) { 
+		throw;
+	 }
+
+	 if (lreader->flags() & IO::BASES) {
+		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+		GrObj::legacyDesrlz(reader);
+	 }
+
+	 sendStateChangeMsg();
   }
-
-  try {
-	 if (is.fail()) throw IO::InputError(ioTag.c_str());
-  }
-  catch (IO::IoError&) { 
-	 throw;
-  }
-
-  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
-
-  sendStateChangeMsg();
-}
-
-int Fish::legacyCharCount() const {
-DOTRACE("Fish::legacyCharCount");
-  int result = ioTag.length() + 1;
-
-  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 result += (this->*IO_MEMBERS[i]).legacyCharCount() + 1;
-  }
-
-  result += 5;						  // fudge factor
-
-  result += GrObj::legacyCharCount();
-
-  return result;
 }
 
 void Fish::readFrom(IO::Reader* reader) {

@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Tue Sep 26 18:39:48 2000
+// written: Wed Sep 27 11:23:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,12 @@
 
 #include "io/property.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
 #include "util/pointers.h"
 #include "util/strings.h"
-
-#include <iostream.h>
 
 Property::~Property() {}
 
@@ -30,21 +29,33 @@ template <class T>
 TProperty<T>::~TProperty() {}
 
 template <class T>
-void TProperty<T>::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag) const 
-  { os << itsVal.itsVal << ' '; }
-
-template <class T>
-void TProperty<T>::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag)
-  { is >> itsVal.itsVal; }
-
-template <>
-void TProperty<bool>::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag) {
-  int temp; is >> temp; itsVal.itsVal = bool(temp);
+void TProperty<T>::legacySrlz(IO::Writer* writer) const 
+{
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
+	 os << itsVal.itsVal << ' ';
+  }
 }
 
 template <class T>
-int TProperty<T>::legacyCharCount() const
-  { return IO::gCharCount<T>(itsVal.itsVal); }
+void TProperty<T>::legacyDesrlz(IO::Reader* reader)
+{
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 is >> itsVal.itsVal;
+  }
+}
+
+template <>
+void TProperty<bool>::legacyDesrlz(IO::Reader* reader) {
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 int temp; is >> temp; itsVal.itsVal = bool(temp);
+  }
+}
 
 template <class T>
 void TProperty<T>::readFrom(IO::Reader* reader)
@@ -66,20 +77,34 @@ template <class T>
 TPtrProperty<T>::~TPtrProperty() {}
 
 template <class T>
-void TPtrProperty<T>::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag) const 
-	 { os << itsVal() << ' '; }
+void TPtrProperty<T>::legacySrlz(IO::Writer* writer) const 
+{
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
+	 os << itsVal() << ' ';
+  }
+}
 
 template <class T>
-void TPtrProperty<T>::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag)
-	 { is >> itsVal(); }
+void TPtrProperty<T>::legacyDesrlz(IO::Reader* reader)
+{
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 is >> itsVal();
+  }
+}
 
 template <>
-void TPtrProperty<bool>::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag)
-    { int temp; is >> temp; itsVal() = bool(temp); }
-
-template <class T>
-int TPtrProperty<T>::legacyCharCount() const
-	 { return IO::gCharCount<T>(itsVal()); }
+void TPtrProperty<bool>::legacyDesrlz(IO::Reader* reader)
+{
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 int temp; is >> temp; itsVal() = bool(temp);
+  }
+}
 
 template <class T>
 void TPtrProperty<T>::readFrom(IO::Reader* reader)

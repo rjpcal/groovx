@@ -3,7 +3,7 @@
 // nullresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:35 1999
-// written: Tue Sep 26 18:39:47 2000
+// written: Wed Sep 27 11:12:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,9 +20,8 @@ public:
   NullResponseHdlr();
   virtual ~NullResponseHdlr();
 
-  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const;
-  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag);
-  virtual int legacyCharCount() const;
+  virtual void legacySrlz(IO::Writer* writer) const;
+  virtual void legacyDesrlz(IO::Reader* reader);
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Tue Sep 26 19:12:26 2000
+// written: Wed Sep 27 11:23:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,8 @@
 
 #include "tlist.h"
 
-#include <iostream.h>
+#include "io/iolegacy.h"
+
 #include <cstring>
 
 #define NO_TRACE
@@ -62,18 +63,20 @@ DOTRACE("Tlist::theTlist");
 //
 //---------------------------------------------------------------------
 
-void Tlist::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+void Tlist::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Tlist::legacySrlz");
-  // Always legacySrlz the PtrList base
-  if (true || flag & IO::BASES) { 
-	 PtrList<TrialBase>::legacySrlz(writer, os, flag);
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
+	 // Always legacySrlz the PtrList base
+	 PtrList<TrialBase>::legacySrlz(writer);
+
+	 // Here we are spoofing the obselete data members itsCurTrial and
+	 // itsVisibility.
+	 os << int(0) << IO::SEP << bool(false) << IO::SEP;
+
+	 if (os.fail()) throw IO::OutputError(ioTag);
   }
-
-  // Here we are spoofing the obselete data members itsCurTrial and
-  // itsVisibility.
-  os << int(0) << IO::SEP << bool(false) << IO::SEP;
-
-  if (os.fail()) throw IO::OutputError(ioTag);
 }
 
 //---------------------------------------------------------------------
@@ -82,27 +85,21 @@ DOTRACE("Tlist::legacySrlz");
 //
 //---------------------------------------------------------------------
 
-void Tlist::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void Tlist::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Tlist::legacyDesrlz");
-  // Always legacyDesrlz its PtrList<TrialBase> base
-  if (true || flag & IO::BASES) {
-	 PtrList<TrialBase>::legacyDesrlz(reader, is, flag);
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 // Always legacyDesrlz its PtrList<TrialBase> base
+	 PtrList<TrialBase>::legacyDesrlz(reader);
+
+	 // Here we are spoofing the obselete data members itsCurTrial and
+	 // itsVisibility.
+	 int dummy1, dummy2;
+	 is >> dummy1 >> dummy2;
+
+	 if (is.fail()) throw IO::InputError(ioTag);
   }
-
-  // Here we are spoofing the obselete data members itsCurTrial and
-  // itsVisibility.
-  int dummy1, dummy2;
-  is >> dummy1 >> dummy2;
-
-  if (is.fail()) throw IO::InputError(ioTag);
-}
-
-int Tlist::legacyCharCount() const {
-  return (strlen(ioTag) + 1
-			 + IO::gCharCount<int>(0) + 1
-			 + IO::gCharCount<bool>(false) + 1
-			 + PtrList<TrialBase>::legacyCharCount()
-			 + 5 ); // fudge factor 5
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Tue Sep 26 19:12:27 2000
+// written: Wed Sep 27 11:32:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "rect.h"
 
 #include "io/ioproxy.h"
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -23,7 +24,6 @@
 
 #include "util/strings.h"
 
-#include <iostream.h>           // for legacySrlz
 #include <cstring>
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -105,21 +105,7 @@ Face::Face(double eh, double es, double nl, double mh, int categ) :
 DOTRACE("Face::Face");
   Invariant(check());
 }
-#ifdef LEGACY
-// read the object's state from an input stream. The input stream must
-// already be open and connected to an appropriate file.
-Face::Face(STD_IO::istream& is, IO::IOFlag flag) :
-  category(0),
-  eyeHeight(0.6),
-  eyeDistance(0.4),
-  noseLength(0.4),
-  mouthHeight(-0.8)
-{
-DOTRACE("Face::Face(STD_IO::istream&, IO::IOFlag)");
-  legacyDesrlz(is, flag);
-  Invariant(check());
-}
-#endif
+
 Face::~Face() {
 DOTRACE("Face::~Face");
   // nothing to do
@@ -127,107 +113,107 @@ DOTRACE("Face::~Face");
 
 // Writes the object's state to an output stream. The output stream
 // must already be open and connected to an appropriate file.
-void Face::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+void Face::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Face::legacySrlz");
   Invariant(check());
 
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  // version
-  os << "@1" << sep;
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
-  os << '{' << sep;
+	 // version
+	 os << "@1" << sep;
 
-  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 (this->*IO_MEMBERS[i]).legacySrlz(writer, os, flag);
+	 os << '{' << sep;
+
+	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		(this->*IO_MEMBERS[i]).legacySrlz(writer);
+	 }
+
+	 os << '}' << endl;
+	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+
+	 if (lwriter->flags() & IO::BASES) {
+		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+		GrObj::legacySrlz(writer);
+	 }
   }
-
-  os << '}' << endl;
-  if (os.fail()) throw IO::OutputError(ioTag.c_str());
-
-  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
 }
 
-void Face::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void Face::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Face::legacyDesrlz");
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
-  IO::IoObject::eatWhitespace(is);
-  int version = 0;
+	 IO::IoObject::eatWhitespace(is);
+	 int version = 0;
 
-  if ( is.peek() == '@' ) {
-	 int c = is.get();
-	 Assert(c == '@');
+	 if ( is.peek() == '@' ) {
+		int c = is.get();
+		Assert(c == '@');
 
-	 is >> version;
-	 DebugEvalNL(version);
-  }
-
-  if (version == 0) {
-	 // Format is:
-	 // Face $category $eyeheight $eyedistance $noselength $mouthheight
-	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		(this->*IO_MEMBERS[i]).legacyDesrlz(reader, is, flag);
+		is >> version;
+		DebugEvalNL(version);
 	 }
-  }
-  else if (version == 1) {
-	 // Format is:
-	 // Face { $category $eyeheight $eyedistance $noselength $mouthheight }
-	 char brace;
-	 is >> brace;
-	 if (brace != '{') {
-		IO::LogicError err(ioTag.c_str()); err.appendMsg(" missing left-brace");
+
+	 if (version == 0) {
+		// Format is:
+		// Face $category $eyeheight $eyedistance $noselength $mouthheight
+		for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		  (this->*IO_MEMBERS[i]).legacyDesrlz(reader);
+		}
+	 }
+	 else if (version == 1) {
+		// Format is:
+		// Face { $category $eyeheight $eyedistance $noselength $mouthheight }
+		char brace;
+		is >> brace;
+		if (brace != '{') {
+		  IO::LogicError err(ioTag.c_str()); err.appendMsg(" missing left-brace");
+		  throw err;
+		}
+
+		for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		  (this->*IO_MEMBERS[i]).legacyDesrlz(reader);
+		}
+
+		is >> brace;
+		if (brace != '}') {
+		  IO::LogicError err(ioTag.c_str()); err.appendMsg(" missing right-brace");
+		  throw err;
+		}
+	 }
+	 else {
+		IO::LogicError err(ioTag.c_str()); err.appendMsg(" unknown version");
 		throw err;
 	 }
 
-	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-		(this->*IO_MEMBERS[i]).legacyDesrlz(reader, is, flag);
+	 // Mysterious bug in HP compiler (aCC) requires the following
+	 // contorted code; if the exception is not first caught in this
+	 // function, then re-thrown, it causes a bus error when compiled
+	 // with optimization on, although there is no problem with
+	 // optimization off. Somehow adding the catch and re-throw avoids
+	 // the problem, without changing the program's behavior.
+	 try {
+		if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 }
+	 catch (IO::IoError&) { 
+		throw;
+	 }
+	 Invariant(check());
+
+	 if (lreader->flags() & IO::BASES) {
+		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+		GrObj::legacyDesrlz(reader);
 	 }
 
-	 is >> brace;
-	 if (brace != '}') {
-		IO::LogicError err(ioTag.c_str()); err.appendMsg(" missing right-brace");
-		throw err;
-	 }
+	 sendStateChangeMsg();
   }
-  else {
-	 IO::LogicError err(ioTag.c_str()); err.appendMsg(" unknown version");
-	 throw err;
-  }
-
-  // Mysterious bug in HP compiler (aCC) requires the following
-  // contorted code; if the exception is not first caught in this
-  // function, then re-thrown, it causes a bus error when compiled
-  // with optimization on, although there is no problem with
-  // optimization off. Somehow adding the catch and re-throw avoids
-  // the problem, without changing the program's behavior.
-  try {
-	 if (is.fail()) throw IO::InputError(ioTag.c_str());
-  }
-  catch (IO::IoError&) { 
-	 throw;
-  }
-  Invariant(check());
-
-  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
-
-  sendStateChangeMsg();
-}
-
-int Face::legacyCharCount() const {
-DOTRACE("Face::legacyCharCount");
-  return (ioTag.length() + 1
-			 + 3 // version
-			 + 2 // brace
-			 + category.legacyCharCount() + 1
-			 + eyeDistance.legacyCharCount() + 1
-			 + noseLength.legacyCharCount() + 1
-			 + mouthHeight.legacyCharCount() + 1
-			 + eyeHeight.legacyCharCount() + 1
-			 + 2 // brace
-			 + GrObj::legacyCharCount()
-			 + 1);//fudge factor
 }
 
 unsigned long Face::serialVersionId() const {

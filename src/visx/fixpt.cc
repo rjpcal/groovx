@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Sep 26 19:12:26 2000
+// written: Wed Sep 27 11:48:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,11 +15,11 @@
 
 #include "rect.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
 #include <cstring>
-#include <iostream.h>
 #include <GL/gl.h>
 
 #define NO_TRACE
@@ -59,42 +59,43 @@ namespace {
 
 FixPt::FixPt(double len, int wid) : 
   length(len), width(wid) {}
-#ifdef LEGACY
-FixPt::FixPt(STD_IO::istream &is, IO::IOFlag flag) :
-  length(0.1), width(1)
-{
-  legacyDesrlz(is, flag);
-}
-#endif
+
 FixPt::~FixPt() {}
 
-void FixPt::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+void FixPt::legacySrlz(IO::Writer* writer) const {
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  os << length() << sep;
-  os << width() << endl;
-  if (os.fail()) throw IO::OutputError(ioTag);
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
-  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
+	 os << length() << sep;
+	 os << width() << endl;
+	 if (os.fail()) throw IO::OutputError(ioTag);
+
+	 if (lwriter->flags() & IO::BASES) {
+		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+		GrObj::legacySrlz(writer);
+	 }
+  }
 }
 
-void FixPt::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+void FixPt::legacyDesrlz(IO::Reader* reader) {
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
-  is >> length();
-  is >> width();
-  if (is.fail()) throw IO::InputError(ioTag);
+	 is >> length();
+	 is >> width();
+	 if (is.fail()) throw IO::InputError(ioTag);
 
-  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
-}
-
-int FixPt::legacyCharCount() const {
-  return (strlen(ioTag) + 1
-			 + IO::gCharCount<double>(length()) + 1
-			 + IO::gCharCount<int>(width()) + 1
-			 + GrObj::legacyCharCount()
-			 + 1);// fudge factor
+	 if (lreader->flags() & IO::BASES) {
+		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+		GrObj::legacyDesrlz(reader);
+	 }
+  }
 }
 
 void FixPt::readFrom(IO::Reader* reader) {

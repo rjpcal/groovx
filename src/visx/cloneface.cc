@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Tue Sep 26 19:12:27 2000
+// written: Wed Sep 27 11:32:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,11 @@
 
 #include "cloneface.h"
 
+#include "io/iolegacy.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
 #include <cstring>
-#include <iostream.h>			  // for legacySrlz
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -51,15 +51,6 @@ DOTRACE("CloneFace::CloneFace()");
   }
 }
 
-#ifdef LEGACY
-CloneFace::CloneFace (STD_IO::istream& is, IO::IOFlag flag) :
-  Face(), itsEyeAspect(0.0), itsVertOffset(0.0) 
-{
-DOTRACE("CloneFace::CloneFace(STD_IO::istream&, IO::IOFlag)");
-  legacyDesrlz(is, flag);
-}
-#endif
-
 CloneFace::~CloneFace () {
 DOTRACE("CloneFace::~CloneFace");
 }
@@ -68,56 +59,57 @@ DOTRACE("CloneFace::~CloneFace");
 // before the base class (Face) since the first thing the virtual
 // constructor sees must be the typename of the most fully derived
 // class, in order to invoke the proper constructor.
-void CloneFace::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+void CloneFace::legacySrlz(IO::Writer* writer) const {
 DOTRACE("CloneFace::legacySrlz");
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  for (int i = 0; i < 24; ++i) {
-	 os << itsCtrlPnts[i] << sep;
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
+
+	 for (int i = 0; i < 24; ++i) {
+		os << itsCtrlPnts[i] << sep;
+	 }
+	 os << itsEyeAspect << sep;
+	 os << itsVertOffset << sep;
+
+	 if (os.fail()) throw IO::OutputError(ioTag);
+
+	 // Always legacySrlz Face, regardless of (lwriter->flags() & IO::BASES)
+	 // Always use the typename in the base class, regardless of flag
+	 IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+	 Face::legacySrlz(writer);
   }
-  os << itsEyeAspect << sep;
-  os << itsVertOffset << sep;
-
-  if (os.fail()) throw IO::OutputError(ioTag);
-
-  // Always legacySrlz Face, regardless of (flag & IO::BASES)
-  // Always use the typename in the base class, regardless of flag
-  Face::legacySrlz(writer, os, (flag | IO::TYPENAME));
 }
 
-void CloneFace::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void CloneFace::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("CloneFace::legacyDesrlz");
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
   
-  for (int i = 0; i < 24; ++i) {
-	 is >> itsCtrlPnts[i];
-  }
-  is >> itsEyeAspect;
-  is >> itsVertOffset;
+	 for (int i = 0; i < 24; ++i) {
+		is >> itsCtrlPnts[i];
+	 }
+	 is >> itsEyeAspect;
+	 is >> itsVertOffset;
 
-  // Bug in aCC requires this rather than a simple throw; see face.cc
-  // for further explanation.
-  try {
-	 if (is.fail()) throw IO::InputError(ioTag);
-  }
-  catch (IO::IoError&) {
- 	 throw;
-  }
+	 // Bug in aCC requires this rather than a simple throw; see face.cc
+	 // for further explanation.
+	 try {
+		if (is.fail()) throw IO::InputError(ioTag);
+	 }
+	 catch (IO::IoError&) {
+		throw;
+	 }
 
-  // Always legacyDesrlz Face, regardless of (flag & IO::BASES)
-  // Always use the typename in the base class, regardless of flag
-  Face::legacyDesrlz(reader, is, (flag | IO::TYPENAME));
-}
-
-int CloneFace::legacyCharCount() const {
-DOTRACE("CloneFace::legacyCharCount");
-  return ( strlen(ioTag) + 1  
-			  + 24*6 + 1
-			  + IO::gCharCount(itsEyeAspect) + 1
-			  + IO::gCharCount(itsVertOffset) + 1
-			  + Face::legacyCharCount()
-			  + 5 ); 
+	 // Always legacyDesrlz Face, regardless of (lreader->flags() & IO::BASES)
+	 // Always use the typename in the base class, regardless of flag
+	 IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+	 Face::legacyDesrlz(reader);
+  }
 }
 
 void CloneFace::readFrom(IO::Reader* reader) {

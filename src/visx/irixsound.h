@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Tue Sep 26 18:39:49 2000
+// written: Wed Sep 27 11:21:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,6 +11,7 @@
 #ifndef IRIXSOUND_CC_DEFINED
 #define IRIXSOUND_CC_DEFINED
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -63,9 +64,8 @@ public:
   IrixAudioSound(const char* filename);
   virtual ~IrixAudioSound();
 
-  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const;
-  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag);
-  virtual int legacyCharCount() const;
+  virtual void legacySrlz(IO::Writer* writer) const;
+  virtual void legacyDesrlz(IO::Reader* reader);
   
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
@@ -116,38 +116,35 @@ DOTRACE("IrixAudioSound::~IrixAudioSound");
   }
 }
 
-void IrixAudioSound::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+void IrixAudioSound::legacySrlz(IO::Writer* writer) const {
 DOTRACE("IrixAudioSound::legacySrlz");
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
-  os << itsFilename << endl;
+	 os << itsFilename << endl;
 
-  if (os.fail()) throw IO::OutputError(ioTag.c_str());
-
-  if (flag & IO::BASES) { /* no bases to deal with */ }
+	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+  }
 }
 
-void IrixAudioSound::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+void IrixAudioSound::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("IrixAudioSound::legacyDesrlz");
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
 
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
-  getline(is, itsFilename, '\n');
+	 getline(is, itsFilename, '\n');
   
-  if (is.fail()) throw IO::InputError(ioTag.c_str());
+	 if (is.fail()) throw IO::InputError(ioTag.c_str());
 
-  if (flag & IO::BASES) { /* no bases to deal with */ }
-
-  setFile(itsFilename.c_str());
-}
-
-int IrixAudioSound::legacyCharCount() const {
-DOTRACE("IrixAudioSound::legacyCharCount");
-  return (ioTag.length() + 1
-			 + itsFilename.length() + 1
-			 +5); // fudge factor
+	 setFile(itsFilename.c_str());
+  }
 }
 
 void IrixAudioSound::readFrom(IO::Reader* reader) {

@@ -3,7 +3,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Tue Sep 26 19:07:24 2000
+// written: Wed Sep 27 11:12:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,19 +37,14 @@ public:
 
   /// Default constructor.
   Position();
-#ifdef LEGACY
-  /// Stream constructor.
-  Position(STD_IO::istream &is, IO::IOFlag flag);
-#endif
   ///
   virtual ~Position();
 
   ///
-  virtual void legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const;
+  virtual void legacySrlz(IO::Writer* writer) const;
   ///
-  virtual void legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag);
+  virtual void legacyDesrlz(IO::Reader* reader);
   ///
-  virtual int legacyCharCount() const;
 
   ///
   virtual void readFrom(IO::Reader* reader);

@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Tue Sep 26 19:12:26 2000
+// written: Wed Sep 27 11:48:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,10 +19,10 @@
 
 #include "rect.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include <iostream.h>
 #include <GL/gl.h>
 
 #define NO_TRACE
@@ -266,39 +266,53 @@ House::~House() {
 DOTRACE("House::~House");
 }
 
-void House::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+void House::legacySrlz(IO::Writer* writer) const {
 DOTRACE("House::legacySrlz");
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
-  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 (this->*IO_MEMBERS[i]).legacySrlz(writer, os, flag);
+	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		(this->*IO_MEMBERS[i]).legacySrlz(writer);
+	 }
+
+	 if (os.fail()) throw IO::OutputError(ioTag);
+
+	 if (lwriter->flags() & IO::BASES) {
+		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+		GrObj::legacySrlz(writer);
+	 }
   }
-
-  if (os.fail()) throw IO::OutputError(ioTag);
-
-  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
 }
 
-void House::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+void House::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("House::legacyDesrlz");
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
-  for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
-	 (this->*IO_MEMBERS[i]).legacyDesrlz(reader, is, flag);
+	 for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
+		(this->*IO_MEMBERS[i]).legacyDesrlz(reader);
+	 }
+
+	 try {
+		if (is.fail()) throw IO::InputError(ioTag);
+	 }
+	 catch (IO::IoError&) { 
+		throw;
+	 }
+
+	 if (lreader->flags() & IO::BASES) {
+		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+		GrObj::legacyDesrlz(reader);
+	 }
+
+	 sendStateChangeMsg();
   }
-
-  try {
-	 if (is.fail()) throw IO::InputError(ioTag);
-  }
-  catch (IO::IoError&) { 
-	 throw;
-  }
-
-  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
-
-  sendStateChangeMsg();
 }
 
 void House::readFrom(IO::Reader* reader) {
@@ -319,11 +333,6 @@ DOTRACE("House::writeTo");
   }
 
   GrObj::writeTo(writer);
-}
-
-int House::legacyCharCount() const {
-DOTRACE("House::legacyCharCount");
-  return 128 + GrObj::legacyCharCount();
 }
 
 ///////////////////////////////////////////////////////////////////////

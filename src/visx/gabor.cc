@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Tue Sep 26 19:12:26 2000
+// written: Wed Sep 27 11:48:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "rect.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -23,7 +24,6 @@
 #include <GL/gl.h>
 #include <cmath>
 #include <cstring>
-#include <iostream.h>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -96,23 +96,35 @@ DOTRACE("Gabor::~Gabor");
 
 }
 
-void Gabor::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+void Gabor::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Gabor::legacySrlz");
-  if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
-  if (os.fail()) throw IO::OutputError(ioTag);
-  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
+
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << IO::SEP; }
+	 if (os.fail()) throw IO::OutputError(ioTag);
+
+	 if (lwriter->flags() & IO::BASES) {
+		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+		GrObj::legacySrlz(writer);
+	 }
+  }
 }
 
-void Gabor::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void Gabor::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Gabor::legacyDesrlz");
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
-  if (is.fail()) throw IO::InputError(ioTag);
-  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
-}
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+	 if (is.fail()) throw IO::InputError(ioTag);
 
-int Gabor::legacyCharCount() const {
-DOTRACE("Gabor::legacyCharCount");
-  return strlen(ioTag) + 1 + GrObj::legacyCharCount();
+	 if (lreader->flags() & IO::BASES) {
+		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+		GrObj::legacyDesrlz(reader);
+	 }
+  }
 }
 
 void Gabor::readFrom(IO::Reader* reader) {

@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat Sep 23 15:55:55 2000
+// written: Wed Sep 27 11:23:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,7 @@
 #include "thlist.h"
 #include "timinghdlr.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/readutils.h"
 #include "io/writer.h"
@@ -34,7 +35,6 @@
 
 #include "util/strings.h"
 
-#include <iostream.h>
 #include <strstream.h>
 #include <vector>
 
@@ -134,9 +134,9 @@ private:
 public:
 
   // Delegand functions for Trial
-  void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
-  void deserialize(STD_IO::istream &is, IO::IOFlag flag);
-  int charCount() const;
+  void legacySrlz(IO::Writer* writer) const;
+  void legacyDesrlz(IO::Reader* reader);
+
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
   int readFromObjidsOnly(STD_IO::istream &is, int offset);
@@ -216,97 +216,80 @@ DOTRACE("Trial::IdPair::scanFrom");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Trial::Impl::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("Trial::Impl::serialize");
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+void Trial::Impl::legacySrlz(IO::Writer* writer) const {
+DOTRACE("Trial::Impl::legacySrlz");
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+	 // itsIdPairs
+	 os << itsIdPairs.size() << sep;
+	 for (std::vector<IdPair>::const_iterator ii = itsIdPairs.begin(); 
+			ii != itsIdPairs.end(); 
+			++ii) {
+		os << ii->objid << sep << ii->posid << sep << sep;
+	 }
+	 // itsResponses
+	 os << itsResponses.size() << sep << sep;
+	 for (size_t i = 0; i < itsResponses.size(); ++i) {
+		itsResponses[i].printTo(os);
+	 }
+	 // itsType
+	 os << itsType << sep;
 
-  // itsIdPairs
-  os << itsIdPairs.size() << sep;
-  for (std::vector<IdPair>::const_iterator ii = itsIdPairs.begin(); 
-       ii != itsIdPairs.end(); 
-       ++ii) {
-    os << ii->objid << sep << ii->posid << sep << sep;
+	 // itsRhId
+	 os << itsRhId << sep;
+	 // itsThId
+	 os << itsThId << endl;
+
+	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
   }
-  // itsResponses
-  os << itsResponses.size() << sep << sep;
-  for (size_t i = 0; i < itsResponses.size(); ++i) {
-	 itsResponses[i].printTo(os);
-  }
-  // itsType
-  os << itsType << sep;
-
-  // itsRhId
-  os << itsRhId << sep;
-  // itsThId
-  os << itsThId << endl;
-
-  if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
-void Trial::Impl::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("Trial::Impl::deserialize");
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+void Trial::Impl::legacyDesrlz(IO::Reader* reader) {
+DOTRACE("Trial::Impl::legacyDesrlz");
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
   
-  // itsIdPairs
-  itsIdPairs.clear();
-  int size;
-  is >> size;
-  if (size < 0) {
-	 throw IO::ValueError(ioTag.c_str());
-  }
-  int objid;
-  int posid;
-  for (int i = 0; i < size; ++i) {
-    is >> objid >> posid;
-	 if ( !ObjList::theObjList().isValidId(objid) ||
-			!PosList::thePosList().isValidId(posid) ) {
+	 // itsIdPairs
+	 itsIdPairs.clear();
+	 int size;
+	 is >> size;
+	 if (size < 0) {
 		throw IO::ValueError(ioTag.c_str());
 	 }
-    add(objid, posid);
-  }
-  // itsResponses
-  int resp_size;
-  is >> resp_size;
-  itsResponses.resize(resp_size);
-  for (int j = 0; j < resp_size; ++j) {
-	 itsResponses[j].scanFrom(is);
-  }
-  // itsType
-  is >> itsType;
+	 int objid;
+	 int posid;
+	 for (int i = 0; i < size; ++i) {
+		is >> objid >> posid;
+		if ( !ObjList::theObjList().isValidId(objid) ||
+			  !PosList::thePosList().isValidId(posid) ) {
+		  throw IO::ValueError(ioTag.c_str());
+		}
+		add(objid, posid);
+	 }
+	 // itsResponses
+	 int resp_size;
+	 is >> resp_size;
+	 itsResponses.resize(resp_size);
+	 for (int j = 0; j < resp_size; ++j) {
+		itsResponses[j].scanFrom(is);
+	 }
+	 // itsType
+	 is >> itsType;
 
-  // itsRhId
-  is >> itsRhId; DebugEvalNL(itsRhId);
-  // itsThId
-  is >> itsThId; DebugEvalNL(itsThId);
+	 // itsRhId
+	 is >> itsRhId; DebugEvalNL(itsRhId);
+	 // itsThId
+	 is >> itsThId; DebugEvalNL(itsThId);
 
-  if (is.fail()) { throw IO::InputError(ioTag.c_str()); }
+	 if (is.fail()) { throw IO::InputError(ioTag.c_str()); }
+  }
 }
-
-int Trial::Impl::charCount() const {
-DOTRACE("Trial::Impl::charCount");
-  int count = (ioTag.length() + 1
-					+ IO::gCharCount<int>(itsIdPairs.size()) + 1);
-  for (std::vector<IdPair>::const_iterator ii = itsIdPairs.begin(); 
-       ii != itsIdPairs.end(); 
-       ++ii) {
-	 count += (IO::gCharCount<int>(ii->objid) + 1
-				  + IO::gCharCount<int>(ii->posid) + 2);
-  }
-  count += (IO::gCharCount<int>(itsResponses.size()) + 2);
-  for (size_t i = 0; i < itsResponses.size(); ++i) {
-	 count += (IO::gCharCount<int>(itsResponses[i].val()) + 1
-				  + IO::gCharCount<int>(itsResponses[i].msec()) + 2);
-  }
-  count += 
-	 IO::gCharCount<int>(itsType) + 1
-	 + IO::gCharCount<int>(itsRhId) + 1
-	 + IO::gCharCount<int>(itsThId) + 1;
-  return (count + 1);// fudge factor (1)
-}					
 
 void Trial::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("Trial::Impl::readFrom");
@@ -685,13 +668,6 @@ Trial::Trial() :
 DOTRACE("Trial::Trial()");
 }
 
-Trial::Trial(STD_IO::istream &is, IO::IOFlag flag) :
-  itsImpl( new Impl(this) )
-{
-DOTRACE("Trial::Trial(STD_IO::istream&, IO::IOFlag)");
-  deserialize(is, flag);
-}
-
 Trial::~Trial() {
 DOTRACE("Trial::~Trial");
   delete itsImpl;
@@ -701,14 +677,11 @@ DOTRACE("Trial::~Trial");
 // delegations to Trial::Impl //
 ////////////////////////////////
 
-void Trial::serialize(STD_IO::ostream &os, IO::IOFlag flag) const
-  { itsImpl->serialize(os, flag); }
+void Trial::legacySrlz(IO::Writer* writer) const
+  { itsImpl->legacySrlz(writer); }
 
-void Trial::deserialize(STD_IO::istream &is, IO::IOFlag flag)
-  { itsImpl->deserialize(is, flag); }
-
-int Trial::charCount() const
-  { return itsImpl->charCount(); }
+void Trial::legacyDesrlz(IO::Reader* reader)
+  { itsImpl->legacyDesrlz(reader); }
 
 unsigned long Trial::serialVersionId() const
   { return TRIAL_SERIAL_VERSION_ID; }

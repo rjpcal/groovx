@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Tue Sep 26 19:07:17 2000
+// written: Wed Sep 27 12:05:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,15 +13,16 @@
 
 #include "position.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
 #include <cstring>
-#include <iostream.h>
 #include <GL/gl.h>
 
 #define NO_TRACE
 #include "util/trace.h"
+#define LOCAL_DEBUG
 #define LOCAL_INVARIANT
 #include "util/debug.h"
 
@@ -74,79 +75,68 @@ DOTRACE("Position::Position()");
   // empty
   Invariant(check());
 }
-#ifdef LEGACY
-Position::Position (STD_IO::istream& is, IO::IOFlag flag) : 
-  itsImpl(new PositionImpl)
-{
-DOTRACE("Position::Position(STD_IO::istream&, IO::IOFlag)");
-  legacyDesrlz(is, flag);
-}
-#endif
+
 Position::~Position() {
 DOTRACE("Position::~Position");
   delete itsImpl;
 }
 
-void Position::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const {
+void Position::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Position::legacySrlz");
-  Invariant(check());
-  if (flag & IO::BASES) { /* there are no bases to legacySrlz */ }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 Invariant(check());
+	 ostream& os = lwriter->output();
 
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+	 char sep = ' ';
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << sep; }
 
-  os << itsImpl->tr_x << sep
-     << itsImpl->tr_y << sep
-     << itsImpl->tr_z << sep;
-  os << itsImpl->sc_x << sep
-     << itsImpl->sc_y << sep
-     << itsImpl->sc_z << sep;
-  os << itsImpl->rt_x << sep
-     << itsImpl->rt_y << sep
-     << itsImpl->rt_z << sep
-     << itsImpl->rt_ang << endl;
-  if (os.fail()) throw IO::OutputError(ioTag);
+	 os << itsImpl->tr_x << sep
+		 << itsImpl->tr_y << sep
+		 << itsImpl->tr_z << sep;
+	 os << itsImpl->sc_x << sep
+		 << itsImpl->sc_y << sep
+		 << itsImpl->sc_z << sep;
+	 os << itsImpl->rt_x << sep
+		 << itsImpl->rt_y << sep
+		 << itsImpl->rt_z << sep
+		 << itsImpl->rt_ang << endl;
+	 if (os.fail()) throw IO::OutputError(ioTag);
+  }
 }
 
-void Position::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag) {
+void Position::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Position::legacyDesrlz");
-  Invariant(check());
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+	 Invariant(check());
 
-  DebugEvalNL(flag);
+	 DebugEvalNL(lreader->flags());
 
-  if (flag & IO::BASES) { /* there are no bases to legacyDesrlz */ }
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+	 if (lreader->flags() & IO::TYPENAME) {
+		DebugPrintNL("reading typename");
+		IO::IoObject::readTypename(is, ioTag);
+	 }
 
-  is >> itsImpl->tr_x;
-  is >> itsImpl->tr_y;
-  is >> itsImpl->tr_z;
-  is >> itsImpl->sc_x;
-  is >> itsImpl->sc_y;
-  is >> itsImpl->sc_z;
-  is >> itsImpl->rt_x;
-  is >> itsImpl->rt_y;
-  is >> itsImpl->rt_z;
-  is >> itsImpl->rt_ang;
+	 if (is.fail()) throw IO::InputError("after Position typename");
 
-  DebugEval(itsImpl->tr_x);
-  DebugEvalNL(itsImpl->rt_ang);
+	 is >> itsImpl->tr_x;
+	 is >> itsImpl->tr_y;
+	 is >> itsImpl->tr_z;
+	 is >> itsImpl->sc_x;
+	 is >> itsImpl->sc_y;
+	 is >> itsImpl->sc_z;
+	 is >> itsImpl->rt_x;
+	 is >> itsImpl->rt_y;
+	 is >> itsImpl->rt_z;
+	 is >> itsImpl->rt_ang;
 
-  if (is.fail()) throw IO::InputError(ioTag);
-}
+	 DebugEval(itsImpl->tr_x);
+	 DebugEvalNL(itsImpl->rt_ang);
 
-int Position::legacyCharCount() const {
-  return (strlen(ioTag) + 1
-			 + IO::gCharCount<double>(itsImpl->tr_x) + 1
-			 + IO::gCharCount<double>(itsImpl->tr_y) + 1
-			 + IO::gCharCount<double>(itsImpl->tr_z) + 1
-			 + IO::gCharCount<double>(itsImpl->sc_x) + 1
-			 + IO::gCharCount<double>(itsImpl->sc_y) + 1
-			 + IO::gCharCount<double>(itsImpl->sc_z) + 1
-			 + IO::gCharCount<double>(itsImpl->rt_x) + 1
-			 + IO::gCharCount<double>(itsImpl->rt_y) + 1
-			 + IO::gCharCount<double>(itsImpl->rt_z) + 1
-			 + IO::gCharCount<double>(itsImpl->rt_ang) + 1
-			 + 1);// fudge factor
+	 if (is.fail()) throw IO::InputError(ioTag);
+  }
 }
 
 void Position::readFrom(IO::Reader* reader) {

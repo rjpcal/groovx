@@ -3,7 +3,7 @@
 // grobjimpl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:54 2000
-// written: Sat Sep 23 15:32:23 2000
+// written: Wed Sep 27 11:12:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,12 +49,10 @@ public:
   Impl(GrObj* obj);
   virtual ~Impl();
 
-  void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
-  void deserialize(STD_IO::istream &is, IO::IOFlag flag);
+  void legacySrlz(IO::Writer* writer) const;
+  void legacyDesrlz(IO::Reader* reader);
   // These functions write the object's state from/to an output/input
   // stream. Both functions are defined, but are no-ops for GrObj.
-
-  int charCount() const;
 
   unsigned long serialVersionId() const { return GROBJ_SERIAL_VERSION_ID; }
   void readFrom(IO::Reader* reader);

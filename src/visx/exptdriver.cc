@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Sep 26 19:20:33 2000
+// written: Wed Sep 27 11:36:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@
 #include "tlist.h"
 #include "tlistwidget.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/asciistreamwriter.h"
 
@@ -137,10 +138,8 @@ private:
   //////////////////////////
 
 public:
-  void legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const;
-  void legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag);
-
-  int legacyCharCount() const;
+  void legacySrlz(IO::Writer* writer) const;
+  void legacyDesrlz(IO::Reader* reader);
 
   unsigned long serialVersionId() const
 	 { return EXPTDRIVER_SERIAL_VERSION_ID; }
@@ -559,96 +558,83 @@ DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void ExptDriver::Impl::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+void ExptDriver::Impl::legacySrlz(IO::Writer* writer) const {
 DOTRACE("ExptDriver::Impl::legacySrlz");
 
-  if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  ObjList::   theObjList()   .legacySrlz(writer, os, flag);
-  PosList::   thePosList()   .legacySrlz(writer, os, flag);
-  Tlist::     theTlist()     .legacySrlz(writer, os, flag);
-  RhList::    theRhList()    .legacySrlz(writer, os, flag);
-  ThList::    theThList()    .legacySrlz(writer, os, flag);
-  BlockList:: theBlockList() .legacySrlz(writer, os, flag);
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << IO::SEP; }
 
-  os << itsHostname       << '\n';
-  os << itsSubject        << '\n';
-  os << itsBeginDate      << '\n';
-  os << itsEndDate        << '\n';
-  os << itsAutosaveFile   << '\n';
+	 ObjList::   theObjList()   .legacySrlz(writer);
+	 PosList::   thePosList()   .legacySrlz(writer);
+	 Tlist::     theTlist()     .legacySrlz(writer);
+	 RhList::    theRhList()    .legacySrlz(writer);
+	 ThList::    theThList()    .legacySrlz(writer);
+	 BlockList:: theBlockList() .legacySrlz(writer);
 
-  os << itsBlockId << IO::SEP
-	  << itsDummyRhId << IO::SEP
-	  << itsDummyThId << endl;
+	 os << itsHostname       << '\n';
+	 os << itsSubject        << '\n';
+	 os << itsBeginDate      << '\n';
+	 os << itsEndDate        << '\n';
+	 os << itsAutosaveFile   << '\n';
 
-  updateDoUponCompletionBody();
+	 os << itsBlockId << IO::SEP
+		 << itsDummyRhId << IO::SEP
+		 << itsDummyThId << endl;
 
-  os << itsDoUponCompletionBody.length() << endl
-	  << itsDoUponCompletionBody << endl;
+	 updateDoUponCompletionBody();
 
-  if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 os << itsDoUponCompletionBody.length() << endl
+		 << itsDoUponCompletionBody << endl;
+
+	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
+  }
 }
 
-void ExptDriver::Impl::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+void ExptDriver::Impl::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("ExptDriver::Impl::legacyDesrlz");
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
 
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
-  ObjList::   theObjList()   .legacyDesrlz(reader, is, flag);
-  PosList::   thePosList()   .legacyDesrlz(reader, is, flag);
-  Tlist::     theTlist()     .legacyDesrlz(reader, is, flag);
-  RhList::    theRhList()    .legacyDesrlz(reader, is, flag);
-  ThList::    theThList()    .legacyDesrlz(reader, is, flag);
-  BlockList:: theBlockList() .legacyDesrlz(reader, is, flag);
+	 ObjList::   theObjList()   .legacyDesrlz(reader);
+	 PosList::   thePosList()   .legacyDesrlz(reader);
+	 Tlist::     theTlist()     .legacyDesrlz(reader);
+	 RhList::    theRhList()    .legacyDesrlz(reader);
+	 ThList::    theThList()    .legacyDesrlz(reader);
+	 BlockList:: theBlockList() .legacyDesrlz(reader);
 
-  getline(is, itsHostname,     '\n');
-  getline(is, itsSubject,      '\n');
-  getline(is, itsBeginDate,    '\n');
-  getline(is, itsEndDate,      '\n');
-  getline(is, itsAutosaveFile, '\n');
+	 getline(is, itsHostname,     '\n');
+	 getline(is, itsSubject,      '\n');
+	 getline(is, itsBeginDate,    '\n');
+	 getline(is, itsEndDate,      '\n');
+	 getline(is, itsAutosaveFile, '\n');
 
-  is >> itsBlockId >> itsDummyRhId >> itsDummyThId;
+	 is >> itsBlockId >> itsDummyRhId >> itsDummyThId;
 
-  int numchars;
-  is >> numchars;
-  if (is.peek() == '\n') { is.get(); }
+	 int numchars;
+	 is >> numchars;
+	 if (is.peek() == '\n') { is.get(); }
 
-  if ( numchars > 0 ) {
-	 fixed_block<char> buf(numchars+1);
-	 is.read(&buf[0], numchars);
-	 buf[numchars] = '\0';
+	 if ( numchars > 0 ) {
+		fixed_block<char> buf(numchars+1);
+		is.read(&buf[0], numchars);
+		buf[numchars] = '\0';
 
-	 itsDoUponCompletionBody = &buf[0];
+		itsDoUponCompletionBody = &buf[0];
+	 }
+	 else {
+		itsDoUponCompletionBody = "";
+	 }
+
+	 recreateDoUponCompletionProc();
+
+	 if (is.fail()) throw IO::InputError(ioTag.c_str());
   }
-  else {
-	 itsDoUponCompletionBody = "";
-  }
-
-  recreateDoUponCompletionProc();
-
-  if (is.fail()) throw IO::InputError(ioTag.c_str());
-}
-
-int ExptDriver::Impl::legacyCharCount() const {
-DOTRACE("ExptDriver::Impl::legacyCharCount");
-  return (  ioTag.length() + 1
-			 + (ObjList::   theObjList()   .legacyCharCount()) + 1
-			 + (PosList::   thePosList()   .legacyCharCount()) + 1
-			 + (Tlist::     theTlist()     .legacyCharCount()) + 1
-			 + (RhList::    theRhList()    .legacyCharCount()) + 1
-			 + (ThList::    theThList()    .legacyCharCount()) + 1
-			 + (BlockList:: theBlockList() .legacyCharCount()) + 1
-			 + itsHostname.length() + 1
-			 + itsSubject.length() + 1
-			 + itsBeginDate.length() + 1
-			 + itsEndDate.length() + 1
-			 + itsAutosaveFile.length() + 1
-			 + IO::gCharCount<int>(itsBlockId) + 1
-			 + IO::gCharCount<int>(itsDummyRhId) + 1
-			 + IO::gCharCount<int>(itsDummyThId) + 1
-			 + IO::gCharCount<int>(itsDoUponCompletionBody.length()) + 1
-			 + itsDoUponCompletionBody.length() + 1
-			 + 5); // fudge factor
 }
 
 void ExptDriver::Impl::readFrom(IO::Reader* reader) {
@@ -1006,14 +992,11 @@ DOTRACE("ExptDriver::~ExptDriver");
   delete itsImpl;
 }
 
-void ExptDriver::legacySrlz(IO::Writer* writer, STD_IO::ostream &os, IO::IOFlag flag) const
-  { itsImpl->legacySrlz(writer, os, flag); }
+void ExptDriver::legacySrlz(IO::Writer* writer) const
+  { itsImpl->legacySrlz(writer); }
 
-void ExptDriver::legacyDesrlz(IO::Reader* reader, STD_IO::istream &is, IO::IOFlag flag)
-  { itsImpl->legacyDesrlz(reader, is, flag); }
-
-int ExptDriver::legacyCharCount() const
-  { return itsImpl->legacyCharCount(); }
+void ExptDriver::legacyDesrlz(IO::Reader* reader)
+  { itsImpl->legacyDesrlz(reader); }
 
 unsigned long ExptDriver::serialVersionId() const
   { return itsImpl->serialVersionId(); }

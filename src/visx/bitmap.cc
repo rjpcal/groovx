@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Tue Sep 26 19:12:27 2000
+// written: Wed Sep 27 11:43:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "bitmap.h"
 
 #include "bitmaprep.h"
+#include "io/iolegacy.h"
 #include "util/strings.h"
 
 #define NO_TRACE
@@ -41,39 +42,38 @@ Bitmap::Bitmap(BmapRenderer* renderer, const char* filename) :
 DOTRACE("Bitmap::Bitmap");
 }
 
-#ifdef LEGACY
-Bitmap::Bitmap(BmapRenderer* renderer, STD_IO::istream& is, IO::IOFlag flag) :
-  GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER),
-  itsImpl(new BitmapRep(renderer))
-{
-DOTRACE("Bitmap::Bitmap");
-  legacyDesrlz(is, flag);
-}
-#endif
-
 Bitmap::~Bitmap() {
 DOTRACE("Bitmap::~Bitmap");
   delete itsImpl;
 }
 
-void Bitmap::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+void Bitmap::legacySrlz(IO::Writer* writer) const {
 DOTRACE("Bitmap::legacySrlz");
 
-  itsImpl->legacySrlz(writer, os, flag);
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 itsImpl->legacySrlz(writer);
 
-  if (flag & IO::BASES) { GrObj::legacySrlz(writer, os, flag | IO::TYPENAME); }
+	 if (lwriter->flags() & IO::BASES) {
+		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
+		GrObj::legacySrlz(writer);
+	 }
+  }
 }
 
-void Bitmap::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+void Bitmap::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("Bitmap::legacyDesrlz");
 
-  itsImpl->legacyDesrlz(reader, is, flag);
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 itsImpl->legacyDesrlz(reader);
 
-  if (flag & IO::BASES) { GrObj::legacyDesrlz(reader, is, flag | IO::TYPENAME); }
+	 if (lreader->flags() & IO::BASES) {
+		IO::LRFlagJanitor jtr_(*lreader, lreader->flags() | IO::TYPENAME);
+		GrObj::legacyDesrlz(reader);
+	 }
+  }
 }
-
-int Bitmap::legacyCharCount() const
-  { return itsImpl->legacyCharCount() + GrObj::legacyCharCount(); }
 
 void Bitmap::readFrom(IO::Reader* reader) {
 DOTRACE("Bitmap::readFrom");

@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Sat Sep 23 20:07:20 2000
+// written: Wed Sep 27 11:35:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "response.h"
 #include "trialbase.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -68,13 +69,11 @@ public:
   ~Impl();
 
   // Delegand functions
-  void serialize(STD_IO::ostream &os, IO::IOFlag flag) const;
-  void deserialize(STD_IO::istream &is, IO::IOFlag flag);
-  int charCount() const;
+  void legacySrlz(IO::Writer* writer) const;
+  void legacyDesrlz(IO::Reader* reader);
 
-  void oldSerialize(STD_IO::ostream &os, IO::IOFlag flag) const;
-  void oldDeserialize(STD_IO::istream &is, IO::IOFlag flag);
-  int oldCharCount() const;
+  void oldLegacySrlz(IO::Writer* writer) const;
+  void oldLegacyDesrlz(IO::Reader* reader);
 
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
@@ -443,89 +442,88 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   }
 }
 
-void EventResponseHdlr::Impl::serialize(STD_IO::ostream &os, IO::IOFlag flag) const {
-DOTRACE("EventResponseHdlr::Impl::serialize");
+void EventResponseHdlr::Impl::legacySrlz(IO::Writer* writer) const {
+DOTRACE("EventResponseHdlr::Impl::legacySrlz");
 
-  if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  oldSerialize(os, flag);
+	 if (lwriter->flags() & IO::TYPENAME) { os << ioTag << IO::SEP; }
 
-  os << itsEventSequence << endl;
-  os << itsBindingSubstitution << endl;
+	 oldLegacySrlz(writer);
 
-  if (os.fail()) throw IO::OutputError(ioTag.c_str());
+	 os << itsEventSequence << endl;
+	 os << itsBindingSubstitution << endl;
 
-  if (flag & IO::BASES) { /* no bases to serialize */ }
-}
-
-void EventResponseHdlr::Impl::deserialize(STD_IO::istream &is, IO::IOFlag flag) {
-DOTRACE("EventResponseHdlr::Impl::deserialize");
-
-  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
-
-  oldDeserialize(is, flag);
-
-  getline(is, itsEventSequence, '\n');       DebugEvalNL(itsEventSequence);
-  getline(is, itsBindingSubstitution, '\n'); DebugEvalNL(itsBindingSubstitution);
-
-  if (is.fail()) throw IO::InputError(ioTag.c_str());
-
-  if (flag & IO::BASES) { /* no bases to deserialize */ }
-}
-
-int EventResponseHdlr::Impl::charCount() const {
-DOTRACE("EventResponseHdlr::Impl::charCount");
-  return(ioTag.length() + 1
-			+ oldCharCount()
-			+ itsEventSequence.length() + 1
-			+ itsBindingSubstitution.length() + 1);
-}
-
-void EventResponseHdlr::Impl::oldSerialize(STD_IO::ostream &os, IO::IOFlag) const {
-DOTRACE("EventResponseHdlr::Impl::oldSerialize");
-  os << itsInputResponseMap << endl;
-  os << itsFeedbackMap << endl;
-  os << itsUseFeedback << endl;
-}
-
-void EventResponseHdlr::Impl::oldDeserialize(STD_IO::istream &is, IO::IOFlag) {
-DOTRACE("EventResponseHdlr::Impl::oldDeserialize");
-  // XXX This is some sort of strange platform dependency..if the next
-  // character in the stream is a space (the separator following the
-  // typename), then we must pull it off the stream; however, in some
-  // cases (using aCC/hp9000s700), the space is already gone by the
-  // time we get here.
-  DebugEvalNL(is.peek());
-  if ( is.peek() == ' ' ) {
-	 is.get();
-  }
-
-  getline(is, itsInputResponseMap, '\n');
-  updateRegexps();
-
-  DebugEvalNL(is.peek());
-  getline(is, itsFeedbackMap, '\n');
-  updateFeedbacks();
-
-  int val;
-  is >> val;
-  itsUseFeedback = bool(val);
-
-  // The next character after itsUseFeedback had better be a newline,
-  // and we need to remove it from the stream.
-  int cc = is.get();
-  if ( cc != '\n' ) {
-	 DebugEvalNL(cc);
-	 throw IO::LogicError(ioTag.c_str());
+	 if (os.fail()) throw IO::OutputError(ioTag.c_str());
   }
 }
 
-int EventResponseHdlr::Impl::oldCharCount() const {
-DOTRACE("EventResponseHdlr::Impl::oldCharCount");
-  return (itsInputResponseMap.length() + 1
-			 + itsFeedbackMap.length() + 1
-			 + IO::gCharCount<bool>(itsUseFeedback) + 1
-			 + 1); // fudge factor
+void EventResponseHdlr::Impl::legacyDesrlz(IO::Reader* reader) {
+DOTRACE("EventResponseHdlr::Impl::legacyDesrlz");
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+
+	 if (lreader->flags() & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
+
+	 oldLegacyDesrlz(reader);
+
+	 getline(is, itsEventSequence, '\n');       DebugEvalNL(itsEventSequence);
+	 getline(is, itsBindingSubstitution, '\n'); DebugEvalNL(itsBindingSubstitution);
+
+	 if (is.fail()) throw IO::InputError(ioTag.c_str());
+  }
+}
+
+void EventResponseHdlr::Impl::oldLegacySrlz(IO::Writer* writer) const {
+DOTRACE("EventResponseHdlr::Impl::oldLegacySrlz");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
+	 os << itsInputResponseMap << endl;
+	 os << itsFeedbackMap << endl;
+	 os << itsUseFeedback << endl;
+  }
+}
+
+void EventResponseHdlr::Impl::oldLegacyDesrlz(IO::Reader* reader) {
+DOTRACE("EventResponseHdlr::Impl::oldLegacyDesrlz");
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
+
+	 // XXX This is some sort of strange platform dependency..if the next
+	 // character in the stream is a space (the separator following the
+	 // typename), then we must pull it off the stream; however, in some
+	 // cases (using aCC/hp9000s700), the space is already gone by the
+	 // time we get here.
+	 DebugEvalNL(is.peek());
+	 if ( is.peek() == ' ' ) {
+		is.get();
+	 }
+
+	 getline(is, itsInputResponseMap, '\n');
+	 updateRegexps();
+
+	 DebugEvalNL(is.peek());
+	 getline(is, itsFeedbackMap, '\n');
+	 updateFeedbacks();
+
+	 int val;
+	 is >> val;
+	 itsUseFeedback = bool(val);
+
+	 // The next character after itsUseFeedback had better be a newline,
+	 // and we need to remove it from the stream.
+	 int cc = is.get();
+	 if ( cc != '\n' ) {
+		DebugEvalNL(cc);
+		throw IO::LogicError(ioTag.c_str());
+	 }
+  }
 }
 
 void EventResponseHdlr::Impl::readFrom(IO::Reader* reader) {
@@ -875,14 +873,11 @@ EventResponseHdlr::EventResponseHdlr(const char* input_response_map) :
 EventResponseHdlr::~EventResponseHdlr()
   { delete itsImpl; }
 
-void EventResponseHdlr::serialize(STD_IO::ostream &os, IO::IOFlag flag) const
-  { itsImpl->serialize(os, flag); }
+void EventResponseHdlr::legacySrlz(IO::Writer* writer) const
+  { itsImpl->legacySrlz(writer); }
 
-void EventResponseHdlr::deserialize(STD_IO::istream &is, IO::IOFlag flag)
-  { itsImpl->deserialize(is, flag); }
-
-int EventResponseHdlr::charCount() const
-  { return itsImpl->charCount(); }
+void EventResponseHdlr::legacyDesrlz(IO::Reader* reader)
+  { itsImpl->legacyDesrlz(reader); }
 
 void EventResponseHdlr::readFrom(IO::Reader* reader)
   { itsImpl->readFrom(reader); }
@@ -953,14 +948,11 @@ void EventResponseHdlr::rhEndTrial() const
 void EventResponseHdlr::rhHaltExpt() const
   { itsImpl->rhHaltExpt(); }
 
-void EventResponseHdlr::oldSerialize(STD_IO::ostream &os, IO::IOFlag flag) const
-  { itsImpl->oldSerialize(os, flag); }
+void EventResponseHdlr::oldLegacySrlz(IO::Writer* writer) const
+  { itsImpl->oldLegacySrlz(writer); }
 
-void EventResponseHdlr::oldDeserialize(STD_IO::istream &is, IO::IOFlag flag)
-  { itsImpl->oldDeserialize(is, flag); }
-
-int EventResponseHdlr::oldCharCount() const
-  { return itsImpl->oldCharCount(); }
+void EventResponseHdlr::oldLegacyDesrlz(IO::Reader* reader)
+  { itsImpl->oldLegacyDesrlz(reader); }
 
 static const char vcid_eventresponsehdlr_cc[] = "$Header$";
 #endif // !EVENTRESPONSEHDLR_CC_DEFINED

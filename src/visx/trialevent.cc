@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Tue Sep 26 18:39:48 2000
+// written: Wed Sep 27 11:40:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "trialbase.h"
 
+#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -82,35 +83,36 @@ DOTRACE("TrialEvent::~TrialEvent");
   DebugEvalNL(averageError);
 }
 
-void TrialEvent::legacySrlz(IO::Writer* writer, STD_IO::ostream& os, IO::IOFlag flag) const {
+void TrialEvent::legacySrlz(IO::Writer* writer) const {
 DOTRACE("TrialEvent::legacySrlz");
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 ostream& os = lwriter->output();
 
-  if (flag&IO::TYPENAME)
-	 {
-		os << demangle_cstr(typeid(*this).name()) << ' ';
-	 }
-  os << itsRequestedDelay << endl;
-  if (os.fail()) throw IO::InputError(typeid(*this));
+	 if (lwriter->flags() & IO::TYPENAME)
+		{
+		  os << demangle_cstr(typeid(*this).name()) << ' ';
+		}
+	 os << itsRequestedDelay << endl;
+	 if (os.fail()) throw IO::InputError(typeid(*this));
+  }
 }
 
-void TrialEvent::legacyDesrlz(IO::Reader* reader, STD_IO::istream& is, IO::IOFlag flag) {
+void TrialEvent::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("TrialEvent::legacyDesrlz");
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 istream& is = lreader->input();
 
-  cancel(); // cancel since the event is changing state
+	 cancel(); // cancel since the event is changing state
 
-  if (flag&IO::TYPENAME)
-	 {
-		IO::IoObject::readTypename(is, demangle_cstr(typeid(*this).name()));
-	 }
-  is >> itsRequestedDelay;
-  if (is.fail()) throw IO::InputError(typeid(*this));
-}
-
-int TrialEvent::legacyCharCount() const {
-DOTRACE("TrialEvent::legacyCharCount");
-  return ( strlen(demangle_cstr(typeid(*this).name())) + 1
-			 + IO::gCharCount<int>(itsRequestedDelay) + 1
-			 + 1); // fudge factor
+	 if (lreader->flags() & IO::TYPENAME)
+		{
+		  IO::IoObject::readTypename(is, demangle_cstr(typeid(*this).name()));
+		}
+	 is >> itsRequestedDelay;
+	 if (is.fail()) throw IO::InputError(typeid(*this));
+  }
 }
 
 void TrialEvent::readFrom(IO::Reader* reader) {
