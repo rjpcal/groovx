@@ -111,57 +111,57 @@ test "GxSepTcl-GxSeparator::numChildren" "use after a remove" {
 	 set face [Obj::new Face]
 	 set child_id1 [GxSeparator::addChild $gxsep $face]
 	 set child_id2 [GxSeparator::addChild $gxsep $face]
-	 GxSeparator::removeChildId $gxsep $child_id1
+	 GxSeparator::removeChildAt $gxsep $child_id1
 	 GxSeparator::numChildren $gxsep
 } {^1$}
 
-### GxSeparator::removeChildId ###
-test "GxSepTcl-GxSeparator::removeChildId" "id too small" {
+### GxSeparator::removeChildAt ###
+test "GxSepTcl-GxSeparator::removeChildAt" "id too small" {
 	 set gxsep [Obj::new GxSeparator]
-	 GxSeparator::removeChildId $gxsep -1
+	 GxSeparator::removeChildAt $gxsep -1
 	 GxSeparator::numChildren $gxsep
-} {^GxSeparator::removeChildId: signed/unsigned conversion failed$}
+} {^GxSeparator::removeChildAt: signed/unsigned conversion failed$}
 
-test "GxSepTcl-GxSeparator::removeChildId" "use when empty" {
+test "GxSepTcl-GxSeparator::removeChildAt" "use when empty" {
 	 set gxsep [Obj::new GxSeparator]
-	 GxSeparator::removeChildId $gxsep 0
+	 GxSeparator::removeChildAt $gxsep 0
 	 GxSeparator::numChildren $gxsep
 } {^0$}
 
-test "GxSepTcl-GxSeparator::removeChildId" "use when filled" {
+test "GxSepTcl-GxSeparator::removeChildAt" "use when filled" {
 	 set gxsep [Obj::new GxSeparator]
 	 set face [Obj::new Face]
 	 GxSeparator::addChild $gxsep $face
 	 GxSeparator::addChild $gxsep $face
-	 GxSeparator::removeChildId $gxsep 0
+	 GxSeparator::removeChildAt $gxsep 0
 	 GxSeparator::numChildren $gxsep
 } {^1$}
 
-test "GxSepTcl-GxSeparator::removeChildId" "id too large" {
+test "GxSepTcl-GxSeparator::removeChildAt" "id too large" {
 	 set gxsep [Obj::new GxSeparator]
 	 set face [Obj::new Face]
 	 GxSeparator::addChild $gxsep $face
 	 GxSeparator::addChild $gxsep $face
-	 GxSeparator::removeChildId $gxsep 2
+	 GxSeparator::removeChildAt $gxsep 2
 	 GxSeparator::numChildren $gxsep
 } {^2$}
 
 
-### GxSeparator::removeChildUid ###
-test "GxSepTcl-GxSeparator::removeChildUid" "try non-contained item" {
+### GxSeparator::removeChild ###
+test "GxSepTcl-GxSeparator::removeChild" "try non-contained item" {
 	 set gxsep [Obj::new GxSeparator]
 	 set face [Obj::new Face]
-	 GxSeparator::removeChildUid $gxsep $face
+	 GxSeparator::removeChild $gxsep $face
 	 GxSeparator::numChildren $gxsep
 } {^0$}
 
-test "GxSepTcl-GxSeparator::removeChildUid" "use when filled" {
+test "GxSepTcl-GxSeparator::removeChild" "use when filled" {
 	 set gxsep [Obj::new GxSeparator]
 	 set pos [Obj::new Position]
 	 set face [Obj::new Face]
 	 GxSeparator::addChild $gxsep $pos
 	 GxSeparator::addChild $gxsep $face
-	 GxSeparator::removeChildUid $gxsep $face
+	 GxSeparator::removeChild $gxsep $face
 	 return "[GxSeparator::numChildren $gxsep] [GxNode::contains $gxsep $face]"
 } {^1 0$}
 
