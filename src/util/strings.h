@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Wed Jan 30 15:17:37 2002
+// written: Fri Feb  1 10:47:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -286,22 +286,31 @@ namespace Util
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Overloaded operator==
+// Overloaded operators
 //
 ///////////////////////////////////////////////////////////////////////
 
-// With const char* on left
+// operator ==
 
 inline bool operator==(const char* lhs, const fstring& rhs)
   { return rhs.equals(lhs); }
-
-// With fstring on left
 
 inline bool operator==(const fstring& lhs, const char* rhs)
   { return lhs.equals(rhs); }
 
 inline bool operator==(const fstring& lhs, const fstring& rhs)
   { return lhs.equals(rhs); }
+
+// operator !=
+
+inline bool operator!=(const char* lhs, const fstring& rhs)
+  { return !rhs.equals(lhs); }
+
+inline bool operator!=(const fstring& lhs, const char* rhs)
+  { return !lhs.equals(rhs); }
+
+inline bool operator!=(const fstring& lhs, const fstring& rhs)
+  { return !lhs.equals(rhs); }
 
 ///////////////////////////////////////////////////////////////////////
 //
