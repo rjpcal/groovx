@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Tue Jun  5 10:34:00 2001
+// written: Sun Jun 10 16:08:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,11 @@ class fixed_string;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::IoObject : public Util::Object {
+class IO::IoObject : public virtual Util::Object {
+private:
+  IoObject(const IoObject&);
+  IoObject& operator=(const IoObject&);
+
 protected:
   /** Default constructor. */
   IoObject();
