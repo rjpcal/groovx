@@ -2,8 +2,7 @@
 // objlist.h 
 // Rob Peters
 // Created: Nov-98
-// written: Fri Mar 12 12:55:53 1999
-static const char vcid_objlist_h[] = "$Id$";
+// written: Fri Mar 12 13:21:17 1999
 //
 // The ObjList class implements a list of GrObj pointers. The
 // interface allows for management of a collection of GrObj's (i.e.,
@@ -128,4 +127,5 @@ private:
   ObjVec itsObjVec;				  // associative array from objid's to GrObj*'s
 };
 
+static const char vcid_objlist_h[] = "$Id$";
 #endif // !OBJLIST_H_DEFINED
