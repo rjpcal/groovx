@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Wed Aug 15 15:19:06 2001
+// written: Wed Aug 15 19:42:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,15 +59,15 @@ struct PositionImpl {
 
 const FieldMap& Position::classFields()
 {
-  static const FieldInfo FINFOS[] =
+  static const Field FINFOS[] =
   {
-    FieldInfo("translation", FieldInfo::ValueType(), &Position::translation, 0., 0., 0., 0., true),
-    FieldInfo("scaling", FieldInfo::ValueType(), &Position::scaling, 0., 0., 0., 0.),
-    FieldInfo("rotationAxis", FieldInfo::ValueType(), &Position::rotationAxis, 0., 0., 0., 0.),
-    FieldInfo("rotationAngle", &Position::itsRotationAngle, 0., 0., 360., 1.)
+    Field("translation", Field::ValueType(), &Position::translation, 0., 0., 0., 0., true),
+    Field("scaling", Field::ValueType(), &Position::scaling, 0., 0., 0., 0.),
+    Field("rotationAxis", Field::ValueType(), &Position::rotationAxis, 0., 0., 0., 0.),
+    Field("rotationAngle", &Position::itsRotationAngle, 0., 0., 360., 1.)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
 
   static FieldMap POS_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
 

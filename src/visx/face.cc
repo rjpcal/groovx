@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Aug 15 14:28:55 2001
+// written: Wed Aug 15 19:40:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,16 +60,16 @@ namespace
 
 const FieldMap& Face::classFields()
 {
-  static const FieldInfo FINFOS[] =
+  static const Field FINFOS[] =
   {
-    FieldInfo("category", &Face::itsFaceCategory, 0, 0, 10, 1, true),
-    FieldInfo("eyeHeight", &Face::itsEyeHeight, 0.6, -1.2, 1.2, 0.01),
-    FieldInfo("eyeDistance", &Face::itsEyeDistance, 0.4, 0.0, 1.8, 0.01),
-    FieldInfo("noseLength", &Face::itsNoseLength, 0.4, -0.0, 3.0, 0.01),
-    FieldInfo("mouthHeight", &Face::itsMouthHeight, 0.8, -1.2, 1.2, 0.01)
+    Field("category", &Face::itsFaceCategory, 0, 0, 10, 1, true),
+    Field("eyeHeight", &Face::itsEyeHeight, 0.6, -1.2, 1.2, 0.01),
+    Field("eyeDistance", &Face::itsEyeDistance, 0.4, 0.0, 1.8, 0.01),
+    Field("noseLength", &Face::itsNoseLength, 0.4, -0.0, 3.0, 0.01),
+    Field("mouthHeight", &Face::itsMouthHeight, 0.8, -1.2, 1.2, 0.01)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
 
   static FieldMap FACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
                               &GrObj::classFields());

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Wed Aug 15 12:04:54 2001
+// written: Wed Aug 15 19:43:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -276,13 +276,13 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * FieldInfo. We make one info object per property per class. This
+ * Field. We make one info object per property per class. This
  * class has no virtuals... it can be allocated in a builtin array.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class FieldInfo {
+class Field {
 private:
   const fstring itsName;
   shared_ptr<FieldImpl> itsFieldImpl;
@@ -306,11 +306,11 @@ public:
 
   template <class C, class T>
   static shared_ptr<FieldImpl> makeImpl(T C::* member_ptr,
-													 const T& min, const T& max)
+                                        const T& min, const T& max)
   {
     return shared_ptr<FieldImpl>
       (new DataMemberFieldImpl<C,T>
-		 (member_ptr, BoundsChecker<Deref<T>::Type>::make(min, max)));
+       (member_ptr, BoundsChecker<Deref<T>::Type>::make(min, max)));
   }
 
   template <class C, class T>
@@ -318,7 +318,7 @@ public:
   makeImpl(std::pair<T (C::*)() const, void (C::*)(T)> funcs)
   {
     return shared_ptr<FieldImpl>
-		(new FuncMemberFieldImpl<C,T>(funcs.first, funcs.second));
+      (new FuncMemberFieldImpl<C,T>(funcs.first, funcs.second));
   }
 
   static shared_ptr<FieldImpl> makeImpl(shared_ptr<FieldImpl> ptr)
@@ -327,9 +327,9 @@ public:
   }
 
   template <class T, class C, class V>
-  FieldInfo(const fstring& name, ValueType, V C::* value_ptr,
-            const T& def, const T& min, const T& max, const T& res,
-            bool new_group=false) :
+  Field(const fstring& name, ValueType, V C::* value_ptr,
+        const T& def, const T& min, const T& max, const T& res,
+        bool new_group=false) :
     itsName(name),
     itsFieldImpl(new ValueFieldImpl<C,V>(value_ptr)),
     itsDefaultValue(new TValue<T>(def)),
@@ -340,9 +340,9 @@ public:
   {}
 
   template <class T, class M>
-  FieldInfo(const fstring& name, M member_ptr_init,
-            const T& def, const T& min, const T& max, const T& res,
-            bool new_group=false) :
+  Field(const fstring& name, M member_ptr_init,
+        const T& def, const T& min, const T& max, const T& res,
+        bool new_group=false) :
     itsName(name),
     itsFieldImpl(makeImpl(member_ptr_init)),
     itsDefaultValue(new TValue<T>(def)),
@@ -353,9 +353,9 @@ public:
   {}
 
   template <class T, class M>
-  FieldInfo(const fstring& name, BoundsCheck, M member_ptr_init,
-            const T& def, const T& min, const T& max, const T& res,
-            bool new_group=false) :
+  Field(const fstring& name, BoundsCheck, M member_ptr_init,
+        const T& def, const T& min, const T& max, const T& res,
+        bool new_group=false) :
     itsName(name),
     itsFieldImpl(makeImpl(member_ptr_init, min, max)),
     itsDefaultValue(new TValue<T>(def)),
@@ -376,33 +376,33 @@ public:
 
   void setValue(FieldContainer* obj, const Value& new_val) const
   {
-	 itsFieldImpl->set(obj, new_val);
+    itsFieldImpl->set(obj, new_val);
   }
 
   shared_ptr<Value> getValue(const FieldContainer* obj) const
   {
-	 return itsFieldImpl->get(obj);
+    return itsFieldImpl->get(obj);
   }
 
   void readValueFrom(FieldContainer* obj,
-							IO::Reader* reader, const fstring& name) const
+                     IO::Reader* reader, const fstring& name) const
   {
-	 itsFieldImpl->readValueFrom(obj, reader, name);
+    itsFieldImpl->readValueFrom(obj, reader, name);
   }
 
   void writeValueTo(const FieldContainer* obj,
-						  IO::Writer* writer, const fstring& name) const
+                    IO::Writer* writer, const fstring& name) const
   {
-	 itsFieldImpl->writeValueTo(obj, writer, name);
+    itsFieldImpl->writeValueTo(obj, writer, name);
   }
 };
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * FieldMap is an associative container that returns a FieldInfo given
- * the correspnding name. We make one statically allocated property
- * map per class. This is a concrete class with no virtual functions.
+ * FieldMap is an associative container that returns a Field given the
+ * correspnding name. We make one statically allocated property map
+ * per class. This is a concrete class with no virtual functions.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -415,11 +415,11 @@ private:
   FieldMap(const FieldMap&);
   FieldMap& operator=(const FieldMap&);
 
-  void init(const FieldInfo* begin, const FieldInfo* end,
+  void init(const Field* begin, const Field* end,
             const FieldMap* parent);
 
 public:
-  FieldMap(const FieldInfo* begin, const FieldInfo* end,
+  FieldMap(const Field* begin, const Field* end,
            const FieldMap* parent=0) :
     itsImpl(0)
   {
@@ -433,11 +433,11 @@ public:
   bool hasParent() const;
   const FieldMap* parent() const;
 
-  const FieldInfo& info(const fstring& name) const;
+  const Field& field(const fstring& name) const;
 
   class ItrImpl;
 
-  // Iterates over the FieldInfo's in alphabetical order by name
+  // Iterates over the Field's in alphabetical order by name
   class Iterator {
   private:
     ItrImpl* const itsImpl;
@@ -447,8 +447,8 @@ public:
     Iterator& operator=(const Iterator& other);
     ~Iterator();
 
-    const FieldInfo& operator*() const;
-    const FieldInfo* operator->() const;
+    const Field& operator*() const;
+    const Field* operator->() const;
     Iterator& operator++();
     bool operator==(const Iterator& other);
     bool operator!=(const Iterator& other)
@@ -458,9 +458,9 @@ public:
   Iterator begin() const;
   Iterator end() const;
 
-  // Iterates over the FieldInfo's in the order they were declared in
+  // Iterates over the Field's in the order they were declared in
   // the sequence that was passed to the FieldMap constructor.
-  typedef const FieldInfo* IoIterator;
+  typedef const Field* IoIterator;
   IoIterator ioBegin() const;
   IoIterator ioEnd() const;
 };
@@ -492,10 +492,10 @@ public:
   void setFieldMap(const FieldMap& fields);
 
   void setField(const fstring& name, const Value& new_val);
-  void setField(const FieldInfo& pinfo, const Value& new_val);
+  void setField(const Field& field, const Value& new_val);
 
   shared_ptr<Value> getField(const fstring& name) const;
-  shared_ptr<Value> getField(const FieldInfo& pinfo) const;
+  shared_ptr<Value> getField(const Field& field) const;
 
   void readFieldsFrom(IO::Reader* reader, const FieldMap& fields);
   void writeFieldsTo(IO::Writer* writer, const FieldMap& fields) const;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Aug 15 14:38:26 2001
+// written: Wed Aug 15 19:40:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,10 +47,10 @@ namespace
 
 const FieldMap& FixPt::classFields()
 {
-  static const FieldInfo FIXPT_FINFOS[] =
+  static const Field FIXPT_FINFOS[] =
   {
-    FieldInfo("length", &FixPt::itsLength, 0.1, 0.0, 10.0, 0.1, true),
-    FieldInfo("width", &FixPt::itsWidth, 1, 1, 100, 1)
+    Field("length", &FixPt::itsLength, 0.1, 0.0, 10.0, 0.1, true),
+    Field("width", &FixPt::itsWidth, 1, 1, 100, 1)
   };
 
   static FieldMap FIXPT_FIELDS(FIXPT_FINFOS, FIXPT_FINFOS+2,

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Wed Aug 15 11:36:20 2001
+// written: Wed Aug 15 19:43:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,14 +41,14 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  typedef std::map<fstring, const FieldInfo*> MapType;
+  typedef std::map<fstring, const Field*> MapType;
   MapType itsNameMap;
-  const FieldInfo* const itsIoBegin;
-  const FieldInfo* const itsIoEnd;
+  const Field* const itsIoBegin;
+  const Field* const itsIoEnd;
 
   const FieldMap* itsParent;
 
-  Impl(const FieldInfo* begin, const FieldInfo* end,
+  Impl(const Field* begin, const Field* end,
        const FieldMap* parent) :
     itsNameMap(),
     itsIoBegin(begin),
@@ -63,8 +63,8 @@ public:
     }
 };
 
-void FieldMap::init(const FieldInfo* begin, const FieldInfo* end,
-						  const FieldMap* parent)
+void FieldMap::init(const Field* begin, const Field* end,
+                    const FieldMap* parent)
 {
   Assert(itsImpl == 0);
   itsImpl = new Impl(begin, end, parent);
@@ -76,7 +76,7 @@ const FieldMap* FieldMap::emptyFieldMap()
 {
   static const FieldMap* emptyMap = 0;
   if (emptyMap == 0)
-    emptyMap = new FieldMap((FieldInfo*)0, (FieldInfo*)0, (FieldMap*)0);
+    emptyMap = new FieldMap((Field*)0, (Field*)0, (FieldMap*)0);
   return emptyMap;
 }
 
@@ -86,7 +86,7 @@ bool FieldMap::hasParent() const
 const FieldMap* FieldMap::parent() const
 { return itsImpl->itsParent; }
 
-const FieldInfo& FieldMap::info(const fstring& name) const {
+const Field& FieldMap::field(const fstring& name) const {
   Impl::MapType::const_iterator itr = itsImpl->itsNameMap.find(name);
 
   if (itr != itsImpl->itsNameMap.end())
@@ -94,7 +94,7 @@ const FieldInfo& FieldMap::info(const fstring& name) const {
 
   if (hasParent())
     {
-      return parent()->info(name);
+      return parent()->field(name);
     }
   else
     {
@@ -104,7 +104,7 @@ const FieldInfo& FieldMap::info(const fstring& name) const {
 
 class FieldMap::ItrImpl {
 public:
-  typedef std::map<fstring, const FieldInfo*> MapType;
+  typedef std::map<fstring, const Field*> MapType;
 
   ItrImpl(MapType::const_iterator i) : itsItr(i) {}
 
@@ -121,10 +121,10 @@ FieldMap::Iterator::operator=(const FieldMap::Iterator& other)
 
 FieldMap::Iterator::~Iterator() { delete itsImpl; }
 
-const FieldInfo& FieldMap::Iterator::operator*() const
+const Field& FieldMap::Iterator::operator*() const
 { return *(operator->()); }
 
-const FieldInfo* FieldMap::Iterator::operator->() const
+const Field* FieldMap::Iterator::operator->() const
 { return (*(itsImpl->itsItr)).second; }
 
 FieldMap::Iterator& FieldMap::Iterator::operator++()
@@ -167,22 +167,22 @@ void FieldContainer::setFieldMap(const FieldMap& fields)
 
 shared_ptr<Value> FieldContainer::getField(const fstring& name) const
 {
-  return getField(itsFieldMap->info(name));
+  return getField(itsFieldMap->field(name));
 }
 
-shared_ptr<Value> FieldContainer::getField(const FieldInfo& pinfo) const
+shared_ptr<Value> FieldContainer::getField(const Field& field) const
 {
-  return pinfo.getValue(this);
+  return field.getValue(this);
 }
 
 void FieldContainer::setField(const fstring& name, const Value& new_val)
 {
-  setField(itsFieldMap->info(name), new_val);
+  setField(itsFieldMap->field(name), new_val);
 }
 
-void FieldContainer::setField(const FieldInfo& pinfo, const Value& new_val)
+void FieldContainer::setField(const Field& field, const Value& new_val)
 {
-  pinfo.setValue(this, new_val);
+  field.setValue(this, new_val);
   if (itsObservable)
     itsObservable->sendStateChangeMsg();
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Aug 15 11:26:26 2001
+// written: Wed Aug 15 19:42:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -476,13 +476,13 @@ DOTRACE("Trial::Impl::undoLastResponse");
 
 namespace
 {
-  const FieldInfo FINFOS[] =
+  const Field FINFOS[] =
   {
-    FieldInfo("tType", std::make_pair(&Trial::trialType, &Trial::setType),
-              -1, -10, 10, 1, true)
+    Field("tType", std::make_pair(&Trial::trialType, &Trial::setType),
+          -1, -10, 10, 1, true)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
 
   FieldMap TRIAL_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Wed Aug 15 11:04:15 2001
+// written: Wed Aug 15 19:42:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,28 +31,28 @@ namespace Tcl
 {
   struct FieldGetter
   {
-    FieldGetter(const FieldInfo& finfo) : itsFinfo(finfo) {}
+    FieldGetter(const Field& field) : itsField(field) {}
 
-    const FieldInfo& itsFinfo;
+    const Field& itsField;
 
     void operator()(Tcl::Context& ctx)
     {
       Ref<FieldContainer> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
-      ctx.setResult<const Value&>(*(item->getField(itsFinfo)));
+      ctx.setResult<const Value&>(*(item->getField(itsField)));
     }
   };
 
   struct FieldSetter
   {
-    FieldSetter(const FieldInfo& finfo) : itsFinfo(finfo) {}
+    FieldSetter(const Field& field) : itsField(field) {}
 
-    const FieldInfo& itsFinfo;
+    const Field& itsField;
 
     void operator()(Tcl::Context& ctx)
     {
       Ref<FieldContainer> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
       TclValue val = ctx.getValFromArg(2, TypeCue<TclValue>());
-      item->setField(itsFinfo, val);
+      item->setField(itsField, val);
     }
   };
 
@@ -104,15 +104,15 @@ DOTRACE("Tcl::FieldsLister::operator()");
                itr != end;
                ++itr)
             {
-              const FieldInfo& finfo = *itr;
+              const Field& field = *itr;
 
               Tcl::List sub_list;
 
-              sub_list.append(finfo.name());           // property name
-              sub_list.append<TclValue>(finfo.min());  // min value
-              sub_list.append<TclValue>(finfo.max());  // max value
-              sub_list.append<TclValue>(finfo.res());  // resolution value
-              sub_list.append(finfo.startsNewGroup()); // start new group flag
+              sub_list.append(field.name());           // property name
+              sub_list.append<TclValue>(field.min());  // min value
+              sub_list.append<TclValue>(field.max());  // max value
+              sub_list.append<TclValue>(field.res());  // resolution value
+              sub_list.append(field.startsNewGroup()); // start new group flag
 
               itsFieldList.append(sub_list);
             }
@@ -130,14 +130,14 @@ DOTRACE("Tcl::FieldsLister::operator()");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Tcl::defField(Tcl::Pkg* pkg, const FieldInfo& finfo)
+void Tcl::defField(Tcl::Pkg* pkg, const Field& field)
 {
 DOTRACE("Tcl::defField");
 
-  pkg->defVecRaw( finfo.name().c_str(), 1, "item_id(s)",
-                  FieldGetter(finfo) );
-  pkg->defVecRaw( finfo.name().c_str(), 2, "item_id(s) new_val(s)",
-                  FieldSetter(finfo) );
+  pkg->defVecRaw( field.name().c_str(), 1, "item_id(s)",
+                  FieldGetter(field) );
+  pkg->defVecRaw( field.name().c_str(), 2, "item_id(s) new_val(s)",
+                  FieldSetter(field) );
 }
 
 void Tcl::defAllFields(Tcl::Pkg* pkg, const FieldMap& fieldmap)

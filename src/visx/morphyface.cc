@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Aug 15 15:13:37 2001
+// written: Wed Aug 15 19:44:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -135,48 +135,48 @@ const FieldMap& MorphyFace::classFields()
 {
   typedef MorphyFace MF;
 
-  static const FieldInfo FINFOS[] =
+  static const Field FINFOS[] =
   {
-    FieldInfo("category", &MF::itsMfaceCategory, 0, 0, 10, 1, true),
+    Field("category", &MF::itsMfaceCategory, 0, 0, 10, 1, true),
 
-    FieldInfo("faceWidth", &MF::itsFaceWidth, 2.75, 1.5, 3.5, 0.1),
-    FieldInfo("topWidth", &MF::itsTopWidth, 1.15, 0.05, 2.0, 0.05),
-    FieldInfo("bottomWidth", &MF::itsBottomWidth, 1.0, 0.05, 2.0, 0.05),
-    FieldInfo("topHeight", &MF::itsTopHeight, 3.8, 0.5, 5.0, 0.25),
-    FieldInfo("bottomHeight", &MF::itsBottomHeight, -3.0, -5.0, -0.5, 0.25),
+    Field("faceWidth", &MF::itsFaceWidth, 2.75, 1.5, 3.5, 0.1),
+    Field("topWidth", &MF::itsTopWidth, 1.15, 0.05, 2.0, 0.05),
+    Field("bottomWidth", &MF::itsBottomWidth, 1.0, 0.05, 2.0, 0.05),
+    Field("topHeight", &MF::itsTopHeight, 3.8, 0.5, 5.0, 0.25),
+    Field("bottomHeight", &MF::itsBottomHeight, -3.0, -5.0, -0.5, 0.25),
 
-    FieldInfo("hairWidth", &MF::itsHairWidth, 0.20, 0.00, 0.5, 0.02, true),
-    FieldInfo("hairStyle", &MF::itsHairStyle, 0, 0, 1, 1),
+    Field("hairWidth", &MF::itsHairWidth, 0.20, 0.00, 0.5, 0.02, true),
+    Field("hairStyle", &MF::itsHairStyle, 0, 0, 1, 1),
 
-    FieldInfo("eyeYpos", &MF::itsEyeYpos, 0.375, -2.0, 2.0, 0.1, true),
-    FieldInfo("eyeDistance", &MF::itsEyeDistance, 2.25, 0.0, 5.0, 0.25),
-    FieldInfo("eyeHeight", &MF::itsEyeHeight, 0.9, 0.0, 2.0, 0.1),
-    FieldInfo("eyeAspectRatio", &MF::itsEyeAspectRatio, 1.555556, 0.1, 5.0, 0.1),
+    Field("eyeYpos", &MF::itsEyeYpos, 0.375, -2.0, 2.0, 0.1, true),
+    Field("eyeDistance", &MF::itsEyeDistance, 2.25, 0.0, 5.0, 0.25),
+    Field("eyeHeight", &MF::itsEyeHeight, 0.9, 0.0, 2.0, 0.1),
+    Field("eyeAspectRatio", &MF::itsEyeAspectRatio, 1.555556, 0.1, 5.0, 0.1),
 
-    FieldInfo("pupilXpos", &MF::itsPupilXpos, 0.0, -0.5, 0.5, 0.05, true),
-    FieldInfo("pupilYpos", &MF::itsPupilYpos, 0.0, -0.5, 0.5, 0.05),
-    FieldInfo("pupilSize", &MF::itsPupilSize, 0.6, 0.0, 1.0, 0.05),
-    FieldInfo("pupilDilation", FieldInfo::BoundsCheck(),
-				  &MF::itsPupilDilation, 0.5, 0.05, 0.95, 0.05),
+    Field("pupilXpos", &MF::itsPupilXpos, 0.0, -0.5, 0.5, 0.05, true),
+    Field("pupilYpos", &MF::itsPupilYpos, 0.0, -0.5, 0.5, 0.05),
+    Field("pupilSize", &MF::itsPupilSize, 0.6, 0.0, 1.0, 0.05),
+    Field("pupilDilation", Field::BoundsCheck(),
+          &MF::itsPupilDilation, 0.5, 0.05, 0.95, 0.05),
 
-    FieldInfo("eyebrowXpos", &MF::itsEyebrowXpos, 0.0, -0.5, 0.5, 0.02, true),
-    FieldInfo("eyebrowYpos", &MF::itsEyebrowYpos, 0.5, 0.0, 1.5, 0.05),
-    FieldInfo("eyebrowCurvature", &MF::itsEyebrowCurvature, 0.8, -2.0, 2.0, 0.1),
-    FieldInfo("eyebrowAngle", &MF::itsEyebrowAngle, -5, -50, 50, 1),
-    FieldInfo("eyebrowThickness", &MF::itsEyebrowThickness, 2.0, 0.1, 4.0, 0.1),
+    Field("eyebrowXpos", &MF::itsEyebrowXpos, 0.0, -0.5, 0.5, 0.02, true),
+    Field("eyebrowYpos", &MF::itsEyebrowYpos, 0.5, 0.0, 1.5, 0.05),
+    Field("eyebrowCurvature", &MF::itsEyebrowCurvature, 0.8, -2.0, 2.0, 0.1),
+    Field("eyebrowAngle", &MF::itsEyebrowAngle, -5, -50, 50, 1),
+    Field("eyebrowThickness", &MF::itsEyebrowThickness, 2.0, 0.1, 4.0, 0.1),
 
-    FieldInfo("noseXpos", &MF::itsNoseXpos, 0.0, -1.0, 1.0, 0.05, true),
-    FieldInfo("noseYpos", &MF::itsNoseYpos, -0.825, -2.0, 2.0, 0.1),
-    FieldInfo("noseLength", &MF::itsNoseLength, 0.75, 0.0, 2.0, 0.1),
-    FieldInfo("noseWidth", &MF::itsNoseWidth, 1.5, 0.0, 3.0, 0.1),
+    Field("noseXpos", &MF::itsNoseXpos, 0.0, -1.0, 1.0, 0.05, true),
+    Field("noseYpos", &MF::itsNoseYpos, -0.825, -2.0, 2.0, 0.1),
+    Field("noseLength", &MF::itsNoseLength, 0.75, 0.0, 2.0, 0.1),
+    Field("noseWidth", &MF::itsNoseWidth, 1.5, 0.0, 3.0, 0.1),
 
-    FieldInfo("mouthXpos", &MF::itsMouthXpos, 0.0, -2.0, 2.0, 0.1, true),
-    FieldInfo("mouthYpos", &MF::itsMouthYpos, -2.0, -3.0, 1.0, 0.1),
-    FieldInfo("mouthWidth", &MF::itsMouthWidth, 2.5, 0.0, 5.0, 0.25),
-    FieldInfo("mouthCurvature", &MF::itsMouthCurvature, 0.6, -2.0, 2.0, 0.1)
+    Field("mouthXpos", &MF::itsMouthXpos, 0.0, -2.0, 2.0, 0.1, true),
+    Field("mouthYpos", &MF::itsMouthYpos, -2.0, -3.0, 1.0, 0.1),
+    Field("mouthWidth", &MF::itsMouthWidth, 2.5, 0.0, 5.0, 0.25),
+    Field("mouthCurvature", &MF::itsMouthCurvature, 0.6, -2.0, 2.0, 0.1)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
 
   static FieldMap MFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
                                &GrObj::classFields());

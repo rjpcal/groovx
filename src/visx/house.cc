@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Wed Aug 15 15:00:44 2001
+// written: Wed Aug 15 19:42:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -145,38 +145,38 @@ namespace
 
 const FieldMap& House::classFields()
 {
-  static const FieldInfo FINFOS[] =
+  static const Field FINFOS[] =
   {
-    FieldInfo("storyAspectRatio",
-              &House::itsStoryAspectRatio, 3.0, 0.5, 10.0, 0.05, true),
-    FieldInfo("numStories", &House::itsNumStories, 2, 1, 5, 1),
+    Field("storyAspectRatio",
+          &House::itsStoryAspectRatio, 3.0, 0.5, 10.0, 0.05, true),
+    Field("numStories", &House::itsNumStories, 2, 1, 5, 1),
 
-    FieldInfo("doorPosition", &House::itsDoorPosition, 2, 0, 5, 1, true),
-    FieldInfo("doorWidth", &House::itsDoorWidth, 0.75, 0.05, 1.0, 0.05),
-    FieldInfo("doorHeight", &House::itsDoorHeight, 0.75, 0.05, 1.0, 0.05),
-    FieldInfo("doorOrientation",
-              &House::itsDoorOrientation, false, false, true, true),
+    Field("doorPosition", &House::itsDoorPosition, 2, 0, 5, 1, true),
+    Field("doorWidth", &House::itsDoorWidth, 0.75, 0.05, 1.0, 0.05),
+    Field("doorHeight", &House::itsDoorHeight, 0.75, 0.05, 1.0, 0.05),
+    Field("doorOrientation",
+          &House::itsDoorOrientation, false, false, true, true),
 
-    FieldInfo("numWindows", &House::itsNumWindows, 5, 2, 6, 1, true),
-    FieldInfo("windowWidth", &House::itsWindowWidth, 0.75, 0.05, 1.0, 0.05),
-    FieldInfo("windowHeight", &House::itsWindowHeight, 0.5, 0.05, 1.0, 0.05),
-    FieldInfo("windowVertBars", &House::itsWindowVertBars, 1, 0, 5, 1),
-    FieldInfo("windowHorizBars", &House::itsWindowHorizBars, 1, 0, 5, 1),
+    Field("numWindows", &House::itsNumWindows, 5, 2, 6, 1, true),
+    Field("windowWidth", &House::itsWindowWidth, 0.75, 0.05, 1.0, 0.05),
+    Field("windowHeight", &House::itsWindowHeight, 0.5, 0.05, 1.0, 0.05),
+    Field("windowVertBars", &House::itsWindowVertBars, 1, 0, 5, 1),
+    Field("windowHorizBars", &House::itsWindowHorizBars, 1, 0, 5, 1),
 
-    FieldInfo("roofShape", &House::itsRoofShape, 0, 0, 2, 1, true),
-    FieldInfo("roofHeight", &House::itsRoofHeight, 0.05, 0.05, 2.0, 0.05),
-    FieldInfo("roofOverhang", &House::itsRoofOverhang, 0.75, 0.0, 0.5, 0.05),
-    FieldInfo("roofColor", &House::itsRoofColor, 1, 0, 1, 1),
+    Field("roofShape", &House::itsRoofShape, 0, 0, 2, 1, true),
+    Field("roofHeight", &House::itsRoofHeight, 0.05, 0.05, 2.0, 0.05),
+    Field("roofOverhang", &House::itsRoofOverhang, 0.75, 0.0, 0.5, 0.05),
+    Field("roofColor", &House::itsRoofColor, 1, 0, 1, 1),
 
-    FieldInfo("chimneyXPosition",
-              &House::itsChimneyXPosition, 0.2, -0.5, 0.5, 0.05, true),
-    FieldInfo("chimneyYPosition",
-              &House::itsChimneyYPosition, 0.5, 0.0, 1.0, 0.05),
-    FieldInfo("chimneyWidth", &House::itsChimneyWidth, 0.06, 0.01, 0.30, 0.01),
-    FieldInfo("chimneyHeight", &House::itsChimneyHeight, 0.5, 0.05, 2.0, 0.1)
+    Field("chimneyXPosition",
+          &House::itsChimneyXPosition, 0.2, -0.5, 0.5, 0.05, true),
+    Field("chimneyYPosition",
+          &House::itsChimneyYPosition, 0.5, 0.0, 1.0, 0.05),
+    Field("chimneyWidth", &House::itsChimneyWidth, 0.06, 0.01, 0.30, 0.01),
+    Field("chimneyHeight", &House::itsChimneyHeight, 0.5, 0.05, 2.0, 0.1)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
 
   static FieldMap HOUSE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
                                &GrObj::classFields());

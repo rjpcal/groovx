@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Aug 15 13:40:07 2001
+// written: Wed Aug 15 19:40:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,37 +28,27 @@ namespace
 {
 #define GETSET(type, attr) std::make_pair(&type::get##attr, &type::set##attr)
 
-  const FieldInfo FINFOS[] =
+  const Field FINFOS[] =
   {
-    FieldInfo("renderMode", GETSET(GrObj, RenderMode),
-              1, 1, 4, 1, true),
+    Field("renderMode", GETSET(GrObj, RenderMode), 1, 1, 4, 1, true),
 
-    FieldInfo("unRenderMode", GETSET(GrObj, UnRenderMode),
-              6, 1, 6, 1),
-    FieldInfo("bbVisibility", GETSET(GrObj, BBVisibility),
-              false, false, true, true),
-    FieldInfo("scalingMode", GETSET(GrObj, ScalingMode),
-              1, 1, 3, 1),
+    Field("unRenderMode", GETSET(GrObj, UnRenderMode), 6, 1, 6, 1),
+    Field("bbVisibility", GETSET(GrObj, BBVisibility),
+          false, false, true, true),
+    Field("scalingMode", GETSET(GrObj, ScalingMode), 1, 1, 3, 1),
     // xx widthFactor
     // xx heightFactor
-    FieldInfo("aspectRatio", GETSET(GrObj, AspectRatio),
-              1.0, 0.1, 10.0, 0.1),
-    FieldInfo("width", GETSET(GrObj, Width),
-              1.0, 0.1, 10.0, 0.1),
-    FieldInfo("height", GETSET(GrObj, Height),
-              1.0, 0.1, 10.0, 0.1),
-    FieldInfo("maxDimension", GETSET(GrObj, MaxDimension),
-              1.0, 0.1, 10.0, 0.1),
-    FieldInfo("alignmentMode", GETSET(GrObj, AlignmentMode),
-              1, 1, 7, 1),
-    FieldInfo("centerX", GETSET(GrObj, CenterX),
-              0.0, -10.0, 10.0, 0.1),
-    FieldInfo("centerY", GETSET(GrObj, CenterY),
-              0.0, -10.0, 10.0, 0.1)
+    Field("aspectRatio", GETSET(GrObj, AspectRatio), 1.0, 0.1, 10.0, 0.1),
+    Field("width", GETSET(GrObj, Width), 1.0, 0.1, 10.0, 0.1),
+    Field("height", GETSET(GrObj, Height), 1.0, 0.1, 10.0, 0.1),
+    Field("maxDimension", GETSET(GrObj, MaxDimension), 1.0, 0.1, 10.0, 0.1),
+    Field("alignmentMode", GETSET(GrObj, AlignmentMode), 1, 1, 7, 1),
+    Field("centerX", GETSET(GrObj, CenterX), 0.0, -10.0, 10.0, 0.1),
+    Field("centerY", GETSET(GrObj, CenterY), 0.0, -10.0, 10.0, 0.1)
   };
 #undef GETSET
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
 
   FieldMap GROBJ_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
 }

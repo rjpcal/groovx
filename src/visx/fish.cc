@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Aug 15 14:32:31 2001
+// written: Wed Aug 15 19:40:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,28 +96,28 @@ struct Fish::EndPt {
 
 const FieldMap& Fish::classFields()
 {
-  static const FieldInfo FINFOS[] =
+  static const Field FINFOS[] =
   {
-    FieldInfo("category", &Fish::itsFishCategory, 0, 0, 10, 1, true),
-    FieldInfo("dorsalFinCoord", &Fish::itsDorsalFinCoord, 0.0, -2.0, 2.0, 0.1),
-    FieldInfo("tailFinCoord", &Fish::itsTailFinCoord, 0.0, -2.0, 2.0, 0.1),
-    FieldInfo("lowerFinCoord", &Fish::itsLowerFinCoord, 0.0, -2.0, 2.0, 0.1),
-    FieldInfo("mouthCoord", &Fish::itsMouthCoord, 0.0, -2.0, 2.0, 0.1),
+    Field("category", &Fish::itsFishCategory, 0, 0, 10, 1, true),
+    Field("dorsalFinCoord", &Fish::itsDorsalFinCoord, 0.0, -2.0, 2.0, 0.1),
+    Field("tailFinCoord", &Fish::itsTailFinCoord, 0.0, -2.0, 2.0, 0.1),
+    Field("lowerFinCoord", &Fish::itsLowerFinCoord, 0.0, -2.0, 2.0, 0.1),
+    Field("mouthCoord", &Fish::itsMouthCoord, 0.0, -2.0, 2.0, 0.1),
 
-    FieldInfo("currentPart", FieldInfo::BoundsCheck(),
-				  &Fish::itsCurrentPart, 0, 0, 3, 1, true),
+    Field("currentPart", Field::BoundsCheck(),
+          &Fish::itsCurrentPart, 0, 0, 3, 1, true),
 
-    FieldInfo("currentEndPt", FieldInfo::BoundsCheck(),
-				  &Fish::itsCurrentEndPt, 0, 0, 3, 1, true),
+    Field("currentEndPt", Field::BoundsCheck(),
+          &Fish::itsCurrentEndPt, 0, 0, 3, 1, true),
 
-    FieldInfo("endPt_Part", &Fish::itsEndPt_Part, 1, 1, 4, 1),
-    FieldInfo("endPt_Bkpt", &Fish::itsEndPt_Bkpt, 1, 1, 10, 1)
+    Field("endPt_Part", &Fish::itsEndPt_Part, 1, 1, 4, 1),
+    Field("endPt_Bkpt", &Fish::itsEndPt_Bkpt, 1, 1, 10, 1)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
 
   static FieldMap FISH_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-										&GrObj::classFields());
+                              &GrObj::classFields());
 
   return FISH_FIELDS;
 }

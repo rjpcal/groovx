@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Aug 15 14:44:20 2001
+// written: Wed Aug 15 19:40:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,20 +48,20 @@ const Gabor::ColorMode Gabor::BW_DITHER_RECT;
 
 const FieldMap& Gabor::classFields()
 {
-  static const FieldInfo FINFOS[] =
+  static const Field FINFOS[] =
   {
-    FieldInfo("colorMode", &Gabor::itsColorMode, 2, 1, 4, 1, true),
-    FieldInfo("contrast", &Gabor::itsContrast, 1.0, 0.0, 1.0, 0.05),
-    FieldInfo("spatialFreq", &Gabor::itsSpatialFreq, 3.5, 0.5, 10.0, 0.5),
-    FieldInfo("phase", &Gabor::itsPhase, 0.0, -180.0, 179.0, 1.0),
-    FieldInfo("sigma", &Gabor::itsSigma, 0.15, 0.025, 0.5, 0.025),
-    FieldInfo("aspectRatio", &Gabor::itsAspectRatio, 1.0, 0.1, 10.0, 0.1),
-    FieldInfo("orientation", &Gabor::itsOrientation, 0.0, -180.0, 179.0, 1.0),
-    FieldInfo("resolution", &Gabor::itsResolution, 60, 5, 500, 1),
-    FieldInfo("pointSize", &Gabor::itsPointSize, 1, 1, 25, 1)
+    Field("colorMode", &Gabor::itsColorMode, 2, 1, 4, 1, true),
+    Field("contrast", &Gabor::itsContrast, 1.0, 0.0, 1.0, 0.05),
+    Field("spatialFreq", &Gabor::itsSpatialFreq, 3.5, 0.5, 10.0, 0.5),
+    Field("phase", &Gabor::itsPhase, 0.0, -180.0, 179.0, 1.0),
+    Field("sigma", &Gabor::itsSigma, 0.15, 0.025, 0.5, 0.025),
+    Field("aspectRatio", &Gabor::itsAspectRatio, 1.0, 0.1, 10.0, 0.1),
+    Field("orientation", &Gabor::itsOrientation, 0.0, -180.0, 179.0, 1.0),
+    Field("resolution", &Gabor::itsResolution, 60, 5, 500, 1),
+    Field("pointSize", &Gabor::itsPointSize, 1, 1, 25, 1)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(Field);
 
   static FieldMap GABOR_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
                                &GrObj::classFields());

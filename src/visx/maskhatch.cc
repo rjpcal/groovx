@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Aug 15 17:29:27 2001
+// written: Wed Aug 15 19:44:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,14 +36,14 @@ namespace
 
 const FieldMap& MaskHatch::classFields()
 {
-  static const FieldInfo MASK_FINFOS[] =
+  static const Field MASK_FINFOS[] =
   {
-    FieldInfo("numLines", &MaskHatch::itsNumLines, 5, 0, 25, 1, true),
-    FieldInfo("lineWidth", FieldInfo::BoundsCheck(),
-              &MaskHatch::itsLineWidth, 1, 0, 25, 1)
+    Field("numLines", &MaskHatch::itsNumLines, 5, 0, 25, 1, true),
+    Field("lineWidth", Field::BoundsCheck(),
+          &MaskHatch::itsLineWidth, 1, 0, 25, 1)
   };
 
-  const unsigned int NUM_FINFOS = sizeof(MASK_FINFOS)/sizeof(FieldInfo);
+  const unsigned int NUM_FINFOS = sizeof(MASK_FINFOS)/sizeof(Field);
 
   static FieldMap MASK_FIELDS(MASK_FINFOS, MASK_FINFOS+NUM_FINFOS,
                               &GrObj::classFields());

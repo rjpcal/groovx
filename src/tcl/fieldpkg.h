@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 12 17:45:52 2000
-// written: Wed Jul 18 11:25:50 2001
+// written: Wed Aug 15 19:42:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 #include "tcl/tclpkg.h"
 #endif
 
-class FieldInfo;
+class Field;
 class FieldMap;
 
 namespace Tcl
@@ -29,7 +29,7 @@ namespace Tcl
 
   class Pkg;
 
-  void defField(Pkg* pkg, const FieldInfo& finfo);
+  void defField(Pkg* pkg, const Field& field);
   void defAllFields(Pkg* pkg, const FieldMap& fmap);
 
   template <class C>
