@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Sat Dec  4 01:49:40 1999
+// written: Tue Dec  7 18:44:24 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -81,7 +81,7 @@ DOTRACE("ObjTogl::toglHasBeenCreated");
 
 TlistWidget* ObjTogl::theTlistWidget() {
 DOTRACE("ObjTogl::theTlistWidget");
-  if (!toglCreated) { throw TclError("Togl not yet initialized"); }
+  if (!toglCreated) { throw Tcl::TclError("Togl not yet initialized"); }
   Assert(theWidget != 0);
   return theWidget;
 }
@@ -97,10 +97,10 @@ DOTRACE("ObjTogl::theToglConfig");
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::DestroyCmd : public TclCmd {
+class ObjTogl::DestroyCmd : public Tcl::TclCmd {
 public:
   DestroyCmd(Tcl_Interp* interp, const char* cmd_name) :
-    TclCmd(interp, cmd_name, NULL, 1, 1)
+    Tcl::TclCmd(interp, cmd_name, NULL, 1, 1)
   {
     Togl_DestroyFunc(destroyCallback);  
   }
@@ -138,11 +138,11 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::BindCmd : public TclItemCmd<ToglConfig> {
+class ObjTogl::BindCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  BindCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<ToglConfig>(pkg, cmd_name, "event_sequence binding_script",
-									3, 3) {}
+  BindCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name,
+										  "event_sequence binding_script", 3, 3) {}
 protected:
   virtual void invoke() {
 	 const char* event_sequence = getCstringFromArg(1);
@@ -158,11 +158,12 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::DumpCmapCmd : public TclItemCmd<ToglConfig> {
+class ObjTogl::DumpCmapCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  DumpCmapCmd(TclItemPkg* pkg, const char* cmd_name) :
-    TclItemCmd<ToglConfig>(pkg, cmd_name,
-                           "?start_index=0? ?end_index=255?", 1, 3, false) {}
+  DumpCmapCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name,
+										  "?start_index=0? ?end_index=255?",
+										  1, 3, false) {}
 protected:
   virtual void invoke() {
     int start = (objc() < 2) ? 0   : getIntFromArg(1);
@@ -170,7 +171,7 @@ protected:
 
     if (start < 0 || end < 0 || start > 255 || end > 255) {
       static const char* const bad_index_msg = "colormap index out of range";
-      throw TclError(bad_index_msg);
+      throw Tcl::TclError(bad_index_msg);
     }
 
     const int BUF_SIZE = 64;
@@ -199,10 +200,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::DumpEpsCmd : public TclItemCmd<ToglConfig> {
+class ObjTogl::DumpEpsCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  DumpEpsCmd(TclItemPkg* pkg, const char* cmd_name) :
-    TclItemCmd<ToglConfig>(pkg, cmd_name, "filename", 2, 2) {}
+  DumpEpsCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "filename", 2, 2) {}
 protected:
   virtual void invoke() {
     const char* filename = getCstringFromArg(1);
@@ -217,12 +218,12 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::InitCmd : public TclCmd {
+class ObjTogl::InitCmd : public Tcl::TclCmd {
 public:
   InitCmd(Tcl_Interp* interp, const char* cmd_name) :
-    TclCmd(interp, cmd_name,
-           "init_args ?viewing_dist=30?"
-			  "?gl_unit_angle=2.05? ?pack=yes?", 2, 5),
+    Tcl::TclCmd(interp, cmd_name,
+					 "init_args ?viewing_dist=30?"
+					 "?gl_unit_angle=2.05? ?pack=yes?", 2, 5),
     itsInterp(interp)
   {
     Togl_CreateFunc(createCallback);
@@ -234,7 +235,7 @@ protected:
   }
 
   virtual void invoke() {
-    if (toglCreated) { throw TclError("Togl widget already initialized"); }
+    if (toglCreated) { throw Tcl::TclError("Togl widget already initialized"); }
 
     const char* init_args     = getCstringFromArg(1);
     int         viewing_dist  = (objc() < 3) ? 30 : getIntFromArg(2);
@@ -247,12 +248,14 @@ protected:
     // call the createCallback as part of Togl's internal creation
     // procedures.
     string create_cmd_str = string("togl ") + pathname + " " + init_args;
-    TclEvalCmd create_cmd(create_cmd_str.c_str(), TclEvalCmd::THROW_EXCEPTION);
+    Tcl::TclEvalCmd create_cmd(create_cmd_str.c_str(),
+										 Tcl::TclEvalCmd::THROW_EXCEPTION);
     create_cmd.invoke(itsInterp);
 
     // Make sure that widget creation and the create callback
     // successfully set ObjTogl::theTogl to point to a struct Togl
-    if (ObjTogl::theTogl == 0) { throw TclError(); }
+    if (ObjTogl::theTogl == 0)
+		{ throw Tcl::TclError("widget creationg failed"); }
 
     // Create a new ToglConfig object with the specified viewing
     // distance and visual angle per GL unit
@@ -263,7 +266,8 @@ protected:
 	 if (pack) {
 		string pack_cmd_str =
 		  string("pack ") + pathname + " -expand 1 -fill both";
-		TclEvalCmd pack_cmd(pack_cmd_str.c_str(), TclEvalCmd::THROW_EXCEPTION);
+		Tcl::TclEvalCmd pack_cmd(pack_cmd_str.c_str(),
+										 Tcl::TclEvalCmd::THROW_EXCEPTION);
 		pack_cmd.invoke(itsInterp);
 	 }
 
@@ -283,10 +287,10 @@ private:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::InitedCmd : public TclCmd {
+class ObjTogl::InitedCmd : public Tcl::TclCmd {
 public:
   InitedCmd(Tcl_Interp* interp, const char* cmd_name) :
-    TclCmd(interp, cmd_name, NULL, 1, 1) {}
+    Tcl::TclCmd(interp, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() {
     returnBool(ObjTogl::toglCreated);
@@ -299,10 +303,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::LoadFontCmd : public TclItemCmd<ToglConfig> {
+class ObjTogl::LoadFontCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  LoadFontCmd(TclItemPkg* pkg, const char* cmd_name) :
-    TclItemCmd<ToglConfig>(pkg, cmd_name, "?fontname?", 1, 2) {}
+  LoadFontCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "?fontname?", 1, 2) {}
 protected:
   virtual void invoke() {
     const char* fontname = (objc() < 2) ? 0 : getCstringFromArg(1);
@@ -317,10 +321,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::LoadFontiCmd : public TclItemCmd<ToglConfig> {
+class ObjTogl::LoadFontiCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  LoadFontiCmd(TclItemPkg* pkg, const char* cmd_name) :
-    TclItemCmd<ToglConfig>(pkg, cmd_name, "?fontnumber?", 1, 2) {}
+  LoadFontiCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "?fontnumber?", 1, 2) {}
 protected:
   virtual void invoke() {
     int fontnumber = (objc() < 2) ? 0 : getIntFromArg(1);
@@ -335,10 +339,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::SetColorCmd : public TclItemCmd<ToglConfig> {
+class ObjTogl::SetColorCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  SetColorCmd(TclItemPkg* pkg, const char* cmd_name) :
-    TclItemCmd<ToglConfig>(pkg, cmd_name, "index r g b", 5, 5) {}
+  SetColorCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "index r g b", 5, 5) {}
 protected:
   virtual void invoke() {
     int i = getIntFromArg(1);
@@ -361,16 +365,16 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class ObjTogl::SetCurTrialCmd : public TclItemCmd<ToglConfig> {
+class ObjTogl::SetCurTrialCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  SetCurTrialCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", 2, 2) {}
+  SetCurTrialCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", 2, 2) {}
 protected:
   virtual void invoke() {
 	 int trial = getIntFromArg(1);
 
 	 if (!Tlist::theTlist().isValidId(trial))
-		{ throw TclError("invalid trial id"); }
+		{ throw Tcl::TclError("invalid trial id"); }
 	 
 	 TlistWidget* widg = dynamic_cast<TlistWidget*>(getItem());
 
@@ -386,10 +390,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::SetMinRectCmd : public TclItemCmd<ToglConfig> {
+class ObjTogl::SetMinRectCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  SetMinRectCmd(TclItemPkg* pkg, const char* cmd_name) :
-    TclItemCmd<ToglConfig>(pkg, cmd_name, "left top right bottom", 5, 5) {}
+  SetMinRectCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "left top right bottom", 5, 5) {}
 protected:
   virtual void invoke() {
     double l = getDoubleFromArg(1);
@@ -400,7 +404,7 @@ protected:
     // Test for valid rect: right > left && top > bottom. In
     // particular, we must not have right == left or top == bottom
     // since this collapses the space onto one dimension.
-    if (r <= l || t <= b) { throw TclError("invalid rect"); }
+    if (r <= l || t <= b) { throw Tcl::TclError("invalid rect"); }
     
     getItem()->setMinRectLTRB(l,t,r,b);
   }
@@ -413,10 +417,10 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class ObjTogl::SetVisibleCmd : public TclItemCmd<ToglConfig> {
+class ObjTogl::SetVisibleCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  SetVisibleCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<ToglConfig>(pkg, cmd_name, "visibility", 2, 2) {}
+  SetVisibleCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "visibility", 2, 2) {}
 protected:
   virtual void invoke() {
 	 bool vis = getBoolFromArg(1);
@@ -438,10 +442,10 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class ObjTogl::ShowCmd : public TclItemCmd<ToglConfig> {
+class ObjTogl::ShowCmd : public Tcl::TclItemCmd<ToglConfig> {
 public:
-  ShowCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", 2, 2) {}
+  ShowCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "trial_id", 2, 2) {}
 protected:
   virtual void invoke() {
   DOTRACE("ShowCmd::invoke");
@@ -464,10 +468,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjTogl::ObjToglPkg : public CTclItemPkg<ToglConfig> {
+class ObjTogl::ObjToglPkg : public Tcl::CTclItemPkg<ToglConfig> {
 public:
   ObjToglPkg(Tcl_Interp* interp) :
-    CTclItemPkg<ToglConfig>(interp, "Togl", "$Revision$", 0)
+    Tcl::CTclItemPkg<ToglConfig>(interp, "Togl", "$Revision$", 0)
   {
     Tcl_PkgProvide(interp, "Objtogl", "3.2");
 
