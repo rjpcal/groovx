@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:37:04 1999
-// written: Fri Aug 10 12:38:31 2001
+// written: Fri Aug 10 15:03:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,9 +52,9 @@ XBitmap::XBitmap() :
          )
 {
 DOTRACE("XBitmap::XBitmap");
-  GrObj::setRenderMode(DIRECT_RENDER);
-  GrObj::setUnRenderMode(CLEAR_BOUNDING_BOX);
-  Bitmap::setUsingZoom(false);
+  setRenderMode(Gmodes::DIRECT_RENDER);
+  setUnRenderMode(Gmodes::CLEAR_BOUNDING_BOX);
+  setUsingZoom(false);
 }
 
 XBitmap::~XBitmap()

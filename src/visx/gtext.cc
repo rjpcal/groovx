@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Fri Aug 10 10:46:50 2001
+// written: Fri Aug 10 15:08:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -663,7 +663,7 @@ DOTRACE("Gtext::make");
 }
 
 Gtext::Gtext(const char* text) :
-  GrObj(GLCOMPILE, SWAP_FORE_BACK),
+  GrObj(Gmodes::GLCOMPILE, Gmodes::SWAP_FORE_BACK),
   itsText(text ? text : ""),
   itsStrokeWidth(2),
   itsListBase(0)
@@ -671,9 +671,9 @@ Gtext::Gtext(const char* text) :
 DOTRACE("Gtext::Gtext(const char*)");
   itsListBase = getStrokeFontListBase();
 
-  GrObj::setAlignmentMode(GrObj::CENTER_ON_CENTER);
-  GrObj::setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
-  GrObj::setHeight(1.0);
+  setAlignmentMode(Gmodes::CENTER_ON_CENTER);
+  setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
+  setHeight(1.0);
 }
 
 Gtext::~Gtext() {

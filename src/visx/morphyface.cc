@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Fri Aug 10 10:55:04 2001
+// written: Fri Aug 10 15:09:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -187,7 +187,7 @@ DOTRACE("MorphyFace::make");
 }
 
 MorphyFace::MorphyFace() :
-  GrObj(GLCOMPILE, CLEAR_BOUNDING_BOX),
+  GrObj(Gmodes::GLCOMPILE, Gmodes::CLEAR_BOUNDING_BOX),
   FieldContainer(),
 
   mfaceCategory(0),

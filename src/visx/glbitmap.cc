@@ -49,8 +49,8 @@ GLBitmap::GLBitmap() :
          )
 {
 DOTRACE("GLBitmap::GLBitmap");
-  GrObj::setRenderMode(GLCOMPILE);
-  GrObj::setUnRenderMode(CLEAR_BOUNDING_BOX);
+  setRenderMode(Gmodes::GLCOMPILE);
+  setUnRenderMode(Gmodes::CLEAR_BOUNDING_BOX);
   setUsingZoom(true);
 }
 
