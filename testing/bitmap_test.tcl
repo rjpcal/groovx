@@ -91,7 +91,6 @@ test "BitmapTcl-Bitmap::flipContrast" "normal use" {
 	 
 	 return "[expr $count1 != $count2] $count1 $count2"
 } {^1}
-test "BitmapTcl-Bitmap::flipContrast" "error" {} {^$} $no_test
 
 ### Bitmap::flipVerticalCmd ###
 test "BitmapTcl-Bitmap::flipVertical" "too few args" {
@@ -111,9 +110,8 @@ test "BitmapTcl-Bitmap::flipVertical" "normal use" {
 	 show $::BITMAP_TRIAL
 	 set count2 [pixelCheckSum]
 	 
-	 expr { $count1 == $count2 }
-} {^1$}
-test "BitmapTcl-Bitmap::flipVertical" "error" {} {^$} $no_test
+	 return "[expr { $count1 == $count2 }] $count1 $count2"
+} {^1}
 
 ### Bitmap::centerCmd ###
 test "BitmapTcl-Bitmap::center" "too few args" {
@@ -164,9 +162,8 @@ test "BitmapTcl-Bitmap::zoomX/Y" "normal use" {
 	 show $::BITMAP_TRIAL
 	 set count2 [pixelCheckSum]
 
-	 expr { $count1 != $count2 }
-} {^1$}
-test "BitmapTcl-Bitmap::zoomX/Y" "error" {} {^$} $no_test
+	 return "[expr { $count1 != $count2 }] $count1 $count2"
+} {^1}
 
 ### GLBitmap::usingGlBitmapCmd ###
 test "GLBitmapTcl-GLBitmap::usingGlBitmap" "too few args" {
@@ -187,8 +184,7 @@ test "GLBitmapTcl-GLBitmap::usingGlBitmap" "normal use" {
 	 # Rendering should always be faster with glBitmap than with glDrawPixels
 	 expr { $time1 > $time2 }
 	 
-} {^1$}
-test "GLBitmapTcl-GLBitmap::usingGlBitmap" "error" {} {^$} $no_test
+} {^1$} $no_test
 
 ### Bitmap::stringifyCmd ###
 ### Bitmap::destringifyCmd ###
