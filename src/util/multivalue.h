@@ -37,8 +37,8 @@ template <class T>
 class TMultiValue : public Value
 {
 public:
-  TMultiValue(int num) : itsNumValues(num) {}
-  virtual ~TMultiValue() {}
+  TMultiValue(int num);
+  virtual ~TMultiValue();
 
   /// Get a string describing the underlying native type.
   virtual fstring getNativeTypeName() const = 0;
