@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Dec  6 20:05:50 1999
+// written: Mon Dec  6 21:57:02 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -396,7 +396,7 @@ DOTRACE("Trial::trDraw");
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
 	   pos->go();
-      obj->draw();
+      obj->draw(canvas);
     glPopMatrix();
   }
 
@@ -414,7 +414,7 @@ DOTRACE("Trial::trUndraw");
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
 	   pos->rego();
-      obj->undraw();
+      obj->undraw(canvas);
     glPopMatrix();
   }
 
