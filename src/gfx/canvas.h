@@ -100,7 +100,7 @@ public:
   virtual geom::vec3<double> worldFromScreen3(const geom::vec3<int>& screen_pos) const = 0;
 
   /// Convert a rect from screen coordinates to world coordinates.
-  geom::rect<int> screenFromWorldRect(const geom::rect<double>& world_pos) const;
+  geom::rect<int> screenBoundsFromWorldRect(const geom::rect<double>& world_pos) const;
 
   /// Get the viewport rect in screen coordinates.
   virtual geom::rect<int> getScreenViewport() const = 0;

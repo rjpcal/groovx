@@ -114,7 +114,7 @@ DOTRACE("GxNode::undraw");
 
   const geom::rect<double> world_box = getBoundingBox(canvas);
 
-  geom::rect<int> screen_box = canvas.screenFromWorldRect(world_box);
+  geom::rect<int> screen_box = canvas.screenBoundsFromWorldRect(world_box);
 
   screen_box.set_width(screen_box.width()+4);
   screen_box.set_height(screen_box.height()+4);

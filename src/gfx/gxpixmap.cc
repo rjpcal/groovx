@@ -375,7 +375,7 @@ void GxPixmap::grabWorldRect(Nub::SoftRef<Gfx::Canvas> canvas,
 {
 DOTRACE("GxPixmap::grabWorldRect");
 
-  geom::rect<int> screen_rect = canvas->screenFromWorldRect(world_rect);
+  geom::rect<int> screen_rect = canvas->screenBoundsFromWorldRect(world_rect);
 
   grabScreenRect(canvas, screen_rect);
 
