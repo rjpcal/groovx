@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:40 2001
-// written: Thu Mar 15 14:57:20 2001
+// written: Fri Mar 23 16:34:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,6 +39,7 @@ public:
   {}
 
   virtual ~SharedDataBlock() { delete [] itsData; }
+  virtual bool isUnique() const { return refCount() <= 1; }
 };
 
 class BorrowedDataBlock : public DataBlock {
@@ -49,6 +50,9 @@ public:
 
   virtual ~BorrowedDataBlock()
   { /* don't delete the data, since they are 'borrowed' */ }
+
+  // Since the data are borrowed, we always return false here.
+  virtual bool isUnique() const { return false; }
 };
 
 void* DataBlock::operator new(size_t bytes) {
@@ -121,19 +125,22 @@ DataBlock* DataBlock::makeBorrowed(double* data, int data_length) {
 }
 
 void DataBlock::makeUnique(DataBlock*& rep) {
-DOTRACE("DataBlock::makeUnique");
-  if (rep->itsRefCount <= 1) return;
+  if (rep->isUnique()) return;
 
-  DataBlock* rep_copy = makeDataCopy(rep->itsData, rep->itsLength);
+  {
+	 DOTRACE("DataBlock::makeUnique");
 
-  // do the swap
+	 DataBlock* rep_copy = makeDataCopy(rep->itsData, rep->itsLength);
 
-  rep->decrRefCount();
-  rep_copy->incrRefCount();
+	 // do the swap
 
-  rep = rep_copy;
+	 rep->decrRefCount();
+	 rep_copy->incrRefCount();
 
-  Postcondition(rep->itsRefCount == 1);
+	 rep = rep_copy;
+
+	 Postcondition(rep->itsRefCount == 1);
+  }
 }
 
 static const char vcid_datablock_cc[] = "$Header$";
