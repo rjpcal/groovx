@@ -84,6 +84,14 @@ namespace
     glGetBooleanv(GL_CURRENT_RASTER_POSITION_VALID, &value);
     return (value == GL_TRUE);
   }
+
+  geom::span<double> depthRange()
+  {
+    DOTRACE("<glcanvas.cc>::depthRange");
+    GLdouble vals[2];
+    glGetDoublev(GL_DEPTH_RANGE, &vals[0]);
+    return geom::span<double>(vals[0], vals[1]);
+  }
 }
 
 class GLCanvas::Impl
@@ -473,14 +481,17 @@ void GLCanvas::rasterPos(const geom::vec3<double>& world_pos)
 {
 DOTRACE("GLCanvas::rasterPos");
 
-  const geom::rect<int> viewport = getScreenViewport();
+  const geom::rect<double> viewport = geom::rect<double>(getScreenViewport());
+
+  const geom::span<double> depth = depthRange();
 
   const vec3d screen_pos = screenFromWorld3(world_pos);
 
   dbg_dump(3, world_pos);
   dbg_dump(3, screen_pos);
 
-  if (viewport.contains(screen_pos.as_vec2()))
+  if (viewport.contains(screen_pos.as_vec2()) &&
+      depth.contains(screen_pos.z()))
     {
       glRasterPos3d(world_pos.x(), world_pos.y(), world_pos.z());
     }
@@ -492,22 +503,26 @@ DOTRACE("GLCanvas::rasterPos");
       // invalid point and then subsequent glDrawPixels() calls would
       // fail. To trick OpenGL in using the position we want, we first
       // do a glRasterPos() to some valid position -- in this case, we
-      // pick a point NEAR the lower left corner of the viewport with
-      // coords (1,1). (The reason we don't use (0,0) is that this
-      // might get converted into a world position that is slightly
-      // outside the viewport due to rounding errors.) Then we do a
-      // glBitmap() call whose only purpose is to use the "xmove" and
-      // "ymove" arguments to adjust the raster position.
-      const vec3d lower_left = worldFromScreen3(vec3d(1.0,1.0,0.5));
-      dbg_dump(3, lower_left);
-      glRasterPos3d(lower_left.x(), lower_left.y(), lower_left.z());
+      // pick a point near at the center of the viewport and depth
+      // range. Then we do a glBitmap() call whose only purpose is to
+      // use the "xmove" and "ymove" arguments to adjust the raster
+      // position to the desired location.
+      const vec3d safe_screen = vec3d(viewport.center_x(),
+                                      viewport.center_y(),
+                                      depth.center());
+      const vec3d safe_world = worldFromScreen3(safe_screen);
+
+      dbg_dump(3, safe_screen);
+      dbg_dump(3, safe_world);
+
+      glRasterPos3d(safe_world.x(), safe_world.y(), safe_world.z());
 
       if (!rasterPositionValid())
         throw rutz::error("couldn't set valid raster position", SRC_POS);
 
       glBitmap(0, 0, 0.0f, 0.0f,
-               screen_pos.x()-1,
-               screen_pos.y()-1,
+               screen_pos.x()-safe_screen.x(),
+               screen_pos.y()-safe_screen.y(),
                static_cast<const GLubyte*>(0));
     }
 
