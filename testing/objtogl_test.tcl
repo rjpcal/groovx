@@ -138,16 +138,6 @@ test "ObjTogl-dumpCmap" "error from too large index" {
     Togl::dumpCmap 100 900
 } {^Toglet::dumpCmap: colormap index out of range$}
 
-### dumpEpsCmd ###
-test "ObjTogl-dumpEps" "too few args" {
-    Togl::dumpEps
-} {^wrong \# args: should be}
-test "ObjTogl-dumpEps" "too few args" {
-    Togl::dumpEps j u
-} {^wrong \# args: should be}
-test "ObjTogl-dumpEps" "normal use" {} $BLANK $no_test
-test "ObjTogl-dumpEps" "no error" {} $BLANK $no_test
-
 ### scaleRectCmd ###
 test "ObjTogl-scaleRect" "too few args" {
     Togl::scaleRect
