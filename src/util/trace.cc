@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Jan 18 16:07:03 2002
+// written: Mon Jan 21 13:16:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,18 +40,8 @@ namespace
 #endif
   }
 
-  inline bool shouldTrace(bool val) { return val; }
-//    inline bool shouldTrace(bool val) { return true; }
-}
+  bool GLOBAL_TRACE = false;
 
-int MAX_TRACE_LEVEL = 12;
-
-int TRACE_LEVEL = 0;
-
-Util::Trace::Mode TRACE_MODE = Util::Trace::RUN;
-
-namespace
-{
   const char* PDATA_FILE = "prof.out";
 
   STD_IO::ofstream* PDATA_STREAM = new STD_IO::ofstream(PDATA_FILE);
@@ -78,6 +68,15 @@ namespace
 
   minivec<Util::Prof*> allProfs;
 }
+
+
+int MAX_TRACE_LEVEL = 12;
+
+///////////////////////////////////////////////////////////////////////
+//
+// Util::Prof member definitions
+//
+///////////////////////////////////////////////////////////////////////
 
 Util::Prof::Prof(const char* s) :
   funcName(s), callCount(0), totalTime()
@@ -126,6 +125,34 @@ void Util::Prof::printAllProfData(ostream& os)
     }
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// Util::Trace member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+Util::Trace::Mode TRACE_MODE = Util::Trace::RUN;
+
+void Util::Trace::setMode(Mode new_mode)
+{
+  TRACE_MODE = new_mode;
+}
+
+Util::Trace::Mode Util::Trace::getMode()
+{
+  return TRACE_MODE;
+}
+
+bool Util::Trace::getGlobalTrace()
+{
+  return GLOBAL_TRACE;
+}
+
+void Util::Trace::setGlobalTrace(bool on_off)
+{
+  GLOBAL_TRACE = on_off;
+}
+
 void Util::Trace::printStackTrace(ostream& os)
 {
   os << "stack trace:\n";
@@ -154,22 +181,12 @@ void Util::Trace::printStackTrace()
     }
 }
 
-void Util::Trace::setMode(Mode new_mode)
-{
-  TRACE_MODE = new_mode;
-}
-
-Util::Trace::Mode Util::Trace::getMode()
-{
-  return TRACE_MODE;
-}
-
 Util::Trace::Trace(Prof& p, bool useMsg) :
   prof(p),
   start(), finish(), elapsed(),
-  giveTraceMsg(shouldTrace(useMsg))
+  giveTraceMsg(useMsg)
 {
-  if (giveTraceMsg)
+  if (GLOBAL_TRACE || giveTraceMsg)
     {
       printIn();
     }
@@ -185,19 +202,19 @@ Util::Trace::~Trace()
   elapsed.tv_sec = finish.tv_sec - start.tv_sec;
   elapsed.tv_usec = finish.tv_usec - start.tv_usec;
   prof.add(elapsed);
-  if (giveTraceMsg)
+  callStack.pop_back();
+  if (GLOBAL_TRACE || giveTraceMsg)
     {
       printOut();
     }
-  callStack.pop_back();
 }
 
 void Util::Trace::printIn()
 {
 
-  if (TRACE_LEVEL < MAX_TRACE_LEVEL)
+  if (callStack.size() < MAX_TRACE_LEVEL)
     {
-      for (int i=0; i < TRACE_LEVEL; ++i)
+      for (int i=0; i < callStack.size(); ++i)
         STD_IO::cerr << TRACE_TAB;
       STD_IO::cerr << "entering " << prof.name() << "...";
 
@@ -210,15 +227,13 @@ void Util::Trace::printIn()
           STD_IO::cerr << '\n';
         }
     }
-  ++TRACE_LEVEL;
 }
 
 void Util::Trace::printOut()
 {
-  --TRACE_LEVEL;
-  if (TRACE_LEVEL < MAX_TRACE_LEVEL)
+  if (callStack.size() < MAX_TRACE_LEVEL)
     {
-      for (int i=0; i < TRACE_LEVEL; ++i)
+      for (int i=0; i < callStack.size(); ++i)
         STD_IO::cerr << TRACE_TAB;
       STD_IO::cerr << "leaving " << prof.name() << ".";
 
@@ -232,7 +247,7 @@ void Util::Trace::printOut()
         }
 
   }
-  if (TRACE_LEVEL == 0) STD_IO::cerr << '\n';
+  if (callStack.size() == 0) STD_IO::cerr << '\n';
 }
 
 static const char vcid_trace_cc[] = "$Header$";
