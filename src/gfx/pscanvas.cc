@@ -870,7 +870,7 @@ DOTRACE("Gfx::PSCanvas::transform");
 
 
 void Gfx::PSCanvas::drawPixels(const media::bmap_data& /*data*/,
-                               const vec2d& /*world_pos*/,
+                               const vec3d& /*world_pos*/,
                                const vec2d& /*zoom*/)
 {
 DOTRACE("Gfx::PSCanvas::drawPixels");
@@ -878,7 +878,7 @@ DOTRACE("Gfx::PSCanvas::drawPixels");
 }
 
 void Gfx::PSCanvas::drawBitmap(const media::bmap_data& /*data*/,
-                               const vec2d& /*world_pos*/)
+                               const vec3d& /*world_pos*/)
 {
 DOTRACE("Gfx::PSCanvas::drawBitmap");
 // FIXME

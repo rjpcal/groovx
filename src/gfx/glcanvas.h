@@ -125,14 +125,14 @@ public:
   /** If the given position does not fall in the screen viewport, then we
       use the "fake glBitmap()" hack to get a valid raster position outside
       the viewport. */
-  void rasterPos(const geom::vec2<double>& world_pos);
+  void rasterPos(const geom::vec3<double>& world_pos);
 
   virtual void drawPixels(const media::bmap_data& data,
-                          const geom::vec2<double>& world_pos,
+                          const geom::vec3<double>& world_pos,
                           const geom::vec2<double>& zoom);
 
   virtual void drawBitmap(const media::bmap_data& data,
-                          const geom::vec2<double>& world_pos);
+                          const geom::vec3<double>& world_pos);
 
   virtual void grabPixels(const geom::rect<int>& bounds,
                           media::bmap_data& data_out);

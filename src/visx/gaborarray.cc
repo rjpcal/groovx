@@ -274,7 +274,7 @@ DOTRACE("GaborArray::grRender");
 
   update();
 
-  canvas.drawPixels(*itsBmap, vec2d(0.0, 0.0), vec2d(1.0, 1.0));
+  canvas.drawPixels(*itsBmap, vec3d::zeros(), vec2d::ones());
 }
 
 void GaborArray::updateForeg() const

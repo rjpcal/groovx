@@ -473,20 +473,20 @@ namespace
   }
 }
 
-void GLCanvas::rasterPos(const geom::vec2<double>& world_pos)
+void GLCanvas::rasterPos(const geom::vec3<double>& world_pos)
 {
 DOTRACE("GLCanvas::rasterPos");
 
   const geom::rect<int> viewport = getScreenViewport();
 
-  const vec2d screen_pos = screenFromWorld2(world_pos);
+  const vec3d screen_pos = screenFromWorld3(world_pos);
 
   dbg_dump(3, world_pos);
   dbg_dump(3, screen_pos);
 
-  if (viewport.contains(screen_pos))
+  if (viewport.contains(screen_pos.as_vec2()))
     {
-      glRasterPos2d(world_pos.x(), world_pos.y());
+      glRasterPos3d(world_pos.x(), world_pos.y(), world_pos.z());
     }
   else
     {
@@ -504,8 +504,8 @@ DOTRACE("GLCanvas::rasterPos");
       // "ymove" arguments to adjust the raster position.
       const vec3d lower_left = worldFromScreen3(vec3i(1,1,0));
       dbg_dump(3, lower_left);
-      // FIXME do this all in 3D
-      glRasterPos2d(lower_left.x(), lower_left.y());
+      // FIXME why doesn't lower_left.z() work here?
+      glRasterPos3d(lower_left.x(), lower_left.y(), 0.0);
 
       if (!rasterPositionValid())
         throw rutz::error("couldn't set valid raster position", SRC_POS);
@@ -520,7 +520,7 @@ DOTRACE("GLCanvas::rasterPos");
 }
 
 void GLCanvas::drawPixels(const media::bmap_data& data,
-                          const vec2d& world_pos,
+                          const vec3d& world_pos,
                           const vec2d& zoom)
 {
 DOTRACE("GLCanvas::drawPixels");
@@ -576,7 +576,7 @@ DOTRACE("GLCanvas::drawPixels");
 }
 
 void GLCanvas::drawBitmap(const media::bmap_data& data,
-                          const vec2d& world_pos)
+                          const vec3d& world_pos)
 {
 DOTRACE("GLCanvas::drawBitmap");
 
@@ -837,7 +837,7 @@ DOTRACE("GLCanvas::drawRasterText");
 
       dbg_eval(3, len); dbg_eval_nl(3, p);
 
-      rasterPos( vec2d(0.0, 0.0) );
+      rasterPos( vec3d::zeros() );
       if (line > 0)
         {
           // this is a workaround to shift the raster position by a given

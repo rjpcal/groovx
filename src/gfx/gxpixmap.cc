@@ -57,6 +57,7 @@
 
 #include "util/trace.h"
 
+using geom::vec3d;
 using rutz::fstring;
 
 namespace
@@ -408,7 +409,7 @@ void GxPixmap::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxPixmap::grRender");
 
-  geom::vec2<double> world_pos;
+  const vec3d world_pos = vec3d::zeros();
 
   if (rep->itsData.bits_per_pixel() == 1 && rep->itsAsBitmap)
     {
@@ -435,7 +436,7 @@ void GxPixmap::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxPixmap::grGetBoundingBox");
 
-  bbox.drawScreenRect(geom::vec3d::zeros(),
+  bbox.drawScreenRect(vec3d::zeros(),
                       this->size(),
                       getZoom());
 }

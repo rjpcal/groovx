@@ -280,12 +280,12 @@ public:
 
   /// Draw pixmap data at the specified position.
   virtual void drawPixels(const media::bmap_data& data,
-                          const geom::vec2<double>& world_pos,
+                          const geom::vec3<double>& world_pos,
                           const geom::vec2<double>& zoom) = 0;
 
   /// Draw 1-bit bitmap data at the specified position.
   virtual void drawBitmap(const media::bmap_data& data,
-                          const geom::vec2<double>& world_pos) = 0;
+                          const geom::vec3<double>& world_pos) = 0;
 
   /// Read pixel data from the screen rect \a bounds into \a data_out.
   virtual void grabPixels(const geom::rect<int>& bounds,

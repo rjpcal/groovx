@@ -305,7 +305,7 @@ DOTRACE("Gabor::grRender");
   media::bmap_data data;
   getBmapData(data);
 
-  canvas.drawPixels(data, vec2d(0.0, 0.0),
+  canvas.drawPixels(data, vec3d::zeros(),
                     vec2d(itsPointSize, itsPointSize));
 }
 
