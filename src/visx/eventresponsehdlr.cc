@@ -565,7 +565,7 @@ DOTRACE("EventResponseHdlr::Impl::rhAbortTrial");
   ignore();
 
   const int ERR_INDEX = 1;
-  SoundList::Ptr p = SoundList::theSoundList().getCheckedPtr(ERR_INDEX);
+  SoundList::SharedPtr p = SoundList::theSoundList().getCheckedPtr(ERR_INDEX);
   p->play();
 }
 
