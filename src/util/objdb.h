@@ -58,9 +58,6 @@ public:
 
 class ObjDb
 {
-private:
-  static ObjDb theInstance;
-
 protected:
   /// Default constructor makes an empty list.
   ObjDb();

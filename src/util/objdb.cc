@@ -222,11 +222,14 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-ObjDb ObjDb::theInstance;
-
 ObjDb& ObjDb::theDb()
 {
-  return theInstance;
+  static ObjDb* instance = 0;
+  if (instance == 0)
+    {
+      instance = new ObjDb;
+    }
+  return *instance;
 }
 
 ObjDb::Iterator ObjDb::objects() const
