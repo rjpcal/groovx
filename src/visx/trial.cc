@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Sep 29 16:12:19 2000
+// written: Mon Oct  2 13:10:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,6 +33,7 @@
 #include "gwt/canvas.h"
 #include "gwt/widget.h"
 
+#include "util/errorhandler.h"
 #include "util/strings.h"
 
 #include <strstream.h>
@@ -68,14 +69,17 @@ private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
-
 public:
+  enum TrialState { ACTIVE, INACTIVE };
+
   Impl(Trial*) :
 	 itsCorrectResponse(Response::ALWAYS_CORRECT),
-	 itsIdPairs(), itsResponses(), itsType(-1),
-	 itsRhId(0), itsThId(0),
+	 itsIdPairs(),
+	 itsResponses(),
+	 itsType(-1),
+	 itsRhId(0),
+	 itsThId(0),
+	 itsState(INACTIVE),
 	 itsCanvas(0),
 	 itsBlock(0)
 	 {}
@@ -88,8 +92,13 @@ private:
   int itsRhId;
   int itsThId;
 
+  TrialState itsState;
+
   GWT::Canvas* itsCanvas;
   Block* itsBlock;
+
+  void legacySrlz(IO::LegacyWriter* writer) const;
+  void legacyDesrlz(IO::LegacyReader* reader);
 
   bool assertIdsOrHalt()
 	 {
@@ -186,7 +195,8 @@ Trial::IdPair::~IdPair() {}
 
 Value* Trial::IdPair::clone() const {
 DOTRACE("Trial::IdPair::clone");
-  return new IdPair(*this); 
+
+  return new IdPair(*this);
 }
 
 Value::Type Trial::IdPair::getNativeType() const {
@@ -250,6 +260,8 @@ DOTRACE("Trial::Impl::legacyDesrlz");
 void Trial::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("Trial::Impl::readFrom");
 
+  itsState = INACTIVE;
+
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
 	 legacyDesrlz(lreader);
@@ -298,6 +310,9 @@ DOTRACE("Trial::Impl::writeTo");
 
 int Trial::Impl::readFromObjidsOnly(STD_IO::istream &is, int offset) {
 DOTRACE("Trial::Impl::readFromObjidsOnly");
+
+  itsState = INACTIVE;
+
   int posid = 0;
   int objid;
   if (offset == 0) {
@@ -468,7 +483,18 @@ void Trial::Impl::trDoTrial(Trial* self, GWT::Widget& widget,
 DOTRACE("Trial::Impl::trDoTrial");
   itsCanvas = widget.getCanvas();
   itsBlock = &block;
+
+  Assert(&errhdlr != 0);
+
+  if (itsBlock == 0)
+	 errhdlr.handleMsg("Trial::itsBlock was null in trDoTrial");
+
+  if (itsCanvas == 0)
+	 errhdlr.handleMsg("Trial::itsCanvas was null in trDoTrial");
+
   if ( !assertIdsOrHalt() ) return;
+
+  itsState = ACTIVE;
 
   timingHdlr().thBeginTrial(widget, errhdlr, *self);
   timeTrace("trDoTrial"); 
@@ -485,6 +511,8 @@ DOTRACE("Trial::Impl::trElapsedMsec");
 
 void Trial::Impl::trAbortTrial() {
 DOTRACE("Trial::Impl::trAbortTrial");
+  if (INACTIVE == itsState) return;
+
   if ( !assertIdsOrHalt() ) return;
 
   timeTrace("trAbortTrial");
@@ -497,6 +525,8 @@ DOTRACE("Trial::Impl::trAbortTrial");
 
 void Trial::Impl::trEndTrial() {
 DOTRACE("Trial::Impl::trEndTrial");
+  if (INACTIVE == itsState) return;
+
   if ( !assertIdsOrHalt() ) return;
 
   timeTrace("trEndTrial");
@@ -508,15 +538,20 @@ DOTRACE("Trial::Impl::trEndTrial");
 
 void Trial::Impl::trNextTrial() {
 DOTRACE("Trial::Impl::trNextTrial");
+  if (INACTIVE == itsState) return;
+
   if ( !assertIdsOrHalt() ) return;
 
   timeTrace("trNextTrial");
+
+  itsState = INACTIVE;
 
   getBlock().nextTrial();
 }
 
 void Trial::Impl::trHaltExpt() {
 DOTRACE("Trial::Impl::trHaltExpt");
+  if (INACTIVE == itsState) return;
 
   if ( ThList::theThList().isValidId(itsThId) ) { 
 	 timeTrace("trHaltExpt");
@@ -535,10 +570,14 @@ DOTRACE("Trial::Impl::trHaltExpt");
   if ( ThList::theThList().isValidId(itsThId) ) { 
 	 timingHdlr().thHaltExpt();
   }
+
+  itsState = INACTIVE;
 }
 
 void Trial::Impl::trResponseSeen() {
 DOTRACE("Trial::Impl::trResponseSeen");
+  if (INACTIVE == itsState) return;
+
   if ( !assertIdsOrHalt() ) return;
 
   timeTrace("trResponseSeen");
@@ -548,6 +587,8 @@ DOTRACE("Trial::Impl::trResponseSeen");
 
 void Trial::Impl::trRecordResponse(Response& response) {
 DOTRACE("Trial::Impl::trRecordResponse");
+  if (INACTIVE == itsState) return;
+
   timeTrace("trRecordResponse");
   response.setCorrectVal(itsCorrectResponse);
 
@@ -558,6 +599,7 @@ DOTRACE("Trial::Impl::trRecordResponse");
 
 void Trial::Impl::trDrawTrial() const {
 DOTRACE("Trial::Impl::trDrawTrial");
+  if (INACTIVE == itsState) return;
 
   trDraw(getCanvas(), true);
 
@@ -566,6 +608,7 @@ DOTRACE("Trial::Impl::trDrawTrial");
 
 void Trial::Impl::trUndrawTrial() const {
 DOTRACE("Trial::Impl::trUndrawTrial");
+  if (INACTIVE == itsState) return;
 
   trUndraw(getCanvas(), true);
 }
