@@ -3,13 +3,18 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Tue Dec  7 12:29:47 1999
+// written: Tue Dec  7 13:19:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TCLVECCMDS_H_DEFINED
 #define TCLVECCMDS_H_DEFINED
+
+#ifndef MEMORY_DEFINED
+#include <memory>
+#define MEMORY_DEFINED
+#endif
 
 #ifndef TCLCMD_H_DEFINED
 #include "tclcmd.h"
