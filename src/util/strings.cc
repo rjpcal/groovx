@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Tue Oct 31 23:00:56 2000
+// written: Thu Nov  2 17:55:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,8 @@
 
 #define NO_PROF
 #include "util/trace.h"
+#define LOCAL_ASSERT
+#include "util/debug.h"
 
 //---------------------------------------------------------------------
 //
@@ -48,11 +50,32 @@ bool string_literal::equals(const string_literal& other) const
 //
 //---------------------------------------------------------------------
 
-fixed_string::fixed_string(const char* text) :
-  itsText(0),
-  itsLength(0)
+namespace {
+  struct FreeNode {
+	 FreeNode* next;
+  };
+
+  FreeNode* fsFreeList = 0;
+}
+
+void* fixed_string::Rep::operator new(size_t bytes) {
+  Assert(bytes == sizeof(Rep));
+  if (fsFreeList == 0)
+	 return ::operator new(bytes);
+  FreeNode* node = fsFreeList;
+  fsFreeList = fsFreeList->next;
+  return (void*)node;
+}
+
+void fixed_string::Rep::operator delete(void* space) {
+  ((FreeNode*)space)->next = fsFreeList;
+  fsFreeList = (FreeNode*)space;
+}
+
+fixed_string::Rep::Rep(const char* text)
 {
-DOTRACE("fixed_string::fixed_string(const char*)");
+
+  itsRefCount = 0; 
 
   itsText = (text == 0 ? new char[1] : new char[strlen(text)+1]);
   itsLength = (text == 0 ? 0 : strlen(text));
@@ -61,78 +84,85 @@ DOTRACE("fixed_string::fixed_string(const char*)");
 	 strcpy(itsText, text);
   else
 	 itsText[0] = 0;
+
+}
+
+fixed_string::Rep::~Rep()
+{ delete [] itsText; }
+
+fixed_string::fixed_string(const char* text) :
+  itsRep(0)
+{
+DOTRACE("fixed_string::fixed_string(const char*)");
+  itsRep = Rep::make(text);
+  itsRep->incrRefCount();
 }
 
 fixed_string::fixed_string(const fixed_string& other) :
-  itsText(0),
-  itsLength(0)
+  itsRep(other.itsRep)
 {
 DOTRACE("fixed_string::fixed_string(const fixed_string&)");
-
-  itsText = (new char[other.length() + 1]);
-  itsLength = (other.length());
-
-  strcpy(itsText, other.itsText);
+  itsRep->incrRefCount();
 }
 
 fixed_string::~fixed_string()
 {
 DOTRACE("fixed_string::~fixed_string");
-  delete [] itsText;
+  itsRep->decrRefCount();
 }
 
 void fixed_string::swap(fixed_string& other)
 {
 DOTRACE("fixed_string::swap");
-  char* other_data = other.itsText;
-  other.itsText = this->itsText;
-  this->itsText = other_data;
-
-  unsigned int other_len = other.itsLength;
-  other.itsLength = this->itsLength;
-  this->itsLength = other_len;
+  Rep* other_rep = other.itsRep;
+  other.itsRep = this->itsRep;
+  this->itsRep = other_rep;
 }
 
 fixed_string& fixed_string::operator=(const char* text)
 {
 DOTRACE("fixed_string::operator=(const char*)");
-  if (itsText != text)
-	 {
-		fixed_string rhs_copy(text);
-		this->swap(rhs_copy);
-	 }
+
+  Rep* old_rep = itsRep;
+  itsRep = Rep::make(text); 
+  itsRep->incrRefCount();
+  old_rep->decrRefCount();
+
   return *this;
 }
 
 fixed_string& fixed_string::operator=(const fixed_string& other)
 {
 DOTRACE("fixed_string::operator=(const fixed_string&)");
-  if (itsText != other.itsText)
-	 {
-		fixed_string rhs_copy(other);
-		this->swap(rhs_copy);
-	 }
+
+  Rep* old_rep = itsRep;
+  itsRep = other.itsRep;
+  itsRep->incrRefCount();
+  old_rep->decrRefCount();
+
   return *this;
 }
 
 bool fixed_string::equals(const char* other) const
 {
 DOTRACE("fixed_string::equals(const char*)");
-  return ( strcmp(itsText, other) == 0 );
+  return ( itsRep->itsText == other || 
+			  strcmp(itsRep->itsText, other) == 0 );
 }
 
 bool fixed_string::equals(const string_literal& other) const
 {
 DOTRACE("fixed_string::equals(const string_literal&");
-  return ( itsLength == other.itsLength &&
-			  strcmp(itsText, other.itsText) == 0 );
+  return ( itsRep->itsLength == other.length() &&
+			  strcmp(itsRep->itsText, other.c_str()) == 0 );
 }
 
 bool fixed_string::equals(const fixed_string& other) const
 {
 DOTRACE("fixed_string::equals(const fixed_string&)");
-  return ( itsLength == other.itsLength &&
-			  strcmp(itsText, other.itsText) == 0 );
+  return itsRep->itsText == other.itsRep->itsText ||
+	 ( itsRep->itsLength == other.itsRep->itsLength &&
+		strcmp(itsRep->itsText, other.itsRep->itsText) == 0 );
 }
 
 //---------------------------------------------------------------------
@@ -234,8 +264,8 @@ DOTRACE("dynamic_string::equals(const string_literal&)");
 bool dynamic_string::equals(const fixed_string& other) const
 {
 DOTRACE("dynamic_string::equals(const fixed_string&)");
-  return ( itsImpl->text.length() == other.itsLength &&
-			  itsImpl->text == other.itsText );
+  return ( itsImpl->text.length() == other.length() &&
+			  itsImpl->text == other.c_str() );
 }
 
 bool dynamic_string::equals(const dynamic_string& other) const
