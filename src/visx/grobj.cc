@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu Jul 19 11:59:01 2001
+// written: Thu Jul 19 13:10:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ DOTRACE("GrObj::GrObj");
   DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
 
   itsImpl->itsRenderer.setMode(render_mode);
-  setUnRenderMode(unrender_mode);
+  itsImpl->itsRenderer.setUnMode(unrender_mode);
 
   // The GrObj needs to observe itself in order to update its display
   // list according to state changes.
@@ -172,7 +172,7 @@ DOTRACE("GrObj::getPixelBorder");
 
 int GrObj::category() const {
 DOTRACE("GrObj::category");
-  return itsImpl->category();
+  return itsImpl->itsCategory;
 }
 
 GrObj::RenderMode GrObj::getRenderMode() const {
@@ -181,7 +181,7 @@ GrObj::RenderMode GrObj::getRenderMode() const {
 
 GrObj::RenderMode GrObj::getUnRenderMode() const {
 DOTRACE("GrObj::getUnRenderMode");
-  return itsImpl->getUnRenderMode();
+  return itsImpl->itsRenderer.getUnMode();
 }
 
 //////////////////
@@ -262,7 +262,7 @@ DOTRACE("GrObj::setPixelBorder");
 
 void GrObj::setCategory(int val) {
 DOTRACE("GrObj::setCategory");
-  itsImpl->setCategory(val);
+  itsImpl->itsCategory = val;
 }
 
 void GrObj::setRenderMode(GrObj::RenderMode mode) {
@@ -275,7 +275,7 @@ DOTRACE("GrObj::setRenderMode");
 void GrObj::setUnRenderMode(GrObj::RenderMode mode) {
 DOTRACE("GrObj::setUnRenderMode");
 
-  itsImpl->setUnRenderMode(mode);
+  itsImpl->itsRenderer.setUnMode(mode);
   sendStateChangeMsg();
 }
 
