@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Tue Nov 23 17:37:01 1999
+// written: Wed Nov 24 12:05:54 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,6 @@
 #include "grobj.h"
 #endif
 
-#ifndef RECT_H_DEFINED
-#include "rect.h"
-#endif
-
 #ifndef STRING_DEFINED
 #include <string>
 #define STRING_DEFINED
@@ -28,6 +24,8 @@
 #include <vector>
 #define VECTOR_DEFINED
 #endif
+
+template <class V> class Rect;
 
 ///////////////////////////////////////////////////////////////////////
 /**
