@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Jun  1 13:53:29 2000
+// written: Mon Jun 26 12:15:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -196,10 +196,9 @@ DOTRACE("IoPtrList::writeTo");
 	 {
 		DebugEval(i);
 		void* voidptr = getVoidPtr(i);       DebugEval(voidptr);
-		if ( voidptr != 0 )
-		  {
-			 ioBlock[i] = fromVoidToIO(voidptr);
-		  }
+
+		ioBlock[i] = fromVoidToIO(voidptr);
+
 		DebugEvalNL(ioBlock[i]);
 	 }
 
