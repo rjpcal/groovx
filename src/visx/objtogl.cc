@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Sep 11 14:56:22 2002
+// written: Wed Sep 11 15:25:14 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -189,7 +189,7 @@ public:
 
     defAction("hook", &Tcl::TkWidget::hook);
 
-    setCurrentTogl(SoftRef<Toglet>(Toglet::make(interp)));
+    setCurrentTogl(SoftRef<Toglet>(Toglet::make()));
 
     Pkg::eval("namespace eval Togl { proc init {} {} }\n"
               "proc clearscreen {} { Togl::clearscreen }\n"
@@ -223,18 +223,6 @@ public:
 //
 //---------------------------------------------------------------------
 
-namespace
-{
-  Tcl_Interp* toglCreateInterp = 0;
-
-  Toglet* makeToglet()
-  {
-    Assert(toglCreateInterp != 0);
-
-    return Toglet::make(toglCreateInterp);
-  }
-}
-
 extern "C"
 int Objtogl_Init(Tcl_Interp* interp)
 {
@@ -242,9 +230,7 @@ DOTRACE("Objtogl_Init");
 
   Tcl::Pkg* pkg = new ObjTogl::TogletPkg(interp);
 
-  toglCreateInterp = interp;
-
-  Util::ObjFactory::theOne().registerCreatorFunc( makeToglet );
+  Util::ObjFactory::theOne().registerCreatorFunc( &Toglet::make );
 
   return pkg->initStatus();
 }

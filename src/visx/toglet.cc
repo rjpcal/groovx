@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Sep  9 11:29:40 2002
+// written: Wed Sep 11 15:23:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,7 @@
 #include "gx/rgbacolor.h"
 
 #include "tcl/tclcode.h"
+#include "tcl/tclmain.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "togl/glutil.h"
@@ -293,7 +294,7 @@ public:
   scoped_ptr<TogletSizer> sizer;
   unsigned int fontListBase;
 
-  TogletImpl(Toglet* owner, Tcl_Interp* interp, Util::UID uid);
+  TogletImpl(Toglet* owner, Util::UID uid);
 
   ~TogletImpl();
 
@@ -306,10 +307,9 @@ public:
   static void destroyCallback(Togl* togl);
 };
 
-TogletImpl::TogletImpl(Toglet* owner,
-                       Tcl_Interp* interp, Util::UID uid)
+TogletImpl::TogletImpl(Toglet* owner, Util::UID uid)
   :
-  togl(new Togl(interp, widgetName(uid))),
+  togl(new Togl(Tcl::Main::interp(), widgetName(uid))),
   canvas(GLCanvas::make(togl->bitsPerPixel(),
                         togl->isRgba(), togl->isDoubleBuffered())),
   sizer(new TogletSizer),
@@ -436,9 +436,9 @@ void TogletImpl::destroyCallback(Togl* togl)
 //
 ///////////////////////////////////////////////////////////////////////
 
-Toglet::Toglet(Tcl_Interp* interp, bool pack) :
+Toglet::Toglet(bool pack) :
   Tcl::TkWidget(),
-  rep(new TogletImpl(this, interp, id()))
+  rep(new TogletImpl(this, id()))
 {
 DOTRACE("Toglet::Toglet");
   DebugEvalNL((void*) this);
@@ -458,7 +458,7 @@ DOTRACE("Toglet::Toglet");
       pack_cmd_str.append( pathname() );
       pack_cmd_str.append( " -side left -expand 1 -fill both; update" );
       Tcl::Code pack_cmd(pack_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
-      pack_cmd.invoke(interp);
+      pack_cmd.invoke(rep->togl->interp());
     }
 
   TkWidget::setTkWin(tkwin);

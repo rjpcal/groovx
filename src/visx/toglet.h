@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Aug  5 13:05:58 2002
+// written: Wed Sep 11 15:21:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ class TogletImpl;
 class Toglet : public Tcl::TkWidget
 {
 protected:
-  Toglet(Tcl_Interp* interp, bool pack=true);
+  Toglet(bool pack=true);
 
 public:
   /// Simple RGB color struct for use with Toglet.
@@ -40,7 +40,7 @@ public:
     double red, green, blue;
   };
 
-  static Toglet* make(Tcl_Interp* interp) { return new Toglet(interp); }
+  static Toglet* make() { return new Toglet; }
 
   virtual ~Toglet();
 
