@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Nov  9 13:14:45 2002
+// written: Fri Dec 20 10:09:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -218,7 +218,7 @@ namespace
 #endif
   }
 
-  unsigned int MAX_TRACE_LEVEL = 12;
+  unsigned int MAX_TRACE_LEVEL = 20;
 
   bool GLOBAL_TRACE = false;
 
