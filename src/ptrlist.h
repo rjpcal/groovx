@@ -166,6 +166,16 @@ public:
   void insertAt(int id, MasterPtr<T>* master)
 	 { VoidPtrList::insertVoidPtrAt(id, master); }
 
+  /// Insert \a ptr into the list, and return its id.
+  int insert(PtrHandle<T> handle)
+	 { return VoidPtrList::insertVoidPtr(handle.masterPtr()); }
+
+  /** Insert \a ptr into the list at index \a id. If an object
+      previously existed at index \a id, that object will be properly
+      destroyed. */
+  void insertAt(int id, PtrHandle<T> handle)
+	 { VoidPtrList::insertVoidPtrAt(id, handle.masterPtr()); }
+
 protected:
   /** Reimplemented from \c IoPtrList to include "PtrList<T>" with \c
       \a T replaced with the the typename of the actual template argument. */
