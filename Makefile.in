@@ -169,6 +169,18 @@ $(DEP)/pkgdepends: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
 		--pkgdir $(SRC)/pkgs \
 		--libdir $(VISX_LIB_DIR)
 
+$(VISX_LIB_DIR)/dlinktest.$(SHLIB_EXT): \
+	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
+
+$(VISX_LIB_DIR)/fstringtest.$(SHLIB_EXT): \
+	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
+
+$(VISX_LIB_DIR)/vectwotest.$(SHLIB_EXT): \
+	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
+
 $(VISX_LIB_DIR)/matlabengine.$(SHLIB_EXT): \
 	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
