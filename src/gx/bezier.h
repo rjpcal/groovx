@@ -32,7 +32,6 @@
 
 #include "util/algo.h"
 #include "util/arrays.h"
-#include "util/slink_list.h"
 
 #include <cmath>
 
@@ -165,44 +164,22 @@ void Bezier::setCtrlPnts(const dynamic_block<double>& RR, int extrema_res)
 
   if (extrema_res <= 0) { extrema_res = 4*(RR.size()); }
 
-  slink_list<double> extrema;
-
-  extrema.push_front(0.0);
-
-  double prev, current = evalDeriv(0.0);
-  for (int e = 1; e <= extrema_res; ++e)
-    {
-      prev = current;
-      current = evalDeriv(double(e)/extrema_res);
-      // See if the derivative has crossed zero by checking if the signs
-      // of current and prev are different
-      if ( (prev > 0.0) != (current > 0.0) )
-        {
-          extrema.push_front((current+prev)/2.0);
-        }
-    }
-
-  extrema.push_front(1.0);
-
   uMin_ = uMax_ = 0.0;
   valMin_ = valMax_ = eval(0.0);
 
-  for (slink_list<double>::iterator
-         ii = extrema.begin(),
-         end = extrema.end();
-       ii != end;
-       ++ii)
+  for (int e = 1; e <= extrema_res; ++e)
     {
-      double current = eval(*ii);
+      const double u = double(e)/extrema_res;
+      const double current = eval(u);
       if (current < valMin_)
         {
           valMin_ = current;
-          uMin_ = *ii;
+          uMin_ = u;
         }
-      if (current > valMax_)
+      else if (current > valMax_)
         {
           valMax_ = current;
-          uMax_ = *ii;
+          uMax_ = u;
         }
     }
 }
