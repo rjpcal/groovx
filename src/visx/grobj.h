@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Mar 23 12:56:26 2000
+// written: Thu Mar 23 15:45:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -379,6 +379,10 @@ public:
       setBitmapCacheDir(). The filename must refer to a format
       supported by \c Pbm. */
   void saveBitmapCache(Canvas& canvas, const char* filename) const;
+
+  /** Restores the bitmap cache from the bitmap cache filename that
+      was most recently passed to \c saveBitmapCache(). */
+  void restoreBitmapCache() const;
 
   /** Recompiles the OpenGL display list or bitmap cache, if there are
 		changes pending, otherwise does nothing. */
