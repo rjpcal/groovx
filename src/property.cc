@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Fri Mar  3 18:05:12 2000
+// written: Sat Mar  4 04:32:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,76 @@
 
 #include "property.h"
 
+#include "reader.h"
+#include "writer.h"
+
+#include <iostream.h>
 #include <memory>
 #include <string>
 
 Property::~Property() {}
+
+template <class T>
+void TProperty<T>::serialize(ostream& os, IOFlag) const 
+  { os << itsVal.itsVal << ' '; }
+
+template <class T>
+void TProperty<T>::deserialize(istream& is, IOFlag)
+  { is >> itsVal.itsVal; }
+
+template <>
+void TProperty<bool>::deserialize(istream& is, IOFlag) {
+  int temp; is >> temp; itsVal.itsVal = bool(temp);
+}
+
+template <class T>
+int TProperty<T>::charCount() const
+  { return gCharCount<T>(itsVal.itsVal); }
+
+template <class T>
+void TProperty<T>::readFrom(Reader* reader)
+  { reader->readValue("value", itsVal.itsVal); }
+
+template <class T>
+void TProperty<T>::writeTo(Writer* writer) const
+  { writer->writeValue("value", itsVal.itsVal); }
+
+template class TProperty<int>;
+template class TProperty<bool>;
+template class TProperty<double>;
+template class TProperty<string>;
+
+
+template <class T>
+void TPtrProperty<T>::serialize(ostream& os, IOFlag) const 
+	 { os << itsVal() << ' '; }
+
+template <class T>
+void TPtrProperty<T>::deserialize(istream& is, IOFlag)
+	 { is >> itsVal(); }
+
+template <>
+void TPtrProperty<bool>::deserialize(istream& is, IOFlag)
+    { int temp; is >> temp; itsVal() = bool(temp); }
+
+template <class T>
+int TPtrProperty<T>::charCount() const
+	 { return gCharCount<T>(itsVal()); }
+
+template <class T>
+void TPtrProperty<T>::readFrom(Reader* reader)
+	 { reader->readValue("value", itsVal()); }
+
+template <class T>
+void TPtrProperty<T>::writeTo(Writer* writer) const
+	 { writer->writeValue("value", itsVal()); }
+  
+
+template class TPtrProperty<int>;
+template class TPtrProperty<bool>;
+template class TPtrProperty<double>;
+template class TPtrProperty<string>;
+
 
 class PropertyInfoBase::Impl {
 public:

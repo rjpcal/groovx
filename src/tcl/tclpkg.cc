@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Dec 15 16:28:33 1999
+// written: Sat Mar  4 04:10:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "tclitempkg.h"
 
 #include <string>
+#include <vector>
 
 #include "tclcmd.h"
 #include "stringifycmd.h"

@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Mon Dec  6 15:10:50 1999
+// written: Sat Mar  4 01:49:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,11 @@
 
 #include "voidptrlist.h"
 
+#include "demangle.h"
+
 #include <algorithm> // for ::count
 #include <typeinfo>
-
-#include "demangle.h"
+#include <vector>
 
 #include "trace.h"
 #include "debug.h"
@@ -32,6 +33,30 @@ namespace {
   const int RESERVE_CHUNK = 20;
 }
 
+
+///////////////////////////////////////////////////////////////////////
+//
+// VoidPtrList::Impl definition
+//
+///////////////////////////////////////////////////////////////////////
+
+class VoidPtrList::Impl {
+public:
+  Impl(int size) :
+	 itsFirstVacant(0),
+	 itsVec()
+	 {
+		itsVec.reserve(size);
+	 }
+
+  int itsFirstVacant;
+  vector<void*> itsVec;
+
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+};
+
 ///////////////////////////////////////////////////////////////////////
 //
 // VoidPtrList member definitions
@@ -39,21 +64,19 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 VoidPtrList::VoidPtrList(int size) :
-  itsFirstVacant(0),
-  itsVec()
+  itsImpl(new Impl(size))
 {
 DOTRACE("VoidPtrList::VoidPtrList");
-
-  itsVec.reserve(size); 
 }
 
 VoidPtrList::~VoidPtrList() {
 DOTRACE("VoidPtrList::~VoidPtrList");
+  delete itsImpl; 
 }
 
 int VoidPtrList::capacity() const {
 DOTRACE("VoidPtrList::capacity");
-  return itsVec.size(); 
+  return itsImpl->itsVec.size(); 
 }
 
 int VoidPtrList::count() const {
@@ -64,9 +87,9 @@ DOTRACE("VoidPtrList::count");
   // pointers, i.e. the size of the container less the number of null
   // pointers.
   int num_null=0;
-  ::count(itsVec.begin(), itsVec.end(),
+  ::count(itsImpl->itsVec.begin(), itsImpl->itsVec.end(),
 			 static_cast<void *>(NULL), num_null);
-  return (itsVec.size() - num_null);
+  return (itsImpl->itsVec.size() - num_null);
 }
 
 bool VoidPtrList::isValidId(int id) const {
@@ -74,41 +97,41 @@ DOTRACE("VoidPtrList::isValidId");
 
   DebugEval(id);
   DebugEval(id>=0);
-  DebugEvalNL(itsVec.size());
-  DebugEvalNL(itsVec[id]);
-  DebugEvalNL(id<itsVec.size());
-  DebugEvalNL(itsVec[id] != NULL);
+  DebugEvalNL(itsImpl->itsVec.size());
+  DebugEvalNL(itsImpl->itsVec[id]);
+  DebugEvalNL(id<itsImpl->itsVec.size());
+  DebugEvalNL(itsImpl->itsVec[id] != NULL);
 
-  return ( id >= 0 && size_t(id) < itsVec.size() && itsVec[id] != NULL ); 
+  return ( id >= 0 && size_t(id) < itsImpl->itsVec.size() && itsImpl->itsVec[id] != NULL ); 
 }
 
 void VoidPtrList::remove(int id) {
 DOTRACE("VoidPtrList::remove");
   if (!isValidId(id)) return;
 
-  destroyPtr(itsVec[id]);
-  itsVec[id] = NULL;         // reset the pointer to NULL
+  destroyPtr(itsImpl->itsVec[id]);
+  itsImpl->itsVec[id] = NULL;         // reset the pointer to NULL
 
-  // reset itsFirstVacant in case i would now be the first vacant
-  if (itsFirstVacant > id) itsFirstVacant = id;
+  // reset itsImpl->itsFirstVacant in case i would now be the first vacant
+  if (itsImpl->itsFirstVacant > id) itsImpl->itsFirstVacant = id;
 }
 
 void VoidPtrList::clear() {
 DOTRACE("VoidPtrList::clear");
-  for (size_t i = 0; i < itsVec.size(); ++i) {
-	 DebugEval(i); DebugEvalNL(itsVec.size());
-	 destroyPtr(itsVec[i]);
-	 itsVec[i] = NULL;
+  for (size_t i = 0; i < itsImpl->itsVec.size(); ++i) {
+	 DebugEval(i); DebugEvalNL(itsImpl->itsVec.size());
+	 destroyPtr(itsImpl->itsVec[i]);
+	 itsImpl->itsVec[i] = NULL;
   }
 
-  itsVec.resize(0);
+  itsImpl->itsVec.resize(0);
 
-  itsFirstVacant = 0;
+  itsImpl->itsFirstVacant = 0;
 }
 
 void* VoidPtrList::getVoidPtr(int id) const throw () {
 DOTRACE("VoidPtrList::getVoidPtr");
-  return itsVec[id]; 
+  return itsImpl->itsVec[id]; 
 }
 
 void* VoidPtrList::getCheckedVoidPtr(int id) const throw (InvalidIdError) {
@@ -122,7 +145,7 @@ DOTRACE("VoidPtrList::getCheckedVoidPtr");
 
 int VoidPtrList::insertVoidPtr(void* ptr) {
 DOTRACE("VoidPtrList::insertVoidPtr");
-  int new_site = itsFirstVacant;
+  int new_site = itsImpl->itsFirstVacant;
   insertVoidPtrAt(new_site, ptr);
   return new_site;              // return the id of the inserted void*
 }
@@ -131,11 +154,11 @@ void VoidPtrList::insertVoidPtrAt(int id, void* ptr) {
 DOTRACE("VoidPtrList::insertVoidPtrAt");
   if (id < 0) return;
 
-  if (size_t(id) >= itsVec.capacity()) {
-	 itsVec.reserve(id+RESERVE_CHUNK);
+  if (size_t(id) >= itsImpl->itsVec.capacity()) {
+	 itsImpl->itsVec.reserve(id+RESERVE_CHUNK);
   }
-  if (size_t(id) >= itsVec.size()) {
-    itsVec.resize(id+1, NULL);
+  if (size_t(id) >= itsImpl->itsVec.size()) {
+    itsImpl->itsVec.resize(id+1, NULL);
   }
 
   // Check to see if we are attempting to insert the same object that
@@ -143,26 +166,54 @@ DOTRACE("VoidPtrList::insertVoidPtrAt");
   // nothing needs to be done (in particular, we had better not delete
   // the "previous" object and then hold on the "new" pointer, since
   // the "new" pointer would then be dangling).
-  if (itsVec[id] == ptr) return;
+  if (itsImpl->itsVec[id] == ptr) return;
 
-  destroyPtr(itsVec[id]);
-  itsVec[id] = ptr;
+  destroyPtr(itsImpl->itsVec[id]);
+  itsImpl->itsVec[id] = ptr;
 
   // It is possible that ptr is NULL, in this case, we might need to
-  // adjust itsFirstVacant if it is currently beyond than the site
+  // adjust itsImpl->itsFirstVacant if it is currently beyond than the site
   // that we have just changed.
-  if (ptr == NULL && id < itsFirstVacant)
-	 itsFirstVacant = id;
+  if (ptr == NULL && id < itsImpl->itsFirstVacant)
+	 itsImpl->itsFirstVacant = id;
 
-  // make sure itsFirstVacant is up-to-date
-  while ( (itsVec[itsFirstVacant] != NULL) &&
-          (size_t(++itsFirstVacant) < itsVec.size()) );
+  // make sure itsImpl->itsFirstVacant is up-to-date
+  while ( (itsImpl->itsVec[itsImpl->itsFirstVacant] != NULL) &&
+          (size_t(++itsImpl->itsFirstVacant) < itsImpl->itsVec.size()) );
 
   afterInsertHook(id, ptr);
 }
 
 void VoidPtrList::afterInsertHook(int /* id */, void* /* ptr */) {
 DOTRACE("VoidPtrList::insertVoidPtrAt");
+}
+
+int& VoidPtrList::firstVacant() {
+  return itsImpl->itsFirstVacant;
+}
+
+const int& VoidPtrList::firstVacant() const {
+  return itsImpl->itsFirstVacant;
+}
+
+void** VoidPtrList::voidVecBegin() const {
+DOTRACE("VoidPtrList::voidVecBegin");
+  return &(itsImpl->itsVec[0]);
+}
+
+void** VoidPtrList::voidVecEnd() const {
+DOTRACE("VoidPtrList::voidVecEnd");
+  return voidVecBegin() + voidVecSize();
+}
+
+unsigned int VoidPtrList::voidVecSize() const {
+DOTRACE("VoidPtrList::voidVecEnd");
+  return itsImpl->itsVec.size();
+}
+
+void VoidPtrList::voidVecResize(unsigned int new_size) {
+DOTRACE("VoidPtrList::voidVecResize");
+  itsImpl->itsVec.resize(new_size, NULL); 
 }
 
 static const char vcid_voidptrlist_cc[] = "$Header$";

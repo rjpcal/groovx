@@ -3,18 +3,13 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Fri Mar  3 16:19:03 2000
+// written: Sat Mar  4 02:38:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FACE_H_DEFINED
 #define FACE_H_DEFINED
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
-#endif
 
 #ifndef GROBJ_H_DEFINED
 #include "grobj.h"
@@ -71,8 +66,11 @@ public:
   /// Info about a \c Face property.
   typedef PropertyInfo<Face> PInfo;
 
-  /// Return a collection of info about all \c Face properties.
-  static const vector<PInfo>& getPropertyInfos();
+  /// Return the number of \c Face properties.
+  static unsigned int numPropertyInfos();
+
+  /// Return info on the i'th \c Face property.
+  static const PInfo& getPropertyInfo(unsigned int i);
 
   /** The category of the face. The semantics of \a category are
       defined by the client. */
@@ -131,9 +129,6 @@ private:
 
   /// assignment operator not to be used
   Face& operator=(const Face&);
-
-  void makeIoList(vector<IO *>& vec);
-  void makeIoList(vector<const IO *>& vec) const;
 };
 
 static const char vcid_face_h[] = "$Header$";

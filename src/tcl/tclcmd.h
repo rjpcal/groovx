@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Fri Mar  3 16:33:01 2000
+// written: Sat Mar  4 02:15:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,11 +18,6 @@
 
 #ifndef STRINGFWD_H_DEFINED
 #include "stringfwd.h"
-#endif
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
 #endif
 
 #ifndef TCLVALUE_H_DEFINED
@@ -104,10 +99,6 @@ protected:
 
   /// Return the number of arguments in the current invocation.
   int objc() { return itsObjc; }
-
-  /** Fills the vector \a vec with pointers to the arguments of the
-      current invocation. */
-  void args(vector<Value*>& vec);
 
   /// Returns the argument number \a argn of the current invocation.
   TclValue& arg(int argn);
@@ -266,42 +257,12 @@ private:
   Tcl_Interp* itsInterp;
   int itsObjc;
   Tcl_Obj* const* itsObjv;
-  vector<TclValue> itsArgs;
+
+  class Impl; // this contains a vector<TclValue> to hold its args
+  Impl* const itsImpl;
 
   int itsResult;
 };
-
-template <>
-inline void Tcl::TclCmd::getValFromObj<int>(Tcl_Obj* obj, int& val) {
-  if ( Tcl_GetIntFromObj(itsInterp, obj, &val) != TCL_OK ) throw TclError();
-}
-
-template <>
-inline void Tcl::TclCmd::getValFromObj<bool>(Tcl_Obj* obj, bool& val) {
-  int int_val;
-  if ( Tcl_GetBooleanFromObj(itsInterp, obj, &int_val) != TCL_OK )
-	 throw TclError();
-  val = bool(int_val);
-}
-
-template <>
-inline void Tcl::TclCmd::getValFromObj<double>(Tcl_Obj* obj,
-															  double& val) {
-  if ( Tcl_GetDoubleFromObj(itsInterp, obj, &val) != TCL_OK )
-	 throw TclError();
-}
-
-template <>
-inline void Tcl::TclCmd::getValFromObj<const char*>(Tcl_Obj* obj,
-																	 const char*& val) {
-  val = Tcl_GetString(obj);
-}
-
-template <>
-inline void Tcl::TclCmd::getValFromObj<string>(Tcl_Obj* obj,
-															  string& val) {
-  val = Tcl_GetString(obj);
-}
 
 static const char vcid_tclcmd_h[] = "$Header$";
 #endif // !TCLCMD_H_DEFINED

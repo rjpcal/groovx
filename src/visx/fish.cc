@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Sat Mar  4 00:26:39 2000
+// written: Sat Mar  4 03:10:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
 #include <GL/glu.h>
 #include <fstream.h>
 #include <strstream.h>
+#include <vector>
 
 #define DYNAMIC_TRACE_EXPR Fish::tracer.status()
 #include "util/trace.h"
@@ -38,6 +39,51 @@ namespace {
   const string ioTag = "Fish";
 
   int dummy=0; // We need a dummy int to attach various CPtrProperty's
+
+
+  void makeIoList(Fish* f, vector<IO *>& vec);
+  void makeIoList(const Fish* f, vector<const IO *>& vec);
+
+  void makeIoList(Fish* f, vector<IO *>& vec) {
+  DOTRACE("Fish::makeIoList");
+	 makeIoList(f, reinterpret_cast<vector<const IO *> &>(vec)); 
+  }
+
+  void makeIoList(const Fish* f, vector<const IO *>& vec) {
+  DOTRACE("Fish::makeIoList const");
+	 vec.clear();
+
+	 vec.push_back(&f->category);
+	 vec.push_back(&f->dorsalFinCoord);
+	 vec.push_back(&f->tailFinCoord);
+	 vec.push_back(&f->lowerFinCoord);
+	 vec.push_back(&f->mouthCoord);
+  }
+
+  const vector<Fish::PInfo>& getPropertyInfos() {
+  DOTRACE("Fish::getPropertyInfos");
+
+	 static vector<Fish::PInfo> p;
+
+	 typedef Fish F;
+	 typedef Fish::PInfo P;
+
+	 if (p.size() == 0) {
+		p.push_back(P("category", &F::category, 0, 10, 1, true));
+		p.push_back(P("dorsalFinCoord", &F::dorsalFinCoord, -2.0, 2.0, 0.1));
+		p.push_back(P("tailFinCoord", &F::tailFinCoord, -2.0, 2.0, 0.1));
+		p.push_back(P("lowerFinCoord", &F::lowerFinCoord, -2.0, 2.0, 0.1));
+		p.push_back(P("mouthCoord", &F::mouthCoord, -2.0, 2.0, 0.1));
+
+		p.push_back(P("currentPart", &F::currentPart, 0, 3, 1, true));
+
+		p.push_back(P("currentEndPt", &F::currentEndPt, 0, 3, 1, true));
+		p.push_back(P("endPt_Part", &F::endPt_Part, 1, 4, 1));
+		p.push_back(P("endPt_Bkpt", &F::endPt_Bkpt, 1, 10, 1));
+	 }
+	 return p;
+  }
+
 }
 
 Util::Tracer Fish::tracer;
@@ -193,7 +239,7 @@ DOTRACE("Fish::serialize");
   if (flag & TYPENAME) { os << ioTag << sep; }
 
   vector<const IO *> ioList;
-  makeIoList(ioList);
+  makeIoList(this, ioList);
   for (vector<const IO *>::const_iterator ii = ioList.begin();
 		 ii != ioList.end(); ++ii) {
 	 (*ii)->serialize(os, flag);
@@ -209,7 +255,7 @@ DOTRACE("Fish::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
   vector<IO *> ioList;
-  makeIoList(ioList);
+  makeIoList(this, ioList);
   for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
 	 (*ii)->deserialize(is, flag);
   }
@@ -231,7 +277,7 @@ DOTRACE("Fish::charCount");
   int result = ioTag.length() + 1;
 
   vector<const IO*> ioList;
-  makeIoList(ioList);
+  makeIoList(this, ioList);
 
   for (size_t i = 0; i < ioList.size(); ++i) {
 	 result += ioList[i]->charCount() + 1; 
@@ -289,27 +335,14 @@ DOTRACE("Fish::receiveStateChangeMsg");
 //
 ///////////////////////////////////////////////////////////////////////
 
-const vector<Fish::PInfo>& Fish::getPropertyInfos() {
-DOTRACE("Fish::getPropertyInfos");
+unsigned int Fish::numPropertyInfos() {
+DOTRACE("Fish::numPropertyInfos");
+  return getPropertyInfos().size();
+}
 
-  static vector<PInfo> p;
-
-  typedef Fish F;
-
-  if (p.size() == 0) {
-	 p.push_back(PInfo("category", &F::category, 0, 10, 1, true));
-	 p.push_back(PInfo("dorsalFinCoord", &F::dorsalFinCoord, -2.0, 2.0, 0.1));
-	 p.push_back(PInfo("tailFinCoord", &F::tailFinCoord, -2.0, 2.0, 0.1));
-	 p.push_back(PInfo("lowerFinCoord", &F::lowerFinCoord, -2.0, 2.0, 0.1));
-	 p.push_back(PInfo("mouthCoord", &F::mouthCoord, -2.0, 2.0, 0.1));
-
-	 p.push_back(PInfo("currentPart", &F::currentPart, 0, 3, 1, true));
-
-	 p.push_back(PInfo("currentEndPt", &F::currentEndPt, 0, 3, 1, true));
-	 p.push_back(PInfo("endPt_Part", &F::endPt_Part, 1, 4, 1));
-	 p.push_back(PInfo("endPt_Bkpt", &F::endPt_Bkpt, 1, 10, 1));
-  }
-  return p;
+const Fish::PInfo& Fish::getPropertyInfo(unsigned int i) {
+DOTRACE("Fish::getPropertyInfo");
+  return getPropertyInfos()[i];
 }
 
 void Fish::readSplineFile(const char* splinefile) {
@@ -471,22 +504,6 @@ DOTRACE("Fish::grRender");
 
   // Must free theNurb here
   gluDeleteNurbsRenderer(theNurb);
-}
-
-void Fish::makeIoList(vector<IO *>& vec) {
-DOTRACE("Fish::makeIoList");
-  makeIoList(reinterpret_cast<vector<const IO *> &>(vec)); 
-}
-
-void Fish::makeIoList(vector<const IO *>& vec) const {
-DOTRACE("Fish::makeIoList const");
-  vec.clear();
-
-  vec.push_back(&category);
-  vec.push_back(&dorsalFinCoord);
-  vec.push_back(&tailFinCoord);
-  vec.push_back(&lowerFinCoord);
-  vec.push_back(&mouthCoord);
 }
 
 

@@ -3,7 +3,7 @@
 // demangle.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct 13 10:41:03 1999
-// written: Fri Mar  3 14:27:10 2000
+// written: Sat Mar  4 02:59:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,10 @@
 #endif
 
 string demangle(const string& in);
+
+// Warning: the result of this function is only valid until the next
+// call to the function.
+const char* demangle_cstr(const char* in);
 
 static const char vcid_demangle_h[] = "$Header$";
 #endif // !DEMANGLE_H_DEFINED

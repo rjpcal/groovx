@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Sat Mar  4 00:03:44 2000
+// written: Sat Mar  4 03:27:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,13 @@
 
 namespace {
   const string ioTag = "MaskHatch";
+
+  const MaskHatch::PInfo PINFOS[] = {
+	 MaskHatch::PInfo("numLines", &MaskHatch::numLines, 0, 25, 1, true),
+	 MaskHatch::PInfo("lineWidth", &MaskHatch::lineWidth, 0, 25, 1)
+  };
+
+  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(MaskHatch::PInfo);
 }
 
 MaskHatch::MaskHatch () :
@@ -66,10 +73,9 @@ DOTRACE("MaskHatch::charCount");
 
 void MaskHatch::readFrom(Reader* reader) {
 DOTRACE("MaskHatch::readFrom");
-  const vector<PInfo>& infos = getPropertyInfos();
-  for (size_t i = 0; i < infos.size(); ++i) {
-	 reader->readValueObj(infos[i].name_cstr(),
-								 const_cast<Value&>(get(infos[i].property())));
+  for (size_t i = 0; i < numPropertyInfos(); ++i) {
+	 reader->readValueObj(PINFOS[i].name_cstr(),
+								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
   GrObj::readFrom(reader);
@@ -77,9 +83,8 @@ DOTRACE("MaskHatch::readFrom");
 
 void MaskHatch::writeTo(Writer* writer) const {
 DOTRACE("MaskHatch::writeTo");
-  const vector<PInfo>& infos = getPropertyInfos();
-  for (size_t i = 0; i < infos.size(); ++i) {
-	 writer->writeValueObj(infos[i].name_cstr(), get(infos[i].property()));
+  for (size_t i = 0; i < numPropertyInfos(); ++i) {
+	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }
 
   GrObj::writeTo(writer);
@@ -91,19 +96,16 @@ DOTRACE("MaskHatch::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-const vector<MaskHatch::PInfo>& MaskHatch::getPropertyInfos() {
-DOTRACE("MaskHatch::getPropertyInfos");
+unsigned int MaskHatch::numPropertyInfos() {
+DOTRACE("MaskHatch::numPropertyInfos");
+//   return getPropertyInfos().size();
+  return NUM_PINFOS;
+}
 
-  static vector<PInfo> p;
-
-  typedef MaskHatch MH;
-
-  if (p.size() == 0) {
-	 p.push_back(PInfo("numLines", &MH::numLines, 0, 25, 1, true));
-	 p.push_back(PInfo("lineWidth", &MH::lineWidth, 0, 25, 1));
-  }
-
-  return p;
+const MaskHatch::PInfo& MaskHatch::getPropertyInfo(unsigned int i) {
+DOTRACE("MaskHatch::getPropertyInfo");
+//   return getPropertyInfos()[i];
+  return PINFOS[i];
 }
 
 void MaskHatch::grGetBoundingBox(Rect<double>& bbox,

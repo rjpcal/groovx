@@ -3,21 +3,13 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Fri Jan 14 17:36:01 2000
+// written: Sat Mar  4 04:09:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef BITMAPTCL_CC_DEFINED
 #define BITMAPTCL_CC_DEFINED
-
-#include <tcl.h>
-#include <tk.h>
-#include <string>
-#include <cstring>
-#include <cstdio>
-#include <fstream.h>
-#include <strstream.h>
 
 #include "bitmap.h"
 #include "glbitmap.h"
@@ -28,6 +20,15 @@
 #include "system.h"
 #include "tclcmd.h"
 #include "tclobjlock.h"
+
+#include <tcl.h>
+#include <tk.h>
+#include <string>
+#include <cstring>
+#include <cstdio>
+#include <fstream.h>
+#include <strstream.h>
+#include <vector>
 
 #define NO_TRACE
 #include "trace.h"

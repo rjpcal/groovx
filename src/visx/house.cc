@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Sat Mar  4 00:03:26 2000
+// written: Sat Mar  4 03:18:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,7 @@
 #include <iostream.h>
 #include <string>
 #include <GL/gl.h>
+#include <vector>
 
 #define NO_TRACE
 #include "trace.h"
@@ -38,6 +39,80 @@
 
 namespace {
   const string ioTag = "House";
+
+  void makeIoList(House* h, vector<IO *>& vec);
+  void makeIoList(const House* h, vector<const IO *>& vec);
+
+  void makeIoList(House* h, vector<IO *>& vec) {
+  DOTRACE("House::makeIoList");
+	 makeIoList(h, reinterpret_cast<vector<const IO *> &>(vec));
+  }
+
+  void makeIoList(const House* h, vector<const IO *>& vec) {
+	 DOTRACE("House::makeIoList const");
+	 vec.clear();
+
+	 vec.push_back(&h->storyAspectRatio);
+	 vec.push_back(&h->numStories);
+
+	 vec.push_back(&h->doorPosition);
+	 vec.push_back(&h->doorWidth);  // fraction of avail. space
+	 vec.push_back(&h->doorHeight); // fraction of one story
+	 vec.push_back(&h->doorOrientation); // left or right
+
+	 vec.push_back(&h->numWindows);
+	 vec.push_back(&h->windowWidth);	// fraction of avail. space
+	 vec.push_back(&h->windowHeight); // fraction of one story
+	 vec.push_back(&h->windowVertBars);
+	 vec.push_back(&h->windowHorizBars);
+
+	 vec.push_back(&h->roofShape);
+	 vec.push_back(&h->roofOverhang);
+	 vec.push_back(&h->roofHeight);
+	 vec.push_back(&h->roofColor);
+
+	 vec.push_back(&h->chimneyXPosition);
+	 vec.push_back(&h->chimneyYPosition);
+	 vec.push_back(&h->chimneyWidth);
+	 vec.push_back(&h->chimneyHeight);
+  }
+
+
+  const vector<House::PInfo>& getPropertyInfos() {
+  DOTRACE("House::getPropertyInfos");
+
+	 static vector<House::PInfo> p;
+
+	 typedef House H;
+	 typedef House::PInfo P;
+
+	 if (p.size() == 0) {
+		p.push_back(P("storyAspectRatio", &H::storyAspectRatio, 0.5, 10.0, 0.05, true));
+		p.push_back(P("numStories", &H::numStories, 1, 5, 1));
+
+		p.push_back(P("doorPosition", &H::doorPosition, 0, 5, 1, true));
+		p.push_back(P("doorWidth", &H::doorWidth, 0.05, 1.0, 0.05));
+		p.push_back(P("doorHeight", &H::doorHeight, 0.05, 1.0, 0.05));
+		p.push_back(P("doorOrientation", &H::doorOrientation, 0, 1, 1));
+
+		p.push_back(P("numWindows", &H::numWindows, 2, 6, 1, true));
+		p.push_back(P("windowWidth", &H::windowWidth, 0.05, 1.0, 0.05));
+		p.push_back(P("windowHeight", &H::windowHeight, 0.05, 1.0, 0.05));
+		p.push_back(P("windowVertBars", &H::windowVertBars, 0, 5, 1));
+		p.push_back(P("windowHorizBars", &H::windowHorizBars, 0, 5, 1));
+
+		p.push_back(P("roofShape", &H::roofShape, 0, 2, 1, true));
+		p.push_back(P("roofHeight", &H::roofHeight, 0.05, 2.0, 0.05));
+		p.push_back(P("roofOverhang", &H::roofOverhang, 0.0, 0.5, 0.05));
+		p.push_back(P("roofColor", &H::roofColor, 0, 1, 1));
+
+		p.push_back(P("chimneyXPosition", &H::chimneyXPosition, -0.5, 0.5, 0.05, true));
+		p.push_back(P("chimneyYPosition", &H::chimneyYPosition, 0.0, 1.0, 0.05));
+		p.push_back(P("chimneyWidth", &H::chimneyWidth, 0.01, 0.30, 0.01));
+		p.push_back(P("chimneyHeight", &H::chimneyHeight, 0.05, 2.0, 0.1));
+	 }
+	 return p;
+  }
 
   void drawWindow(int num_vert_bars, int num_horiz_bars) {
 	 // Draw 1x1 window centered on (0,0)
@@ -166,7 +241,7 @@ DOTRACE("House::serialize");
   if (flag & TYPENAME) { os << ioTag << sep; }
 
   vector<const IO *> ioList;
-  makeIoList(ioList);
+  makeIoList(this, ioList);
   for (vector<const IO *>::const_iterator ii = ioList.begin();
 		 ii != ioList.end(); ++ii) {
 	 (*ii)->serialize(os, flag);
@@ -182,7 +257,7 @@ DOTRACE("House::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
   vector<IO *> ioList;
-  makeIoList(ioList);
+  makeIoList(this, ioList);
   for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
 	 (*ii)->deserialize(is, flag);
   }
@@ -232,39 +307,14 @@ DOTRACE("House::charCount");
 //
 ///////////////////////////////////////////////////////////////////////
 
-const vector<House::PInfo>& House::getPropertyInfos() {
-DOTRACE("House::getPropertyInfos");
+unsigned int House::numPropertyInfos() {
+DOTRACE("House::numPropertyInfos");
+  return getPropertyInfos().size();
+}
 
-  static vector<PInfo> p;
-
-  typedef House H;
-
-  if (p.size() == 0) {
-	 p.push_back(PInfo("storyAspectRatio", &H::storyAspectRatio, 0.5, 10.0, 0.05, true));
-	 p.push_back(PInfo("numStories", &H::numStories, 1, 5, 1));
-
-	 p.push_back(PInfo("doorPosition", &H::doorPosition, 0, 5, 1, true));
-	 p.push_back(PInfo("doorWidth", &H::doorWidth, 0.05, 1.0, 0.05));
-	 p.push_back(PInfo("doorHeight", &H::doorHeight, 0.05, 1.0, 0.05));
-	 p.push_back(PInfo("doorOrientation", &H::doorOrientation, 0, 1, 1));
-
-	 p.push_back(PInfo("numWindows", &H::numWindows, 2, 6, 1, true));
-	 p.push_back(PInfo("windowWidth", &H::windowWidth, 0.05, 1.0, 0.05));
-	 p.push_back(PInfo("windowHeight", &H::windowHeight, 0.05, 1.0, 0.05));
-	 p.push_back(PInfo("windowVertBars", &H::windowVertBars, 0, 5, 1));
-	 p.push_back(PInfo("windowHorizBars", &H::windowHorizBars, 0, 5, 1));
-
-	 p.push_back(PInfo("roofShape", &H::roofShape, 0, 2, 1, true));
-	 p.push_back(PInfo("roofHeight", &H::roofHeight, 0.05, 2.0, 0.05));
-	 p.push_back(PInfo("roofOverhang", &H::roofOverhang, 0.0, 0.5, 0.05));
-	 p.push_back(PInfo("roofColor", &H::roofColor, 0, 1, 1));
-
-	 p.push_back(PInfo("chimneyXPosition", &H::chimneyXPosition, -0.5, 0.5, 0.05, true));
-	 p.push_back(PInfo("chimneyYPosition", &H::chimneyYPosition, 0.0, 1.0, 0.05));
-	 p.push_back(PInfo("chimneyWidth", &H::chimneyWidth, 0.01, 0.30, 0.01));
-	 p.push_back(PInfo("chimneyHeight", &H::chimneyHeight, 0.05, 2.0, 0.1));
-  }
-  return p;
+const House::PInfo& House::getPropertyInfo(unsigned int i) {
+DOTRACE("House::getPropertyInfo");
+  return getPropertyInfos()[i];
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -411,41 +461,6 @@ DOTRACE("House::grRender");
 
   }
   glPopMatrix();
-}
-
-
-void House::makeIoList(vector<IO *>& vec) {
-DOTRACE("House::makeIoList");
-  makeIoList(reinterpret_cast<vector<const IO *> &>(vec));
-}
-
-void House::makeIoList(vector<const IO *>& vec) const {
-DOTRACE("House::makeIoList const");
-  vec.clear();
-
-  vec.push_back(&storyAspectRatio);
-  vec.push_back(&numStories);
-
-  vec.push_back(&doorPosition);
-  vec.push_back(&doorWidth);  // fraction of avail. space
-  vec.push_back(&doorHeight); // fraction of one story
-  vec.push_back(&doorOrientation); // left or right
-
-  vec.push_back(&numWindows);
-  vec.push_back(&windowWidth);	// fraction of avail. space
-  vec.push_back(&windowHeight); // fraction of one story
-  vec.push_back(&windowVertBars);
-  vec.push_back(&windowHorizBars);
-
-  vec.push_back(&roofShape);
-  vec.push_back(&roofOverhang);
-  vec.push_back(&roofHeight);
-  vec.push_back(&roofColor);
-
-  vec.push_back(&chimneyXPosition);
-  vec.push_back(&chimneyYPosition);
-  vec.push_back(&chimneyWidth);
-  vec.push_back(&chimneyHeight);
 }
 
 static const char vcid_house_cc[] = "$Header$";

@@ -3,18 +3,13 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Fri Mar  3 18:13:44 2000
+// written: Sat Mar  4 03:46:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef PROPERTY_H_DEFINED
 #define PROPERTY_H_DEFINED
-
-#ifndef IOSTREAM_H_DEFINED
-#include <iostream.h>
-#define IOSTREAM_H_DEFINED
-#endif
 
 #ifndef IO_H_DEFINED
 #include "io.h"
@@ -28,21 +23,12 @@
 #include "value.h"
 #endif
 
-#ifndef READER_H_DEFINED
-#include "reader.h"
-#endif
-
-#ifndef WRITER_H_DEFINED
-#include "writer.h"
-#endif
-
 ///////////////////////////////////////////////////////////////////////
 /**
  *
  * Property defines an interface for getting and setting Value's whose
  * type is not statically known.
  *
- * @short Abstract base class for get/set dynamically-typed Value's.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -80,7 +66,6 @@ public:
  * functions are protected, but CTProperty allows friendship to be
  * granted to one class (probably the owner of the property).
  *
- * @short Simple implementation of Property using TValue template.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -93,24 +78,12 @@ public:
   ///
   template <class C> friend class PropFriend;
 
-  ///
-  virtual void serialize(ostream& os, IOFlag) const 
-	 { os << itsVal.itsVal << ' '; }
-  ///
-  virtual void deserialize(istream& is, IOFlag)
-	 { is >> itsVal.itsVal; }
+  virtual void serialize(ostream& os, IOFlag) const;
+  virtual void deserialize(istream& is, IOFlag);
+  virtual int charCount() const;
 
-  ///
-  virtual int charCount() const
-	 { return gCharCount<T>(itsVal.itsVal); }
-
-  ///
-  virtual void readFrom(Reader* reader)
-	 { reader->readValue("value", itsVal.itsVal); }
-
-  ///
-  virtual void writeTo(Writer* writer) const
-	 { writer->writeValue("value", itsVal.itsVal); }
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
   
 #ifndef GCC_COMPILER
 protected:
@@ -118,9 +91,7 @@ protected:
 public:
 #endif
 
-  ///
   virtual void set(const Value& new_val) { new_val.get(itsVal.itsVal); }
-  ///
   virtual const Value& get() const { return itsVal; }
 
   ///
@@ -137,11 +108,6 @@ public:
   TValue<T> itsVal;
 };
 
-template <>
-void TProperty<bool>::deserialize(istream& is, IOFlag) {
-  int temp; is >> temp; itsVal.itsVal = bool(temp);
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -150,7 +116,6 @@ void TProperty<bool>::deserialize(istream& is, IOFlag) {
  * interface, so that the class that owns a TProperty can access its
  * native-type interface.
  *
- * @short Allows an owner class to have friendship of a TProperty.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -175,7 +140,6 @@ public:
  * specified through the template arguments min, max and div, such
  * that the acceptable range will be [min/div, max/div].
  *
- * @short Like TProperty, but limits the range of the stored value.
  **/
 
 template <class T, int min, int max, int div>
@@ -264,29 +228,14 @@ public:
   ///
   void reseat(T& valRef) { itsVal.reseat(valRef); }
 
-  ///
-  virtual void serialize(ostream& os, IOFlag) const 
-	 { os << itsVal() << ' '; }
-  ///
-  virtual void deserialize(istream& is, IOFlag)
-	 { is >> itsVal(); }
+  virtual void serialize(ostream& os, IOFlag) const ;
+  virtual void deserialize(istream& is, IOFlag);
+  virtual int charCount() const;
 
-  ///
-  virtual int charCount() const
-	 { return gCharCount<T>(itsVal()); }
-
-  ///
-  virtual void readFrom(Reader* reader)
-	 { reader->readValue("value", itsVal()); }
-
-  ///
-  virtual void writeTo(Writer* writer) const
-	 { writer->writeValue("value", itsVal()); }
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
   
-
-  ///
   virtual void set(const Value& new_val) { new_val.get(itsVal()); }
-  ///
   virtual const Value& get() const { return itsVal; }
 
   ///

@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Wed Feb 16 14:33:19 2000
+// written: Sat Mar  4 02:03:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -162,13 +162,6 @@ public:
       the check fails, an \c InvalidIdError exception is thrown. */
   Ptr getCheckedPtr(int id) const throw (InvalidIdError)
 	 { return DumbPtr<T>(castToT(VoidPtrList::getCheckedVoidPtr(id))); }
-
-  /** Puts a list of all valid (i.e. within-range and non-null) trial
-		ids into the vector<int> that is passed in by reference. */
-  void getValidIds(vector<int>& vec) const {
-	 vec.clear();
-	 insertValidIds(back_inserter(vec));
-  }
 
   //////////////////
   // manipulators //

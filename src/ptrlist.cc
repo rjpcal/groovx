@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Wed Feb 16 14:35:53 2000
+// written: Sat Mar  4 02:04:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,10 @@
 
 #include "ptrlist.h"
 
-#include <typeinfo>
-
 #include "demangle.h"
+
+#include <string>
+#include <typeinfo>
 
 template <class T>
 PtrList<T>::PtrList(int size) :

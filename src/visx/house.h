@@ -3,17 +3,13 @@
 // house.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:15 1999
-// written: Fri Mar  3 16:35:46 2000
+// written: Sat Mar  4 02:48:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef HOUSE_H_DEFINED
 #define HOUSE_H_DEFINED
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#endif
 
 #ifndef GROBJ_H_DEFINED
 #include "grobj.h"
@@ -57,8 +53,11 @@ public:
   /// Info about a \c House property.
   typedef PropertyInfo<House> PInfo;
 
-  /// Return a collection of info about all \c House properties.
-  static const vector<PInfo>& getPropertyInfos();
+  /// Return the number of \c House properties.
+  static unsigned int numPropertyInfos();
+
+  /// Return info on the i'th \c House property.
+  static const PInfo& getPropertyInfo(unsigned int i);
 
   /// Width/height ratio of each story.
   CTProperty<House, double> storyAspectRatio;
@@ -128,9 +127,6 @@ protected:
 private:
   House(const House&);
   House& operator=(const House&);
-
-  void makeIoList(vector<IO *>& vec);
-  void makeIoList(vector<const IO *>& vec) const;
 };
 
 static const char vcid_house_h[] = "$Header$";

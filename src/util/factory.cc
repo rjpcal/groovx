@@ -3,7 +3,7 @@
 // factory.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 22:37:31 1999
-// written: Sat Mar  4 00:32:50 2000
+// written: Sat Mar  4 03:07:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ namespace {
   const string bad_create_msg = "unable to create object of type ";
 }
 
-void FactoryError::throwForType(const string& type) {
+void FactoryError::throwForType(const char* type) {
   throw FactoryError(bad_create_msg+type);
 }
 
@@ -45,13 +45,14 @@ void CreatorMapBase::clear() {
   delete itsImpl;
 }
 
-void* CreatorMapBase::getPtrForName(const string& name) const {
-  return itsImpl->itsMap[name];
+void* CreatorMapBase::getPtrForName(const char* name) const {
+  return itsImpl->itsMap[string(name)];
 }
 
-void CreatorMapBase::setPtrForName(const string& name, void* ptr) {
-  killPtr(itsImpl->itsMap[name]);
-  itsImpl->itsMap[name] = ptr;
+void CreatorMapBase::setPtrForName(const char* name, void* ptr) {
+  string sname(name);
+  killPtr(itsImpl->itsMap[sname]);
+  itsImpl->itsMap[sname] = ptr;
 }
 
 static const char vcid_factory_cc[] = "$Header$";

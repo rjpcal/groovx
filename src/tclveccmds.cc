@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Thu Dec 16 17:43:09 1999
+// written: Sat Mar  4 04:11:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #include "tclveccmds.h"
 
 #include "tclitempkgbase.h"
+
+#include <vector>
 
 #define NO_TRACE
 #include "trace.h"

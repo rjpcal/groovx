@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Fri Mar  3 14:37:26 2000
+// written: Sat Mar  4 04:45:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,6 @@
 
 #ifndef STRINGFWD_H_DEFINED
 #include "stringfwd.h"
-#endif
-
-#ifndef CMATH_DEFINED
-#include <cmath>
-#define CMATH_DEFINED
 #endif
 
 #ifndef ERROR_H_DEFINED

@@ -3,18 +3,13 @@
 // gabor.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Fri Mar  3 16:20:48 2000
+// written: Sat Mar  4 02:47:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GABOR_H_DEFINED
 #define GABOR_H_DEFINED
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
-#endif
 
 #ifndef GROBJ_H_DEFINED
 #include "grobj.h"
@@ -71,8 +66,11 @@ public:
   /// Info about a \c Gabor property.
   typedef PropertyInfo<Gabor> PInfo;
 
-  /// Return a collection of info about all \c Gabor properties.
-  static const vector<PInfo>& getPropertyInfos();
+  /// Return the number of \c Gabor properties.
+  static unsigned int numPropertyInfos();
+
+  /// Return info on the i'th \c Gabor property.
+  static const PInfo& getPropertyInfo(unsigned int i);
 
   /// The current \c ColorMode used for rendering.
   CTProperty<Gabor, ColorMode> colorMode;

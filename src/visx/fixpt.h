@@ -3,18 +3,13 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar  3 16:20:32 2000
+// written: Sat Mar  4 02:47:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIXPT_H_DEFINED
 #define FIXPT_H_DEFINED
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
-#endif
 
 #ifndef GROBJ_H_DEFINED
 #include "grobj.h"
@@ -59,8 +54,11 @@ public:
   /// Info about a \c FixPt property.
   typedef PropertyInfo<FixPt> PInfo;
 
-  /// Return a collection of info about all \c FixPt properties.
-  static const vector<PInfo>& getPropertyInfos();
+  /// Return the number of \c FixPt properties.
+  static unsigned int numPropertyInfos();
+
+  /// Return info on the i'th \c FixPt property.
+  static const PInfo& getPropertyInfo(unsigned int i);
 
   /// Length of crosshairs in GL coordinates.
   CTProperty<FixPt, double> length;

@@ -3,18 +3,13 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Mon Dec  6 14:03:00 1999
+// written: Sat Mar  4 01:50:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef VOIDPTRLIST_H_DEFINED
 #define VOIDPTRLIST_H_DEFINED
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
-#endif
 
 #ifndef ERROR_H_DEFINED
 #include "error.h"
@@ -31,7 +26,9 @@
 class InvalidIdError : public ErrorWithMsg {
 public:
   ///
-  InvalidIdError(const string& msg="") : ErrorWithMsg(msg) {}
+  InvalidIdError() : ErrorWithMsg() {}
+  ///
+  InvalidIdError(const string& msg) : ErrorWithMsg(msg) {}
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +39,6 @@ public:
  * destruction of its contained objects to its subclasses by way of
  * destroyPtr().
  *
- * @short Serves as non-typesafe, void* implementation for PtrList<>.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -69,7 +65,9 @@ public:
   ///
   template <class Iterator>
   void insertValidIds(Iterator itr) const {
-	 for (size_t i = 0; i < itsVec.size(); ++i) {
+	 for (unsigned int i = 0, end = voidVecSize();
+			i < end;
+			++i) {
 		if (isValidId(i)) 
 		  *itr++ = i;
 	 }
@@ -115,18 +113,21 @@ protected:
   virtual void destroyPtr(void* ptr) = 0;
 
 protected:
-  vector<void*>& vec() { return itsVec; }
-  const vector<void*>& vec() const { return itsVec; }
+  int& firstVacant();
+  const int& firstVacant() const;
 
-  int& firstVacant() { return itsFirstVacant; }
-  const int& firstVacant() const { return itsFirstVacant; }
+  void** voidVecBegin() const;
+  void** voidVecEnd() const;
+  unsigned int voidVecSize() const;
+
+  void voidVecResize(unsigned int new_size);
 
 private:
   VoidPtrList(const VoidPtrList&);
   VoidPtrList& operator=(const VoidPtrList&);
 
-  int itsFirstVacant;
-  vector<void*> itsVec;
+  class Impl;
+  Impl* const itsImpl;
 };
 
 static const char vcid_voidptrlist_h[] = "$Header$";

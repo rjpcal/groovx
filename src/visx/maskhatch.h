@@ -3,18 +3,13 @@
 // maskhatch.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Fri Mar  3 16:20:56 2000
+// written: Sat Mar  4 02:48:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef MASKHATCH_H_DEFINED
 #define MASKHATCH_H_DEFINED
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
-#endif
 
 #ifndef GROBJ_H_DEFINED
 #include "grobj.h"
@@ -57,8 +52,11 @@ public:
   /// Info about a \c MaskHatch property.
   typedef PropertyInfo<MaskHatch> PInfo;
 
-  /// Return a collection of info about all \c MaskHatch properties.
-  static const vector<PInfo>& getPropertyInfos();
+  /// Return the number of \c MaskHatch properties.
+  static unsigned int numPropertyInfos();
+
+  /// Return info on the i'th \c MaskHatch property.
+  static const PInfo& getPropertyInfo(unsigned int i);
 
   /// The number of lines that will be rendered in each direction.
   CTBoundedProperty<MaskHatch, int, 0, 1000, 1> numLines;

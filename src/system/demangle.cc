@@ -3,7 +3,7 @@
 // demangle.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct 13 10:41:19 1999
-// written: Fri Mar  3 14:27:22 2000
+// written: Sat Mar  4 03:00:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,12 @@
 #include "demangle.h"
 
 #include <string>
+
+const char* demangle_cstr(const char* in) {
+  static string result;
+  result = demangle(in);
+  return result.c_str();
+}
 
 #ifdef ACC_COMPILER
 string demangle(const string& in) { return in; }

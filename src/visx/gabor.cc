@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Sat Mar  4 00:27:15 2000
+// written: Sat Mar  4 03:11:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include <GL/gl.h>
 #include <cmath>
 #include <string>
+#include <vector>
 
 #include "trace.h"
 #include "debug.h"
@@ -28,6 +29,28 @@
 
 namespace {
   const string ioTag = "Gabor";
+
+  const vector<Gabor::PInfo>& getPropertyInfos() {
+  DOTRACE("Fish::getPropertyInfos");
+
+	 static vector<Gabor::PInfo> p;
+
+	 typedef Gabor G;
+	 typedef Gabor::PInfo P;
+
+	 if (p.size() == 0) {
+		p.push_back(P("colorMode", &G::colorMode, 1, 3, 1, true));
+		p.push_back(P("contrast", &G::contrast, 0.0, 1.0, 0.05));
+		p.push_back(P("spatialFreq", &G::spatialFreq, 0.5, 10.0, 0.5));
+		p.push_back(P("phase", &G::phase, -180, 179, 1));
+		p.push_back(P("sigma", &G::sigma, 0.025, 0.5, 0.025));
+		p.push_back(P("aspectRatio", &G::aspectRatio, 0.1, 10.0, 0.1));
+		p.push_back(P("orientation", &G::orientation, -180, 179, 1));
+		p.push_back(P("resolution", &G::resolution, 5, 500, 5));
+		p.push_back(P("pointSize", &G::pointSize, 1, 25, 1));
+	 }
+	 return p;
+  }
 }
 
 const Gabor::ColorMode Gabor::GRAYSCALE;
@@ -95,25 +118,14 @@ DOTRACE("Gabor::writeTo");
   GrObj::writeTo(writer);
 }
 
-const vector<Gabor::PInfo>& Gabor::getPropertyInfos() {
-DOTRACE("Fish::getPropertyInfos");
+unsigned int Gabor::numPropertyInfos() {
+DOTRACE("Gabor::numPropertyInfos");
+  return getPropertyInfos().size();
+}
 
-  static vector<PInfo> p;
-
-  typedef Gabor G;
-
-  if (p.size() == 0) {
-	 p.push_back(PInfo("colorMode", &G::colorMode, 1, 3, 1, true));
-	 p.push_back(PInfo("contrast", &G::contrast, 0.0, 1.0, 0.05));
-	 p.push_back(PInfo("spatialFreq", &G::spatialFreq, 0.5, 10.0, 0.5));
-	 p.push_back(PInfo("phase", &G::phase, -180, 179, 1));
-	 p.push_back(PInfo("sigma", &G::sigma, 0.025, 0.5, 0.025));
-	 p.push_back(PInfo("aspectRatio", &G::aspectRatio, 0.1, 10.0, 0.1));
-	 p.push_back(PInfo("orientation", &G::orientation, -180, 179, 1));
-	 p.push_back(PInfo("resolution", &G::resolution, 5, 500, 5));
-	 p.push_back(PInfo("pointSize", &G::pointSize, 1, 25, 1));
-  }
-  return p;
+const Gabor::PInfo& Gabor::getPropertyInfo(unsigned int i) {
+DOTRACE("Gabors::getPropertyInfo");
+  return getPropertyInfos()[i];
 }
 
 void Gabor::grGetBoundingBox(Rect<double>& bbox,

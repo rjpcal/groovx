@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Fri Mar  3 18:21:42 2000
+// written: Sat Mar  4 02:43:46 2000
 // $Id$
 //
 //
@@ -428,32 +428,33 @@ public:
 
 protected:
   virtual int numInfos() = 0;
-  virtual const char* getName(int i) = 0;
-  virtual const Value& getMin(int i) = 0;
-  virtual const Value& getMax(int i) = 0;
-  virtual const Value& getRes(int i) = 0;
-  virtual bool getStartNewGroup(int i) = 0;
+  virtual const char* getName(unsigned int i) = 0;
+  virtual const Value& getMin(unsigned int i) = 0;
+  virtual const Value& getMax(unsigned int i) = 0;
+  virtual const Value& getRes(unsigned int i) = 0;
+  virtual bool getStartNewGroup(unsigned int i) = 0;
   
   virtual void invoke();
 };
 
 template <class C>
 class CPropertiesCmd : public PropertiesCmdBase {
-private:
-  const vector<PropertyInfo<C> >& itsInfos;
-
 public:
   CPropertiesCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 PropertiesCmdBase(interp, cmd_name),
-	 itsInfos(C::getPropertyInfos()) {}
+	 PropertiesCmdBase(interp, cmd_name) {}
 
 protected:
-  virtual int numInfos() { return itsInfos.size(); }
-  virtual const char* getName(int i) { return itsInfos[i].name_cstr(); }
-  virtual const Value& getMin(int i) { return itsInfos[i].min(); }
-  virtual const Value& getMax(int i) { return itsInfos[i].max(); }
-  virtual const Value& getRes(int i) { return itsInfos[i].res(); }
-  virtual bool getStartNewGroup(int i) { return itsInfos[i].startNewGroup(); }
+  virtual int numInfos() { return C::numPropertyInfos(); }
+  virtual const char* getName(unsigned int i)
+	 { return C::getPropertyInfo(i).name_cstr(); }
+  virtual const Value& getMin(unsigned int i)
+	 { return C::getPropertyInfo(i).min(); }
+  virtual const Value& getMax(unsigned int i)
+	 { return C::getPropertyInfo(i).max(); }
+  virtual const Value& getRes(unsigned int i)
+	 { return C::getPropertyInfo(i).res(); }
+  virtual bool getStartNewGroup(unsigned int i)
+	 { return C::getPropertyInfo(i).startNewGroup(); }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -470,10 +471,8 @@ void CTclIoItemPkg<C>::declareProperty(const PropertyInfo<C>& pinfo) {
 
 template <class C>
 void CTclIoItemPkg<C>::declareAllProperties() {
-  const vector<PropertyInfo<C> >& pinfos = C::getPropertyInfos();
-
-  for (size_t i = 0; i < pinfos.size(); ++i) {
-	 declareProperty(pinfos[i]);
+  for (size_t i = 0; i < C::numPropertyInfos(); ++i) {
+	 declareProperty(C::getPropertyInfo(i));
   }
 
   addCommand( new CPropertiesCmd<C>(TclPkg::interp(),

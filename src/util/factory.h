@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Sat Mar  4 00:29:22 2000
+// written: Sat Mar  4 03:06:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ public:
   /// Construct with an informative message \a msg.
   FactoryError(const string& str) : ErrorWithMsg(str) {}
 
-  static void throwForType(const string& type);
+  static void throwForType(const char* type);
 };
 
 
@@ -89,10 +89,10 @@ public:
 
 protected:
   /// Retrieve the object associated with the tag \a name.
-  void* getPtrForName(const string& name) const;
+  void* getPtrForName(const char* name) const;
 
   /// Associate the object at \a ptr with the tag \a name.
-  void setPtrForName(const string& name, void* ptr);
+  void setPtrForName(const char* name, void* ptr);
 
   /// Delete the object at \a ptr.
   virtual void killPtr(void* ptr) = 0;
@@ -123,11 +123,11 @@ public:
   typedef CreatorBase<Base> CreatorType;
 
   /// Get the object associated with the tag \a name.
-  CreatorType* getPtrForName(const string& name) const
+  CreatorType* getPtrForName(const char* name) const
 	 { return static_cast<CreatorType*>(CreatorMapBase::getPtrForName(name)); }
 
   /// Associate the object at \a ptr with the tag \a name.
-  void setPtrForName(const string& name, CreatorType* ptr)
+  void setPtrForName(const char* name, CreatorType* ptr)
 	 { CreatorMapBase::setPtrForName(name, static_cast<void*>(ptr)); }
 
 protected:
@@ -164,13 +164,13 @@ public:
       a subclass of Base. */
   template <class Derived>
   void registerType(Derived* dummy) {
-	 itsMap.setPtrForName(demangle(typeid(Derived).name()),
+	 itsMap.setPtrForName(demangle_cstr(typeid(Derived).name()),
 								 new Creator<Base, Derived>);
   }
 
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a null pointer is returned. */
-  Base* newObject(const string& type) {
+  Base* newObject(const char* type) {
 	 CreatorBase<Base>* creator = itsMap.getPtrForName(type);
 	 if (creator == 0) return 0;
 	 return creator->create();
@@ -178,7 +178,7 @@ public:
  
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a FactorError is thrown. */
-  Base* newCheckedObject(const string& type) {
+  Base* newCheckedObject(const char* type) {
 	 Base* p = newObject(type);
 	 if (p == 0) FactoryError::throwForType(type);
 	 return p;
@@ -190,7 +190,7 @@ public:
       specified Derived class. If the downcast fails, a FactorError is
       thrown. */
   template <class Derived>
-  Derived* newTypedObject(const string& type, Derived* dummy) {
+  Derived* newTypedObject(const char* type, Derived* dummy) {
 	 Base* b = newCheckedObject(type);
 	 Derived* d = dynamic_cast<Derived*>(b);
 	 if (d == 0) { 

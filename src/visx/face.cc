@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Sat Mar  4 00:26:34 2000
+// written: Sat Mar  4 02:39:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,7 @@
 #include <string>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <vector>
 
 #define NO_TRACE
 #include "trace.h"
@@ -42,6 +43,45 @@ namespace {
   const double theirMouth_x[2] = {-0.2, 0.2};
 
   const string ioTag = "Face";
+
+  void makeIoList(Face* f, vector<IO *>& vec);
+  void makeIoList(const Face* f, vector<const IO *>& vec);
+
+  void makeIoList(Face* f, vector<IO *>& vec) {
+  DOTRACE("Face::makeIoList");
+    makeIoList(f, reinterpret_cast<vector<const IO *> &>(vec)); 
+  }
+  
+  void makeIoList(const Face* f, vector<const IO *>& vec) {
+  DOTRACE("Face::makeIoList const");
+    vec.clear();
+
+	 vec.push_back(&f->category);
+	 vec.push_back(&f->eyeHeight);
+	 vec.push_back(&f->eyeDistance);
+	 vec.push_back(&f->noseLength);
+	 vec.push_back(&f->mouthHeight);
+  }
+
+  const vector<Face::PInfo>& getPropertyInfos() {
+  DOTRACE("Face::getPropertyInfos");
+
+    static vector<Face::PInfo> p;
+
+	 typedef Face F;
+	 typedef Face::PInfo P;
+
+	 if (p.size() == 0) {
+		p.push_back(P("category", &Face::category, 0, 10, 1, true));
+		p.push_back(P("eyeHeight", &Face::eyeHeight, -1.2, 1.2, 0.1));
+		p.push_back(P("eyeDistance", &Face::eyeDistance, 0.0, 1.8, 0.1));
+		p.push_back(P("noseLength", &Face::noseLength, -0.0, 3.0, 0.1));
+		p.push_back(P("mouthHeight", &Face::mouthHeight, -1.2, 1.2, 0.1));
+	 }
+
+	 return p;
+  }
+
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -92,7 +132,7 @@ DOTRACE("Face::serialize");
   os << '{' << sep;
 
   vector<const IO *> ioList;
-  makeIoList(ioList);
+  makeIoList(this, ioList);
   for (vector<const IO *>::const_iterator ii = ioList.begin(); 
 		 ii != ioList.end(); ii++) {
 	 (*ii)->serialize(os, flag);
@@ -122,7 +162,7 @@ DOTRACE("Face::deserialize");
 	 // Format is:
 	 // Face $category $eyeheight $eyedistance $noselength $mouthheight
 	 vector<IO *> ioList;
-	 makeIoList(ioList);
+	 makeIoList(this, ioList);
 	 for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
 		(*ii)->deserialize(is, flag);
 	 }
@@ -134,7 +174,7 @@ DOTRACE("Face::deserialize");
 	 is >> brace;
 	 if (brace != '{') { throw IoLogicError(ioTag + " missing left-brace"); }
 	 vector<IO *> ioList;
-	 makeIoList(ioList);
+	 makeIoList(this, ioList);
 	 for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
 		(*ii)->deserialize(is, flag);
 	 }
@@ -206,22 +246,14 @@ DOTRACE("Face::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-const vector<Face::PInfo>& Face::getPropertyInfos() {
-DOTRACE("Face::getPropertyInfos");
+unsigned int Face::numPropertyInfos() {
+DOTRACE("Face::numPropertyInfos");
+  return getPropertyInfos().size();
+}
 
-  static vector<PInfo> p;
-
-  typedef Face F;
-
-  if (p.size() == 0) {
-	 p.push_back(PInfo("category", &Face::category, 0, 10, 1, true));
-	 p.push_back(PInfo("eyeHeight", &Face::eyeHeight, -1.2, 1.2, 0.1));
-	 p.push_back(PInfo("eyeDistance", &Face::eyeDistance, 0.0, 1.8, 0.1));
-	 p.push_back(PInfo("noseLength", &Face::noseLength, -0.0, 3.0, 0.1));
-	 p.push_back(PInfo("mouthHeight", &Face::mouthHeight, -1.2, 1.2, 0.1));
-  }
-
-  return p;
+const Face::PInfo& Face::getPropertyInfo(unsigned int i) {
+DOTRACE("Face::getPropertyInfo");
+  return getPropertyInfos()[i];
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -398,22 +430,6 @@ bool Face::check() const {
 DOTRACE("Face::check");
 //   return (eyeDistance() >= 0.0 && noseLength() >= 0.0);
   return true; 
-}
-
-void Face::makeIoList(vector<IO *>& vec) {
-DOTRACE("Face::makeIoList");
-  makeIoList(reinterpret_cast<vector<const IO *> &>(vec)); 
-}
-
-void Face::makeIoList(vector<const IO *>& vec) const {
-DOTRACE("Face::makeIoList const");
-  vec.clear();
-
-  vec.push_back(&category);
-  vec.push_back(&eyeHeight);
-  vec.push_back(&eyeDistance);
-  vec.push_back(&noseLength);
-  vec.push_back(&mouthHeight);
 }
 
 static const char vcid_face_cc[] = "$Header$";

@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Feb 16 15:57:18 2000
+// written: Sat Mar  4 04:37:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -158,6 +158,16 @@ int gCharCount(const char* val) {
 template <>
 int gCharCount(char* val) {
   return strlen(val);
+}
+
+template <>
+int gCharCount(string val) {
+  return val.length();
+}
+
+template <>
+int gCharCount(const string& val) {
+  return val.length();
 }
 
 ///////////////////////////////////////////////////////////////////////

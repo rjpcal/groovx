@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Thu Feb 17 14:52:31 2000
+// written: Sat Mar  4 03:00:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ public:
 protected:
   virtual void invoke() {
 	 C* p = TclItemCmd<C>::getItem();
-	 returnCstring(demangle(typeid(*p).name()).c_str());
+	 returnCstring(demangle_cstr(typeid(*p).name()));
   }
 };
 

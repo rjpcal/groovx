@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Feb  1 18:07:04 2000
+// written: Sat Mar  4 04:09:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,14 +11,15 @@
 #ifndef OBJLISTTCL_CC_DEFINED
 #define OBJLISTTCL_CC_DEFINED
 
-#include <fstream.h>
-#include <cctype>
-#include <string>
-
 #include "grobj.h"
 #include "iomgr.h"
 #include "objlist.h"
 #include "listpkg.h"
+
+#include <fstream.h>
+#include <cctype>
+#include <string>
+#include <vector>
 
 #define NO_TRACE
 #include "trace.h"

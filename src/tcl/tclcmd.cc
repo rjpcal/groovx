@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Fri Mar  3 16:31:01 2000
+// written: Sat Mar  4 02:15:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,13 @@
 
 #include "tclcmd.h"
 
+#include "demangle.h"
+#include "errmsg.h"
+
 #include <exception>
 #include <typeinfo>
 #include <string>
-
-#include "demangle.h"
-#include "errmsg.h"
+#include <vector>
 
 #define NO_TRACE
 #include "trace.h"
@@ -41,8 +42,14 @@ namespace {
   }
 }
 
+class Tcl::TclCmd::Impl {
+public:
+  vector<TclValue> itsArgs;
+};
+
 Tcl::TclCmd::~TclCmd() {
 DOTRACE("Tcl::TclCmd::~TclCmd");
+  delete itsImpl;
 }
 
 Tcl::TclCmd::TclCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage, 
@@ -54,7 +61,7 @@ Tcl::TclCmd::TclCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
   itsInterp(0),
   itsObjc(0),
   itsObjv(0),
-  itsArgs(),
+  itsImpl(new Impl),
   itsResult(TCL_OK)
 {
 DOTRACE("Tcl::TclCmd::TclCmd");
@@ -78,17 +85,10 @@ DOTRACE("Tcl::TclCmd::errorMessage");
 }
 
 
-void Tcl::TclCmd::args(vector<Value*>& vec) {
-DOTRACE("Tcl::TclCmd::args");
-  for (int i = 0; i < itsObjc; ++i) {
- 	 vec.push_back(&itsArgs[i]);
-  }
-}
-
 Tcl::TclValue& Tcl::TclCmd::arg(int argn) {
 DOTRACE("Tcl::TclCmd::arg");
   if (argn > itsObjc) { throw TclError("argument number too high"); }
-  return itsArgs[argn];
+  return itsImpl->itsArgs[argn];
 }
 
 int Tcl::TclCmd::getIntFromArg(int argn) {
@@ -142,6 +142,38 @@ DOTRACE("Tcl::TclCmd::getCstringFromArg");
 string Tcl::TclCmd::getStringFromArg(int argn) {
 DOTRACE("Tcl::TclCmd::getStringFromArg");
   return Tcl_GetString(itsObjv[argn]);
+}
+
+template <>
+void Tcl::TclCmd::getValFromObj<int>(Tcl_Obj* obj, int& val) {
+  if ( Tcl_GetIntFromObj(itsInterp, obj, &val) != TCL_OK ) throw TclError();
+}
+
+template <>
+void Tcl::TclCmd::getValFromObj<bool>(Tcl_Obj* obj, bool& val) {
+  int int_val;
+  if ( Tcl_GetBooleanFromObj(itsInterp, obj, &int_val) != TCL_OK )
+	 throw TclError();
+  val = bool(int_val);
+}
+
+template <>
+void Tcl::TclCmd::getValFromObj<double>(Tcl_Obj* obj,
+															  double& val) {
+  if ( Tcl_GetDoubleFromObj(itsInterp, obj, &val) != TCL_OK )
+	 throw TclError();
+}
+
+template <>
+void Tcl::TclCmd::getValFromObj<const char*>(Tcl_Obj* obj,
+																	 const char*& val) {
+  val = Tcl_GetString(obj);
+}
+
+template <>
+void Tcl::TclCmd::getValFromObj<string>(Tcl_Obj* obj,
+													 string& val) {
+  val = Tcl_GetString(obj);
 }
 
 void Tcl::TclCmd::returnVal(const Value& val) {
@@ -256,7 +288,7 @@ DOTRACE("Tcl::TclCmd::lappendVal");
 }
 
 int Tcl::TclCmd::dummyInvoke(ClientData clientData, Tcl_Interp* interp,
-								int objc, Tcl_Obj *const objv[]) {
+									  int objc, Tcl_Obj *const objv[]) {
 DOTRACE("Tcl::TclCmd::dummyInvoke");
 
   TclCmd* theCmd = static_cast<TclCmd*>(clientData);
@@ -289,12 +321,13 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
   // catch all possible exceptions
   try {
 	 
-	 if (theCmd->itsArgs.size() == 0) {
+	 if (theCmd->itsImpl->itsArgs.size() == 0) {
 		Tcl_Obj* init = Tcl_NewObj();
-		theCmd->itsArgs.resize(theCmd->itsObjcMax, TclValue(interp, init));
+		theCmd->itsImpl->itsArgs.resize(theCmd->itsObjcMax,
+												  TclValue(interp, init));
 	 }
 	 for (int i=0; i < objc; ++i) {
-		theCmd->itsArgs[i].setObj(objv[i]);
+		theCmd->itsImpl->itsArgs[i].setObj(objv[i]);
 	 }
 
 	 theCmd->invoke();
@@ -344,7 +377,7 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
 
   // cleanup
   for (int i=0; i < objc; ++i) {
- 	 theCmd->itsArgs[i].setObj(nullObject());
+ 	 theCmd->itsImpl->itsArgs[i].setObj(nullObject());
   }
   theCmd->itsObjc = 0;
 

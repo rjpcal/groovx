@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Feb 16 14:56:05 2000
+// written: Sat Mar  4 01:58:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include <iostream.h>
 #include <typeinfo>
 #include <string>
+#include <vector>
 
 #include "demangle.h"
 #include "iomgr.h"
@@ -41,26 +42,26 @@ DOTRACE("IoPtrList::serialize");
   char sep = ' ';
   if (flag & TYPENAME) { os << ioTag << sep; }
 
-  const vector<void*>& theVec = VoidPtrList::vec();
-
   // itsVec: we will serialize only the non-null T*'s in
   // itsVec. In order to correctly deserialize the object later, we
   // must write both the size of itsVec (in order to correctly
   // resize later), as well as the number of non-null objects that we
   // serialize (so that deserialize knows when to stop reading).
-  os << theVec.size() << sep;
+  os << voidVecSize() << sep;
 
   int num_non_null = VoidPtrList::count();
   os << num_non_null << endl;
 
   // Serialize all non-null ptr's.
   int c = 0;
-  for (size_t i = 0; i < theVec.size(); ++i) {
-    if (theVec[i] != NULL) {
+  for (size_t i = 0, end = voidVecSize();
+		 i < end;
+		 ++i) {
+    if (getVoidPtr(i) != NULL) {
       os << i << sep;
       // we must serialize the typename since deserialize requires a
       // typename in order to call the virtual constructor
-		IO* obj = fromVoidToIO(theVec[i]);
+		IO* obj = fromVoidToIO(getVoidPtr(i));
       obj->serialize(os, flag|TYPENAME);
       ++c;
     }
@@ -85,19 +86,17 @@ DOTRACE("IoPtrList::deserialize");
 	 IO::readTypename(is, ioTag + " " + alternateIoTags());
   }
 
-  vector<void*>& theVec = VoidPtrList::vec();
-
-  // theVec
+  // voidVec
   clear();
   int size, num_non_null;
   is >> size >> num_non_null;
   // We must check if the istream has failed in order to avoid
-  // attempting to resize theVec to some crazy size.
+  // attempting to resize the voidVec to some crazy size.
   if (is.fail()) throw InputError(ioTag);
   if ( size < 0 || num_non_null < 0 || num_non_null > size ) {
 	 throw IoValueError(ioTag);
   }
-  theVec.resize(size, NULL);
+  voidVecResize(size);
   int ptrid;
   string type;
   for (int i = 0; i < num_non_null; ++i) {
@@ -135,16 +134,18 @@ int IoPtrList::charCount() const {
 DOTRACE("IoPtrList::charCount");
   string ioTag = IO::ioTypename();
   int ch_count = ioTag.size() + 1
-	 + gCharCount<int>(vec().size()) + 1;
+	 + gCharCount<int>(voidVecSize()) + 1;
   int num_non_null = VoidPtrList::count();
   ch_count += 
 	 gCharCount<int>(num_non_null) + 1;
   
-  for (size_t i = 0; i < vec().size(); ++i) {
-	 if (vec()[i] != NULL) {
+  for (size_t i = 0, end = voidVecSize();
+		 i < end;
+		 ++i) {
+	 if (getVoidPtr(i) != NULL) {
 		ch_count += gCharCount<int>(i) + 1;
 
-		IO* obj = fromVoidToIO(vec()[i]);
+		IO* obj = fromVoidToIO(getVoidPtr(i));
 		ch_count += obj->charCount() + 1;
 	 }
   }
@@ -162,15 +163,15 @@ DOTRACE("IoPtrList::readFrom");
 
   ReadUtils::readObjectSeq(reader, "itsVec", back_inserter(ioVec), (IO*) 0);
 
-  vector<void*>& voidVec = VoidPtrList::vec();
+//   vector<void*>& voidVec = VoidPtrList::vec();
 
-  voidVec.clear();
-  voidVec.resize(ioVec.size());
+  voidVecResize(ioVec.size());
 
-  for (size_t i = 0; i < ioVec.size(); ++i)
+  for (size_t i = 0, end = ioVec.size();
+		 i < end;
+		 ++i)
 	 if (ioVec[i] != 0) {
-		voidVec[i] = fromIOToVoid(ioVec[i]);
-		afterInsertHook(i, voidVec[i]);
+		insertVoidPtrAt(i, fromIOToVoid(ioVec[i]));
 	 }
 }
 
@@ -179,11 +180,13 @@ void IoPtrList::writeTo(Writer* writer) const {
 DOTRACE("IoPtrList::writeTo");
   writer->writeInt("itsFirstVacant", firstVacant());
 
-  vector<IO*> ioVec(vec().size());
+  vector<IO*> ioVec(voidVecSize());
 
-  for (size_t i = 0; i < vec().size(); ++i)
-	 if ( vec()[i] != 0 )
-		ioVec[i] = fromVoidToIO(vec()[i]);
+  for (size_t i = 0, end = voidVecSize();
+		 i < end;
+		 ++i)
+	 if ( getVoidPtr(i) != 0 )
+		ioVec[i] = fromVoidToIO(getVoidPtr(i));
 
   WriteUtils::writeObjectSeq(writer, "itsVec", ioVec.begin(), ioVec.end());
 }

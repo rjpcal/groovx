@@ -3,7 +3,7 @@
 // tclerror.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Jun 20 15:10:13 1999
-// written: Fri Mar  3 16:38:40 2000
+// written: Sat Mar  4 04:14:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,12 @@ namespace Tcl {
 
 TclError::TclError() :
   ::ErrorWithMsg()
+{
+DOTRACE("TclError::TclError");
+}
+
+TclError::TclError(const char* msg) : 
+  ::ErrorWithMsg(msg)
 {
 DOTRACE("TclError::TclError");
 }

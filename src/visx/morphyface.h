@@ -3,17 +3,13 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Fri Mar  3 16:43:30 2000
+// written: Sat Mar  4 02:48:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef MORPHYFACE_H_DEFINED
 #define MORPHYFACE_H_DEFINED
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#endif
 
 #ifndef GROBJ_H_DEFINED
 #include "grobj.h"
@@ -61,8 +57,11 @@ public:
   /// Info about a \c MorphyFace property.
   typedef PropertyInfo<MorphyFace> PInfo;
 
-  /// Return a collection of info about all \c MorphyFace properties.
-  static const vector<PInfo>& getPropertyInfos();
+  /// Return the number of \c MorphyFace properties.
+  static unsigned int numPropertyInfos();
+
+  /// Return info on the i'th \c MorphyFace property.
+  static const PInfo& getPropertyInfo(unsigned int i);
 
   /** The category of the face. The semantics of \a category are
       defined by the client. */
@@ -148,9 +147,6 @@ private:
 
   MorphyFace(const MorphyFace&);            // copy constructor not to be used
   MorphyFace& operator=(const MorphyFace&); // assignment operator not to be used
-
-  void makeIoList(vector<IO *>& vec);
-  void makeIoList(vector<const IO *>& vec) const;
 };
 
 static const char vcid_morphyface_h[] = "$Header$";

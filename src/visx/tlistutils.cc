@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Tue Feb  1 18:29:48 2000
+// written: Sat Mar  4 02:02:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@ DOTRACE("TlistUtils::makeSingles");
 
   vector<int> vec;
   const ObjList& olist = ObjList::theObjList();
-  olist.getValidIds(vec);
+  olist.insertValidIds(back_inserter(vec));
 
   tlist.clear();
 
@@ -156,7 +156,7 @@ DOTRACE("TlistUtils::makePairs");
 	 { throw ErrorWithMsg(bad_posid_msg); }
   
   vector<int> vec;
-  ObjList::theObjList().getValidIds(vec);
+  ObjList::theObjList().insertValidIds(back_inserter(vec));
   
   tlist.clear();
   
@@ -194,7 +194,7 @@ DOTRACE("TlistUtils::makeTriads");
   DebugEval(posid[0]); DebugEval(posid[1]); DebugEvalNL(posid[3]);
 
   vector<int> vec;
-  ObjList::theObjList().getValidIds(vec);
+  ObjList::theObjList().insertValidIds(back_inserter(vec));
 	 
   tlist.clear();
 
@@ -270,7 +270,7 @@ DOTRACE("TlistUtils::makeSummaryTrial");
   int num_rows = 1 + (num_objs-1)/num_cols;
 
   vector<int> objids;
-  olist.getValidIds(objids);
+  olist.insertValidIds(back_inserter(objids));
 	 
   // Coords of upper left corner of viewing area
   const double x0 = scale * (0.0 - xstep*(num_cols-1)/2.0);
@@ -312,7 +312,7 @@ DOTRACE("TlistUtils::makeSummaryTrial");
 void TlistUtils::writeResponses(Tlist& tlist, const char* filename) {
 DOTRACE("TlistUtils::writeResponses");
   vector<int> trialids;
-  tlist.getValidIds(trialids);
+  tlist.insertValidIds(back_inserter(trialids));
 
   DebugEvalNL(trialids.size());
 
@@ -340,7 +340,7 @@ DOTRACE("TlistUtils::writeResponses");
 void TlistUtils::writeIncidenceMatrix(Tlist& tlist, const char* filename) {
 DOTRACE("TlistUtils::writeIncidenceMatrix");
   vector<int> trialids;
-  tlist.getValidIds(trialids);
+  tlist.insertValidIds(back_inserter(trialids));
 	 
   DebugEvalNL(trialids.size());
 	 
@@ -404,7 +404,7 @@ DOTRACE("TlistUtils::readFromObjidsOnly");
 void TlistUtils::writeMatlab(Tlist& tlist, const char* filename) {
 DOTRACE("TlistUtils::writeMatlab");
   vector<int> trialids;
-  tlist.getValidIds(trialids);
+  tlist.insertValidIds(back_inserter(trialids));
 
   DebugEvalNL(trialids.size());
 

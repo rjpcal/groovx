@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar  3 18:08:34 2000
+// written: Sat Mar  4 03:13:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include <iostream.h>
 #include <string>
 #include <GL/gl.h>
+#include <vector>
 
 #include "trace.h"
 #include "debug.h"
@@ -32,6 +33,20 @@
 
 namespace {
   const string ioTag = "FixPt";
+
+  const vector<FixPt::PInfo>& getPropertyInfos() {
+	 static vector<FixPt::PInfo> p;
+
+	 typedef FixPt F;
+
+	 if (p.size() == 0) {
+		p.push_back(FixPt::PInfo("length", &F::length, 0.0, 10.0, 0.1, true));
+		p.push_back(FixPt::PInfo("width", &F::width, 0, 100, 1));
+	 }
+
+	 return p;
+  }
+
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -96,17 +111,14 @@ DOTRACE("FixPt::writeTo");
   GrObj::writeTo(writer);
 }
 
-const vector<FixPt::PInfo>& FixPt::getPropertyInfos() {
-  static vector<PInfo> p;
+unsigned int FixPt::numPropertyInfos() {
+DOTRACE("FixPt::numPropertyInfos");
+  return getPropertyInfos().size();
+}
 
-  typedef FixPt F;
-
-  if (p.size() == 0) {
-	 p.push_back(PInfo("length", &F::length, 0.0, 10.0, 0.1, true));
-	 p.push_back(PInfo("width", &F::width, 0, 100, 1));
-  }
-
-  return p;
+const FixPt::PInfo& FixPt::getPropertyInfo(unsigned int i) {
+DOTRACE("FixPt::getPropertyInfo");
+  return getPropertyInfos()[i];
 }
 
 void FixPt::grGetBoundingBox(Rect<double>& bbox,

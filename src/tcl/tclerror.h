@@ -3,7 +3,7 @@
 // tclerror.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Jun 20 15:10:26 1999
-// written: Fri Mar  3 16:37:59 2000
+// written: Sat Mar  4 04:14:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,7 @@ namespace Tcl {
 class Tcl::TclError : public ErrorWithMsg {
 public:
   TclError();
+  TclError(const char* msg);
   TclError(const string& msg);
 };
 
