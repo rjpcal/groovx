@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Thu Mar  9 16:08:52 2000
+// written: Sat Mar 11 23:15:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,6 +136,7 @@ protected:
 		T val;
 		getValFromObj(elements[i], val);
 		*itr = val;
+		++itr;
 	 }
   }
 
@@ -150,6 +151,7 @@ protected:
 
 	 for (int i = 0; i < count; ++i) {
 		*itr = TclValue(itsInterp, elements[i]);
+		++itr;
 	 }
   }
 
