@@ -3,7 +3,7 @@
 // tlisttcl.h
 // Rob Peters
 // created: Sat Mar 13 12:37:22 1999
-// written: Thu May 27 13:49:50 1999
+// written: Wed Jun  9 12:16:06 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,8 +23,6 @@ struct Tcl_Obj;
 class Tlist;
 
 namespace TlistTcl {
-  Tlist& getTlist();
-
   // Exported procedures
   int write_responsesProc(Tcl_Interp* interp, Tcl_Obj* const objv[],
 								  const char* filename);
