@@ -93,6 +93,24 @@ template <>
 Value::Type TValue<string>::getNativeType() const { return Value::STRING; }
 
 
+template <>
+const char* TValue<int>::getNativeTypeName() const { return "int"; }
+
+template <>
+const char* TValue<long>::getNativeTypeName() const { return "long"; }
+
+template <>
+const char* TValue<bool>::getNativeTypeName() const { return "bool"; }
+
+template <>
+const char* TValue<double>::getNativeTypeName() const { return "double"; }
+
+template <>
+const char* TValue<const char*>::getNativeTypeName() const { return "cstring"; }
+
+template <>
+const char* TValue<string>::getNativeTypeName() const { return "string"; }
+
 //
 // The get functions default to throwing an exception, but are
 // specialized to return the correct value when the type requested
@@ -193,6 +211,24 @@ Value::Type TValuePtr<const char*>::getNativeType() const { return Value::CSTRIN
 template <>
 Value::Type TValuePtr<string>::getNativeType() const { return Value::STRING; }
 
+
+template <>
+const char* TValuePtr<int>::getNativeTypeName() const { return "int"; }
+
+template <>
+const char* TValuePtr<long>::getNativeTypeName() const { return "long"; }
+
+template <>
+const char* TValuePtr<bool>::getNativeTypeName() const { return "bool"; }
+
+template <>
+const char* TValuePtr<double>::getNativeTypeName() const { return "double"; }
+
+template <>
+const char* TValuePtr<const char*>::getNativeTypeName() const { return "cstring"; }
+
+template <>
+const char* TValuePtr<string>::getNativeTypeName() const { return "string"; }
 
 //
 // The get functions default to throwing an exception, but are

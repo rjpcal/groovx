@@ -3,7 +3,7 @@
 // tclvalue.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Tue Nov 16 12:09:27 1999
+// written: Tue Nov 16 12:35:36 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,6 +49,8 @@ public:
   virtual Value* clone() const;
   
   virtual Type getNativeType() const;
+
+  virtual const char* getNativeTypeName() const;
 
   virtual void printTo(ostream& os) const;
   virtual void scanFrom(istream& is);

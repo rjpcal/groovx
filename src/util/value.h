@@ -45,6 +45,8 @@ public:
 
   virtual Type getNativeType() const = 0;
 
+  virtual const char* getNativeTypeName() const = 0;
+
   // Input/Output
   virtual void printTo(ostream& os) const;
   virtual void scanFrom(istream& is);
@@ -120,6 +122,8 @@ public:
   
   virtual Type getNativeType() const;
 
+  virtual const char* getNativeTypeName() const;
+
   virtual void printTo(ostream& os) const;
   virtual void scanFrom(istream& is);
 
@@ -165,6 +169,8 @@ public:
   virtual Value* clone() const;
   
   virtual Type getNativeType() const;
+
+  virtual const char* getNativeTypeName() const;
 
   virtual void printTo(ostream& os) const;
   virtual void scanFrom(istream& is);
