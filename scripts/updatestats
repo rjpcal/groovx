@@ -21,47 +21,47 @@ proc readfile { fname } {
         } else {
             set ::COUNTS($name) $count
         }
-    }    
+    }
 
     close $f
 }
 
 proc writefile { fname } {
     foreach name [array names ::COUNTS] {
-	lappend stems([file tail $name]) $name
+        lappend stems([file tail $name]) $name
     }
 
     foreach name [array names stems] {
-	set files [lsort -unique $stems($name)]
-	set file_exist_count 0
-	set total_count 0
-	set existing_file ""
-	foreach f $files {
-	    if { [file exists $f] } {
-		incr file_exist_count
-		set existing_file $f
-	    }
-	    incr total_count $::COUNTS($f)
-	}
+        set files [lsort -unique $stems($name)]
+        set file_exist_count 0
+        set total_count 0
+        set existing_file ""
+        foreach f $files {
+            if { [file exists $f] } {
+                incr file_exist_count
+                set existing_file $f
+            }
+            incr total_count $::COUNTS($f)
+        }
 
-	if { $file_exist_count == 0 } {
-	    puts "no existing file with the given stem, need help:"
-	    puts $files
-	    exit
-	}
+        if { $file_exist_count == 0 } {
+            puts "no existing file with the given stem, need help:"
+            puts $files
+            exit
+        }
 
-	if { $file_exist_count > 1 } {
-	    puts "too many files with the same stem, need help:"
-	    puts $files
-	    exit
-	}
+        if { $file_exist_count > 1 } {
+            puts "too many files with the same stem, need help:"
+            puts $files
+            exit
+        }
 
-	if { [llength $files] > 1} {
-	    puts "collating files:"
-	    puts "'$files' --> $existing_file"
-	}
+        if { [llength $files] > 1} {
+            puts "collating files:"
+            puts "'$files' --> $existing_file"
+        }
 
-	set newcounts($existing_file) $total_count
+        set newcounts($existing_file) $total_count
     }
 
     set f [open $fname w]
@@ -78,7 +78,7 @@ proc writefile { fname } {
 
 proc backup { fname } {
     if { [file exists $fname] } {
-	file delete ${fname}.bkp
+        file delete ${fname}.bkp
         exec mv $fname ${fname}.bkp
     }
 }
