@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Dec  5 16:01:45 2002
+// written: Thu Dec  5 16:34:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,6 +52,265 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
+class ElementContainer
+{
+public:
+  ElementContainer();
+
+  ~ElementContainer();
+
+  void readFrom(IO::Reader* reader);
+
+  void writeTo(IO::Writer* writer);
+
+  void addElement(Ref<Element> element, unsigned int repeat = 1);
+
+  void setRandSeed(int s);
+  int getRandSeed() const;
+
+  void shuffle();
+
+  void clearElements();
+
+  Ref<Element> currentElement();
+
+  int lastResponse() const;
+
+  void childFinishedHelper(Element::ChildStatus s);
+
+  void vxUndo();
+
+  void vxReset();
+
+  unsigned int numElements() const;
+
+  unsigned int numCompleted() const;
+
+  Util::FwdIter<Util::Ref<Element> > getElements();
+
+  bool isComplete() const;
+
+private:
+  class Impl;
+  Impl* const rep;
+};
+
+class ElementContainer::Impl
+{
+public:
+  Impl() : elements(), randSeed(0), sequencePos(0) {}
+
+  minivec<Ref<Element> > elements;
+
+  int randSeed;                 // Random seed used to create element sequence
+  unsigned int sequencePos;     // Index of the current element
+                                // Also functions as # of completed elements
+};
+
+ElementContainer::ElementContainer() :
+  rep(new Impl)
+{
+DOTRACE("ElementContainer::ElementContainer");
+}
+
+ElementContainer::~ElementContainer()
+{
+DOTRACE("ElementContainer::~ElementContainer");
+  delete rep;
+}
+
+void ElementContainer::readFrom(IO::Reader* reader)
+{
+DOTRACE("ElementContainer::readFrom");
+  clearElements();
+
+  IO::ReadUtils::readObjectSeq<Element>
+    (reader, "trialSeq", std::back_inserter(rep->elements));
+
+  reader->readValue("randSeed", rep->randSeed);
+  reader->readValue("curTrialSeqdx", rep->sequencePos);
+  if (rep->sequencePos > rep->elements.size())
+    {
+      throw IO::ReadError("ElementContainer");
+    }
+}
+
+void ElementContainer::writeTo(IO::Writer* writer)
+{
+DOTRACE("ElementContainer::writeTo");
+  IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
+                                 rep->elements.begin(),
+                                 rep->elements.end());
+
+  writer->writeValue("randSeed", rep->randSeed);
+  writer->writeValue("curTrialSeqdx", rep->sequencePos);
+}
+
+void ElementContainer::addElement(Ref<Element> element, unsigned int repeat)
+{
+DOTRACE("ElementContainer::addElement");
+
+  for (unsigned int i = 0; i < repeat; ++i)
+    {
+      rep->elements.push_back(element);
+    }
+}
+
+void ElementContainer::setRandSeed(int s)
+{
+DOTRACE("ElementContainer::setRandSeed");
+  rep->randSeed = s;
+}
+
+int ElementContainer::getRandSeed() const
+{
+DOTRACE("ElementContainer::getRandSeed");
+  return rep->randSeed;
+}
+
+void ElementContainer::shuffle()
+{
+DOTRACE("ElementContainer::shuffle");
+  Util::Urand generator(rep->randSeed);
+
+  std::random_shuffle(rep->elements.begin(),
+                      rep->elements.end(),
+                      generator);
+}
+
+void ElementContainer::clearElements()
+{
+DOTRACE("ElementContainer::clearElements");
+  rep->elements.clear();
+  rep->sequencePos = 0;
+}
+
+Ref<Element> ElementContainer::currentElement()
+{
+DOTRACE("ElementContainer::currentElement");
+  Precondition(rep->sequencePos < rep->elements.size());
+
+  return rep->elements.at(rep->sequencePos);
+}
+
+int ElementContainer::lastResponse() const
+{
+DOTRACE("ElementContainer::lastResponse");
+  dbgEval(9, rep->sequencePos);
+  dbgEvalNL(9, rep->elements.size());
+
+  if (rep->sequencePos == 0 ||
+      rep->elements.size() == 0) return -1;
+
+  Ref<Element> prev_element = rep->elements.at(rep->sequencePos-1);
+
+  return prev_element->lastResponse();
+}
+
+void ElementContainer::childFinishedHelper(Element::ChildStatus s)
+{
+DOTRACE("ElementContainer::childFinishedHelper");
+  switch (s)
+    {
+    case Element::CHILD_OK:
+      // Move on to the next element.
+      ++rep->sequencePos;
+      break;
+
+    case Element::CHILD_REPEAT:
+      {
+        // Add a repeat of the current element to the sequence and reshuffle
+        addElement(currentElement(), 1);
+        std::random_shuffle
+          (rep->elements.begin()+rep->sequencePos+1, rep->elements.end());
+
+        // Move on to the next element.
+        ++rep->sequencePos;
+      }
+      break;
+
+    case Element::CHILD_ABORTED:
+      {
+        // Remember the element that we are about to abort so we can
+        // store it at the end of the sequence.
+        Ref<Element> aborted_element = currentElement();
+
+        // Erase the aborted element from the sequence. Subsequent elements
+        // will slide up to fill in the gap.
+        rep->elements.erase(rep->elements.begin()+rep->sequencePos);
+
+        // Add the aborted element to the back of the sequence.
+        rep->elements.push_back(aborted_element);
+
+        // Don't need to increment sequencePos here since the new trial
+        // has "slid into place" by the reshuffling we've just done.
+      }
+      break;
+
+    default:
+      Assert(false);
+    }
+}
+
+void ElementContainer::vxUndo()
+{
+DOTRACE("ElementContainer::vxUndo");
+  dbgEval(3, rep->sequencePos);
+
+  // Check to make sure we've completed at least one element
+  if (rep->sequencePos < 1) return;
+
+  // Move the counter back to the previous element...
+  --rep->sequencePos;
+
+  Assert(rep->sequencePos < rep->elements.size());
+
+  // ...and undo that element
+  currentElement()->vxUndo();
+}
+
+void ElementContainer::vxReset()
+{
+DOTRACE("ElementContainer::vxReset");
+  for (unsigned int i = 0; i < rep->elements.size(); ++i)
+    {
+      rep->elements[i]->vxReset();
+    }
+
+  rep->sequencePos = 0;
+}
+
+unsigned int ElementContainer::numElements() const
+{
+DOTRACE("ElementContainer::numElements");
+  return rep->elements.size();
+}
+
+unsigned int ElementContainer::numCompleted() const
+{
+DOTRACE("ElementContainer::numCompleted");
+  return rep->sequencePos;
+}
+
+Util::FwdIter<Util::Ref<Element> > ElementContainer::getElements()
+{
+DOTRACE("ElementContainer::getElements");
+
+  return Util::FwdIter<Util::Ref<Element> >
+    (rep->elements.begin(), rep->elements.end());
+}
+
+bool ElementContainer::isComplete() const
+{
+DOTRACE("ElementContainer::isComplete");
+
+  dbgEval(9, rep->sequencePos);
+  dbgEvalNL(9, rep->elements.size());
+
+  return (rep->sequencePos >= rep->elements.size());
+}
+
+
 class Block::Impl
 {
 private:
@@ -60,9 +319,6 @@ private:
 
 public:
   Impl() :
-    elements(),
-    randSeed(0),
-    sequencePos(0),
     parent(0)
   {}
 
@@ -72,18 +328,7 @@ public:
       return *parent;
     }
 
-  Ref<Element> currentElement()
-    {
-      Precondition(sequencePos < elements.size());
-
-      return elements.at(sequencePos);
-    }
-
-  minivec<Ref<Element> > elements;
-
-  int randSeed;                 // Random seed used to create element sequence
-  unsigned int sequencePos;     // Index of the current element
-                                // Also functions as # of completed elements
+  ElementContainer ec;
 
   Element* parent;
 };
@@ -114,29 +359,21 @@ Block::~Block()
 void Block::addElement(Ref<Element> element, int repeat)
 {
 DOTRACE("Block::addElement");
-  for (int i = 0; i < repeat; ++i)
-    {
-      rep->elements.push_back(element);
-    }
+
+  rep->ec.addElement(element, repeat);
 };
 
 void Block::shuffle(int seed)
 {
 DOTRACE("Block::shuffle");
-  rep->randSeed = seed;
-
-  Util::Urand generator(seed);
-
-  std::random_shuffle(rep->elements.begin(),
-                      rep->elements.end(),
-                      generator);
+  rep->ec.setRandSeed(seed);
+  rep->ec.shuffle();
 }
 
 void Block::clearAllElements()
 {
 DOTRACE("Block::clearAllElements");
-  rep->elements.clear();
-  rep->sequencePos = 0;
+  rep->ec.clearElements();
 }
 
 IO::VersionId Block::serialVersionId() const
@@ -151,16 +388,7 @@ DOTRACE("Block::readFrom");
 
   int svid = reader->ensureReadVersionId("Block", 1, "Try grsh0.8a3");
 
-  rep->elements.clear();
-  IO::ReadUtils::readObjectSeq<Element>(
-        reader, "trialSeq", std::back_inserter(rep->elements));
-
-  reader->readValue("randSeed", rep->randSeed);
-  reader->readValue("curTrialSeqdx", rep->sequencePos);
-  if (rep->sequencePos > rep->elements.size())
-    {
-      throw IO::ReadError("Block");
-    }
+  rep->ec.readFrom(reader);
 
   if (svid < 2)
     {
@@ -176,12 +404,7 @@ DOTRACE("Block::writeTo");
   writer->ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 2,
                                "Try grsh0.8a7");
 
-  IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
-                                 rep->elements.begin(),
-                                 rep->elements.end());
-
-  writer->writeValue("randSeed", rep->randSeed);
-  writer->writeValue("curTrialSeqdx", rep->sequencePos);
+  rep->ec.writeTo(writer);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -207,24 +430,16 @@ int Block::trialType() const
 DOTRACE("Block::trialType");
   if (isComplete()) return -1;
 
-  dbgEvalNL(3, rep->currentElement()->trialType());
+  dbgEvalNL(3, currentElement()->trialType());
 
-  return rep->currentElement()->trialType();
+  return currentElement()->trialType();
 }
 
 int Block::lastResponse() const
 {
 DOTRACE("Block::lastResponse");
 
-  dbgEval(9, rep->sequencePos);
-  dbgEvalNL(9, rep->elements.size());
-
-  if (rep->sequencePos == 0 ||
-      rep->elements.size() == 0) return -1;
-
-  Ref<Element> prev_element =
-    rep->elements.at(rep->sequencePos-1);
-  return prev_element->lastResponse();
+  return rep->ec.lastResponse();
 }
 
 fstring Block::status() const
@@ -252,7 +467,7 @@ DOTRACE("Block::vxRun");
 
   rep->parent = &e;
 
-  rep->currentElement()->vxRun(*this);
+  currentElement()->vxRun(*this);
 }
 
 void Block::vxHalt() const
@@ -260,7 +475,7 @@ void Block::vxHalt() const
 DOTRACE("Block::vxHalt");
 
   if ( !isComplete() )
-    rep->currentElement()->vxHalt();
+    currentElement()->vxHalt();
 }
 
 void Block::vxEndTrialHook()
@@ -276,46 +491,7 @@ void Block::vxChildFinished(ChildStatus s)
 DOTRACE("Block::vxChildFinished");
   Assert( !isComplete() );
 
-  switch (s)
-    {
-    case CHILD_OK:
-      // Move on to the next element.
-      ++rep->sequencePos;
-      break;
-
-    case CHILD_REPEAT:
-      {
-        // Add a repeat of the current element to the sequence and reshuffle
-        addElement(rep->currentElement(), 1);
-        std::random_shuffle
-          (rep->elements.begin()+rep->sequencePos+1, rep->elements.end());
-
-        // Move on to the next element.
-        ++rep->sequencePos;
-      }
-      break;
-
-    case CHILD_ABORTED:
-      {
-        // Remember the element that we are about to abort so we can
-        // store it at the end of the sequence.
-        Ref<Element> aborted_element = rep->currentElement();
-
-        // Erase the aborted element from the sequence. Subsequent
-        // elements will slide up to fill in the gap.
-        rep->elements.erase(rep->elements.begin()+rep->sequencePos);
-
-        // Add the aborted element to the back of the sequence.
-        rep->elements.push_back(aborted_element);
-
-        // Don't need to increment sequencePos here since the new trial
-        // has "slid into place" by the reshuffling we've just done.
-      }
-      break;
-
-    default:
-      Assert(false);
-    }
+  rep->ec.childFinishedHelper(s);
 
   dbgEval(3, numCompleted());
   dbgEval(3, numElements());
@@ -327,7 +503,7 @@ DOTRACE("Block::vxChildFinished");
     {
       Util::log( status() );
 
-      rep->currentElement()->vxRun(*this);
+      currentElement()->vxRun(*this);
     }
   else
     {
@@ -342,30 +518,13 @@ void Block::vxUndo()
 {
 DOTRACE("Block::vxUndo");
 
-  dbgEval(3, rep->sequencePos);
-
-  // Check to make sure we've completed at least one element
-  if (rep->sequencePos < 1) return;
-
-  // Move the counter back to the previous element...
-  --rep->sequencePos;
-
-  Assert(rep->sequencePos < rep->elements.size());
-
-  // ...and undo that element
-  rep->currentElement()->vxUndo();
+  rep->ec.vxUndo();
 }
 
 void Block::vxReset()
 {
 DOTRACE("Block::vxReset");
-
-  for (unsigned int i = 0; i < rep->elements.size(); ++i)
-    {
-      rep->elements[i]->vxReset();
-    }
-
-  rep->sequencePos = 0;
+  rep->ec.vxReset();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -377,19 +536,18 @@ DOTRACE("Block::vxReset");
 int Block::numElements() const
 {
 DOTRACE("Block::numElements");
-  return rep->elements.size();
+  return rep->ec.numElements();
 }
 
 int Block::numCompleted() const
 {
 DOTRACE("Block::numCompleted");
-  return rep->sequencePos;
+  return rep->ec.numCompleted();
 }
 
 Util::FwdIter<Util::Ref<Element> > Block::getElements() const
 {
-  return Util::FwdIter<Util::Ref<Element> >
-    (rep->elements.begin(), rep->elements.end());
+  return rep->ec.getElements();
 }
 
 Util::SoftRef<Element> Block::currentElement() const
@@ -397,17 +555,13 @@ Util::SoftRef<Element> Block::currentElement() const
 DOTRACE("Block::currentElement");
   if (isComplete()) return Util::SoftRef<Element>();
 
-  return rep->currentElement();
+  return rep->ec.currentElement();
 }
 
 bool Block::isComplete() const
 {
 DOTRACE("Block::isComplete");
-
-  dbgEval(9, rep->sequencePos);
-  dbgEvalNL(9, rep->elements.size());
-
-  return (rep->sequencePos >= rep->elements.size());
+  return rep->ec.isComplete();
 }
 
 static const char vcid_block_cc[] = "$Header$";
