@@ -3,7 +3,7 @@
 // fixpttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Mon Oct  4 16:22:39 1999
+// written: Tue Oct 19 10:42:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include <tcl.h>
 
 #include "fixpt.h"
+#include "iomgr.h"
 #include "objlist.h"
 #include "propitempkg.h"
 
@@ -27,7 +28,9 @@ int Fixpt_Init(Tcl_Interp* interp) {
 DOTRACE("Fixpt_Init");
 
   new PropertyListItemPkg<FixPt, ObjList>(interp, ObjList::theObjList(),
-														"Fixpt", "1.2");
+ 														"Fixpt", "$Revision$");
+
+  FactoryRegistrar<IO, FixPt> registrar(IoFactory::theOne());
 
   return TCL_OK;
 }
