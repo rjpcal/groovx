@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 15:15:31 2002
+// written: Thu Dec  5 15:21:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,7 +131,7 @@ public:
 
   unsigned int sequenceIdx;
 
-  mutable Tcl::BkdErrorHandler errorHandler;
+  Tcl::BkdErrorHandler errorHandler;
 
   Ref<Tcl::ProcWrapper> doWhenComplete;
 
@@ -307,15 +307,8 @@ DOTRACE("ExptDriver::vxEndTrialHook");
        rep->autosaveFile.is_empty() )
     return;
 
-  try
-    {
-      dbgEvalNL(3, rep->autosaveFile.c_str());
-      IO::saveASW(Util::Ref<IO::IoObject>(this), rep->autosaveFile);
-    }
-  catch (Util::Error& err)
-    {
-      rep->errorHandler.handleMsg(err.msg_cstr());
-    }
+  dbgEvalNL(3, rep->autosaveFile.c_str());
+  IO::saveASW(Util::Ref<IO::IoObject>(this), rep->autosaveFile);
 }
 
 void ExptDriver::vxNext()
@@ -554,39 +547,32 @@ DOTRACE("ExptDriver::storeData");
   // The experiment and a summary of the responses to it are written to
   // files with unique filenames.
 
-  try
-    {
-      rep->endDate = System::theSystem().formattedTime();
+  rep->endDate = System::theSystem().formattedTime();
 
-      fstring unique_file_extension =
-        System::theSystem().formattedTime("%H%M%S%d%b%Y");
+  fstring unique_file_extension =
+    System::theSystem().formattedTime("%H%M%S%d%b%Y");
 
-      // Write the main experiment file
-      fstring expt_filename = "expt";
-      expt_filename.append(unique_file_extension);
-      expt_filename.append(".asw");
-      IO::saveASW(Util::Ref<IO::IoObject>(this), expt_filename.c_str());
-      Util::log( fstring( "wrote file ", expt_filename.c_str()) );
+  // Write the main experiment file
+  fstring expt_filename = "expt";
+  expt_filename.append(unique_file_extension);
+  expt_filename.append(".asw");
+  IO::saveASW(Util::Ref<IO::IoObject>(this), expt_filename.c_str());
+  Util::log( fstring( "wrote file ", expt_filename.c_str()) );
 
-      // Write the responses file
-      fstring resp_filename = "resp";
-      resp_filename.append(unique_file_extension);
-      TlistUtils::writeResponses(resp_filename.c_str());
-      Util::log( fstring( "wrote file ", resp_filename.c_str()) );
+  // Write the responses file
+  fstring resp_filename = "resp";
+  resp_filename.append(unique_file_extension);
+  TlistUtils::writeResponses(resp_filename.c_str());
+  Util::log( fstring( "wrote file ", resp_filename.c_str()) );
 
-      // Change file access modes to allow read-only by all
-      System::mode_t datafile_mode =
-        System::IRUSR | System::IRGRP | System::IROTH;
+  // Change file access modes to allow read-only by all
+  System::mode_t datafile_mode =
+    System::IRUSR | System::IRGRP | System::IROTH;
 
-      System::theSystem().chmod(expt_filename.c_str(), datafile_mode);
-      System::theSystem().chmod(resp_filename.c_str(), datafile_mode);
+  System::theSystem().chmod(expt_filename.c_str(), datafile_mode);
+  System::theSystem().chmod(resp_filename.c_str(), datafile_mode);
 
-      addLogInfo("Experiment saved.");
-    }
-  catch (Util::Error& err)
-    {
-      rep->errorHandler.handleMsg(err.msg_cstr());
-    }
+  addLogInfo("Experiment saved.");
 }
 
 static const char vcid_exptdriver_cc[] = "$Header$";
