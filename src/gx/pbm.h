@@ -3,7 +3,7 @@
 // pbm.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:06 1999
-// written: Mon Sep 20 09:50:49 1999
+// written: Fri Sep 24 15:58:55 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,9 @@ public:
   // the function.
   void grabBytes(vector<unsigned char>& bytes,
  					  int& width, int& height, int& bits_per_pixel);					  
+
+  void setBytes(vector<unsigned char>& bytes,
+					 int width, int height, int bits_per_pixel);
 
 private:
   void init();
