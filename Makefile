@@ -260,8 +260,6 @@ endif
 ifeq ($(COMPILER),g++3)
 	CC := time g++-3.1
 # Filter the compiler output...
-	FILTER := #|& $(SCRIPTS)/filter_gcc_v3
-
 	WARNINGS := -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings
 	CC_SWITCHES += $(WARNINGS)
 	CPP_DEFINES += -DSTD_IO=std -DFUNCTIONAL_OK
@@ -332,7 +330,11 @@ ALL_CC_OPTIONS := $(CC_SWITCHES) $(INCLUDE_PATH) $(CPP_DEFINES)
 
 $(OBJ)/%$(OBJ_EXT) : $(SRC)/%.cc
 	echo $< >> $(LOGS)/CompileStats
+ifdef FILTER
 	csh -fc "($(CC) -c $< -o $@ $(ALL_CC_OPTIONS)) $(FILTER)"
+else
+	$(CC) -c $< -o $@ $(ALL_CC_OPTIONS)
+endif
 
 # to avoid deleting any intermediate targets
 .SECONDARY:
