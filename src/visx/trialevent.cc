@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Thu Dec  5 14:25:05 2002
+// written: Thu Dec  5 15:27:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,7 +149,22 @@ void TrialEvent::dummyInvoke(ClientData clientData)
 
   Assert(event != 0);
 
-  event->invokeTemplate();
+  Util::ErrorHandler* handler = event->itsErrorHandler;
+
+  try
+    {
+      event->invokeTemplate();
+    }
+  catch (Util::Error& err)
+    {
+      if (handler != 0) handler->handleError(err);
+    }
+  catch (...)
+    {
+      if (handler != 0)
+        handler->handleMsg
+          ("an error of unknown type occured during a TrialEvent callback");
+    }
 }
 
 void TrialEvent::invokeTemplate()
@@ -183,21 +198,9 @@ DOTRACE("TrialEvent::invokeTemplate");
            moving_average_ratio  * error;
 
   // Do the actual event callback.
-  if ( itsErrorHandler != 0 && itsTrial != 0 )
+  if ( itsTrial != 0 )
     {
-      try
-        {
-          invoke(*itsTrial);
-        }
-      catch (Util::Error& err)
-        {
-          itsErrorHandler->handleError(err);
-        }
-      catch (...)
-        {
-          itsErrorHandler->handleMsg(
-            "an error of unknown type occured during a TrialEvent callback");
-        }
+      invoke(*itsTrial);
     }
 
   Util::log( "event complete" );
