@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Mon Nov 15 15:46:10 1999
+// written: Sun Nov 21 15:45:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,34 +23,64 @@
 #include <string>
 #endif
 
+/**
+ *
+ * Exception class for Gtext.
+ *
+ **/
+
 class GtextError : public ErrorWithMsg {
 public:
   GtextError(const string& str = "") : ErrorWithMsg(str) {}
 };
 
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * Gtext is a subclass that renders text as a series of vector
+ * graphics in OpenGL. There is only one font currently available.
+ *
+ * @memo Subclass of GrObj for rendering text in a simple vector font.
+ **/
+///////////////////////////////////////////////////////////////////////
+
 class Gtext : public GrObj {
 public:
+  ///
   Gtext(const char* text=0);
+  ///
   Gtext(istream& is, IOFlag flag);
+  ///
   virtual ~Gtext();
 
+  ///
   virtual void serialize(ostream &os, IOFlag flag) const;
+  ///
   virtual void deserialize(istream &is, IOFlag flag);
+  ///
   virtual int charCount() const;
 
+  ///
   virtual void readFrom(Reader* reader);
+  ///
   virtual void writeTo(Writer* writer) const;
 
+  ///
   void setText(const char* text);
+  ///
   const char* getText() const;
 
+  ///
   void setStrokeWidth(int width);
+  ///
   int getStrokeWidth() const;
 
 protected:
+  ///
   virtual bool grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
 
+  ///
   virtual void grRender() const;
 
 private:
