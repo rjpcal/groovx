@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Fri Mar 10 01:02:11 2000
+// written: Fri Mar 10 15:07:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,8 +45,9 @@ namespace {
 
 class Tcl::TclCmd::Impl {
 public:
-  Impl() : itsArgs() {}
+  Impl() : itsArgsInited(false), itsArgs() {}
 
+  bool itsArgsInited;
   vector<TclValue> itsArgs;
 };
 
@@ -90,7 +91,21 @@ DOTRACE("Tcl::TclCmd::errorMessage");
 
 Tcl::TclValue& Tcl::TclCmd::arg(int argn) {
 DOTRACE("Tcl::TclCmd::arg");
-  if (argn > itsObjc) { throw TclError("argument number too high"); }
+  if (argn < 0 || argn > itsObjc) {
+	 throw TclError("argument number too high");
+  }
+
+  if ( !itsImpl->itsArgsInited ) {
+	 itsImpl->itsArgs.clear();
+	 itsImpl->itsArgs.reserve(itsObjc);
+
+	 for (int i=0; i < itsObjc; ++i) {
+		itsImpl->itsArgs.push_back(TclValue(itsInterp, itsObjv[i]));
+	 }
+
+	 itsImpl->itsArgsInited = true;
+  }
+
   return itsImpl->itsArgs[argn];
 }
 
@@ -313,16 +328,7 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
   // ...otherwise if the argument count is OK, try the command and
   // catch all possible exceptions
   try {
-	 
-	 if (theCmd->itsImpl->itsArgs.size() == 0) {
-		Tcl_Obj* init = Tcl_NewObj();
-		theCmd->itsImpl->itsArgs.resize(theCmd->itsObjcMax,
-												  TclValue(interp, init));
-	 }
-	 for (int i=0; i < objc; ++i) {
-		theCmd->itsImpl->itsArgs[i].setObj(objv[i]);
-	 }
-
+	 theCmd->itsImpl->itsArgsInited = false;
 	 theCmd->invoke();
   }
   catch (TclError& err) {
@@ -369,9 +375,7 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
 
 
   // cleanup
-  for (int i=0; i < objc; ++i) {
- 	 theCmd->itsImpl->itsArgs[i].setObj(nullObject());
-  }
+  theCmd->itsImpl->itsArgs.clear();
   theCmd->itsObjc = 0;
 
   DebugEvalNL(theCmd->itsResult == TCL_OK);
