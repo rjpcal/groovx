@@ -190,6 +190,27 @@ $(DEVSCRIPTS)/cppdeps: $(DEVSCRIPTS)/cppdeps.cc
 $(DEP)/cppdepends: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs --objdir $(OBJ)/ --srcdir $(SRC) |sort> $@
 
+$(DEP)/ldepgroups: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs \
+	  --objdir $(OBJ)/ \
+	  --srcdir $(SRC) \
+	  --output-ldep-groups \
+	  |sort -n> $@
+
+$(DEP)/ldeplevels: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs \
+	  --objdir $(OBJ)/ \
+	  --srcdir $(SRC) \
+	  --output-ldep-levels \
+	  |sort -n> $@
+
+$(DEP)/ldeplevelsv: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs \
+	  --objdir $(OBJ)/ \
+	  --srcdir $(SRC) \
+	  --output-ldep-levelsv \
+	  |sort -n> $@
+
 $(DEP)/altdeps: $(DEVSCRIPTS)/cppdeps.tcl $(DEVSCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cppdeps.tcl --include $(SRC)/pkgs --src $(SRC) --objdir $(OBJ)/ > $@
 

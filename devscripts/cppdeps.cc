@@ -344,11 +344,11 @@ namespace
 
     /// Dereference.
     T& operator*() const throw()
-    { return *px; }
+    { assert(px != 0); return *px; }
 
     /// Dereference for member access.
     T* operator->() const throw()
-    { return px; }
+    { assert(px != 0); return px; }
 
     /// Get a pointer to the referred-to object.
     T* get() const throw()
@@ -685,7 +685,8 @@ namespace
       verbosity(NORMAL),
       output_mode(0),
       start_time(time((time_t*) 0)),
-      nest_level(0)
+      nest_level(0),
+      output_comment_character("#")
     {}
 
     ostream& info()
@@ -724,6 +725,7 @@ namespace
                                  // source files have timestamps in
                                  // the future
     int             nest_level;
+    const char*     output_comment_character;
   };
 
   dep_config cfg;
@@ -765,12 +767,22 @@ namespace
 
     string bigname() const;
 
-    void get_all_nested_ldeps(dep_list_t& result) const;
+    void get_all_nested_ldeps(dep_list_t& result, bool prune) const;
 
     int level();
 
     vector<file_info*>  m_members;
     int                 m_level;
+    unsigned int        m_id;
+  };
+
+  struct ldep_group_level_cmp
+  {
+    bool operator()(const shared_ptr<ldep_group>& g1,
+                    const shared_ptr<ldep_group>& g2)
+    {
+      return g1->level() > g2->level();
+    }
   };
 
   class file_info
@@ -855,10 +867,9 @@ namespace
         }
     }
 
-    static void dump_ldep_groups()
+    static void find_ldep_groups(set<shared_ptr<ldep_group> >& result)
     {
-      typedef set<shared_ptr<ldep_group> > all_groups_t;
-      all_groups_t all_groups;
+      result.clear();
 
       for (info_map_t::const_iterator
              itr = s_info_map.begin(),
@@ -871,8 +882,27 @@ namespace
           if (!finfo->is_cc_file())
             continue;
 
-          all_groups.insert(finfo->m_ldep_group);
+          result.insert(finfo->m_ldep_group);
         }
+    }
+
+    static void find_ldep_groups_sorted
+                          (vector<shared_ptr<ldep_group> >& result)
+    {
+      set<shared_ptr<ldep_group> > temp;
+      find_ldep_groups(temp);
+
+      result.assign(temp.begin(), temp.end());
+
+      std::sort(result.begin(), result.end(), ldep_group_level_cmp());
+    }
+
+    static void dump_ldep_groups()
+    {
+      typedef set<shared_ptr<ldep_group> > all_groups_t;
+      all_groups_t all_groups;
+
+      find_ldep_groups(all_groups);
 
       for (all_groups_t::const_iterator
              itr = all_groups.begin(),
@@ -885,24 +915,78 @@ namespace
         }
     }
 
+    static void dump_ldep_adjacency()
+    {
+      typedef vector<shared_ptr<ldep_group> > all_groups_t;
+      all_groups_t all_groups;
+
+      find_ldep_groups_sorted(all_groups);
+
+      unsigned int id = 0;
+
+      std::cout << "filenames = {\n";
+
+      // Assign id's and write filenames
+      for (all_groups_t::const_iterator
+             itr = all_groups.begin(),
+             stop = all_groups.end();
+           itr != stop;
+           ++itr)
+        {
+          (*itr)->m_id = id++;
+          std::cout << "\t'"
+                    << (*itr)->bigname()
+                    << " [level=" << (*itr)->level() << "]"
+                    << "'\n";
+        }
+
+      std::cout << "}; % end filenames\n\n\n";
+
+      const unsigned int N = id;
+
+      std::cout << "adjacency = [\n";
+
+      int maxlevel = 0;
+
+      for (all_groups_t::const_iterator
+             itr = all_groups.begin(),
+             stop = all_groups.end();
+           itr != stop;
+           ++itr)
+        {
+          dep_list_t deps;
+          (*itr)->get_all_nested_ldeps(deps, true);
+
+          vector<int> adj(N, 0);
+
+          for (unsigned int i = 0; i < deps.size(); ++i)
+            {
+              adj[deps[i]->m_ldep_group->m_id]
+                = deps[i]->m_ldep_group->level();
+
+              if (deps[i]->m_ldep_group->level() > maxlevel)
+                maxlevel = deps[i]->m_ldep_group->level();
+            }
+
+          std::cout << "\t";
+
+          for (unsigned int i = 0; i < N; ++i)
+            {
+              std::cout << adj[i] << ' ';
+            }
+
+          std::cout << ";\n";
+        }
+
+      std::cout << "]; % end adjacency\n\n\n";
+    }
+
     static void dump_ldep_levels(bool verbose)
     {
       typedef set<shared_ptr<ldep_group> > all_groups_t;
       all_groups_t all_groups;
 
-      for (info_map_t::const_iterator
-             itr = s_info_map.begin(),
-             stop = s_info_map.end();
-           itr != stop;
-           ++itr)
-        {
-          file_info* finfo = (*itr).second;
-
-          if (!finfo->is_cc_file())
-            continue;
-
-          all_groups.insert(finfo->m_ldep_group);
-        }
+      find_ldep_groups(all_groups);
 
       for (all_groups_t::const_iterator
              itr = all_groups.begin(),
@@ -922,13 +1006,10 @@ namespace
           if (verbose)
             {
               dep_list_t deps;
-              (*itr)->get_all_nested_ldeps(deps);
+              (*itr)->get_all_nested_ldeps(deps, true);
 
               for (unsigned int i = 0; i < deps.size(); ++i)
                 {
-                  if (deps[i]->is_phantom() || deps[i]->is_pruned())
-                    continue;
-
                   std::cout << std::setw(4) << (*itr)->level() << " "
                             << std::setw(8) << (long int)(*itr).get()
                             << "  Bdepend     " << deps[i]->name()
@@ -990,7 +1071,8 @@ namespace
     return result;
   }
 
-  void ldep_group::get_all_nested_ldeps(dep_list_t& result) const
+  void ldep_group::get_all_nested_ldeps(dep_list_t& result,
+                                        bool prune) const
   {
     typedef set<file_info*> all_deps_t;
     all_deps_t all_deps;
@@ -998,7 +1080,15 @@ namespace
     for (unsigned int i = 0; i < m_members.size(); ++i)
       {
         const dep_list_t& d = m_members[i]->get_nested_ldeps();
-        all_deps.insert(d.begin(), d.end());
+        if (!prune)
+          all_deps.insert(d.begin(), d.end());
+        else
+          {
+            for (unsigned int j = 0; j < d.size(); ++j)
+              if (!d[j]->is_phantom() &&
+                  !d[j]->is_pruned())
+                all_deps.insert(d[j]);
+          }
       }
 
     result.assign(all_deps.begin(), all_deps.end());
@@ -1010,7 +1100,7 @@ namespace
       return m_level;
 
     dep_list_t deps;
-    get_all_nested_ldeps(deps);
+    get_all_nested_ldeps(deps, true);
 
     if (deps.size() == 0)
       {
@@ -1025,8 +1115,7 @@ namespace
             if (deps[i]->m_ldep_group.get() == this)
               continue;
 
-            if (deps[i]->m_ldep_group.get() == 0)
-              continue;
+            assert(deps[i]->m_ldep_group.get() != 0);
 
             const int lev = deps[i]->m_ldep_group->level();
 
@@ -1650,6 +1739,7 @@ private:
   static const int LDEP_GROUPS         = (1 << 3);
   static const int LDEP_LEVELS         = (1 << 4);
   static const int LDEP_LEVELSV        = (1 << 5);
+  static const int LDEP_ADJACENCY      = (1 << 6);
 
   // Member variables
 
@@ -1893,6 +1983,12 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
   else if (strcmp(option, "--output-ldep-levelsv") == 0)
     {
       cfg.output_mode |= LDEP_LEVELSV;
+      return false;
+    }
+  else if (strcmp(option, "--output-ldep-adjacency") == 0)
+    {
+      cfg.output_mode |= LDEP_ADJACENCY;
+      cfg.output_comment_character = "%"; // for matlab
       return false;
     }
   else if (strcmp(option, "--literal") == 0)
@@ -2190,8 +2286,9 @@ void cppdeps::traverse_sources()
   // start off with a copy of m_src_files
   vector<string> files (m_src_files);
 
-  printf("%s\n",
-         "# Do not edit this file! "
+  printf("%s %s\n",
+         cfg.output_comment_character,
+         "Do not edit this file! "
          "It is automatically generated. "
          "Changes will be lost.");
 
@@ -2269,7 +2366,8 @@ void cppdeps::traverse_sources()
 
           if ((cfg.output_mode & LDEP_GROUPS) ||
               (cfg.output_mode & LDEP_LEVELS) ||
-              (cfg.output_mode & LDEP_LEVELSV))
+              (cfg.output_mode & LDEP_LEVELSV) ||
+              (cfg.output_mode & LDEP_ADJACENCY))
             {
               if (finfo->is_cc_file())
                 (void) finfo->get_nested_ldeps();
@@ -2295,6 +2393,10 @@ void cppdeps::traverse_sources()
   if (cfg.output_mode & LDEP_LEVELSV)
     {
       file_info::dump_ldep_levels(true);
+    }
+  if (cfg.output_mode & LDEP_ADJACENCY)
+    {
+      file_info::dump_ldep_adjacency();
     }
 }
 
