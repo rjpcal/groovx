@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Sat Sep  8 14:12:16 2001
+// written: Sun Sep  9 15:25:34 2001
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -19,22 +19,13 @@
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 
+#include "util/algo.h"
+
 #include "util/trace.h"
 
 
 namespace DlistTcl
 {
-  Tcl::List choose(Tcl::List source_list, Tcl::List index_list);
-  Tcl::List not_(Tcl::List source_list);
-  Tcl::List ones(unsigned int num_ones);
-  Tcl::ObjPtr pickone(Tcl::List source_list);
-  Tcl::List range(int begin, int end);
-  Tcl::List repeat(Tcl::List source_list, Tcl::List times_list);
-  Tcl::List select(Tcl::List source_list, Tcl::List flags_list);
-  Tcl::ObjPtr sum(Tcl::List source_list);
-  Tcl::List zeros(unsigned int num_zeros);
-}
-
 
 //--------------------------------------------------------------------
 //
@@ -49,21 +40,33 @@ namespace DlistTcl
 //
 //--------------------------------------------------------------------
 
-Tcl::List DlistTcl::choose(Tcl::List source_list, Tcl::List index_list)
-{
-  Tcl::List result;
+  Tcl::List choose(Tcl::List source_list, Tcl::List index_list)
+  {
+    Tcl::List result;
 
-  for (unsigned int i = 0; i < index_list.length(); ++i)
-    {
-      unsigned int index = index_list.get<unsigned int>(i);
+    for (unsigned int i = 0; i < index_list.length(); ++i)
+      {
+        unsigned int index = index_list.get<unsigned int>(i);
 
-      // use that int as an index into source list, getting the
-      // corresponding list element and appending it to the output list
-      result.append(source_list.at(index));
-    }
+        // use that int as an index into source list, getting the
+        // corresponding list element and appending it to the output list
+        result.append(source_list.at(index));
+      }
 
-  return result;
-}
+    return result;
+  }
+
+//---------------------------------------------------------------------
+//
+// Returns the n'th element of the list; generates an error if n is
+// out of range.
+//
+//---------------------------------------------------------------------
+
+  Tcl::ObjPtr index(Tcl::List source_list, unsigned int n)
+  {
+    return source_list.at(n);
+  }
 
 //--------------------------------------------------------------------
 //
@@ -73,22 +76,22 @@ Tcl::List DlistTcl::choose(Tcl::List source_list, Tcl::List index_list)
 //
 //--------------------------------------------------------------------
 
-Tcl::List DlistTcl::not_(Tcl::List source_list)
-{
-  Tcl::ObjPtr one(Tcl::Convert<int>::toTcl(1));
-  Tcl::ObjPtr zero(Tcl::Convert<int>::toTcl(0));
-  Tcl::List result;
+  Tcl::List not_(Tcl::List source_list)
+  {
+    Tcl::ObjPtr one(Tcl::Convert<int>::toTcl(1));
+    Tcl::ObjPtr zero(Tcl::Convert<int>::toTcl(0));
+    Tcl::List result;
 
-  for (unsigned int i = 0; i < source_list.length(); ++i)
-    {
-      if ( source_list.get<int>(i) == 0 )
-        result.append(one);
-      else
-        result.append(zero);
-    }
+    for (unsigned int i = 0; i < source_list.length(); ++i)
+      {
+        if ( source_list.get<int>(i) == 0 )
+          result.append(one);
+        else
+          result.append(zero);
+      }
 
-  return result;
-}
+    return result;
+  }
 
 //--------------------------------------------------------------------
 //
@@ -97,13 +100,13 @@ Tcl::List DlistTcl::not_(Tcl::List source_list)
 //
 //--------------------------------------------------------------------
 
-Tcl::List DlistTcl::ones(unsigned int num_ones)
-{
-  Tcl::List result;
-  result.append(1, num_ones);
+  Tcl::List ones(unsigned int num_ones)
+  {
+    Tcl::List result;
+    result.append(1, num_ones);
 
-  return result;
-}
+    return result;
+  }
 
 //--------------------------------------------------------------------
 //
@@ -112,19 +115,19 @@ Tcl::List DlistTcl::ones(unsigned int num_ones)
 //
 //--------------------------------------------------------------------
 
-Tcl::ObjPtr DlistTcl::pickone(Tcl::List source_list)
-{
-  if (source_list.length() == 0)
-    {
-      throw Tcl::TclError("source_list is empty");
-    }
+  Tcl::ObjPtr pickone(Tcl::List source_list)
+  {
+    if (source_list.length() == 0)
+      {
+        throw Tcl::TclError("source_list is empty");
+      }
 
-  // pick a random int between 0 and (src_len-1), inclusive
-  unsigned int randnum = (unsigned int)
-    ( double(rand())/(double(RAND_MAX)+1.0) * source_list.length() );
+    // pick a random int between 0 and (src_len-1), inclusive
+    unsigned int randnum = (unsigned int)
+      ( double(rand())/(double(RAND_MAX)+1.0) * source_list.length() );
 
-  return source_list.at(randnum);
-}
+    return source_list.at(randnum);
+  }
 
 //--------------------------------------------------------------------
 //
@@ -133,17 +136,17 @@ Tcl::ObjPtr DlistTcl::pickone(Tcl::List source_list)
 //
 //--------------------------------------------------------------------
 
-Tcl::List DlistTcl::range(int begin, int end)
-{
-  Tcl::List result;
+  Tcl::List range(int begin, int end)
+  {
+    Tcl::List result;
 
-  for (int i = begin; i <= end; ++i)
-    {
-      result.append(i);
-    }
+    for (int i = begin; i <= end; ++i)
+      {
+        result.append(i);
+      }
 
-  return result;
-}
+    return result;
+  }
 
 //--------------------------------------------------------------------
 //
@@ -159,24 +162,21 @@ Tcl::List DlistTcl::range(int begin, int end)
 //
 //--------------------------------------------------------------------
 
-Tcl::List DlistTcl::repeat(Tcl::List source_list, Tcl::List times_list)
-{
-  unsigned int src_len = source_list.length();
-  unsigned int tim_len = times_list.length();
+  Tcl::List repeat(Tcl::List source_list, Tcl::List times_list)
+  {
+    // find the minimum of the two lists' lengths
+    unsigned int min_len = Util::min(source_list.length(), times_list.length());
 
-  // find the minimum of the two lists' lengths
-  unsigned int min_len = (src_len < tim_len) ? src_len : tim_len;
+    Tcl::List result;
 
-  Tcl::List result;
+    for (unsigned int t = 0; t < min_len; ++t)
+      {
+        result.append(source_list.at(t),
+                      times_list.get<unsigned int>(t));
+      }
 
-  for (unsigned int t = 0; t < min_len; ++t)
-    {
-      result.append(source_list.at(t),
-                    times_list.get<unsigned int>(t));
-    }
-
-  return result;
-}
+    return result;
+  }
 
 //--------------------------------------------------------------------
 //
@@ -186,30 +186,49 @@ Tcl::List DlistTcl::repeat(Tcl::List source_list, Tcl::List times_list)
 //
 //--------------------------------------------------------------------
 
-Tcl::List DlistTcl::select(Tcl::List source_list, Tcl::List flags_list)
-{
-  unsigned int src_len = source_list.length();
-  unsigned int flg_len = flags_list.length();
+  Tcl::List select(Tcl::List source_list, Tcl::List flags_list)
+  {
+    unsigned int src_len = source_list.length();
+    unsigned int flg_len = flags_list.length();
 
-  if (flg_len < src_len)
-    {
-      throw Tcl::TclError("flags list must be as long as source_list");
-    }
+    if (flg_len < src_len)
+      {
+        throw Tcl::TclError("flags list must be as long as source_list");
+      }
 
-  Tcl::List result;
+    Tcl::List result;
 
-  for (unsigned int i = 0; i < src_len; ++i)
-    {
-      // if the flag is true, add the corresponding source_list
-      // element to the result list
-      if ( flags_list.get<int>(i) )
-        {
-          result.append(source_list.at(i));
-        }
-    }
+    for (unsigned int i = 0; i < src_len; ++i)
+      {
+        // if the flag is true, add the corresponding source_list
+        // element to the result list
+        if ( flags_list.get<int>(i) )
+          {
+            result.append(source_list.at(i));
+          }
+      }
 
-  return result;
-}
+    return result;
+  }
+
+//---------------------------------------------------------------------
+//
+// dlist::slice
+//
+//---------------------------------------------------------------------
+
+  Tcl::List slice(Tcl::List src, unsigned int slice)
+  {
+    Tcl::List result;
+
+    for (unsigned int i = 0, end = src.length(); i < end; ++i)
+      {
+        Tcl::List sub(src.at(i));
+        result.append(sub.at(slice));
+      }
+
+    return result;
+  }
 
 //--------------------------------------------------------------------
 //
@@ -219,40 +238,40 @@ Tcl::List DlistTcl::select(Tcl::List source_list, Tcl::List flags_list)
 //
 //--------------------------------------------------------------------
 
-Tcl::ObjPtr DlistTcl::sum(Tcl::List source_list)
-{
-  int isum=0;
-  double dsum=0.0;
-  bool seen_double=false;
+  Tcl::ObjPtr sum(Tcl::List source_list)
+  {
+    int isum=0;
+    double dsum=0.0;
+    bool seen_double=false;
 
-  for (unsigned int i = 0; i < source_list.length(); /* incr in loop body*/)
-    {
-      if ( !seen_double )
-        {
-          try
-            {
-              isum += source_list.get<int>(i);
-            }
-          catch(Tcl::TclError&)
-            {
-              seen_double = true;
-              dsum = isum;
-              continue; // skip the increment
-            }
-        }
-      else
-        {
-          dsum += source_list.get<double>(i);
-        }
+    for (unsigned int i = 0; i < source_list.length(); /* incr in loop body*/)
+      {
+        if ( !seen_double )
+          {
+            try
+              {
+                isum += source_list.get<int>(i);
+              }
+            catch(Tcl::TclError&)
+              {
+                seen_double = true;
+                dsum = isum;
+                continue; // skip the increment
+              }
+          }
+        else
+          {
+            dsum += source_list.get<double>(i);
+          }
 
-      ++i; // here's the increment
+        ++i; // here's the increment
+      }
+
+    if ( !seen_double )
+      return isum;
+    else
+      return dsum;
   }
-
-  if ( !seen_double )
-    return isum;
-  else
-    return dsum;
-}
 
 //--------------------------------------------------------------------
 //
@@ -261,36 +280,35 @@ Tcl::ObjPtr DlistTcl::sum(Tcl::List source_list)
 //
 //--------------------------------------------------------------------
 
-Tcl::List DlistTcl::zeros(unsigned int num_zeros)
-{
-  Tcl::List result;
-  result.append(0, num_zeros);
+  Tcl::List zeros(unsigned int num_zeros)
+  {
+    Tcl::List result;
+    result.append(0, num_zeros);
 
-  return result;
-}
+    return result;
+  }
 
-//--------------------------------------------------------------------
-//
-// package initialization procedure
-//
-//--------------------------------------------------------------------
+} // end namespace
+
 
 extern "C"
 int Dlist_Init(Tcl_Interp* interp)
 {
 DOTRACE("Dlist_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Dlist", "$Revision$");
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "dlist", "$Revision$");
 
-  pkg->def( "::dlist_choose", "source_list index_list", &DlistTcl::choose );
-  pkg->def( "::dlist_not", "source_list", &DlistTcl::not_ );
-  pkg->def( "::dlist_ones", "num_ones", &DlistTcl::ones );
-  pkg->def( "::dlist_pickone", "source_list", &DlistTcl::pickone );
-  pkg->def( "::dlist_range", "begin end", &DlistTcl::range );
-  pkg->def( "::dlist_repeat", "source_list times_list", &DlistTcl::repeat );
-  pkg->def( "::dlist_select", "source_list flags_list", &DlistTcl::select );
-  pkg->def( "::dlist_sum", "source_list", &DlistTcl::sum );
-  pkg->def( "::dlist_zeros", "num_zeros", &DlistTcl::zeros );
+  pkg->def( "choose", "source_list index_list", &DlistTcl::choose );
+  pkg->def( "index", "list index", &DlistTcl::index );
+  pkg->def( "not", "source_list", &DlistTcl::not_ );
+  pkg->def( "ones", "num_ones", &DlistTcl::ones );
+  pkg->def( "pickone", "source_list", &DlistTcl::pickone );
+  pkg->def( "range", "begin end", &DlistTcl::range );
+  pkg->def( "repeat", "source_list times_list", &DlistTcl::repeat );
+  pkg->def( "select", "source_list flags_list", &DlistTcl::select );
+  pkg->def( "slice", "list n", &DlistTcl::slice );
+  pkg->def( "sum", "source_list", &DlistTcl::sum );
+  pkg->def( "zeros", "num_zeros", &DlistTcl::zeros );
 
   return pkg->initStatus();
 }
