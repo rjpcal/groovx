@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Sat Aug  3 16:49:04 2002
+// written: Sat Aug  3 17:20:43 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -84,6 +84,59 @@ KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
 EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
 VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
 
+struct GlxOpts
+{
+  GlxOpts() :
+#ifndef NO_RGBA
+    rgbaFlag(1),
+#else
+    rgbaFlag(0),
+#endif
+    rgbaRed(1),
+    rgbaGreen(1),
+    rgbaBlue(1),
+    colorIndexSize(8),
+#ifndef NO_DOUBLE_BUFFER
+    doubleFlag(1),
+#else
+    doubleFlag(0),
+#endif
+    depthFlag(0),
+    depthSize(1),
+    accumFlag(0),
+    accumRed(1),
+    accumGreen(1),
+    accumBlue(1),
+    accumAlpha(1),
+    alphaFlag(0),
+    alphaSize(1),
+    stencilFlag(0),
+    stencilSize(1),
+    auxNumber(0),
+    indirect(GL_FALSE)
+  {}
+
+  int rgbaFlag;           /* configuration flags (ala GLX parameters) */
+  int rgbaRed;
+  int rgbaGreen;
+  int rgbaBlue;
+  int colorIndexSize;
+  int doubleFlag;
+  int depthFlag;
+  int depthSize;
+  int accumFlag;
+  int accumRed;
+  int accumGreen;
+  int accumBlue;
+  int accumAlpha;
+  int alphaFlag;
+  int alphaSize;
+  int stencilFlag;
+  int stencilSize;
+  int auxNumber;
+  int indirect;
+};
+
 class Togl::Impl
 {
 private:
@@ -129,7 +182,7 @@ public:
 
   void swapBuffers() const
   {
-    if (itsDoubleFlag)
+    if (itsGlxOpts.doubleFlag)
       {
         glXSwapBuffers( itsDisplay, windowId() );
       }
@@ -141,8 +194,8 @@ public:
 
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
-  bool isRgba() const { return itsRgbaFlag; }
-  bool isDoubleBuffered() const { return itsDoubleFlag; }
+  bool isRgba() const { return itsGlxOpts.rgbaFlag; }
+  bool isDoubleBuffered() const { return itsGlxOpts.doubleFlag; }
   unsigned int bitsPerPixel() const { return itsVisInfo->depth; }
   bool hasPrivateCmap() const { return itsPrivateCmapFlag; }
   Tcl_Interp* interp() const { return itsInterp; }
@@ -215,28 +268,12 @@ public:
   int itsHeight;                /* Dimensions of window */
   int itsTime;                  /* Time value for timer */
   Tcl_TimerToken itsTimerHandler; /* Token for togl's timer handler */
-  int itsRgbaFlag;           /* configuration flags (ala GLX parameters) */
-  int itsRgbaRed;
-  int itsRgbaGreen;
-  int itsRgbaBlue;
-  int itsColorIndexSize;
-  int itsDoubleFlag;
-  int itsDepthFlag;
-  int itsDepthSize;
-  int itsAccumFlag;
-  int itsAccumRed;
-  int itsAccumGreen;
-  int itsAccumBlue;
-  int itsAccumAlpha;
-  int itsAlphaFlag;
-  int itsAlphaSize;
-  int itsStencilFlag;
-  int itsStencilSize;
+
+  GlxOpts itsGlxOpts;
+
   int itsPrivateCmapFlag;
   int itsOverlayFlag;
   int itsStereoFlag;
-  int itsAuxNumber;
-  int itsIndirect;
 
   ClientData itsClientData;     /* Pointer to user data */
 
@@ -282,19 +319,19 @@ static Tk_ConfigSpec configSpecs[] =
 #else
    (char*)"false",
 #endif
-   Tk_Offset(Togl::Impl, itsRgbaFlag), 0, NULL},
+   Tk_Offset(Togl::Impl, itsGlxOpts.rgbaFlag), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-redsize", (char*)"redsize", (char*)"RedSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsRgbaRed), 0, NULL},
+   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.rgbaRed), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-greensize", (char*)"greensize", (char*)"GreenSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsRgbaGreen), 0, NULL},
+   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.rgbaGreen), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-bluesize", (char*)"bluesize", (char*)"BlueSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsRgbaBlue), 0, NULL},
+   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.rgbaBlue), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-colorindexsize", (char*)"colorindexsize", (char*)"ColorIndexSize",
-   (char*)"8", Tk_Offset(Togl::Impl, itsColorIndexSize), 0, NULL},
+   (char*)"8", Tk_Offset(Togl::Impl, itsGlxOpts.colorIndexSize), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-double", (char*)"double", (char*)"Double",
 #ifndef NO_DOUBLE_BUFFER
@@ -302,43 +339,43 @@ static Tk_ConfigSpec configSpecs[] =
 #else
    (char*)"false",
 #endif
-   Tk_Offset(Togl::Impl, itsDoubleFlag), 0, NULL},
+   Tk_Offset(Togl::Impl, itsGlxOpts.doubleFlag), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-depth", (char*)"depth", (char*)"Depth",
-   (char*)"true", Tk_Offset(Togl::Impl, itsDepthFlag), 0, NULL},
+   (char*)"true", Tk_Offset(Togl::Impl, itsGlxOpts.depthFlag), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-depthsize", (char*)"depthsize", (char*)"DepthSize",
-   (char*)"8", Tk_Offset(Togl::Impl, itsDepthSize), 0, NULL},
+   (char*)"8", Tk_Offset(Togl::Impl, itsGlxOpts.depthSize), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-accum", (char*)"accum", (char*)"Accum",
-   (char*)"false", Tk_Offset(Togl::Impl, itsAccumFlag), 0, NULL},
+   (char*)"false", Tk_Offset(Togl::Impl, itsGlxOpts.accumFlag), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-accumredsize", (char*)"accumredsize", (char*)"AccumRedSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsAccumRed), 0, NULL},
+   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.accumRed), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-accumgreensize", (char*)"accumgreensize", (char*)"AccumGreenSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsAccumGreen), 0, NULL},
+   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.accumGreen), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-accumbluesize", (char*)"accumbluesize", (char*)"AccumBlueSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsAccumBlue), 0, NULL},
+   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.accumBlue), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-accumalphasize", (char*)"accumalphasize", (char*)"AccumAlphaSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsAccumAlpha), 0, NULL},
+   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.accumAlpha), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-alpha", (char*)"alpha", (char*)"Alpha",
-   (char*)"false", Tk_Offset(Togl::Impl, itsAlphaFlag), 0, NULL},
+   (char*)"false", Tk_Offset(Togl::Impl, itsGlxOpts.alphaFlag), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-alphasize", (char*)"alphasize", (char*)"AlphaSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsAlphaSize), 0, NULL},
+   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.alphaSize), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-stencil", (char*)"stencil", (char*)"Stencil",
-   (char*)"false", Tk_Offset(Togl::Impl, itsStencilFlag), 0, NULL},
+   (char*)"false", Tk_Offset(Togl::Impl, itsGlxOpts.stencilFlag), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-stencilsize", (char*)"stencilsize", (char*)"StencilSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsStencilSize), 0, NULL},
+   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.stencilSize), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-auxbuffers", (char*)"auxbuffers", (char*)"AuxBuffers",
-   (char*)"0", Tk_Offset(Togl::Impl, itsAuxNumber), 0, NULL},
+   (char*)"0", Tk_Offset(Togl::Impl, itsGlxOpts.auxNumber), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-privatecmap", (char*)"privateCmap", (char*)"PrivateCmap",
    (char*)"false", Tk_Offset(Togl::Impl, itsPrivateCmapFlag), 0, NULL},
@@ -358,7 +395,7 @@ static Tk_ConfigSpec configSpecs[] =
    (char*)DEFAULT_TIME, Tk_Offset(Togl::Impl, itsTime), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-indirect", (char*)"indirect", (char*)"Indirect",
-   (char*)"false", Tk_Offset(Togl::Impl, itsIndirect), 0, NULL},
+   (char*)"false", Tk_Offset(Togl::Impl, itsGlxOpts.indirect), 0, NULL},
 
   {TK_CONFIG_END, (char *) NULL, (char *) NULL, (char *) NULL,
    (char *) NULL, 0, 0, NULL}
@@ -1000,36 +1037,10 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsHeight(0),
   itsTime(0),
   itsTimerHandler(0),
-#ifndef NO_RGBA
-  itsRgbaFlag(1),
-#else
-  itsRgbaFlag(0),
-#endif
-  itsRgbaRed(1),
-  itsRgbaGreen(1),
-  itsRgbaBlue(1),
-  itsColorIndexSize(8),
-#ifndef NO_DOUBLE_BUFFER
-  itsDoubleFlag(1),
-#else
-  itsDoubleFlag(0),
-#endif
-  itsDepthFlag(0),
-  itsDepthSize(1),
-  itsAccumFlag(0),
-  itsAccumRed(1),
-  itsAccumGreen(1),
-  itsAccumBlue(1),
-  itsAccumAlpha(1),
-  itsAlphaFlag(0),
-  itsAlphaSize(1),
-  itsStencilFlag(0),
-  itsStencilSize(1),
+  itsGlxOpts(),
   itsPrivateCmapFlag(0),
   itsOverlayFlag(0),
   itsStereoFlag(0),
-  itsAuxNumber(0),
-  itsIndirect(GL_FALSE),
   itsClientData(DefaultClientData),
   itsUpdatePending(GL_FALSE),
   itsDisplayProc(DefaultDisplayProc),
@@ -1155,24 +1166,24 @@ int Togl::Impl::configure(Tcl_Interp* interp,
 {
 DOTRACE("Togl::Impl::configure");
 
-  int oldRgbaFlag       = itsRgbaFlag;
-  int oldRgbaRed        = itsRgbaRed;
-  int oldRgbaGreen      = itsRgbaGreen;
-  int oldRgbaBlue       = itsRgbaBlue;
-  int oldColorIndexSize = itsColorIndexSize;
-  int oldDoubleFlag     = itsDoubleFlag;
-  int oldDepthFlag      = itsDepthFlag;
-  int oldDepthSize      = itsDepthSize;
-  int oldAccumFlag      = itsAccumFlag;
-  int oldAccumRed       = itsAccumRed;
-  int oldAccumGreen     = itsAccumGreen;
-  int oldAccumBlue      = itsAccumBlue;
-  int oldAccumAlpha     = itsAccumAlpha;
-  int oldAlphaFlag      = itsAlphaFlag;
-  int oldAlphaSize      = itsAlphaSize;
-  int oldStencilFlag    = itsStencilFlag;
-  int oldStencilSize    = itsStencilSize;
-  int oldAuxNumber      = itsAuxNumber;
+  int oldRgbaFlag       = itsGlxOpts.rgbaFlag;
+  int oldRgbaRed        = itsGlxOpts.rgbaRed;
+  int oldRgbaGreen      = itsGlxOpts.rgbaGreen;
+  int oldRgbaBlue       = itsGlxOpts.rgbaBlue;
+  int oldColorIndexSize = itsGlxOpts.colorIndexSize;
+  int oldDoubleFlag     = itsGlxOpts.doubleFlag;
+  int oldDepthFlag      = itsGlxOpts.depthFlag;
+  int oldDepthSize      = itsGlxOpts.depthSize;
+  int oldAccumFlag      = itsGlxOpts.accumFlag;
+  int oldAccumRed       = itsGlxOpts.accumRed;
+  int oldAccumGreen     = itsGlxOpts.accumGreen;
+  int oldAccumBlue      = itsGlxOpts.accumBlue;
+  int oldAccumAlpha     = itsGlxOpts.accumAlpha;
+  int oldAlphaFlag      = itsGlxOpts.alphaFlag;
+  int oldAlphaSize      = itsGlxOpts.alphaSize;
+  int oldStencilFlag    = itsGlxOpts.stencilFlag;
+  int oldStencilSize    = itsGlxOpts.stencilSize;
+  int oldAuxNumber      = itsGlxOpts.auxNumber;
 
   if (Tk_ConfigureWidget(interp, itsTkWin, configSpecs,
                          argc, const_cast<char**>(argv),
@@ -1183,24 +1194,24 @@ DOTRACE("Togl::Impl::configure");
 
   Tk_GeometryRequest(itsTkWin, itsWidth, itsHeight);
 
-  if (itsRgbaFlag != oldRgbaFlag
-      || itsRgbaRed != oldRgbaRed
-      || itsRgbaGreen != oldRgbaGreen
-      || itsRgbaBlue != oldRgbaBlue
-      || itsColorIndexSize != oldColorIndexSize
-      || itsDoubleFlag != oldDoubleFlag
-      || itsDepthFlag != oldDepthFlag
-      || itsDepthSize != oldDepthSize
-      || itsAccumFlag != oldAccumFlag
-      || itsAccumRed != oldAccumRed
-      || itsAccumGreen != oldAccumGreen
-      || itsAccumBlue != oldAccumBlue
-      || itsAccumAlpha != oldAccumAlpha
-      || itsAlphaFlag != oldAlphaFlag
-      || itsAlphaSize != oldAlphaSize
-      || itsStencilFlag != oldStencilFlag
-      || itsStencilSize != oldStencilSize
-      || itsAuxNumber != oldAuxNumber)
+  if (itsGlxOpts.rgbaFlag != oldRgbaFlag
+      || itsGlxOpts.rgbaRed != oldRgbaRed
+      || itsGlxOpts.rgbaGreen != oldRgbaGreen
+      || itsGlxOpts.rgbaBlue != oldRgbaBlue
+      || itsGlxOpts.colorIndexSize != oldColorIndexSize
+      || itsGlxOpts.doubleFlag != oldDoubleFlag
+      || itsGlxOpts.depthFlag != oldDepthFlag
+      || itsGlxOpts.depthSize != oldDepthSize
+      || itsGlxOpts.accumFlag != oldAccumFlag
+      || itsGlxOpts.accumRed != oldAccumRed
+      || itsGlxOpts.accumGreen != oldAccumGreen
+      || itsGlxOpts.accumBlue != oldAccumBlue
+      || itsGlxOpts.accumAlpha != oldAccumAlpha
+      || itsGlxOpts.alphaFlag != oldAlphaFlag
+      || itsGlxOpts.alphaSize != oldAlphaSize
+      || itsGlxOpts.stencilFlag != oldStencilFlag
+      || itsGlxOpts.stencilSize != oldStencilSize
+      || itsGlxOpts.auxNumber != oldAuxNumber)
     {
       /* Have to recreate the window and GLX context */
       if (makeWindowExist()==TCL_ERROR)
@@ -1334,7 +1345,7 @@ DOTRACE("Togl::Impl::postReconfigure");
 unsigned long Togl::Impl::allocColor(float red, float green, float blue) const
 {
 DOTRACE("Togl::Impl::allocColor");
-  if (itsRgbaFlag)
+  if (itsGlxOpts.rgbaFlag)
     {
       fprintf(stderr,"Error: Togl::allocColor illegal in RGBA mode.\n");
       return 0;
@@ -1362,7 +1373,7 @@ DOTRACE("Togl::Impl::allocColor");
 void Togl::Impl::freeColor(unsigned long pixel) const
 {
 DOTRACE("Togl::Impl::freeColor");
-  if (itsRgbaFlag)
+  if (itsGlxOpts.rgbaFlag)
     {
       fprintf(stderr,"Error: Togl::freeColor illegal in RGBA mode.\n");
       return;
@@ -1382,7 +1393,7 @@ void Togl::Impl::setColor(unsigned long index,
                           float red, float green, float blue) const
 {
 DOTRACE("Togl::Impl::setColor");
-  if (itsRgbaFlag)
+  if (itsGlxOpts.rgbaFlag)
     {
       fprintf(stderr,"Error: Togl::setColor illegal in RGBA mode.\n");
       return;
@@ -1834,21 +1845,21 @@ DOTRACE("Togl::Impl::setupVisInfoAndContext");
   // Create a new OpenGL rendering context.
   Assert( itsGlx == 0 );
 
-  itsGlx = new GlxWrapper(itsDisplay, *attribs, !itsIndirect);
+  itsGlx = new GlxWrapper(itsDisplay, *attribs, !itsGlxOpts.indirect);
 
   itsVisInfo = itsGlx->visInfo();
 
   // Make sure we don't try to use a depth buffer with indirect rendering
-  if ( !itsGlx->isDirect() && itsDepthFlag == true )
+  if ( !itsGlx->isDirect() && itsGlxOpts.depthFlag == true )
     {
       delete itsGlx;
       itsGlx = 0;
-      itsDepthFlag = false;
+      itsGlxOpts.depthFlag = false;
       setupVisInfoAndContext();
       return;
     }
 
-  itsIndirect = !itsGlx->isDirect();
+  itsGlxOpts.indirect = !itsGlx->isDirect();
 }
 
 shared_ptr<GlxAttribs> Togl::Impl::buildAttribList()
@@ -1857,25 +1868,25 @@ DOTRACE("Togl::Impl::buildAttribList");
 
   shared_ptr<GlxAttribs> attribs(new GlxAttribs);
 
-  if (itsRgbaFlag)        attribs->rgba(itsRgbaRed,
-                                        itsRgbaGreen,
-                                        itsRgbaBlue,
-                                        itsAlphaFlag ? itsAlphaSize : -1);
+  if (itsGlxOpts.rgbaFlag)        attribs->rgba(itsGlxOpts.rgbaRed,
+                                        itsGlxOpts.rgbaGreen,
+                                        itsGlxOpts.rgbaBlue,
+                                        itsGlxOpts.alphaFlag ? itsGlxOpts.alphaSize : -1);
 
-  else                    attribs->colorIndex( itsColorIndexSize );
+  else                    attribs->colorIndex( itsGlxOpts.colorIndexSize );
 
-  if (itsDepthFlag)       attribs->depthBuffer( itsDepthSize );
+  if (itsGlxOpts.depthFlag)       attribs->depthBuffer( itsGlxOpts.depthSize );
 
-  if (itsDoubleFlag)      attribs->doubleBuffer();
+  if (itsGlxOpts.doubleFlag)      attribs->doubleBuffer();
 
-  if (itsStencilFlag)     attribs->stencilBuffer( itsStencilSize );
+  if (itsGlxOpts.stencilFlag)     attribs->stencilBuffer( itsGlxOpts.stencilSize );
 
-  if (itsAccumFlag)       attribs->accum(itsAccumRed,
-                                         itsAccumGreen,
-                                         itsAccumBlue,
-                                         itsAlphaFlag ? itsAccumAlpha : -1);
+  if (itsGlxOpts.accumFlag)       attribs->accum(itsGlxOpts.accumRed,
+                                         itsGlxOpts.accumGreen,
+                                         itsGlxOpts.accumBlue,
+                                         itsGlxOpts.alphaFlag ? itsGlxOpts.accumAlpha : -1);
 
-  if (itsAuxNumber > 0)   attribs->auxBuffers( itsAuxNumber );
+  if (itsGlxOpts.auxNumber > 0)   attribs->auxBuffers( itsGlxOpts.auxNumber );
 
   return attribs;
 }
@@ -1887,7 +1898,7 @@ DOTRACE("Togl::Impl::createWindow");
   TkWindow *winPtr = (TkWindow *) itsTkWin;
 
   Colormap cmap = X11Util::findColormap(itsDisplay, itsVisInfo,
-                                        itsRgbaFlag, itsPrivateCmapFlag);
+                                        itsGlxOpts.rgbaFlag, itsPrivateCmapFlag);
 
   /* Make sure Tk knows to switch to the new colormap when the cursor
    * is over this window when running in color index mode.
@@ -1912,7 +1923,7 @@ DOTRACE("Togl::Impl::createWindow");
 
   DebugEvalNL(winPtr->window);
 
-  if (!itsRgbaFlag)
+  if (!itsGlxOpts.rgbaFlag)
     {
       X11Util::hackInstallColormap(itsDisplay, winPtr->window, cmap);
     }
@@ -2064,7 +2075,8 @@ DOTRACE("Togl::Impl::setupOverlay");
 
   Assert( itsOverlayGlx == 0 );
 
-  itsOverlayGlx = new GlxWrapper(itsDisplay, visinfo, !itsIndirect, itsGlx);
+  itsOverlayGlx = new GlxWrapper(itsDisplay, visinfo,
+                                 !itsGlxOpts.indirect, itsGlx);
 
   XSetWindowAttributes swa;
   swa.colormap = XCreateColormap( itsDisplay,
@@ -2146,7 +2158,7 @@ DOTRACE("Togl::Impl::checkDblBufferSnafu");
   int dbl_flag;
   if (glXGetConfig( itsDisplay, itsVisInfo, GLX_DOUBLEBUFFER, &dbl_flag ))
     {
-      if (itsDoubleFlag==0 && dbl_flag)
+      if (itsGlxOpts.doubleFlag==0 && dbl_flag)
         {
           /* We requested single buffering but had to accept a */
           /* double buffered visual.  Set the GL draw buffer to */
