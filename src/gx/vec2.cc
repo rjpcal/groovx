@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug  9 14:38:13 2001
-// written: Fri Jan 18 16:07:07 2002
+// written: Wed Mar 27 10:45:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #include "util/algo.h"
 
 #include <cmath>
+
+#include "util/trace.h"
 
 namespace Gfx { namespace PointAlgo
 {
@@ -86,6 +88,7 @@ double Gfx::PointAlgo::thetaDeg(double y, double x)
 void Gfx::PointAlgo::setPolarPoint(Gfx::Vec2<double>& point,
                                    double length, double degrees)
 {
+DOTRACE("Gfx::PointAlgo::setPolarPoint");
   normDeg(degrees);
 
   if (degrees == 0.0) { point.set(length, 0.0); return; }
