@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Tue Oct 24 17:43:56 2000
+// written: Wed Oct 25 09:18:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,9 +55,11 @@ public:
   virtual void clear();
 
 protected:
-  virtual RefCounted* getPtrBase(int id) const throw ();
-  virtual RefCounted* getCheckedPtrBase(int id) const throw (InvalidIdError);
-  virtual int insertPtrBase(RefCounted* ptr);
+  virtual IO::IoObject* getPtrBase(int id) const throw ();
+  virtual IO::IoObject* getCheckedPtrBase(int id) const throw (InvalidIdError);
+  virtual int insertPtrBase(IO::IoObject* ptr);
+
+  virtual void ensureCorrectType(const IO::IoObject* ptr) const;
 
 private:
 

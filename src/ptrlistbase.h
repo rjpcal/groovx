@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Tue Oct 24 17:42:53 2000
+// written: Wed Oct 25 09:18:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 #include "util/error.h"
 #endif
 
-class RefCounted;
+namespace IO { class IoObject; }
 
 /**
  *
@@ -93,20 +93,24 @@ public:
   virtual void clear();
 
 protected:
-  /** Return the \c RefCounted* at the index given by \a id.  There is no
+  /** Return the \c IO::IoObject* at the index given by \a id.  There is no
 		range-check performed; this must be done by the client with
 		\c isValidId(). */
-  virtual RefCounted* getPtrBase(int id) const throw ();
+  virtual IO::IoObject* getPtrBase(int id) const throw ();
 
   /** Like \c getPtrBase(), but checks first if \a id is a valid index,
 		and throws an \c InvalidIdError if it is not. */
-  virtual RefCounted* getCheckedPtrBase(int id) const throw (InvalidIdError);
+  virtual IO::IoObject* getCheckedPtrBase(int id) const throw (InvalidIdError);
 
   /** Add ptr at the next available location, and return the index
 		where it was inserted. If necessary, the list will be expanded
 		to make room for the ptr. The PtrList now assumes control of the
 		memory management for the object *ptr. */
-  virtual int insertPtrBase(RefCounted* ptr);
+  virtual int insertPtrBase(IO::IoObject* ptr);
+
+  /** Subclasses override to throw an exception if \a ptr is of the
+      wrong type to be in the list. */
+  virtual void ensureCorrectType(const IO::IoObject* ptr) const = 0;
 
 private:
   PtrListBase(const PtrListBase&);
