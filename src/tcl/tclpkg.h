@@ -149,13 +149,21 @@ public:
 
   /// Export commands into a different namespace.
   /** Causes all of our package's currently defined commands and
-      procedures to be imported into the specified other namespace. */
-  void namespaceAlias(const char* namesp) throw();
+      procedures to be imported into the specified other namespace. If
+      pattern is different from the default value of "*", then only
+      commands whose names match pattern according to glob rules will
+      be aliased into the other namespace. */
+  void namespaceAlias(const char* namesp,
+                      const char* pattern = "*") throw();
 
   /// Import commands from a different namespace.
   /** Import all of the commands and procedures defined in the
-      specified namespace into our own package namespace. */
-  void inherit(const char* namesp) throw();
+      specified namespace into our own package namespace. If pattern
+      is different from the default value of "*", then only commands
+      whose names match pattern according to glob rules will be
+      imported into our own package namespace. */
+  void inherit(const char* namesp,
+               const char* pattern = "*") throw();
 
   /// Import all commands and procedures defined in the named pkg.
   /** If the named pkg has not yet been loaded, this function will

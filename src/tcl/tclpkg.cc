@@ -106,11 +106,13 @@ namespace
 #endif
   }
 
-  void exportInto(Tcl::Interp& interp, const char* from, const char* to)
+  void exportInto(Tcl::Interp& interp,
+                  const char* from, const char* to,
+                  const char* pattern)
   {
   DOTRACE("exportInto");
     fstring cmd("namespace eval ", to, " { namespace import ::");
-    cmd.append(from, "::* }");
+    cmd.append(from, "::", pattern, " }");
 
     interp.eval(cmd);
   }
@@ -313,14 +315,15 @@ DOTRACE("Tcl::Pkg::handleLiveException");
   rep->interp.handleLiveException("");
 }
 
-void Tcl::Pkg::namespaceAlias(const char* namesp) throw()
+void Tcl::Pkg::namespaceAlias(const char* namesp,
+                              const char* pattern) throw()
 {
 DOTRACE("Tcl::Pkg::namespaceAlias");
 
   try
     {
       exportAll(rep->interp, rep->namespName.c_str());
-      exportInto(rep->interp, rep->namespName.c_str(), namesp);
+      exportInto(rep->interp, rep->namespName.c_str(), namesp, pattern);
     }
   catch (...)
     {
@@ -328,14 +331,15 @@ DOTRACE("Tcl::Pkg::namespaceAlias");
     }
 }
 
-void Tcl::Pkg::inherit(const char* namesp) throw()
+void Tcl::Pkg::inherit(const char* namesp,
+                       const char* pattern) throw()
 {
 DOTRACE("Tcl::Pkg::inherit");
 
   try
     {
       exportAll(rep->interp, namesp);
-      exportInto(rep->interp, namesp, rep->namespName.c_str());
+      exportInto(rep->interp, namesp, rep->namespName.c_str(), pattern);
     }
   catch (...)
     {
