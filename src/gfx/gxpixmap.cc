@@ -53,7 +53,7 @@
 
 namespace
 {
-  Gfx::Vec2<double> defaultZoom(1.0, 1.0);
+  const Gfx::Vec2<double> defaultZoom(1.0, 1.0);
 
   const IO::VersionId BITMAP_SERIAL_VERSION_ID = 4;
 }
