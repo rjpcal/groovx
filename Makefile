@@ -362,7 +362,7 @@ CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
 	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
 
 $(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
-	$(CC) -o $(TMP_FILE) $(CMDLINE); mv $(TMP_FILE) $@
+	$(CC) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
 
 #-------------------------------------------------------------------------
 #
@@ -390,10 +390,10 @@ $(SRC)/%.preh : $(SRC)/%.h
 #-------------------------------------------------------------------------
 
 %.$(SHLIB_EXT):
-	$(SHLIB_CMD) $(TMP_DIR)/$(notdir $@) $^; mv $(TMP_DIR)/$(notdir $@) $@
+	$(SHLIB_CMD) $(TMP_DIR)/$(notdir $@) $^ && mv $(TMP_DIR)/$(notdir $@) $@
 
 %.$(STATLIB_EXT):
-	$(STATLIB_CMD) $(TMP_DIR)/$(notdir $@) $^; mv $(TMP_DIR)/$(notdir $@) $@
+	$(STATLIB_CMD) $(TMP_DIR)/$(notdir $@) $^ && mv $(TMP_DIR)/$(notdir $@) $@
 
 $(LIBDEEPVISION): $(DEEPVISION_OBJS)
 $(LIBDEEPTCL):    $(DEEPTCL_OBJS)
