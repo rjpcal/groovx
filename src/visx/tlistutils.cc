@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Sat Dec  4 04:11:28 1999
+// written: Sat Dec  4 04:15:10 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@
 
 namespace {
   const char* const bad_trial_msg = "invalid trial id";
-  const char* const bad_objid_msg = "invalid objid";
-  const char* const bad_posid_msg = "invalid posid";
+  const char* const bad_objid_msg = "objid out of range";
+  const char* const bad_posid_msg = "posid out of range";
 }
 
 int TlistUtils::createPreview(Tlist& tlist,
