@@ -46,27 +46,30 @@
 DBG_REGISTER
 #include "util/trace.h"
 
+using geom::vec2d;
+using geom::vec3d;
+
 GxAligner::GxAligner(Nub::SoftRef<GxNode> child) :
   GxBin(child),
   itsMode(NATIVE_ALIGNMENT),
   itsCenter(0.0, 0.0)
 {}
 
-geom::vec2<double> GxAligner::getCenter(const geom::rect<double>& bounds) const
+vec2d GxAligner::getCenter(const geom::rect<double>& bounds) const
 {
 DOTRACE("GxAligner::getCenter");
   switch (itsMode)
     {
     case CENTER_ON_CENTER:
-      return geom::vec2<double>(0.0, 0.0);
+      return vec2d(0.0, 0.0);
     case NW_ON_CENTER:
-      return geom::vec2<double>(bounds.width()/2.0, -bounds.height()/2.0);
+      return vec2d(bounds.width()/2.0, -bounds.height()/2.0);
     case NE_ON_CENTER:
-      return geom::vec2<double>(-bounds.width()/2.0, -bounds.height()/2.0);
+      return vec2d(-bounds.width()/2.0, -bounds.height()/2.0);
     case SW_ON_CENTER:
-      return geom::vec2<double>(bounds.width()/2.0, bounds.height()/2.0);
+      return vec2d(bounds.width()/2.0, bounds.height()/2.0);
     case SE_ON_CENTER:
-      return geom::vec2<double>(-bounds.width()/2.0, bounds.height()/2.0);
+      return vec2d(-bounds.width()/2.0, bounds.height()/2.0);
     case ARBITRARY_ON_CENTER:
       return itsCenter;
     }
@@ -82,11 +85,9 @@ DOTRACE("GxAligner::doAlignment");
   if (NATIVE_ALIGNMENT == itsMode) return;
 
   // This indicates where the center of the object will go
-  geom::vec2<double> center = getCenter(native);
+  const vec2d center = getCenter(native) - native.center();
 
-  center -= native.center();
-
-  geom::vec3<double> vec(center.x(), center.y(), 0.0);
+  const vec3d vec(center.x(), center.y(), 0.0);
 
   canvas.translate(vec);
 }
@@ -112,7 +113,7 @@ DOTRACE("GxAligner::getBoundingCube");
 
   geom::rect<double> bounds = mybox.rect();
 
-  geom::vec2<double> center = getCenter(bounds);
+  const vec2d center = getCenter(bounds);
 
   bounds.set_center(center);
 
