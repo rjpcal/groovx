@@ -319,6 +319,18 @@ DOTRACE("ClearBufferEvent::invoke");
     widget->clearscreen();
 }
 
+FinishDrawingEvent::FinishDrawingEvent(unsigned int msec) : TrialEvent(msec) {}
+
+FinishDrawingEvent::~FinishDrawingEvent() throw() {}
+
+void FinishDrawingEvent::invoke(Trial& trial)
+{
+DOTRACE("FinishDrawingEvent::invoke");
+  Util::SoftRef<Toglet> widget = trial.getWidget();
+  if (widget.isValid())
+    widget->getCanvas().finishDrawing();
+}
+
 GenericEvent::GenericEvent(unsigned int msec) :
   TrialEvent(msec),
   itsCallback(new Tcl::ProcWrapper(Tcl::Main::interp()))

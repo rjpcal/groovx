@@ -379,7 +379,27 @@ public:
 //  ###################################################################
 //  ===================================================================
 
-/// TrialEvent subclass to call Canvas::clearColorBuffer().
+/// TrialEvent subclass to call Canvas::finishDrawing().
+class FinishDrawingEvent : public TrialEvent
+{
+protected:
+  /// Construct with a requested delay of \a msec milliseconds.
+  FinishDrawingEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~FinishDrawingEvent() throw();
+
+  virtual void invoke(Trial& trial);
+
+public:
+  /// Default creator.
+  static FinishDrawingEvent* make() { return new FinishDrawingEvent; }
+};
+
+//  ###################################################################
+//  ===================================================================
+
+/// TrialEvent subclass to call an arbitrary piece of Tcl code.
 class GenericEvent : public TrialEvent
 {
 protected:

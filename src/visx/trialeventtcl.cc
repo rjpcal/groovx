@@ -5,7 +5,7 @@
 // Copyright (c) 2003-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 22 14:37:17 2003
-// written: Thu May 22 14:52:26 2003
+// written: Thu May 22 15:26:00 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -56,6 +56,19 @@ namespace
 
     return pkg;
   }
+
+  void addEvents(Util::Ref<MultiEvent> multi, Tcl::List event_ids)
+  {
+    Tcl::List::Iterator<Util::Ref<TrialEvent> >
+      itr = event_ids.begin<Util::Ref<TrialEvent> >(),
+      end = event_ids.end<Util::Ref<TrialEvent> >();
+
+    while (itr != end)
+      {
+        multi->addEvent(*itr);
+        ++itr;
+      }
+  }
 }
 
 extern "C"
@@ -81,6 +94,7 @@ DOTRACE("Trialevent_Init");
   initEventType<RenderBackEvent>(interp);
   initEventType<RenderFrontEvent>(interp);
   initEventType<ClearBufferEvent>(interp);
+  initEventType<FinishDrawingEvent>(interp);
 
   return pkg->initStatus();
 }
@@ -105,8 +119,9 @@ DOTRACE("Multievent_Init");
 
   Tcl::Pkg* pkg = initEventType<MultiEvent>(interp);
 
-  pkg->defGetter("getEvents", &MultiEvent::getEvents);
+  pkg->defGetter("events", &MultiEvent::getEvents);
   pkg->def("addEvent", "<this> event_id", &MultiEvent::addEvent);
+  pkg->def("addEvents", "<this> event_id(s)", &addEvents);
   pkg->def("eraseEventAt", "<this> index", &MultiEvent::eraseEventAt);
   pkg->def("clearEvents", "<this>", &MultiEvent::clearEvents);
 
