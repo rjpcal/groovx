@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Tue Oct 24 07:12:54 2000
+// written: Thu Oct 26 16:57:58 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -229,12 +229,14 @@ ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
   addCommand( new PauseCmd(this, "Expt::pause") );
   addCommand( new SetStartCommandCmd(this, "Expt::setStartCommand") );
 
+  declareCSetter("addBlock", &ExptDriver::addBlock);
   declareCAttrib("autosaveFile",
 					  &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
   declareCAttrib("autosavePeriod",
 					  &ExptDriver::getAutosavePeriod,
 					  &ExptDriver::setAutosavePeriod);
   declareCAction("clear", &ExptDriver::edClearExpt);
+  declareCGetter("currentBlock", &ExptDriver::currentBlock);
   declareCAction("reset", &ExptDriver::edResetExpt);
   declareCAction("stop", &ExptDriver::edHaltExpt);
   declareCAction("storeData", &ExptDriver::storeData);
