@@ -2,7 +2,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Sat Mar 13 14:48:16 1999
+// written: Sun Mar 14 18:09:50 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POSITION_H_DEFINED
@@ -21,7 +21,7 @@ public:
   //////////////
 
   Position();
-  Position(istream &is);
+  Position(istream &is, IOFlag flag);
   virtual ~Position();
 
   IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const;
