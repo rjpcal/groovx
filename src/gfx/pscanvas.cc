@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Sun Nov  3 13:41:12 2002
+// written: Thu Nov 21 15:40:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -730,6 +730,27 @@ DOTRACE("Gfx::PSCanvas::enableAntialiasing");
   // nothing, antialiasing is default in postscript
 }
 
+
+
+void Gfx::PSCanvas::viewport(int x, int y, int w, int h)
+{
+DOTRACE("Gfx::PSCanvas::viewport");
+// FIXME
+}
+
+void Gfx::PSCanvas::orthographic(const Gfx::Rect<double>& bounds,
+                                 double zNear, double zFar)
+{
+DOTRACE("Gfx::PSCanvas::orthographic");
+// FIXME
+}
+
+void Gfx::PSCanvas::perspective(double fovy, double aspect,
+                                double zNear, double zFar)
+{
+DOTRACE("Gfx::PSCanvas::perspective");
+// FIXME
+}
 
 
 void Gfx::PSCanvas::pushMatrix()
