@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Jan 21 14:21:10 2002
+// written: Tue Jan 29 19:02:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,9 +66,27 @@ namespace
       }
   }
 
-  minivec<Util::Prof*> callStack;
+  typedef minivec<Util::Prof*> ProfVec;
 
-  minivec<Util::Prof*> allProfs;
+  ProfVec& callStack()
+  {
+    static ProfVec* ptr = 0;
+    if (ptr == 0)
+      {
+        ptr = new ProfVec;
+      }
+    return *ptr;
+  }
+
+  ProfVec& allProfs()
+  {
+    static ProfVec* ptr = 0;
+    if (ptr == 0)
+      {
+        ptr = new ProfVec;
+      }
+    return *ptr;
+  }
 }
 
 
@@ -84,7 +102,7 @@ Util::Prof::Prof(const char* s) :
   totalTime.tv_sec = 0;
   totalTime.tv_usec = 0;
 
-  allProfs.push_back(this);
+  allProfs().push_back(this);
 }
 
 Util::Prof::~Prof()
@@ -141,19 +159,19 @@ void Util::Prof::printProfData(ostream& os) const
 
 void Util::Prof::resetAllProfData()
 {
-  for (unsigned int i = 0; i < allProfs.size(); ++i)
+  for (unsigned int i = 0; i < allProfs().size(); ++i)
     {
-      allProfs[i]->callCount = 0;
-      allProfs[i]->totalTime.tv_sec = 0;
-      allProfs[i]->totalTime.tv_usec = 0;
+      allProfs()[i]->callCount = 0;
+      allProfs()[i]->totalTime.tv_sec = 0;
+      allProfs()[i]->totalTime.tv_usec = 0;
     }
 }
 
 void Util::Prof::printAllProfData(ostream& os)
 {
-  for (unsigned int i = 0; i < allProfs.size(); ++i)
+  for (unsigned int i = 0; i < allProfs().size(); ++i)
     {
-      allProfs[i]->printProfData(os);
+      allProfs()[i]->printProfData(os);
     }
 }
 
@@ -200,11 +218,11 @@ void Util::Trace::printStackTrace(ostream& os)
   os << "stack trace:\n";
 
   unsigned int i = 0;
-  unsigned int ri = callStack.size()-1;
+  unsigned int ri = callStack().size()-1;
 
-  for (; i < callStack.size(); ++i, --ri)
+  for (; i < callStack().size(); ++i, --ri)
     {
-      os << "\t[" << i << "] " << callStack[ri]->name() << '\n';
+      os << "\t[" << i << "] " << callStack()[ri]->name() << '\n';
     }
 
   os << flush;
@@ -215,11 +233,11 @@ void Util::Trace::printStackTrace()
   printf("stack trace:\n");
 
   unsigned int i = 0;
-  unsigned int ri = callStack.size()-1;
+  unsigned int ri = callStack().size()-1;
 
-  for (; i < callStack.size(); ++i, --ri)
+  for (; i < callStack().size(); ++i, --ri)
     {
-      printf("\t[%d] %s\n", int(i), callStack[ri]->name());
+      printf("\t[%d] %s\n", int(i), callStack()[ri]->name());
     }
 }
 
@@ -233,7 +251,7 @@ Util::Trace::Trace(Prof& p, bool useMsg) :
       printIn();
     }
 
-  callStack.push_back(&p);
+  callStack().push_back(&p);
 
   getTime(start);
 }
@@ -244,7 +262,7 @@ Util::Trace::~Trace()
   elapsed.tv_sec = finish.tv_sec - start.tv_sec;
   elapsed.tv_usec = finish.tv_usec - start.tv_usec;
   prof.add(elapsed);
-  callStack.pop_back();
+  callStack().pop_back();
   if (GLOBAL_TRACE || giveTraceMsg)
     {
       printOut();
@@ -253,11 +271,11 @@ Util::Trace::~Trace()
 
 void Util::Trace::printIn()
 {
-  if (callStack.size() < MAX_TRACE_LEVEL)
+  if (callStack().size() < MAX_TRACE_LEVEL)
     {
-      if (callStack.size() > 0)
+      if (callStack().size() > 0)
         {
-          for (unsigned int i=0; i < callStack.size()-1; ++i)
+          for (unsigned int i=0; i < callStack().size()-1; ++i)
             {
               STD_IO::cerr << "|   ";
             }
@@ -279,7 +297,7 @@ void Util::Trace::printIn()
 
 void Util::Trace::printOut()
 {
-  if (callStack.size() == 0) STD_IO::cerr << '\n';
+  if (callStack().size() == 0) STD_IO::cerr << '\n';
 }
 
 static const char vcid_trace_cc[] = "$Header$";
