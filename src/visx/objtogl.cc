@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Aug  3 15:43:49 1999
+// written: Wed Sep 15 19:19:52 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -80,7 +80,13 @@ public:
     glClear(GL_COLOR_BUFFER_BIT);
     
     DebugPrintNL("drawing the trial...");
-    Tlist::theTlist().drawCurTrial();
+	 try {
+		Tlist::theTlist().drawCurTrial();
+	 }
+	 catch (InvalidIdError& err) {
+		Tcl_BackgroundError(getInterp());
+		Tcl_AddObjErrorInfo(getInterp(), err.msg().c_str(), -1);		
+	 }
     
     DebugPrintNL("swapping the buffers...");
     swapBuffers();
