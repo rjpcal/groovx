@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Fri Sep 29 14:31:29 2000
+// written: Wed Oct 11 14:37:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,6 @@
 #endif
 
 namespace GWT { class Widget; }
-
-struct Tcl_Interp;
 
 class Block;
 class TrialBase;
@@ -49,10 +47,6 @@ public:
       indicate that the response was invalid or could not be
       determined. */
   static const int INVALID_RESPONSE = -1;
-
-  /** Use \a interp as the Tcl interpreter for any Tcl-related
-      processing that may be required in handling responses. */
-  virtual void setInterp(Tcl_Interp* interp) = 0;
 
   /** Will be called by a \c TrialBase at the beginning of a trial. \c
       ResponseHandler subclasses implement this function to prepare

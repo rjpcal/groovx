@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Fri Sep 29 14:43:24 2000
+// written: Wed Oct 11 14:39:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,10 +12,6 @@
 #define NULLRESPONSEHDLR_CC_DEFINED
 
 #include "nullresponsehdlr.h"
-
-#include "io/iolegacy.h"
-
-#include <cstring>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -34,11 +30,6 @@ DOTRACE("NullResponseHdlr::readFrom");
 
 void NullResponseHdlr::writeTo(IO::Writer*) const {
 DOTRACE("NullResponseHdlr::writeTo");
-}
-
-// manipulators/accessors
-void NullResponseHdlr::setInterp(Tcl_Interp*) {
-  // do nothing, since we don't need a Tcl_Interp* for this class
 }
 
 // actions

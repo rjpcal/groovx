@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Fri Sep 29 14:43:25 2000
+// written: Wed Oct 11 14:39:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,8 +90,6 @@ public:
   ////////////////////////////
   // manipulators/accessors //
   ////////////////////////////
-
-  virtual void setInterp(Tcl_Interp* interp);
 
   /// Returns the current input response map.
   const fixed_string& getInputResponseMap() const;
