@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Mar 29 14:07:33 2000
+// written: Thu Jun  1 13:07:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,10 +25,12 @@
 
 class InvalidIdError : public ErrorWithMsg {
 public:
-  ///
-  InvalidIdError() : ErrorWithMsg() {}
-  ///
-  InvalidIdError(const char* msg) : ErrorWithMsg(msg) {}
+  /// Default constructor.
+  InvalidIdError();
+  /// Construct with an informative message \a msg.
+  InvalidIdError(const char* msg);
+  /// Virtual destructor.
+  virtual ~InvalidIdError();
 };
 
 ///////////////////////////////////////////////////////////////////////

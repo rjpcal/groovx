@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Mon May 15 22:53:43 2000
+// written: Thu Jun  1 13:07:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,12 @@
 #include "util/debug.h"
 
 
+InvalidIdError::InvalidIdError() : ErrorWithMsg() {}
+
+InvalidIdError::InvalidIdError(const char* msg) : ErrorWithMsg(msg) {}
+
+InvalidIdError::~InvalidIdError() {}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope declarations
@@ -34,7 +40,6 @@
 namespace {
   const int RESERVE_CHUNK = 20;
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 //
