@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Fri Apr  6 10:27:20 2001
+// written: Fri Apr  6 11:49:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,6 +54,27 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
+
+class MtxIter {
+  double* data;
+  int stride;
+  double* stop;
+
+  MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n);
+
+  friend class MtxConstIter;
+  friend class Slice;
+  friend class Mtx;
+
+public:
+
+  double& operator*() { return *data; }
+
+  MtxIter& operator++() { data += stride; return *this; }
+
+  bool hasMore() const { return data < stop; }
+};
+
 class MtxConstIter {
   const double* data;
   int stride;
@@ -66,6 +87,8 @@ class MtxConstIter {
   friend class Mtx;
 
 public:
+  MtxConstIter(const MtxIter& other) :
+	 data(other.data), stride(other.stride), stop(other.stop) {}
 
   double operator*() const { return *data; }
 
@@ -74,25 +97,6 @@ public:
   bool hasMore() const { return data < stop; }
 };
 
-
-class MtxIter {
-  double* data;
-  int stride;
-  double* stop;
-
-  MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n);
-
-  friend class Slice;
-  friend class Mtx;
-
-public:
-
-  double& operator*() { return *data; }
-
-  MtxIter& operator++() { data += stride; return *this; }
-
-  bool hasMore() const { return data < stop; }
-};
 
 
 ///////////////////////////////////////////////////////////////////////
