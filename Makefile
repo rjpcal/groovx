@@ -196,6 +196,15 @@ LIBRARIES := \
 GRSH_MAIN_OBJ := $(OBJ)/grshAppInit.do
 
 GRSH_STATIC_OBJS := \
+
+# My intent is that libvisx should contain the core classes for the
+# experiment framework, and that libgrsh should contain the
+# application-specific subclasses (like Face, House, etc.). But there
+# are some bizarre problems on HPUX that give crashes from OpenGL,
+# which are very sensitive to the link order. So for now, all the
+# GL-related objects go into libgrsh, and everything else into libvisx.
+
+GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/bitmap.do \
 	$(OBJ)/bitmaprep.do \
 	$(OBJ)/face.do \
@@ -221,7 +230,7 @@ GRSH_STATIC_OBJS := \
 	$(OBJ)/xbmaprenderer.do \
 
 
-GRSH_DYNAMIC_OBJS := \
+VISX_OBJS := \
 	$(OBJ)/application.do \
 	$(OBJ)/bitmaptcl.do \
 	$(OBJ)/block.do \
@@ -331,14 +340,17 @@ DEBUG_DEFS := -DPROF -DASSERT -DINVARIANT -DTEST
 DEBUG_GRSH_MAIN_OBJ := $(GRSH_MAIN_OBJ)
 DEBUG_GRSH_STATIC_OBJS := $(GRSH_STATIC_OBJS)
 DEBUG_GRSH_DYNAMIC_OBJS := $(GRSH_DYNAMIC_OBJS)
+DEBUG_VISX_OBJS := $(VISX_OBJS)
 DEBUG_TCLWORKS_OBJS := $(TCLWORKS_OBJS)
 DEBUG_APPWORKS_OBJS := $(APPWORKS_OBJS)
 
+DEBUG_LIBGRSH := $(LIB)/libgrsh.d.$(DEBUGLIB_EXT)
 DEBUG_LIBVISX := $(LIB)/libvisx.d.$(DEBUGLIB_EXT)
 DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(DEBUGLIB_EXT)
 DEBUG_LIBAPPWORKS := $(LIB)/libappworks.d.$(DEBUGLIB_EXT)
 
-ALL_DEBUG_LIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS) $(DEBUG_LIBAPPWORKS)
+ALL_DEBUG_LIBS := $(DEBUG_LIBGRSH) $(DEBUG_LIBVISX) \
+	$(DEBUG_LIBTCLWORKS) $(DEBUG_LIBAPPWORKS)
 
 ALL_DEBUG_STATLIBS := $(filter %.$(STATLIB_EXT),$(ALL_DEBUG_LIBS))
 ALL_DEBUG_SHLIBS   := $(filter %.$(SHLIB_EXT),$(ALL_DEBUG_LIBS))
@@ -361,6 +373,7 @@ PROD_DEFS := -DASSERT -DINVARIANT
 PROD_GRSH_MAIN_OBJ := $(GRSH_MAIN_OBJ:.do=.o)
 PROD_GRSH_STATIC_OBJS := $(DEBUG_GRSH_STATIC_OBJS:.do=.o)
 PROD_GRSH_DYNAMIC_OBJS := $(DEBUG_GRSH_DYNAMIC_OBJS:.do=.o)
+PROD_VISX_OBJS := $(DEBUG_VISX_OBJS:.do=.o)
 PROD_TCLWORKS_OBJS := $(DEBUG_TCLWORKS_OBJS:.do=.o)
 PROD_APPWORKS_OBJS := $(DEBUG_APPWORKS_OBJS:.do=.o)
 
@@ -368,20 +381,14 @@ PROD_APPWORKS_OBJS := $(DEBUG_APPWORKS_OBJS:.do=.o)
 # current version of g++ (2.95.1), so on irix6 we must make the
 # libvisx library as an archive library.
 
+PROD_LIBGRSH := $(LIB)/libgrsh$(VERSION).$(PRODLIB_EXT)
 PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(PRODLIB_EXT)
 PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(PRODLIB_EXT)
 PROD_LIBAPPWORKS := $(LIB)/libappworks$(VERSION).$(PRODLIB_EXT)
 
-ALL_PROD_LIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) $(PROD_LIBAPPWORKS)
+ALL_PROD_LIBS := $(PROD_LIBGRSH) $(PROD_LIBVISX) \
+	$(PROD_LIBTCLWORKS) $(PROD_LIBAPPWORKS)
 
-#ifeq ($(ARCH),irix6)
-#	ALL_PROD_STATLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) $(PROD_LIBAPPWORKS)
-#	ALL_PROD_SHLIBS :=
-#endif
-#ifeq ($(ARCH),hp9000s700)
-#	ALL_PROD_STATLIBS :=
-#	ALL_PROD_SHLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) $(PROD_LIBAPPWORKS)
-#endif
 ALL_PROD_STATLIBS := $(filter %.$(STATLIB_EXT),$(ALL_PROD_LIBS))
 ALL_PROD_SHLIBS   := $(filter %.$(SHLIB_EXT),$(ALL_PROD_LIBS))
 
@@ -431,7 +438,7 @@ $(DEBUG_TARGET): $(DEBUG_GRSH_MAIN_OBJ) \
 		$(DEBUG_GRSH_STATIC_OBJS) $(ALL_DEBUG_STATLIBS)
 	$(CC) $(DEBUG_LINK_OPTIONS) -o $@ $(DEBUG_GRSH_STATIC_OBJS) \
 	 $(DEBUG_GRSH_MAIN_OBJ) $(DEBUG_AUX_OBJ) \
-	$(LIB_DIRS) -lvisx.d -ltclworks.d -lappworks.d $(LIBRARIES) 
+	$(LIB_DIRS) -lgrsh.d -lvisx.d -ltclworks.d -lappworks.d $(LIBRARIES) 
 
 grsh: $(SRC)/TAGS $(ALL_PROD_SHLIBS) $(PROD_TARGET)
 	$(PROD_TARGET) ./testing/grshtest.tcl
@@ -440,7 +447,7 @@ $(PROD_TARGET): $(PROD_GRSH_MAIN_OBJ) \
 		$(PROD_GRSH_STATIC_OBJS) $(ALL_PROD_STATLIBS)
 	$(CC) $(PROD_LINK_OPTIONS) -o $@ $(PROD_GRSH_STATIC_OBJS) \
 	$(PROD_GRSH_MAIN_OBJ) $(LIB_DIRS) \
-	-lvisx$(VERSION) -ltclworks$(VERSION) -lappworks$(VERSION) \
+	-lgrsh$(VERSION) -lvisx$(VERSION) -ltclworks$(VERSION) -lappworks$(VERSION) \
 	$(LIBRARIES) \
 
 #-------------------------------------------------------------------------
@@ -455,8 +462,10 @@ $(PROD_TARGET): $(PROD_GRSH_MAIN_OBJ) \
 %.$(STATLIB_EXT):
 	$(STATLIB_CMD) $@ $^
 
-$(DEBUG_LIBVISX):      $(DEBUG_GRSH_DYNAMIC_OBJS)
-$(PROD_LIBVISX):       $(PROD_GRSH_DYNAMIC_OBJS)
+$(DEBUG_LIBGRSH):      $(DEBUG_GRSH_DYNAMIC_OBJS)
+$(PROD_LIBGRSH):       $(PROD_GRSH_DYNAMIC_OBJS)
+$(DEBUG_LIBVISX):      $(DEBUG_VISX_OBJS)
+$(PROD_LIBVISX):       $(PROD_VISX_OBJS)
 $(DEBUG_LIBTCLWORKS):  $(DEBUG_TCLWORKS_OBJS)
 $(PROD_LIBTCLWORKS):   $(PROD_TCLWORKS_OBJS)
 $(DEBUG_LIBAPPWORKS):  $(DEBUG_APPWORKS_OBJS)
