@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Aug 16 15:13:09 2001
+// written: Sun Aug 19 17:02:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,7 +69,6 @@ public:
 
   bool isValidId(Util::UID id) const
     {
-      DebugEval(id);
       MapType::iterator itr = itsPtrMap.find(id);
       return isValidItr(itr);
     }
@@ -208,8 +207,7 @@ DOTRACE("ObjDb::Iterator::operator=");
   return *this;
 }
 
-bool ObjDb::Iterator::operator==(
-      const ObjDb::Iterator& other) const
+bool ObjDb::Iterator::operator==(const ObjDb::Iterator& other) const
 {
   return itsImpl->itsIter == other.itsImpl->itsIter;
 }
@@ -234,9 +232,10 @@ ObjDb::Iterator::operator++()
   return *this;
 }
 
-Util::Object* ObjDb::Iterator::operator*() const
+Util::WeakRef<Util::Object> ObjDb::Iterator::operator*() const
 {
-  return (*(itsImpl->itsIter)).second.get();
+  return Util::WeakRef<Util::Object>
+    ((*(itsImpl->itsIter)).second.get(), false, Util::WEAK);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -247,14 +246,19 @@ Util::Object* ObjDb::Iterator::operator*() const
 
 ObjDb ObjDb::theInstance;
 
-ObjDb& ObjDb::theDb() { return theInstance; }
+ObjDb& ObjDb::theDb()
+{
+  return theInstance;
+}
 
-ObjDb::Iterator ObjDb::begin() const {
+ObjDb::Iterator ObjDb::begin() const
+{
 DOTRACE("ObjDb::begin");
   return Iterator(new ItrImpl(itsImpl->itsPtrMap, itsImpl->itsPtrMap.begin()));
 }
 
-ObjDb::Iterator ObjDb::end() const {
+ObjDb::Iterator ObjDb::end() const
+{
 DOTRACE("ObjDb::end");
   return Iterator(new ItrImpl(itsImpl->itsPtrMap, itsImpl->itsPtrMap.end()));
 }
@@ -265,58 +269,67 @@ ObjDb::ObjDb() :
 DOTRACE("ObjDb::ObjDb");
 }
 
-ObjDb::~ObjDb() {
+ObjDb::~ObjDb()
+{
 DOTRACE("ObjDb::~ObjDb");
   delete itsImpl;
 }
 
-int ObjDb::count() const {
+int ObjDb::count() const
+{
 DOTRACE("ObjDb::count");
 
   return itsImpl->count();
 }
 
-bool ObjDb::isValidId(Util::UID id) const {
+bool ObjDb::isValidId(Util::UID id) const
+{
 DOTRACE("ObjDb::isValidId");
   return itsImpl->isValidId(id);
 }
 
-void ObjDb::remove(Util::UID id) {
+void ObjDb::remove(Util::UID id)
+{
 DOTRACE("ObjDb::remove");
   itsImpl->remove(id);
 }
 
-void ObjDb::release(Util::UID id) {
+void ObjDb::release(Util::UID id)
+{
 DOTRACE("ObjDb::release");
   itsImpl->release(id);
 }
 
-void ObjDb::purge() {
+void ObjDb::purge()
+{
 DOTRACE("ObjDb::clear");
   DebugEvalNL(typeid(*this).name());
   itsImpl->purge();
 }
 
-void ObjDb::clear() {
+void ObjDb::clear()
+{
 DOTRACE("ObjDb::clear");
   // Call purge until no more items can be removed
   while ( itsImpl->purge() != 0 )
     { ; }
 }
 
-void ObjDb::clearOnExit() {
+void ObjDb::clearOnExit()
+{
 DOTRACE("ObjDb::clearOnExit");
   itsImpl->clearAll();
 }
 
-Util::Object* ObjDb::getCheckedPtrBase(Util::UID id) throw (InvalidIdError) {
+Util::Object* ObjDb::getCheckedPtrBase(Util::UID id) throw (InvalidIdError)
+{
 DOTRACE("ObjDb::getCheckedPtrBase");
   return itsImpl->getCheckedPtrBase(id);
 }
 
-void ObjDb::insertPtrBase(Util::Object* ptr) {
+void ObjDb::insertPtrBase(Util::Object* ptr)
+{
 DOTRACE("ObjDb::insertPtrBase");
-
   itsImpl->insertPtrBase(ptr);
 }
 

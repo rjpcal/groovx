@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Aug 16 15:14:40 2001
+// written: Sun Aug 19 16:02:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,10 @@
 #include "util/utilfwd.h"
 #endif
 
-#include <iterator>
+namespace Util
+{
+  template <class T> class WeakRef;
+};
 
 /**
  *
@@ -88,7 +91,7 @@ public:
 
     Iterator& operator++();
 
-    Util::Object* operator*() const;
+    Util::WeakRef<Util::Object> operator*() const;
   };
 
   Iterator begin() const;
@@ -101,7 +104,7 @@ public:
 
     void advanceToValid()
     {
-      while ((itsItr != itsEnd) && (dynamic_cast<T*>(*itsItr)==0))
+      while ((itsItr != itsEnd) && (dynamic_cast<T*>((*itsItr).getWeak())==0))
         ++itsItr;
     }
 
