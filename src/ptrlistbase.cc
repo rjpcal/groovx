@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Mon Oct  9 08:22:52 2000
+// written: Mon Oct  9 09:13:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -186,6 +186,19 @@ void VoidPtrList::remove(int id) {
 DOTRACE("VoidPtrList::remove");
   if (!isValidId(id)) return;
 
+  if ( itsImpl->itsPtrVec[id].masterPtr()->refCount() > 1 )
+	 throw ErrorWithMsg("can't remove a shared object");
+
+  itsImpl->itsPtrVec[id] = VoidPtrHandle(new NullMasterPtr);
+
+  // reset itsImpl->itsFirstVacant in case i would now be the first vacant
+  if (itsImpl->itsFirstVacant > id) itsImpl->itsFirstVacant = id;
+}
+
+void VoidPtrList::release(int id) {
+DOTRACE("VoidPtrList::release");
+  if (!isValidId(id)) return;
+
   itsImpl->itsPtrVec[id] = VoidPtrHandle(new NullMasterPtr);
 
   // reset itsImpl->itsFirstVacant in case i would now be the first vacant
@@ -197,7 +210,8 @@ DOTRACE("VoidPtrList::clear");
   DebugEvalNL(typeid(*this).name());
   for (size_t i = 0; i < itsImpl->itsPtrVec.size(); ++i) {
 	 DebugEval(i);
-  	 itsImpl->itsPtrVec[i] = VoidPtrHandle(new NullMasterPtr);
+	 if ( itsImpl->itsPtrVec[i].masterPtr()->refCount() <= 1 )
+		itsImpl->itsPtrVec[i] = VoidPtrHandle(new NullMasterPtr);
   }
 
   itsImpl->itsPtrVec.resize(0, VoidPtrHandle());

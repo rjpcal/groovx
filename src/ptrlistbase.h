@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Mon Oct  9 08:19:25 2000
+// written: Mon Oct  9 09:12:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,12 +78,18 @@ public:
 	 }
   }
 
-  /** Destroys the object at index 'i'. */
+  /** If the object at \a id is unshared, removes reference to the
+      object at index \a id, causing the object to be destroyed since
+      it was unshared. If the object is shared, this operation throws
+      an exception. */
   void remove(int id);
 
-  /** Releases references to all objects held by the list. If this
-      action reduces an object's reference count to zero, the object
-      will be destroyed. */
+  /** Removes reference to the object at \a id. */
+  void release(int id);
+
+  /** Releases references to all unshared objects held by the
+      list. Since the objects are unshared, they will be destroyed in
+      the process. */
   void clear();
 
 protected:
