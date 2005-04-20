@@ -157,8 +157,7 @@ public:
       pattern is different from the default value of "*", then only
       commands whose names match pattern according to glob rules will
       be aliased into the other namespace. */
-  void namespaceAlias(const char* namesp,
-                      const char* pattern = "*") throw();
+  void namespaceAlias(const char* namesp, const char* pattern = "*");
 
   /// Import commands from a different namespace.
   /** Import all of the commands and procedures defined in the
@@ -166,17 +165,16 @@ public:
       is different from the default value of "*", then only commands
       whose names match pattern according to glob rules will be
       imported into our own package namespace. */
-  void inherit(const char* namesp,
-               const char* pattern = "*") throw();
+  void inherit(const char* namesp, const char* pattern = "*");
 
   /// Import all commands and procedures defined in the named pkg.
   /** If the named pkg has not yet been loaded, this function will
       attempt to load it via loookup(). If a null pointer is passed to
       version (the default), then any version will be acceptable. */
-  void inheritPkg(const char* name, const char* version = 0) throw();
+  void inheritPkg(const char* name, const char* version = 0);
 
   /// Evaluates \a script using the package's \c Tcl_Interp.
-  void eval(const char* script) throw();
+  void eval(const char* script);
 
   /// Links the \a var with the Tcl variable \a varName.
   void linkVar(const char* varName, int& var);

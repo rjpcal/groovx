@@ -337,42 +337,23 @@ DOTRACE("Tcl::Pkg::handleLiveException");
   this->setInitStatusError();
 }
 
-void Tcl::Pkg::namespaceAlias(const char* namesp,
-                              const char* pattern) throw()
+void Tcl::Pkg::namespaceAlias(const char* namesp, const char* pattern)
 {
 DOTRACE("Tcl::Pkg::namespaceAlias");
 
-  try
-    {
-      exportAll(rep->interp, rep->namespName.c_str());
-      exportInto(rep->interp, rep->namespName.c_str(),
-                 namesp, pattern);
-    }
-  catch (...)
-    {
-      rep->interp.handleLiveException("Tcl::Pkg::namespaceAlias",
-                                      SRC_POS);
-    }
+  exportAll(rep->interp, rep->namespName.c_str());
+  exportInto(rep->interp, rep->namespName.c_str(), namesp, pattern);
 }
 
-void Tcl::Pkg::inherit(const char* namesp,
-                       const char* pattern) throw()
+void Tcl::Pkg::inherit(const char* namesp, const char* pattern)
 {
 DOTRACE("Tcl::Pkg::inherit");
 
-  try
-    {
-      exportAll(rep->interp, namesp);
-      exportInto(rep->interp, namesp,
-                 rep->namespName.c_str(), pattern);
-    }
-  catch (...)
-    {
-      rep->interp.handleLiveException("Tcl::Pkg::inherit", SRC_POS);
-    }
+  exportAll(rep->interp, namesp);
+  exportInto(rep->interp, namesp, rep->namespName.c_str(), pattern);
 }
 
-void Tcl::Pkg::inheritPkg(const char* name, const char* version) throw()
+void Tcl::Pkg::inheritPkg(const char* name, const char* version)
 {
 DOTRACE("Tcl::Pkg::inheritPkg");
 
@@ -422,18 +403,10 @@ DOTRACE("Tcl::Pkg::makePkgCmdName");
     }
 }
 
-void Tcl::Pkg::eval(const char* script) throw()
+void Tcl::Pkg::eval(const char* script)
 {
 DOTRACE("Tcl::Pkg::eval");
-
-  try
-    {
-      rep->interp.eval(script);
-    }
-  catch(...)
-    {
-      rep->interp.handleLiveException("Tcl::Pkg::eval", SRC_POS);
-    }
+  rep->interp.eval(script);
 }
 
 void Tcl::Pkg::linkVar(const char* varName, int& var)
