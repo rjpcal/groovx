@@ -280,7 +280,7 @@ public:
   /** If the package's status is OK, then this does the relevant
       Tcl_PkgProvide and returns TCL_OK. Otherwise, it returns
       TCL_ERROR. */
-  int finishInit();
+  int finishInit() throw();
 
 private:
   Pkg(const Pkg&); // not implemented

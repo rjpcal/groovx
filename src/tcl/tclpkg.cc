@@ -38,6 +38,7 @@
 #include "tcl/tcllistobj.h"
 #include "tcl/tclsafeinterp.h"
 
+#include "util/error.h"
 #include "util/fstring.h"
 #include "util/sharedptr.h"
 
@@ -64,8 +65,8 @@ namespace
 
   int INIT_DEPTH = 0;
 
-  // Construct a capitalization-correct version of the given name that is
-  // just how Tcl likes it: first character uppercase, all others
+  // Construct a capitalization-correct version of the given name that
+  // is just how Tcl likes it: first character uppercase, all others
   // lowercase.
   std::string makeCleanPkgName(const std::string& name)
   {
@@ -109,19 +110,6 @@ namespace
     return result;
   }
 
-  void exportAll(Tcl::Interp& interp, const char* from)
-  {
-  DOTRACE("exportAll");
-#ifdef HAVE_TCL_NAMESPACE_API
-    Tcl_Namespace* namesp =
-      Tcl_FindNamespace(interp.intp(), from, 0, TCL_GLOBAL_ONLY);
-    Tcl_Export(interp.intp(), namesp, "*", /*resultListFirst*/ false);
-#else
-    rutz::fstring cmd("namespace eval ", from, " { namespace export * }");
-    interp.eval(cmd);
-#endif
-  }
-
   void exportInto(Tcl::Interp& interp,
                   const char* from, const char* to,
                   const char* pattern)
@@ -143,16 +131,17 @@ namespace
     return cmdlist;
   }
 
-  const char* getNameTail(const char* cmdname)
+  const char* getNameTail(const char* name)
   {
-    const char* p = cmdname;
-    while (*p != 0) ++p; // skip to end of string
-    while (p > cmdname)
-      {
-        if (*p == ':' && p > cmdname && *(p-1) == ':')
-          return p-1;
-        --p;
+    const char* p = name;
+    while (*p != '\0') ++p; // skip to end of string
+    while (--p > name) {
+      if ((*p == ':') && (*(p-1) == ':')) {
+        ++p;
+        break;
       }
+    }
+    ASSERT(p >= name);
     return p;
   }
 }
@@ -189,6 +178,27 @@ public:
   std::vector<rutz::shared_ptr<double> > ownedDoubles;
 
   ExitCallback* exitCallback;
+
+  Tcl_Namespace* tclNamespace() const
+  {
+  DOTRACE("Tcl::Pkg::Impl::tclNamespace");
+
+    Tcl_Namespace* namesp =
+      Tcl_FindNamespace(this->interp.intp(), this->namespName.c_str(),
+                        0 /* namespaceContextPtr*/, TCL_GLOBAL_ONLY);
+
+    if (namesp == 0)
+      {
+        namesp = Tcl_CreateNamespace(this->interp.intp(),
+                                     this->namespName.c_str(),
+                                     0 /*clientData*/,
+                                     0 /*deleteProc*/);
+      }
+
+    ASSERT(namesp != 0);
+
+    return namesp;
+  }
 
   static void exitHandler(ClientData clientData)
   {
@@ -341,7 +351,6 @@ void Tcl::Pkg::namespaceAlias(const char* namesp, const char* pattern)
 {
 DOTRACE("Tcl::Pkg::namespaceAlias");
 
-  exportAll(rep->interp, rep->namespName.c_str());
   exportInto(rep->interp, rep->namespName.c_str(), namesp, pattern);
 }
 
@@ -349,8 +358,32 @@ void Tcl::Pkg::inherit(const char* namesp, const char* pattern)
 {
 DOTRACE("Tcl::Pkg::inherit");
 
-  exportAll(rep->interp, namesp);
+  // (1) export commands from 'namesp' into this Tcl::Pkg's namespace
   exportInto(rep->interp, namesp, rep->namespName.c_str(), pattern);
+
+  // (2) get the export patterns from 'namesp' and include those as
+  // export patterns for this Tcl::Pkg's namespace
+  Tcl_Interp* const interp = rep->interp.intp();
+
+  Tcl_Namespace* const othernsptr =
+    Tcl_FindNamespace(interp, namesp, 0, TCL_GLOBAL_ONLY);
+
+  if (othernsptr == 0)
+    throw rutz::error(rutz::fstring("no Tcl namespace '", namesp, "'"),
+                      SRC_POS);
+
+  Tcl::ObjPtr obj;
+  Tcl_AppendExportList(interp, othernsptr, obj.obj());
+
+  Tcl_Namespace* const thisnsptr = rep->tclNamespace();
+
+  Tcl::List exportlist(obj);
+  for (unsigned int i = 0; i < exportlist.size(); ++i)
+    {
+      Tcl_Export(interp, thisnsptr,
+                 exportlist.get<const char*>(i),
+                 /*resetExportListFirst*/ false);
+    }
 }
 
 void Tcl::Pkg::inheritPkg(const char* name, const char* version)
@@ -359,10 +392,11 @@ DOTRACE("Tcl::Pkg::inheritPkg");
 
   Tcl::Pkg* other = lookup(rep->interp, name, version);
 
-  if (other != 0)
-    {
-      inherit(other->namespName());
-    }
+  if (other == 0)
+    throw rutz::error(rutz::fstring("no Tcl::Pkg named '", name, "'"),
+                      SRC_POS);
+
+  inherit(other->namespName());
 }
 
 const char* Tcl::Pkg::namespName() throw()
@@ -395,6 +429,11 @@ DOTRACE("Tcl::Pkg::makePkgCmdName");
     }
   else
     {
+      Tcl_Namespace* const namesp = rep->tclNamespace();
+
+      Tcl_Export(rep->interp.intp(), namesp, cmd_name_cstr,
+                 /*resetExportListFirst*/ false);
+
       static std::string name;
       name = namespName();
       name += "::";
@@ -462,7 +501,7 @@ DOTRACE("Tcl::Pkg::verboseInit");
   VERBOSE_INIT = verbose;
 }
 
-int Tcl::Pkg::finishInit()
+int Tcl::Pkg::finishInit() throw()
 {
 DOTRACE("Tcl::Pkg::finishInit");
 
