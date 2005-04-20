@@ -57,6 +57,19 @@ test "GxPixmap::loadImage" "error on junk binary file" {
     return $result
 } "bad magic number while reading pnm file.*$"
 
+### GxPixmap::saveImage ###
+test "GxPixmap::saveImage" "read/write comparison" {
+    set tmpname $::TEST_DIR/tmp-[pid]-GxPixmap-saveImage-1.pbm
+    set p [new GxPixmap]
+    -> $p loadImage $::TEST_DIR/pbmfile.PPM
+    file delete -force $tmpname
+    -> $p saveImage $tmpname
+    delete $p
+    set code [catch {exec diff $::TEST_DIR/pbmfile.PPM $tmpname} result]
+    file delete -force $tmpname
+    return "$code $result"
+} {^0 $}
+
 ### GxPixmap rendering ###
 test "rendering" "normal render" {
     clearscreen

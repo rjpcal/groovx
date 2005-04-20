@@ -127,13 +127,15 @@ namespace
 
   void parse_pbm_mode_456(std::istream& is,
                           media::bmap_data& data,
-                          int max_grey)
+                          int max_grey,
+                          int mode)
   {
   DOTRACE("parse_pbm_mode_456");
 
     dbg_eval_nl(3, data.byte_count());
 
-    if (max_grey == 255) // the most common case
+    if (max_grey == 255 // the most common case
+        || mode == 4)
       {
         is.read(reinterpret_cast<char*>(data.bytes_ptr()), data.byte_count());
         unsigned int numread = is.gcount();
@@ -300,7 +302,7 @@ DOTRACE("media::load_pnm");
     {
     case 1:                 parse_pbm_mode_1(is, new_data); break;
     case 2: case 3:         parse_pbm_mode_23(is, new_data, max_grey); break;
-    case 4: case 5: case 6: parse_pbm_mode_456(is, new_data, max_grey); break;
+    case 4: case 5: case 6: parse_pbm_mode_456(is, new_data, max_grey, mode); break;
     default: ASSERT(false); break;
     }
 
