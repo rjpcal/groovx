@@ -48,6 +48,8 @@ namespace Tcl
   class Command;
   class Interp;
   class Pkg;
+
+  const int NO_EXPORT = 1 << 0;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -201,27 +203,27 @@ public:
 
   template <class Func>
   inline void def(const char* cmd_name, const char* usage, Func f,
-                  const rutz::file_pos& src_pos)
+                  const rutz::file_pos& src_pos, int flags = 0)
   {
-    makeCmd(interp(), f, makePkgCmdName(cmd_name),
+    makeCmd(interp(), f, makePkgCmdName(cmd_name, flags),
             usage, src_pos);
   }
 
   template <class Func>
   inline void defVec(const char* cmd_name, const char* usage, Func f,
                      unsigned int keyarg /*default is 1*/,
-                     const rutz::file_pos& src_pos)
+                     const rutz::file_pos& src_pos, int flags = 0)
   {
-    makeVecCmd(interp(), f, makePkgCmdName(cmd_name),
+    makeVecCmd(interp(), f, makePkgCmdName(cmd_name, flags),
                usage, keyarg, src_pos);
   }
 
   template <class Func>
   inline void defRaw(const char* cmd_name, unsigned int nargs,
                      const char* usage, Func f,
-                     const rutz::file_pos& src_pos)
+                     const rutz::file_pos& src_pos, int flags = 0)
   {
-    makeGenericCmd(interp(), f, makePkgCmdName(cmd_name),
+    makeGenericCmd(interp(), f, makePkgCmdName(cmd_name, flags),
                    usage, nargs, src_pos);
   }
 
@@ -229,48 +231,48 @@ public:
   inline void defVecRaw(const char* cmd_name, unsigned int nargs,
                         const char* usage, Func f,
                         unsigned int keyarg /*default is 1*/,
-                        const rutz::file_pos& src_pos)
+                        const rutz::file_pos& src_pos, int flags = 0)
   {
-    makeGenericVecCmd(interp(), f, makePkgCmdName(cmd_name),
+    makeGenericVecCmd(interp(), f, makePkgCmdName(cmd_name, flags),
                       usage, nargs, keyarg, src_pos);
   }
 
   template <class C>
   void defAction(const char* cmd_name, void (C::* actionFunc) (),
-                 const rutz::file_pos& src_pos)
+                 const rutz::file_pos& src_pos, int flags = 0)
   {
-    defVec( cmd_name, actionUsage, actionFunc, 1, src_pos );
+    defVec( cmd_name, actionUsage, actionFunc, 1, src_pos, flags );
   }
 
   template <class C>
   void defAction(const char* cmd_name, void (C::* actionFunc) () const,
-                 const rutz::file_pos& src_pos)
+                 const rutz::file_pos& src_pos, int flags = 0)
   {
-    defVec( cmd_name, actionUsage, actionFunc, 1, src_pos );
+    defVec( cmd_name, actionUsage, actionFunc, 1, src_pos, flags );
   }
 
   template <class C, class T>
   void defGetter(const char* cmd_name, T (C::* getterFunc) () const,
-                 const rutz::file_pos& src_pos)
+                 const rutz::file_pos& src_pos, int flags = 0)
   {
-    defVec( cmd_name, getterUsage, getterFunc, 1, src_pos );
+    defVec( cmd_name, getterUsage, getterFunc, 1, src_pos, flags );
   }
 
   template <class C, class T>
   void defSetter(const char* cmd_name, void (C::* setterFunc) (T),
-                 const rutz::file_pos& src_pos)
+                 const rutz::file_pos& src_pos, int flags = 0)
   {
-    defVec( cmd_name, setterUsage, setterFunc, 1, src_pos );
+    defVec( cmd_name, setterUsage, setterFunc, 1, src_pos, flags );
   }
 
   template <class C, class T>
   void defAttrib(const char* cmd_name,
                  T (C::* getterFunc) () const,
                  void (C::* setterFunc) (T),
-                 const rutz::file_pos& src_pos)
+                 const rutz::file_pos& src_pos, int flags = 0)
   {
-    defGetter( cmd_name, getterFunc, src_pos );
-    defSetter( cmd_name, setterFunc, src_pos );
+    defGetter( cmd_name, getterFunc, src_pos, flags );
+    defSetter( cmd_name, setterFunc, src_pos, flags );
   }
 
   /// Control whether packages should be verbose as they start up.
@@ -289,8 +291,10 @@ private:
   /** Returns a namespace'd command name in the form of
       pkg_name::cmd_name. The result of this function is valid only
       until the next time it is called, so callers should make a copy
-      of the result. */
-  const char* makePkgCmdName(const char* cmd_name);
+      of the result. This function also has the side effect of setting
+      up a Tcl namespace export pattern for the named command, if
+      flags doesn't include NO_EXPORT. */
+  const char* makePkgCmdName(const char* cmd_name, int flags);
 
   static const char* const actionUsage;
   static const char* const getterUsage;

@@ -63,3 +63,14 @@ test "ObjDb-ObjDb::loadObjects" "error from junk text file" {
 test "ObjDb-ObjDb::loadObjects" "error from junk binary file" {
     ObjDb::loadObjects $::TEST_DIR/junk_bin_file
 } {ObjDb::loadObjects:}
+
+### Obj::is ###
+test "Obj::is" "don't inherit over-eagerly" {
+    set f [new Face]
+    set s [new GxScaler]
+    set result0 [GxScaler::is $f]
+    set result1 [GxScaler::is $s]
+    delete $s
+    delete $f
+    return "$result0 $result1"
+} {^0 1$}

@@ -414,7 +414,8 @@ const char* Tcl::Pkg::version() const throw()
   return rep->version.c_str();
 }
 
-const char* Tcl::Pkg::makePkgCmdName(const char* cmd_name_cstr)
+const char* Tcl::Pkg::makePkgCmdName(const char* cmd_name_cstr,
+                                     int flags)
 {
 DOTRACE("Tcl::Pkg::makePkgCmdName");
   std::string cmd_name(cmd_name_cstr);
@@ -429,10 +430,13 @@ DOTRACE("Tcl::Pkg::makePkgCmdName");
     }
   else
     {
-      Tcl_Namespace* const namesp = rep->tclNamespace();
+      if (!(flags & NO_EXPORT))
+        {
+          Tcl_Namespace* const namesp = rep->tclNamespace();
 
-      Tcl_Export(rep->interp.intp(), namesp, cmd_name_cstr,
-                 /*resetExportListFirst*/ false);
+          Tcl_Export(rep->interp.intp(), namesp, cmd_name_cstr,
+                     /*resetExportListFirst*/ false);
+        }
 
       static std::string name;
       name = namespName();

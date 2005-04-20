@@ -130,16 +130,19 @@ void Tcl::defGenericObjCmds(Tcl::Pkg* pkg,
                             const rutz::file_pos& src_pos)
 {
 DOTRACE("Tcl::defGenericObjCmds");
+
+  const int flags = Tcl::NO_EXPORT;
+
   pkg->defVec( "is", "objref(s)",
-               rutz::bind_first(isMyType, caster), 1, src_pos );
+               rutz::bind_first(isMyType, caster), 1, src_pos, flags );
   pkg->def( "countAll", "",
-            rutz::bind_first(countAll, caster), src_pos );
+            rutz::bind_first(countAll, caster), src_pos, flags );
   pkg->def( "findAll", "",
-            rutz::bind_first(findAll, caster), src_pos );
+            rutz::bind_first(findAll, caster), src_pos, flags );
   pkg->def( "removeAll", "",
-            rutz::bind_first(removeAll, caster), src_pos );
+            rutz::bind_first(removeAll, caster), src_pos, flags );
   pkg->def( "sizeof", "",
-            rutz::bind_first(getSizeof, caster), src_pos );
+            rutz::bind_first(getSizeof, caster), src_pos, flags );
 }
 
 static const char vcid_objpkg_cc[] = "$Id$ $URL$";

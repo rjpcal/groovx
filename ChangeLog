@@ -4674,3 +4674,9 @@
 
   Turns out this was a bug in the nvidia driver that was fixed by
   upgrading from version 6629 to 7167.
+
+* (25-Oct-2004, done 2005-04-20) Need to only export certain commands with pkg->inherit()
+  As it is now we end up with strange results like
+  [GxScaler::is [new Face]] == 1
+
+  Need to prohibit 'is' from being inherited, e.g.

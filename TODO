@@ -7,16 +7,47 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (21-Nov-2002) Need a better way to pass enums to/from Tcl
+
+  Who uses the various link*() functions now?
+
+    gxtcl.cc GxShapeKit GxCache GxScaler GxAligner
+    gltcl.cc theAttribMap
+    soundtcl.cc
+
+  Maybe the simplest way is this. Make a big ugly global associative
+  array of enum names. Buyer beware of name clashes. Then we have the
+  string->int translators look for a string in the biguglyarray if the
+  initial int extraction fails. That would be pretty darn simple.
+
+  Downside would be that we wouldn't have any reverse lookup
+  (i.e. int->string); i.e. given a command-name, figure out which
+  enums it can accept. Also, we couldn't return values to Tcl in their
+  string form.
+
+  Let's see. We could have one enum-map per Tcl::Pkg. Then, have a
+  biguglyglobalvariable that points to the current enum-map. This enum
+  map would be used in the string->int translations. Plus the Tcl::Pkg
+  could have an auxiliary command to translate int values into string
+  form. The advantage here would be that we could assume that each
+  integer value is unique in a given enum-map. (Hmmm... will that
+  really be true for the GL enums?)
+
+  Maybe I should just bite the bullet and implement a real Enum type,
+  which would be like an int/string union, that could be passed
+  to/from C++ functions. The callee's would be responsible for knowing
+  where to find an EnumList (or EnumTranslator) that could do the
+  translation. Then we could get the string values out to the IO files
+  (but do we want that?).
+
+** (7-Oct-2004) Hmm... what about using Tcl arrays to define enums...
+   the array name could be the enum type, and the element names could
+   be the enum element names?
+
 * (19-Nov-2004) Fix redundancy of GxShapeKit::category() redundancy
 
   This is duplicated (and serialized twice) in several base classes,
   including Face, MorphyFace, and Fish.
-
-* (25-Oct-2004) Need to only export certain commands with pkg->inherit()
-  As it is now we end up with strange results like
-  [GxScaler::is [new Face]] == 1
-
-  Need to prohibit 'is' from being inherited, e.g.
 
 * (20-Oct-2004) make media/imgfile not depend on Nub::log
 
@@ -208,43 +239,6 @@
 
 * (22-Nov-2002) Make Tcl::Command and Tcl::Pkg into Util::Object subclasses?
   ... for the ultimate in reflexion!
-
-* (21-Nov-2002) Need a better way to pass enums to/from Tcl
-
-  Who uses the various link*() functions now?
-
-    gxtcl.cc GxShapeKit GxCache GxScaler GxAligner
-    gltcl.cc theAttribMap
-    soundtcl.cc
-
-  Maybe the simplest way is this. Make a big ugly global associative
-  array of enum names. Buyer beware of name clashes. Then we have the
-  string->int translators look for a string in the biguglyarray if the
-  initial int extraction fails. That would be pretty darn simple.
-
-  Downside would be that we wouldn't have any reverse lookup
-  (i.e. int->string); i.e. given a command-name, figure out which
-  enums it can accept. Also, we couldn't return values to Tcl in their
-  string form.
-
-  Let's see. We could have one enum-map per Tcl::Pkg. Then, have a
-  biguglyglobalvariable that points to the current enum-map. This enum
-  map would be used in the string->int translations. Plus the Tcl::Pkg
-  could have an auxiliary command to translate int values into string
-  form. The advantage here would be that we could assume that each
-  integer value is unique in a given enum-map. (Hmmm... will that
-  really be true for the GL enums?)
-
-  Maybe I should just bite the bullet and implement a real Enum type,
-  which would be like an int/string union, that could be passed
-  to/from C++ functions. The callee's would be responsible for knowing
-  where to find an EnumList (or EnumTranslator) that could do the
-  translation. Then we could get the string values out to the IO files
-  (but do we want that?).
-
-** (7-Oct-2004) Hmm... what about using Tcl arrays to define enums...
-   the array name could be the enum type, and the element names could
-   be the enum element names?
 
 * (13-Sep-2001) Nested containment of FieldContainer's
   in addition to inheritance.

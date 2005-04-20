@@ -326,6 +326,7 @@ DOTRACE("Gxscaler_Init");
 
   PKG_CREATE(interp, "GxScaler", "4.$Revision$");
   pkg->inheritPkg("GxNode");
+  Tcl::defGenericObjCmds<GxScaler>(pkg, SRC_POS);
   Tcl::defCreator<GxScaler>(pkg);
   pkg->defAttrib("child", &GxScaler::child, &GxScaler::setChild, SRC_POS);
   pkg->defAttrib("mode", &GxScaler::getMode, &GxScaler::setMode, SRC_POS);
@@ -346,6 +347,7 @@ DOTRACE("Gxemptynode_Init");
 
   PKG_CREATE(interp, "GxEmptyNode", "4.$Revision$");
   pkg->inheritPkg("GxNode");
+  Tcl::defGenericObjCmds<GxEmptyNode>(pkg, SRC_POS);
   Tcl::defCreator<GxEmptyNode>(pkg);
 
   PKG_RETURN;
