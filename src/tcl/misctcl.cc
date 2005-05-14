@@ -36,9 +36,9 @@
 // functions that are basically wrappers for standard C library
 // functions, including rand(), sleep(), and usleep()
 
-#include "tcl/tclpkg.h"
-
 #include "tcl/tclcommandgroup.h"
+#include "tcl/tcllistobj.h"
+#include "tcl/tclpkg.h"
 
 #include "util/backtrace.h"
 #include "util/error.h"
@@ -87,6 +87,19 @@ namespace
   {
     return obj.typeName();
   }
+
+  double rand_draw(double min, double max)
+  {
+    return generator.fdraw_range(min, max);
+  }
+
+  Tcl::List rand_draw_n(double min, double max, int n)
+  {
+    Tcl::List result;
+    for (int i = 0; i < n; ++i)
+      result.append(rand_draw(min, max));
+    return result;
+  }
 }
 
 extern "C"
@@ -98,9 +111,8 @@ DOTRACE("Misc_Init");
 
   PKG_CREATE(interp, "Misc", "4.$Revision$");
 
-  pkg->def( "::rand", "min max",
-            bind_first(mem_func(&rutz::urand::fdraw_range), &generator),
-            SRC_POS );
+  pkg->def( "::rand", "min max", &rand_draw, SRC_POS);
+  pkg->def( "::rand", "min max ?n=1?", &rand_draw_n, SRC_POS);
   pkg->def( "::srand", "seed",
             bind_first(mem_func(&rutz::urand::seed), &generator),
             SRC_POS );
