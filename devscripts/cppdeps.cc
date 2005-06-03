@@ -41,6 +41,7 @@
 #include <iostream>
 #include <map>
 #include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -767,6 +768,8 @@ namespace
 
     string bigname() const;
 
+    string abbrevname() const;
+
     void get_all_nested_ldeps(dep_list_t& result, bool prune) const;
 
     int level();
@@ -935,7 +938,7 @@ namespace
         {
           (*itr)->m_id = id++;
           std::cout << "\t'"
-                    << (*itr)->bigname()
+                    << (*itr)->abbrevname()
                     << " [level=" << (*itr)->level() << "]"
                     << "'\n";
         }
@@ -1069,6 +1072,19 @@ namespace
           result += " + ";
       }
     return result;
+  }
+
+  string ldep_group::abbrevname() const
+  {
+    if (m_members.size() <= 2)
+      return this->bigname();
+
+    std::ostringstream result;
+    result << "group of "
+           << m_members[0]->name()
+           << " + " << m_members.size()-1 << " others";
+
+    return result.str();
   }
 
   void ldep_group::get_all_nested_ldeps(dep_list_t& result,
