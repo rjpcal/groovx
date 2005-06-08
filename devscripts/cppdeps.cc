@@ -79,24 +79,22 @@ namespace
     return s;
   }
 
-  bool file_exists(const char* fname)
+  string file_tail(string fname)
   {
-    struct stat statbuf;
-    return (stat(fname, &statbuf) == 0);
-  }
+    if (fname.length() == 0)
+      return fname;
 
-  bool is_directory(const char* fname)
-  {
-    struct stat statbuf;
-    errno = 0;
-    if (stat(fname, &statbuf) != 0)
+    // kill any trailing slashes
+    while (fname.length() > 0 && fname[fname.length()-1] == '/')
+      fname.erase(fname.length()-1, 1);
+
+    string::size_type slash = fname.find_last_of('/');
+    if (slash == string::npos)
       {
-        cerr << strerror(errno) << "\n";
-        cerr << "ERROR: in is_directory: stat failed " << fname << "\n";
-        return false;
+        // no '/' was found, so file tail is the whole filename
+        return fname;
       }
-
-    return S_ISDIR(statbuf.st_mode);
+    return fname.substr(slash+1, string::npos);
   }
 
   // get the name of the directory containing fname -- the result will NOT
@@ -110,6 +108,65 @@ namespace
         return string(".");
       }
     return fname.substr(0, pos);
+  }
+
+  bool file_exists(const char* fname)
+  {
+    struct stat statbuf;
+    return (stat(fname, &statbuf) == 0);
+  }
+
+  // assuming that stat(fname) has already failed, can we come up with
+  // any more explanation for the failure... e.g., the file is a
+  // broken link
+  void print_stat_failure_info(const char* fname)
+  {
+    struct stat statbuf;
+    if (lstat(fname, &statbuf) != 0)
+      {
+        cerr << "lstat failed for " << fname << '\n';
+        // it's not a symlink, so give up
+        return;
+      }
+
+    char buf[256];
+    int nchars = readlink(fname, &buf[0], 255);
+
+    if (nchars < 0)
+      {
+        cerr << "readlink failed for " << fname << '\n';
+        // readlink() failed, so give up
+        return;
+      }
+
+    buf[nchars] = '\0';
+
+    string tail = file_tail(fname);
+    string dirname = get_dirname_of(fname);
+
+    if (tail.compare(0, 2, ".#") == 0)
+      {
+        tail = tail.substr(2, string::npos);
+
+        cerr << "\t(make sure you have saved all your emacs buffers;\n"
+             << "\t " << fname << " appears to be an emacs placeholder\n"
+             << "\t for the unsaved file " << dirname << "/" << tail << " pointing to\n"
+             << "\t " << buf << ")\n";
+      }
+  }
+
+  bool is_directory(const char* fname)
+  {
+    struct stat statbuf;
+    errno = 0;
+    if (stat(fname, &statbuf) != 0)
+      {
+        cerr << "ERROR: in is_directory: stat failed " << fname << "\n";
+        cerr << strerror(errno) << "\n";
+        return false;
+      }
+
+    return S_ISDIR(statbuf.st_mode);
   }
 
   string join_filename(const string& dir, const string& fname)
@@ -433,6 +490,7 @@ namespace
           cerr << "in mapped_file(): stat() failed for file "
                << filename << ":\n"
                << strerror(errno) << "\n";
+          print_stat_failure_info(filename);
           exit(1);
         }
 
@@ -2324,9 +2382,9 @@ void cppdeps::traverse_sources()
           DIR* d = opendir(current_file.c_str());
           if (d == 0)
             {
-              cerr << strerror(errno) << "\n"
-                   << "ERROR: couldn't read directory: "
-                   << current_file.c_str() << "\n";
+              cerr << "ERROR: couldn't read directory: "
+                   << current_file.c_str() << "\n"
+                   << strerror(errno) << "\n";
               exit(1);
             }
 
