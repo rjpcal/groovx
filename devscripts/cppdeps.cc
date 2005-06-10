@@ -1042,6 +1042,25 @@ namespace
       std::cout << "]; % end adjacency\n\n\n";
     }
 
+    // We use this function so that if we pipe the output of
+    // dump_ldep_levels() through /bin/sort, all the lines still end
+    // up in the right order.
+    static void format_sort_key(std::ostream& out,
+                                int level,
+                                void* addr,
+                                char linetype,
+                                int linelevel)
+    {
+      out << "[[#"
+          << std::setw(2) << std::setfill('0')
+          << level << "-"
+          << std::setw(8) << std::hex
+          << (long int)(addr) << std::dec
+          << "-" << linetype
+          << std::setw(2) << linelevel
+          << "]]";
+    }
+
     static void dump_ldep_levels(bool verbose)
     {
       typedef set<shared_ptr<ldep_group> > all_groups_t;
@@ -1055,14 +1074,28 @@ namespace
            itr != stop;
            ++itr)
         {
+          format_sort_key(std::cout, (*itr)->level(), (*itr).get(),
+                          'a', 0);
+          std::cout << "\n";
+
+          format_sort_key(std::cout, (*itr)->level(), (*itr).get(),
+                          'a', 1);
+          std::cout << "==============================================\n";
+
           for (unsigned int i = 0; i < (*itr)->m_members.size(); ++i)
             {
-              std::cout << std::setw(4) << (*itr)->level() << " "
-                        << std::setw(8) << (long int)(*itr).get()
-                        << "  Amember " << (*itr)->m_members[i]->name()
+              format_sort_key(std::cout, (*itr)->level(), (*itr).get(),
+                              'b', (*itr)->level());
+
+              std::cout << ">>>> member: "
+                        << (*itr)->m_members[i]->name()
                         << '[' << (*itr)->level() << ']'
                         << '\n';
             }
+
+          format_sort_key(std::cout, (*itr)->level(), (*itr).get(),
+                          'c', 0);
+          std::cout << "\n";
 
           if (verbose)
             {
@@ -1071,9 +1104,11 @@ namespace
 
               for (unsigned int i = 0; i < deps.size(); ++i)
                 {
-                  std::cout << std::setw(4) << (*itr)->level() << " "
-                            << std::setw(8) << (long int)(*itr).get()
-                            << "  Bdepend     " << deps[i]->name()
+                  format_sort_key(std::cout, (*itr)->level(), (*itr).get(),
+                                  'd', deps[i]->m_ldep_group->level());
+
+                  std::cout << "             depends on:  "
+                            << deps[i]->name()
                             << '[' << deps[i]->m_ldep_group->level() << ']'
                             << '\n';
                 }
