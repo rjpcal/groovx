@@ -211,7 +211,7 @@ $(DEP)/ldeplevelsv: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
 	  --objdir $(OBJ)/ \
 	  --srcdir $(SRC) \
 	  --output-ldep-levelsv \
-	  |sort -n | sed -e 's/\[\[#..-........-...\]\]//' > $@
+	  |sort -n | sed -e 's/\[\[\[#.*\]\]\]//' > $@
 
 $(DEP)/altdeps: $(DEVSCRIPTS)/cppdeps.tcl $(DEVSCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cppdeps.tcl --include $(SRC)/pkgs --src $(SRC) --objdir $(OBJ)/ > $@

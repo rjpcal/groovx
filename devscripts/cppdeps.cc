@@ -1049,16 +1049,15 @@ namespace
                                 int level,
                                 void* addr,
                                 char linetype,
-                                int linelevel)
+                                int linelevel,
+                                const char* other)
     {
-      out << "[[#"
-          << std::setw(2) << std::setfill('0')
-          << level << "-"
-          << std::setw(8) << std::hex
-          << (long int)(addr) << std::dec
+      out << "[[[#" << std::setw(2) << std::setfill('0') << level
+          << "-" << std::setw(8) << std::hex << (long int)(addr) << std::dec
           << "-" << linetype
-          << std::setw(2) << linelevel
-          << "]]";
+          << "-" << other
+          << "-" << std::setw(2) << linelevel
+          << "]]]";
     }
 
     static void dump_ldep_levels(bool verbose)
@@ -1075,17 +1074,17 @@ namespace
            ++itr)
         {
           format_sort_key(std::cout, (*itr)->level(), (*itr).get(),
-                          'a', 0);
+                          'a', 0, "");
           std::cout << "\n";
 
           format_sort_key(std::cout, (*itr)->level(), (*itr).get(),
-                          'a', 1);
+                          'a', 1, "");
           std::cout << "==============================================\n";
 
           if ((*itr)->m_members.size() > 1)
             {
               format_sort_key(std::cout, (*itr)->level(), (*itr).get(),
-                              'a', 2);
+                              'a', 2, "");
               std::cout << "WARNING: CYCLIC LINK DEPENDENCY GROUP:\n";
             }
 
@@ -1093,7 +1092,7 @@ namespace
           for (unsigned int i = 0; i < (*itr)->m_members.size(); ++i)
             {
               format_sort_key(std::cout, (*itr)->level(), (*itr).get(),
-                              'b', (*itr)->level());
+                              'b', (*itr)->level(), "");
 
               std::cout << ">>>> module: "
                         << (*itr)->m_members[i]->name()
@@ -1102,7 +1101,7 @@ namespace
             }
 
           format_sort_key(std::cout, (*itr)->level(), (*itr).get(),
-                          'c', 0);
+                          'c', 0, "");
           std::cout << "\n";
 
           if (verbose)
@@ -1113,7 +1112,8 @@ namespace
               for (unsigned int i = 0; i < deps.size(); ++i)
                 {
                   format_sort_key(std::cout, (*itr)->level(), (*itr).get(),
-                                  'd', deps[i]->m_ldep_group->level());
+                                  'd', deps[i]->m_ldep_group->level(),
+                                  get_dirname_of(deps[i]->name()).c_str());
 
                   std::cout << "             depends on:  "
                             << deps[i]->name()
