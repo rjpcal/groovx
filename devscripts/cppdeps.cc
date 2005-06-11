@@ -1082,12 +1082,20 @@ namespace
                           'a', 1);
           std::cout << "==============================================\n";
 
+          if ((*itr)->m_members.size() > 1)
+            {
+              format_sort_key(std::cout, (*itr)->level(), (*itr).get(),
+                              'a', 2);
+              std::cout << "WARNING: CYCLIC LINK DEPENDENCY GROUP:\n";
+            }
+
+
           for (unsigned int i = 0; i < (*itr)->m_members.size(); ++i)
             {
               format_sort_key(std::cout, (*itr)->level(), (*itr).get(),
                               'b', (*itr)->level());
 
-              std::cout << ">>>> member: "
+              std::cout << ">>>> module: "
                         << (*itr)->m_members[i]->name()
                         << '[' << (*itr)->level() << ']'
                         << '\n';
