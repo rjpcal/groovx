@@ -1144,10 +1144,10 @@ namespace
             {
               for (unsigned int j = 0; j < deps.size(); ++j)
                 {
-                  std::cout << std::setw(35)
+                  std::cout << std::setw(35) << std::left
                             << (*itr)->m_members[i]->name()
                             << " "
-                            << std::setw(35)
+                            << std::setw(35) << std::left
                             << deps[j]->name()
                             << "\n";
                 }
