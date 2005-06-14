@@ -190,28 +190,38 @@ $(DEVSCRIPTS)/cppdeps: $(DEVSCRIPTS)/cppdeps.cc
 $(DEP)/cppdepends: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs --objdir $(OBJ)/ --srcdir $(SRC) |sort> $@
 
-LDEPOPTS := --verbosity 2
+LDEPOPTS := --verbosity 2 --includedir $(SRC)/pkgs --objdir $(OBJ)/ --srcdir $(SRC)
 
 $(DEP)/ldepgroups: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) --includedir $(SRC)/pkgs \
-	  --objdir $(OBJ)/ \
-	  --srcdir $(SRC) \
+	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) \
 	  --output-ldep-groups \
 	  |sort -n> $@
 
 $(DEP)/ldeplevels: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) --includedir $(SRC)/pkgs \
-	  --objdir $(OBJ)/ \
-	  --srcdir $(SRC) \
+	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) \
 	  --output-ldep-levels \
 	  |sort -n> $@
 
 $(DEP)/ldeplevelsv: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) --includedir $(SRC)/pkgs \
-	  --objdir $(OBJ)/ \
-	  --srcdir $(SRC) \
+	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) \
 	  --output-ldep-levelsv \
 	  |sort -n | sed -e 's/\[\[\[#.*\]\]\]//' > $@
+
+# This is a series of shell pipes to build a PNG image showing the
+# link dependencies among our src subdirectories. First,
+# devscripts/cdeps output a raw list (probably 20,000+ lines long) in
+# which each line lists two files, indicating that the first file
+# link-depends on the second file. Then,
+# devscripts/dot-ldep-modules.tcl transforms this into DOT
+# format. Next, 'tred' prunes out superfluous transitive edges from
+# the graph. Finally, 'dot' renders the graph into a PNG image.
+ldep-modules.png: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) \
+	   --output-ldep-raw \
+	   | $(DEVSCRIPTS)/dot-ldep-modules.tcl \
+	   | tred \
+	   | dot -Tpng \
+	   > $@
 
 $(DEP)/altdeps: $(DEVSCRIPTS)/cppdeps.tcl $(DEVSCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cppdeps.tcl --include $(SRC)/pkgs --src $(SRC) --objdir $(OBJ)/ > $@
