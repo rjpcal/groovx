@@ -220,11 +220,11 @@ DOTRACE("Gabor::getBmapData");
   // is otherwise there to keep the total area under the curve to 1,
   // but this affects the maximum height).
 
-  double res_step = 1.0/itsResolution;
+  const double res_step = 1.0/itsResolution;
 
-  vec2i size(itsResolution, itsResolution);
+  const vec2i size(itsResolution, itsResolution);
 
-  int bits_per_pixel = (itsColorMode == GRAYSCALE) ? 32 : 8;
+  const int bits_per_pixel = (itsColorMode == GRAYSCALE) ? 32 : 8;
 
   media::bmap_data data(size, bits_per_pixel, 1);
 
