@@ -539,6 +539,32 @@ namespace
 
   //----------------------------------------------------------
   //
+  // link_pattern class
+  //
+  //----------------------------------------------------------
+
+  class link_pattern
+  {
+  public:
+    link_pattern(const string& pat)
+      :
+      m_pattern(pat),
+      m_wildcard_pos(pat.find_first_of('*'))
+    {}
+
+    string            m_pattern;
+    string::size_type m_wildcard_pos;
+
+    string transform(const string& stem) const
+    {
+      string result = m_pattern;
+      result.replace(m_wildcard_pos, 1, stem);
+      return result;
+    }
+  };
+
+  //----------------------------------------------------------
+  //
   // formatter class
   //
   //----------------------------------------------------------
@@ -546,11 +572,11 @@ namespace
   class formatter
   {
   private:
-    string            m_group;
-    string            m_prefix;
-    string            m_link_pattern;
-    string::size_type m_wildcard_pos;
-    mutable bool      m_ever_matched;
+    string               m_group;
+    string               m_prefix;
+    vector<link_pattern> m_patterns;
+    string               m_full_pattern;
+    mutable bool         m_ever_matched;
 
   public:
     // Try to parse the input string as follows:
@@ -597,10 +623,15 @@ namespace
       strip_whitespace(m_prefix);
 
       // Find the 'link_pattern' (everything after the first colon)
-      m_link_pattern = format_spec.substr(colon+1);
-      strip_whitespace(m_link_pattern);
-
-      m_wildcard_pos = m_link_pattern.find_first_of('*');
+      m_full_pattern = format_spec.substr(colon+1);
+      strip_whitespace(m_full_pattern);
+      std::stringstream strm(m_full_pattern);
+      while (strm)
+        {
+          string s; strm >> s;
+          if (s.length() > 0)
+            m_patterns.push_back(s);
+        }
     }
 
     void warn_if_never_matched(const char* setname) const
@@ -608,7 +639,10 @@ namespace
       if (!m_ever_matched)
         {
           cerr << "WARNING: " << setname << " pattern was never matched: "
-               << m_prefix << ':' << m_link_pattern << '\n';
+               << m_prefix << ':';
+          for (unsigned int i = 0; i < m_patterns.size(); ++i)
+            cerr << m_patterns[i].m_pattern << ' ';
+          cerr << '\n';
         }
     }
 
@@ -626,16 +660,42 @@ namespace
 
     string transform(const string& srcfile) const
     {
-      if (m_wildcard_pos == string::npos)
-        return m_link_pattern;
+      bool needtransform = false;
+      for (unsigned int i = 0; i < m_patterns.size(); ++i)
+        if (m_patterns[i].m_wildcard_pos != string::npos)
+          { needtransform = true; break; }
+
+      if (!needtransform)
+        return m_full_pattern;
 
       // else...
+
+      // here we know it's safe to chop off the prefix from srcfile,
+      // because somebody has already called matches() and verified
+      // that srcfile begins with m_prefix:
       string stem = srcfile.substr(m_prefix.length(), string::npos);
       const string::size_type suff = stem.find_last_of('.');
       if (suff != string::npos)
         stem.erase(suff, string::npos);
-      string result = m_link_pattern;
-      result.replace(m_wildcard_pos, 1, stem);
+
+      // now let's build the result up by transforming each one of the
+      // patterns in our list
+      string result;
+      for (unsigned int i = 0; i < m_patterns.size(); ++i)
+        {
+          if (m_patterns[i].m_wildcard_pos == string::npos)
+            {
+              result += m_patterns[i].m_pattern;
+            }
+          else
+            {
+              result += m_patterns[i].transform(stem);
+            }
+
+          if (i+1 < m_patterns.size())
+            result += ' ';
+        }
+
       return result;
     }
 
