@@ -374,6 +374,7 @@ $(exec_prefix)/lib/libDeepGfx$(LIB_EXT): \
 	$(exec_prefix)/lib/libDeepGeom$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepIO$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepTk$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepNub$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
 
@@ -385,6 +386,7 @@ $(exec_prefix)/lib/libDeepVisx$(LIB_EXT): \
 	$(exec_prefix)/lib/libDeepNub$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepTk$(LIB_EXT) \
 
 #-------------------------------------------------------------------------
 #
