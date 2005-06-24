@@ -2393,12 +2393,23 @@ void cppdeps::print_link_deps(file_info* finfo)
        itr != stop;
        ++itr)
     {
+      if (cfg.verbosity >= NOISY)
+        cfg.info() << "considering exec " << exe << " --> ldep " << (*itr)->name() << '\n';
+
       if (!(*itr)->is_phantom() && !(*itr)->is_pruned())
         {
           const string t = cfg.link_formats.transform_strict((*itr)->name());
           if (!t.empty())
-            links.insert(t);
+            {
+              links.insert(t);
+            }
+
+          if (cfg.verbosity >= NOISY)
+            cfg.info() << "ldep " << (*itr)->name() << " --> link format '" << t << "'\n";
         }
+      else
+        if (cfg.verbosity >= NOISY)
+          cfg.info() << "ldep " << (*itr)->name() << " is phantom or pruned\n";
     }
 
   for (set<string>::iterator
