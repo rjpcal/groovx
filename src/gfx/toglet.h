@@ -32,7 +32,7 @@
 #ifndef TOGLET_H_DEFINED
 #define TOGLET_H_DEFINED
 
-#include "tcl/tkwidget.h"
+#include "tk/tkwidget.h"
 
 class GxCamera;
 class GxNode;

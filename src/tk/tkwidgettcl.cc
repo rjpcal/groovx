@@ -34,7 +34,7 @@
 
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
-#include "tcl/tkwidget.h"
+#include "tk/tkwidget.h"
 
 #include "util/fstring.h"
 

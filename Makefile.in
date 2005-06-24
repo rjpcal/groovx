@@ -207,6 +207,10 @@ $(DEP)/ldeplevelsv: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
 	  --output-ldep-levelsv \
 	  |sort -n | sed -e 's/\[\[\[#.*\]\]\]//' > $@
 
+$(DEP)/ldepraw: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) \
+	  --output-ldep-raw > $@
+
 # This is a series of shell pipes to build a PNG image showing the
 # link dependencies among our src subdirectories. First,
 # devscripts/cdeps output a raw list (probably 20,000+ lines long) in
@@ -322,7 +326,7 @@ LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--srcroot $(SRC) \
 		--objroot $(OBJ) \
 		--objext .$(OBJEXT) \
-		--modules "Visx,Gfx,Tcl,IO,Media,Geom,Util,Nub"
+		--modules "Visx,Gfx,Tcl,Tk,IO,Media,Geom,Util,Nub"
 
 $(DEP)/libdepends: $(DEP)/.timestamp $(ALL_SRCS) \
 		$(SCRIPTS)/build_lib_rules.tcl
@@ -344,6 +348,11 @@ $(exec_prefix)/lib/libDeepNub$(LIB_EXT): \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
 
 $(exec_prefix)/lib/libDeepTcl$(LIB_EXT): \
+	$(exec_prefix)/lib/libDeepNub$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
+
+$(exec_prefix)/lib/libDeepTk$(LIB_EXT): \
+	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepNub$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT) \
 
