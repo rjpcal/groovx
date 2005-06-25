@@ -44,10 +44,6 @@
 #include <tk.h>
 #include <unistd.h>
 
-#ifndef WITH_READLINE
-#define WITH_READLINE
-#endif
-
 #ifdef WITH_READLINE
 #  include <cstdlib> // for malloc/free
 #  include <readline/readline.h>

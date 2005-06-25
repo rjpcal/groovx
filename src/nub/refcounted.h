@@ -126,7 +126,7 @@ private:
   RefCounted(const RefCounted& other);
   RefCounted& operator=(const RefCounted& other);
 
-public:
+protected:
   /** Class-specific operator new; protected to ensure that clients
       use factory functions. */
   void* operator new(size_t bytes);

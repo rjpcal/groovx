@@ -32,8 +32,6 @@
 #ifndef LOGTCL_CC_DEFINED
 #define LOGTCL_CC_DEFINED
 
-#include "tcl/logtcl.h"
-
 #include "nub/log.h"
 
 #include "tcl/tclpkg.h"

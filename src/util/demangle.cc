@@ -60,10 +60,7 @@ namespace
 #    include "util/demangle_cxxfilt.h"
 #    define DEMANGLE_IMPL demangle_cxxfilt
 #  else
-// use g++ abi demangling as the default
-#    include "util/demangle_gcc_v3.h"
-#    define DEMANGLE_IMPL demangle_gcc_v3
-//#    error no method specified for typename demangling
+#    error no method specified for typename demangling
 #  endif
 #endif // defined(NO_TYPENAME_MANGLING)
 
