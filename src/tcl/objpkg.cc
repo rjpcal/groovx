@@ -58,7 +58,7 @@ Tcl::ObjCaster::~ObjCaster() {}
 
 bool Tcl::ObjCaster::isIdMyType(Nub::UID uid) const
 {
-  Nub::SoftRef<Nub::Object> item(uid);
+  Nub::SoftRef<Nub::Object> item(uid, Nub::STRONG);
   return (item.isValid() && isMyType(item.get()));
 }
 

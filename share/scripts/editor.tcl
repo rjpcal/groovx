@@ -395,7 +395,7 @@ itcl::class Editor {
 
     private method init {parent objtype}
 
-    constructor {parent {objtype Gabor} } { init $parent $objtype }
+    constructor {parent objtype } { init $parent $objtype }
 
     public method loadObjects {filename}
     public method loadExpt {filename}
@@ -650,6 +650,7 @@ itcl::body Editor::init {parent objtype } {
     $itsButtons.objtypes insert 0 \
         Face \
         Fish \
+	FixPt \
         Gabor \
         GaborArray \
         GxCylinder \
@@ -915,7 +916,11 @@ itcl::class Menuapp {
         pack $itsFrame -fill both -expand yes
         pack $itsHelpEntry -anchor sw -fill x -expand yes
 
-        set itsEditor [Editor [::AUTO] $itsFrame]
+	set inittype "Gabor"
+	if { [llength $::argv] > 0 } {
+	    set inittype [lindex $::argv end]
+	}
+        set itsEditor [Editor [::AUTO] $itsFrame $inittype]
     }
 }
 

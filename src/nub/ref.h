@@ -280,6 +280,12 @@ Nub::Ref<To> dynamicCast(Nub::Ref<Fr> p)
   return Nub::Ref<To>(t);
 }
 
+template <class To, class Fr>
+void dynamicCastToFrom(Nub::Ref<To>& dest, Nub::Ref<Fr> p)
+{
+  dest = dynamicCast<To>(p);
+}
+
 
 
 namespace Nub
@@ -438,6 +444,8 @@ namespace Nub
 
     // Default destructor, copy constructor, operator=() are fine
 
+    void reset(T* p) { *this = SoftRef(p); }
+
     /** Returns the pointee, or if throws an exception if there is not a
         valid pointee. */
     T* get()         const { return itsHandle.get(); }
@@ -491,7 +499,34 @@ Nub::SoftRef<To> dynamicCast(Nub::SoftRef<Fr> p)
         rutz::throw_bad_cast(typeid(To), typeid(Fr), SRC_POS);
       return Nub::SoftRef<To>(t);
     }
-  return Nub::SoftRef<To>(p.id());
+  return Nub::SoftRef<To>(p.id(), Nub::STRONG);
+}
+
+template <class To, class Fr>
+void dynamicCastToFrom(Nub::SoftRef<To>& dest, Nub::SoftRef<Fr> p)
+{
+  dest = dynamicCast<To>(p);
+}
+
+
+template <class To, class Fr>
+Nub::SoftRef<To> dynamicCastWeak(Nub::SoftRef<Fr> p)
+{
+  if (p.isValid())
+    {
+      Fr* f = p.get();
+      To* t = dynamic_cast<To*>(f);
+      if (t == 0)
+        return Nub::SoftRef<To>(); // return a null SoftRef
+      return Nub::SoftRef<To>(t);
+    }
+  return Nub::SoftRef<To>(p.id(), Nub::STRONG);
+}
+
+template <class To, class Fr>
+void dynamicCastWeakToFrom(Nub::SoftRef<To>& dest, Nub::SoftRef<Fr> p)
+{
+  dest = dynamicCast<To>(p);
 }
 
 ///////////////////////////////////////////////////////////////////////

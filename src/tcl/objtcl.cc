@@ -32,9 +32,6 @@
 #ifndef OBJTCL_CC_DEFINED
 #define OBJTCL_CC_DEFINED
 
-#include "io/io.h"
-#include "io/iolegacy.h"
-
 #include "nub/objdb.h"
 #include "nub/objmgr.h"
 
@@ -55,70 +52,6 @@ using Nub::SoftRef;
 
 namespace
 {
-  const int ALL = -1; // indicates to read all objects until eof
-
-  Tcl::List loadObjects(const char* file, int num_to_read)
-  {
-    std::ifstream ifs(file);
-    if (ifs.fail())
-      {
-        throw rutz::error("unable to open file", SRC_POS);
-      }
-
-    int num_read = 0;
-
-    ifs >> std::ws;
-
-    Tcl::List result;
-
-    while ( (num_to_read == ALL || num_read < num_to_read)
-            && (ifs.peek() != EOF) )
-      {
-        // allow for whole-line comments between objects beginning
-        // with '#'
-        if (ifs.peek() == '#')
-          {
-            ifs.ignore(10000000, '\n');
-            continue;
-          }
-
-        IO::LegacyReader reader(ifs);
-
-        Ref<IO::IoObject> obj(reader.readRoot(0));
-
-        result.append(obj.id());
-
-        ++num_read;
-
-        ifs >> std::ws;
-      }
-
-    return result;
-  }
-
-  void saveObjects(Tcl::List objids, const char* filename,
-                   bool use_bases)
-  {
-    std::ofstream ofs(filename);
-    if (ofs.fail())
-      {
-        throw rutz::error(rutz::fstring("error opening file: ",
-                                        filename), SRC_POS);
-      }
-
-    IO::LegacyWriter writer(ofs, use_bases);
-    writer.usePrettyPrint(false);
-
-    for (Tcl::List::Iterator<Ref<IO::IoObject> >
-           itr = objids.begin<Ref<IO::IoObject> >(),
-           end = objids.end<Ref<IO::IoObject> >();
-         itr != end;
-         ++itr)
-      {
-        writer.writeRoot((*itr).get());
-      }
-  }
-
   void dbClear() { Nub::ObjDb::theDb().clear(); }
   void dbPurge() { Nub::ObjDb::theDb().purge(); }
   void dbRelease(Nub::UID id) { Nub::ObjDb::theDb().release(id); }
@@ -188,11 +121,6 @@ DOTRACE("Objdb_Init");
   pkg->def( "clear", 0, &dbClear, SRC_POS );
   pkg->def( "purge", 0, &dbPurge, SRC_POS );
   pkg->def( "release", 0, &dbRelease, SRC_POS );
-  pkg->def( "loadObjects", "filename num_to_read=-1", &loadObjects, SRC_POS );
-  pkg->def( "loadObjects", "filename", rutz::bind_last(&loadObjects, ALL), SRC_POS );
-  pkg->def( "saveObjects", "objids filename use_bases=yes", &saveObjects, SRC_POS );
-  pkg->def( "saveObjects", "objids filename",
-            rutz::bind_last(&saveObjects, true), SRC_POS );
 
   PKG_RETURN;
 }

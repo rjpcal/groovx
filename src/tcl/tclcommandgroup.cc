@@ -44,6 +44,7 @@
 
 #include <list>
 #include <tcl.h>
+#include <tcl-private/generic/tclInt.h>
 
 #include "util/trace.h"
 #include "util/debug.h"

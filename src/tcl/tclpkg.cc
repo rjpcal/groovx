@@ -42,6 +42,7 @@
 #include "util/fstring.h"
 #include "util/sharedptr.h"
 
+#include <tcl-private/generic/tclInt.h>
 #include <tcl.h>
 #include <cctype>
 #include <iostream>
