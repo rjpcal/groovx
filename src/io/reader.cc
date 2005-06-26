@@ -41,7 +41,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace IO
 {
@@ -83,7 +83,7 @@ int IO::Reader::ensureReadVersionId(const char* name,
                                     const char* msg,
                                     const rutz::file_pos& pos)
 {
-DOTRACE("IO::Reader::ensureReadVersionId");
+GVX_TRACE("IO::Reader::ensureReadVersionId");
 
   IO::VersionId actual_version = this->readSerialVersionId();
 
@@ -92,7 +92,7 @@ DOTRACE("IO::Reader::ensureReadVersionId");
                                lowest_supported_version, msg,
                                pos);
 
-  ASSERT(actual_version >= lowest_supported_version);
+  GVX_ASSERT(actual_version >= lowest_supported_version);
 
   return actual_version;
 }
@@ -100,7 +100,7 @@ DOTRACE("IO::Reader::ensureReadVersionId");
 void IO::Reader::defaultReadRawData(const rutz::fstring& name,
                                     rutz::byte_array& data)
 {
-DOTRACE("IO::Reader::defaultReadRawData");
+GVX_TRACE("IO::Reader::defaultReadRawData");
 
   rutz::fstring encoded = readStringImpl(name);
   rutz::base64_decode(encoded.c_str(), encoded.length(),

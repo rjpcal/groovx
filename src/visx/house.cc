@@ -49,7 +49,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using geom::rectd;
 using geom::vec2d;
@@ -67,7 +67,7 @@ namespace
 
   void drawWindow(Gfx::Canvas& canvas, int num_vert_bars, int num_horiz_bars)
   {
-    DOTRACE("House::drawWindow");
+    GVX_TRACE("House::drawWindow");
     // Draw 1x1 window centered on (0,0)
 
     {
@@ -98,7 +98,7 @@ namespace
 
   void drawDoor(Gfx::Canvas& canvas)
   {
-    DOTRACE("House::drawDoor");
+    GVX_TRACE("House::drawDoor");
     // Draw 1x1 door with bottom line centered on (0,0)
     canvas.drawRect(rectd::lbwh(-0.5, 0.0, 1.0, 1.0));
 
@@ -110,14 +110,14 @@ namespace
 
   void drawStoryFrame(Gfx::Canvas& canvas)
   {
-    DOTRACE("House::drawStoryFrame");
+    GVX_TRACE("House::drawStoryFrame");
     // Draw 1x1 story frame centered on (0,0)
     canvas.drawRect(rectd::lbwh(-0.5, -0.5, 1.0, 1.0));
   }
 
   void drawTriangleRoof(Gfx::Canvas& canvas)
   {
-    DOTRACE("House::drawTriangleRoof");
+    GVX_TRACE("House::drawTriangleRoof");
     // Draw 1x1-bounded triangle with bottom line centered on (0,0)
 
     {
@@ -135,7 +135,7 @@ namespace
 
   void drawTrapezoidRoof(Gfx::Canvas& canvas)
   {
-    DOTRACE("House::drawTrapezoidRoof");
+    GVX_TRACE("House::drawTrapezoidRoof");
     {
       Gfx::QuadsBlock block(canvas, "trapezoid roof");
       canvas.vertex2(vec2d(-0.5, 0.0));
@@ -152,7 +152,7 @@ namespace
 
   void drawSquareRoof(Gfx::Canvas& canvas)
   {
-    DOTRACE("House::drawSquareRoof");
+    GVX_TRACE("House::drawSquareRoof");
     {
       Gfx::QuadsBlock block(canvas, "square roof");
       canvas.vertex2(vec2d(-0.5, 0.0));
@@ -169,7 +169,7 @@ namespace
 
   void drawChimney(Gfx::Canvas& canvas)
   {
-    DOTRACE("House::drawChimney");
+    GVX_TRACE("House::drawChimney");
     {
       Gfx::QuadsBlock block(canvas, "chimney");
       canvas.vertex2(vec2d( 0.5, 0.0));
@@ -226,7 +226,7 @@ const FieldMap& House::classFields()
 
 House* House::make()
 {
-DOTRACE("House::make");
+GVX_TRACE("House::make");
   return new House;
 }
 
@@ -255,25 +255,25 @@ House::House() :
   itsChimneyWidth(0.06),
   itsChimneyHeight(0.5)
 {
-DOTRACE("House::House");
+GVX_TRACE("House::House");
 
   setFieldMap(House::classFields());
 }
 
 House::~House() throw()
 {
-DOTRACE("House::~House");
+GVX_TRACE("House::~House");
 }
 
 IO::VersionId House::serialVersionId() const
 {
-DOTRACE("House::serialVersionId");
+GVX_TRACE("House::serialVersionId");
   return HOUSE_SVID;
 }
 
 void House::readFrom(IO::Reader& reader)
 {
-DOTRACE("House::readFrom");
+GVX_TRACE("House::readFrom");
 
   reader.ensureReadVersionId("House", 3,
                              "Try cvs tag xml_conversion_20040526",
@@ -286,7 +286,7 @@ DOTRACE("House::readFrom");
 
 void House::writeTo(IO::Writer& writer) const
 {
-DOTRACE("House::writeTo");
+GVX_TRACE("House::writeTo");
 
   writer.ensureWriteVersionId("House", HOUSE_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
@@ -304,7 +304,7 @@ DOTRACE("House::writeTo");
 
 void House::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
-DOTRACE("House::grGetBoundingBox");
+GVX_TRACE("House::grGetBoundingBox");
 
   const double main_width = itsStoryAspectRatio;
   const double main_height = itsNumStories + itsRoofHeight;
@@ -326,7 +326,7 @@ DOTRACE("House::grGetBoundingBox");
 
 void House::grRender(Gfx::Canvas& canvas) const
 {
-DOTRACE("House::grRender");
+GVX_TRACE("House::grRender");
   const double total_width = itsStoryAspectRatio;
   const double total_height = itsNumStories + itsRoofHeight;
 

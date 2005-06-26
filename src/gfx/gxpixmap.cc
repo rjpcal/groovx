@@ -111,7 +111,7 @@ private:
 
 void ImageUpdater::update(media::bmap_data& update_me)
 {
-DOTRACE("ImageUpdater::update");
+GVX_TRACE("ImageUpdater::update");
 
   try
     {
@@ -201,32 +201,32 @@ GxPixmap::GxPixmap() :
   GxShapeKit(),
   rep(new GxPixmapImpl)
 {
-DOTRACE("GxPixmap::GxPixmap");
+GVX_TRACE("GxPixmap::GxPixmap");
   setAlignmentMode(GxAligner::CENTER_ON_CENTER);
   setPercentBorder(0);
 }
 
 GxPixmap* GxPixmap::make()
 {
-DOTRACE("GxPixmap::make");
+GVX_TRACE("GxPixmap::make");
   return new GxPixmap;
 }
 
 GxPixmap::~GxPixmap() throw()
 {
-DOTRACE("GxPixmap::~GxPixmap");
+GVX_TRACE("GxPixmap::~GxPixmap");
   delete rep;
 }
 
 IO::VersionId GxPixmap::serialVersionId() const
 {
-DOTRACE("GxPixmap::serialVersionId");
+GVX_TRACE("GxPixmap::serialVersionId");
   return BITMAP_SVID;
 }
 
 void GxPixmap::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxPixmap::readFrom");
+GVX_TRACE("GxPixmap::readFrom");
 
   int svid = reader.ensureReadVersionId("GxPixmap", 4,
                                         "Try cvs tag xml_conversion_20040526",
@@ -269,7 +269,7 @@ DOTRACE("GxPixmap::readFrom");
 
 void GxPixmap::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxPixmap::writeTo");
+GVX_TRACE("GxPixmap::writeTo");
 
   writer.ensureWriteVersionId("GxPixmap", BITMAP_SVID, 5,
                               "Try groovx0.8a7", SRC_POS);
@@ -306,7 +306,7 @@ DOTRACE("GxPixmap::writeTo");
 
 void GxPixmap::loadImage(const char* filename)
 {
-DOTRACE("GxPixmap::loadImage");
+GVX_TRACE("GxPixmap::loadImage");
 
   media::load_image(filename, rep->itsData);
 
@@ -317,7 +317,7 @@ DOTRACE("GxPixmap::loadImage");
 
 void GxPixmap::loadImageStream(std::istream& ist)
 {
-DOTRACE("GxPixmap::loadImageStream");
+GVX_TRACE("GxPixmap::loadImageStream");
 
   media::load_pnm(ist, rep->itsData);
   rep->itsFilename = "";
@@ -326,7 +326,7 @@ DOTRACE("GxPixmap::loadImageStream");
 
 void GxPixmap::reload()
 {
-DOTRACE("GxPixmap::reload");
+GVX_TRACE("GxPixmap::reload");
 
   media::load_image(rep->itsFilename.c_str(), rep->itsData);
 
@@ -335,7 +335,7 @@ DOTRACE("GxPixmap::reload");
 
 void GxPixmap::queueImage(const char* filename)
 {
-DOTRACE("GxPixmap::queueImage");
+GVX_TRACE("GxPixmap::queueImage");
 
   rep->queueImage(filename);
 
@@ -344,7 +344,7 @@ DOTRACE("GxPixmap::queueImage");
 
 void GxPixmap::saveImage(const char* filename) const
 {
-DOTRACE("GxPixmap::saveImage");
+GVX_TRACE("GxPixmap::saveImage");
 
   media::save_image(filename, rep->itsData);
 }
@@ -352,7 +352,7 @@ DOTRACE("GxPixmap::saveImage");
 void GxPixmap::grabScreenRect(Nub::SoftRef<Gfx::Canvas> canvas,
                               const recti& rect)
 {
-DOTRACE("GxPixmap::grabScreenRect");
+GVX_TRACE("GxPixmap::grabScreenRect");
 
   canvas->grabPixels(rect, rep->itsData);
 
@@ -367,7 +367,7 @@ DOTRACE("GxPixmap::grabScreenRect");
 
 void GxPixmap::grabScreen(Nub::SoftRef<Gfx::Canvas> canvas)
 {
-DOTRACE("GxPixmap::grabScreen");
+GVX_TRACE("GxPixmap::grabScreen");
 
   recti bounds = canvas->getScreenViewport();
 
@@ -377,7 +377,7 @@ DOTRACE("GxPixmap::grabScreen");
 void GxPixmap::grabWorldRect(Nub::SoftRef<Gfx::Canvas> canvas,
                              const rectd& world_rect)
 {
-DOTRACE("GxPixmap::grabWorldRect");
+GVX_TRACE("GxPixmap::grabWorldRect");
 
   recti screen_rect = canvas->screenBoundsFromWorldRect(world_rect);
 
@@ -388,7 +388,7 @@ DOTRACE("GxPixmap::grabWorldRect");
 
 void GxPixmap::flipContrast()
 {
-DOTRACE("GxPixmap::flipContrast");
+GVX_TRACE("GxPixmap::flipContrast");
 
   // Toggle itsContrastFlip so we keep track of whether the number of
   // flips has been even or odd.
@@ -400,7 +400,7 @@ DOTRACE("GxPixmap::flipContrast");
 
 void GxPixmap::flipVertical()
 {
-DOTRACE("GxPixmap::flipVertical");
+GVX_TRACE("GxPixmap::flipVertical");
 
   rep->itsVerticalFlip = !(rep->itsVerticalFlip);
   rep->itsData.flip_vertical();
@@ -410,7 +410,7 @@ DOTRACE("GxPixmap::flipVertical");
 
 void GxPixmap::grRender(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxPixmap::grRender");
+GVX_TRACE("GxPixmap::grRender");
 
   const vec3d world_pos = vec3d::zeros();
 
@@ -437,7 +437,7 @@ DOTRACE("GxPixmap::grRender");
 
 void GxPixmap::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxPixmap::grGetBoundingBox");
+GVX_TRACE("GxPixmap::grGetBoundingBox");
 
   bbox.drawScreenRect(vec3d::zeros(),
                       this->size(),
@@ -461,7 +461,7 @@ const char* GxPixmap::filename() const
 
 bool GxPixmap::getAsBitmap() const
 {
-DOTRACE("GxPixmap::getAsBitmap");
+GVX_TRACE("GxPixmap::getAsBitmap");
   return rep->itsAsBitmap;
 }
 
@@ -474,19 +474,19 @@ long int GxPixmap::checkSum() const
 
 media::bmap_data& GxPixmap::data()
 {
-DOTRACE("GxPixmap::data");
+GVX_TRACE("GxPixmap::data");
   return rep->itsData;
 }
 
 void GxPixmap::setZoom(geom::vec2<double> zoom)
 {
-DOTRACE("GxPixmap::setZoom");
+GVX_TRACE("GxPixmap::setZoom");
   rep->itsZoom = zoom; this->sigNodeChanged.emit();
 }
 
 void GxPixmap::zoomTo(geom::vec2<int> sz)
 {
-DOTRACE("GxPixmap::zoomTo");
+GVX_TRACE("GxPixmap::zoomTo");
   double x_ratio = double(sz.x()) / rep->itsData.width();
   double y_ratio = double(sz.y()) / rep->itsData.height();
   double ratio = rutz::min(x_ratio, y_ratio);
@@ -496,7 +496,7 @@ DOTRACE("GxPixmap::zoomTo");
 
 void GxPixmap::setUsingZoom(bool val)
 {
-DOTRACE("GxPixmap::setUsingZoom");
+GVX_TRACE("GxPixmap::setUsingZoom");
   rep->itsUsingZoom = val;
 
   // glPixelZoom() does not work with glBitmap()
@@ -508,13 +508,13 @@ DOTRACE("GxPixmap::setUsingZoom");
 
 void GxPixmap::setPurgeable(bool val)
 {
-DOTRACE("GxPixmap::setPurgeable");
+GVX_TRACE("GxPixmap::setPurgeable");
   rep->itsPurgeable = val; this->sigNodeChanged.emit();
 }
 
 void GxPixmap::setAsBitmap(bool val)
 {
-DOTRACE("GxPixmap::setAsBitmap");
+GVX_TRACE("GxPixmap::setAsBitmap");
   rep->itsAsBitmap = val;
 
   // glPixelZoom() does not work with glBitmap()
@@ -529,7 +529,7 @@ void GxPixmap::scramble(int numsubcols, int numsubrows, int seed,
                         bool allowFlipLeftRight,
                         bool allowFlipTopBottom)
 {
-DOTRACE("GxPixmap::scramble");
+GVX_TRACE("GxPixmap::scramble");
 
   rutz::shared_ptr<media::bmap_data> newdata =
     rep->itsData.make_scrambled(numsubcols, numsubrows, seed,

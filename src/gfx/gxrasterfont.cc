@@ -41,7 +41,7 @@
 
 GxRasterFont::~GxRasterFont() throw()
 {
-DOTRACE("GxRasterFont::~GxRasterFont");
+GVX_TRACE("GxRasterFont::~GxRasterFont");
 }
 
 #if defined(GL_PLATFORM_GLX)
@@ -50,7 +50,7 @@ DOTRACE("GxRasterFont::~GxRasterFont");
 
 rutz::shared_ptr<GxRasterFont> GxRasterFont::make(const char* fontname)
 {
-DOTRACE("GxRasterFont::make[glx]");
+GVX_TRACE("GxRasterFont::make[glx]");
   return rutz::make_shared(new GlxRasterFont(fontname));
 }
 
@@ -60,7 +60,7 @@ DOTRACE("GxRasterFont::make[glx]");
 
 rutz::shared_ptr<GxRasterFont> GxRasterFont::make(const char* fontname)
 {
-DOTRACE("GxRasterFont::make[agl]");
+GVX_TRACE("GxRasterFont::make[agl]");
   return rutz::make_shared(new AglRasterFont(fontname));
 }
 

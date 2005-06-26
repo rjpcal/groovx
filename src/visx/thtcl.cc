@@ -58,7 +58,7 @@ namespace
 extern "C"
 int Timinghdlr_Init(Tcl_Interp* interp)
 {
-DOTRACE("Timinghdlr_Init");
+GVX_TRACE("Timinghdlr_Init");
 
   PKG_CREATE(interp, "TimingHdlr", "4.$Revision$");
   Tcl::defCreator<TimingHdlr>(pkg);
@@ -103,7 +103,7 @@ DOTRACE("Timinghdlr_Init");
 extern "C"
 int Timinghandler_Init(Tcl_Interp* interp)
 {
-DOTRACE("Timinghandler_Init");
+GVX_TRACE("Timinghandler_Init");
 
   PKG_CREATE(interp, "TimingHandler", "4.$Revision$");
   Tcl::defCreator<TimingHandler>(pkg);

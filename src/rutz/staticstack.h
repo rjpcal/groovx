@@ -34,7 +34,7 @@
 #define GROOVX_RUTZ_STATICSTACK_H_UTC20050626084019_DEFINED
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace rutz
 {
@@ -78,7 +78,7 @@ namespace rutz
     void pop() throw()
     {
       if (sz == 0)
-        PANIC("underflow in static_stack::pop");
+        GVX_PANIC("underflow in static_stack::pop");
       --sz;
     }
 

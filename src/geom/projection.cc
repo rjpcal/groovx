@@ -50,7 +50,7 @@ vec3d geom::unproject(const txform& modelview,
                       const recti& viewport,
                       const vec3d& screen)
 {
-DOTRACE("geom::unproject");
+GVX_TRACE("geom::unproject");
 
   const txform pm = projection.mtx_mul(modelview);
   const txform pmi = pm.inverted();
@@ -67,7 +67,7 @@ vec3d geom::project(const txform& modelview,
                     const recti& viewport,
                     const vec3d& world_pos)
 {
-DOTRACE("geom::project");
+GVX_TRACE("geom::project");
 
   const txform pm = projection.mtx_mul(modelview);
 

@@ -42,7 +42,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace IO
 {
@@ -89,7 +89,7 @@ int IO::Writer::ensureWriteVersionId(const char* name,
     throw IO::WriteVersionError(name, actual_version,
                                 lowest_supported_version, msg, pos);
 
-  ASSERT(actual_version >= lowest_supported_version);
+  GVX_ASSERT(actual_version >= lowest_supported_version);
 
   return actual_version;
 }
@@ -98,7 +98,7 @@ void IO::Writer::defaultWriteRawData(const char* name,
                                      const unsigned char* data,
                                      unsigned int length)
 {
-DOTRACE("IO::Writer::defaultWriteRawData");
+GVX_TRACE("IO::Writer::defaultWriteRawData");
 
   rutz::byte_array encoded;
 

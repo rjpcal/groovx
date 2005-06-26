@@ -111,7 +111,7 @@ namespace
 extern "C"
 int Objdb_Init(Tcl_Interp* interp)
 {
-DOTRACE("Objdb_Init");
+GVX_TRACE("Objdb_Init");
 
   PKG_CREATE(interp, "ObjDb", "4.$Revision$");
 
@@ -127,7 +127,7 @@ DOTRACE("Objdb_Init");
 extern "C"
 int Obj_Init(Tcl_Interp* interp)
 {
-DOTRACE("Obj_Init");
+GVX_TRACE("Obj_Init");
 
   PKG_CREATE(interp, "Obj", "4.$Revision$");
   Tcl::defGenericObjCmds<Nub::Object>(pkg, SRC_POS);

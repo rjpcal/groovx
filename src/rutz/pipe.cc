@@ -39,7 +39,7 @@
 #include "rutz/fstring.h"
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 rutz::shell_pipe::shell_pipe(const char* command, const char* mode) :
   m_file(popen(command, mode)),
@@ -180,7 +180,7 @@ rutz::exec_pipe::~exec_pipe() throw()
 
 std::iostream& rutz::exec_pipe::stream() throw()
 {
-  ASSERT(m_stream != 0);
+  GVX_ASSERT(m_stream != 0);
   return *m_stream;
 }
 
@@ -274,13 +274,13 @@ rutz::bidir_pipe::~bidir_pipe() throw()
 
 std::iostream& rutz::bidir_pipe::in_stream() throw()
 {
-  ASSERT(m_in_stream != 0);
+  GVX_ASSERT(m_in_stream != 0);
   return *m_in_stream;
 }
 
 std::iostream& rutz::bidir_pipe::out_stream() throw()
 {
-  ASSERT(m_out_stream != 0);
+  GVX_ASSERT(m_out_stream != 0);
   return *m_out_stream;
 }
 

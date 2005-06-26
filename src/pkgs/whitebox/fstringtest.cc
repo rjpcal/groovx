@@ -270,7 +270,7 @@ namespace
 extern "C"
 int Fstringtest_Init(Tcl_Interp* interp)
 {
-DOTRACE("Fstringtest_Init");
+GVX_TRACE("Fstringtest_Init");
 
   PKG_CREATE(interp, "Fstringtest", "4.$Revision$");
 
@@ -301,7 +301,7 @@ extern "C" int Fstringtest_SafeInit(Tcl_Interp*) { return 1; }
 
 extern "C" int Fstringtest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
-DOTRACE("Fstringtest_Unload");
+GVX_TRACE("Fstringtest_Unload");
   return Tcl::Pkg::unloadDestroy(interp, "Fstringtest");
 }
 

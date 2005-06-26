@@ -43,10 +43,10 @@
 #include <cmath>
 #include <cstring>
 
-#define NO_PROF
+#define GVX_NO_PROF
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using geom::vec2d;
 using geom::vec3d;
@@ -73,7 +73,7 @@ geom::txform::txform(const vec3d& translation,
                      const vec3d& rotation_axis,
                      double rotation_angle)
 {
-DOTRACE("geom::txform::txform(tx, scl, rot)");
+GVX_TRACE("geom::txform::txform(tx, scl, rot)");
 
   // The matrices look transposed because OpenGL expects column-major
 
@@ -127,7 +127,7 @@ DOTRACE("geom::txform::txform(tx, scl, rot)");
 
 geom::txform geom::txform::identity()
 {
-DOTRACE("geom::txform::identity");
+GVX_TRACE("geom::txform::identity");
   txform r(true);
   r[0] = 1.0; r[4] = 0.0; r[8] = 0.0; r[12] = 0.0;
   r[1] = 0.0; r[5] = 1.0; r[9] = 0.0; r[13] = 0.0;
@@ -138,7 +138,7 @@ DOTRACE("geom::txform::identity");
 
 geom::txform geom::txform::random()
 {
-DOTRACE("geom::txform::random");
+GVX_TRACE("geom::txform::random");
 
   static rutz::urand generator(rutz::default_rand_seed);
 
@@ -151,7 +151,7 @@ DOTRACE("geom::txform::random");
 geom::txform geom::txform::orthographic(const geom::rect<double>& b,
                                         double zNear, double zFar)
 {
-DOTRACE("geom::txform::orthographic");
+GVX_TRACE("geom::txform::orthographic");
 
   txform result = txform::no_init();
 
@@ -180,7 +180,7 @@ DOTRACE("geom::txform::orthographic");
 
 geom::txform geom::txform::inverted() const
 {
-DOTRACE("geom::txform::inverted");
+GVX_TRACE("geom::txform::inverted");
 
   // ALGORITHM (Cramer's Rule):
 
@@ -338,7 +338,7 @@ DOTRACE("geom::txform::inverted");
 
 void geom::txform::translate(const vec3d& t)
 {
-DOTRACE("geom::txform::translate");
+GVX_TRACE("geom::txform::translate");
 
 #if 0
   /*                     brute force
@@ -374,7 +374,7 @@ DOTRACE("geom::txform::translate");
 
 void geom::txform::scale(const vec3d& s)
 {
-DOTRACE("geom::txform::scale");
+GVX_TRACE("geom::txform::scale");
 
 #if 0
   /*                brute force
@@ -419,7 +419,7 @@ DOTRACE("geom::txform::scale");
 void geom::txform::rotate(const vec3d& rotation_axis,
                           double rotation_angle)
 {
-DOTRACE("geom::txform::rotate");
+GVX_TRACE("geom::txform::rotate");
 
   txform rotation(vec3d(0, 0, 0),
                   vec3d(1, 1, 1),
@@ -430,7 +430,7 @@ DOTRACE("geom::txform::rotate");
 
 geom::txform geom::txform::mtx_mul(const txform& other) const
 {
-DOTRACE("geom::txform::mtx_mul");
+GVX_TRACE("geom::txform::mtx_mul");
 
   txform result(true);
 
@@ -441,7 +441,7 @@ DOTRACE("geom::txform::mtx_mul");
 
 void geom::txform::transform(const geom::txform& other)
 {
-DOTRACE("geom::txform::transform");
+GVX_TRACE("geom::txform::transform");
 
   txform old_mtx(*this);
 
@@ -450,7 +450,7 @@ DOTRACE("geom::txform::transform");
 
 vec2d geom::txform::apply_to(const vec2d& input) const
 {
-DOTRACE("geom::txform::apply_to(vec2d)");
+GVX_TRACE("geom::txform::apply_to(vec2d)");
   /*
         | m0 m4 m8  m12 |   | input.x |
         | m1 m5 m9  m13 | * | input.y |
@@ -485,7 +485,7 @@ DOTRACE("geom::txform::apply_to(vec2d)");
 
 vec3d geom::txform::apply_to(const vec3d& input) const
 {
-DOTRACE("geom::txform::apply_to(vec3d)");
+GVX_TRACE("geom::txform::apply_to(vec3d)");
   /*
         | m0 m4 m8  m12 |   | input.x |
         | m1 m5 m9  m13 | * | input.y |
@@ -526,14 +526,14 @@ DOTRACE("geom::txform::apply_to(vec3d)");
 
 void geom::txform::set_col_major_data(const double* data)
 {
-DOTRACE("geom::txform::set_col_major_data");
+GVX_TRACE("geom::txform::set_col_major_data");
   for (int i = 0; i < 16; ++i)
     m_mtx[i] = data[i];
 }
 
 void geom::txform::debug_dump() const
 {
-DOTRACE("geom::txform::debug_dump");
+GVX_TRACE("geom::txform::debug_dump");
   dbg_nl(0);
   dbg_print(0, m_mtx[0]); dbg_print(0, m_mtx[4]); dbg_print(0, m_mtx[8]); dbg_print_nl(0, m_mtx[12]);
   dbg_print(0, m_mtx[1]); dbg_print(0, m_mtx[5]); dbg_print(0, m_mtx[9]); dbg_print_nl(0, m_mtx[13]);
@@ -543,7 +543,7 @@ DOTRACE("geom::txform::debug_dump");
 
 double geom::txform::debug_sse(const txform& ref) const
 {
-DOTRACE("geom::txform::debug_sse");
+GVX_TRACE("geom::txform::debug_sse");
   double result = 0.0;
   for (int i = 0; i < 16; ++i)
     {

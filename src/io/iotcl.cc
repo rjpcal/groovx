@@ -124,7 +124,7 @@ namespace
 extern "C"
 int Io_Init(Tcl_Interp* interp)
 {
-DOTRACE("Io_Init");
+GVX_TRACE("Io_Init");
 
   PKG_CREATE(interp, "IO", "4.$Revision$");
   pkg->inheritPkg("Obj");
@@ -159,7 +159,7 @@ DOTRACE("Io_Init");
 extern "C"
 int Outputfile_Init(Tcl_Interp* interp)
 {
-DOTRACE("Outputfile_Init");
+GVX_TRACE("Outputfile_Init");
 
   PKG_CREATE(interp, "OutputFile", "4.$Revision$");
   pkg->inheritPkg("IO");

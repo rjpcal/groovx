@@ -47,7 +47,7 @@
 extern "C"
 int Mtx_Init(Tcl_Interp* interp)
 {
-DOTRACE("Mtx_Init");
+GVX_TRACE("Mtx_Init");
 
   PKG_CREATE(interp, "mtx", "4.$Revision$");
   pkg->inheritPkg("Obj");

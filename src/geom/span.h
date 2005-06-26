@@ -103,7 +103,7 @@ namespace geom
 
     bool is_void() const
     {
-      ASSERT(!(lo > hi));
+      GVX_ASSERT(!(lo > hi));
       return (lo == hi);
     }
 

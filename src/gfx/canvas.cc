@@ -45,7 +45,7 @@
 #include "rutz/error.h"
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 using geom::recti;
@@ -70,7 +70,7 @@ Gfx::Canvas::~Canvas() throw() {}
 
 vec2d Gfx::Canvas::screenFromWorld2(const vec2d& world_pos) const
 {
-DOTRACE("Gfx::Canvas::screenFromWorld2");
+GVX_TRACE("Gfx::Canvas::screenFromWorld2");
 
   return screenFromWorld3(vec3d(world_pos.x(),
                                 world_pos.y(),
@@ -79,7 +79,7 @@ DOTRACE("Gfx::Canvas::screenFromWorld2");
 
 recti Gfx::Canvas::screenBoundsFromWorldRect(const rectd& world_pos) const
 {
-DOTRACE("Gfx::Canvas::screenBoundsFromWorldRect");
+GVX_TRACE("Gfx::Canvas::screenBoundsFromWorldRect");
 
   // In order to get an accurate bounding box in screen coords, we need
   // to consider all four corners in world coordinates.
@@ -150,7 +150,7 @@ void Gfx::Canvas::drawBezier4(const vec3d& p1,
                               const vec3d& p4,
                               unsigned int subdivisions)
 {
-DOTRACE("Gfx::Canvas::drawBezier4");
+GVX_TRACE("Gfx::Canvas::drawBezier4");
 
   geom::bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
   geom::bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
@@ -172,7 +172,7 @@ void Gfx::Canvas::drawBezierFill4(const vec3d& center,
                                   const vec3d& p4,
                                   unsigned int subdivisions)
 {
-DOTRACE("Gfx::Canvas::drawBezierFill4");
+GVX_TRACE("Gfx::Canvas::drawBezierFill4");
 
   geom::bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
   geom::bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
@@ -192,14 +192,14 @@ void Gfx::Canvas::drawNurbsCurve
   (const rutz::dynamic_block<float>& knots,
    const rutz::dynamic_block<geom::vec3<float> >& pts)
 {
-DOTRACE("Gfx::Canvas::drawNurbsCurve");
+GVX_TRACE("Gfx::Canvas::drawNurbsCurve");
 
   const float* t = &knots[2];
   // t points to { 0, 0, 0.17, 0.33, 0.5, 0.67, 0.83, 1, 1 }
 
   unsigned int nctrl = pts.size();
 
-  ASSERT(nctrl > 4);
+  GVX_ASSERT(nctrl > 4);
 
   unsigned int nbz = nctrl - 3;
 
@@ -257,7 +257,7 @@ void Gfx::Canvas::begin(Gfx::Canvas::VertexStyle s, const char* comment)
 
 void Gfx::Canvas::finishDrawing()
 {
-DOTRACE("Gfx::Canvas::finishDrawing");
+GVX_TRACE("Gfx::Canvas::finishDrawing");
 }
 
 const char vcid_canvas_cc[] = "$Id$ $URL$";

@@ -51,7 +51,7 @@
 #include <vector>
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 using Nub::Ref;
@@ -77,18 +77,18 @@ public:
 ElementContainer::ElementContainer() :
   rep(new Impl)
 {
-DOTRACE("ElementContainer::ElementContainer");
+GVX_TRACE("ElementContainer::ElementContainer");
 }
 
 ElementContainer::~ElementContainer() throw()
 {
-DOTRACE("ElementContainer::~ElementContainer");
+GVX_TRACE("ElementContainer::~ElementContainer");
   delete rep;
 }
 
 void ElementContainer::readFrom(IO::Reader& reader)
 {
-DOTRACE("ElementContainer::readFrom");
+GVX_TRACE("ElementContainer::readFrom");
   clearElements();
 
   IO::ReadUtils::readObjectSeq<Element>
@@ -104,7 +104,7 @@ DOTRACE("ElementContainer::readFrom");
 
 void ElementContainer::writeTo(IO::Writer& writer) const
 {
-DOTRACE("ElementContainer::writeTo");
+GVX_TRACE("ElementContainer::writeTo");
   IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
                                  rep->elements.begin(),
                                  rep->elements.end());
@@ -121,7 +121,7 @@ DOTRACE("ElementContainer::writeTo");
 
 int ElementContainer::trialType() const
 {
-DOTRACE("ElementContainer::trialType");
+GVX_TRACE("ElementContainer::trialType");
   if (isComplete()) return -1;
 
   dbg_eval_nl(3, currentElement()->trialType());
@@ -131,7 +131,7 @@ DOTRACE("ElementContainer::trialType");
 
 int ElementContainer::lastResponse() const
 {
-DOTRACE("ElementContainer::lastResponse");
+GVX_TRACE("ElementContainer::lastResponse");
   dbg_eval(9, rep->sequencePos);
   dbg_eval_nl(9, rep->elements.size());
 
@@ -145,7 +145,7 @@ DOTRACE("ElementContainer::lastResponse");
 
 rutz::fstring ElementContainer::vxInfo() const
 {
-DOTRACE("ElementContainer::vxInfo");
+GVX_TRACE("ElementContainer::vxInfo");
   if (isComplete()) return rutz::fstring("complete");
 
   rutz::fstring msg("current element ",
@@ -158,7 +158,7 @@ DOTRACE("ElementContainer::vxInfo");
 
 void ElementContainer::vxHalt() const
 {
-DOTRACE("ElementContainer::vxHalt");
+GVX_TRACE("ElementContainer::vxHalt");
 
   if ( !isComplete() )
     currentElement()->vxHalt();
@@ -166,9 +166,9 @@ DOTRACE("ElementContainer::vxHalt");
 
 void ElementContainer::vxReturn(ChildStatus s)
 {
-DOTRACE("ExptDriver::vxReturn");
+GVX_TRACE("ExptDriver::vxReturn");
 
-  PRECONDITION( !isComplete() );
+  GVX_PRECONDITION( !isComplete() );
 
   switch (s)
     {
@@ -208,7 +208,7 @@ DOTRACE("ExptDriver::vxReturn");
       break;
 
     default:
-      ASSERT(false);
+      GVX_ASSERT(false);
     }
 
   dbg_eval(3, numCompleted());
@@ -231,7 +231,7 @@ DOTRACE("ExptDriver::vxReturn");
 
 void ElementContainer::vxUndo()
 {
-DOTRACE("ElementContainer::vxUndo");
+GVX_TRACE("ElementContainer::vxUndo");
   dbg_eval(3, rep->sequencePos);
 
   // FIXME how to know whether we should back up our own sequence, or
@@ -243,7 +243,7 @@ DOTRACE("ElementContainer::vxUndo");
   // Move the counter back to the previous element...
   --rep->sequencePos;
 
-  ASSERT(rep->sequencePos < rep->elements.size());
+  GVX_ASSERT(rep->sequencePos < rep->elements.size());
 
   // ...and undo that element
   currentElement()->vxUndo();
@@ -251,7 +251,7 @@ DOTRACE("ElementContainer::vxUndo");
 
 void ElementContainer::vxReset()
 {
-DOTRACE("ElementContainer::vxReset");
+GVX_TRACE("ElementContainer::vxReset");
   vxHalt();
 
   Nub::log("ElementContainer::vxReset");
@@ -274,7 +274,7 @@ DOTRACE("ElementContainer::vxReset");
 
 void ElementContainer::addElement(Ref<Element> element, unsigned int repeat)
 {
-DOTRACE("ElementContainer::addElement");
+GVX_TRACE("ElementContainer::addElement");
 
   for (unsigned int i = 0; i < repeat; ++i)
     {
@@ -284,19 +284,19 @@ DOTRACE("ElementContainer::addElement");
 
 void ElementContainer::setRandSeed(int s)
 {
-DOTRACE("ElementContainer::setRandSeed");
+GVX_TRACE("ElementContainer::setRandSeed");
   rep->randSeed = s;
 }
 
 int ElementContainer::getRandSeed() const
 {
-DOTRACE("ElementContainer::getRandSeed");
+GVX_TRACE("ElementContainer::getRandSeed");
   return rep->randSeed;
 }
 
 void ElementContainer::shuffle(int seed)
 {
-DOTRACE("ElementContainer::shuffle");
+GVX_TRACE("ElementContainer::shuffle");
 
   setRandSeed(seed);
 
@@ -309,7 +309,7 @@ DOTRACE("ElementContainer::shuffle");
 
 void ElementContainer::clearElements()
 {
-DOTRACE("ElementContainer::clearElements");
+GVX_TRACE("ElementContainer::clearElements");
   vxHalt();
 
   rep->elements.clear();
@@ -318,7 +318,7 @@ DOTRACE("ElementContainer::clearElements");
 
 Nub::SoftRef<Element> ElementContainer::currentElement() const
 {
-DOTRACE("ElementContainer::currentElement");
+GVX_TRACE("ElementContainer::currentElement");
   if (rep->sequencePos >= rep->elements.size())
     return Nub::SoftRef<Element>();
 
@@ -327,20 +327,20 @@ DOTRACE("ElementContainer::currentElement");
 
 unsigned int ElementContainer::numElements() const
 {
-DOTRACE("ElementContainer::numElements");
+GVX_TRACE("ElementContainer::numElements");
   return rep->elements.size();
 }
 
 unsigned int ElementContainer::numCompleted() const
 {
-DOTRACE("ElementContainer::numCompleted");
+GVX_TRACE("ElementContainer::numCompleted");
   return rep->sequencePos;
 }
 
 rutz::fwd_iter<const Nub::Ref<Element> >
 ElementContainer::getElements() const
 {
-DOTRACE("ElementContainer::getElements");
+GVX_TRACE("ElementContainer::getElements");
 
   return rutz::fwd_iter<const Nub::Ref<Element> >
     (rep->elements.begin(), rep->elements.end());
@@ -348,7 +348,7 @@ DOTRACE("ElementContainer::getElements");
 
 bool ElementContainer::isComplete() const
 {
-DOTRACE("ElementContainer::isComplete");
+GVX_TRACE("ElementContainer::isComplete");
 
   dbg_eval(9, rep->sequencePos);
   dbg_eval_nl(9, rep->elements.size());

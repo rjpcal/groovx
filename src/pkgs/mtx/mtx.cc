@@ -48,7 +48,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 
@@ -184,7 +184,7 @@ void range_checking::in_full_open(int x,
 
 slice slice::operator()(const index_range& rng) const
 {
-DOTRACE("slice::operator");
+GVX_TRACE("slice::operator");
   RC_in_half_open(rng.begin(), 0, m_nelems);
   RC_geq(rng.count(), 0);
   RC_leq(rng.end(), m_nelems);
@@ -195,7 +195,7 @@ DOTRACE("slice::operator");
 
 void slice::print(std::ostream& s) const
 {
-DOTRACE("slice::print");
+GVX_TRACE("slice::print");
   for (mtx_const_iter iter = begin(); iter.has_more(); ++iter)
     {
       s << std::setw(12) << std::setprecision(7) << double(*iter);
@@ -205,13 +205,13 @@ DOTRACE("slice::print");
 
 void slice::print_stdout() const
 {
-DOTRACE("slice::print_stdout");
+GVX_TRACE("slice::print_stdout");
   print(std::cout);
 }
 
 double slice::sum() const
 {
-DOTRACE("slice::sum");
+GVX_TRACE("slice::sum");
   double s = 0.0;
   for (mtx_const_iter i = begin(); i.has_more(); ++i)
     s += *i;
@@ -220,7 +220,7 @@ DOTRACE("slice::sum");
 
 double slice::min() const
 {
-DOTRACE("slice::min");
+GVX_TRACE("slice::min");
   mtx_const_iter i = begin();
   double mn = *i;
   for (; i.has_more(); ++i)
@@ -230,7 +230,7 @@ DOTRACE("slice::min");
 
 double slice::max() const
 {
-DOTRACE("slice::max");
+GVX_TRACE("slice::max");
   mtx_const_iter i = begin();
   double m = *i;
   for (; i.has_more(); ++i)
@@ -253,7 +253,7 @@ namespace
 
 mtx slice::get_sort_order() const
 {
-DOTRACE("slice::get_sort_order");
+GVX_TRACE("slice::get_sort_order");
 
   std::vector<val_index> buf(this->begin(), this->end());
 
@@ -268,7 +268,7 @@ DOTRACE("slice::get_sort_order");
 
   for (int i = 0; i < nelems(); ++i)
     {
-      ASSERT(buf[i].index < static_cast<unsigned int>(nelems()));
+      GVX_ASSERT(buf[i].index < static_cast<unsigned int>(nelems()));
       index.at(0,i) = buf[i].index;
     }
 
@@ -277,7 +277,7 @@ DOTRACE("slice::get_sort_order");
 
 bool slice::operator==(const slice& other) const
 {
-DOTRACE("slice::operator==(const slice&)");
+GVX_TRACE("slice::operator==(const slice&)");
   if (m_nelems != other.m_nelems) return false;
 
   for (mtx_const_iter a = this->begin(), b = other.begin();
@@ -290,13 +290,13 @@ DOTRACE("slice::operator==(const slice&)");
 
 void slice::sort()
 {
-DOTRACE("slice::sort");
+GVX_TRACE("slice::sort");
   std::sort(begin_nc(), end_nc());
 }
 
 void slice::reorder(const mtx& index_)
 {
-DOTRACE("slice::reorder");
+GVX_TRACE("slice::reorder");
   mtx index(index_.as_column());
 
   if (index.mrows() != nelems())
@@ -312,7 +312,7 @@ DOTRACE("slice::reorder");
 
 slice& slice::operator+=(const slice& other)
 {
-DOTRACE("slice::operator+=(const slice&)");
+GVX_TRACE("slice::operator+=(const slice&)");
   if (m_nelems != other.nelems())
     throw rutz::error("dimension mismatch in slice::operator+=", SRC_POS);
 
@@ -326,7 +326,7 @@ DOTRACE("slice::operator+=(const slice&)");
 
 slice& slice::operator-=(const slice& other)
 {
-DOTRACE("slice::operator-=(const slice&)");
+GVX_TRACE("slice::operator-=(const slice&)");
   if (m_nelems != other.nelems())
     throw rutz::error("dimension mismatch in slice::operator-=", SRC_POS);
 
@@ -340,7 +340,7 @@ DOTRACE("slice::operator-=(const slice&)");
 
 slice& slice::operator=(double val)
 {
-DOTRACE("slice::operator=(double)");
+GVX_TRACE("slice::operator=(double)");
   for (mtx_iter itr = begin_nc(); itr.has_more(); ++itr)
     *itr = val;
 
@@ -349,7 +349,7 @@ DOTRACE("slice::operator=(double)");
 
 slice& slice::operator=(const slice& other)
 {
-DOTRACE("slice::operator=(const slice&)");
+GVX_TRACE("slice::operator=(const slice&)");
   if (m_nelems != other.nelems())
     throw rutz::error("dimension mismatch in slice::operator=", SRC_POS);
 
@@ -363,7 +363,7 @@ DOTRACE("slice::operator=(const slice&)");
 
 slice& slice::operator=(const mtx& other)
 {
-DOTRACE("slice::operator=(const mtx&)");
+GVX_TRACE("slice::operator=(const mtx&)");
   if (m_nelems != other.nelems())
     throw rutz::error("dimension mismatch in slice::operator=", SRC_POS);
 
@@ -383,7 +383,7 @@ void mtx_specs::swap(mtx_specs& other)
 
 mtx_specs mtx_specs::as_shape(const mtx_shape& s) const
 {
-DOTRACE("mtx_specs::as_shape");
+GVX_TRACE("mtx_specs::as_shape");
   if (s.nelems() != this->nelems())
     {
       fstring msg;
@@ -405,7 +405,7 @@ DOTRACE("mtx_specs::as_shape");
 
 void mtx_specs::select_rows(const row_index_range& rng)
 {
-DOTRACE("mtx_specs::select_rows");
+GVX_TRACE("mtx_specs::select_rows");
   if (rng.begin() < 0)
     throw rutz::error("select_rows(): row index must be >= 0", SRC_POS);
 
@@ -421,7 +421,7 @@ DOTRACE("mtx_specs::select_rows");
 
 void mtx_specs::select_cols(const col_index_range& rng)
 {
-DOTRACE("mtx_specs::select_cols");
+GVX_TRACE("mtx_specs::select_cols");
   if (rng.begin() < 0)
     throw rutz::error("select_cols(): column index must be >= 0", SRC_POS);
 
@@ -481,7 +481,7 @@ template class mtx_base<data_ref_holder>;
 
 sub_mtx_ref& sub_mtx_ref::operator=(const sub_mtx_ref& other)
 {
-DOTRACE("sub_mtx_ref::operator=(const sub_mtx_ref&)");
+GVX_TRACE("sub_mtx_ref::operator=(const sub_mtx_ref&)");
   if (this->nelems() != other.nelems())
     throw rutz::error("sub_mtx_ref::operator=(): dimension mismatch",
                       SRC_POS);
@@ -494,7 +494,7 @@ DOTRACE("sub_mtx_ref::operator=(const sub_mtx_ref&)");
 
 sub_mtx_ref& sub_mtx_ref::operator=(const mtx& other)
 {
-DOTRACE("sub_mtx_ref::operator=(const mtx&)");
+GVX_TRACE("sub_mtx_ref::operator=(const mtx&)");
   if (this->nelems() != other.nelems())
     throw rutz::error("sub_mtx_ref::operator=(): dimension mismatch",
                       SRC_POS);
@@ -513,7 +513,7 @@ DOTRACE("sub_mtx_ref::operator=(const mtx&)");
 
 mtx mtx::colmaj_copy_of(const double* data, int mrows, int ncols)
 {
-DOTRACE("mtx::colmaj_copy_of");
+GVX_TRACE("mtx::colmaj_copy_of");
 
   return mtx(mtx_shape(mrows, ncols),
              data_holder(const_cast<double*>(data),
@@ -522,7 +522,7 @@ DOTRACE("mtx::colmaj_copy_of");
 
 mtx mtx::colmaj_borrow_from(double* data, int mrows, int ncols)
 {
-DOTRACE("mtx::colmaj_borrow_from");
+GVX_TRACE("mtx::colmaj_borrow_from");
 
   return mtx(mtx_shape(mrows, ncols),
              data_holder(data, mrows, ncols, BORROW));
@@ -530,7 +530,7 @@ DOTRACE("mtx::colmaj_borrow_from");
 
 mtx mtx::colmaj_refer_to(double* data, int mrows, int ncols)
 {
-DOTRACE("mtx::colmaj_refer_to");
+GVX_TRACE("mtx::colmaj_refer_to");
 
   return mtx(mtx_shape(mrows, ncols),
              data_holder(data, mrows, ncols, REFER));
@@ -548,7 +548,7 @@ mtx mtx::uninitialized(const mtx_shape& s)
 
 mtx mtx::from_stream(std::istream& s)
 {
-DOTRACE("mtx::from_stream");
+GVX_TRACE("mtx::from_stream");
 
   fstring buf;
   int mrows = -1;
@@ -599,7 +599,7 @@ DOTRACE("mtx::from_stream");
 
 mtx mtx::from_string(const char* s)
 {
-DOTRACE("mtx::from_string");
+GVX_TRACE("mtx::from_string");
 
   rutz::imemstream ms(s);
   return mtx::from_stream(ms);
@@ -608,7 +608,7 @@ DOTRACE("mtx::from_string");
 
 const mtx& mtx::empty_mtx()
 {
-DOTRACE("mtx::empty_mtx");
+GVX_TRACE("mtx::empty_mtx");
   static mtx* m = 0;
   if (m == 0)
     {
@@ -620,7 +620,7 @@ DOTRACE("mtx::empty_mtx");
 mtx::mtx(const slice& s) :
   Base(s.nelems(), 1, data_holder(s.nelems(), 1, NO_INIT))
 {
-DOTRACE("mtx::mtx");
+GVX_TRACE("mtx::mtx");
   std::copy(s.begin(), s.end(), this->colmaj_begin_nc());
 }
 
@@ -628,7 +628,7 @@ mtx::~mtx() {}
 
 void mtx::resize(int mrows_new, int ncols_new)
 {
-DOTRACE("mtx::resize");
+GVX_TRACE("mtx::resize");
   if (mrows() == mrows_new && ncols() == ncols_new)
     return;
   else
@@ -640,7 +640,7 @@ DOTRACE("mtx::resize");
 
 mtx mtx::contig() const
 {
-DOTRACE("mtx::contig");
+GVX_TRACE("mtx::contig");
   if (mrows() == rowstride())
     return *this;
 
@@ -680,25 +680,25 @@ namespace
 
 void mtx::print(std::ostream& s, const char* mtx_name) const
 {
-DOTRACE("mtx::print");
+GVX_TRACE("mtx::print");
   format_mtx(*this, s, mtx_name, true);
 }
 
 void mtx::print_stdout() const
 {
-DOTRACE("mtx::print_stdout");
+GVX_TRACE("mtx::print_stdout");
   format_mtx(*this, std::cout, 0, true);
 }
 
 void mtx::print_stdout_named(const char* mtx_name) const
 {
-DOTRACE("mtx::print_stdout_named");
+GVX_TRACE("mtx::print_stdout_named");
   format_mtx(*this, std::cout, mtx_name, true);
 }
 
 rutz::fstring mtx::as_string() const
 {
-DOTRACE("mtx::as_string");
+GVX_TRACE("mtx::as_string");
   std::ostringstream oss;
 
   format_mtx(*this, oss, 0, false);
@@ -708,21 +708,21 @@ DOTRACE("mtx::as_string");
 
 void mtx::scan(std::istream& s)
 {
-DOTRACE("mtx::scan");
+GVX_TRACE("mtx::scan");
 
   *this = mtx::from_stream(s);
 }
 
 void mtx::scan_string(const char* s)
 {
-DOTRACE("mtx::scan_string");
+GVX_TRACE("mtx::scan_string");
 
   *this = mtx::from_string(s);
 }
 
 void mtx::reorder_rows(const mtx& index_)
 {
-DOTRACE("mtx::reorder_rows");
+GVX_TRACE("mtx::reorder_rows");
 
   mtx index(index_.as_column());
 
@@ -740,7 +740,7 @@ DOTRACE("mtx::reorder_rows");
 
 void mtx::reorder_columns(const mtx& index_)
 {
-DOTRACE("mtx::reorder_columns");
+GVX_TRACE("mtx::reorder_columns");
 
   mtx index(index_.as_column());
 
@@ -758,7 +758,7 @@ DOTRACE("mtx::reorder_columns");
 
 void mtx::swap_columns(int c1, int c2)
 {
-DOTRACE("mtx::swap_columns");
+GVX_TRACE("mtx::swap_columns");
 
   if (c1 == c2) return;
 
@@ -767,7 +767,7 @@ DOTRACE("mtx::swap_columns");
 
 mtx mtx::mean_row() const
 {
-DOTRACE("mtx::mean_row");
+GVX_TRACE("mtx::mean_row");
 
   mtx res = mtx::uninitialized(1, ncols());
 
@@ -781,7 +781,7 @@ DOTRACE("mtx::mean_row");
 
 mtx mtx::mean_column() const
 {
-DOTRACE("mtx::mean_column");
+GVX_TRACE("mtx::mean_column");
 
   mtx res = mtx::uninitialized(mrows(), 1);
 
@@ -795,7 +795,7 @@ DOTRACE("mtx::mean_column");
 
 mtx::const_iterator mtx::find_min() const
 {
-DOTRACE("mtx::find_min");
+GVX_TRACE("mtx::find_min");
 
   if (nelems() == 0)
     throw rutz::error("find_min(): the matrix must be non-empty",
@@ -806,7 +806,7 @@ DOTRACE("mtx::find_min");
 
 mtx::const_iterator mtx::find_max() const
 {
-DOTRACE("mtx::find_max");
+GVX_TRACE("mtx::find_max");
 
   if (nelems() == 0)
     throw rutz::error("find_max(): the matrix must be non-empty",
@@ -817,7 +817,7 @@ DOTRACE("mtx::find_max");
 
 double mtx::min() const
 {
-DOTRACE("mtx::min");
+GVX_TRACE("mtx::min");
 
   if (nelems() == 0)
     throw rutz::error("min(): the matrix must be non-empty",
@@ -828,7 +828,7 @@ DOTRACE("mtx::min");
 
 double mtx::max() const
 {
-DOTRACE("mtx::max");
+GVX_TRACE("mtx::max");
 
   if (nelems() == 0)
     throw rutz::error("max(): the matrix must be non-empty",
@@ -839,13 +839,13 @@ DOTRACE("mtx::max");
 
 double mtx::sum() const
 {
-DOTRACE("mtx::sum");
+GVX_TRACE("mtx::sum");
   return std::accumulate(begin(), end(), 0.0);
 }
 
 mtx& mtx::operator+=(const mtx& other)
 {
-DOTRACE("mtx::operator+=(const mtx&)");
+GVX_TRACE("mtx::operator+=(const mtx&)");
   if (ncols() != other.ncols())
     throw rutz::error("dimension mismatch in mtx::operator+=",
                       SRC_POS);
@@ -858,7 +858,7 @@ DOTRACE("mtx::operator+=(const mtx&)");
 
 mtx& mtx::operator-=(const mtx& other)
 {
-DOTRACE("mtx::operator-=(const mtx&)");
+GVX_TRACE("mtx::operator-=(const mtx&)");
   if (ncols() != other.ncols())
     throw rutz::error("dimension mismatch in mtx::operator-=",
                       SRC_POS);
@@ -871,7 +871,7 @@ DOTRACE("mtx::operator-=(const mtx&)");
 
 bool mtx::operator==(const mtx& other) const
 {
-DOTRACE("mtx::operator==(const mtx&)");
+GVX_TRACE("mtx::operator==(const mtx&)");
   if ( (mrows() != other.mrows()) || (ncols() != other.ncols()) )
     return false;
   for (int c = 0; c < ncols(); ++c)
@@ -882,7 +882,7 @@ DOTRACE("mtx::operator==(const mtx&)");
 void mtx::VMmul_assign(const slice& vec, const mtx& mtx,
                        slice& result)
 {
-DOTRACE("mtx::VMmul_assign");
+GVX_TRACE("mtx::VMmul_assign");
 
   // e.g mrows == vec.nelems == 3   ncols == 4
   //
@@ -908,7 +908,7 @@ DOTRACE("mtx::VMmul_assign");
 
 void mtx::assign_MMmul(const mtx& m1, const mtx& m2)
 {
-DOTRACE("mtx::assign_MMmul");
+GVX_TRACE("mtx::assign_MMmul");
   if ( (m1.ncols() != m2.mrows()) ||
        (this->ncols() != m2.ncols()) )
     throw rutz::error("dimension mismatch in mtx::VMmul_assign",
@@ -983,37 +983,37 @@ namespace
 
 mtx operator+(const mtx& m1, const mtx& m2)
 {
-DOTRACE("operator+(mtx, mtx)");
+GVX_TRACE("operator+(mtx, mtx)");
   return binary_op(m1, m2, std::plus<double>());
 }
 
 mtx operator-(const mtx& m1, const mtx& m2)
 {
-DOTRACE("operator-(mtx, mtx)");
+GVX_TRACE("operator-(mtx, mtx)");
   return binary_op(m1, m2, std::minus<double>());
 }
 
 mtx arr_mul(const mtx& m1, const mtx& m2)
 {
-DOTRACE("arr_mul(mtx, mtx)");
+GVX_TRACE("arr_mul(mtx, mtx)");
   return binary_op(m1, m2, std::multiplies<double>());
 }
 
 mtx arr_div(const mtx& m1, const mtx& m2)
 {
-DOTRACE("arr_div(mtx, mtx)");
+GVX_TRACE("arr_div(mtx, mtx)");
   return binary_op(m1, m2, std::divides<double>());
 }
 
 mtx min(const mtx& m1, const mtx& m2)
 {
-DOTRACE("min(mtx, mtx)");
+GVX_TRACE("min(mtx, mtx)");
   return binary_op(m1, m2, dash::min());
 }
 
 mtx max(const mtx& m1, const mtx& m2)
 {
-DOTRACE("max(mtx, mtx)");
+GVX_TRACE("max(mtx, mtx)");
   return binary_op(m1, m2, dash::max());
 }
 

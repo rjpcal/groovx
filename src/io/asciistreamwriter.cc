@@ -53,7 +53,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 using rutz::shared_ptr;
@@ -67,7 +67,7 @@ namespace
 
   void addEscapes(std::string& text)
   {
-  DOTRACE("AsciiStreamWriter::addEscapes");
+  GVX_TRACE("AsciiStreamWriter::addEscapes");
     // Escape any special characters
     for (size_t pos = 0; pos < text.length(); /* ++ done in loop body */ )
       {
@@ -201,7 +201,7 @@ AsciiStreamWriter::AsciiStreamWriter(std::ostream& os) :
   itsToHandleV(),
   itsWrittenObjects()
 {
-DOTRACE("AsciiStreamWriter::AsciiStreamWriter");
+GVX_TRACE("AsciiStreamWriter::AsciiStreamWriter");
 }
 
 AsciiStreamWriter::AsciiStreamWriter(const char* filename) :
@@ -210,48 +210,48 @@ AsciiStreamWriter::AsciiStreamWriter(const char* filename) :
   itsToHandleV(),
   itsWrittenObjects()
 {
-DOTRACE("AsciiStreamWriter::AsciiStreamWriter(const char*)");
+GVX_TRACE("AsciiStreamWriter::AsciiStreamWriter(const char*)");
 }
 
 AsciiStreamWriter::~AsciiStreamWriter () throw()
 {
-DOTRACE("AsciiStreamWriter::~AsciiStreamWriter");
+GVX_TRACE("AsciiStreamWriter::~AsciiStreamWriter");
 }
 
 void AsciiStreamWriter::writeChar(const char* name, char val)
 {
-DOTRACE("AsciiStreamWriter::writeChar");
+GVX_TRACE("AsciiStreamWriter::writeChar");
   writeBasicType(name, val, "char");
 }
 
 void AsciiStreamWriter::writeInt(const char* name, int val)
 {
-DOTRACE("AsciiStreamWriter::writeInt");
+GVX_TRACE("AsciiStreamWriter::writeInt");
   writeBasicType(name, val, "int");
 }
 
 void AsciiStreamWriter::writeBool(const char* name, bool val)
 {
-DOTRACE("AsciiStreamWriter::writeBool");
+GVX_TRACE("AsciiStreamWriter::writeBool");
   writeBasicType(name, val, "bool");
 }
 
 void AsciiStreamWriter::writeDouble(const char* name, double val)
 {
-DOTRACE("AsciiStreamWriter::writeDouble");
+GVX_TRACE("AsciiStreamWriter::writeDouble");
   writeBasicType(name, val, "double");
 }
 
 void AsciiStreamWriter::writeCstring(const char* name, const char* val)
 {
-DOTRACE("AsciiStreamWriter::writeCstring");
+GVX_TRACE("AsciiStreamWriter::writeCstring");
   writeStringType(name, val);
 }
 
 void AsciiStreamWriter::writeValueObj(const char* name,
                                       const rutz::value& v)
 {
-DOTRACE("AsciiStreamWriter::writeValueObj");
+GVX_TRACE("AsciiStreamWriter::writeValueObj");
 
   writeBasicType<const rutz::value&>(name, v, v.value_typename().c_str());
 }
@@ -259,14 +259,14 @@ DOTRACE("AsciiStreamWriter::writeValueObj");
 void AsciiStreamWriter::writeObject(const char* name,
                                     SoftRef<const IO::IoObject> obj)
 {
-DOTRACE("AsciiStreamWriter::writeObject");
+GVX_TRACE("AsciiStreamWriter::writeObject");
 
   fstring type = "NULL";
   Nub::UID id = 0;
 
   if (obj.isValid())
     {
-      ASSERT(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
+      GVX_ASSERT(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
 
       type = obj->objTypename();
       id = itsIdMap.get(obj->id());
@@ -282,7 +282,7 @@ DOTRACE("AsciiStreamWriter::writeObject");
 void AsciiStreamWriter::writeOwnedObject(const char* name,
                                          Ref<const IO::IoObject> obj)
 {
-DOTRACE("AsciiStreamWriter::writeOwnedObject");
+GVX_TRACE("AsciiStreamWriter::writeOwnedObject");
 
   fstring type = obj->objTypename().c_str();
 
@@ -296,13 +296,13 @@ DOTRACE("AsciiStreamWriter::writeOwnedObject");
 void AsciiStreamWriter::writeBaseClass(const char* baseClassName,
                                        Ref<const IO::IoObject> basePart)
 {
-DOTRACE("AsciiStreamWriter::writeBaseClass");
+GVX_TRACE("AsciiStreamWriter::writeBaseClass");
   writeOwnedObject(baseClassName, basePart);
 }
 
 void AsciiStreamWriter::writeRoot(const IO::IoObject* root)
 {
-DOTRACE("AsciiStreamWriter::writeRoot");
+GVX_TRACE("AsciiStreamWriter::writeRoot");
   itsToHandleV.clear();
   itsWrittenObjects.clear();
 
@@ -332,7 +332,7 @@ DOTRACE("AsciiStreamWriter::writeRoot");
 
 void AsciiStreamWriter::flattenObject(SoftRef<const IO::IoObject> obj)
 {
-DOTRACE("AsciiStreamWriter::flattenObject");
+GVX_TRACE("AsciiStreamWriter::flattenObject");
 
   // Objects are written in the following format:
   //

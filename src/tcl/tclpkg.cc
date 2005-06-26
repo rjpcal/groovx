@@ -53,7 +53,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 #if (TCL_MAJOR_VERSION > 8) || (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION >= 5)
 #  define HAVE_TCL_NAMESPACE_API
@@ -116,7 +116,7 @@ namespace
                   const char* from, const char* to,
                   const char* pattern)
   {
-  DOTRACE("exportInto");
+  GVX_TRACE("exportInto");
     rutz::fstring cmd("namespace eval ", to, " { namespace import ::");
     cmd.append(from, "::", pattern, " }");
 
@@ -143,7 +143,7 @@ namespace
         break;
       }
     }
-    ASSERT(p >= name);
+    GVX_ASSERT(p >= name);
     return p;
   }
 }
@@ -183,7 +183,7 @@ public:
 
   Tcl_Namespace* tclNamespace() const
   {
-  DOTRACE("Tcl::Pkg::Impl::tclNamespace");
+  GVX_TRACE("Tcl::Pkg::Impl::tclNamespace");
 
     Tcl_Namespace* namesp =
       Tcl_FindNamespace(this->interp.intp(), this->namespName.c_str(),
@@ -197,14 +197,14 @@ public:
                                      0 /*deleteProc*/);
       }
 
-    ASSERT(namesp != 0);
+    GVX_ASSERT(namesp != 0);
 
     return namesp;
   }
 
   static void exitHandler(ClientData clientData)
   {
-    DOTRACE("Tcl::Pkg-exitHandler");
+    GVX_TRACE("Tcl::Pkg-exitHandler");
     Tcl::Pkg* pkg = static_cast<Tcl::Pkg*>(clientData);
     dbg_eval_nl(3, pkg->namespName());
     delete pkg;
@@ -222,12 +222,12 @@ Tcl::Pkg::Impl::Impl(Tcl_Interp* intp,
   ownedDoubles(),
   exitCallback(0)
 {
-DOTRACE("Tcl::Pkg::Impl::Impl");
+GVX_TRACE("Tcl::Pkg::Impl::Impl");
 }
 
 Tcl::Pkg::Impl::~Impl() throw()
 {
-DOTRACE("Tcl::Pkg::Impl::~Impl");
+GVX_TRACE("Tcl::Pkg::Impl::~Impl");
   if (exitCallback != 0)
     exitCallback();
 }
@@ -236,7 +236,7 @@ Tcl::Pkg::Pkg(Tcl_Interp* interp,
               const char* name, const char* version) :
   rep(0)
 {
-DOTRACE("Tcl::Pkg::Pkg");
+GVX_TRACE("Tcl::Pkg::Pkg");
 
   rep = new Impl(interp, name, version);
 
@@ -245,7 +245,7 @@ DOTRACE("Tcl::Pkg::Pkg");
 
 Tcl::Pkg::~Pkg() throw()
 {
-DOTRACE("Tcl::Pkg::~Pkg");
+GVX_TRACE("Tcl::Pkg::~Pkg");
 
   // To avoid double-deletion:
   Tcl_DeleteExitHandler(&Impl::exitHandler, static_cast<ClientData>(this));
@@ -279,13 +279,13 @@ DOTRACE("Tcl::Pkg::~Pkg");
 
 void Tcl::Pkg::onExit(ExitCallback* callback)
 {
-DOTRACE("Tcl::Pkg::onExit");
+GVX_TRACE("Tcl::Pkg::onExit");
   rep->exitCallback = callback;
 }
 
 int Tcl::Pkg::unloadDestroy(Tcl_Interp* intp, const char* pkgname)
 {
-DOTRACE("Tcl::Pkg::unloadDestroy");
+GVX_TRACE("Tcl::Pkg::unloadDestroy");
   Tcl::Interp interp(intp);
   Tcl::Pkg* pkg = Tcl::Pkg::lookup(interp, pkgname);
   if (pkg != 0)
@@ -300,7 +300,7 @@ DOTRACE("Tcl::Pkg::unloadDestroy");
 Tcl::Pkg* Tcl::Pkg::lookup(Tcl::Interp& interp, const char* name,
                            const char* version) throw()
 {
-DOTRACE("Tcl::Pkg::lookup");
+GVX_TRACE("Tcl::Pkg::lookup");
 
   ClientData clientData = 0;
 
@@ -328,7 +328,7 @@ DOTRACE("Tcl::Pkg::lookup");
 
 int Tcl::Pkg::initStatus() const throw()
 {
-DOTRACE("Tcl::Pkg::initStatus");
+GVX_TRACE("Tcl::Pkg::initStatus");
   if (rep->interp.getResult<const char*>()[0] != '\0')
     {
       rep->initStatus = TCL_ERROR;
@@ -338,27 +338,27 @@ DOTRACE("Tcl::Pkg::initStatus");
 
 Tcl::Interp& Tcl::Pkg::interp() throw()
 {
-DOTRACE("Tcl::Pkg::interp");
+GVX_TRACE("Tcl::Pkg::interp");
   return rep->interp;
 }
 
 void Tcl::Pkg::handleLiveException(const rutz::file_pos& pos) throw()
 {
-DOTRACE("Tcl::Pkg::handleLiveException");
+GVX_TRACE("Tcl::Pkg::handleLiveException");
   rep->interp.handleLiveException(rep->pkgName.c_str(), pos);
   this->setInitStatusError();
 }
 
 void Tcl::Pkg::namespaceAlias(const char* namesp, const char* pattern)
 {
-DOTRACE("Tcl::Pkg::namespaceAlias");
+GVX_TRACE("Tcl::Pkg::namespaceAlias");
 
   exportInto(rep->interp, rep->namespName.c_str(), namesp, pattern);
 }
 
 void Tcl::Pkg::inherit(const char* namesp, const char* pattern)
 {
-DOTRACE("Tcl::Pkg::inherit");
+GVX_TRACE("Tcl::Pkg::inherit");
 
   // (1) export commands from 'namesp' into this Tcl::Pkg's namespace
   exportInto(rep->interp, namesp, rep->namespName.c_str(), pattern);
@@ -390,7 +390,7 @@ DOTRACE("Tcl::Pkg::inherit");
 
 void Tcl::Pkg::inheritPkg(const char* name, const char* version)
 {
-DOTRACE("Tcl::Pkg::inheritPkg");
+GVX_TRACE("Tcl::Pkg::inheritPkg");
 
   Tcl::Pkg* other = lookup(rep->interp, name, version);
 
@@ -419,7 +419,7 @@ const char* Tcl::Pkg::version() const throw()
 const char* Tcl::Pkg::makePkgCmdName(const char* cmd_name_cstr,
                                      int flags)
 {
-DOTRACE("Tcl::Pkg::makePkgCmdName");
+GVX_TRACE("Tcl::Pkg::makePkgCmdName");
   std::string cmd_name(cmd_name_cstr);
 
   // Look for a namespace qualifier "::" -- if there is already one,
@@ -450,25 +450,25 @@ DOTRACE("Tcl::Pkg::makePkgCmdName");
 
 void Tcl::Pkg::eval(const char* script)
 {
-DOTRACE("Tcl::Pkg::eval");
+GVX_TRACE("Tcl::Pkg::eval");
   rep->interp.eval(script);
 }
 
 void Tcl::Pkg::linkVar(const char* varName, int& var)
 {
-DOTRACE("Tcl::Pkg::linkVar int");
+GVX_TRACE("Tcl::Pkg::linkVar int");
   rep->interp.linkInt(varName, &var, false);
 }
 
 void Tcl::Pkg::linkVar(const char* varName, double& var)
 {
-DOTRACE("Tcl::Pkg::linkVar double");
+GVX_TRACE("Tcl::Pkg::linkVar double");
   rep->interp.linkDouble(varName, &var, false);
 }
 
 void Tcl::Pkg::linkVarCopy(const char* varName, int var)
 {
-DOTRACE("Tcl::Pkg::linkVarCopy int");
+GVX_TRACE("Tcl::Pkg::linkVarCopy int");
   rutz::shared_ptr<int> copy(new int(var));
   rep->ownedInts.push_back(copy);
   rep->interp.linkInt(varName, copy.get(), true);
@@ -476,7 +476,7 @@ DOTRACE("Tcl::Pkg::linkVarCopy int");
 
 void Tcl::Pkg::linkVarCopy(const char* varName, double var)
 {
-DOTRACE("Tcl::Pkg::linkVarCopy double");
+GVX_TRACE("Tcl::Pkg::linkVarCopy double");
   rutz::shared_ptr<double> copy(new double(var));
   rep->ownedDoubles.push_back(copy);
   rep->interp.linkDouble(varName, copy.get(), true);
@@ -484,32 +484,32 @@ DOTRACE("Tcl::Pkg::linkVarCopy double");
 
 void Tcl::Pkg::linkVarConst(const char* varName, int& var)
 {
-DOTRACE("Tcl::Pkg::linkVarConst int");
+GVX_TRACE("Tcl::Pkg::linkVarConst int");
   rep->interp.linkInt(varName, &var, true);
 }
 
 void Tcl::Pkg::linkVarConst(const char* varName, double& var)
 {
-DOTRACE("Tcl::Pkg::linkVarConst double");
+GVX_TRACE("Tcl::Pkg::linkVarConst double");
   rep->interp.linkDouble(varName, &var, true);
 }
 
 void Tcl::Pkg::setInitStatusError() throw()
 {
-DOTRACE("Tcl::Pkg::setInitStatusError");
+GVX_TRACE("Tcl::Pkg::setInitStatusError");
   rep->initStatus = TCL_ERROR;
 }
 
 void Tcl::Pkg::verboseInit(bool verbose) throw()
 {
-DOTRACE("Tcl::Pkg::verboseInit");
+GVX_TRACE("Tcl::Pkg::verboseInit");
 
   VERBOSE_INIT = verbose;
 }
 
 int Tcl::Pkg::finishInit() throw()
 {
-DOTRACE("Tcl::Pkg::finishInit");
+GVX_TRACE("Tcl::Pkg::finishInit");
 
   --INIT_DEPTH;
 

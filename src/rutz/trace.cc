@@ -33,7 +33,7 @@
 #ifndef GROOVX_RUTZ_TRACE_CC_UTC20050626084020_DEFINED
 #define GROOVX_RUTZ_TRACE_CC_UTC20050626084020_DEFINED
 
-#define LOCAL_PROF
+#define GVX_LOCAL_PROF
 #include "rutz/trace.h"
 
 #include "rutz/backtrace.h"
@@ -48,7 +48,7 @@
 #include <new> // for std::nothrow
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -108,7 +108,7 @@ namespace
         ptr = new (std::nothrow) prof_list;
 
         if (ptr == 0)
-          PANIC("memory allocation failed");
+          GVX_PANIC("memory allocation failed");
       }
     return *ptr;
   }
@@ -218,7 +218,7 @@ double rutz::prof::avg_self_time() const throw()
 
 void rutz::prof::print_prof_data(FILE* file) const throw()
 {
-  ASSERT(file != 0);
+  GVX_ASSERT(file != 0);
 
   fprintf(file, "%10ld %6u %10ld %10ld %s\n",
           long(avg_self_time()), count(),

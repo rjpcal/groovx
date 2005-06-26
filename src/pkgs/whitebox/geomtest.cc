@@ -43,7 +43,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -89,7 +89,7 @@ namespace
 extern "C"
 int Geomtest_Init(Tcl_Interp* interp)
 {
-DOTRACE("Geomtest_Init");
+GVX_TRACE("Geomtest_Init");
 
   PKG_CREATE(interp, "Geomtest", "4.$Revision$");
 
@@ -103,7 +103,7 @@ extern "C" int Geomtest_SafeInit(Tcl_Interp*) { return 1; }
 
 extern "C" int Geomtest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
-DOTRACE("Geomtest_Unload");
+GVX_TRACE("Geomtest_Unload");
   return Tcl::Pkg::unloadDestroy(interp, "Geomtest");
 }
 

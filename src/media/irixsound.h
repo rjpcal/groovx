@@ -75,7 +75,7 @@ media::irix_audio_sound_rep::irix_audio_sound_rep(const char* filename) :
   m_samples(),
   m_frame_count(0)
 {
-DOTRACE("media::irix_audio_sound_rep::irix_audio_sound_rep");
+GVX_TRACE("media::irix_audio_sound_rep::irix_audio_sound_rep");
 
   if (m_audio_config == 0)
     throw rutz::error("error creating an ALconfig "
@@ -162,7 +162,7 @@ DOTRACE("media::irix_audio_sound_rep::irix_audio_sound_rep");
 
 media::irix_audio_sound_rep::~irix_audio_sound_rep() throw()
 {
-DOTRACE("media::irix_audio_sound_rep::~irix_audio_sound_rep");
+GVX_TRACE("media::irix_audio_sound_rep::~irix_audio_sound_rep");
   if (m_audio_config != 0)
     {
       alFreeConfig(m_audio_config);
@@ -171,7 +171,7 @@ DOTRACE("media::irix_audio_sound_rep::~irix_audio_sound_rep");
 
 void media::irix_audio_sound_rep::play()
 {
-DOTRACE("media::irix_audio_sound_rep::play");
+GVX_TRACE("media::irix_audio_sound_rep::play");
   if (m_samples.size() == 0) return;
 
   ALport audio_port = alOpenPort("Sound::play", "w", m_audio_config);

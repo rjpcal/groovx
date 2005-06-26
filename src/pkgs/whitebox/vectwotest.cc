@@ -42,7 +42,7 @@
 #include "rutz/unittest.h"
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 namespace
@@ -121,7 +121,7 @@ namespace
 extern "C"
 int Vectwotest_Init(Tcl_Interp* interp)
 {
-DOTRACE("Vectwotest_Init");
+GVX_TRACE("Vectwotest_Init");
 
   // Package can't be named "vec2test" because Tcl doesn't like numerals in
   // package names
@@ -142,7 +142,7 @@ extern "C" int Vectwotest_SafeInit(Tcl_Interp*) { return 1; }
 
 extern "C" int Vectwotest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
-DOTRACE("Vectwotest_Unload");
+GVX_TRACE("Vectwotest_Unload");
   return Tcl::Pkg::unloadDestroy(interp, "Vectwotest");
 }
 

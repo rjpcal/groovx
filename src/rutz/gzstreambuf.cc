@@ -116,7 +116,7 @@ void rutz::gzstreambuf::close()
 
 int rutz::gzstreambuf::underflow() // with help from Josuttis, p. 678
 {
-DOTRACE("rutz::gzstreambuf::underflow");
+GVX_TRACE("rutz::gzstreambuf::underflow");
   // is read position before end of buffer?
   if (gptr() < egptr())
     return *gptr();
@@ -159,7 +159,7 @@ DOTRACE("rutz::gzstreambuf::underflow");
 
 int rutz::gzstreambuf::overflow(int c)
 {
-DOTRACE("rutz::gzstreambuf::overflow");
+GVX_TRACE("rutz::gzstreambuf::overflow");
   if (!(m_mode & std::ios::out) || !m_opened) return EOF;
 
   if (c != EOF)

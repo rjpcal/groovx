@@ -42,7 +42,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 #ifndef XML_STATUS_OK
 #define XML_STATUS_OK    1
@@ -54,7 +54,7 @@ XmlParser::XmlParser(std::istream& is, int bufsize) :
   itsStream(is),
   itsBufSize(bufsize)
 {
-DOTRACE("XmlParser::XmlParser");
+GVX_TRACE("XmlParser::XmlParser");
   if (itsParser == 0)
     {
       throw rutz::error("couldn't allocate memory for XML_Parser",
@@ -70,42 +70,42 @@ DOTRACE("XmlParser::XmlParser");
 
 XmlParser::~XmlParser()
 {
-DOTRACE("XmlParser::~XmlParser");
+GVX_TRACE("XmlParser::~XmlParser");
   XML_ParserFree(itsParser);
 }
 
 void XmlParser::characterData(const char* /*text*/, int /*length*/)
 {
-DOTRACE("XmlParser::characterData");
+GVX_TRACE("XmlParser::characterData");
 }
 
 void XmlParser::elementStartC(void* data, const char* el, const char** attr)
 {
-DOTRACE("XmlParser::elementStartC");
+GVX_TRACE("XmlParser::elementStartC");
   XmlParser* p = static_cast<XmlParser*>(data);
-  ASSERT(p != 0);
+  GVX_ASSERT(p != 0);
   p->elementStart(el, attr);
 }
 
 void XmlParser::elementEndC(void* data, const char* el)
 {
-DOTRACE("XmlParser::elementEndC");
+GVX_TRACE("XmlParser::elementEndC");
   XmlParser* p = static_cast<XmlParser*>(data);
-  ASSERT(p != 0);
+  GVX_ASSERT(p != 0);
   p->elementEnd(el);
 }
 
 void XmlParser::characterDataC(void* data, const char* text, int length)
 {
-DOTRACE("XmlParser::characterDataC");
+GVX_TRACE("XmlParser::characterDataC");
   XmlParser* p = static_cast<XmlParser*>(data);
-  ASSERT(p != 0);
+  GVX_ASSERT(p != 0);
   p->characterData(text, length);
 }
 
 void XmlParser::parse()
 {
-DOTRACE("XmlParser::parse");
+GVX_TRACE("XmlParser::parse");
   while (1)
     {
       void* const buf = XML_GetBuffer(itsParser, itsBufSize);
@@ -129,7 +129,7 @@ DOTRACE("XmlParser::parse");
 
       const int done = (peek == EOF);
 
-      if (GET_DBG_LEVEL() >= 3)
+      if (GVX_DBG_LEVEL() >= 3)
         {
           dbg_eval(3, buf);
           dbg_eval(3, itsBufSize);

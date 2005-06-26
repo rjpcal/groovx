@@ -47,7 +47,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 GxBounds::GxBounds(Nub::SoftRef<GxNode> child) :
   GxBin(child),
@@ -62,7 +62,7 @@ GxBounds::~GxBounds() throw() {}
 
 void GxBounds::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxBounds::readFrom");
+GVX_TRACE("GxBounds::readFrom");
   reader.readValue("isVisible", isItVisible);
   reader.readValue("isAnimated", isItAnimated);
   reader.readValue("percentBorder", itsPercentBorder);
@@ -70,7 +70,7 @@ DOTRACE("GxBounds::readFrom");
 
 void GxBounds::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxBounds::writeTo");
+GVX_TRACE("GxBounds::writeTo");
   writer.writeValue("isVisible", isItVisible);
   writer.writeValue("isAnimated", isItAnimated);
   writer.writeValue("percentBorder", itsPercentBorder);
@@ -78,7 +78,7 @@ DOTRACE("GxBounds::writeTo");
 
 void GxBounds::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxBounds::draw");
+GVX_TRACE("GxBounds::draw");
 
   child()->draw(canvas);
 
@@ -123,7 +123,7 @@ DOTRACE("GxBounds::draw");
 
 void GxBounds::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxBounds::getBoundingCube");
+GVX_TRACE("GxBounds::getBoundingCube");
 
   bbox.push();
 

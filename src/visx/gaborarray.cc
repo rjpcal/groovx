@@ -58,7 +58,7 @@
 #include <cstdio>
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 using geom::vec2i;
@@ -78,7 +78,7 @@ namespace
 
   void dumpFrame(shared_ptr<media::bmap_data> bmap)
   {
-    DOTRACE("<gaborarray.cc>::dumpFrame");
+    GVX_TRACE("<gaborarray.cc>::dumpFrame");
 
     static int framecount = 0;
 
@@ -125,7 +125,7 @@ GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
   itsDumpingFrames(false),
   itsFrameDumpPeriod(20)
 {
-DOTRACE("GaborArray::GaborArray");
+GVX_TRACE("GaborArray::GaborArray");
 
   setAlignmentMode(GxAligner::CENTER_ON_CENTER);
   setPercentBorder(0);
@@ -173,13 +173,13 @@ const FieldMap& GaborArray::classFields()
 
 IO::VersionId GaborArray::serialVersionId() const
 {
-DOTRACE("GaborArray::serialVersionId");
+GVX_TRACE("GaborArray::serialVersionId");
   return GABORARRAY_SVID;
 }
 
 void GaborArray::readFrom(IO::Reader& reader)
 {
-DOTRACE("GaborArray::readFrom");
+GVX_TRACE("GaborArray::readFrom");
 
   readFieldsFrom(reader, classFields());
 
@@ -188,7 +188,7 @@ DOTRACE("GaborArray::readFrom");
 
 void GaborArray::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GaborArray::writeTo");
+GVX_TRACE("GaborArray::writeTo");
 
   writeFieldsTo(writer, classFields(), GABORARRAY_SVID);
 
@@ -197,7 +197,7 @@ DOTRACE("GaborArray::writeTo");
 
 void GaborArray::saveImage(const char* filename) const
 {
-DOTRACE("GaborArray::saveImage");
+GVX_TRACE("GaborArray::saveImage");
 
   update();
 
@@ -206,7 +206,7 @@ DOTRACE("GaborArray::saveImage");
 
 void GaborArray::saveContourOnlyImage(const char* filename) const
 {
-DOTRACE("GaborArray::saveContourOnlyImage");
+GVX_TRACE("GaborArray::saveContourOnlyImage");
 
   updateForeg();
 
@@ -270,7 +270,7 @@ DOTRACE("GaborArray::saveContourOnlyImage");
 
 void GaborArray::grGetBoundingBox(Bbox& bbox) const
 {
-DOTRACE("GaborArray::grGetBoundingBox");
+GVX_TRACE("GaborArray::grGetBoundingBox");
 
   bbox.drawScreenRect(vec3d::zeros(),
                       vec2i(itsSizeX, itsSizeY),
@@ -279,7 +279,7 @@ DOTRACE("GaborArray::grGetBoundingBox");
 
 void GaborArray::grRender(Canvas& canvas) const
 {
-DOTRACE("GaborArray::grRender");
+GVX_TRACE("GaborArray::grRender");
 
   update();
 
@@ -288,7 +288,7 @@ DOTRACE("GaborArray::grRender");
 
 void GaborArray::updateForeg() const
 {
-DOTRACE("GaborArray::updateForeg");
+GVX_TRACE("GaborArray::updateForeg");
 
   if (itsForegSeed.ok()
       && itsForegNumber.ok()
@@ -325,12 +325,12 @@ DOTRACE("GaborArray::updateForeg");
 
   itsBackgSeed.touch(); // to force a redo in updateBackg()
 
-  ASSERT(itsTotalNumber == itsForegNumber);
+  GVX_ASSERT(itsTotalNumber == itsForegNumber);
 }
 
 void GaborArray::updateBackg() const
 {
-DOTRACE("GaborArray::updateBackg");
+GVX_TRACE("GaborArray::updateBackg");
 
   if (itsBackgSeed.ok()
       && itsSizeX.ok()
@@ -406,7 +406,7 @@ DOTRACE("GaborArray::updateBackg");
 
 shared_ptr<media::bmap_data> GaborArray::generateBmap(bool doTagLast) const
 {
-DOTRACE("GaborArray::generateBmap");
+GVX_TRACE("GaborArray::generateBmap");
 
   const int npix = itsSizeX*itsSizeY;
 
@@ -491,8 +491,8 @@ DOTRACE("GaborArray::generateBmap");
       if      (val < 0)   { clip = true; val = 0; }
       else if (val > 255) { clip = true; val = 255; }
 
-      ASSERT(val >= 0);
-      ASSERT(val <= 255);
+      GVX_ASSERT(val >= 0);
+      GVX_ASSERT(val <= 255);
 
       *bytes++ = val;
     }
@@ -505,7 +505,7 @@ DOTRACE("GaborArray::generateBmap");
 
 void GaborArray::updateBmap() const
 {
-DOTRACE("GaborArray::updateBmap");
+GVX_TRACE("GaborArray::updateBmap");
 
   if (itsThetaSeed.ok()
       && itsPhaseSeed.ok()
@@ -529,7 +529,7 @@ DOTRACE("GaborArray::updateBmap");
 
 void GaborArray::update() const
 {
-DOTRACE("GaborArray::update");
+GVX_TRACE("GaborArray::update");
 
   updateForeg();
 
@@ -581,7 +581,7 @@ bool GaborArray::tooClose(const vec2d& v, int except) const
 
 void GaborArray::backgHexGrid() const
 {
-DOTRACE("GaborArray::backgHexGrid");
+GVX_TRACE("GaborArray::backgHexGrid");
 
   // lay down a hexagonal grid of elements
 
@@ -610,7 +610,7 @@ DOTRACE("GaborArray::backgHexGrid");
 
 void GaborArray::backgFill() const
 {
-DOTRACE("GaborArray::backgFill");
+GVX_TRACE("GaborArray::backgFill");
 
   const double dx = itsMinSpacing / itsFillResolution;
 
@@ -629,7 +629,7 @@ DOTRACE("GaborArray::backgFill");
 
 void GaborArray::backgJitter(rutz::urand& urand) const
 {
-DOTRACE("GaborArray::backgJitter");
+GVX_TRACE("GaborArray::backgJitter");
 
   const double jitter = (itsMinSpacing/16.0);
 

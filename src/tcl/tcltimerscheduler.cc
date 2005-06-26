@@ -44,7 +44,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace Tcl
 {
@@ -79,12 +79,12 @@ Tcl::TimerSchedulerToken::TimerSchedulerToken(int msec,
   itsCallback(callback),
   itsClientData(clientdata)
 {
-DOTRACE("Tcl::TimerSchedulerToken::TimerSchedulerToken");
+GVX_TRACE("Tcl::TimerSchedulerToken::TimerSchedulerToken");
 }
 
 Tcl::TimerSchedulerToken::~TimerSchedulerToken() throw()
 {
-DOTRACE("Tcl::TimerSchedulerToken::~TimerSchedulerToken");
+GVX_TRACE("Tcl::TimerSchedulerToken::~TimerSchedulerToken");
   Tcl_DeleteTimerHandler(itsToken);
 }
 
@@ -92,7 +92,7 @@ void Tcl::TimerSchedulerToken::dummyCallback(void* token) throw()
 {
   TimerSchedulerToken* tok = static_cast<TimerSchedulerToken*>(token);
 
-  ASSERT(tok != 0);
+  GVX_ASSERT(tok != 0);
 
   try
     {
@@ -112,12 +112,12 @@ void Tcl::TimerSchedulerToken::dummyCallback(void* token) throw()
 
 Tcl::TimerScheduler::TimerScheduler()
 {
-DOTRACE("Tcl::TimerScheduler::TimerScheduler");
+GVX_TRACE("Tcl::TimerScheduler::TimerScheduler");
 }
 
 Tcl::TimerScheduler::~TimerScheduler() throw()
 {
-DOTRACE("Tcl::TimerScheduler::~TimerScheduler");
+GVX_TRACE("Tcl::TimerScheduler::~TimerScheduler");
 }
 
 rutz::shared_ptr<Nub::TimerToken>
@@ -125,7 +125,7 @@ Tcl::TimerScheduler::schedule(int msec,
                               void (*callback)(void*),
                               void* clientdata)
 {
-DOTRACE("Tcl::TimerScheduler::schedule");
+GVX_TRACE("Tcl::TimerScheduler::schedule");
   // If the requested delay is zero -- i.e., immediate -- then don't
   // bother creating a timer handler. Instead, generate a direct
   // invocation; this saves a trip into the event loop and back.

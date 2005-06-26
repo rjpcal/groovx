@@ -107,25 +107,25 @@ public:
 
 GxSeparator* GxSeparator::make()
 {
-DOTRACE("GxSeparator::make");
+GVX_TRACE("GxSeparator::make");
   return new GxSeparator;
 }
 
 GxSeparator::GxSeparator() :
   rep(Impl::make(this))
 {
-DOTRACE("GxSeparator::GxSeparator");
+GVX_TRACE("GxSeparator::GxSeparator");
 }
 
 GxSeparator::~GxSeparator() throw()
 {
-DOTRACE("GxSeparator::~GxSeparator");
+GVX_TRACE("GxSeparator::~GxSeparator");
   rep->destroy();
 }
 
 void GxSeparator::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxSeparator::readFrom");
+GVX_TRACE("GxSeparator::readFrom");
 
   for(unsigned int i = 0; i < rep->children.size(); ++i)
     {
@@ -148,7 +148,7 @@ DOTRACE("GxSeparator::readFrom");
 
 void GxSeparator::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxSeparator::writeTo");
+GVX_TRACE("GxSeparator::writeTo");
   IO::WriteUtils::writeObjectSeq(writer, "children",
                                  rep->children.begin(),
                                  rep->children.end());
@@ -156,7 +156,7 @@ DOTRACE("GxSeparator::writeTo");
 
 GxSeparator::ChildId GxSeparator::addChild(Nub::Ref<GxNode> item)
 {
-DOTRACE("GxSeparator::addChild");
+GVX_TRACE("GxSeparator::addChild");
 
   rep->ensureNoCycle(item.get());
 
@@ -171,7 +171,7 @@ DOTRACE("GxSeparator::addChild");
 
 void GxSeparator::insertChild(Nub::Ref<GxNode> item, ChildId at_index)
 {
-DOTRACE("GxSeparator::insertChild");
+GVX_TRACE("GxSeparator::insertChild");
 
   rep->ensureNoCycle(item.get());
 
@@ -187,7 +187,7 @@ DOTRACE("GxSeparator::insertChild");
 
 void GxSeparator::removeChildAt(ChildId index)
 {
-DOTRACE("GxSeparator::removeChildAt");
+GVX_TRACE("GxSeparator::removeChildAt");
   if (index < rep->children.size())
     {
       rep->children[index]->sigNodeChanged
@@ -200,7 +200,7 @@ DOTRACE("GxSeparator::removeChildAt");
 
 void GxSeparator::removeChild(Nub::Ref<GxNode> item)
 {
-DOTRACE("GxSeparator::removeChild");
+GVX_TRACE("GxSeparator::removeChild");
 
   const Nub::UID target = item.id();
 
@@ -222,13 +222,13 @@ DOTRACE("GxSeparator::removeChild");
 
 unsigned int GxSeparator::numChildren() const
 {
-DOTRACE("GxSeparator::numChildren");
+GVX_TRACE("GxSeparator::numChildren");
   return rep->children.size();
 }
 
 Nub::Ref<GxNode> GxSeparator::getChild(ChildId index) const
 {
-DOTRACE("GxSeparator::getChild");
+GVX_TRACE("GxSeparator::getChild");
   if (index >= rep->children.size())
     {
       throw rutz::error(rutz::fstring("GxSeparator has no child with "
@@ -240,7 +240,7 @@ DOTRACE("GxSeparator::getChild");
 
 rutz::fwd_iter<Nub::Ref<GxNode> > GxSeparator::children() const
 {
-DOTRACE("GxSeparator::children");
+GVX_TRACE("GxSeparator::children");
 
   return rutz::fwd_iter<Nub::Ref<GxNode> >(rep->children.begin(),
                                            rep->children.end());
@@ -290,7 +290,7 @@ private:
 
 rutz::fwd_iter<const Nub::Ref<GxNode> > GxSeparator::deepChildren()
 {
-DOTRACE("GxSeparator::deepChildren");
+GVX_TRACE("GxSeparator::deepChildren");
 
   return rutz::fwd_iter<const Nub::Ref<GxNode> >
     (shared_ptr<GxSepIter>(new GxSepIter(this)));
@@ -298,13 +298,13 @@ DOTRACE("GxSeparator::deepChildren");
 
 bool GxSeparator::contains(GxNode* other) const
 {
-DOTRACE("GxSeparator::contains");
+GVX_TRACE("GxSeparator::contains");
   return rep->contains(other);
 }
 
 void GxSeparator::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxSeparator::getBoundingCube");
+GVX_TRACE("GxSeparator::getBoundingCube");
 
   if (!rep->children.empty())
     {
@@ -325,14 +325,14 @@ DOTRACE("GxSeparator::getBoundingCube");
 
 bool GxSeparator::getDebugMode() const
 {
-DOTRACE("GxSeparator::getDebugMode");
+GVX_TRACE("GxSeparator::getDebugMode");
 
   return rep->debugMode;
 }
 
 void GxSeparator::setDebugMode(bool b)
 {
-DOTRACE("GxSeparator::setDebugMode");
+GVX_TRACE("GxSeparator::setDebugMode");
 
   if (rep->debugMode != b)
     {
@@ -343,7 +343,7 @@ DOTRACE("GxSeparator::setDebugMode");
 
 void GxSeparator::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxSeparator::draw");
+GVX_TRACE("GxSeparator::draw");
 
   if (rep->debugMode)
     {

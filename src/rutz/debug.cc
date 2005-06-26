@@ -34,7 +34,7 @@
 #define GROOVX_RUTZ_DEBUG_CC_UTC20050626084020_DEFINED
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 #include "rutz/backtrace.h"
 #include "rutz/fstring.h"
@@ -43,7 +43,7 @@ DBG_REGISTER
 #include <iomanip>
 #include <iostream>
 
-#define LOCAL_PROF
+#define GVX_LOCAL_PROF
 #include "rutz/trace.h"
 
 namespace

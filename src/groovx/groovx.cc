@@ -87,7 +87,7 @@
 #include "visx/trialtcl.h"                   // for Trial_Init(),
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 //
@@ -184,11 +184,11 @@ PackageInfo DELAYED_PKGS[] =
   {
     switch (signum)
       {
-        case SIGSEGV: PANIC("Segmentation fault (SIGSEGV)");
-        case SIGFPE:  PANIC("Floating point exception (SIGFPE)");
-        case SIGBUS:  PANIC("Bus error (SIGBUS)");
+        case SIGSEGV: GVX_PANIC("Segmentation fault (SIGSEGV)");
+        case SIGFPE:  GVX_PANIC("Floating point exception (SIGFPE)");
+        case SIGBUS:  GVX_PANIC("Bus error (SIGBUS)");
       }
-    ASSERT(0);
+    GVX_ASSERT(0);
   }
 
   // This is a fallback function to be used by the object
@@ -213,7 +213,7 @@ PackageInfo DELAYED_PKGS[] =
 
 int main(int argc, char** argv)
 {
-DOTRACE("main");
+GVX_TRACE("main");
 
   signal(SIGSEGV, &sigHandler);
   signal(SIGFPE, &sigHandler);

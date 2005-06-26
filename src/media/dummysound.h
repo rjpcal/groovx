@@ -53,13 +53,13 @@ namespace media
 
 media::dummy_sound_rep::dummy_sound_rep(const char* filename)
 {
-DOTRACE("dummy_sound_rep::dummy_sound_rep");
+GVX_TRACE("dummy_sound_rep::dummy_sound_rep");
   sound_rep::check_filename(filename);
 }
 
 void media::dummy_sound_rep::play()
 {
-DOTRACE("dummy_sound_rep::play");
+GVX_TRACE("dummy_sound_rep::play");
 }
 
 static const char vcid_groovx_media_dummysound_h_utc20050626084018[] = "$Id$ $HeadURL$";

@@ -52,7 +52,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using geom::recti;
 using geom::rectd;
@@ -112,13 +112,13 @@ public:
 
   State& current_state()
   {
-    ASSERT(itsStates.size() > 0);
+    GVX_ASSERT(itsStates.size() > 0);
     return itsStates.back();
   }
 
   const State& current_state() const
   {
-    ASSERT(itsStates.size() > 0);
+    GVX_ASSERT(itsStates.size() > 0);
     return itsStates.back();
   }
 
@@ -653,18 +653,18 @@ namespace
 Gfx::PSCanvas::PSCanvas(const char* filename) :
   rep(new Impl(filename))
 {
-DOTRACE("Gfx::PSCanvas::PSCanvas");
+GVX_TRACE("Gfx::PSCanvas::PSCanvas");
 }
 
 Gfx::PSCanvas::~PSCanvas() throw()
 {
-DOTRACE("Gfx::PSCanvas::~PSCanvas");
+GVX_TRACE("Gfx::PSCanvas::~PSCanvas");
   delete rep;
 }
 
 vec3d Gfx::PSCanvas::screenFromWorld3(const vec3d& /*world_pos*/) const
 {
-DOTRACE("Gfx::PSCanvas::screenFromWorld3");
+GVX_TRACE("Gfx::PSCanvas::screenFromWorld3");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
   return vec3d();
@@ -672,7 +672,7 @@ DOTRACE("Gfx::PSCanvas::screenFromWorld3");
 
 vec3d Gfx::PSCanvas::worldFromScreen3(const vec3d& /*screen_pos*/) const
 {
-DOTRACE("Gfx::PSCanvas::worldFromScreen3");
+GVX_TRACE("Gfx::PSCanvas::worldFromScreen3");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
   return vec3d();
@@ -681,7 +681,7 @@ DOTRACE("Gfx::PSCanvas::worldFromScreen3");
 
 recti Gfx::PSCanvas::getScreenViewport() const
 {
-DOTRACE("Gfx::PSCanvas::getScreenViewport()");
+GVX_TRACE("Gfx::PSCanvas::getScreenViewport()");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
   return recti();
@@ -690,32 +690,32 @@ DOTRACE("Gfx::PSCanvas::getScreenViewport()");
 
 bool Gfx::PSCanvas::isRgba() const
 {
-DOTRACE("Gfx::PSCanvas::isRgba");
+GVX_TRACE("Gfx::PSCanvas::isRgba");
   return true;
 }
 
 bool Gfx::PSCanvas::isColorIndex() const
 {
-DOTRACE("Gfx::PSCanvas::isColorIndex");
+GVX_TRACE("Gfx::PSCanvas::isColorIndex");
   return false;
 }
 
 bool Gfx::PSCanvas::isDoubleBuffered() const
 {
-DOTRACE("Gfx::PSCanvas::isDoubleBuffered");
+GVX_TRACE("Gfx::PSCanvas::isDoubleBuffered");
   return false;
 }
 
 unsigned int Gfx::PSCanvas::bitsPerPixel() const
 {
-DOTRACE("Gfx::PSCanvas::bitsPerPixel");
+GVX_TRACE("Gfx::PSCanvas::bitsPerPixel");
   return 24;
 }
 
 void Gfx::PSCanvas::throwIfError(const char* where,
                                  const rutz::file_pos& pos) const
 {
-DOTRACE("Gfx::PSCanvas::throwIfError");
+GVX_TRACE("Gfx::PSCanvas::throwIfError");
   if (rep->itsFstream.fail())
     rep->raiseError(where, pos);
 }
@@ -723,92 +723,92 @@ DOTRACE("Gfx::PSCanvas::throwIfError");
 
 void Gfx::PSCanvas::pushAttribs(const char* comment)
 {
-DOTRACE("Gfx::PSCanvas::pushAttribs");
+GVX_TRACE("Gfx::PSCanvas::pushAttribs");
   rep->gsave(comment);
 }
 
 void Gfx::PSCanvas::popAttribs()
 {
-DOTRACE("Gfx::PSCanvas::popAttribs");
+GVX_TRACE("Gfx::PSCanvas::popAttribs");
   rep->grestore();
 }
 
 void Gfx::PSCanvas::drawOnFrontBuffer()
 {
-DOTRACE("Gfx::PSCanvas::drawOnFrontBuffer");
+GVX_TRACE("Gfx::PSCanvas::drawOnFrontBuffer");
   ;// nothing
 }
 
 void Gfx::PSCanvas::drawOnBackBuffer()
 {
-DOTRACE("Gfx::PSCanvas::drawOnBackBuffer");
+GVX_TRACE("Gfx::PSCanvas::drawOnBackBuffer");
   ;// nothing
 }
 
 void Gfx::PSCanvas::setColor(const RgbaColor& col)
 {
-DOTRACE("Gfx::PSCanvas::setColor");
+GVX_TRACE("Gfx::PSCanvas::setColor");
   rep->setrgbcolor(col);
 }
 
 void Gfx::PSCanvas::setClearColor(const RgbaColor&)
 {
-DOTRACE("Gfx::PSCanvas::setClearColor");
+GVX_TRACE("Gfx::PSCanvas::setClearColor");
   ;//nothing
 }
 
 void Gfx::PSCanvas::setColorIndex(unsigned int /*index*/)
 {
-DOTRACE("Gfx::PSCanvas::setColorIndex");
+GVX_TRACE("Gfx::PSCanvas::setColorIndex");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::setClearColorIndex(unsigned int /*index*/)
 {
-DOTRACE("Gfx::PSCanvas::setClearColorIndex");
+GVX_TRACE("Gfx::PSCanvas::setClearColorIndex");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::swapForeBack()
 {
-DOTRACE("Gfx::PSCanvas::swapForeBack");
+GVX_TRACE("Gfx::PSCanvas::swapForeBack");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::setPolygonFill(bool on)
 {
-DOTRACE("Gfx::PSCanvas::setPolygonFill");
+GVX_TRACE("Gfx::PSCanvas::setPolygonFill");
 
   rep->current_state().polygonFill = on;
 }
 
 void Gfx::PSCanvas::setPointSize(double /*size*/)
 {
-DOTRACE("Gfx::PSCanvas::setPointSize");
+GVX_TRACE("Gfx::PSCanvas::setPointSize");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::setLineWidth(double width)
 {
-DOTRACE("Gfx::PSCanvas::setLineWidth");
+GVX_TRACE("Gfx::PSCanvas::setLineWidth");
 
   rep->setlinewidth(width);
 }
 
 void Gfx::PSCanvas::setLineStipple(unsigned short bit_pattern)
 {
-DOTRACE("Gfx::PSCanvas::setLineStipple");
+GVX_TRACE("Gfx::PSCanvas::setLineStipple");
 
   rep->setdash(bit_pattern);
 }
 
 void Gfx::PSCanvas::enableAntialiasing()
 {
-DOTRACE("Gfx::PSCanvas::enableAntialiasing");
+GVX_TRACE("Gfx::PSCanvas::enableAntialiasing");
   // nothing, antialiasing is default in postscript
 }
 
@@ -816,7 +816,7 @@ DOTRACE("Gfx::PSCanvas::enableAntialiasing");
 
 void Gfx::PSCanvas::viewport(int /*x*/, int /*y*/, int /*w*/, int /*h*/)
 {
-DOTRACE("Gfx::PSCanvas::viewport");
+GVX_TRACE("Gfx::PSCanvas::viewport");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
 }
@@ -824,57 +824,57 @@ DOTRACE("Gfx::PSCanvas::viewport");
 void Gfx::PSCanvas::orthographic(const rectd& /*bounds*/,
                                  double /*zNear*/, double /*zFar*/)
 {
-DOTRACE("Gfx::PSCanvas::orthographic");
+GVX_TRACE("Gfx::PSCanvas::orthographic");
 // FIXME
 }
 
 void Gfx::PSCanvas::perspective(double /*fovy*/, double /*aspect*/,
                                 double /*zNear*/, double /*zFar*/)
 {
-DOTRACE("Gfx::PSCanvas::perspective");
+GVX_TRACE("Gfx::PSCanvas::perspective");
 // FIXME
 }
 
 
 void Gfx::PSCanvas::pushMatrix(const char* comment)
 {
-DOTRACE("Gfx::PSCanvas::pushMatrix");
+GVX_TRACE("Gfx::PSCanvas::pushMatrix");
   rep->gsave(comment);
 }
 
 void Gfx::PSCanvas::popMatrix()
 {
-DOTRACE("Gfx::PSCanvas::popMatrix");
+GVX_TRACE("Gfx::PSCanvas::popMatrix");
   rep->grestore();
 }
 
 void Gfx::PSCanvas::translate(const vec3d& v)
 {
-DOTRACE("Gfx::PSCanvas::translate");
+GVX_TRACE("Gfx::PSCanvas::translate");
   rep->translate(v);
 }
 
 void Gfx::PSCanvas::scale(const vec3d& v)
 {
-DOTRACE("Gfx::PSCanvas::scale");
+GVX_TRACE("Gfx::PSCanvas::scale");
   rep->scale(v);
 }
 
 void Gfx::PSCanvas::rotate(const vec3d& axis, double angle_in_degrees)
 {
-DOTRACE("Gfx::PSCanvas::rotate");
+GVX_TRACE("Gfx::PSCanvas::rotate");
   rep->rotate(axis, angle_in_degrees);
 }
 
 void Gfx::PSCanvas::transform(const geom::txform& tx)
 {
-DOTRACE("Gfx::PSCanvas::transform");
+GVX_TRACE("Gfx::PSCanvas::transform");
   rep->current_state().txform.transform(tx);
 }
 
 void Gfx::PSCanvas::loadMatrix(const geom::txform& tx)
 {
-DOTRACE("Gfx::PSCanvas::loadMatrix");
+GVX_TRACE("Gfx::PSCanvas::loadMatrix");
   rep->current_state().txform = tx;
 }
 
@@ -883,7 +883,7 @@ void Gfx::PSCanvas::drawPixels(const media::bmap_data& /*data*/,
                                const vec3d& /*world_pos*/,
                                const vec2d& /*zoom*/)
 {
-DOTRACE("Gfx::PSCanvas::drawPixels");
+GVX_TRACE("Gfx::PSCanvas::drawPixels");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
 }
@@ -891,35 +891,35 @@ DOTRACE("Gfx::PSCanvas::drawPixels");
 void Gfx::PSCanvas::drawBitmap(const media::bmap_data& /*data*/,
                                const vec3d& /*world_pos*/)
 {
-DOTRACE("Gfx::PSCanvas::drawBitmap");
+GVX_TRACE("Gfx::PSCanvas::drawBitmap");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::grabPixels(const recti&, media::bmap_data&)
 {
-DOTRACE("Gfx::PSCanvas::grabPixels");
+GVX_TRACE("Gfx::PSCanvas::grabPixels");
   rep->raiseError("grabPixels not possible in PostScript canvas",
                   SRC_POS);
 }
 
 void Gfx::PSCanvas::clearColorBuffer()
 {
-DOTRACE("Gfx::PSCanvas::clearColorBuffer");
+GVX_TRACE("Gfx::PSCanvas::clearColorBuffer");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::clearColorBuffer(const recti& /*screen_rect*/)
 {
-DOTRACE("Gfx::PSCanvas::clearColorBuffer(geom::rect)");
+GVX_TRACE("Gfx::PSCanvas::clearColorBuffer(geom::rect)");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::drawRect(const rectd& r)
 {
-DOTRACE("Gfx::PSCanvas::drawRect");
+GVX_TRACE("Gfx::PSCanvas::drawRect");
 
   rep->newpath();
   rep->moveto(r.bottom_left());
@@ -936,7 +936,7 @@ DOTRACE("Gfx::PSCanvas::drawRect");
 void Gfx::PSCanvas::drawCircle(double inner_radius, double outer_radius,
                                bool fill, unsigned int, unsigned int)
 {
-DOTRACE("Gfx::PSCanvas::drawCircle");
+GVX_TRACE("Gfx::PSCanvas::drawCircle");
 
   rep->newpath();
   rep->circle(0.0, 0.0, outer_radius);
@@ -973,7 +973,7 @@ void Gfx::PSCanvas::drawBezier4(const vec3d& p1,
                                 const vec3d& p4,
                                 unsigned int /*subdivisions*/)
 {
-DOTRACE("Gfx::PSCanvas::drawBezier4");
+GVX_TRACE("Gfx::PSCanvas::drawBezier4");
   rep->bezier(p1, p2, p3, p4);
 }
 
@@ -984,80 +984,80 @@ void Gfx::PSCanvas::drawBezierFill4(const vec3d& /*center*/,
                                     const vec3d& /*p4*/,
                                     unsigned int /*subdivisions*/)
 {
-DOTRACE("Gfx::PSCanvas::drawBezierFill4");
+GVX_TRACE("Gfx::PSCanvas::drawBezierFill4");
   // FIXME
   rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::beginPoints(const char* comment)
 {
-DOTRACE("Gfx::PSCanvas::beginPoints");
+GVX_TRACE("Gfx::PSCanvas::beginPoints");
   rep->beginPrimitive(&thePointsPrim, comment);
 }
 
 void Gfx::PSCanvas::beginLines(const char* comment)
 {
-DOTRACE("Gfx::PSCanvas::beginLines");
+GVX_TRACE("Gfx::PSCanvas::beginLines");
   rep->beginPrimitive(&theLinesPrim, comment);
 }
 
 void Gfx::PSCanvas::beginLineStrip(const char* comment)
 {
-DOTRACE("Gfx::PSCanvas::beginLineStrip");
+GVX_TRACE("Gfx::PSCanvas::beginLineStrip");
   rep->beginPrimitive(&theLineStripPrim, comment);
 }
 
 void Gfx::PSCanvas::beginLineLoop(const char* comment)
 {
-DOTRACE("Gfx::PSCanvas::beginLineLoop");
+GVX_TRACE("Gfx::PSCanvas::beginLineLoop");
   rep->beginPrimitive(&theLineLoopPrim, comment);
 }
 
 void Gfx::PSCanvas::beginTriangles(const char* comment)
 {
-DOTRACE("Gfx::PSCanvas::beginTriangles");
+GVX_TRACE("Gfx::PSCanvas::beginTriangles");
   rep->beginPrimitive(&theTrianglesPrim, comment);
 }
 
 void Gfx::PSCanvas::beginTriangleStrip(const char* comment)
 {
-DOTRACE("Gfx::PSCanvas::beginTriangleStrip");
+GVX_TRACE("Gfx::PSCanvas::beginTriangleStrip");
   rep->beginPrimitive(&theTriangleStripPrim, comment);
 }
 
 void Gfx::PSCanvas::beginTriangleFan(const char* comment)
 {
-DOTRACE("Gfx::PSCanvas::beginTriangleFan");
+GVX_TRACE("Gfx::PSCanvas::beginTriangleFan");
   rep->beginPrimitive(&theTriangleFanPrim, comment);
 }
 
 void Gfx::PSCanvas::beginQuads(const char* comment)
 {
-DOTRACE("Gfx::PSCanvas::beginQuads");
+GVX_TRACE("Gfx::PSCanvas::beginQuads");
   rep->beginPrimitive(&theQuadsPrim, comment);
 }
 
 void Gfx::PSCanvas::beginQuadStrip(const char* comment)
 {
-DOTRACE("Gfx::PSCanvas::beginQuadStrip");
+GVX_TRACE("Gfx::PSCanvas::beginQuadStrip");
   rep->beginPrimitive(&theQuadStripPrim, comment);
 }
 
 void Gfx::PSCanvas::beginPolygon(const char* comment)
 {
-DOTRACE("Gfx::PSCanvas::beginPolygon");
+GVX_TRACE("Gfx::PSCanvas::beginPolygon");
   rep->beginPrimitive(&thePolygonPrim, comment);
 }
 
 void Gfx::PSCanvas::vertex2(const vec2d& v)
 {
-DOTRACE("Gfx::PSCanvas::vertex2");
+GVX_TRACE("Gfx::PSCanvas::vertex2");
   vertex3(vec3d(v.x(), v.y(), 0.0));
 }
 
 void Gfx::PSCanvas::vertex3(const vec3d& v)
 {
-DOTRACE("Gfx::PSCanvas::vertex3");
+GVX_TRACE("Gfx::PSCanvas::vertex3");
 
   if (rep->itsPrimPtr == 0)
     {
@@ -1070,27 +1070,27 @@ DOTRACE("Gfx::PSCanvas::vertex3");
 
 void Gfx::PSCanvas::end()
 {
-DOTRACE("Gfx::PSCanvas::end");
+GVX_TRACE("Gfx::PSCanvas::end");
   rep->endPrimitive();
 }
 
 void Gfx::PSCanvas::drawRasterText(const rutz::fstring& /*text*/,
                                    const GxRasterFont& /*font*/)
 {
-DOTRACE("Gfx::PSCanvas::drawRasterText");
+GVX_TRACE("Gfx::PSCanvas::drawRasterText");
   throw rutz::error("PSCanvas::drawRasterText not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::drawVectorText(const rutz::fstring& /*text*/,
                                    const GxVectorFont& /*font*/)
 {
-DOTRACE("Gfx::PSCanvas::drawVectorText");
+GVX_TRACE("Gfx::PSCanvas::drawVectorText");
   throw rutz::error("PSCanvas::drawVectorText not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::flushOutput()
 {
-DOTRACE("Gfx::PSCanvas::flushOutput");
+GVX_TRACE("Gfx::PSCanvas::flushOutput");
   rep->itsFstream << std::flush;
 }
 

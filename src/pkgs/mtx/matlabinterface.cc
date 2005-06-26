@@ -54,21 +54,21 @@ namespace
 
 mtx make_mtx(mxArray* a, mtx_policies::storage_policy s)
 {
-DOTRACE("make_mtx(mxArray*, storage_policy)");
+GVX_TRACE("make_mtx(mxArray*, storage_policy)");
   return mtx(mtx_specs(mxGetM(a), mxGetN(a)),
              data_holder(new_data_block(a, s)));
 }
 
 mtx make_mtx(const mxArray* a, mtx_policies::storage_policy s)
 {
-DOTRACE("make_mtx(const mxArray*, storage_policy)");
+GVX_TRACE("make_mtx(const mxArray*, storage_policy)");
   return mtx(mtx_specs(mxGetM(a), mxGetN(a)),
              data_holder(new_data_block(a, s)));
 }
 
 mxArray* make_mxarray(const mtx& m)
 {
-DOTRACE("make_mxarray");
+GVX_TRACE("make_mxarray");
   mxArray* result_mx =
     mxCreateDoubleMatrix(m.mrows(), m.ncols(), mxREAL);
 

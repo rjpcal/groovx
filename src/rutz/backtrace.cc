@@ -45,7 +45,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -62,14 +62,14 @@ rutz::backtrace::backtrace() throw() :
   rep(new (std::nothrow) impl)
 {
   if (rep == 0)
-    PANIC("memory allocation failed");
+    GVX_PANIC("memory allocation failed");
 }
 
 rutz::backtrace::backtrace(const backtrace& other) throw() :
   rep(new (std::nothrow) impl(*other.rep))
 {
   if (rep == 0)
-    PANIC("memory allocation failed");
+    GVX_PANIC("memory allocation failed");
 }
 
 rutz::backtrace& rutz::backtrace::operator=(const backtrace& other) throw()
@@ -91,7 +91,7 @@ rutz::backtrace& rutz::backtrace::current() throw()
       ptr = new (std::nothrow) rutz::backtrace;
 
       if (ptr == 0)
-        PANIC("memory allocation failed");
+        GVX_PANIC("memory allocation failed");
     }
   return *ptr;
 }

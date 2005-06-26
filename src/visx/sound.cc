@@ -66,7 +66,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -96,13 +96,13 @@ Nub::Ref<Sound> Sound::getErrSound()
 
 Sound* Sound::make()
 {
-DOTRACE("Sound::make");
+GVX_TRACE("Sound::make");
   return new Sound;
 }
 
 Sound* Sound::makeFrom(const char* filename)
 {
-DOTRACE("Sound::make");
+GVX_TRACE("Sound::make");
   return new Sound(filename);
 }
 
@@ -110,18 +110,18 @@ Sound::Sound(const char* filename) :
   itsFilename(""),
   itsRep()
 {
-DOTRACE("Sound::Sound");
+GVX_TRACE("Sound::Sound");
   setFile(filename);
 }
 
 Sound::~Sound() throw()
 {
-DOTRACE("Sound::~Sound");
+GVX_TRACE("Sound::~Sound");
 }
 
 void Sound::readFrom(IO::Reader& reader)
 {
-DOTRACE("Sound::readFrom");
+GVX_TRACE("Sound::readFrom");
 
   reader.readValue("filename", itsFilename);
 
@@ -131,14 +131,14 @@ DOTRACE("Sound::readFrom");
 
 void Sound::writeTo(IO::Writer& writer) const
 {
-DOTRACE("Sound::writeTo");
+GVX_TRACE("Sound::writeTo");
 
   writer.writeValue("filename", itsFilename);
 }
 
 void Sound::play()
 {
-DOTRACE("Sound::play");
+GVX_TRACE("Sound::play");
 
   forceLoad();
 
@@ -148,7 +148,7 @@ DOTRACE("Sound::play");
 
 void Sound::forceLoad()
 {
-DOTRACE("Sound::forceLoad");
+GVX_TRACE("Sound::forceLoad");
   // check if we have a valid filename without a corresponding valid rep
   if (itsRep.get() == 0 && !itsFilename.is_empty())
     itsRep.reset(new sound_rep_t(itsFilename.c_str()));
@@ -156,7 +156,7 @@ DOTRACE("Sound::forceLoad");
 
 void Sound::setFile(const char* filename)
 {
-DOTRACE("Sound::setFile");
+GVX_TRACE("Sound::setFile");
 
   if (filename == 0)
     filename = "";
@@ -173,7 +173,7 @@ DOTRACE("Sound::setFile");
 
 const char* Sound::getFile() const
 {
-DOTRACE("Sound::getFile");
+GVX_TRACE("Sound::getFile");
   return itsFilename.c_str();
 }
 

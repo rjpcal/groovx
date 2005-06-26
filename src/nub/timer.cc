@@ -39,7 +39,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::shared_ptr;
 
@@ -60,9 +60,9 @@ Nub::Timer::~Timer()
 
 void Nub::Timer::schedule(rutz::shared_ptr<Nub::Scheduler> scheduler)
 {
-DOTRACE("Nub::Timer::schedule");
+GVX_TRACE("Nub::Timer::schedule");
 
-  PRECONDITION(scheduler.get() != 0);
+  GVX_PRECONDITION(scheduler.get() != 0);
 
   if (itsMsecDelay == 0 && isItRepeating == true)
     {
@@ -90,17 +90,17 @@ DOTRACE("Nub::Timer::schedule");
 
 void Nub::Timer::cancel()
 {
-DOTRACE("Nub::Timer::cancel");
+GVX_TRACE("Nub::Timer::cancel");
 
   itsToken.reset(0);
 }
 
 void Nub::Timer::dummyCallback(void* clientData)
 {
-DOTRACE("Nub::Timer::dummyCallback");
+GVX_TRACE("Nub::Timer::dummyCallback");
   Nub::Timer* timer = static_cast<Nub::Timer*>(clientData);
 
-  ASSERT(timer != 0);
+  GVX_ASSERT(timer != 0);
 
   timer->itsToken.reset(0);
 
@@ -115,7 +115,7 @@ DOTRACE("Nub::Timer::dummyCallback");
       // can't allow a timer callback that is both repeating and
       // immediate (delay == 0), otherwise we fall into an
       // infinite loop
-      ASSERT(timer->itsMsecDelay != 0);
+      GVX_ASSERT(timer->itsMsecDelay != 0);
 
       if (timer->itsScheduler.get() != 0)
         timer->schedule(timer->itsScheduler);

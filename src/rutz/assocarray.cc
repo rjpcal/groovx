@@ -62,12 +62,12 @@ rutz::assoc_array_base::assoc_array_base(kill_func_t* f,
                                          const char* descr) :
   rep(new impl(f, descr))
 {
-DOTRACE("rutz::assoc_array_base::assoc_array_base");
+GVX_TRACE("rutz::assoc_array_base::assoc_array_base");
 }
 
 rutz::assoc_array_base::~assoc_array_base()
 {
-DOTRACE("rutz::assoc_array_base::~assoc_array_base");
+GVX_TRACE("rutz::assoc_array_base::~assoc_array_base");
   clear();
 }
 
@@ -97,7 +97,7 @@ void rutz::assoc_array_base::throw_for_key(const rutz::fstring& key,
 
 void rutz::assoc_array_base::clear()
 {
-DOTRACE("rutz::assoc_array_base::clear");
+GVX_TRACE("rutz::assoc_array_base::clear");
   for (impl::map_t::iterator ii = rep->values.begin();
        ii != rep->values.end();
        ++ii)
@@ -111,7 +111,7 @@ DOTRACE("rutz::assoc_array_base::clear");
 
 void* rutz::assoc_array_base::get_value_for_key(const rutz::fstring& key) const
 {
-DOTRACE("rutz::assoc_array_base::get_value_for_key");
+GVX_TRACE("rutz::assoc_array_base::get_value_for_key");
   return rep->values[key];
 }
 
@@ -122,7 +122,7 @@ void* rutz::assoc_array_base::get_value_for_key(const char* key) const
 
 void rutz::assoc_array_base::set_value_for_key(const char* key, void* ptr)
 {
-DOTRACE("rutz::assoc_array_base::set_value_for_key");
+GVX_TRACE("rutz::assoc_array_base::set_value_for_key");
   rutz::fstring skey(key);
   void*& ptr_slot = rep->values[skey];
   if (rep->kill_func != 0) rep->kill_func(ptr_slot);

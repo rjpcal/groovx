@@ -42,7 +42,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 #if ((TCL_MAJOR_VERSION == 8) \
       && (TCL_MINOR_VERSION >= 5)) \
@@ -65,13 +65,13 @@ namespace
 void Tcl::Dict::doPut(const char*, Tcl::ObjPtr)
 {
   noDictError();
-  ASSERT(0);
+  GVX_ASSERT(0);
 }
 
 Tcl::ObjPtr Tcl::Dict::doGet(const char*) const
 {
   noDictError();
-  ASSERT(0);
+  GVX_ASSERT(0);
   return Tcl::ObjPtr(); // can't happen, but placate compiler
 }
 
@@ -79,7 +79,7 @@ Tcl::ObjPtr Tcl::Dict::doGet(const char*) const
 
 void Tcl::Dict::doPut(const char* key, Tcl::ObjPtr val)
 {
-DOTRACE("Tcl::Dict::doPut");
+GVX_TRACE("Tcl::Dict::doPut");
 
   Tcl::ObjPtr keyObj = Tcl::toTcl(key);
   if (Tcl_DictObjPut(0, itsDictObj.obj(), keyObj.obj(), val.obj()) != TCL_OK)
@@ -91,7 +91,7 @@ DOTRACE("Tcl::Dict::doPut");
 
 Tcl::ObjPtr Tcl::Dict::doGet(const char* key) const
 {
-DOTRACE("Tcl::Dict::doGet");
+GVX_TRACE("Tcl::Dict::doGet");
 
   Tcl_Obj* dest = 0;
 

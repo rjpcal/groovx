@@ -43,7 +43,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -78,7 +78,7 @@ void rutz::base64_encode(const unsigned char* src,
                          rutz::byte_array& dst,
                          unsigned int line_width)
 {
-DOTRACE("rutz::base64_encode");
+GVX_TRACE("rutz::base64_encode");
   dst.vec.resize(0);
 
   if (src_len == 0) return;
@@ -136,7 +136,7 @@ DOTRACE("rutz::base64_encode");
         }
     }
 
-  ASSERT(i >= 0 && i <= 2);
+  GVX_ASSERT(i >= 0 && i <= 2);
 
   if (i == 1)
     {
@@ -186,7 +186,7 @@ void rutz::base64_decode(const char* src,
                          unsigned int in_len,
                          rutz::byte_array& dst)
 {
-DOTRACE("rutz::base64_decode");
+GVX_TRACE("rutz::base64_decode");
   dst.vec.resize(0);
   dst.vec.reserve((in_len / 4) * 3);
 
@@ -227,7 +227,7 @@ DOTRACE("rutz::base64_decode");
                           SRC_POS);
     }
 
-  ASSERT(i != 1); // can't happen; this would be an extra 6 bits
+  GVX_ASSERT(i != 1); // can't happen; this would be an extra 6 bits
                   // encoded, implying zero extra bits decoded
 
   if (i == 2)

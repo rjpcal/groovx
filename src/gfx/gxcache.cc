@@ -44,7 +44,7 @@
 
 #include "rutz/debug.h"
 #include "rutz/trace.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -57,24 +57,24 @@ GxCache::GxCache(Nub::SoftRef<GxNode> child) :
   itsDisplayList(0),
   itsCanvas()
 {
-DOTRACE("GxCache::GxCache");
+GVX_TRACE("GxCache::GxCache");
 }
 
 GxCache::~GxCache() throw()
 {
-DOTRACE("GxCache::~GxCache");
+GVX_TRACE("GxCache::~GxCache");
   invalidate();
 }
 
 IO::VersionId GxCache::serialVersionId() const
 {
-DOTRACE("GxCache::serialVersionId");
+GVX_TRACE("GxCache::serialVersionId");
   return GXCACHE_SVID;
 }
 
 void GxCache::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxCache::readFrom");
+GVX_TRACE("GxCache::readFrom");
 
   reader.ensureReadVersionId("GxCache", 1,
                              "Try Revision 1.11", SRC_POS);
@@ -84,14 +84,14 @@ DOTRACE("GxCache::readFrom");
 
 void GxCache::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxCache::writeTo");
+GVX_TRACE("GxCache::writeTo");
 
   writer.writeValue("mode", itsMode);
 }
 
 void GxCache::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxCache::draw");
+GVX_TRACE("GxCache::draw");
   GLCanvas* const glcanvas = dynamic_cast<GLCanvas*>(&canvas);
   if (itsMode != GLCOMPILE || glcanvas == 0)
     {
@@ -119,13 +119,13 @@ DOTRACE("GxCache::draw");
 
 void GxCache::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxCache::getBoundingCube");
+GVX_TRACE("GxCache::getBoundingCube");
   child()->getBoundingCube(bbox);
 }
 
 void GxCache::invalidate() throw()
 {
-DOTRACE("GxCache::invalidate");
+GVX_TRACE("GxCache::invalidate");
   if (itsCanvas.isValid())
     itsCanvas->deleteLists(itsDisplayList, 1);
 
@@ -136,7 +136,7 @@ DOTRACE("GxCache::invalidate");
 
 void GxCache::setMode(Mode new_mode) throw()
 {
-DOTRACE("GxCache::setMode");
+GVX_TRACE("GxCache::setMode");
 #ifdef BROKEN_GL_DISPLAY_LISTS
   if (new_mode == GLCOMPILE) new_mode = DIRECT;
 #endif

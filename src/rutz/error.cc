@@ -43,7 +43,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -56,7 +56,7 @@ rutz::error::error(const rutz::file_pos& pos) :
   m_file_pos(pos),
   m_backtrace(new rutz::backtrace(rutz::backtrace::current()))
 {
-DOTRACE("rutz::error::error()");
+GVX_TRACE("rutz::error::error()");
 
   dbg_dump(4, m_msg);
 
@@ -65,7 +65,7 @@ DOTRACE("rutz::error::error()");
   else
     *last = *m_backtrace;
 
-  if (GET_DBG_LEVEL() >= 4)
+  if (GVX_DBG_LEVEL() >= 4)
     {
       m_backtrace->print();
     }
@@ -78,7 +78,7 @@ rutz::error::error(const rutz::fstring& msg,
   m_file_pos(pos),
   m_backtrace(new rutz::backtrace(rutz::backtrace::current()))
 {
-DOTRACE("rutz::error::error(fstring)");
+GVX_TRACE("rutz::error::error(fstring)");
 
   dbg_dump(4, m_msg);
 
@@ -87,7 +87,7 @@ DOTRACE("rutz::error::error(fstring)");
   else
     *last = *m_backtrace;
 
-  if (GET_DBG_LEVEL() >= 4)
+  if (GVX_DBG_LEVEL() >= 4)
     {
       m_backtrace->print();
     }
@@ -99,7 +99,7 @@ rutz::error::error(const rutz::error& other) throw() :
   m_file_pos(other.m_file_pos),
   m_backtrace(0)
 {
-DOTRACE("rutz::error::error(copy)");
+GVX_TRACE("rutz::error::error(copy)");
 
   dbg_dump(4, m_msg);
 
@@ -110,7 +110,7 @@ DOTRACE("rutz::error::error(copy)");
 
 rutz::error::~error() throw()
 {
-DOTRACE("rutz::error::~error");
+GVX_TRACE("rutz::error::~error");
   delete m_backtrace;
 }
 

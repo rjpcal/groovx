@@ -64,7 +64,7 @@ namespace
 extern "C"
 int Face_Init(Tcl_Interp* interp)
 {
-DOTRACE("Face_Init");
+GVX_TRACE("Face_Init");
 
   PKG_CREATE(interp, "Face", "4.$Revision$");
 
@@ -84,7 +84,7 @@ DOTRACE("Face_Init");
 extern "C"
 int Cloneface_Init(Tcl_Interp* interp)
 {
-DOTRACE("Cloneface_Init");
+GVX_TRACE("Cloneface_Init");
 
   PKG_CREATE(interp, "CloneFace", "4.$Revision$");
   pkg->inheritPkg("Face");

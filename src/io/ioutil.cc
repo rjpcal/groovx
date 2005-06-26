@@ -53,7 +53,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 using rutz::shared_ptr;

@@ -45,7 +45,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace media
 {
@@ -123,7 +123,7 @@ namespace
 media::esd_sound_rep::esd_sound_rep(const char* filename) :
   m_filename("")
 {
-DOTRACE("media::esd_sound_rep::esd_sound_rep");
+GVX_TRACE("media::esd_sound_rep::esd_sound_rep");
 
   sound_rep::check_filename(filename);
 
@@ -163,7 +163,7 @@ media::esd_sound_rep::~esd_sound_rep() throw() {}
 
 void media::esd_sound_rep::play()
 {
-  DOTRACE("media::esd_sound_rep::play");
+  GVX_TRACE("media::esd_sound_rep::play");
 
   if (m_filename.is_empty())
     return;

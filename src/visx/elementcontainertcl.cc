@@ -65,7 +65,7 @@ namespace
 extern "C"
 int Elementcontainer_Init(Tcl_Interp* interp)
 {
-DOTRACE("Elementcontainer_Init");
+GVX_TRACE("Elementcontainer_Init");
 
   PKG_CREATE(interp, "ElementContainer", "4.$Revision$");
   pkg->inheritPkg("Element");

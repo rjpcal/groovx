@@ -54,7 +54,7 @@
 extern "C"
 int Trial_Init(Tcl_Interp* interp)
 {
-DOTRACE("Trial_Init");
+GVX_TRACE("Trial_Init");
 
   PKG_CREATE(interp, "Trial", "4.$Revision$");
   pkg->inheritPkg("Element");

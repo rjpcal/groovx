@@ -52,7 +52,7 @@ namespace
 
 const FieldMap& GxPointSet::classFields()
 {
-DOTRACE("GxPointSet::classFields");
+GVX_TRACE("GxPointSet::classFields");
   static const Field FIELD_ARRAY[] =
   {
     Field("points", Field::ValueType(), &GxPointSet::itsPoints,
@@ -67,7 +67,7 @@ DOTRACE("GxPointSet::classFields");
 
 GxPointSet* GxPointSet::make()
 {
-DOTRACE("GxPointSet::make");
+GVX_TRACE("GxPointSet::make");
  return new GxPointSet;
 }
 
@@ -75,30 +75,30 @@ GxPointSet::GxPointSet() :
   FieldContainer(&sigNodeChanged),
   itsPoints()
 {
-DOTRACE("GxPointSet::GxPointSet");
+GVX_TRACE("GxPointSet::GxPointSet");
   setFieldMap(GxPointSet::classFields());
 }
 
 GxPointSet::~GxPointSet() throw()
 {
-DOTRACE("GxPointSet::~GxPointSet");
+GVX_TRACE("GxPointSet::~GxPointSet");
 }
 
 IO::VersionId GxPointSet::serialVersionId() const
 {
-DOTRACE("GxPointSet::serialVersionId");
+GVX_TRACE("GxPointSet::serialVersionId");
   return GXPOINTSET_SVID;
 }
 
 void GxPointSet::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxPointSet::readFrom");
+GVX_TRACE("GxPointSet::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
 void GxPointSet::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxPointSet::writeTo");
+GVX_TRACE("GxPointSet::writeTo");
   writeFieldsTo(writer, classFields(), GXPOINTSET_SVID);
 }
 
@@ -108,7 +108,7 @@ DOTRACE("GxPointSet::writeTo");
 
 void GxPointSet::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxPointSet::getBoundingCube");
+GVX_TRACE("GxPointSet::getBoundingCube");
 
   for (unsigned int i = 0; i < itsPoints.array_size(); ++i)
     bbox.vertex3(itsPoints.array_at(i));
@@ -116,7 +116,7 @@ DOTRACE("GxPointSet::getBoundingCube");
 
 void GxPointSet::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxPointSet::draw");
+GVX_TRACE("GxPointSet::draw");
 
   canvas.begin(Gfx::Canvas::VertexStyle(itsStyle));
 

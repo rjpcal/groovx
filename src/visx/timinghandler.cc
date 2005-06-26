@@ -45,7 +45,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -60,7 +60,7 @@ namespace
 
 TimingHandler* TimingHandler::make()
 {
-DOTRACE("TimingHandler::make");
+GVX_TRACE("TimingHandler::make");
   return new TimingHandler;
 }
 
@@ -70,7 +70,7 @@ TimingHandler::TimingHandler() :
   iti_response_id(0),
   abortwait_abort_id(0)
 {
-DOTRACE("TimingHandler::TimingHandler");
+GVX_TRACE("TimingHandler::TimingHandler");
   addEventByName("DrawEvent", IMMEDIATE, 0);
   stimdur_start_id = addEventByName("UndrawEvent", FROM_START, 2000);
   timeout_start_id = addEventByName("AbortTrialEvent", FROM_START, 4000);
@@ -81,18 +81,18 @@ DOTRACE("TimingHandler::TimingHandler");
 
 TimingHandler::~TimingHandler() throw()
 {
-DOTRACE("TimingHandler::~TimingHandler");
+GVX_TRACE("TimingHandler::~TimingHandler");
 }
 
 IO::VersionId TimingHandler::serialVersionId() const
 {
-DOTRACE("TimingHandler::serialVersionId");
+GVX_TRACE("TimingHandler::serialVersionId");
  return TIMINGHANDLER_SVID;
 }
 
 void TimingHandler::readFrom(IO::Reader& reader)
 {
-DOTRACE("TimingHandler::readFrom");
+GVX_TRACE("TimingHandler::readFrom");
 
   reader.ensureReadVersionId("TimingHandler", 2, "Try groovx0.8a4", SRC_POS);
 
@@ -101,7 +101,7 @@ DOTRACE("TimingHandler::readFrom");
 
 void TimingHandler::writeTo(IO::Writer& writer) const
 {
-DOTRACE("TimingHandler::writeTo");
+GVX_TRACE("TimingHandler::writeTo");
 
   writer.ensureWriteVersionId("TimingHandler",
             TIMINGHANDLER_SVID, 2, "Try groovx0.8a4", SRC_POS);

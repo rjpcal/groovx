@@ -45,7 +45,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace Tcl
 {
@@ -86,7 +86,7 @@ namespace Tcl
 
 void Tcl::FieldsLister::operator()(Tcl::Context& ctx)
 {
-DOTRACE("Tcl::FieldsLister::operator()");
+GVX_TRACE("Tcl::FieldsLister::operator()");
   if (!isItInited)
     {
       for (const FieldMap* fmap = &itsFields;
@@ -136,7 +136,7 @@ DOTRACE("Tcl::FieldsLister::operator()");
 void Tcl::defField(Tcl::Pkg* pkg, const Field& field,
                    const rutz::file_pos& src_pos)
 {
-DOTRACE("Tcl::defField");
+GVX_TRACE("Tcl::defField");
 
   const unsigned int keyarg = 1;
 
@@ -149,7 +149,7 @@ DOTRACE("Tcl::defField");
 void Tcl::defAllFields(Tcl::Pkg* pkg, const FieldMap& fieldmap,
                        const rutz::file_pos& src_pos)
 {
-DOTRACE("Tcl::defAllFields");
+GVX_TRACE("Tcl::defAllFields");
 
   for (const FieldMap* fmap = &fieldmap; fmap != 0; fmap = fmap->parent())
     {

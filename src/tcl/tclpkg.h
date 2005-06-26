@@ -307,7 +307,7 @@ private:
 };
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 /*
   These macros make it slightly more convenient to make sure that
@@ -331,7 +331,7 @@ int PKG_STATUS = Tcl::Pkg::STATUS_ERR;                                \
   catch (...) { return 1; }                                           \
                                                                       \
   static bool recursive_initialization = false;                       \
-  ASSERT(!recursive_initialization);                                  \
+  GVX_ASSERT(!recursive_initialization);                                  \
   recursive_initialization = true;                                    \
                                                                       \
   try                                                                 \

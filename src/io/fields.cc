@@ -47,7 +47,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 
@@ -98,7 +98,7 @@ public:
 void FieldMap::init(const Field* begin, const Field* end,
                     const FieldMap* parent)
 {
-  ASSERT(rep == 0);
+  GVX_ASSERT(rep == 0);
   rep = new Impl(begin, end, parent);
 }
 
@@ -195,7 +195,7 @@ void FieldContainer::setField(const Field& field, const Tcl::ObjPtr& new_val)
 void FieldContainer::readFieldsFrom(IO::Reader& reader,
                                     const FieldMap& fields)
 {
-DOTRACE("FieldContainer::readFieldsFrom");
+GVX_TRACE("FieldContainer::readFieldsFrom");
 
   const IO::VersionId svid = reader.readSerialVersionId();
 
@@ -213,7 +213,7 @@ void FieldContainer::writeFieldsTo(IO::Writer& writer,
                                    const FieldMap& fields,
                                    IO::VersionId svid) const
 {
-DOTRACE("FieldContainer::writeFieldsTo");
+GVX_TRACE("FieldContainer::writeFieldsTo");
 
   for (FieldMap::Iterator itr(fields.ioFields()); itr.is_valid(); ++itr)
     {
@@ -224,7 +224,7 @@ DOTRACE("FieldContainer::writeFieldsTo");
 
 FieldContainer* FieldContainer::child() const
 {
-DOTRACE("FieldContainer::child");
+GVX_TRACE("FieldContainer::child");
   return 0;
 }
 

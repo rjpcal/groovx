@@ -86,18 +86,18 @@ GaborPatch::GaborPatch(const GaborSpec& spec)
   itsSigmaSqr  ( 2.0* spec.sigma * spec.sigma ),
   itsData      ( 0 )
 {
-DOTRACE("GaborPatch::GaborPatch");
+GVX_TRACE("GaborPatch::GaborPatch");
 }
 
 GaborPatch::~GaborPatch()
 {
-DOTRACE("GaborPatch::~GaborPatch");
+GVX_TRACE("GaborPatch::~GaborPatch");
   delete [] itsData;
 }
 
 const GaborPatch& GaborPatch::lookup(const GaborSpec& spec)
 {
-DOTRACE("GaborPatch::lookup");
+GVX_TRACE("GaborPatch::lookup");
 
   GaborPatch*& patch = theMap[spec];
 

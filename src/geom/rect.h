@@ -40,7 +40,7 @@
 #include "rutz/error.h"
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace geom
 {

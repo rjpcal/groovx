@@ -41,14 +41,14 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 Tcl::List::List() :
   itsList(Tcl_NewListObj(0,0)),
   itsElements(0),
   itsLength(0)
 {
-DOTRACE("Tcl::List::List");
+GVX_TRACE("Tcl::List::List");
   split();
 }
 
@@ -57,13 +57,13 @@ Tcl::List::List(const Tcl::ObjPtr& listObj) :
   itsElements(0),
   itsLength(0)
 {
-DOTRACE("Tcl::List::List");
+GVX_TRACE("Tcl::List::List");
   split();
 }
 
 void Tcl::List::split() const
 {
-DOTRACE("Tcl::List::split");
+GVX_TRACE("Tcl::List::split");
 
   int count;
   if ( Tcl_ListObjGetElements(0, itsList.obj(), &count, &itsElements)
@@ -72,13 +72,13 @@ DOTRACE("Tcl::List::split");
       throw rutz::error("couldn't split Tcl list", SRC_POS);
     }
 
-  ASSERT(count >= 0);
+  GVX_ASSERT(count >= 0);
   itsLength = static_cast<unsigned int>(count);
 }
 
 void Tcl::List::doAppend(const Tcl::ObjPtr& obj, unsigned int times)
 {
-DOTRACE("Tcl::List::doAppend");
+GVX_TRACE("Tcl::List::doAppend");
 
   itsList.ensureUnique();
 
@@ -94,7 +94,7 @@ DOTRACE("Tcl::List::doAppend");
 
 Tcl_Obj* Tcl::List::at(unsigned int index) const
 {
-DOTRACE("Tcl::List::at");
+GVX_TRACE("Tcl::List::at");
 
   update();
 
@@ -109,7 +109,7 @@ DOTRACE("Tcl::List::at");
 
 unsigned int Tcl::List::getLength(Tcl_Obj* obj)
 {
-DOTRACE("Tcl::List::getLength");
+GVX_TRACE("Tcl::List::getLength");
 
   int len;
   if ( Tcl_ListObjLength(0, obj, &len) != TCL_OK)
@@ -118,7 +118,7 @@ DOTRACE("Tcl::List::getLength");
                         SRC_POS);
     }
 
-  ASSERT(len >= 0);
+  GVX_ASSERT(len >= 0);
 
   return static_cast<unsigned int>(len);
 }

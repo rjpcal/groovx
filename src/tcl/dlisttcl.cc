@@ -49,7 +49,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 #include <algorithm> // for std::random_shuffle
 #include <cmath>
@@ -117,7 +117,7 @@ namespace Dlist
         result.append(source_list.at(index));
       }
 
-    ASSERT(result.length() == index_list.length());
+    GVX_ASSERT(result.length() == index_list.length());
 
     return result;
   }
@@ -200,7 +200,7 @@ namespace Dlist
           result.append(zero);
       }
 
-    ASSERT(result.length() == source_list.length());
+    GVX_ASSERT(result.length() == source_list.length());
 
     return result;
   }
@@ -434,7 +434,7 @@ namespace Dlist
         while (v == i || used[v])
           v = rutz::rand_range(0u, N);
 
-        ASSERT(v < N);
+        GVX_ASSERT(v < N);
 
         used[v] = true;
         slots[i] = v;
@@ -449,7 +449,7 @@ namespace Dlist
           break;
         }
 
-    ASSERT(lastslot != N);
+    GVX_ASSERT(lastslot != N);
 
     if (lastslot == N)
       {
@@ -640,7 +640,7 @@ namespace Dlist
         result.append(sub.at(slice));
       }
 
-    ASSERT(result.length() == src.length());
+    GVX_ASSERT(result.length() == src.length());
 
     return result;
   }
@@ -709,7 +709,7 @@ namespace Dlist
 extern "C"
 int Dlist_Init(Tcl_Interp* interp)
 {
-DOTRACE("Dlist_Init");
+GVX_TRACE("Dlist_Init");
 
   PKG_CREATE(interp, "dlist", "4.$Revision$");
 

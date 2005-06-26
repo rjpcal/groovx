@@ -46,7 +46,7 @@ namespace
 {
   std::string demangle_gcc_v3(const std::string& mangled)
   {
-    DOTRACE("demangle_gcc_v3");
+    GVX_TRACE("demangle_gcc_v3");
 
     int status = 0;
 
@@ -58,7 +58,7 @@ namespace
 
     if (status == 0)
       {
-        ASSERT(demangled != 0);
+        GVX_ASSERT(demangled != 0);
         return demangled;
       }
 
@@ -83,7 +83,7 @@ namespace
         throw rutz::error(rutz::fstring(msg, "unknown error code"), SRC_POS);
       }
 
-    ASSERT(false);
+    GVX_ASSERT(false);
     return "can't happen"; // can't happen, but placate compiler
   }
 }

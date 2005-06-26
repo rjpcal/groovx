@@ -52,7 +52,7 @@ namespace
 
 const FieldMap& GxCylinder::classFields()
 {
-DOTRACE("GxCylinder::classFields");
+GVX_TRACE("GxCylinder::classFields");
   static const Field FIELD_ARRAY[] =
   {
     Field("base", &GxCylinder::itsBase, 1.0, 0.0, 10.0, 0.1,
@@ -72,7 +72,7 @@ DOTRACE("GxCylinder::classFields");
 
 GxCylinder* GxCylinder::make()
 {
-DOTRACE("GxCylinder::make");
+GVX_TRACE("GxCylinder::make");
  return new GxCylinder;
 }
 
@@ -85,30 +85,30 @@ GxCylinder::GxCylinder() :
   itsStacks(20),
   itsFilled(true)
 {
-DOTRACE("GxCylinder::GxCylinder");
+GVX_TRACE("GxCylinder::GxCylinder");
   setFieldMap(GxCylinder::classFields());
 }
 
 GxCylinder::~GxCylinder() throw()
 {
-DOTRACE("GxCylinder::~GxCylinder");
+GVX_TRACE("GxCylinder::~GxCylinder");
 }
 
 IO::VersionId GxCylinder::serialVersionId() const
 {
-DOTRACE("GxCylinder::serialVersionId");
+GVX_TRACE("GxCylinder::serialVersionId");
   return GXCYLINDER_SVID;
 }
 
 void GxCylinder::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxCylinder::readFrom");
+GVX_TRACE("GxCylinder::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
 void GxCylinder::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxCylinder::writeTo");
+GVX_TRACE("GxCylinder::writeTo");
   writeFieldsTo(writer, classFields(), GXCYLINDER_SVID);
 }
 
@@ -118,7 +118,7 @@ DOTRACE("GxCylinder::writeTo");
 
 void GxCylinder::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxCylinder::getBoundingCube");
+GVX_TRACE("GxCylinder::getBoundingCube");
 
   geom::box<double> mybox;
 
@@ -133,7 +133,7 @@ DOTRACE("GxCylinder::getBoundingCube");
 
 void GxCylinder::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxCylinder::draw");
+GVX_TRACE("GxCylinder::draw");
 
   canvas.drawCylinder(itsBase, itsTop, itsHeight,
                       itsSlices, itsStacks, itsFilled);

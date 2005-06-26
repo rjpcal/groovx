@@ -41,7 +41,7 @@
 
 GlWindowInterface::~GlWindowInterface()
 {
-DOTRACE("GlWindowInterface::~GlWindowInterface");
+GVX_TRACE("GlWindowInterface::~GlWindowInterface");
 }
 
 #if defined(GL_PLATFORM_GLX)
@@ -49,7 +49,7 @@ DOTRACE("GlWindowInterface::~GlWindowInterface");
 rutz::shared_ptr<GlWindowInterface>
 GlWindowInterface::make(Display* dpy, GlxOpts& opts)
 {
-DOTRACE("GlWindowInterface::make[glx]");
+GVX_TRACE("GlWindowInterface::make[glx]");
   return rutz::make_shared
     (GlxWrapper::make(dpy, opts, (GlxWrapper*)0 /*shared context*/));
 }
@@ -58,7 +58,7 @@ DOTRACE("GlWindowInterface::make[glx]");
 rutz::shared_ptr<GlWindowInterface>
 GlWindowInterface::make(Display* dpy, GlxOpts& opts)
 {
-DOTRACE("GlWindowInterface::make[agl]");
+GVX_TRACE("GlWindowInterface::make[agl]");
   return rutz::make_shared(AglWrapper::make(dpy, opts));
 }
 #else

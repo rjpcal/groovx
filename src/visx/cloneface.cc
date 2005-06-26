@@ -41,7 +41,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -70,14 +70,14 @@ const FieldMap& CloneFace::classFields()
 
 CloneFace* CloneFace::make()
 {
-DOTRACE("CloneFace::make");
+GVX_TRACE("CloneFace::make");
   return new CloneFace;
 }
 
 CloneFace::CloneFace () :
   Face(), itsEyeAspect(0.0), itsVertOffset(0.0)
 {
-DOTRACE("CloneFace::CloneFace()");
+GVX_TRACE("CloneFace::CloneFace()");
 
   setFieldMap(CloneFace::classFields());
 
@@ -92,18 +92,18 @@ DOTRACE("CloneFace::CloneFace()");
 
 CloneFace::~CloneFace () throw()
 {
-DOTRACE("CloneFace::~CloneFace");
+GVX_TRACE("CloneFace::~CloneFace");
 }
 
 IO::VersionId CloneFace::serialVersionId() const
 {
-DOTRACE("CloneFace::serialVersionId");
+GVX_TRACE("CloneFace::serialVersionId");
   return CLONEFACE_SVID;
 }
 
 void CloneFace::readFrom(IO::Reader& reader)
 {
-DOTRACE("CloneFace::readFrom");
+GVX_TRACE("CloneFace::readFrom");
 
   IO::ReadUtils::readValueSeq<double>(reader, "ctrlPnts",
                                                itsCtrlPnts, 24);
@@ -115,7 +115,7 @@ DOTRACE("CloneFace::readFrom");
 
 void CloneFace::writeTo(IO::Writer& writer) const
 {
-DOTRACE("CloneFace::writeTo");
+GVX_TRACE("CloneFace::writeTo");
 
   IO::WriteUtils::writeValueSeq(writer, "ctrlPnts",
                                 itsCtrlPnts, itsCtrlPnts+24, true);
@@ -127,19 +127,19 @@ DOTRACE("CloneFace::writeTo");
 
 const double* CloneFace::getCtrlPnts() const
 {
-DOTRACE("CloneFace::getCtrlPnts");
+GVX_TRACE("CloneFace::getCtrlPnts");
   return itsCtrlPnts;
 }
 
 double CloneFace::getEyeAspect() const
 {
-DOTRACE("CloneFace::getEyeAspect");
+GVX_TRACE("CloneFace::getEyeAspect");
   return itsEyeAspect;
 }
 
 double CloneFace::getVertOffset() const
 {
-DOTRACE("CloneFace::getVertOffset");
+GVX_TRACE("CloneFace::getVertOffset");
   return itsVertOffset;
 }
 

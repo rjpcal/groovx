@@ -71,7 +71,7 @@ namespace
 
   void cleanup(jpeg_decompress_struct* cinfo)
   {
-    DOTRACE("<jpegparser.cc>::cleanup");
+    GVX_TRACE("<jpegparser.cc>::cleanup");
 
     jpeg_aux* aux = static_cast<jpeg_aux*>(cinfo->client_data);
     if (aux->infile != 0)
@@ -105,7 +105,7 @@ do {                                                     \
 
 void media::load_jpeg(const char* filename, media::bmap_data& data)
 {
-DOTRACE("media::load_jpeg");
+GVX_TRACE("media::load_jpeg");
 
   if (BITS_IN_JSAMPLE != 8)
     {

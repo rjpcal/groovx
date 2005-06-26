@@ -46,7 +46,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -80,7 +80,7 @@ const FieldMap& FixPt::classFields()
 
 FixPt* FixPt::make()
 {
-DOTRACE("FixPt::make");
+GVX_TRACE("FixPt::make");
   return new FixPt;
 }
 
@@ -94,13 +94,13 @@ FixPt::~FixPt() throw() {}
 
 IO::VersionId FixPt::serialVersionId() const
 {
-DOTRACE("FixPt::serialVersionId");
+GVX_TRACE("FixPt::serialVersionId");
   return FIXPT_SVID;
 }
 
 void FixPt::readFrom(IO::Reader& reader)
 {
-DOTRACE("FixPt::readFrom");
+GVX_TRACE("FixPt::readFrom");
 
   reader.ensureReadVersionId("FixPt", 3,
                              "Try cvs tag xml_conversion_20040526",
@@ -113,7 +113,7 @@ DOTRACE("FixPt::readFrom");
 
 void FixPt::writeTo(IO::Writer& writer) const
 {
-DOTRACE("FixPt::writeTo");
+GVX_TRACE("FixPt::writeTo");
 
   writer.ensureWriteVersionId("FixPt", FIXPT_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
@@ -125,7 +125,7 @@ DOTRACE("FixPt::writeTo");
 
 void FixPt::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
-DOTRACE("FixPt::grGetBoundingBox");
+GVX_TRACE("FixPt::grGetBoundingBox");
 
   bbox.vertex2(geom::vec2<double>(-itsLength/2.0, -itsLength/2.0));
   bbox.vertex2(geom::vec2<double>(+itsLength/2.0, +itsLength/2.0));
@@ -133,7 +133,7 @@ DOTRACE("FixPt::grGetBoundingBox");
 
 void FixPt::grRender(Gfx::Canvas& canvas) const
 {
-DOTRACE("FixPt::grRender");
+GVX_TRACE("FixPt::grRender");
 
   Gfx::AttribSaver saver(canvas);
 

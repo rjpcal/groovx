@@ -47,7 +47,7 @@
 extern "C"
 int Tlist_Init(Tcl_Interp* interp)
 {
-DOTRACE("Tlist_Init");
+GVX_TRACE("Tlist_Init");
 
   PKG_CREATE(interp, "Tlist", "4.$Revision$");
   pkg->def( "createPreview", "objids viewport num_cols_hint use_text_labels",

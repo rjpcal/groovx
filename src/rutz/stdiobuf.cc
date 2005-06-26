@@ -41,12 +41,12 @@
 #include <unistd.h>
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 void rutz::stdiobuf::init(int fd, int om, bool throw_exception)
 {
-DOTRACE("rutz::stdiobuf::init");
+GVX_TRACE("rutz::stdiobuf::init");
   m_filedes = fd;
 
   if (m_filedes >= 0)
@@ -70,21 +70,21 @@ DOTRACE("rutz::stdiobuf::init");
 rutz::stdiobuf::stdiobuf(FILE* f, int om, bool throw_exception) :
   m_mode(0), m_filedes(-1)
 {
-DOTRACE("rutz::stdiobuf::stdiobuf(FILE*)");
+GVX_TRACE("rutz::stdiobuf::stdiobuf(FILE*)");
   init(fileno(f), om, throw_exception);
 }
 
 rutz::stdiobuf::stdiobuf(int fd, int om, bool throw_exception) :
   m_mode(0), m_filedes(-1)
 {
-DOTRACE("rutz::stdiobuf::stdiobuf(int)");
+GVX_TRACE("rutz::stdiobuf::stdiobuf(int)");
 
   init(fd, om, throw_exception);
 }
 
 void rutz::stdiobuf::close()
 {
-DOTRACE("rutz::stdiobuf::close");
+GVX_TRACE("rutz::stdiobuf::close");
   if (is_open())
     {
       sync();
@@ -97,7 +97,7 @@ DOTRACE("rutz::stdiobuf::close");
 
 int rutz::stdiobuf::underflow() // with help from Josuttis, p. 678
 {
-DOTRACE("rutz::stdiobuf::underflow");
+GVX_TRACE("rutz::stdiobuf::underflow");
   // is read position before end of buffer?
   if (gptr() < egptr())
     return *gptr();
@@ -141,7 +141,7 @@ DOTRACE("rutz::stdiobuf::underflow");
 
 int rutz::stdiobuf::overflow(int c)
 {
-DOTRACE("rutz::stdiobuf::overflow");
+GVX_TRACE("rutz::stdiobuf::overflow");
   if (!(m_mode & std::ios::out) || !is_open()) return EOF;
 
   if (c != EOF)

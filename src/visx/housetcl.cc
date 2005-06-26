@@ -45,7 +45,7 @@
 extern "C"
 int House_Init(Tcl_Interp* interp)
 {
-DOTRACE("House_Init");
+GVX_TRACE("House_Init");
 
   PKG_CREATE(interp, "House", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");

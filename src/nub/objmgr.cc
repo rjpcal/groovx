@@ -48,7 +48,7 @@ Nub::SoftRef<Nub::Object> Nub::ObjMgr::newObj(const char* type)
 
 Nub::SoftRef<Nub::Object> Nub::ObjMgr::newObj(const rutz::fstring& type)
 {
-DOTRACE("Nub::ObjMgr::newObj(const fstring&)");
+GVX_TRACE("Nub::ObjMgr::newObj(const fstring&)");
   return SoftRef<Object>(ObjFactory::theOne().new_checked_object(type));
 }
 

@@ -113,7 +113,7 @@ namespace
 extern "C"
 int Numtest_Init(Tcl_Interp* interp)
 {
-DOTRACE("Numtest_Init");
+GVX_TRACE("Numtest_Init");
 
   PKG_CREATE(interp, "Numtest", "4.$Revision$");
 
@@ -128,7 +128,7 @@ extern "C" int Numtest_SafeInit(Tcl_Interp*) { return 1; }
 
 extern "C" int Numtest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
-DOTRACE("Numtest_Unload");
+GVX_TRACE("Numtest_Unload");
   return Tcl::Pkg::unloadDestroy(interp, "Numtest");
 }
 

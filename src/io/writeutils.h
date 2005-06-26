@@ -38,7 +38,7 @@
 #include "nub/ref.h"
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace IO
 {

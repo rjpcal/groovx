@@ -42,7 +42,7 @@ rutz::filename_error::filename_error(const char* str,
   :
   rutz::error(rutz::fstring("couldn't use file '", str, "'"), pos)
 {
-DOTRACE("rutz::filename_error::filename_error");
+GVX_TRACE("rutz::filename_error::filename_error");
 }
 
 rutz::filename_error::~filename_error() throw() {}

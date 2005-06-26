@@ -69,7 +69,7 @@ namespace
 #include <string>
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 namespace
@@ -83,7 +83,7 @@ namespace
 
 const char* rutz::demangled_name(const std::type_info& info)
 {
-DOTRACE("rutz::demangled_name");
+GVX_TRACE("rutz::demangled_name");
 
   const std::string mangled = info.name();
 
@@ -99,7 +99,7 @@ DOTRACE("rutz::demangled_name");
   std::pair<Cache::iterator, bool> result =
     nameCache.insert(Cache::value_type(mangled, demangled));
 
-  ASSERT(result.second == true);
+  GVX_ASSERT(result.second == true);
 
   return (*result.first).second.c_str();
 }

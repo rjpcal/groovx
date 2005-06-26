@@ -44,7 +44,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using geom::vec2d;
 using geom::vec3d;
@@ -56,31 +56,31 @@ Gfx::LineStrip::LineStrip() :
   join(false),
   loop(false)
 {
-DOTRACE("Gfx::LineStrip::LineStrip");
+GVX_TRACE("Gfx::LineStrip::LineStrip");
 }
 
 void Gfx::LineStrip::lineJoin(bool doJoin)
 {
-DOTRACE("Gfx::LineStrip::lineJoin");
+GVX_TRACE("Gfx::LineStrip::lineJoin");
   join = doJoin;
 }
 
 void Gfx::LineStrip::closeLoop(bool doClose)
 {
-DOTRACE("Gfx::LineStrip::closeLoop");
+GVX_TRACE("Gfx::LineStrip::closeLoop");
   loop = doClose;
 }
 
 void Gfx::LineStrip::begin(Gfx::Canvas& c, double w)
 {
-DOTRACE("Gfx::LineStrip::begin");
+GVX_TRACE("Gfx::LineStrip::begin");
 
   if (pts.size() != 0)
     {
       throw rutz::error("LineStrip::end() not called before LineStrip::begin()", SRC_POS);
     }
 
-  ASSERT(canvas == 0);
+  GVX_ASSERT(canvas == 0);
 
   canvas = &c;
   width = w;
@@ -88,7 +88,7 @@ DOTRACE("Gfx::LineStrip::begin");
 
 void Gfx::LineStrip::vertex(const vec2d& pt)
 {
-DOTRACE("Gfx::LineStrip::vertex");
+GVX_TRACE("Gfx::LineStrip::vertex");
   pts.push_back(pt);
 }
 
@@ -99,7 +99,7 @@ void Gfx::LineStrip::drawBezier4(const vec3d& p1,
                                  unsigned int subdivisions,
                                  unsigned int start)
 {
-DOTRACE("Gfx::LineStrip::drawBezier4");
+GVX_TRACE("Gfx::LineStrip::drawBezier4");
   geom::bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
   geom::bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
   //     geom::bezier4 zb(p1.z(), p2.z(), p3.z(), p4.z());
@@ -113,11 +113,11 @@ DOTRACE("Gfx::LineStrip::drawBezier4");
 
 void Gfx::LineStrip::end()
 {
-DOTRACE("Gfx::LineStrip::end");
+GVX_TRACE("Gfx::LineStrip::end");
 
   if (pts.size() == 0) return;
 
-  ASSERT(canvas != 0);
+  GVX_ASSERT(canvas != 0);
 
   if (join)
     drawJoinedLineStrip();
@@ -130,7 +130,7 @@ DOTRACE("Gfx::LineStrip::end");
 
 void Gfx::LineStrip::drawSimpleLineStrip()
 {
-DOTRACE("Gfx::LineStrip::drawSimpleLineStrip");
+GVX_TRACE("Gfx::LineStrip::drawSimpleLineStrip");
   if (loop)
     canvas->beginLineLoop();
   else
@@ -164,7 +164,7 @@ namespace
 
 void Gfx::LineStrip::drawJoinedLineStrip()
 {
-DOTRACE("Gfx::LineStrip::drawJoinedLineStrip");
+GVX_TRACE("Gfx::LineStrip::drawJoinedLineStrip");
   canvas->beginQuadStrip();
 
   vec2d d1;

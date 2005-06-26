@@ -357,7 +357,7 @@ void GLTcl::lookAt(Tcl::List args)
 
 void GLTcl::antialias(bool on_off)
 {
-DOTRACE("GLTcl::antialias");
+GVX_TRACE("GLTcl::antialias");
   if (on_off) // turn antialiasing on
     {
       glEnable(GL_BLEND);
@@ -458,7 +458,7 @@ Tcl::List GLTcl::lineInfo()
 extern "C"
 int Gl_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gl_Init");
+GVX_TRACE("Gl_Init");
 
   PKG_CREATE(interp, "GL", "4.$Revision$");
   GLTcl::loadGet(pkg);

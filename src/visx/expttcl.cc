@@ -117,7 +117,7 @@ namespace
 extern "C"
 int Exptdriver_Init(Tcl_Interp* interp)
 {
-DOTRACE("Exptdriver_Init");
+GVX_TRACE("Exptdriver_Init");
 
   PKG_CREATE(interp, "ExptDriver", "4.$Revision$");
   pkg->inheritPkg("ElementContainer");

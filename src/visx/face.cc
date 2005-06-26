@@ -47,7 +47,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using geom::vec2d;
 using geom::vec3d;
@@ -102,7 +102,7 @@ const FieldMap& Face::classFields()
 
 Face* Face::make()
 {
-DOTRACE("Face::make");
+GVX_TRACE("Face::make");
   return new Face;
 }
 
@@ -115,26 +115,26 @@ Face::Face(double eh, double es, double nl, double mh, int categ) :
   itsPartsMask(0),
   isItFilled(false)
 {
-DOTRACE("Face::Face");
+GVX_TRACE("Face::Face");
 
   setFieldMap(Face::classFields());
 }
 
 Face::~Face() throw()
 {
-DOTRACE("Face::~Face");
+GVX_TRACE("Face::~Face");
   // nothing to do
 }
 
 IO::VersionId Face::serialVersionId() const
 {
-DOTRACE("Face::serialVersionId");
+GVX_TRACE("Face::serialVersionId");
   return FACE_SVID;
 }
 
 void Face::readFrom(IO::Reader& reader)
 {
-DOTRACE("Face::readFrom");
+GVX_TRACE("Face::readFrom");
 
   reader.ensureReadVersionId("Face", 2,
                              "Try cvs tag xml_conversion_20040526",
@@ -147,7 +147,7 @@ DOTRACE("Face::readFrom");
 
 void Face::writeTo(IO::Writer& writer) const
 {
-DOTRACE("Face::writeTo");
+GVX_TRACE("Face::writeTo");
 
   writer.ensureWriteVersionId("Face", FACE_SVID, 2,
                               "Try groovx0.8a4", SRC_POS);
@@ -163,7 +163,7 @@ DOTRACE("Face::writeTo");
 
 void Face::grRender(Gfx::Canvas& canvas) const
 {
-DOTRACE("Face::grRender");
+GVX_TRACE("Face::grRender");
 
   //
   // Drawing commands begin here...
@@ -310,7 +310,7 @@ DOTRACE("Face::grRender");
 
 void Face::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
-DOTRACE("Face::grGetBoundingBox");
+GVX_TRACE("Face::grGetBoundingBox");
 
   bbox.vertex2(vec2d(-0.7, 0.2 + 0.75*(-1.7-0.2)));
   bbox.vertex2(vec2d(+0.7, 0.2 + 0.75*(+1.4-0.2)));
@@ -318,19 +318,19 @@ DOTRACE("Face::grGetBoundingBox");
 
 int Face::category() const
 {
-DOTRACE("Face::category");
+GVX_TRACE("Face::category");
   return itsFaceCategory;
 }
 
 void Face::setCategory(int val)
 {
-DOTRACE("Face::setCategory");
+GVX_TRACE("Face::setCategory");
   itsFaceCategory = val;
 }
 
 const double* Face::getCtrlPnts() const
 {
-DOTRACE("Face::getCtrlPnts");
+GVX_TRACE("Face::getCtrlPnts");
   static const double ctrlpnts[] =
   {
     -.7, 0.2, 0.0, // first 4 control points
@@ -347,13 +347,13 @@ DOTRACE("Face::getCtrlPnts");
 
 double Face::getEyeAspect() const
 {
-DOTRACE("Face::getEyeAspect");
+GVX_TRACE("Face::getEyeAspect");
   return 0.0;
 }
 
 double Face::getVertOffset() const
 {
-DOTRACE("Face::getVertOffset");
+GVX_TRACE("Face::getVertOffset");
   return 0.0;
 }
 

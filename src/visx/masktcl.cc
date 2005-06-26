@@ -44,7 +44,7 @@
 extern "C"
 int Maskhatch_Init(Tcl_Interp* interp)
 {
-DOTRACE("Maskhatch_Init");
+GVX_TRACE("Maskhatch_Init");
 
   PKG_CREATE(interp, "MaskHatch", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");

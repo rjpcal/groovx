@@ -47,7 +47,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -76,7 +76,7 @@ namespace
 
 void rutz::unixcall::chmod(const char* path, mode_t mode)
 {
-DOTRACE("rutz::unixcall::chmod");
+GVX_TRACE("rutz::unixcall::chmod");
 
   ErrnoSaver saver;
 
@@ -86,7 +86,7 @@ DOTRACE("rutz::unixcall::chmod");
 
 void rutz::unixcall::rename(const char* oldpath, const char* newpath)
 {
-DOTRACE("rutz::unixcall::rename");
+GVX_TRACE("rutz::unixcall::rename");
 
   ErrnoSaver saver;
 
@@ -96,7 +96,7 @@ DOTRACE("rutz::unixcall::rename");
 
 void rutz::unixcall::remove(const char* pathname)
 {
-DOTRACE("rutz::unixcall::remove");
+GVX_TRACE("rutz::unixcall::remove");
 
   errno = 0;
 
@@ -106,7 +106,7 @@ DOTRACE("rutz::unixcall::remove");
 
 rutz::fstring rutz::unixcall::getcwd()
 {
-DOTRACE("rutz::unixcall::getcwd");
+GVX_TRACE("rutz::unixcall::getcwd");
 
   ErrnoSaver saver;
 

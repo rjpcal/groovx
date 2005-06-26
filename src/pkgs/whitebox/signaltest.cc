@@ -190,7 +190,7 @@ namespace
 extern "C"
 int Signaltest_Init(Tcl_Interp* interp)
 {
-DOTRACE("Signaltest_Init");
+GVX_TRACE("Signaltest_Init");
 
   PKG_CREATE(interp, "Signaltest", "4.$Revision$");
 
@@ -208,7 +208,7 @@ extern "C" int Signaltest_SafeInit(Tcl_Interp*)
 
 extern "C" int Signaltest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
-DOTRACE("Signaltest_Unload");
+GVX_TRACE("Signaltest_Unload");
   return Tcl::Pkg::unloadDestroy(interp, "Signaltest");
 }
 

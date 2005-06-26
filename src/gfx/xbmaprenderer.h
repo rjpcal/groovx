@@ -80,7 +80,7 @@ namespace XBmapRenderer
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 void XBmapRenderer::doRender(Display* display,
                              Window win,
@@ -90,7 +90,7 @@ void XBmapRenderer::doRender(Display* display,
                              const geom::vec2<double>& world_pos,
                              const geom::vec2<double>& /* zoom */)
 {
-DOTRACE("XBmapRenderer::doRender");
+GVX_TRACE("XBmapRenderer::doRender");
 
   XWindowAttributes xwa;
   Status status = XGetWindowAttributes(display, win, &xwa);

@@ -43,7 +43,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::shared_ptr;
 
@@ -135,7 +135,7 @@ Tcl::Command::Command(shared_ptr<Tcl::Callback> callback,
   :
   rep(new Impl(callback, usage, objc_min, objc_max, exact_objc))
 {
-DOTRACE("Tcl::Command::Command");
+GVX_TRACE("Tcl::Command::Command");
 }
 
 shared_ptr<Tcl::Command> Tcl::Command::make(
@@ -145,12 +145,12 @@ shared_ptr<Tcl::Command> Tcl::Command::make(
           int objc_min, int objc_max, bool exact_objc,
           const rutz::file_pos& src_pos)
 {
-DOTRACE("Tcl::Command::make");
+GVX_TRACE("Tcl::Command::make");
 
   CommandGroup* const group =
     Tcl::CommandGroup::make(interp, cmd_name, src_pos);
 
-  ASSERT(group != 0);
+  GVX_ASSERT(group != 0);
 
   shared_ptr<Command> cmd( new Command(callback,
                                        usage,
@@ -172,14 +172,14 @@ DOTRACE("Tcl::Command::make");
 
 Tcl::Command::~Command() throw()
 {
-DOTRACE("Tcl::Command::~Command");
+GVX_TRACE("Tcl::Command::~Command");
 
   delete rep;
 }
 
 bool Tcl::Command::allowsObjc(unsigned int objc) const
 {
-DOTRACE("Tcl::Command::allowsObjc");
+GVX_TRACE("Tcl::Command::allowsObjc");
   if (rep->exactObjc)
     {
       return (objc == rep->objcMin || objc == rep->objcMax);
@@ -195,7 +195,7 @@ bool Tcl::Command::rejectsObjc(unsigned int objc) const
 
 rutz::fstring Tcl::Command::usageString() const
 {
-DOTRACE("Tcl::Command::usageString");
+GVX_TRACE("Tcl::Command::usageString");
   return rep->usage;
 }
 
@@ -207,13 +207,13 @@ void Tcl::Command::call(Tcl::Interp& interp,
 
 shared_ptr<Tcl::Dispatcher> Tcl::Command::getDispatcher() const
 {
-DOTRACE("Tcl::Command::getDispatcher");
+GVX_TRACE("Tcl::Command::getDispatcher");
   return rep->dispatcher;
 }
 
 void Tcl::Command::setDispatcher(shared_ptr<Tcl::Dispatcher> dpx)
 {
-DOTRACE("Tcl::Command::setDispatcher");
+GVX_TRACE("Tcl::Command::setDispatcher");
   rep->dispatcher = dpx;
 }
 
@@ -236,7 +236,7 @@ Tcl::Context::~Context() throw()
 
 void Tcl::Context::setObjResult(const Tcl::ObjPtr& obj)
 {
-DOTRACE("Tcl::Context::setObjResult");
+GVX_TRACE("Tcl::Context::setObjResult");
   itsInterp.setResult(obj);
 }
 

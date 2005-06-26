@@ -70,7 +70,7 @@ bool media::quicktime_sound_rep::quicktime_inited = false;
 
 media::quicktime_sound_rep::quicktime_sound_rep(const char* filename)
 {
-DOTRACE("media::quicktime_sound_rep::quicktime_sound_rep");
+GVX_TRACE("media::quicktime_sound_rep::quicktime_sound_rep");
 
   init_sound();
 
@@ -115,14 +115,14 @@ DOTRACE("media::quicktime_sound_rep::quicktime_sound_rep");
 
 media::quicktime_sound_rep::~quicktime_sound_rep() throw()
 {
-DOTRACE("media::quicktime_sound_rep::~quicktime_sound_rep");
+GVX_TRACE("media::quicktime_sound_rep::~quicktime_sound_rep");
   DisposeMovie(m_movie);
   CloseMovieFile(m_file_ref_num);
 }
 
 void media::quicktime_sound_rep::play()
 {
-DOTRACE("media::quicktime_sound_rep::play");
+GVX_TRACE("media::quicktime_sound_rep::play");
   GoToBeginningOfMovie(m_movie);
 
   StartMovie(m_movie);
@@ -135,7 +135,7 @@ DOTRACE("media::quicktime_sound_rep::play");
 
 bool media::quicktime_sound_rep::init_sound()
 {
-DOTRACE("media::quicktime_sound_rep::init_sound");
+GVX_TRACE("media::quicktime_sound_rep::init_sound");
   if (!quicktime_inited)
     {
       const OSErr err = EnterMovies();
@@ -149,7 +149,7 @@ DOTRACE("media::quicktime_sound_rep::init_sound");
 
 void media::quicktime_sound_rep::close_sound()
 {
-DOTRACE("quicktime_sound_rep::close_sound");
+GVX_TRACE("quicktime_sound_rep::close_sound");
   if (quicktime_inited)
     {
       ExitMovies();

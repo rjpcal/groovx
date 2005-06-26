@@ -208,7 +208,7 @@ namespace
 extern "C"
 int Basesixfourtest_Init(Tcl_Interp* interp)
 {
-DOTRACE("Basesixfourtest_Init");
+GVX_TRACE("Basesixfourtest_Init");
 
   PKG_CREATE(interp, "Basesixfourtest", "4.$Revision$");
 
@@ -227,7 +227,7 @@ extern "C" int Basesixfourtest_SafeInit(Tcl_Interp*)
 
 extern "C" int Basesixfourtest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
-DOTRACE("Basesixfourtest_Unload");
+GVX_TRACE("Basesixfourtest_Unload");
   return Tcl::Pkg::unloadDestroy(interp, "Basesixfourtest");
 }
 

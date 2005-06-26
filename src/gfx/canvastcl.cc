@@ -98,7 +98,7 @@ namespace
 extern "C"
 int Canvas_Init(Tcl_Interp* interp)
 {
-DOTRACE("Canvas_Init");
+GVX_TRACE("Canvas_Init");
 
   PKG_CREATE(interp, "Canvas", "4.$Revision$");
   pkg->inheritPkg("Obj");
@@ -120,7 +120,7 @@ DOTRACE("Canvas_Init");
 extern "C"
 int Glcanvas_Init(Tcl_Interp* interp)
 {
-DOTRACE("Glcanvas_Init");
+GVX_TRACE("Glcanvas_Init");
 
   PKG_CREATE(interp, "GLCanvas", "4.$Revision$");
   pkg->inheritPkg("Canvas");

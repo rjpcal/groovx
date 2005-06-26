@@ -81,7 +81,7 @@ namespace
 extern "C"
 int Trialevent_Init(Tcl_Interp* interp)
 {
-DOTRACE("Trialevent_Init");
+GVX_TRACE("Trialevent_Init");
 
   PKG_CREATE(interp, "TrialEvent", "4.$Revision$");
   pkg->inheritPkg("IO");
@@ -111,7 +111,7 @@ DOTRACE("Trialevent_Init");
 extern "C"
 int Nulltrialevent_Init(Tcl_Interp* interp)
 {
-DOTRACE("Nulltrialevent_Init");
+GVX_TRACE("Nulltrialevent_Init");
 
   PKG_CREATE(interp, "NullTrialEvent", "4.$Revision$");
   pkg->inheritPkg("TrialEvent");
@@ -123,7 +123,7 @@ DOTRACE("Nulltrialevent_Init");
 extern "C"
 int Filewriteevent_Init(Tcl_Interp* interp)
 {
-DOTRACE("Filewriteevent_Init");
+GVX_TRACE("Filewriteevent_Init");
 
   PKG_CREATE(interp, "FileWriteEvent", "4.$Revision$");
   pkg->inheritPkg("TrialEvent");
@@ -144,7 +144,7 @@ DOTRACE("Filewriteevent_Init");
 extern "C"
 int Genericevent_Init(Tcl_Interp* interp)
 {
-DOTRACE("Genericevent_Init");
+GVX_TRACE("Genericevent_Init");
 
   PKG_CREATE(interp, "GenericEvent", "4.$Revision$");
   pkg->inheritPkg("TrialEvent");
@@ -159,7 +159,7 @@ DOTRACE("Genericevent_Init");
 extern "C"
 int Multievent_Init(Tcl_Interp* interp)
 {
-DOTRACE("Multievent_Init");
+GVX_TRACE("Multievent_Init");
 
   PKG_CREATE(interp, "MultiEvent", "4.$Revision$");
   pkg->inheritPkg("TrialEvent");

@@ -140,7 +140,7 @@ namespace GxTcl
   Tcl::List bezier4(double p1, double p2, double p3, double p4,
                     unsigned int N)
   {
-    DOTRACE("<gxtcl.cc>::bezier4");
+    GVX_TRACE("<gxtcl.cc>::bezier4");
 
     if (N < 4)
       {
@@ -164,7 +164,7 @@ namespace GxTcl
 extern "C"
 int Gx_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gx_Init");
+GVX_TRACE("Gx_Init");
 
   PKG_CREATE(interp, "Gx", "4.$Revision$");
 
@@ -176,7 +176,7 @@ DOTRACE("Gx_Init");
 extern "C"
 int Gxnode_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxnode_Init");
+GVX_TRACE("Gxnode_Init");
 
   PKG_CREATE(interp, "GxNode", "4.$Revision$");
   pkg->inheritPkg("IO");
@@ -193,7 +193,7 @@ DOTRACE("Gxnode_Init");
 extern "C"
 int Gxseparator_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxseparator_Init");
+GVX_TRACE("Gxseparator_Init");
 
   PKG_CREATE(interp, "GxSeparator", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -221,7 +221,7 @@ DOTRACE("Gxseparator_Init");
 extern "C"
 int Gxcolor_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxcolor_Init");
+GVX_TRACE("Gxcolor_Init");
 
   PKG_CREATE(interp, "GxColor", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -234,7 +234,7 @@ DOTRACE("Gxcolor_Init");
 extern "C"
 int Gxdrawstyle_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxdrawstyle_Init");
+GVX_TRACE("Gxdrawstyle_Init");
 
   PKG_CREATE(interp, "GxDrawStyle", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -247,7 +247,7 @@ DOTRACE("Gxdrawstyle_Init");
 extern "C"
 int Gxline_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxline_Init");
+GVX_TRACE("Gxline_Init");
 
   PKG_CREATE(interp, "GxLine", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -260,7 +260,7 @@ DOTRACE("Gxline_Init");
 extern "C"
 int Gxcylinder_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxcylinder_Init");
+GVX_TRACE("Gxcylinder_Init");
 
   PKG_CREATE(interp, "GxCylinder", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -273,7 +273,7 @@ DOTRACE("Gxcylinder_Init");
 extern "C"
 int Gxsphere_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxsphere_Init");
+GVX_TRACE("Gxsphere_Init");
 
   PKG_CREATE(interp, "GxSphere", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -286,7 +286,7 @@ DOTRACE("Gxsphere_Init");
 extern "C"
 int Gxlighting_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxlighting_Init");
+GVX_TRACE("Gxlighting_Init");
 
   PKG_CREATE(interp, "GxLighting", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -299,7 +299,7 @@ DOTRACE("Gxlighting_Init");
 extern "C"
 int Gxmaterial_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxmaterial_Init");
+GVX_TRACE("Gxmaterial_Init");
 
   PKG_CREATE(interp, "GxMaterial", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -312,7 +312,7 @@ DOTRACE("Gxmaterial_Init");
 extern "C"
 int Gxpointset_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxpointset_Init");
+GVX_TRACE("Gxpointset_Init");
 
   PKG_CREATE(interp, "GxPointSet", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -325,7 +325,7 @@ DOTRACE("Gxpointset_Init");
 extern "C"
 int Gxscaler_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxscaler_Init");
+GVX_TRACE("Gxscaler_Init");
 
   PKG_CREATE(interp, "GxScaler", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -346,7 +346,7 @@ DOTRACE("Gxscaler_Init");
 extern "C"
 int Gxemptynode_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxemptynode_Init");
+GVX_TRACE("Gxemptynode_Init");
 
   PKG_CREATE(interp, "GxEmptyNode", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -359,7 +359,7 @@ DOTRACE("Gxemptynode_Init");
 extern "C"
 int Gxtransform_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxtransform_Init");
+GVX_TRACE("Gxtransform_Init");
 
   PKG_CREATE(interp, "GxTransform", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -372,7 +372,7 @@ DOTRACE("Gxtransform_Init");
 extern "C"
 int Gxshapekit_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxshapekit_Init");
+GVX_TRACE("Gxshapekit_Init");
 
   PKG_CREATE(interp, "GxShapeKit", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -433,7 +433,7 @@ namespace
 extern "C"
 int Gxpixmap_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxpixmap_Init");
+GVX_TRACE("Gxpixmap_Init");
 
   PKG_CREATE(interp, "GxPixmap", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
@@ -475,7 +475,7 @@ DOTRACE("Gxpixmap_Init");
 extern "C"
 int Gxtext_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxtext_Init");
+GVX_TRACE("Gxtext_Init");
 
   PKG_CREATE(interp, "GxText", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
@@ -493,7 +493,7 @@ DOTRACE("Gxtext_Init");
 extern "C"
 int Gxfixedscalecamera_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxfixedscalecamera_Init");
+GVX_TRACE("Gxfixedscalecamera_Init");
 
   PKG_CREATE(interp, "GxFixedScaleCamera", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -506,7 +506,7 @@ DOTRACE("Gxfixedscalecamera_Init");
 extern "C"
 int Gxpsyphycamera_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxpsyphycamera_Init");
+GVX_TRACE("Gxpsyphycamera_Init");
 
   PKG_CREATE(interp, "GxPsyphyCamera", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -519,7 +519,7 @@ DOTRACE("Gxpsyphycamera_Init");
 extern "C"
 int Gxperspectivecamera_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxperspectivecamera_Init");
+GVX_TRACE("Gxperspectivecamera_Init");
 
   PKG_CREATE(interp, "GxPerspectiveCamera", "4.$Revision$");
   pkg->inheritPkg("GxNode");
@@ -532,7 +532,7 @@ DOTRACE("Gxperspectivecamera_Init");
 extern "C"
 int Gxdisk_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gxdisk_Init");
+GVX_TRACE("Gxdisk_Init");
 
   PKG_CREATE(interp, "GxDisk", "4.$Revision$");
   pkg->inheritPkg("GxNode");

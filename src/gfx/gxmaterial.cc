@@ -51,7 +51,7 @@ namespace
 
 const FieldMap& GxMaterial::classFields()
 {
-DOTRACE("GxMaterial::classFields");
+GVX_TRACE("GxMaterial::classFields");
   static const Field FIELD_ARRAY[] =
   {
     Field("specularColor", Field::ValueType(), &GxMaterial::specularColor,
@@ -73,7 +73,7 @@ DOTRACE("GxMaterial::classFields");
 
 GxMaterial* GxMaterial::make()
 {
-DOTRACE("GxMaterial::make");
+GVX_TRACE("GxMaterial::make");
  return new GxMaterial;
 }
 
@@ -84,30 +84,30 @@ GxMaterial::GxMaterial() :
   ambientColor(0.0, 0.0, 0.0, 1.0),
   shininess(50.0)
 {
-DOTRACE("GxMaterial::GxMaterial");
+GVX_TRACE("GxMaterial::GxMaterial");
   setFieldMap(GxMaterial::classFields());
 }
 
 GxMaterial::~GxMaterial() throw()
 {
-DOTRACE("GxMaterial::~GxMaterial");
+GVX_TRACE("GxMaterial::~GxMaterial");
 }
 
 IO::VersionId GxMaterial::serialVersionId() const
 {
-DOTRACE("GxMaterial::serialVersionId");
+GVX_TRACE("GxMaterial::serialVersionId");
   return GXMATERIAL_SVID;
 }
 
 void GxMaterial::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxMaterial::readFrom");
+GVX_TRACE("GxMaterial::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
 void GxMaterial::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxMaterial::writeTo");
+GVX_TRACE("GxMaterial::writeTo");
   writeFieldsTo(writer, classFields(), GXMATERIAL_SVID);
 }
 
@@ -120,7 +120,7 @@ void GxMaterial::getBoundingCube(Gfx::Bbox&) const
 
 void GxMaterial::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxMaterial::draw");
+GVX_TRACE("GxMaterial::draw");
 
   GLCanvas* glcanvas = dynamic_cast<GLCanvas*>(&canvas);
 

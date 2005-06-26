@@ -43,7 +43,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::shared_ptr;
 
@@ -130,7 +130,7 @@ void Tcl::defGenericObjCmds(Tcl::Pkg* pkg,
                             shared_ptr<Tcl::ObjCaster> caster,
                             const rutz::file_pos& src_pos)
 {
-DOTRACE("Tcl::defGenericObjCmds");
+GVX_TRACE("Tcl::defGenericObjCmds");
 
   const int flags = Tcl::NO_EXPORT;
 

@@ -41,18 +41,18 @@
 // recording such information falls to the rutz::trace class. An
 // automatic object of the rutz::trace class is constructed on entry
 // to a function, and it is destructed just prior to function exit. If
-// LOCAL_TRACE is defined, the rutz::trace object will emit "entering"
-// and "leaving" messages as it is constructed and destructed,
-// respectively. In any case, the rutz::trace object takes care of
-// teling the static rutz::prof object to 1) increment its counter,
-// and 2) record the elapsed time.
+// GVX_LOCAL_TRACE is defined, the rutz::trace object will emit
+// "entering" and "leaving" messages as it is constructed and
+// destructed, respectively. In any case, the rutz::trace object takes
+// care of teling the static rutz::prof object to 1) increment its
+// counter, and 2) record the elapsed time.
 //
 // The behavior of the control macros are as follows:
 //
-// 1) if LOCAL_PROF is defined, profiling will always occur
-// 2) if LOCAL_TRACE is defined, profiling AND tracing will always occur
-// 3) if TRACE is defined, profiling AND tracing will occur, EXCEPT:
-// 4) if NO_TRACE is defined, TRACE is ignored
+// 1) if GVX_LOCAL_PROF is defined, profiling will always occur
+// 2) if GVX_LOCAL_TRACE is defined, profiling AND tracing will always occur
+// 3) if GVX_TRACE is defined, profiling AND tracing will occur, EXCEPT:
+// 4) if GVX_NO_TRACE is defined, GVX_TRACE is ignored
 
 #include "rutz/time.h"
 
@@ -154,31 +154,32 @@ private:
   bool       m_should_pop;
 };
 
-#if (defined(TRACE) && !defined(NO_TRACE))
-#  ifndef LOCAL_TRACE
-#    define LOCAL_TRACE
+#if (defined(GVX_TRACE) && !defined(GVX_NO_TRACE))
+#  ifndef GVX_LOCAL_TRACE
+#    define GVX_LOCAL_TRACE
 #  endif
 #endif
 
-#if defined(LOCAL_TRACE) || (defined(PROF) && !defined(NO_PROF))
-#  ifndef LOCAL_PROF
-#    define LOCAL_PROF
+#if defined(GVX_LOCAL_TRACE) || (defined(GVX_PROF) && !defined(GVX_NO_PROF))
+#  ifndef GVX_LOCAL_PROF
+#    define GVX_LOCAL_PROF
 #  endif
 #endif
 
-#if !defined(DYNAMIC_TRACE_EXPR)
-#  if defined(LOCAL_TRACE)
-#    define DYNAMIC_TRACE_EXPR true
+#if !defined(GVX_DYNAMIC_TRACE_EXPR)
+#  if defined(GVX_LOCAL_TRACE)
+#    define GVX_DYNAMIC_TRACE_EXPR true
 #  else
-#    define DYNAMIC_TRACE_EXPR false
+#    define GVX_DYNAMIC_TRACE_EXPR false
 #  endif
 #endif
 
-#ifdef LOCAL_PROF
-#  define DOTRACE(x) static rutz::prof P_x_(x, __FILE__, __LINE__); \
-                     rutz::trace T_x_(P_x_, DYNAMIC_TRACE_EXPR);
+#ifdef GVX_LOCAL_PROF
+#  define GVX_TRACE(x) \
+                 static rutz::prof  P_x_  (x,   __FILE__, __LINE__); \
+                 rutz::trace        T_x_  (P_x_, GVX_DYNAMIC_TRACE_EXPR);
 #else
-#  define DOTRACE(x) {}
+#  define GVX_TRACE(x) {}
 #endif
 
 static const char vcid_groovx_rutz_trace_h_utc20050626084019[] = "$Id$ $HeadURL$";

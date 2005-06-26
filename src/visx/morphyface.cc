@@ -52,7 +52,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using geom::vec2d;
 using geom::vec3d;
@@ -72,7 +72,7 @@ namespace
                                            // below
   const double* getHairVertices(double top_width, double hair_width)
   {
-    DOTRACE("getHairVertices");
+    GVX_TRACE("getHairVertices");
 
     static double hair_vertices[NUM_HAIR_POINTS*4];
 
@@ -205,7 +205,7 @@ const FieldMap& MorphyFace::classFields()
 
 MorphyFace* MorphyFace::make()
 {
-DOTRACE("MorphyFace::make");
+GVX_TRACE("MorphyFace::make");
   return new MorphyFace;
 }
 
@@ -252,7 +252,7 @@ MorphyFace::MorphyFace() :
   itsStrokeWidth(3.0),
   itsLineJoin(true)
 {
-DOTRACE("MorphyFace::MorphyFace");
+GVX_TRACE("MorphyFace::MorphyFace");
 
   setFieldMap(MorphyFace::classFields());
 
@@ -262,19 +262,19 @@ DOTRACE("MorphyFace::MorphyFace");
 
 MorphyFace::~MorphyFace() throw()
 {
-DOTRACE("MorphyFace::~MorphyFace");
+GVX_TRACE("MorphyFace::~MorphyFace");
   // nothing to do
 }
 
 IO::VersionId MorphyFace::serialVersionId() const
 {
-DOTRACE("MorphyFace::serialVersionId");
+GVX_TRACE("MorphyFace::serialVersionId");
   return MFACE_SVID;
 }
 
 void MorphyFace::readFrom(IO::Reader& reader)
 {
-DOTRACE("MorphyFace::readFrom");
+GVX_TRACE("MorphyFace::readFrom");
 
   reader.ensureReadVersionId("MorphyFace", 2,
                              "Try cvs tag xml_conversion_20040526",
@@ -287,7 +287,7 @@ DOTRACE("MorphyFace::readFrom");
 
 void MorphyFace::writeTo(IO::Writer& writer) const
 {
-DOTRACE("MorphyFace::writeTo");
+GVX_TRACE("MorphyFace::writeTo");
 
   writer.ensureWriteVersionId("MorphyFace", MFACE_SVID, 2,
                               "Try groovx0.8a4", SRC_POS);
@@ -304,7 +304,7 @@ DOTRACE("MorphyFace::writeTo");
 
 void MorphyFace::grRender(Gfx::Canvas& canvas) const
 {
-DOTRACE("MorphyFace::grRender");
+GVX_TRACE("MorphyFace::grRender");
 
   Gfx::AttribSaver attribSaver(canvas);
 
@@ -340,7 +340,7 @@ DOTRACE("MorphyFace::grRender");
 
       // Draw eye outline
       {
-        DOTRACE("MorphyFace::grRender-draw eye outline");
+        GVX_TRACE("MorphyFace::grRender-draw eye outline");
 
         const vec3d s1(itsEyeHeight*itsEyeAspectRatio,
                        -itsEyeHeight,
@@ -368,7 +368,7 @@ DOTRACE("MorphyFace::grRender");
 
       // Draw eyebrow
       {
-        DOTRACE("MorphyFace::grRender-draw eyebrow");
+        GVX_TRACE("MorphyFace::grRender-draw eyebrow");
 
         Gfx::MatrixSaver msaver3(canvas);
 
@@ -392,7 +392,7 @@ DOTRACE("MorphyFace::grRender");
 
       // Draw pupil
       {
-        DOTRACE("MorphyFace::grRender-draw pupil");
+        GVX_TRACE("MorphyFace::grRender-draw pupil");
 
         Gfx::MatrixSaver msaver4(canvas);
 
@@ -437,7 +437,7 @@ DOTRACE("MorphyFace::grRender");
   //
 
   {
-    DOTRACE("MorphyFace::grRender-draw nose");
+    GVX_TRACE("MorphyFace::grRender-draw nose");
 
     Gfx::MatrixSaver msaver5(canvas);
 
@@ -464,7 +464,7 @@ DOTRACE("MorphyFace::grRender");
   //
 
   {
-    DOTRACE("MorphyFace::grRender-draw mouth");
+    GVX_TRACE("MorphyFace::grRender-draw mouth");
 
     Gfx::MatrixSaver msaver6(canvas);
 
@@ -486,7 +486,7 @@ DOTRACE("MorphyFace::grRender");
   //
 
   {
-    DOTRACE("MorphyFace::grRender-draw hair");
+    GVX_TRACE("MorphyFace::grRender-draw hair");
 
     Gfx::AttribSaver saver(canvas);
 
@@ -508,7 +508,7 @@ DOTRACE("MorphyFace::grRender");
 
 void MorphyFace::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
-DOTRACE("MorphyFace::grGetBoundingBox");
+GVX_TRACE("MorphyFace::grGetBoundingBox");
 
   geom::bezier4 xbezier_top(-1.0, -itsTopWidth, itsTopWidth, 1.0);
   geom::bezier4 xbezier_bottom(1.0, itsBottomWidth, -itsBottomWidth, -1.0);

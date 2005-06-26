@@ -56,7 +56,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using geom::vec2i;
 using geom::vec2d;
@@ -104,7 +104,7 @@ const FieldMap& Gabor::classFields()
 
 Gabor* Gabor::make()
 {
-DOTRACE("Gabor::make");
+GVX_TRACE("Gabor::make");
   return new Gabor;
 }
 
@@ -123,7 +123,7 @@ Gabor::Gabor() :
   itsFgTint(1.0, 1.0, 1.0, 1.0),
   itsBgTint(0.0, 0.0, 0.0, 0.0)
 {
-DOTRACE("Gabor::Gabor");
+GVX_TRACE("Gabor::Gabor");
 
   setFieldMap(Gabor::classFields());
 
@@ -132,18 +132,18 @@ DOTRACE("Gabor::Gabor");
 
 Gabor::~Gabor () throw()
 {
-DOTRACE("Gabor::~Gabor");
+GVX_TRACE("Gabor::~Gabor");
 }
 
 IO::VersionId Gabor::serialVersionId() const
 {
-DOTRACE("Gabor::serialVersionId");
+GVX_TRACE("Gabor::serialVersionId");
   return GABOR_SVID;
 }
 
 void Gabor::readFrom(IO::Reader& reader)
 {
-DOTRACE("Gabor::readFrom");
+GVX_TRACE("Gabor::readFrom");
 
   reader.ensureReadVersionId("Gabor", 2,
                              "Try cvs tag xml_conversion_20040526",
@@ -156,7 +156,7 @@ DOTRACE("Gabor::readFrom");
 
 void Gabor::writeTo(IO::Writer& writer) const
 {
-DOTRACE("Gabor::writeTo");
+GVX_TRACE("Gabor::writeTo");
 
   writer.ensureWriteVersionId("Gabor", GABOR_SVID, 2,
                               "Try groovx0.8a4", SRC_POS);
@@ -168,7 +168,7 @@ DOTRACE("Gabor::writeTo");
 
 void Gabor::setLogContrast(double logContrast)
 {
-DOTRACE("Gabor::setLogContrast");
+GVX_TRACE("Gabor::setLogContrast");
 
   if (logContrast <= 0.0)
     {
@@ -178,14 +178,14 @@ DOTRACE("Gabor::setLogContrast");
 
 double Gabor::getLogContrast() const
 {
-DOTRACE("getLogContrast");
+GVX_TRACE("getLogContrast");
 
   return (itsContrast > 0.0) ? std::log10(itsContrast) : -10.0;
 }
 
 void Gabor::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
-DOTRACE("Gabor::grGetBoundingBox");
+GVX_TRACE("Gabor::grGetBoundingBox");
 
   bbox.drawScreenRect(vec3d::zeros(),
                       vec2i::ones() * itsResolution,
@@ -194,7 +194,7 @@ DOTRACE("Gabor::grGetBoundingBox");
 
 void Gabor::getBmapData(media::bmap_data& dest) const
 {
-DOTRACE("Gabor::getBmapData");
+GVX_TRACE("Gabor::getBmapData");
   const double xsigma2 = itsSigma*itsAspectRatio * itsSigma*itsAspectRatio;
   const double ysigma2 = itsSigma * itsSigma;
 
@@ -257,7 +257,7 @@ DOTRACE("Gabor::getBmapData");
 
           const double gabor = 0.5*sin_x*gauss_xy*itsContrast + 0.5;
 
-          ASSERT( bytes < bytes_end );
+          GVX_ASSERT( bytes < bytes_end );
 
           if ( itsColorMode == GRAYSCALE )
             {
@@ -291,7 +291,7 @@ DOTRACE("Gabor::getBmapData");
 
 void Gabor::saveImage(const char* filename) const
 {
-DOTRACE("Gabor::saveImage");
+GVX_TRACE("Gabor::saveImage");
 
   media::bmap_data data;
   getBmapData(data);
@@ -301,7 +301,7 @@ DOTRACE("Gabor::saveImage");
 
 void Gabor::grRender(Gfx::Canvas& canvas) const
 {
-DOTRACE("Gabor::grRender");
+GVX_TRACE("Gabor::grRender");
 
   media::bmap_data data;
   getBmapData(data);

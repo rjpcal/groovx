@@ -51,7 +51,7 @@ namespace
 
 const FieldMap& GxLighting::classFields()
 {
-DOTRACE("GxLighting::classFields");
+GVX_TRACE("GxLighting::classFields");
   static const Field FIELD_ARRAY[] =
   {
     Field("specularColor", Field::ValueType(), &GxLighting::specularColor,
@@ -81,7 +81,7 @@ DOTRACE("GxLighting::classFields");
 
 GxLighting* GxLighting::make()
 {
-DOTRACE("GxLighting::make");
+GVX_TRACE("GxLighting::make");
  return new GxLighting;
 }
 
@@ -96,30 +96,30 @@ GxLighting::GxLighting() :
   spotExponent(0.0),
   spotCutoff(180.0)
 {
-DOTRACE("GxLighting::GxLighting");
+GVX_TRACE("GxLighting::GxLighting");
   setFieldMap(GxLighting::classFields());
 }
 
 GxLighting::~GxLighting() throw()
 {
-DOTRACE("GxLighting::~GxLighting");
+GVX_TRACE("GxLighting::~GxLighting");
 }
 
 IO::VersionId GxLighting::serialVersionId() const
 {
-DOTRACE("GxLighting::serialVersionId");
+GVX_TRACE("GxLighting::serialVersionId");
   return GXLIGHTING_SVID;
 }
 
 void GxLighting::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxLighting::readFrom");
+GVX_TRACE("GxLighting::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
 void GxLighting::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxLighting::writeTo");
+GVX_TRACE("GxLighting::writeTo");
   writeFieldsTo(writer, classFields(), GXLIGHTING_SVID);
 }
 
@@ -132,7 +132,7 @@ void GxLighting::getBoundingCube(Gfx::Bbox&) const
 
 void GxLighting::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxLighting::draw");
+GVX_TRACE("GxLighting::draw");
 
   GLCanvas* glcanvas = dynamic_cast<GLCanvas*>(&canvas);
 

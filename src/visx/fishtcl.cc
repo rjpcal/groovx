@@ -59,7 +59,7 @@ namespace
 extern "C"
 int Fish_Init(Tcl_Interp* interp)
 {
-DOTRACE("Fish_Init");
+GVX_TRACE("Fish_Init");
 
   PKG_CREATE(interp, "Fish", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");

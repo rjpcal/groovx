@@ -58,10 +58,10 @@
 #include "visx/response.h"
 #include "visx/trial.h"
 
-#define DYNAMIC_TRACE_EXPR EventResponseHdlr::tracer.status()
+#define GVX_DYNAMIC_TRACE_EXPR EventResponseHdlr::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 
@@ -135,7 +135,7 @@ public:
       itsBindingScript(script),
       itsResponseCount(0)
     {
-      PRECONDITION((erh != 0) && (widget.isValid()) && (&trial != 0));
+      GVX_PRECONDITION((erh != 0) && (widget.isValid()) && (&trial != 0));
       attend();
     }
 
@@ -209,7 +209,7 @@ public:
                                      const char* event_info)
   {
     EventResponseHdlr::Impl* rep = erh->rep;
-    PRECONDITION( rep->isActive() );
+    GVX_PRECONDITION( rep->isActive() );
 
     rep->itsState->handleResponse(rep, event_info);
   }
@@ -269,12 +269,12 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner) :
   itsResponseProc(new Tcl::ProcWrapper(itsInterp, uniqCmdName("responseProc"))),
   itsMaxResponses(1)
 {
-DOTRACE("EventResponseHdlr::Impl::Impl");
+GVX_TRACE("EventResponseHdlr::Impl::Impl");
 }
 
 EventResponseHdlr::Impl::~Impl()
 {
-DOTRACE("EventResponseHdlr::Impl::~Impl");
+GVX_TRACE("EventResponseHdlr::Impl::~Impl");
 
   // force the destructor to run now, rather than after ~Impl()
   // finishes, so that the reference to *this in ActiveState does
@@ -291,7 +291,7 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
 
 EventResponseHdlr* EventResponseHdlr::make()
 {
-DOTRACE("EventResponseHdlr::make");
+GVX_TRACE("EventResponseHdlr::make");
   return new EventResponseHdlr;
 }
 
@@ -308,7 +308,7 @@ IO::VersionId EventResponseHdlr::serialVersionId() const
 
 void EventResponseHdlr::readFrom(IO::Reader& reader)
 {
-DOTRACE("EventResponseHdlr::readFrom");
+GVX_TRACE("EventResponseHdlr::readFrom");
 
   reader.ensureReadVersionId("EventResponseHdlr", 2,
                              "Try cvs tag xml_conversion_20040526",
@@ -329,7 +329,7 @@ DOTRACE("EventResponseHdlr::readFrom");
 
 void EventResponseHdlr::writeTo(IO::Writer& writer) const
 {
-DOTRACE("EventResponseHdlr::writeTo");
+GVX_TRACE("EventResponseHdlr::writeTo");
 
   writer.ensureWriteVersionId("EventResponseHdlr", ERH_SVID, 2,
                               "Try groovx0.8a7", SRC_POS);
@@ -345,7 +345,7 @@ DOTRACE("EventResponseHdlr::writeTo");
 // FIXME XML still need this?
 void EventResponseHdlr::setInputResponseMap(const fstring& s)
 {
-DOTRACE("EventResponseHdlr::setInputResponseMap");
+GVX_TRACE("EventResponseHdlr::setInputResponseMap");
 
   fstring args("inp");
 
@@ -362,25 +362,25 @@ DOTRACE("EventResponseHdlr::setInputResponseMap");
 
 bool EventResponseHdlr::getUseFeedback() const
 {
-DOTRACE("EventResponseHdlr::getUseFeedback");
+GVX_TRACE("EventResponseHdlr::getUseFeedback");
   return rep->itsFeedbackMap.itsUseFeedback;
 }
 
 void EventResponseHdlr::setUseFeedback(bool val)
 {
-DOTRACE("EventResponseHdlr::setUseFeedback");
+GVX_TRACE("EventResponseHdlr::setUseFeedback");
   rep->itsFeedbackMap.itsUseFeedback = val;
 }
 
 const char* EventResponseHdlr::getFeedbackMap() const
 {
-DOTRACE("EventResponseHdlr::getFeedbackMap");
+GVX_TRACE("EventResponseHdlr::getFeedbackMap");
   return rep->itsFeedbackMap.rep().c_str();
 }
 
 void EventResponseHdlr::setFeedbackMap(const char* feedback_string)
 {
-DOTRACE("EventResponseHdlr::setFeedbackMap");
+GVX_TRACE("EventResponseHdlr::setFeedbackMap");
   rep->itsFeedbackMap.set(feedback_string);
 }
 
@@ -422,13 +422,13 @@ unsigned int EventResponseHdlr::getMaxResponses() const
 void EventResponseHdlr::rhBeginTrial(Nub::SoftRef<Toglet> widget,
                                      Trial& trial) const
 {
-  PRECONDITION( rep->isInactive() );
+  GVX_PRECONDITION( rep->isInactive() );
 
   rep->itsInterp.clearEventQueue();
 
   rep->becomeActive(widget, trial);
 
-  POSTCONDITION( rep->isActive() );
+  GVX_POSTCONDITION( rep->isActive() );
 }
 
 void EventResponseHdlr::rhAbortTrial() const
@@ -445,7 +445,7 @@ void EventResponseHdlr::rhEndTrial() const
       rep->becomeInactive();
     }
 
-  POSTCONDITION( rep->isInactive() );
+  GVX_POSTCONDITION( rep->isInactive() );
 }
 
 void EventResponseHdlr::rhHaltExpt() const
@@ -456,7 +456,7 @@ void EventResponseHdlr::rhHaltExpt() const
       rep->becomeInactive();
     }
 
-  POSTCONDITION( rep->isInactive() );
+  GVX_POSTCONDITION( rep->isInactive() );
 }
 
 void EventResponseHdlr::rhAllowResponses(Nub::SoftRef<Toglet> widget,
@@ -464,14 +464,14 @@ void EventResponseHdlr::rhAllowResponses(Nub::SoftRef<Toglet> widget,
 {
   rep->becomeActive(widget, trial);
 
-  POSTCONDITION( rep->isActive() );
+  GVX_POSTCONDITION( rep->isActive() );
 }
 
 void EventResponseHdlr::rhDenyResponses() const
 {
   rep->becomeInactive();
 
-  POSTCONDITION( rep->isInactive() );
+  GVX_POSTCONDITION( rep->isInactive() );
 }
 
 static const char vcid_groovx_visx_eventresponsehdlr_cc_utc20050626084016[] = "$Id$ $HeadURL$";

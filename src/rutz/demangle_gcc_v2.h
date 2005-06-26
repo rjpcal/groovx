@@ -39,7 +39,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -96,7 +96,7 @@ namespace
             modifiers.insert(0, " unsigned");
             break;
           default:
-            ASSERT(0);
+            GVX_ASSERT(0);
           }
         str.erase(pos, 1);
       }
@@ -139,14 +139,14 @@ namespace
         break;
       default:
         dbg_eval_nl(3, typecode);
-        ASSERT(0);
+        GVX_ASSERT(0);
         break;
       }
   }
 
   std::string demangle_gcc_v2(const std::string& in)
   {
-    DOTRACE("demangle_impl");
+    GVX_TRACE("demangle_impl");
     std::string out=in;
 
     dbg_eval_nl(3, out.c_str());
@@ -168,7 +168,7 @@ namespace
             out.erase(0, 1);
             num_levels = munch_int(out, 0);
             dbg_eval_nl(3, num_levels);
-            ASSERT(out[0] == '_');
+            GVX_ASSERT(out[0] == '_');
             out.erase(0, 1);
           }
         else
@@ -222,7 +222,7 @@ namespace
         for (int n = 0; n < num_parameters; ++n)
           {
             // Template parameters must start with 'Z'
-            ASSERT( out[pos] == 'Z' );
+            GVX_ASSERT( out[pos] == 'Z' );
             out.erase(pos, 1);
 
             dbg_eval_nl(3, out.c_str());

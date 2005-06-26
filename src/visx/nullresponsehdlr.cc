@@ -43,59 +43,59 @@
 
 NullResponseHdlr* NullResponseHdlr::make()
 {
-DOTRACE("NullResponseHdlr::make");
+GVX_TRACE("NullResponseHdlr::make");
   return new NullResponseHdlr;
 }
 
 NullResponseHdlr::NullResponseHdlr()
 {
-DOTRACE("NullResponseHdlr::NullResponseHdlr");
+GVX_TRACE("NullResponseHdlr::NullResponseHdlr");
 }
 
 NullResponseHdlr::~NullResponseHdlr() throw()
 {
-DOTRACE("NullResponseHdlr::~NullResponseHdlr");
+GVX_TRACE("NullResponseHdlr::~NullResponseHdlr");
 }
 
 void NullResponseHdlr::readFrom(IO::Reader&)
 {
-DOTRACE("NullResponseHdlr::readFrom");
+GVX_TRACE("NullResponseHdlr::readFrom");
 }
 
 void NullResponseHdlr::writeTo(IO::Writer&) const
 {
-DOTRACE("NullResponseHdlr::writeTo");
+GVX_TRACE("NullResponseHdlr::writeTo");
 }
 
 // actions
 void NullResponseHdlr::rhBeginTrial(Nub::SoftRef<Toglet>, Trial&) const
 {
-DOTRACE("NullResponseHdlr::rhBeginTrial");
+GVX_TRACE("NullResponseHdlr::rhBeginTrial");
 }
 
 void NullResponseHdlr::rhAbortTrial()  const
 {
-DOTRACE("NullResponseHdlr::rhAbortTrial");
+GVX_TRACE("NullResponseHdlr::rhAbortTrial");
 }
 
 void NullResponseHdlr::rhEndTrial() const
 {
-DOTRACE("NullResponseHdlr::rhEndTrial");
+GVX_TRACE("NullResponseHdlr::rhEndTrial");
 }
 
 void NullResponseHdlr::rhHaltExpt() const
 {
-DOTRACE("NullResponseHdlr::rhHaltExpt");
+GVX_TRACE("NullResponseHdlr::rhHaltExpt");
 }
 
 void NullResponseHdlr::rhAllowResponses(Nub::SoftRef<Toglet>, Trial&) const
 {
-DOTRACE("NullResponseHdlr::rhAllowResponses");
+GVX_TRACE("NullResponseHdlr::rhAllowResponses");
 }
 
 void NullResponseHdlr::rhDenyResponses() const
 {
-DOTRACE("NullResponseHdlr::rhDenyResponses");
+GVX_TRACE("NullResponseHdlr::rhDenyResponses");
 }
 
 static const char vcid_groovx_visx_nullresponsehdlr_cc_utc20050626084016[] = "$Id$ $HeadURL$";

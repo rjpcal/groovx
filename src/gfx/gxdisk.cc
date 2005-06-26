@@ -52,7 +52,7 @@ namespace
 
 const FieldMap& GxDisk::classFields()
 {
-DOTRACE("GxDisk::classFields");
+GVX_TRACE("GxDisk::classFields");
   static const Field FIELD_ARRAY[] =
   {
     Field("innerRadius", &GxDisk::itsInnerRadius, 0.0, 0.0, 100.0, 1.0,
@@ -71,7 +71,7 @@ DOTRACE("GxDisk::classFields");
 
 GxDisk* GxDisk::make()
 {
-DOTRACE("GxDisk::make");
+GVX_TRACE("GxDisk::make");
  return new GxDisk;
 }
 
@@ -83,30 +83,30 @@ GxDisk::GxDisk() :
   itsNumLoops(1),
   itsFilled(true)
 {
-DOTRACE("GxDisk::GxDisk");
+GVX_TRACE("GxDisk::GxDisk");
   setFieldMap(GxDisk::classFields());
 }
 
 GxDisk::~GxDisk() throw()
 {
-DOTRACE("GxDisk::~GxDisk");
+GVX_TRACE("GxDisk::~GxDisk");
 }
 
 IO::VersionId GxDisk::serialVersionId() const
 {
-DOTRACE("GxDisk::serialVersionId");
+GVX_TRACE("GxDisk::serialVersionId");
   return GXDISK_SVID;
 }
 
 void GxDisk::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxDisk::readFrom");
+GVX_TRACE("GxDisk::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
 void GxDisk::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxDisk::writeTo");
+GVX_TRACE("GxDisk::writeTo");
   writeFieldsTo(writer, classFields(), GXDISK_SVID);
 }
 
@@ -116,7 +116,7 @@ DOTRACE("GxDisk::writeTo");
 
 void GxDisk::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxDisk::getBoundingCube");
+GVX_TRACE("GxDisk::getBoundingCube");
 
   geom::box<double> mybox;
 
@@ -129,7 +129,7 @@ DOTRACE("GxDisk::getBoundingCube");
 
 void GxDisk::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxDisk::draw");
+GVX_TRACE("GxDisk::draw");
 
   canvas.drawCircle(itsInnerRadius, itsOuterRadius, itsFilled,
                     itsNumSlices, itsNumLoops);

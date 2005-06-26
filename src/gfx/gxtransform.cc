@@ -48,7 +48,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -117,7 +117,7 @@ const FieldMap& GxTransform::classFields()
 
 GxTransform* GxTransform::make()
 {
-DOTRACE("GxTransform::make");
+GVX_TRACE("GxTransform::make");
   return new GxTransform;
 }
 
@@ -131,7 +131,7 @@ GxTransform::GxTransform() :
   itsJackSize(0),
   rep(new GxTransformImpl(this))
 {
-DOTRACE("GxTransform::GxTransform");
+GVX_TRACE("GxTransform::GxTransform");
 
   dbg_eval_nl(3, rep);
 
@@ -140,19 +140,19 @@ DOTRACE("GxTransform::GxTransform");
 
 GxTransform::~GxTransform() throw()
 {
-DOTRACE("GxTransform::~GxTransform");
+GVX_TRACE("GxTransform::~GxTransform");
   delete rep;
 }
 
 IO::VersionId GxTransform::serialVersionId() const
 {
-DOTRACE("GxTransform::serialVersionId");
+GVX_TRACE("GxTransform::serialVersionId");
   return GXTRANSFORM_SVID;
 }
 
 void GxTransform::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxTransform::readFrom");
+GVX_TRACE("GxTransform::readFrom");
 
   reader.ensureReadVersionId("GxTransform", 1,
                              "Try cvs tag xml_conversion_20040526",
@@ -163,7 +163,7 @@ DOTRACE("GxTransform::readFrom");
 
 void GxTransform::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxTransform::writeTo");
+GVX_TRACE("GxTransform::writeTo");
 
   writer.ensureWriteVersionId("GxTransform",
                               GXTRANSFORM_SVID, 1,
@@ -178,7 +178,7 @@ DOTRACE("GxTransform::writeTo");
 
 const geom::txform& GxTransform::getTxform() const
 {
-DOTRACE("GxTransform::getTxform");
+GVX_TRACE("GxTransform::getTxform");
 
   return rep->getTxform();
 }
@@ -189,25 +189,25 @@ DOTRACE("GxTransform::getTxform");
 
 void GxTransform::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxTransform::getBoundingCube");
+GVX_TRACE("GxTransform::getBoundingCube");
 
   bbox.transform(getTxform());
 }
 
 void GxTransform::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxTransform::draw");
+GVX_TRACE("GxTransform::draw");
 
   if (itsMtxMode == 0)
     {
-      DOTRACE("GxTransform::draw::native-transform");
+      GVX_TRACE("GxTransform::draw::native-transform");
       canvas.translate(translation);
       canvas.scale(scaling);
       canvas.rotate(rotationAxis, itsRotationAngle);
     }
   else
     {
-      DOTRACE("GxTransform::draw::custom-transform");
+      GVX_TRACE("GxTransform::draw::custom-transform");
       canvas.transform(rep->getTxform());
     }
 

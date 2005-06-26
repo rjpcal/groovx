@@ -55,10 +55,10 @@
 
 #include <vector>
 
-#define DYNAMIC_TRACE_EXPR Trial::tracer.status()
+#define GVX_DYNAMIC_TRACE_EXPR Trial::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 
@@ -89,7 +89,7 @@ namespace
       th(t),
       status(Element::CHILD_OK)
     {
-      PRECONDITION(parent != 0);
+      GVX_PRECONDITION(parent != 0);
       Nub::Log::addObjScope(*trial);
     }
 
@@ -166,7 +166,7 @@ public:
 
   void installCurrentNode() const
   {
-    PRECONDITION( isActive() );
+    GVX_PRECONDITION( isActive() );
     if (activeState->widget.isValid() && currentNode < gxNodes.size())
       {
         activeState->widget->setDrawable(gxNodes[currentNode]);
@@ -201,7 +201,7 @@ const FieldMap& Trial::classFields()
 
 Trial* Trial::make()
 {
-DOTRACE("Trial::make");
+GVX_TRACE("Trial::make");
   return new Trial;
 }
 
@@ -209,14 +209,14 @@ Trial::Trial() :
   FieldContainer(0),
   rep( new Impl(this) )
 {
-DOTRACE("Trial::Trial()");
+GVX_TRACE("Trial::Trial()");
 
   setFieldMap(Trial::classFields());
 }
 
 Trial::~Trial() throw()
 {
-DOTRACE("Trial::~Trial");
+GVX_TRACE("Trial::~Trial");
   delete rep;
 }
 
@@ -225,7 +225,7 @@ IO::VersionId Trial::serialVersionId() const
 
 void Trial::readFrom(IO::Reader& reader)
 {
-DOTRACE("Trial::readFrom");
+GVX_TRACE("Trial::readFrom");
 
   rep->becomeInactive();
 
@@ -253,7 +253,7 @@ DOTRACE("Trial::readFrom");
 
 void Trial::writeTo(IO::Writer& writer) const
 {
-DOTRACE("Trial::writeTo");
+GVX_TRACE("Trial::writeTo");
 
   writer.ensureWriteVersionId("Trial", TRIAL_SVID, 5,
                               "Try groovx0.8a3", SRC_POS);
@@ -278,7 +278,7 @@ DOTRACE("Trial::writeTo");
 
 const SoftRef<Toglet>& Trial::getWidget() const
 {
-  PRECONDITION( rep->isActive() );
+  GVX_PRECONDITION( rep->isActive() );
   return rep->activeState->widget;
 }
 
@@ -312,7 +312,7 @@ void Trial::setType(int t)
 
 fstring Trial::vxInfo() const
 {
-DOTRACE("Trial::vxInfo");
+GVX_TRACE("Trial::vxInfo");
   if (rep->info.is_empty())
     return stdInfo();
 
@@ -321,7 +321,7 @@ DOTRACE("Trial::vxInfo");
 
 int Trial::lastResponse() const
 {
-DOTRACE("Trial::lastResponse");
+GVX_TRACE("Trial::lastResponse");
 
   if (rep->responses.empty())
     throw rutz::error("the trial has no responses yet", SRC_POS);
@@ -331,14 +331,14 @@ DOTRACE("Trial::lastResponse");
 
 void Trial::vxUndo()
 {
-DOTRACE("Trial::vxUndo");
+GVX_TRACE("Trial::vxUndo");
   if ( !rep->responses.empty() )
     rep->responses.pop_back();
 }
 
 rutz::fwd_iter<Response> Trial::responses() const
 {
-DOTRACE("Trial::responses");
+GVX_TRACE("Trial::responses");
   return rutz::fwd_iter<Response>
     (rep->responses.begin(), rep->responses.end());
 }
@@ -351,7 +351,7 @@ void Trial::clearResponses()
 
 double Trial::avgResponse() const
 {
-DOTRACE("Trial::avgResponse");
+GVX_TRACE("Trial::avgResponse");
   int sum = 0;
   for (std::vector<Response>::const_iterator ii = rep->responses.begin();
        ii != rep->responses.end();
@@ -364,7 +364,7 @@ DOTRACE("Trial::avgResponse");
 
 double Trial::avgRespTime() const
 {
-DOTRACE("Trial::avgRespTime");
+GVX_TRACE("Trial::avgRespTime");
   int sum = 0;
   for (std::vector<Response>::const_iterator ii = rep->responses.begin();
        ii != rep->responses.end();
@@ -381,32 +381,32 @@ DOTRACE("Trial::avgRespTime");
 
 void Trial::addNode(Ref<GxNode> item)
 {
-DOTRACE("Trial::addNode");
+GVX_TRACE("Trial::addNode");
   rep->gxNodes.push_back(item);
 }
 
 void Trial::trNextNode()
 {
-DOTRACE("Trial::trNextNode");
+GVX_TRACE("Trial::trNextNode");
   setCurrentNode(rep->currentNode+1);
 }
 
 rutz::fwd_iter<Ref<GxNode> > Trial::nodes() const
 {
-DOTRACE("Trial::nodes");
+GVX_TRACE("Trial::nodes");
   return rutz::fwd_iter<Ref<GxNode> >
     (rep->gxNodes.begin(), rep->gxNodes.end());
 }
 
 unsigned int Trial::getCurrentNode() const
 {
-DOTRACE("Trial::getCurrentNode");
+GVX_TRACE("Trial::getCurrentNode");
   return rep->currentNode;
 }
 
 void Trial::setCurrentNode(unsigned int nodeNumber)
 {
-DOTRACE("Trial::setCurrentNode");
+GVX_TRACE("Trial::setCurrentNode");
   if (nodeNumber >= rep->gxNodes.size())
     {
       throw rutz::error(fstring("invalid node number ", nodeNumber),
@@ -417,13 +417,13 @@ DOTRACE("Trial::setCurrentNode");
 
 void Trial::clearObjs()
 {
-DOTRACE("Trial::clearObjs");
+GVX_TRACE("Trial::clearObjs");
   rep->gxNodes.clear();
 }
 
 fstring Trial::stdInfo() const
 {
-DOTRACE("Trial::stdInfo");
+GVX_TRACE("Trial::stdInfo");
 
   fstring objids;
   fstring cats;
@@ -459,20 +459,20 @@ DOTRACE("Trial::stdInfo");
 
 void Trial::setInfo(fstring info)
 {
-DOTRACE("Trial::setInfo");
+GVX_TRACE("Trial::setInfo");
   rep->info = info;
 }
 
 
 void Trial::vxRun(Element& parent)
 {
-DOTRACE("Trial::vxRun");
+GVX_TRACE("Trial::vxRun");
 
-  PRECONDITION(&parent != 0);
+  GVX_PRECONDITION(&parent != 0);
 
   SoftRef<Toglet> widget = parent.getWidget();
 
-  PRECONDITION(widget.isValid());
+  GVX_PRECONDITION(widget.isValid());
 
   if ( rep->rh.isInvalid() || rep->th.isInvalid() )
     {
@@ -492,18 +492,18 @@ DOTRACE("Trial::vxRun");
 
 double Trial::trElapsedMsec()
 {
-DOTRACE("Trial::trElapsedMsec");
+GVX_TRACE("Trial::trElapsedMsec");
 
-  PRECONDITION( rep->isActive() );
+  GVX_PRECONDITION( rep->isActive() );
 
   return rep->activeState->th->getElapsedMsec();
 }
 
 void Trial::trAbortTrial()
 {
-DOTRACE("Trial::trAbortTrial");
+GVX_TRACE("Trial::trAbortTrial");
 
-  PRECONDITION( rep->isActive() );
+  GVX_PRECONDITION( rep->isActive() );
 
   Nub::log("trAbortTrial");
 
@@ -515,14 +515,14 @@ DOTRACE("Trial::trAbortTrial");
 void Trial::vxReturn(ChildStatus /*s*/)
 {
   // FIXME
-  ASSERT(false);
+  GVX_ASSERT(false);
 }
 
 void Trial::trEndTrial()
 {
-DOTRACE("Trial::trEndTrial");
+GVX_TRACE("Trial::trEndTrial");
 
-  PRECONDITION( rep->isActive() );
+  GVX_PRECONDITION( rep->isActive() );
 
   Nub::log("Trial::trEndTrial");
 
@@ -540,7 +540,7 @@ DOTRACE("Trial::trEndTrial");
 
 void Trial::vxHalt() const
 {
-DOTRACE("Trial::vxHalt");
+GVX_TRACE("Trial::vxHalt");
 
   if (!rep->isActive()) return;
 
@@ -557,15 +557,15 @@ DOTRACE("Trial::vxHalt");
 
 void Trial::vxReset()
 {
-DOTRACE("Trial::vxReset");
+GVX_TRACE("Trial::vxReset");
   rep->responses.clear();
 }
 
 void Trial::trProcessResponse(Response& response)
 {
-DOTRACE("Trial::trProcessResponse");
+GVX_TRACE("Trial::trProcessResponse");
 
-  PRECONDITION( rep->isActive() );
+  GVX_PRECONDITION( rep->isActive() );
 
   Nub::log("trProcessResponse");
 
@@ -586,7 +586,7 @@ DOTRACE("Trial::trProcessResponse");
 
 void Trial::trDraw()
 {
-DOTRACE("Trial::trDraw");
+GVX_TRACE("Trial::trDraw");
   SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     {
@@ -598,7 +598,7 @@ DOTRACE("Trial::trDraw");
 
 void Trial::trRender()
 {
-DOTRACE("Trial::trRender");
+GVX_TRACE("Trial::trRender");
   SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     {
@@ -610,7 +610,7 @@ DOTRACE("Trial::trRender");
 
 void Trial::trUndraw()
 {
-DOTRACE("Trial::trUndraw");
+GVX_TRACE("Trial::trUndraw");
   SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     widget->undraw();
@@ -618,7 +618,7 @@ DOTRACE("Trial::trUndraw");
 
 void Trial::trSwapBuffers()
 {
-DOTRACE("Trial::trSwapBuffers");
+GVX_TRACE("Trial::trSwapBuffers");
   SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     widget->swapBuffers();
@@ -626,7 +626,7 @@ DOTRACE("Trial::trSwapBuffers");
 
 void Trial::trRenderBack()
 {
-DOTRACE("Trial::trRenderBack");
+GVX_TRACE("Trial::trRenderBack");
   SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     widget->getCanvas()->drawOnBackBuffer();
@@ -634,7 +634,7 @@ DOTRACE("Trial::trRenderBack");
 
 void Trial::trRenderFront()
 {
-DOTRACE("Trial::trRenderFront");
+GVX_TRACE("Trial::trRenderFront");
   SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     widget->getCanvas()->drawOnFrontBuffer();
@@ -642,7 +642,7 @@ DOTRACE("Trial::trRenderFront");
 
 void Trial::trClearBuffer()
 {
-DOTRACE("Trial::trClearBuffer");
+GVX_TRACE("Trial::trClearBuffer");
   SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     widget->clearscreen();
@@ -650,7 +650,7 @@ DOTRACE("Trial::trClearBuffer");
 
 void Trial::trFinishDrawing()
 {
-DOTRACE("Trial::trFinishDrawing");
+GVX_TRACE("Trial::trFinishDrawing");
   SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     widget->getCanvas()->finishDrawing();
@@ -659,9 +659,9 @@ DOTRACE("Trial::trFinishDrawing");
 
 void Trial::trAllowResponses()
 {
-DOTRACE("Trial::trAllowResponses");
+GVX_TRACE("Trial::trAllowResponses");
 
-  PRECONDITION( rep->isActive() );
+  GVX_PRECONDITION( rep->isActive() );
 
   Nub::log("trAllowResponses");
 
@@ -671,9 +671,9 @@ DOTRACE("Trial::trAllowResponses");
 
 void Trial::trDenyResponses()
 {
-DOTRACE("Trial::trDenyResponses");
+GVX_TRACE("Trial::trDenyResponses");
 
-  PRECONDITION( rep->isActive() );
+  GVX_PRECONDITION( rep->isActive() );
 
   Nub::log("trDenyResponses");
 

@@ -43,7 +43,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::shared_ptr;
 
@@ -183,7 +183,7 @@ public:
 
   void insertObj(Nub::Object* ptr, bool strong)
     {
-      PRECONDITION(ptr != 0);
+      GVX_PRECONDITION(ptr != 0);
 
       // Check if the object is already in the map
       MapType::iterator existing_site = itsPtrMap.find(ptr->id());
@@ -191,7 +191,7 @@ public:
         {
           // Make sure the existing object is the same as the object
           // that we're trying to insert
-          ASSERT( (*existing_site).second.get() == ptr );
+          GVX_ASSERT( (*existing_site).second.get() == ptr );
         }
 
       const int new_id = ptr->id();
@@ -281,7 +281,7 @@ Nub::ObjDb& Nub::ObjDb::theDb()
 
 Nub::ObjDb::Iterator Nub::ObjDb::objects() const
 {
-DOTRACE("Nub::ObjDb::children");
+GVX_TRACE("Nub::ObjDb::children");
 
  return shared_ptr<Nub::ObjDb::Iterator::ifx_t>
    (new ObjDbIter(rep->itsPtrMap, rep->itsPtrMap.begin()));
@@ -290,50 +290,50 @@ DOTRACE("Nub::ObjDb::children");
 Nub::ObjDb::ObjDb() :
   rep(new Impl)
 {
-DOTRACE("Nub::ObjDb::ObjDb");
+GVX_TRACE("Nub::ObjDb::ObjDb");
 }
 
 Nub::ObjDb::~ObjDb()
 {
-DOTRACE("Nub::ObjDb::~ObjDb");
+GVX_TRACE("Nub::ObjDb::~ObjDb");
   delete rep;
 }
 
 int Nub::ObjDb::count() const throw()
 {
-DOTRACE("Nub::ObjDb::count");
+GVX_TRACE("Nub::ObjDb::count");
 
   return rep->count();
 }
 
 bool Nub::ObjDb::isValidId(Nub::UID id) const throw()
 {
-DOTRACE("Nub::ObjDb::isValidId");
+GVX_TRACE("Nub::ObjDb::isValidId");
   return rep->isValidId(id);
 }
 
 void Nub::ObjDb::remove(Nub::UID id)
 {
-DOTRACE("Nub::ObjDb::remove");
+GVX_TRACE("Nub::ObjDb::remove");
   rep->remove(id);
 }
 
 void Nub::ObjDb::release(Nub::UID id)
 {
-DOTRACE("Nub::ObjDb::release");
+GVX_TRACE("Nub::ObjDb::release");
   rep->release(id);
 }
 
 void Nub::ObjDb::purge()
 {
-DOTRACE("Nub::ObjDb::clear");
+GVX_TRACE("Nub::ObjDb::clear");
   dbg_eval_nl(3, typeid(*this).name());
   rep->purge();
 }
 
 void Nub::ObjDb::clear()
 {
-DOTRACE("Nub::ObjDb::clear");
+GVX_TRACE("Nub::ObjDb::clear");
   // Call purge until no more items can be removed
   while ( rep->purge() != 0 )
     { ; }
@@ -341,25 +341,25 @@ DOTRACE("Nub::ObjDb::clear");
 
 void Nub::ObjDb::clearOnExit()
 {
-DOTRACE("Nub::ObjDb::clearOnExit");
+GVX_TRACE("Nub::ObjDb::clearOnExit");
   rep->clearAll();
 }
 
 Nub::Object* Nub::ObjDb::getCheckedObj(Nub::UID id) throw (Nub::InvalidIdError)
 {
-DOTRACE("Nub::ObjDb::getCheckedObj");
+GVX_TRACE("Nub::ObjDb::getCheckedObj");
   return rep->getCheckedObj(id);
 }
 
 void Nub::ObjDb::insertObj(Nub::Object* obj)
 {
-DOTRACE("Nub::ObjDb::insertObj");
+GVX_TRACE("Nub::ObjDb::insertObj");
   rep->insertObj(obj, true);
 }
 
 void Nub::ObjDb::insertObjWeak(Nub::Object* obj)
 {
-DOTRACE("Nub::ObjDb::insertObjWeak");
+GVX_TRACE("Nub::ObjDb::insertObjWeak");
   rep->insertObj(obj, false);
 }
 

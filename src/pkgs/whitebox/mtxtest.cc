@@ -64,7 +64,7 @@ namespace
 extern "C"
 int Mtxtest_Init(Tcl_Interp* interp)
 {
-DOTRACE("Mtxtest_Init");
+GVX_TRACE("Mtxtest_Init");
 
   PKG_CREATE(interp, "Mtxtest", "4.$Revision$");
 
@@ -78,7 +78,7 @@ extern "C" int Mtxtest_SafeInit(Tcl_Interp*) { return 1; }
 
 extern "C" int Mtxtest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
-DOTRACE("Mtxtest_Unload");
+GVX_TRACE("Mtxtest_Unload");
   return Tcl::Pkg::unloadDestroy(interp, "Mtxtest");
 }
 

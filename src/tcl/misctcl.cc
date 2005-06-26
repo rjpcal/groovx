@@ -108,7 +108,7 @@ namespace
 extern "C"
 int Misc_Init(Tcl_Interp* interp)
 {
-DOTRACE("Misc_Init");
+GVX_TRACE("Misc_Init");
 
   using namespace rutz;
 

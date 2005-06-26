@@ -48,7 +48,7 @@
 extern "C"
 int Block_Init(Tcl_Interp* interp)
 {
-DOTRACE("Block_Init");
+GVX_TRACE("Block_Init");
 
   PKG_CREATE(interp, "Block", "4.$Revision$");
   pkg->inheritPkg("ElementContainer");

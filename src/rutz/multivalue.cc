@@ -41,7 +41,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 template <class T>
 rutz::multi_value<T>::multi_value(int num) : m_num_values(num) {}
@@ -52,7 +52,7 @@ rutz::multi_value<T>::~multi_value() {}
 template <class T>
 void rutz::multi_value<T>::print_to(std::ostream& os) const
 {
-DOTRACE("rutz::multi_value<T>::print_to");
+GVX_TRACE("rutz::multi_value<T>::print_to");
   const T* dat = const_begin();
   const T* end = const_end();
 
@@ -67,7 +67,7 @@ DOTRACE("rutz::multi_value<T>::print_to");
 template <class T>
 void rutz::multi_value<T>::scan_from(std::istream& is)
 {
-DOTRACE("rutz::multi_value<T>::scan_from");
+GVX_TRACE("rutz::multi_value<T>::scan_from");
 
   if (is.fail())
     throw rutz::error("istream started out in fail state", SRC_POS);

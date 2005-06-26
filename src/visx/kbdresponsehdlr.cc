@@ -47,7 +47,7 @@
 
 KbdResponseHdlr* KbdResponseHdlr::make()
 {
-DOTRACE("KbdResponseHdlr::make");
+GVX_TRACE("KbdResponseHdlr::make");
   return new KbdResponseHdlr;
 }
 

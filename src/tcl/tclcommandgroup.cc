@@ -49,7 +49,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 
@@ -125,7 +125,7 @@ private:
 fstring Tcl::CommandGroup::Impl::usageWarning(
                                       const fstring& argv0) const
 {
-DOTRACE("Tcl::CommandGroup::usageWarning");
+GVX_TRACE("Tcl::CommandGroup::usageWarning");
   fstring warning("wrong # args: should be ");
 
   if (cmdList.size() == 1)
@@ -173,8 +173,8 @@ int Tcl::CommandGroup::Impl::cInvokeCallback(
 {
   CommandGroup* c = static_cast<CommandGroup*>(clientData);
 
-  ASSERT(c != 0);
-  ASSERT(interp == c->rep->interp.intp());
+  GVX_ASSERT(c != 0);
+  GVX_ASSERT(interp == c->rep->interp.intp());
 
 #ifdef REAL_BACKTRACE
   typedef void* voidp;
@@ -199,18 +199,18 @@ int Tcl::CommandGroup::Impl::cInvokeCallback(
 void Tcl::CommandGroup::Impl::cDeleteCallback(
     ClientData clientData) throw()
 {
-DOTRACE("Tcl::CommandGroup::Impl::cDeleteCallback");
+GVX_TRACE("Tcl::CommandGroup::Impl::cDeleteCallback");
   CommandGroup* c = static_cast<CommandGroup*>(clientData);
-  ASSERT(c != 0);
+  GVX_ASSERT(c != 0);
   delete c;
 }
 
 void Tcl::CommandGroup::Impl::cExitCallback(
     ClientData clientData) throw()
 {
-DOTRACE("Tcl::CommandGroup::cExitCallback");
+GVX_TRACE("Tcl::CommandGroup::cExitCallback");
   CommandGroup* c = static_cast<CommandGroup*>(clientData);
-  ASSERT(c != 0);
+  GVX_ASSERT(c != 0);
   Tcl_DeleteCommandFromToken(c->rep->interp.intp(), c->rep->cmdToken);
 }
 
@@ -218,7 +218,7 @@ Tcl::CommandGroup* Tcl::CommandGroup::Impl::lookupHelper(
     Tcl::Interp& interp,
     const char* name) throw()
 {
-DOTRACE("Tcl::CommandGroup::Impl::lookupHelper");
+GVX_TRACE("Tcl::CommandGroup::Impl::lookupHelper");
 
   /*
     typedef struct Tcl_CmdInfo {
@@ -251,7 +251,7 @@ Tcl::CommandGroup::CommandGroup(Tcl::Interp& interp,
   :
   rep(new Impl(interp, cmd_name, src_pos))
 {
-DOTRACE("Tcl::CommandGroup::CommandGroup");
+GVX_TRACE("Tcl::CommandGroup::CommandGroup");
 
   // Register the command procedure. We do a two-step
   // initialization. When we call Tcl_CreateObjCommand in Impl's
@@ -264,8 +264,8 @@ DOTRACE("Tcl::CommandGroup::CommandGroup");
   // part of Impl's or CommandGroups's constructor.
   Tcl_CmdInfo info;
   const int result = Tcl_GetCommandInfoFromToken(rep->cmdToken, &info);
-  ASSERT(result == 1);
-  ASSERT(info.isNativeObjectProc == 1);
+  GVX_ASSERT(result == 1);
+  GVX_ASSERT(info.isNativeObjectProc == 1);
   info.objClientData = static_cast<ClientData>(this);
   info.objProc = &Impl::cInvokeCallback;
   info.deleteData = static_cast<ClientData>(this);
@@ -294,7 +294,7 @@ DOTRACE("Tcl::CommandGroup::CommandGroup");
  */
 Tcl::CommandGroup::~CommandGroup() throw()
 {
-DOTRACE("Tcl::CommandGroup::~CommandGroup");
+GVX_TRACE("Tcl::CommandGroup::~CommandGroup");
 
   Tcl_DeleteExitHandler(&Impl::cExitCallback,
                         static_cast<ClientData>(this));
@@ -305,7 +305,7 @@ DOTRACE("Tcl::CommandGroup::~CommandGroup");
 Tcl::CommandGroup* Tcl::CommandGroup::lookup(Tcl::Interp& interp,
                                              const char* name) throw()
 {
-DOTRACE("Tcl::CommandGroup::lookup");
+GVX_TRACE("Tcl::CommandGroup::lookup");
 
   return Impl::lookupHelper(interp, name);
 }
@@ -314,7 +314,7 @@ Tcl::CommandGroup* Tcl::CommandGroup::lookupOriginal(
                                             Tcl::Interp& interp,
                                             const char* name) throw()
 {
-DOTRACE("Tcl::CommandGroup::lookupOriginal");
+GVX_TRACE("Tcl::CommandGroup::lookupOriginal");
 
   const fstring script("namespace origin ", name);
   if (interp.eval(script, Tcl::IGNORE_ERROR) == false)
@@ -332,7 +332,7 @@ Tcl::CommandGroup* Tcl::CommandGroup::make(
                                    const fstring& cmd_name,
                                    const rutz::file_pos& src_pos)
 {
-DOTRACE("Tcl::CommandGroup::make");
+GVX_TRACE("Tcl::CommandGroup::make");
   CommandGroup* const c =
     Tcl::CommandGroup::lookup(interp, cmd_name.c_str());
 
@@ -345,7 +345,7 @@ DOTRACE("Tcl::CommandGroup::make");
 
 void Tcl::CommandGroup::add(rutz::shared_ptr<Tcl::Command> p)
 {
-DOTRACE("Tcl::CommandGroup::add");
+GVX_TRACE("Tcl::CommandGroup::add");
   rep->cmdList.push_back(p);
 }
 
@@ -356,7 +356,7 @@ fstring Tcl::CommandGroup::cmdName() const
 
 fstring Tcl::CommandGroup::usage() const
 {
-DOTRACE("Tcl::CommandGroup::usage");
+GVX_TRACE("Tcl::CommandGroup::usage");
   fstring result;
 
   Impl::List::const_iterator
@@ -382,18 +382,18 @@ DOTRACE("Tcl::CommandGroup::usage");
 int Tcl::CommandGroup::rawInvoke(int s_objc,
                                  Tcl_Obj *const objv[]) throw()
 {
-DOTRACE("Tcl::CommandGroup::rawInvoke");
+GVX_TRACE("Tcl::CommandGroup::rawInvoke");
 
   // This is to use the separate rutz::prof object that each
   // CommandGroup has. This way we can trace the timing of individual
   // Tcl commands.
-  rutz::trace tracer(rep->prof, DYNAMIC_TRACE_EXPR);
+  rutz::trace tracer(rep->prof, GVX_DYNAMIC_TRACE_EXPR);
 
   // Should always be at least one since there is always the
   // command-name itself as the first argument.
-  ASSERT(s_objc >= 1);
+  GVX_ASSERT(s_objc >= 1);
 
-  if (GET_DBG_LEVEL() > 1)
+  if (GVX_DBG_LEVEL() > 1)
     {
       for (int argi = 0; argi < s_objc; ++argi)
         {
@@ -421,7 +421,7 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
           // Found a matching overload, so try it:
           (*itr)->call(rep->interp, objc, objv);
 
-          if (GET_DBG_LEVEL() > 1)
+          if (GVX_DBG_LEVEL() > 1)
             {
               const char* result = rep->interp.getResult<const char*>();
               dbg_eval_nl(1, result);

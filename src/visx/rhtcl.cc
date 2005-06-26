@@ -57,7 +57,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -156,7 +156,7 @@ namespace
 extern "C"
 int Responsehandler_Init(Tcl_Interp* interp)
 {
-DOTRACE("Responsehandler_Init");
+GVX_TRACE("Responsehandler_Init");
 
   PKG_CREATE(interp, "ResponseHandler", "4.$Revision$");
   pkg->inheritPkg("IO");
@@ -169,7 +169,7 @@ DOTRACE("Responsehandler_Init");
 extern "C"
 int Eventresponsehdlr_Init(Tcl_Interp* interp)
 {
-DOTRACE("Eventresponsehdlr_Init");
+GVX_TRACE("Eventresponsehdlr_Init");
 
   PKG_CREATE(interp, "EventResponseHdlr", "4.$Revision$");
   Tcl::defCreator<EventResponseHdlr>(pkg);
@@ -218,7 +218,7 @@ DOTRACE("Eventresponsehdlr_Init");
 extern "C"
 int Kbdresponsehdlr_Init(Tcl_Interp* interp)
 {
-DOTRACE("Kbdresponsehdlr_Init");
+GVX_TRACE("Kbdresponsehdlr_Init");
 
   PKG_CREATE(interp, "KbdResponseHdlr", "4.$Revision$");
   Tcl::defCreator<KbdResponseHdlr>(pkg);
@@ -233,7 +233,7 @@ DOTRACE("Kbdresponsehdlr_Init");
 extern "C"
 int Nullresponsehdlr_Init(Tcl_Interp* interp)
 {
-DOTRACE("Nullresponsehdlr_Init");
+GVX_TRACE("Nullresponsehdlr_Init");
 
   PKG_CREATE(interp, "NullResponseHdlr", "4.$Revision$");
   Tcl::defCreator<NullResponseHdlr>(pkg);
@@ -247,7 +247,7 @@ DOTRACE("Nullresponsehdlr_Init");
 extern "C"
 int Serialrh_Init(Tcl_Interp* interp)
 {
-DOTRACE("Serialrh_Init");
+GVX_TRACE("Serialrh_Init");
 
   PKG_CREATE(interp, "SerialRh", "4.$Revision$");
   pkg->def( "SerialRh::SerialRh", "device=/dev/tty0p0",

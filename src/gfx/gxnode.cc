@@ -71,23 +71,23 @@ public:
 
 GxNode::GxNode() : sigNodeChanged()
 {
-DOTRACE("GxNode::GxNode");
+GVX_TRACE("GxNode::GxNode");
 }
 
 GxNode::~GxNode() throw()
 {
-DOTRACE("GxNode::~GxNode");
+GVX_TRACE("GxNode::~GxNode");
 }
 
 bool GxNode::contains(GxNode* other) const
 {
-DOTRACE("GxNode::contains");
+GVX_TRACE("GxNode::contains");
   return (this == other);
 }
 
 rutz::fwd_iter<const Nub::Ref<GxNode> > GxNode::deepChildren()
 {
-DOTRACE("GxNode::deepChildren");
+GVX_TRACE("GxNode::deepChildren");
 
   return rutz::fwd_iter<const Nub::Ref<GxNode> >
     (shared_ptr<GxNodeIter>(new GxNodeIter(this)));
@@ -95,7 +95,7 @@ DOTRACE("GxNode::deepChildren");
 
 geom::rect<double> GxNode::getBoundingBox(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxNode::getBoundingBox");
+GVX_TRACE("GxNode::getBoundingBox");
 
   Gfx::Bbox bbox(canvas);
   getBoundingCube(bbox);
@@ -105,7 +105,7 @@ DOTRACE("GxNode::getBoundingBox");
 
 void GxNode::undraw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxNode::undraw");
+GVX_TRACE("GxNode::undraw");
 
   const geom::rect<double> world_box = getBoundingBox(canvas);
 

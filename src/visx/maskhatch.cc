@@ -47,7 +47,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -69,7 +69,7 @@ const FieldMap& MaskHatch::classFields()
 
 MaskHatch* MaskHatch::make()
 {
-DOTRACE("MaskHatch::make");
+GVX_TRACE("MaskHatch::make");
   return new MaskHatch;
 }
 
@@ -78,7 +78,7 @@ MaskHatch::MaskHatch () :
   itsNumLines(10),
   itsLineWidth(1)
 {
-DOTRACE("MaskHatch::MaskHatch");
+GVX_TRACE("MaskHatch::MaskHatch");
 
   sigNodeChanged.connect(this, &MaskHatch::update);
 
@@ -90,18 +90,18 @@ DOTRACE("MaskHatch::MaskHatch");
 
 MaskHatch::~MaskHatch() throw()
 {
-DOTRACE("MaskHatch::~MaskHatch");
+GVX_TRACE("MaskHatch::~MaskHatch");
 }
 
 IO::VersionId MaskHatch::serialVersionId() const
 {
-DOTRACE("MaskHatch::serialVersionId");
+GVX_TRACE("MaskHatch::serialVersionId");
  return MASKHATCH_SVID;
 }
 
 void MaskHatch::readFrom(IO::Reader& reader)
 {
-DOTRACE("MaskHatch::readFrom");
+GVX_TRACE("MaskHatch::readFrom");
 
   reader.ensureReadVersionId("MaskHatch", 3,
                              "Try cvs tag xml_conversion_20040526",
@@ -114,7 +114,7 @@ DOTRACE("MaskHatch::readFrom");
 
 void MaskHatch::writeTo(IO::Writer& writer) const
 {
-DOTRACE("MaskHatch::writeTo");
+GVX_TRACE("MaskHatch::writeTo");
 
   writer.ensureWriteVersionId("MaskHatch",
                               MASKHATCH_SVID, 3,
@@ -132,14 +132,14 @@ void MaskHatch::update()
 
 void MaskHatch::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
-DOTRACE("MaskHatch::grGetBoundingBox");
+GVX_TRACE("MaskHatch::grGetBoundingBox");
 
   bbox.drawRect(geom::rect<double>::lbwh(0.0, 0.0, 1.0, 1.0));
 }
 
 void MaskHatch::grRender(Gfx::Canvas& canvas) const
 {
-DOTRACE("MaskHatch::grRender");
+GVX_TRACE("MaskHatch::grRender");
 
   if (itsNumLines == 0) return;
 

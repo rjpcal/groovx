@@ -49,12 +49,12 @@ namespace
 
 Nub::Object::Object() throw() : itsId(++idCounter)
 {
-DOTRACE("Nub::Object::Object");
+GVX_TRACE("Nub::Object::Object");
 }
 
 Nub::Object::~Object() throw()
 {
-DOTRACE("Nub::Object::~Object");
+GVX_TRACE("Nub::Object::~Object");
 }
 
 Nub::UID Nub::Object::id() const throw()
@@ -64,19 +64,19 @@ Nub::UID Nub::Object::id() const throw()
 
 rutz::fstring Nub::Object::realTypename() const
 {
-DOTRACE("Nub::Object::realTypename");
+GVX_TRACE("Nub::Object::realTypename");
   return rutz::demangled_name(typeid(*this));
 }
 
 rutz::fstring Nub::Object::objTypename() const
 {
-DOTRACE("Nub::Object::objTypename");
+GVX_TRACE("Nub::Object::objTypename");
   return realTypename();
 }
 
 rutz::fstring Nub::Object::uniqueName() const
 {
-DOTRACE("Nub::Object::uniqueName");
+GVX_TRACE("Nub::Object::uniqueName");
   return rutz::fstring(objTypename(), "(", id(), ")");
 }
 

@@ -46,7 +46,7 @@
 extern "C"
 int Tkwidget_Init(Tcl_Interp* interp)
 {
-DOTRACE("Tkwidget_Init");
+GVX_TRACE("Tkwidget_Init");
 
   PKG_CREATE(interp, "TkWidget", "4.$Revision$");
 

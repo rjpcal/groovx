@@ -42,13 +42,13 @@
 #include "rutz/fstring.h"
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 extern "C"
 int Log_Init(Tcl_Interp* interp)
 {
-DOTRACE("Log_Init");
+GVX_TRACE("Log_Init");
 
   PKG_CREATE(interp, "Log", "4.$Revision$");
   pkg->def("reset", "", &Nub::Log::reset, SRC_POS);

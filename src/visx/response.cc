@@ -55,19 +55,19 @@ Response::~Response() throw() {}
 
 rutz::fstring Response::value_typename() const
 {
-DOTRACE("Response::value_typename");
+GVX_TRACE("Response::value_typename");
   static rutz::fstring name("Response"); return name;
 }
 
 void Response::print_to(std::ostream& os) const
 {
-DOTRACE("Response::printTo");
+GVX_TRACE("Response::printTo");
   os << itsVal << " " << itsMsec;
 }
 
 void Response::scan_from(std::istream& is)
 {
-DOTRACE("Response::scan_from");
+GVX_TRACE("Response::scan_from");
   is >> itsVal >> itsMsec;
 }
 

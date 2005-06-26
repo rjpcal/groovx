@@ -53,7 +53,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace Tcl
 {
@@ -113,7 +113,7 @@ private:
 public:
   static void create(int argc, char** argv, bool nowindow)
   {
-    ASSERT(theMainImpl == 0);
+    GVX_ASSERT(theMainImpl == 0);
 
     theMainImpl = new MainImpl(argc, argv, nowindow);
     Tcl_CreateExitHandler(exitHandler, static_cast<ClientData>(0));
@@ -168,7 +168,7 @@ Tcl::MainImpl::MainImpl(int argc, char** argv, bool nowindow) :
   itsCommandLine(),
   itsNoWindow(nowindow)
 {
-DOTRACE("Tcl::MainImpl::MainImpl");
+GVX_TRACE("Tcl::MainImpl::MainImpl");
 
   Tcl_FindExecutable(argv[0]);
 
@@ -222,7 +222,7 @@ DOTRACE("Tcl::MainImpl::MainImpl");
 
 int Tcl::MainImpl::historyNext()
 {
-DOTRACE("Tcl::MainImpl::historyNext");
+GVX_TRACE("Tcl::MainImpl::historyNext");
 
 #ifdef WITH_READLINE
   return history_length+1;
@@ -253,7 +253,7 @@ void Tcl::MainImpl::doPrompt(const char* text,
 #endif
                              )
 {
-DOTRACE("Tcl::MainImpl::doPrompt");
+GVX_TRACE("Tcl::MainImpl::doPrompt");
 
 #ifdef WITH_READLINE
   rl_callback_handler_install(text, readlineLineComplete);
@@ -274,7 +274,7 @@ DOTRACE("Tcl::MainImpl::doPrompt");
 
 void Tcl::MainImpl::prompt(Tcl::MainImpl::PromptType t)
 {
-DOTRACE("Tcl::MainImpl::prompt");
+GVX_TRACE("Tcl::MainImpl::prompt");
 
   if (t == PARTIAL)
     {
@@ -303,7 +303,7 @@ DOTRACE("Tcl::MainImpl::prompt");
 
 void Tcl::MainImpl::readlineLineComplete(char* line)
 {
-DOTRACE("Tcl::MainImpl::readlineLineComplete");
+GVX_TRACE("Tcl::MainImpl::readlineLineComplete");
 
   dbg_eval_nl(3, line);
 
@@ -323,7 +323,7 @@ DOTRACE("Tcl::MainImpl::readlineLineComplete");
 
 void Tcl::MainImpl::grabInput()
 {
-DOTRACE("Tcl::MainImpl::grabInput");
+GVX_TRACE("Tcl::MainImpl::grabInput");
 
 #ifndef WITH_READLINE
   Tcl_DString line;
@@ -350,7 +350,7 @@ DOTRACE("Tcl::MainImpl::grabInput");
 
 void Tcl::MainImpl::handleLine(const char* line, int count)
 {
-DOTRACE("Tcl::MainImpl::handleLine");
+GVX_TRACE("Tcl::MainImpl::handleLine");
 
   if (count < 0)
     {
@@ -370,7 +370,7 @@ DOTRACE("Tcl::MainImpl::handleLine");
       return;
     }
 
-  ASSERT(line != 0);
+  GVX_ASSERT(line != 0);
 
   itsCommand.append(line, "\n");
 
@@ -403,7 +403,7 @@ DOTRACE("Tcl::MainImpl::handleLine");
 
 void Tcl::MainImpl::execCommand()
 {
-DOTRACE("Tcl::MainImpl::execCommand");
+GVX_TRACE("Tcl::MainImpl::execCommand");
 
   // Disable the stdin channel handler while evaluating the command;
   // otherwise if the command re-enters the event loop we might
@@ -530,7 +530,7 @@ DOTRACE("Tcl::MainImpl::execCommand");
 
 void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
 {
-DOTRACE("Tcl::MainImpl::stdinProc");
+GVX_TRACE("Tcl::MainImpl::stdinProc");
 
   Tcl::MainImpl::get()->grabInput();
 }
@@ -543,7 +543,7 @@ DOTRACE("Tcl::MainImpl::stdinProc");
 
 void Tcl::MainImpl::run()
 {
-DOTRACE("Tcl::MainImpl::run");
+GVX_TRACE("Tcl::MainImpl::run");
 
   /*
    * Invoke the script specified on the command line, if any.
@@ -619,37 +619,37 @@ Tcl::Main::~Main()
 
 bool Tcl::Main::isInteractive()
 {
-DOTRACE("Tcl::Main::isInteractive");
+GVX_TRACE("Tcl::Main::isInteractive");
   return Tcl::MainImpl::get()->isInteractive();
 }
 
 Tcl::Interp& Tcl::Main::interp()
 {
-DOTRACE("Tcl::Main::interp");
+GVX_TRACE("Tcl::Main::interp");
   return Tcl::MainImpl::get()->interp();
 }
 
 void Tcl::Main::run()
 {
-DOTRACE("Tcl::Main::run");
+GVX_TRACE("Tcl::Main::run");
   Tcl::MainImpl::get()->run();
 }
 
 int Tcl::Main::argc()
 {
-DOTRACE("Tcl::Main::argc");
+GVX_TRACE("Tcl::Main::argc");
   return Tcl::MainImpl::get()->argc();
 }
 
 const char* const* Tcl::Main::argv()
 {
-DOTRACE("Tcl::Main::argv");
+GVX_TRACE("Tcl::Main::argv");
   return Tcl::MainImpl::get()->argv();
 }
 
 rutz::fstring Tcl::Main::commandLine()
 {
-DOTRACE("Tcl::Main::commandLine");
+GVX_TRACE("Tcl::Main::commandLine");
   return Tcl::MainImpl::get()->commandLine();
 }
 

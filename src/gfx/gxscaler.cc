@@ -76,7 +76,7 @@ GxScaler* GxScaler::make()
 
 void GxScaler::setMode(Mode new_mode)
 {
-DOTRACE("GxScaler::setMode");
+GVX_TRACE("GxScaler::setMode");
 
   itsMode = new_mode;
   this->sigNodeChanged.emit();
@@ -84,7 +84,7 @@ DOTRACE("GxScaler::setMode");
 
 void GxScaler::setWidth(double new_width)
 {
-DOTRACE("GxScaler::setWidth");
+GVX_TRACE("GxScaler::setWidth");
   if (itsMode == NATIVE_SCALING) return;
 
   const rectd native_bbox =
@@ -110,7 +110,7 @@ DOTRACE("GxScaler::setWidth");
 
 void GxScaler::setHeight(double new_height)
 {
-DOTRACE("GxScaler::setHeight");
+GVX_TRACE("GxScaler::setHeight");
   if (itsMode == NATIVE_SCALING) return;
 
   const rectd native_bbox =
@@ -136,7 +136,7 @@ DOTRACE("GxScaler::setHeight");
 
 void GxScaler::setAspectRatio(double new_aspect_ratio)
 {
-DOTRACE("GxScaler::setAspectRatio");
+GVX_TRACE("GxScaler::setAspectRatio");
   if (itsMode != FREE_SCALING) return;
 
   itsAspectRatio = new_aspect_ratio;
@@ -146,21 +146,21 @@ DOTRACE("GxScaler::setAspectRatio");
 
 void GxScaler::setWidthFactor(double f)
 {
-DOTRACE("GxScaler::setWidthFactor");
+GVX_TRACE("GxScaler::setWidthFactor");
   itsWidthFactor = f;
   this->sigNodeChanged.emit();
 }
 
 void GxScaler::setHeightFactor(double f)
 {
-DOTRACE("GxScaler::setHeightFactor");
+GVX_TRACE("GxScaler::setHeightFactor");
   itsHeightFactor = f;
   this->sigNodeChanged.emit();
 }
 
 void GxScaler::setMaxDim(double new_max_dimension)
 {
-DOTRACE("GxScaler::setMaxDim");
+GVX_TRACE("GxScaler::setMaxDim");
   if (itsMode == NATIVE_SCALING) return;
 
   double scaling_factor = new_max_dimension / scaledMaxDim();
@@ -173,13 +173,13 @@ DOTRACE("GxScaler::setMaxDim");
 
 double GxScaler::aspectRatio() const
 {
-DOTRACE("GxScaler::aspectRatio");
+GVX_TRACE("GxScaler::aspectRatio");
   return itsMode != FREE_SCALING ? 1.0 : itsAspectRatio;
 }
 
 double GxScaler::scaledWidth() const
 {
-DOTRACE("GxScaler::scaledWidth");
+GVX_TRACE("GxScaler::scaledWidth");
   const rectd native_bbox =
     child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
   return native_bbox.width() * itsWidthFactor * aspectRatio();
@@ -187,7 +187,7 @@ DOTRACE("GxScaler::scaledWidth");
 
 double GxScaler::scaledHeight() const
 {
-DOTRACE("GxScaler::scaledHeight");
+GVX_TRACE("GxScaler::scaledHeight");
   const rectd native_bbox =
     child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
   return native_bbox.height() * itsHeightFactor;
@@ -195,13 +195,13 @@ DOTRACE("GxScaler::scaledHeight");
 
 double GxScaler::scaledMaxDim() const
 {
-DOTRACE("GxScaler::scaledMaxDim");
+GVX_TRACE("GxScaler::scaledMaxDim");
   return rutz::max(scaledWidth(), scaledHeight());
 }
 
 void GxScaler::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxScaler::readFrom");
+GVX_TRACE("GxScaler::readFrom");
   reader.readValue("mode", itsMode);
   reader.readValue("widthFactor", itsWidthFactor);
   reader.readValue("heightFactor", itsHeightFactor);
@@ -210,7 +210,7 @@ DOTRACE("GxScaler::readFrom");
 
 void GxScaler::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxScaler::writeTo");
+GVX_TRACE("GxScaler::writeTo");
   writer.writeValue("mode", itsMode);
   writer.writeValue("widthFactor", itsWidthFactor);
   writer.writeValue("heightFactor", itsHeightFactor);
@@ -219,7 +219,7 @@ DOTRACE("GxScaler::writeTo");
 
 void GxScaler::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxScaler::draw");
+GVX_TRACE("GxScaler::draw");
   if (NATIVE_SCALING == itsMode)
     {
       child()->draw(canvas);
@@ -236,7 +236,7 @@ DOTRACE("GxScaler::draw");
 
 void GxScaler::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxScaler::getBoundingCube");
+GVX_TRACE("GxScaler::getBoundingCube");
   bbox.push();
 
   if (NATIVE_SCALING != itsMode)

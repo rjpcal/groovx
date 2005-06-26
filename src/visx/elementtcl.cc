@@ -51,7 +51,7 @@
 extern "C"
 int Element_Init(Tcl_Interp* interp)
 {
-DOTRACE("Element_Init");
+GVX_TRACE("Element_Init");
 
   PKG_CREATE(interp, "Element", "4.$Revision$");
   pkg->inheritPkg("IO");

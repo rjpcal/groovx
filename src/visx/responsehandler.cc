@@ -45,12 +45,12 @@
 
 ResponseHandler::ResponseHandler()
 {
-DOTRACE("ResponseHandler::ResponseHandler");
+GVX_TRACE("ResponseHandler::ResponseHandler");
 }
 
 ResponseHandler::~ResponseHandler() throw()
 {
-DOTRACE("ResponseHandler::~ResponseHandler");
+GVX_TRACE("ResponseHandler::~ResponseHandler");
 }
 
 static const char vcid_groovx_visx_responsehandler_cc_utc20050626084017[] = "$Id$ $HeadURL$";

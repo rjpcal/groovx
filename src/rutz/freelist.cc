@@ -36,17 +36,17 @@
 #include "rutz/freelist.h"
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 rutz::free_list_base::free_list_base(std::size_t size_check) :
   m_node_list(0), m_size_check(size_check)
 {
-  ASSERT(m_size_check >= sizeof(node));
+  GVX_ASSERT(m_size_check >= sizeof(node));
 }
 
 void* rutz::free_list_base::allocate(std::size_t bytes)
 {
-  ASSERT(bytes == m_size_check);
+  GVX_ASSERT(bytes == m_size_check);
   if (m_node_list == 0)
     return ::operator new(bytes);
   node* node = m_node_list;

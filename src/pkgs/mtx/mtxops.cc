@@ -45,7 +45,7 @@
 
 mtx rand_mtx(int mrows, int ncols)
 {
-DOTRACE("rand_mtx");
+GVX_TRACE("rand_mtx");
 
   static rutz::urand generator(rutz::default_rand_seed);
 
@@ -65,7 +65,7 @@ DOTRACE("rand_mtx");
 
 mtx squared(const mtx& src)
 {
-DOTRACE("squared");
+GVX_TRACE("squared");
 
   mtx result(src);
   // FIXME would be better if mtx_base had a transform() template
@@ -77,7 +77,7 @@ DOTRACE("squared");
 mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
             int* ppadtop, int* ppadleft)
 {
-  DOTRACE("zeropad");
+  GVX_TRACE("zeropad");
 
   if (new_mrows < src.mrows() || new_ncols < src.ncols())
     throw rutz::error("zeropad(): new size must be >= old size",

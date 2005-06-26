@@ -87,7 +87,7 @@ namespace
 extern "C"
 int Toglet_Init(Tcl_Interp* interp)
 {
-DOTRACE("Toglet_Init");
+GVX_TRACE("Toglet_Init");
 
   if (Tcl_PkgRequire(interp, "Tk", 0, 0) == 0)
     return 1;

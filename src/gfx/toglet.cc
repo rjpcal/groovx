@@ -53,7 +53,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::shared_ptr;
 
@@ -123,18 +123,18 @@ Toglet::Impl::Impl(Toglet* p) :
   canvas(GLCanvas::make(opts, glx)),
   scene(new GxScene(canvas))
 {
-DOTRACE("Toglet::Impl::Impl");
+GVX_TRACE("Toglet::Impl::Impl");
 }
 
 Window Toglet::Impl::cClassCreateProc(Tk_Window tkwin,
                                       Window parent,
                                       ClientData clientData) throw()
 {
-DOTRACE("Toglet::Impl::cClassCreateProc");
+GVX_TRACE("Toglet::Impl::cClassCreateProc");
   Toglet* const toglet = static_cast<Toglet*>(clientData);
   GlWindowInterface* const glx = toglet->rep->glx.get();
 
-  ASSERT(glx != 0);
+  GVX_ASSERT(glx != 0);
 
   return glx->makeTkRealWindow(tkwin, parent, DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 }
@@ -171,7 +171,7 @@ Toglet::Toglet(bool pack, bool topLevel) :
   Tcl::TkWidget(Tcl::Main::interp(), "Toglet", widgetName(id()), topLevel),
   rep(new Impl(this))
 {
-DOTRACE("Toglet::Toglet");
+GVX_TRACE("Toglet::Toglet");
 
   dbg_eval_nl(3, this);
 
@@ -196,7 +196,7 @@ DOTRACE("Toglet::Toglet");
 
   if (rep->canvas->isRgba())
     {
-      DOTRACE("GlxWrapper::GlxWrapper::rgbaFlag");
+      GVX_TRACE("GlxWrapper::GlxWrapper::rgbaFlag");
       rep->canvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
       rep->canvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
     }
@@ -212,7 +212,7 @@ DOTRACE("Toglet::Toglet");
 
 Toglet::~Toglet() throw()
 {
-DOTRACE("Toglet::~Toglet");
+GVX_TRACE("Toglet::~Toglet");
 
   dbg_eval_nl(3, this);
 
@@ -221,7 +221,7 @@ DOTRACE("Toglet::~Toglet");
 
 Toglet* Toglet::make()
 {
-DOTRACE("Toglet::make");
+GVX_TRACE("Toglet::make");
 
   Toglet* p = new Toglet;
 
@@ -230,7 +230,7 @@ DOTRACE("Toglet::make");
 
 Toglet* Toglet::makeToplevel()
 {
-DOTRACE("Toglet::makeToplevel");
+GVX_TRACE("Toglet::makeToplevel");
   Toglet* p = new Toglet(true, true);
 
   return p;
@@ -238,26 +238,26 @@ DOTRACE("Toglet::makeToplevel");
 
 Nub::SoftRef<Toglet> Toglet::getCurrent()
 {
-DOTRACE("Toglet::getCurrent");
+GVX_TRACE("Toglet::getCurrent");
   return theCurrentToglet;
 }
 
 void Toglet::setCurrent(Nub::SoftRef<Toglet> toglet)
 {
-DOTRACE("Toglet::setCurrent");
+GVX_TRACE("Toglet::setCurrent");
   dbg_eval(1, toglet.id());
   toglet->makeCurrent();
 }
 
 void Toglet::defaultParent(const char* pathname)
 {
-DOTRACE("Toglet::defaultParent");
+GVX_TRACE("Toglet::defaultParent");
   PARENT = pathname;
 }
 
 Nub::SoftRef<Gfx::Canvas> Toglet::getCanvas() const
 {
-DOTRACE("Toglet::getCanvas");
+GVX_TRACE("Toglet::getCanvas");
   makeCurrent();
   return rep->canvas;
 }
@@ -280,16 +280,16 @@ void Toglet::makeCurrent() const
 
 void Toglet::displayCallback()
 {
-DOTRACE("Toglet::displayCallback");
+GVX_TRACE("Toglet::displayCallback");
   fullRender();
 }
 
 void Toglet::reshapeCallback(int width, int height)
 {
-DOTRACE("Toglet::reshapeCallback");
+GVX_TRACE("Toglet::reshapeCallback");
 
-  ASSERT(rep->glx.get() != 0);
-  ASSERT(rep->scene != 0);
+  GVX_ASSERT(rep->glx.get() != 0);
+  GVX_ASSERT(rep->scene != 0);
 
   makeCurrent();
   rep->glx->onReshape(width, height);
@@ -298,14 +298,14 @@ DOTRACE("Toglet::reshapeCallback");
 
 void Toglet::swapBuffers()
 {
-DOTRACE("Toglet::swapBuffers");
+GVX_TRACE("Toglet::swapBuffers");
   makeCurrent();
   rep->canvas->flushOutput();
 }
 
 GxScene& Toglet::scene()
 {
-DOTRACE("Toglet::scene");
+GVX_TRACE("Toglet::scene");
   return *(rep->scene);
 }
 

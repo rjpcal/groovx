@@ -55,7 +55,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 class GlxRasterFont : public GxRasterFont
 {
@@ -89,7 +89,7 @@ GlxRasterFont::GlxRasterFont(const char* fontname) :
   itsListBase(0),
   itsListCount(0)
 {
-DOTRACE("GlxRasterFont::GlxRasterFont");
+GVX_TRACE("GlxRasterFont::GlxRasterFont");
 
   static Display* dpy = 0;
 
@@ -151,7 +151,7 @@ DOTRACE("GlxRasterFont::GlxRasterFont");
 
 GlxRasterFont::~GlxRasterFont() throw()
 {
-DOTRACE("GlxRasterFont::~GlxRasterFont");
+GVX_TRACE("GlxRasterFont::~GlxRasterFont");
 
   GLCanvas::deleteLists(itsListBase, itsListCount);
   XFreeFontInfo(NULL, itsFontInfo, 1);
@@ -159,7 +159,7 @@ DOTRACE("GlxRasterFont::~GlxRasterFont");
 
 rutz::fstring GlxRasterFont::pickXFont(const char* spec)
 {
-DOTRACE("GlxRasterFont::pickXFont");
+GVX_TRACE("GlxRasterFont::pickXFont");
 
   if (isdigit(spec[0]))
     {
@@ -241,13 +241,13 @@ DOTRACE("GlxRasterFont::pickXFont");
 
 const char* GlxRasterFont::fontName() const
 {
-DOTRACE("GlxRasterFont::fontName");
+GVX_TRACE("GlxRasterFont::fontName");
   return itsFontName.c_str();
 }
 
 unsigned int GlxRasterFont::listBase() const
 {
-DOTRACE("GlxRasterFont::listBase");
+GVX_TRACE("GlxRasterFont::listBase");
   return itsListBase;
 }
 
@@ -266,7 +266,7 @@ namespace
 
 void GlxRasterFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
 {
-DOTRACE("GlxRasterFont::bboxOf");
+GVX_TRACE("GlxRasterFont::bboxOf");
 
   const int asc = itsFontInfo->max_bounds.ascent;
   const int desc = itsFontInfo->max_bounds.descent;
@@ -288,7 +288,7 @@ DOTRACE("GlxRasterFont::bboxOf");
       if (*text == '\0')
         break;
 
-      ASSERT(*text == '\n');
+      GVX_ASSERT(*text == '\n');
       ++text;
     }
 
@@ -307,9 +307,9 @@ DOTRACE("GlxRasterFont::bboxOf");
   dbg_eval(2, b);
   dbg_eval_nl(2, t);
 
-  ASSERT(r >= 0);
-  ASSERT(b <= 0);
-  ASSERT(t >= 0);
+  GVX_ASSERT(r >= 0);
+  GVX_ASSERT(b <= 0);
+  GVX_ASSERT(t >= 0);
 
   bbox.drawScreenRect(geom::vec3d::zeros(),
                       geom::rect<int>::ltrb(l,t,r,b));
@@ -318,14 +318,14 @@ DOTRACE("GlxRasterFont::bboxOf");
 void GlxRasterFont::drawText(const char* text,
                              Gfx::Canvas& canvas) const
 {
-DOTRACE("GlxRasterFont::drawText");
+GVX_TRACE("GlxRasterFont::drawText");
 
   canvas.drawRasterText(text, *this);
 }
 
 int GlxRasterFont::rasterHeight() const
 {
-DOTRACE("GlxRasterFont::rasterHeight");
+GVX_TRACE("GlxRasterFont::rasterHeight");
   const int asc = itsFontInfo->max_bounds.ascent;
   const int desc = itsFontInfo->max_bounds.descent;
 

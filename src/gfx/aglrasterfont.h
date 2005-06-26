@@ -54,7 +54,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 class AglRasterFont : public GxRasterFont
 {
@@ -99,7 +99,7 @@ AglRasterFont::AglRasterFont(const char* fontname) :
   itsListBase(0),
   itsListCount(0)
 {
-DOTRACE("AglRasterFont::AglRasterFont");
+GVX_TRACE("AglRasterFont::AglRasterFont");
 
   // This seems to do nothing (but it should make the Font Manager pick
   // nice outline fonts instead of uglier scaled-bitmap fonts):
@@ -161,7 +161,7 @@ DOTRACE("AglRasterFont::AglRasterFont");
 
 AglRasterFont::~AglRasterFont() throw()
 {
-DOTRACE("AglRasterFont::~AglRasterFont");
+GVX_TRACE("AglRasterFont::~AglRasterFont");
 
   if (aglGetCurrentContext() != 0)
     {
@@ -171,7 +171,7 @@ DOTRACE("AglRasterFont::~AglRasterFont");
 
 GLint AglRasterFont::getFontId(const char* name)
 {
-DOTRACE("AglRasterFont::getFontId");
+GVX_TRACE("AglRasterFont::getFontId");
 
   unsigned char pstring[256];
 
@@ -190,7 +190,7 @@ DOTRACE("AglRasterFont::getFontId");
 
 AglRasterFont::AppleFontSpec AglRasterFont::pickAppleFont(const char* spec)
 {
-DOTRACE("AglRasterFont::pickAppleFont");
+GVX_TRACE("AglRasterFont::pickAppleFont");
 
   AppleFontSpec result;
 
@@ -295,13 +295,13 @@ DOTRACE("AglRasterFont::pickAppleFont");
 
 const char* AglRasterFont::fontName() const
 {
-DOTRACE("AglRasterFont::fontName");
+GVX_TRACE("AglRasterFont::fontName");
   return itsFontName.c_str();
 }
 
 unsigned int AglRasterFont::listBase() const
 {
-DOTRACE("AglRasterFont::listBase");
+GVX_TRACE("AglRasterFont::listBase");
   return itsListBase;
 }
 
@@ -320,7 +320,7 @@ namespace
 
 void AglRasterFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
 {
-DOTRACE("AglRasterFont::bboxOf");
+GVX_TRACE("AglRasterFont::bboxOf");
 
   const int asc = itsFontInfo.ascent;
   const int desc = itsFontInfo.descent;
@@ -387,7 +387,7 @@ DOTRACE("AglRasterFont::bboxOf");
       if (*text == '\0')
         break;
 
-      ASSERT(*text == '\n');
+      GVX_ASSERT(*text == '\n');
       ++text;
     }
 
@@ -407,9 +407,9 @@ DOTRACE("AglRasterFont::bboxOf");
   dbg_eval(2, b);
   dbg_eval_nl(2, t);
 
-  ASSERT(r >= 0);
-  ASSERT(b <= 0);
-  ASSERT(t >= 0);
+  GVX_ASSERT(r >= 0);
+  GVX_ASSERT(b <= 0);
+  GVX_ASSERT(t >= 0);
 
   bbox.drawScreenRect(geom::vec3d::zeros(),
                       geom::rect<int>::ltrb(l,t,r,b));
@@ -419,14 +419,14 @@ DOTRACE("AglRasterFont::bboxOf");
 
 void AglRasterFont::drawText(const char* text, Gfx::Canvas& canvas) const
 {
-DOTRACE("AglRasterFont::drawText");
+GVX_TRACE("AglRasterFont::drawText");
 
   canvas.drawRasterText(text, *this);
 }
 
 int AglRasterFont::rasterHeight() const
 {
-DOTRACE("AglRasterFont::rasterHeight");
+GVX_TRACE("AglRasterFont::rasterHeight");
 
   return itsFontInfo.ascent + itsFontInfo.descent + itsFontInfo.leading;
 }

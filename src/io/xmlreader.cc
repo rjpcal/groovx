@@ -58,7 +58,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 using rutz::shared_ptr;
@@ -92,7 +92,7 @@ namespace
                               eltype, "> element with name: ", elname),
                       pos);
 
-    ASSERT(0);
+    GVX_ASSERT(0);
     return 0; // can't happen
   }
 
@@ -250,14 +250,14 @@ namespace
           invalidAttr("id", eltype, name, SRC_POS);
         }
 
-      ASSERT(itsId >= 0);
+      GVX_ASSERT(itsId >= 0);
 
       if (itsType.empty())
         {
           invalidAttr("type", eltype, name, SRC_POS);
         }
 
-      ASSERT(!itsType.empty());
+      GVX_ASSERT(!itsType.empty());
     }
 
     virtual ~ObjrefElement() {}
@@ -297,7 +297,7 @@ namespace
         {
           invalidAttr("version", eltype, name, SRC_POS);
         }
-      ASSERT(itsVersion >= 0);
+      GVX_ASSERT(itsVersion >= 0);
     }
 
     virtual ~GroupElement() throw() {}
@@ -327,7 +327,7 @@ namespace
       return itsVersion;
     }
 
-    virtual char readChar(const fstring& /*name*/) { ASSERT(0); return '\0'; }
+    virtual char readChar(const fstring& /*name*/) { GVX_ASSERT(0); return '\0'; }
 
     virtual int readInt(const fstring& name)
     {
@@ -387,7 +387,7 @@ namespace
 
     virtual Ref<IO::IoObject> readRoot(IO::IoObject* /*root*/)
     {
-      ASSERT(0); return Ref<IO::IoObject>(static_cast<IO::IoObject*>(0));
+      GVX_ASSERT(0); return Ref<IO::IoObject>(static_cast<IO::IoObject*>(0));
     }
 
     void inflate(IO::IoObject& obj)
@@ -536,7 +536,7 @@ namespace
 
     const char* name = findAttr(attr, "name", el, "(noname)", SRC_POS);
 
-    ASSERT(name != 0);
+    GVX_ASSERT(name != 0);
 
     ElPtr elp = makeElement(el, attr, name, itsObjects);
 
@@ -547,7 +547,7 @@ namespace
 
     itsStack.push_back(elp);
 
-    if (GET_DBG_LEVEL() >= 3)
+    if (GVX_DBG_LEVEL() >= 3)
       {
         dbg_eval(3, itsElCount);
         dbg_eval(3, el);
@@ -560,8 +560,8 @@ namespace
   void TreeBuilder::elementEnd(const char* /*el*/)
   {
     --itsEndCount;
-    ASSERT(itsStack.size() > 0);
-    ASSERT(itsStack.back().get() != 0);
+    GVX_ASSERT(itsStack.size() > 0);
+    GVX_ASSERT(itsStack.back().get() != 0);
     itsStack.back()->finish();
     itsStack.pop_back();
     --itsDepth;
@@ -569,8 +569,8 @@ namespace
 
   void TreeBuilder::characterData(const char* text, int length)
   {
-    ASSERT(itsStack.size() > 0);
-    ASSERT(itsStack.back().get() != 0);
+    GVX_ASSERT(itsStack.size() > 0);
+    GVX_ASSERT(itsStack.back().get() != 0);
     itsStack.back()->characterData(text, length);
   }
 
@@ -579,7 +579,7 @@ namespace
 
 Nub::Ref<IO::IoObject> IO::loadGVX(const char* filename)
 {
-DOTRACE("IO::loadGVX");
+GVX_TRACE("IO::loadGVX");
   shared_ptr<std::istream> ifs(rutz::igzopen(filename));
   TreeBuilder x(*ifs);
   x.parse();
@@ -590,7 +590,7 @@ DOTRACE("IO::loadGVX");
 
 void IO::xmlDebug(const char* filename)
 {
-DOTRACE("IO::xmlDebug");
+GVX_TRACE("IO::xmlDebug");
   shared_ptr<std::istream> ifs(rutz::igzopen(filename));
   TreeBuilder x(*ifs);
   x.parse();

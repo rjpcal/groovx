@@ -79,25 +79,25 @@ namespace rutz {namespace debug
   void set_global_level(int lev);
 }}
 
-#define PANIC(message) rutz::debug::panic_aux(message, __FILE__, __LINE__)
+#define GVX_PANIC(message) rutz::debug::panic_aux(message, __FILE__, __LINE__)
 
-// Like ASSERT(), but can't ever be turned off.
-#define ABORT_IF(expr) \
+// Like GVX_ASSERT(), but can't ever be turned off.
+#define GVX_ABORT_IF(expr) \
       do { if ( expr ) { rutz::debug::panic_aux(#expr, __FILE__, __LINE__); } } while (0)
 
-#define CONCAT(x, y) x ## y
+#define GVX_CONCAT(x, y) x ## y
 
-#define DO_DBG_REGISTER(ext)                                    \
-static const int CONCAT(DEBUG_KEY, ext) =                       \
+#define GVX_DO_DBG_REGISTER(ext)                                    \
+static const int GVX_CONCAT(DEBUG_KEY, ext) =                       \
   rutz::debug::create_key(__FILE__);                            \
                                                                 \
-static inline int CONCAT(dbg_level_, ext) ()                    \
+static inline int GVX_CONCAT(dbg_level_, ext) ()                    \
 {                                                               \
-  return rutz::debug::key_levels[CONCAT(DEBUG_KEY, ext)];       \
+  return rutz::debug::key_levels[GVX_CONCAT(DEBUG_KEY, ext)];       \
 }
 
-#define DBG_REGISTER DO_DBG_REGISTER(1)
-#define GET_DBG_LEVEL dbg_level_1
+#define GVX_DBG_REGISTER GVX_DO_DBG_REGISTER(1)
+#define GVX_DBG_LEVEL dbg_level_1
 
 static const char vcid_groovx_rutz_debug_h_utc20050626084020[] = "$Id$ $HeadURL$";
 
@@ -108,37 +108,37 @@ static const char vcid_groovx_rutz_debug_h_utc20050626084020[] = "$Id$ $HeadURL$
 // this file is #include'ed.
 //
 
-#undef DBG_REGISTER
-#undef GET_DBG_LEVEL
+#undef GVX_DBG_REGISTER
+#undef GVX_DBG_LEVEL
 
-#if   !defined(DEBUG_H_2)
-#      define  DEBUG_H_2
-#      define  DBG_REGISTER DO_DBG_REGISTER(2)
-#      define  GET_DBG_LEVEL dbg_level_2
-#elif !defined(DEBUG_H_3)
-#      define  DEBUG_H_3
-#      define  DBG_REGISTER DO_DBG_REGISTER(3)
-#      define  GET_DBG_LEVEL dbg_level_3
-#elif !defined(DEBUG_H_4)
-#      define  DEBUG_H_4
-#      define  DBG_REGISTER DO_DBG_REGISTER(4)
-#      define  GET_DBG_LEVEL dbg_level_4
-#elif !defined(DEBUG_H_5)
-#      define  DEBUG_H_5
-#      define  DBG_REGISTER DO_DBG_REGISTER(5)
-#      define  GET_DBG_LEVEL dbg_level_5
-#elif !defined(DEBUG_H_6)
-#      define  DEBUG_H_6
-#      define  DBG_REGISTER DO_DBG_REGISTER(6)
-#      define  GET_DBG_LEVEL dbg_level_6
-#elif !defined(DEBUG_H_7)
-#      define  DEBUG_H_7
-#      define  DBG_REGISTER DO_DBG_REGISTER(7)
-#      define  GET_DBG_LEVEL dbg_level_7
-#elif !defined(DEBUG_H_8)
-#      define  DEBUG_H_8
-#      define  DBG_REGISTER DO_DBG_REGISTER(8)
-#      define  GET_DBG_LEVEL dbg_level_8
+#if   !defined(GVX_DEBUG_H_2)
+#      define  GVX_DEBUG_H_2
+#      define  GVX_DBG_REGISTER GVX_DO_DBG_REGISTER(2)
+#      define  GVX_DBG_LEVEL dbg_level_2
+#elif !defined(GVX_DEBUG_H_3)
+#      define  GVX_DEBUG_H_3
+#      define  GVX_DBG_REGISTER GVX_DO_DBG_REGISTER(3)
+#      define  GVX_DBG_LEVEL dbg_level_3
+#elif !defined(GVX_DEBUG_H_4)
+#      define  GVX_DEBUG_H_4
+#      define  GVX_DBG_REGISTER GVX_DO_DBG_REGISTER(4)
+#      define  GVX_DBG_LEVEL dbg_level_4
+#elif !defined(GVX_DEBUG_H_5)
+#      define  GVX_DEBUG_H_5
+#      define  GVX_DBG_REGISTER GVX_DO_DBG_REGISTER(5)
+#      define  GVX_DBG_LEVEL dbg_level_5
+#elif !defined(GVX_DEBUG_H_6)
+#      define  GVX_DEBUG_H_6
+#      define  GVX_DBG_REGISTER GVX_DO_DBG_REGISTER(6)
+#      define  GVX_DBG_LEVEL dbg_level_6
+#elif !defined(GVX_DEBUG_H_7)
+#      define  GVX_DEBUG_H_7
+#      define  GVX_DBG_REGISTER GVX_DO_DBG_REGISTER(7)
+#      define  GVX_DBG_LEVEL dbg_level_7
+#elif !defined(GVX_DEBUG_H_8)
+#      define  GVX_DEBUG_H_8
+#      define  GVX_DBG_REGISTER GVX_DO_DBG_REGISTER(8)
+#      define  GVX_DBG_LEVEL dbg_level_8
 #else
 #      error "debug.h included too many times!"
 #endif
@@ -148,10 +148,10 @@ static const char vcid_groovx_rutz_debug_h_utc20050626084020[] = "$Id$ $HeadURL$
 #undef dbg_print
 #undef dbg_print_nl
 
-#undef ASSERT
-#undef INVARIANT
-#undef PRECONDITION
-#undef POSTCONDITION
+#undef GVX_ASSERT
+#undef GVX_INVARIANT
+#undef GVX_PRECONDITION
+#undef GVX_POSTCONDITION
 
 #endif // !GROOVX_RUTZ_DEBUG_H_UTC20050626084020_DEFINED
 
@@ -160,17 +160,17 @@ static const char vcid_groovx_rutz_debug_h_utc20050626084020[] = "$Id$ $HeadURL$
 //
 
 #if !defined(NO_DEBUG)
-#  define dbg_eval(lev, x)     do { if (GET_DBG_LEVEL() >= lev) rutz::debug::eval(#x, lev, __FILE__, __LINE__, false, x); } while (0)
-#  define dbg_eval_nl(lev, x)  do { if (GET_DBG_LEVEL() >= lev) rutz::debug::eval(#x, lev, __FILE__, __LINE__, true, x); } while (0)
-#  define dbg_print(lev, x)    do { if (GET_DBG_LEVEL() >= lev) rutz::debug::eval(0, lev, __FILE__, __LINE__, false, x); } while (0)
-#  define dbg_print_nl(lev, x) do { if (GET_DBG_LEVEL() >= lev) rutz::debug::eval(0, lev, __FILE__, __LINE__, true, x); } while (0)
-#  define dbg_dump(lev, x)     do { if (GET_DBG_LEVEL() >= lev) { rutz::debug::dump(#x, lev, __FILE__, __LINE__); (x).debug_dump(); } } while (0)
-#  define dbg_nl(lev)          do { if (GET_DBG_LEVEL() >= lev) rutz::debug::start_newline(); } while (0)
+#  define dbg_eval(lev, x)     do { if (GVX_DBG_LEVEL() >= lev) rutz::debug::eval(#x, lev, __FILE__, __LINE__, false, x); } while (0)
+#  define dbg_eval_nl(lev, x)  do { if (GVX_DBG_LEVEL() >= lev) rutz::debug::eval(#x, lev, __FILE__, __LINE__, true, x); } while (0)
+#  define dbg_print(lev, x)    do { if (GVX_DBG_LEVEL() >= lev) rutz::debug::eval(0, lev, __FILE__, __LINE__, false, x); } while (0)
+#  define dbg_print_nl(lev, x) do { if (GVX_DBG_LEVEL() >= lev) rutz::debug::eval(0, lev, __FILE__, __LINE__, true, x); } while (0)
+#  define dbg_dump(lev, x)     do { if (GVX_DBG_LEVEL() >= lev) { rutz::debug::dump(#x, lev, __FILE__, __LINE__); (x).debug_dump(); } } while (0)
+#  define dbg_nl(lev)          do { if (GVX_DBG_LEVEL() >= lev) rutz::debug::start_newline(); } while (0)
 
-#  define ASSERT(expr)        do { if ( !(expr) ) rutz::debug::assert_aux(#expr, __FILE__, __LINE__); } while(0)
-#  define INVARIANT(expr)     do { if ( !(expr) ) rutz::debug::invariant_aux(#expr, __FILE__, __LINE__); } while(0)
-#  define PRECONDITION(expr)  do { if ( !(expr) ) rutz::debug::precondition_aux(#expr, __FILE__, __LINE__); } while(0)
-#  define POSTCONDITION(expr) do { if ( !(expr) ) rutz::debug::postcondition_aux(#expr, __FILE__, __LINE__); } while(0)
+#  define GVX_ASSERT(expr)        do { if ( !(expr) ) rutz::debug::assert_aux(#expr, __FILE__, __LINE__); } while(0)
+#  define GVX_INVARIANT(expr)     do { if ( !(expr) ) rutz::debug::invariant_aux(#expr, __FILE__, __LINE__); } while(0)
+#  define GVX_PRECONDITION(expr)  do { if ( !(expr) ) rutz::debug::precondition_aux(#expr, __FILE__, __LINE__); } while(0)
+#  define GVX_POSTCONDITION(expr) do { if ( !(expr) ) rutz::debug::postcondition_aux(#expr, __FILE__, __LINE__); } while(0)
 
 #else // defined(NO_DEBUG)
 
@@ -181,9 +181,9 @@ static const char vcid_groovx_rutz_debug_h_utc20050626084020[] = "$Id$ $HeadURL$
 #  define dbg_dump(lev, expr)  do {} while (0)
 #  define dbg_nl(lev)          do {} while (0)
 
-#  define ASSERT(x)        do {} while (0)
-#  define INVARIANT(x)     do {} while (0)
-#  define PRECONDITION(x)  do {} while (0)
-#  define POSTCONDITION(x) do {} while (0)
+#  define GVX_ASSERT(x)        do {} while (0)
+#  define GVX_INVARIANT(x)     do {} while (0)
+#  define GVX_PRECONDITION(x)  do {} while (0)
+#  define GVX_POSTCONDITION(x) do {} while (0)
 
 #endif

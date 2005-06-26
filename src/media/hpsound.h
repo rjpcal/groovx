@@ -77,7 +77,7 @@ media::hp_audio_sound_rep::hp_audio_sound_rep(const char* filename) :
   m_sbucket(0),
   m_play_params()
 {
-DOTRACE("hp_audio_sound_rep::hp_audio_sound_rep");
+GVX_TRACE("hp_audio_sound_rep::hp_audio_sound_rep");
   init_sound();
   if ( !s_audio )
     throw rutz::error("invalid HP audio server connection", SRC_POS);
@@ -105,7 +105,7 @@ DOTRACE("hp_audio_sound_rep::hp_audio_sound_rep");
 
 media::hp_audio_sound_rep::~hp_audio_sound_rep() throw()
 {
-DOTRACE("hp_audio_sound_rep::~hp_audio_sound_rep");
+GVX_TRACE("hp_audio_sound_rep::~hp_audio_sound_rep");
   if ( s_audio != 0 )
     {
       if (m_sbucket)
@@ -115,7 +115,7 @@ DOTRACE("hp_audio_sound_rep::~hp_audio_sound_rep");
 
 void media::hp_audio_sound_rep::play()
 {
-DOTRACE("hp_audio_sound_rep::play");
+GVX_TRACE("hp_audio_sound_rep::play");
   init_sound();
   if ( !s_audio )
     throw rutz::error("invalid audio server connection", SRC_POS);
@@ -126,7 +126,7 @@ DOTRACE("hp_audio_sound_rep::play");
 
 bool media::hp_audio_sound_rep::init_sound()
 {
-DOTRACE("hp_audio_sound_rep::init_sound");
+GVX_TRACE("hp_audio_sound_rep::init_sound");
 
   if (s_audio != 0) return true;
 
@@ -156,7 +156,7 @@ DOTRACE("hp_audio_sound_rep::init_sound");
 
 void media::hp_audio_sound_rep::close_sound()
 {
-DOTRACE("hp_audio_sound_rep::close_sound");
+GVX_TRACE("hp_audio_sound_rep::close_sound");
   if ( s_audio )
     {
       ACloseAudio( s_audio, NULL );
@@ -166,7 +166,7 @@ DOTRACE("hp_audio_sound_rep::close_sound");
 
 long media::hp_audio_sound_rep::error_handler(Audio* audio, AErrorEvent *err)
 {
-DOTRACE("media::hp_audio_sound_rep::error_handler");
+GVX_TRACE("media::hp_audio_sound_rep::error_handler");
 
   static char buf[128];
   AGetErrorText(audio, err->error_code, buf, 127);

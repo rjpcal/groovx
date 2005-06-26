@@ -52,7 +52,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 
@@ -68,7 +68,7 @@ namespace WindowSystem
 
 void WindowSystem::winInfo(Tk_Window tkWin)
 {
-DOTRACE("WindowSystem::winInfo[glx]");
+GVX_TRACE("WindowSystem::winInfo[glx]");
   Display* dpy = Tk_Display(tkWin);
 
   int natoms = 0;
@@ -112,7 +112,7 @@ DOTRACE("WindowSystem::winInfo[glx]");
 
 void WindowSystem::iconify(Tk_Window tkWin)
 {
-DOTRACE("WindowSystem::iconify[glx]");
+GVX_TRACE("WindowSystem::iconify[glx]");
   XIconifyWindow(Tk_Display(tkWin),
                  Tk_WindowId(tkWin),
                  Tk_ScreenNumber(tkWin));
@@ -120,7 +120,7 @@ DOTRACE("WindowSystem::iconify[glx]");
 
 void WindowSystem::grabKeyboard(Tk_Window tkWin)
 {
-DOTRACE("WindowSystem::grabKeyboard[glx]");
+GVX_TRACE("WindowSystem::grabKeyboard[glx]");
   const int result =
     XGrabKeyboard(Tk_Display(tkWin),
                   Tk_WindowId(tkWin),
@@ -144,7 +144,7 @@ DOTRACE("WindowSystem::grabKeyboard[glx]");
 
 void WindowSystem::ungrabKeyboard(Tk_Window tkWin)
 {
-DOTRACE("WindowSystem::ungrabKeyboard[glx]");
+GVX_TRACE("WindowSystem::ungrabKeyboard[glx]");
   XUngrabKeyboard(Tk_Display(tkWin), CurrentTime);
 }
 
@@ -152,27 +152,27 @@ DOTRACE("WindowSystem::ungrabKeyboard[glx]");
 
 void WindowSystem::winInfo(Tk_Window /*tkWin*/)
 {
-DOTRACE("WindowSystem::winInfo[agl]");
+GVX_TRACE("WindowSystem::winInfo[agl]");
   // FIXME
   throw rutz::error("WindowSystem::winInfo not supported", SRC_POS);
 }
 
 void WindowSystem::iconify(Tk_Window /*tkWin*/)
 {
-DOTRACE("WindowSystem::iconify[agl]");
+GVX_TRACE("WindowSystem::iconify[agl]");
   // FIXME
   throw rutz::error("WindowSystem::iconify not supported", SRC_POS);
 }
 
 void WindowSystem::grabKeyboard(Tk_Window /*tkWin*/)
 {
-DOTRACE("WindowSystem::grabKeyboard[agl]");
+GVX_TRACE("WindowSystem::grabKeyboard[agl]");
   // don't need to do anything to grab keyboard with Mac OS X Aqua
 }
 
 void WindowSystem::ungrabKeyboard(Tk_Window /*tkWin*/)
 {
-DOTRACE("WindowSystem::ungrabKeyboard[agl]");
+GVX_TRACE("WindowSystem::ungrabKeyboard[agl]");
   // don't need to do anything to (un)grab keyboard with Mac OS X Aqua
 }
 
@@ -262,7 +262,7 @@ TkWidgImpl::TkWidgImpl(Tcl::TkWidget* o, Tcl::Interp& p,
   updatePending(false),
   shutdownRequested(false)
 {
-DOTRACE("TkWidgImpl::TkWidgImpl");
+GVX_TRACE("TkWidgImpl::TkWidgImpl");
 
   if (tkWin == 0)
     {
@@ -278,7 +278,7 @@ DOTRACE("TkWidgImpl::TkWidgImpl");
 
 TkWidgImpl::~TkWidgImpl() throw()
 {
-DOTRACE("TkWidgImpl::~TkWidgImpl");
+GVX_TRACE("TkWidgImpl::~TkWidgImpl");
 
   if (cursor != 0)
     Tk_FreeCursor(Tk_Display(tkWin), cursor);
@@ -293,7 +293,7 @@ DOTRACE("TkWidgImpl::~TkWidgImpl");
 
 void TkWidgImpl::buttonEventProc(XButtonEvent* ev)
 {
-DOTRACE("TkWidgImpl::buttonEventProc");
+GVX_TRACE("TkWidgImpl::buttonEventProc");
 
   const bool controlPressed = ev->state & ControlMask;
   const bool shiftPressed = ev->state & ShiftMask;
@@ -316,7 +316,7 @@ DOTRACE("TkWidgImpl::buttonEventProc");
 
 void TkWidgImpl::keyEventProc(XKeyEvent* ev)
 {
-DOTRACE("TkWidgImpl::keyEventProc");
+GVX_TRACE("TkWidgImpl::keyEventProc");
 
   const bool controlPressed = ev->state & ControlMask;
 
@@ -348,7 +348,7 @@ DOTRACE("TkWidgImpl::keyEventProc");
 void TkWidgImpl::cEventCallback(ClientData clientData,
                                 XEvent* ev) throw()
 {
-DOTRACE("TkWidgImpl::cEventCallback");
+GVX_TRACE("TkWidgImpl::cEventCallback");
 
   TkWidgImpl* const rep = cast_from_void(clientData);
   Tcl::TkWidget* const widg = rep->owner;
@@ -359,7 +359,7 @@ DOTRACE("TkWidgImpl::cEventCallback");
         {
         case Expose:
           {
-            DOTRACE("TkWidgImpl::cEventCallback-Expose");
+            GVX_TRACE("TkWidgImpl::cEventCallback-Expose");
             if (ev->xexpose.count == 0)
               {
                 widg->requestRedisplay();
@@ -368,7 +368,7 @@ DOTRACE("TkWidgImpl::cEventCallback");
           break;
         case ConfigureNotify:
           {
-            DOTRACE("TkWidgImpl::cEventCallback-ConfigureNotify");
+            GVX_TRACE("TkWidgImpl::cEventCallback-ConfigureNotify");
 
             widg->reshapeCallback(Tk_Width(rep->tkWin),
                                   Tk_Height(rep->tkWin));
@@ -389,15 +389,15 @@ DOTRACE("TkWidgImpl::cEventCallback");
           break;
         case MapNotify:
           {
-            DOTRACE("TkWidget::cEventCallback-MapNotify");
+            GVX_TRACE("TkWidget::cEventCallback-MapNotify");
           }
           break;
         case DestroyNotify:
           {
-            DOTRACE("TkWidget::cEventCallback-DestroyNotify");
+            GVX_TRACE("TkWidget::cEventCallback-DestroyNotify");
 
             // Idiot-check that we don't have recursive destroy calls
-            ASSERT(!rep->shutdownRequested);
+            GVX_ASSERT(!rep->shutdownRequested);
 
             rep->shutdownRequested = true;
 
@@ -416,7 +416,7 @@ DOTRACE("TkWidgImpl::cEventCallback");
 
 void TkWidgImpl::cRenderCallback(ClientData clientData) throw()
 {
-DOTRACE("TkWidgImpl::cRenderCallback");
+GVX_TRACE("TkWidgImpl::cRenderCallback");
 
   TkWidgImpl* const rep = cast_from_void(clientData);
 
@@ -434,14 +434,14 @@ DOTRACE("TkWidgImpl::cRenderCallback");
 
 void TkWidgImpl::cEventuallyFreeCallback(char* clientData) throw()
 {
-DOTRACE("TkWidgImpl::cEventuallyFreeCallback");
+GVX_TRACE("TkWidgImpl::cEventuallyFreeCallback");
   TkWidgImpl* const rep = cast_from_void(clientData);
   delete rep->owner;
 }
 
 void TkWidgImpl::cTakeFocusCallback(ClientData clientData) throw()
 {
-DOTRACE("TkWidgImpl::cTakeFocusCallback");
+GVX_TRACE("TkWidgImpl::cTakeFocusCallback");
   TkWidgImpl* const rep = cast_from_void(clientData);
   try
     {
@@ -466,26 +466,26 @@ Tcl::TkWidget::TkWidget(Tcl::Interp& interp,
                         bool topLevel) :
   rep(new TkWidgImpl(this, interp, classname, pathname, topLevel))
 {
-DOTRACE("Tcl::TkWidget::TkWidget");
+GVX_TRACE("Tcl::TkWidget::TkWidget");
 
   this->markAsVolatile();
 }
 
 Tcl::TkWidget::~TkWidget() throw()
 {
-DOTRACE("Tcl::TkWidget::~TkWidget");
+GVX_TRACE("Tcl::TkWidget::~TkWidget");
   delete rep;
 }
 
 int Tcl::TkWidget::width() const
 {
-DOTRACE("Tcl::TkWidget::width");
+GVX_TRACE("Tcl::TkWidget::width");
   return Tk_Width(rep->tkWin);
 }
 
 int Tcl::TkWidget::height() const
 {
-DOTRACE("Tcl::TkWidget::height");
+GVX_TRACE("Tcl::TkWidget::height");
   return Tk_Height(rep->tkWin);
 }
 
@@ -496,7 +496,7 @@ geom::vec2<int> Tcl::TkWidget::size() const
 
 void Tcl::TkWidget::setWidth(int w)
 {
-DOTRACE("Tcl::TkWidget::setWidth");
+GVX_TRACE("Tcl::TkWidget::setWidth");
   // Need to specify Tk_ReqHeight(rep->tkWin) instead of
   // Tk_Height(rep->tkWin), since the latter might not reflect the
   // requested height if the event loop has not been entered since a
@@ -506,7 +506,7 @@ DOTRACE("Tcl::TkWidget::setWidth");
 
 void Tcl::TkWidget::setHeight(int h)
 {
-DOTRACE("Tcl::TkWidget::setHeight");
+GVX_TRACE("Tcl::TkWidget::setHeight");
   // Need to specify Tk_ReqWidth(rep->tkWin) instead of
   // Tk_Width(rep->tkWin), since the latter might not reflect the
   // requested height if the event loop has not been entered since a
@@ -516,13 +516,13 @@ DOTRACE("Tcl::TkWidget::setHeight");
 
 void Tcl::TkWidget::setSize(geom::vec2<int> sz)
 {
-DOTRACE("Tcl::TkWidget::setSize");
+GVX_TRACE("Tcl::TkWidget::setSize");
   Tk_GeometryRequest(rep->tkWin, sz.x(), sz.y());
 }
 
 void Tcl::TkWidget::destroyWidget()
 {
-DOTRACE("Tcl::TkWidget::destroyWidget");
+GVX_TRACE("Tcl::TkWidget::destroyWidget");
 
   // If we are exiting, don't bother destroying the widget; otherwise...
   if ( !rep->interp.interpDeleted() )
@@ -533,7 +533,7 @@ DOTRACE("Tcl::TkWidget::destroyWidget");
 
 void Tcl::TkWidget::winInfo() throw()
 {
-DOTRACE("Tcl::TkWidget::winInfo");
+GVX_TRACE("Tcl::TkWidget::winInfo");
 
   WindowSystem::winInfo(rep->tkWin);
 }
@@ -545,21 +545,21 @@ Tcl::Interp& Tcl::TkWidget::interp() const
 
 Tk_Window Tcl::TkWidget::tkWin() const
 {
-  ASSERT(rep->tkWin != 0);
+  GVX_ASSERT(rep->tkWin != 0);
   return rep->tkWin;
 }
 
 const char* Tcl::TkWidget::pathname() const
 {
-  ASSERT(rep->tkWin != 0);
+  GVX_ASSERT(rep->tkWin != 0);
   return Tk_PathName(rep->tkWin);
 }
 
 double Tcl::TkWidget::pixelsPerInch() const
 {
-DOTRACE("Tcl::TkWidget::pixelsPerInch");
+GVX_TRACE("Tcl::TkWidget::pixelsPerInch");
 
-  ASSERT(rep->tkWin != 0);
+  GVX_ASSERT(rep->tkWin != 0);
 
   Screen* scr = Tk_Screen(rep->tkWin);
   const int screen_pixel_width = WidthOfScreen(scr);
@@ -575,7 +575,7 @@ DOTRACE("Tcl::TkWidget::pixelsPerInch");
 
 void Tcl::TkWidget::setCursor(const char* cursor_spec)
 {
-DOTRACE("Tcl::TkWidget::setCursor");
+GVX_TRACE("Tcl::TkWidget::setCursor");
   if (cursor_spec == 0 || cursor_spec == '\0')
     {
       // Empty string means to unset the cursor
@@ -609,7 +609,7 @@ DOTRACE("Tcl::TkWidget::setCursor");
 
 const char* Tcl::TkWidget::getCursor() const
 {
-DOTRACE("Tcl::TkWidget::getCursor");
+GVX_TRACE("Tcl::TkWidget::getCursor");
   return rep->cursor == 0
     ? ""
     : Tk_NameOfCursor(Tk_Display(rep->tkWin), rep->cursor);
@@ -617,7 +617,7 @@ DOTRACE("Tcl::TkWidget::getCursor");
 
 void Tcl::TkWidget::warpPointer(int x, int y) const
 {
-DOTRACE("Tcl::TkWidget::warpPointer");
+GVX_TRACE("Tcl::TkWidget::warpPointer");
 
   // NOTE: The XWarpPointer emulation routine provided by Tk for Mac
   // OS X Aqua currently does nothing (as of Tk 8.5a1).
@@ -629,7 +629,7 @@ DOTRACE("Tcl::TkWidget::warpPointer");
 
 void Tcl::TkWidget::pack()
 {
-DOTRACE("Tcl::TkWidget::pack");
+GVX_TRACE("Tcl::TkWidget::pack");
 
   if (!Tk_IsTopLevel(rep->tkWin))
     {
@@ -642,7 +642,7 @@ DOTRACE("Tcl::TkWidget::pack");
 
 void Tcl::TkWidget::repack(const char* options)
 {
-DOTRACE("Tcl::TkWidget::repack");
+GVX_TRACE("Tcl::TkWidget::repack");
 
   if (!Tk_IsTopLevel(rep->tkWin))
     {
@@ -654,7 +654,7 @@ DOTRACE("Tcl::TkWidget::repack");
 
 void Tcl::TkWidget::unpack()
 {
-DOTRACE("Tcl::TkWidget::unpack");
+GVX_TRACE("Tcl::TkWidget::unpack");
 
   if (!Tk_IsTopLevel(rep->tkWin))
     {
@@ -665,14 +665,14 @@ DOTRACE("Tcl::TkWidget::unpack");
 
 void Tcl::TkWidget::iconify()
 {
-DOTRACE("Tcl::TkWidget::iconify");
+GVX_TRACE("Tcl::TkWidget::iconify");
 
   WindowSystem::iconify(rep->tkWin);
 }
 
 void Tcl::TkWidget::grabKeyboard()
 {
-DOTRACE("Tcl::TkWidget::grabKeyboard");
+GVX_TRACE("Tcl::TkWidget::grabKeyboard");
 
   WindowSystem::grabKeyboard(rep->tkWin);
 
@@ -690,14 +690,14 @@ DOTRACE("Tcl::TkWidget::grabKeyboard");
 
 void Tcl::TkWidget::ungrabKeyboard()
 {
-DOTRACE("Tcl::TkWidget::ungrabKeyboard");
+GVX_TRACE("Tcl::TkWidget::ungrabKeyboard");
 
   WindowSystem::ungrabKeyboard(rep->tkWin);
 }
 
 void Tcl::TkWidget::maximize()
 {
-DOTRACE("Tcl::TkWidget::maximize");
+GVX_TRACE("Tcl::TkWidget::maximize");
 
   const int w = WidthOfScreen(Tk_Screen(rep->tkWin));
   const int h = HeightOfScreen(Tk_Screen(rep->tkWin));
@@ -716,7 +716,7 @@ DOTRACE("Tcl::TkWidget::maximize");
 
 void Tcl::TkWidget::minimize()
 {
-DOTRACE("Tcl::TkWidget::minimize");
+GVX_TRACE("Tcl::TkWidget::minimize");
 
   ungrabKeyboard();
 
@@ -726,7 +726,7 @@ DOTRACE("Tcl::TkWidget::minimize");
 void Tcl::TkWidget::bind(const fstring& event_sequence,
                          const fstring& script)
 {
-DOTRACE("Tcl::TkWidget::bind");
+GVX_TRACE("Tcl::TkWidget::bind");
 
   fstring cmd_str("bind ", pathname(), " ");
   cmd_str.append( event_sequence, " ");
@@ -749,7 +749,7 @@ DOTRACE("Tcl::TkWidget::bind");
 
 void Tcl::TkWidget::takeFocus()
 {
-DOTRACE("Tcl::TkWidget::takeFocus");
+GVX_TRACE("Tcl::TkWidget::takeFocus");
 
   const fstring cmd("focus -force ", pathname());
 
@@ -758,13 +758,13 @@ DOTRACE("Tcl::TkWidget::takeFocus");
 
 void Tcl::TkWidget::loseFocus()
 {
-DOTRACE("Tcl::TkWidget::loseFocus");
+GVX_TRACE("Tcl::TkWidget::loseFocus");
   Tk_Window toplev = rep->tkWin;
 
   while (!Tk_IsTopLevel(toplev))
     {
       toplev = Tk_Parent(toplev);
-      ASSERT(toplev != 0);
+      GVX_ASSERT(toplev != 0);
     }
 
   const char* pathname = Tk_PathName(toplev);
@@ -776,7 +776,7 @@ DOTRACE("Tcl::TkWidget::loseFocus");
 
 void Tcl::TkWidget::requestRedisplay()
 {
-DOTRACE("Tcl::TkWidget::requestRedisplay");
+GVX_TRACE("Tcl::TkWidget::requestRedisplay");
 
   if (!rep->updatePending)
     {

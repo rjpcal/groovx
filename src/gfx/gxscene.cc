@@ -43,7 +43,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -66,19 +66,19 @@ GxScene::GxScene(Nub::SoftRef<Gfx::Canvas> canvas) :
   itsTimer(100, true),
   slotNodeChanged(Nub::Slot0::make(this, &GxScene::onNodeChange))
 {
-DOTRACE("GxScene::GxScene");
+GVX_TRACE("GxScene::GxScene");
   itsTimer.sigTimeOut.connect(this, &GxScene::fullRender);
   itsCamera->sigNodeChanged.connect(slotNodeChanged);
 }
 
 GxScene::~GxScene() throw()
 {
-DOTRACE("GxScene::~GxScene");
+GVX_TRACE("GxScene::~GxScene");
 }
 
 void GxScene::render()
 {
-DOTRACE("GxScene::render");
+GVX_TRACE("GxScene::render");
 
   try
     {
@@ -101,7 +101,7 @@ DOTRACE("GxScene::render");
 
 void GxScene::fullRender()
 {
-DOTRACE("GxScene::fullRender");
+GVX_TRACE("GxScene::fullRender");
 
   // (1) Clear the screen (but only if we are not "holding")
   if( !isItHolding )
@@ -121,14 +121,14 @@ DOTRACE("GxScene::fullRender");
 
 void GxScene::undraw()
 {
-DOTRACE("GxScene::undraw");
+GVX_TRACE("GxScene::undraw");
   itsUndrawNode->undraw(*itsCanvas);
   itsCanvas->flushOutput();
 }
 
 void GxScene::clearscreen()
 {
-DOTRACE("GxScene::clearscreen");
+GVX_TRACE("GxScene::clearscreen");
   itsCanvas->clearColorBuffer();
   setDrawable(Nub::Ref<GxNode>(GxEmptyNode::make()));
   itsUndrawNode = Nub::Ref<GxNode>(GxEmptyNode::make());
@@ -137,14 +137,14 @@ DOTRACE("GxScene::clearscreen");
 
 void GxScene::fullClearscreen()
 {
-DOTRACE("GxScene::fullClearscreen");
+GVX_TRACE("GxScene::fullClearscreen");
   clearscreen();
   itsCanvas->flushOutput();
 }
 
 void GxScene::setVisibility(bool val)
 {
-DOTRACE("GxScene::setVisibility");
+GVX_TRACE("GxScene::setVisibility");
   isItVisible = val;
   if ( !isItVisible )
     {
@@ -154,7 +154,7 @@ DOTRACE("GxScene::setVisibility");
 
 void GxScene::setCamera(const Nub::Ref<GxCamera>& cam)
 {
-DOTRACE("GxScene::setCamera");
+GVX_TRACE("GxScene::setCamera");
   itsCamera->sigNodeChanged.disconnect(slotNodeChanged);
 
   itsCamera = cam;
@@ -168,7 +168,7 @@ DOTRACE("GxScene::setCamera");
 
 void GxScene::setDrawable(const Nub::Ref<GxNode>& node)
 {
-DOTRACE("GxScene::setDrawable");
+GVX_TRACE("GxScene::setDrawable");
   itsDrawNode->sigNodeChanged.disconnect(slotNodeChanged);
 
   itsDrawNode = node;
@@ -178,7 +178,7 @@ DOTRACE("GxScene::setDrawable");
 
 void GxScene::flushChanges()
 {
-DOTRACE("GxScene::flushChanges");
+GVX_TRACE("GxScene::flushChanges");
   if (isItRefreshing && !isItRefreshed)
     {
       itsCamera->reshape(*itsCanvas, itsWidth, itsHeight);
@@ -188,14 +188,14 @@ DOTRACE("GxScene::flushChanges");
 
 void GxScene::onNodeChange()
 {
-DOTRACE("GxScene::onNodeChange");
+GVX_TRACE("GxScene::onNodeChange");
   isItRefreshed = false;
   flushChanges();
 }
 
 void GxScene::reshape(int width, int height)
 {
-DOTRACE("GxScene::reshape");
+GVX_TRACE("GxScene::reshape");
   itsWidth = width;
   itsHeight = height;
   itsCamera->reshape(*itsCanvas, itsWidth, itsHeight);
@@ -203,7 +203,7 @@ DOTRACE("GxScene::reshape");
 
 void GxScene::animate(unsigned int framesPerSecond)
 {
-DOTRACE("GxScene::animate");
+GVX_TRACE("GxScene::animate");
   if (framesPerSecond == 0)
     {
       itsTimer.cancel();

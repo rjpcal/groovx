@@ -61,10 +61,10 @@
 #include <sys/stat.h> // for mode_t constants S_IRUSR etc.
 #include <unistd.h> // for sleep()
 
-#define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
+#define GVX_DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 
@@ -160,26 +160,26 @@ public:
 ExptDriver::ExptDriver() :
   rep(new Impl)
 {
-DOTRACE("ExptDriver::ExptDriver");
+GVX_TRACE("ExptDriver::ExptDriver");
 
   rep->addLogInfo(Tcl::Main::commandLine().c_str());
 }
 
 ExptDriver::~ExptDriver() throw()
 {
-DOTRACE("ExptDriver::~ExptDriver");
+GVX_TRACE("ExptDriver::~ExptDriver");
   delete rep;
 }
 
 IO::VersionId ExptDriver::serialVersionId() const
 {
-DOTRACE("ExptDriver::serialVersionId");
+GVX_TRACE("ExptDriver::serialVersionId");
   return EXPTDRIVER_SVID;
 }
 
 void ExptDriver::readFrom(IO::Reader& reader)
 {
-DOTRACE("ExptDriver::readFrom");
+GVX_TRACE("ExptDriver::readFrom");
 
   reader.ensureReadVersionId("ExptDriver", 6,
                              "Try cvs tag xml_conversion_20040526",
@@ -201,7 +201,7 @@ DOTRACE("ExptDriver::readFrom");
 
 void ExptDriver::writeTo(IO::Writer& writer) const
 {
-DOTRACE("ExptDriver::writeTo");
+GVX_TRACE("ExptDriver::writeTo");
 
   writer.ensureWriteVersionId("ExptDriver", EXPTDRIVER_SVID, 6,
                               "Try groovx0.8a7", SRC_POS);
@@ -229,19 +229,19 @@ DOTRACE("ExptDriver::writeTo");
 
 const Nub::SoftRef<Toglet>& ExptDriver::getWidget() const
 {
-DOTRACE("ExptDriver::getWidget");
+GVX_TRACE("ExptDriver::getWidget");
   return rep->widget;
 }
 
 void ExptDriver::vxRun(Element& /*parent*/)
 {
-DOTRACE("currentElement");
-  /* FIXME */ ASSERT(false);
+GVX_TRACE("currentElement");
+  /* FIXME */ GVX_ASSERT(false);
 }
 
 void ExptDriver::vxEndTrialHook()
 {
-DOTRACE("ExptDriver::vxEndTrialHook");
+GVX_TRACE("ExptDriver::vxEndTrialHook");
 
   ++(rep->numTrialsCompleted);
 
@@ -259,7 +259,7 @@ DOTRACE("ExptDriver::vxEndTrialHook");
 
 void ExptDriver::vxAllChildrenFinished()
 {
-DOTRACE("ExptDriver::vxAllChildrenFinished");
+GVX_TRACE("ExptDriver::vxAllChildrenFinished");
 
   Nub::log( "ExptDriver::vxAllChildrenFinished" );
 
@@ -284,74 +284,74 @@ DOTRACE("ExptDriver::vxAllChildrenFinished");
 
 const fstring& ExptDriver::getAutosaveFile() const
 {
-DOTRACE("ExptDriver::getAutosaveFile");
+GVX_TRACE("ExptDriver::getAutosaveFile");
   return rep->autosaveFile;
 }
 
 void ExptDriver::setAutosaveFile(const fstring& str)
 {
-DOTRACE("ExptDriver::setAutosaveFile");
+GVX_TRACE("ExptDriver::setAutosaveFile");
   rep->autosaveFile = str;
 }
 
 const fstring& ExptDriver::getFilePrefix() const
 {
-DOTRACE("ExptDriver::getFilePrefix");
+GVX_TRACE("ExptDriver::getFilePrefix");
   return rep->filePrefix;
 }
 
 void ExptDriver::setFilePrefix(const fstring& str)
 {
-DOTRACE("ExptDriver::setFilePrefix");
+GVX_TRACE("ExptDriver::setFilePrefix");
   rep->filePrefix = str;
 }
 
 void ExptDriver::claimLogFile() const
 {
-DOTRACE("ExptDriver::claimLogFile");
+GVX_TRACE("ExptDriver::claimLogFile");
   Nub::Log::setLogFilename(fstring(rep->filePrefix, "_",
                                    rep->fileTimestamp, ".log"));
 }
 
 int ExptDriver::getAutosavePeriod() const
 {
-DOTRACE("ExptDriver::getAutosavePeriod");
+GVX_TRACE("ExptDriver::getAutosavePeriod");
   return rep->autosavePeriod;
 }
 
 void ExptDriver::setAutosavePeriod(int period)
 {
-DOTRACE("ExptDriver::setAutosavePeriod");
+GVX_TRACE("ExptDriver::setAutosavePeriod");
   rep->autosavePeriod = period;
 }
 
 const char* ExptDriver::getInfoLog() const
 {
-DOTRACE("ExptDriver::getInfoLog");
+GVX_TRACE("ExptDriver::getInfoLog");
   return rep->infoLog.c_str();
 }
 
 fstring ExptDriver::getDoWhenComplete() const
 {
-DOTRACE("ExptDriver::getDoWhenComplete");
+GVX_TRACE("ExptDriver::getDoWhenComplete");
   return rep->doWhenComplete->fullSpec();
 }
 
 void ExptDriver::setDoWhenComplete(const fstring& script)
 {
-DOTRACE("ExptDriver::setDoWhenComplete");
+GVX_TRACE("ExptDriver::setDoWhenComplete");
   rep->doWhenComplete->define("", script);
 }
 
 void ExptDriver::setWidget(const Nub::SoftRef<Toglet>& widg)
 {
-DOTRACE("ExptDriver::setWidget");
+GVX_TRACE("ExptDriver::setWidget");
   rep->widget = widg;
 }
 
 void ExptDriver::edBeginExpt()
 {
-DOTRACE("ExptDriver::edBeginExpt");
+GVX_TRACE("ExptDriver::edBeginExpt");
 
   if (isComplete())
     {
@@ -383,7 +383,7 @@ DOTRACE("ExptDriver::edBeginExpt");
 
 void ExptDriver::edResumeExpt()
 {
-DOTRACE("ExptDriver::edResumeExpt");
+GVX_TRACE("ExptDriver::edResumeExpt");
 
   if (isComplete())
     {
@@ -401,7 +401,7 @@ DOTRACE("ExptDriver::edResumeExpt");
 // appears to lock up
 void ExptDriver::pause()
 {
-DOTRACE("ExptDriver::pause");
+GVX_TRACE("ExptDriver::pause");
 
   // Halt the experiment, then pop up a pause window. When the user
   // dismisses the window, the experiment will resume.
@@ -466,7 +466,7 @@ namespace
 
 void ExptDriver::storeData()
 {
-DOTRACE("ExptDriver::storeData");
+GVX_TRACE("ExptDriver::storeData");
 
   // The experiment and a summary of the responses to it are written to
   // files with unique filenames.

@@ -126,7 +126,7 @@ namespace HookTcl
 }
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 #include <cstring>
 #include <tcl.h>
@@ -147,7 +147,7 @@ extern Tcl_ObjType genericObjType;
 
 void genericFreeInternalRepProc(Tcl_Obj* objPtr)
 {
-DOTRACE("genericFreeInternalRepProc");
+GVX_TRACE("genericFreeInternalRepProc");
   GenericObj* gobj =
     static_cast<GenericObj*>(objPtr->internalRep.otherValuePtr);
 
@@ -158,7 +158,7 @@ DOTRACE("genericFreeInternalRepProc");
 
 void genericDupInternalRepProc(Tcl_Obj* srcPtr, Tcl_Obj* dupPtr)
 {
-DOTRACE("genericDupInternalRepProc");
+GVX_TRACE("genericDupInternalRepProc");
   GenericObj* gobj =
     static_cast<GenericObj*>(srcPtr->internalRep.otherValuePtr);
 
@@ -174,13 +174,13 @@ DOTRACE("genericDupInternalRepProc");
 
 void genericUpdateStringProc(Tcl_Obj* objPtr)
 {
-DOTRACE("genericUpdateStringProc");
+GVX_TRACE("genericUpdateStringProc");
   GenericObj* gobj =
     static_cast<GenericObj*>(objPtr->internalRep.otherValuePtr);
 
-  ASSERT(gobj != 0);
+  GVX_ASSERT(gobj != 0);
 
-  ASSERT(objPtr->bytes == 0);
+  GVX_ASSERT(objPtr->bytes == 0);
 
   objPtr->bytes = gobj->asString();
   objPtr->length = strlen(objPtr->bytes);
@@ -188,7 +188,7 @@ DOTRACE("genericUpdateStringProc");
 
 int genericSetFromAnyProc(Tcl_Interp* interp, Tcl_Obj* /*objPtr*/)
 {
-DOTRACE("genericSetFromAnyProc");
+GVX_TRACE("genericSetFromAnyProc");
 
   Tcl_AppendResult(interp, "can't convert to generic object type", 0);
   return TCL_ERROR;

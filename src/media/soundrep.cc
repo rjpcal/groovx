@@ -45,7 +45,7 @@ media::sound_rep::~sound_rep() throw() {}
 
 void media::sound_rep::check_filename(const char* filename)
 {
-DOTRACE("sound_rep::check_filename");
+GVX_TRACE("sound_rep::check_filename");
 
   if (filename == 0 || filename[0] == '\0')
     throw rutz::error("invalid filename", SRC_POS);

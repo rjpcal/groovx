@@ -38,7 +38,7 @@
 #include <cmath>
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace geom
 {

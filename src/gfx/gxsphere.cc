@@ -52,7 +52,7 @@ namespace
 
 const FieldMap& GxSphere::classFields()
 {
-DOTRACE("GxSphere::classFields");
+GVX_TRACE("GxSphere::classFields");
   static const Field FIELD_ARRAY[] =
   {
     Field("radius", &GxSphere::itsRadius, 1.0, 0.0, 10.0, 0.1,
@@ -70,7 +70,7 @@ DOTRACE("GxSphere::classFields");
 
 GxSphere* GxSphere::make()
 {
-DOTRACE("GxSphere::make");
+GVX_TRACE("GxSphere::make");
  return new GxSphere;
 }
 
@@ -81,30 +81,30 @@ GxSphere::GxSphere() :
   itsStacks(50),
   itsFilled(true)
 {
-DOTRACE("GxSphere::GxSphere");
+GVX_TRACE("GxSphere::GxSphere");
   setFieldMap(GxSphere::classFields());
 }
 
 GxSphere::~GxSphere() throw()
 {
-DOTRACE("GxSphere::~GxSphere");
+GVX_TRACE("GxSphere::~GxSphere");
 }
 
 IO::VersionId GxSphere::serialVersionId() const
 {
-DOTRACE("GxSphere::serialVersionId");
+GVX_TRACE("GxSphere::serialVersionId");
   return GXSPHERE_SVID;
 }
 
 void GxSphere::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxSphere::readFrom");
+GVX_TRACE("GxSphere::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
 void GxSphere::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxSphere::writeTo");
+GVX_TRACE("GxSphere::writeTo");
   writeFieldsTo(writer, classFields(), GXSPHERE_SVID);
 }
 
@@ -114,7 +114,7 @@ DOTRACE("GxSphere::writeTo");
 
 void GxSphere::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxSphere::getBoundingCube");
+GVX_TRACE("GxSphere::getBoundingCube");
 
   geom::box<double> mybox;
 
@@ -127,7 +127,7 @@ DOTRACE("GxSphere::getBoundingCube");
 
 void GxSphere::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxSphere::draw");
+GVX_TRACE("GxSphere::draw");
 
   canvas.drawSphere(itsRadius, itsSlices, itsStacks, itsFilled);
 }

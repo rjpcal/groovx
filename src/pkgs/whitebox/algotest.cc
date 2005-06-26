@@ -109,7 +109,7 @@ namespace
 extern "C"
 int Algotest_Init(Tcl_Interp* interp)
 {
-DOTRACE("Algotest_Init");
+GVX_TRACE("Algotest_Init");
 
   PKG_CREATE(interp, "Algotest", "4.$Revision$");
 
@@ -127,7 +127,7 @@ extern "C" int Algotest_SafeInit(Tcl_Interp*)
 
 extern "C" int Algotest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
-DOTRACE("Algotest_Unload");
+GVX_TRACE("Algotest_Unload");
   return Tcl::Pkg::unloadDestroy(interp, "Algotest");
 }
 

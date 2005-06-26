@@ -49,7 +49,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -66,7 +66,7 @@ namespace
   void v1_callback()
   {
     v1 -= 1;
-    ASSERT(tp1 != 0);
+    GVX_ASSERT(tp1 != 0);
     if (v1 < -3) tp1->cancel();
   }
 
@@ -193,7 +193,7 @@ namespace
 extern "C"
 int Tcltimertest_Init(Tcl_Interp* interp)
 {
-DOTRACE("Tcltimertest_Init");
+GVX_TRACE("Tcltimertest_Init");
 
   PKG_CREATE(interp, "Tcltimertest", "4.$Revision$");
 
@@ -211,7 +211,7 @@ extern "C" int Tcltimertest_SafeInit(Tcl_Interp*)
 
 extern "C" int Tcltimertest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
-DOTRACE("Tcltimertest_Unload");
+GVX_TRACE("Tcltimertest_Unload");
   return Tcl::Pkg::unloadDestroy(interp, "Tcltimertest");
 }
 

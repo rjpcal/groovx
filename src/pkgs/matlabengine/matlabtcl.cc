@@ -153,7 +153,7 @@ public:
 extern "C"
 int Matlabengine_Init(Tcl_Interp* interp)
 {
-DOTRACE("Matlabengine_Init");
+GVX_TRACE("Matlabengine_Init");
 
   PKG_CREATE(interp, "MatlabEngine", "4.$Revision$");
   Tcl::defGenericObjCmds<MatlabEngine>(pkg, SRC_POS);

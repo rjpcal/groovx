@@ -73,7 +73,7 @@ namespace
                            int num_cols_hint = -1,
                            bool text_labels = true)
   {
-    DOTRACE("<tlisttcl.cc>::doCreatePreview");
+    GVX_TRACE("<tlisttcl.cc>::doCreatePreview");
 
     if (world_viewport.is_void())
       throw rutz::error("invalid void rect", SRC_POS);
@@ -173,7 +173,7 @@ namespace
 
 void TlistUtils::writeResponses(const char* filename)
 {
-DOTRACE("TlistUtils::writeResponses");
+GVX_TRACE("TlistUtils::writeResponses");
 
   std::ofstream ofs(filename);
   const int wid = 8;
@@ -206,7 +206,7 @@ DOTRACE("TlistUtils::writeResponses");
 
 void TlistUtils::writeIncidenceMatrix(const char* filename)
 {
-DOTRACE("TlistUtils::writeIncidenceMatrix");
+GVX_TRACE("TlistUtils::writeIncidenceMatrix");
 
   std::ofstream ofs(filename);
 
@@ -247,7 +247,7 @@ public:
   virtual void writeObject(const char*,
                            Nub::SoftRef<const IO::IoObject> obj)
   {
-    DOTRACE("MatlabTrialWriter::writeObject");
+    GVX_TRACE("MatlabTrialWriter::writeObject");
     if (!obj.isValid())
       return;
     if (dynamic_cast<const GxShapeKit*>(obj.get()) != 0)
@@ -263,27 +263,27 @@ public:
   virtual void writeOwnedObject(const char* name,
                                 Nub::Ref<const IO::IoObject> obj)
   {
-    DOTRACE("MatlabTrialWriter::writeOwnedObject");
+    GVX_TRACE("MatlabTrialWriter::writeOwnedObject");
     writeObject(name, obj);
   }
 
   virtual void writeBaseClass(const char*,
                               Nub::Ref<const IO::IoObject> basePart)
   {
-    DOTRACE("MatlabTrialWriter::writeBaseClass");
+    GVX_TRACE("MatlabTrialWriter::writeBaseClass");
     basePart->writeTo(*this);
   }
 
   virtual void writeRoot(const IO::IoObject* root)
   {
-    DOTRACE("MatlabTrialWriter::writeRoot");
+    GVX_TRACE("MatlabTrialWriter::writeRoot");
     root->writeTo(*this);
   }
 };
 
 void TlistUtils::writeMatlab(const char* filename)
 {
-DOTRACE("TlistUtils::writeMatlab");
+GVX_TRACE("TlistUtils::writeMatlab");
 
   std::ofstream ofs(filename);
 

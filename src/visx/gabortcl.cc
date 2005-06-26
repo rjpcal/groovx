@@ -45,7 +45,7 @@
 extern "C"
 int Gabor_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gabor_Init");
+GVX_TRACE("Gabor_Init");
 
   PKG_CREATE(interp, "Gabor", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
@@ -59,7 +59,7 @@ DOTRACE("Gabor_Init");
 extern "C"
 int Gaborarray_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gaborarray_Init");
+GVX_TRACE("Gaborarray_Init");
 
   PKG_CREATE(interp, "GaborArray", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");

@@ -39,7 +39,7 @@
 
 double dash::detail::gammaln_engine(const double xx)
 {
-DOTRACE("dash::detail::gammaln_engine");
+GVX_TRACE("dash::detail::gammaln_engine");
 
   static const double cof[6] =
     {

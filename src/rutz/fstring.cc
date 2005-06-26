@@ -42,10 +42,10 @@
 #include <cstring>
 #include <iostream>
 
-#define NO_PROF
+#define GVX_NO_PROF
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 //---------------------------------------------------------------------
 //
@@ -84,7 +84,7 @@ rutz::string_rep::string_rep(std::size_t length, const char* text,
 
 rutz::string_rep::~string_rep() throw()
 {
-DOTRACE("rutz::string_rep::~string_rep");
+GVX_TRACE("rutz::string_rep::~string_rep");
 
   delete [] m_text;
   m_text = (char*)0xdeadbeef;
@@ -128,19 +128,19 @@ void rutz::string_rep::make_unique(rutz::string_rep*& rep)
 
   rep = new_rep;
 
-  POSTCONDITION(new_rep->m_refcount == 1);
+  GVX_POSTCONDITION(new_rep->m_refcount == 1);
 }
 
 char* rutz::string_rep::uniq_data() throw()
 {
-  PRECONDITION(m_refcount <= 1);
+  GVX_PRECONDITION(m_refcount <= 1);
 
   return m_text;
 }
 
 void rutz::string_rep::uniq_clear() throw()
 {
-  PRECONDITION(m_refcount <= 1);
+  GVX_PRECONDITION(m_refcount <= 1);
 
   m_length = 0;
   add_terminator();
@@ -166,16 +166,16 @@ void rutz::string_rep::add_terminator() throw()
 
 void rutz::string_rep::uniq_set_length(std::size_t length) throw()
 {
-  PRECONDITION(m_refcount <= 1);
-  PRECONDITION(length+1 < m_capacity);
+  GVX_PRECONDITION(m_refcount <= 1);
+  GVX_PRECONDITION(length+1 < m_capacity);
   m_length = length;
   add_terminator();
 }
 
 void rutz::string_rep::uniq_append(std::size_t length, const char* text)
 {
-  PRECONDITION(m_refcount <= 1);
-  PRECONDITION(text != 0);
+  GVX_PRECONDITION(m_refcount <= 1);
+  GVX_PRECONDITION(text != 0);
 
   if (m_length + length + 1 <= m_capacity)
     {
@@ -189,13 +189,13 @@ void rutz::string_rep::uniq_append(std::size_t length, const char* text)
       uniq_append(length, text);
     }
 
-  POSTCONDITION(m_length+1 <= m_capacity);
-  POSTCONDITION(m_text[m_length] == '\0');
+  GVX_POSTCONDITION(m_length+1 <= m_capacity);
+  GVX_POSTCONDITION(m_text[m_length] == '\0');
 }
 
 void rutz::string_rep::uniq_realloc(std::size_t capacity)
 {
-  PRECONDITION(m_refcount <= 1);
+  GVX_PRECONDITION(m_refcount <= 1);
 
   rutz::string_rep new_rep(rutz::max(m_capacity*2 + 32, capacity), 0);
 
@@ -232,8 +232,8 @@ void rutz::string_rep::debug_dump() const throw()
 
 void rutz::fstring::init_empty()
 {
-DOTRACE("rutz::fstring::init_empty");
-  PRECONDITION(m_rep == 0);
+GVX_TRACE("rutz::fstring::init_empty");
+  GVX_PRECONDITION(m_rep == 0);
 
   m_rep = string_rep::make(0, 0);
 
@@ -242,8 +242,8 @@ DOTRACE("rutz::fstring::init_empty");
 
 void rutz::fstring::init_range(char_range r)
 {
-DOTRACE("rutz::fstring::init");
-  PRECONDITION(m_rep == 0);
+GVX_TRACE("rutz::fstring::init");
+  GVX_PRECONDITION(m_rep == 0);
 
   m_rep = string_rep::make(r.len, r.text);
 
@@ -253,7 +253,7 @@ DOTRACE("rutz::fstring::init");
 rutz::fstring::fstring() :
   m_rep(string_rep::make(0,0))
 {
-DOTRACE("rutz::fstring::fstring");
+GVX_TRACE("rutz::fstring::fstring");
 
   m_rep->incr_ref_count();
 }
@@ -261,13 +261,13 @@ DOTRACE("rutz::fstring::fstring");
 rutz::fstring::fstring(const rutz::fstring& other) throw() :
   m_rep(other.m_rep)
 {
-DOTRACE("rutz::fstring::fstring(const fstring&)");
+GVX_TRACE("rutz::fstring::fstring(const fstring&)");
   m_rep->incr_ref_count();
 }
 
 rutz::fstring::~fstring() throw()
 {
-DOTRACE("rutz::fstring::~fstring");
+GVX_TRACE("rutz::fstring::~fstring");
 
   dbg_dump(7, *this);
 
@@ -277,14 +277,14 @@ DOTRACE("rutz::fstring::~fstring");
 
 void rutz::fstring::swap(rutz::fstring& other) throw()
 {
-DOTRACE("rutz::fstring::swap");
+GVX_TRACE("rutz::fstring::swap");
 
   rutz::swap2(m_rep, other.m_rep);
 }
 
 rutz::fstring& rutz::fstring::operator=(const char* text)
 {
-DOTRACE("rutz::fstring::operator=(const char*)");
+GVX_TRACE("rutz::fstring::operator=(const char*)");
 
   fstring copy(text);
   this->swap(copy);
@@ -293,7 +293,7 @@ DOTRACE("rutz::fstring::operator=(const char*)");
 
 rutz::fstring& rutz::fstring::operator=(const fstring& other) throw()
 {
-DOTRACE("rutz::fstring::operator=(const fstring&)");
+GVX_TRACE("rutz::fstring::operator=(const fstring&)");
 
   rutz::fstring copy(other);
   this->swap(copy);
@@ -302,7 +302,7 @@ DOTRACE("rutz::fstring::operator=(const fstring&)");
 
 bool rutz::fstring::ends_with(const fstring& ext) const throw()
 {
-DOTRACE("rutz::fstring::ends_with");
+GVX_TRACE("rutz::fstring::ends_with");
   if (ext.length() > this->length())
     return false;
 
@@ -313,7 +313,7 @@ DOTRACE("rutz::fstring::ends_with");
 
 void rutz::fstring::clear()
 {
-DOTRACE("rutz::fstring::clear");
+GVX_TRACE("rutz::fstring::clear");
 
   if (m_rep->is_unique())
     {
@@ -327,14 +327,14 @@ DOTRACE("rutz::fstring::clear");
 
 bool rutz::fstring::equals(const char* other) const throw()
 {
-DOTRACE("rutz::fstring::equals(const char*)");
+GVX_TRACE("rutz::fstring::equals(const char*)");
   return ( c_str() == other ||
            strcmp(c_str(), other) == 0 );
 }
 
 bool rutz::fstring::equals(const fstring& other) const throw()
 {
-DOTRACE("rutz::fstring::equals(const fstring&)");
+GVX_TRACE("rutz::fstring::equals(const fstring&)");
 
   return c_str() == other.c_str() ||
     ( length() == other.length() &&
@@ -343,7 +343,7 @@ DOTRACE("rutz::fstring::equals(const fstring&)");
 
 bool rutz::fstring::operator<(const char* other) const throw()
 {
-DOTRACE("rutz::fstring::operator<");
+GVX_TRACE("rutz::fstring::operator<");
   // Check if we are pointing to the same string
   if (c_str() == other) return false;
   // ...otherwise do a string compare
@@ -352,7 +352,7 @@ DOTRACE("rutz::fstring::operator<");
 
 bool rutz::fstring::operator>(const char* other) const throw()
 {
-DOTRACE("rutz::fstring::operator>");
+GVX_TRACE("rutz::fstring::operator>");
   // Check if we are pointing to the same string
   if (c_str() == other) return false;
   // ...otherwise do a string compare
@@ -367,7 +367,7 @@ void rutz::fstring::do_append(const fstring& s) { append_range(s.c_str(), s.leng
   const int SZ = 64;                            \
   char buf[SZ];                                 \
   int n = snprintf(buf, SZ, fmt, (val));        \
-  ASSERT(n > 0 && n < SZ);                      \
+  GVX_ASSERT(n > 0 && n < SZ);                      \
   append_range(&buf[0], std::size_t(n))
 
 void rutz::fstring::do_append(bool x)          { APPEND("%d", int(x)); }
@@ -381,7 +381,7 @@ void rutz::fstring::do_append(double x)        { APPEND("%g", x); }
 
 void rutz::fstring::append_range(const char* text, std::size_t len)
 {
-DOTRACE("rutz::fstring::append_range");
+GVX_TRACE("rutz::fstring::append_range");
 
   if (len == 0)
     return;
@@ -411,7 +411,7 @@ DOTRACE("rutz::fstring::append_range");
 
 void rutz::fstring::read(std::istream& is)
 {
-DOTRACE("rutz::fstring::read");
+GVX_TRACE("rutz::fstring::read");
   clear();
   string_rep::make_unique(m_rep);
   is >> std::ws;
@@ -431,7 +431,7 @@ DOTRACE("rutz::fstring::read");
 
 void rutz::fstring::readsome(std::istream& is, unsigned int count)
 {
-DOTRACE("rutz::fstring::readsome");
+GVX_TRACE("rutz::fstring::readsome");
 
   if (count > 0)
     {
@@ -446,7 +446,7 @@ DOTRACE("rutz::fstring::readsome");
 
 void rutz::fstring::write(std::ostream& os) const
 {
-DOTRACE("rutz::fstring::write");
+GVX_TRACE("rutz::fstring::write");
   os.write(c_str(), length());
 }
 
@@ -457,7 +457,7 @@ void rutz::fstring::readline(std::istream& is)
 
 void rutz::fstring::readline(std::istream& is, char eol)
 {
-DOTRACE("rutz::fstring::readline");
+GVX_TRACE("rutz::fstring::readline");
   clear();
   string_rep::make_unique(m_rep);
   while ( true )

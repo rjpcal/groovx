@@ -48,7 +48,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 
@@ -105,13 +105,13 @@ Tcl::ObjPtr Tcl::fromTcl(Tcl_Obj* obj, Tcl::ObjPtr*)
 
 int Tcl::fromTcl(Tcl_Obj* obj, int*)
 {
-DOTRACE("Tcl::fromTcl(int*)");
+GVX_TRACE("Tcl::fromTcl(int*)");
 
   int val;
 
   static Tcl_ObjType* const intType = Tcl_GetObjType("int");
 
-  ASSERT(intType != 0);
+  GVX_ASSERT(intType != 0);
 
   SafeUnshared safeobj(obj, intType);
 
@@ -126,7 +126,7 @@ DOTRACE("Tcl::fromTcl(int*)");
 
 unsigned int Tcl::fromTcl(Tcl_Obj* obj, unsigned int*)
 {
-DOTRACE("Tcl::fromTcl(unsigned int*)");
+GVX_TRACE("Tcl::fromTcl(unsigned int*)");
 
   int sval = fromTcl(obj, static_cast<int*>(0));
 
@@ -142,13 +142,13 @@ DOTRACE("Tcl::fromTcl(unsigned int*)");
 
 long Tcl::fromTcl(Tcl_Obj* obj, long*)
 {
-DOTRACE("Tcl::fromTcl(long*)");
+GVX_TRACE("Tcl::fromTcl(long*)");
 
   Tcl_WideInt wideval;
 
   static Tcl_ObjType* const wideIntType = Tcl_GetObjType("wideInt");
 
-  ASSERT(wideIntType != 0);
+  GVX_ASSERT(wideIntType != 0);
 
   SafeUnshared safeobj(obj, wideIntType);
 
@@ -183,13 +183,13 @@ DOTRACE("Tcl::fromTcl(long*)");
 
 unsigned long Tcl::fromTcl(Tcl_Obj* obj, unsigned long*)
 {
-DOTRACE("Tcl::fromTcl(unsigned long*)");
+GVX_TRACE("Tcl::fromTcl(unsigned long*)");
 
   Tcl_WideInt wideval;
 
   static Tcl_ObjType* const wideIntType = Tcl_GetObjType("wideInt");
 
-  ASSERT(wideIntType != 0);
+  GVX_ASSERT(wideIntType != 0);
 
   SafeUnshared safeobj(obj, wideIntType);
 
@@ -221,13 +221,13 @@ DOTRACE("Tcl::fromTcl(unsigned long*)");
 
 bool Tcl::fromTcl(Tcl_Obj* obj, bool*)
 {
-DOTRACE("Tcl::fromTcl(bool*)");
+GVX_TRACE("Tcl::fromTcl(bool*)");
 
   int int_val;
 
   static Tcl_ObjType* const booleanType = Tcl_GetObjType("boolean");
 
-  ASSERT(booleanType != 0);
+  GVX_ASSERT(booleanType != 0);
 
   SafeUnshared safeobj(obj, booleanType);
 
@@ -241,13 +241,13 @@ DOTRACE("Tcl::fromTcl(bool*)");
 
 double Tcl::fromTcl(Tcl_Obj* obj, double*)
 {
-DOTRACE("Tcl::fromTcl(double*)");
+GVX_TRACE("Tcl::fromTcl(double*)");
 
   double val;
 
   static Tcl_ObjType* const doubleType = Tcl_GetObjType("double");
 
-  ASSERT(doubleType != 0);
+  GVX_ASSERT(doubleType != 0);
 
   SafeUnshared safeobj(obj, doubleType);
 
@@ -261,41 +261,41 @@ DOTRACE("Tcl::fromTcl(double*)");
 
 float Tcl::fromTcl(Tcl_Obj* obj, float*)
 {
-DOTRACE("Tcl::fromTcl(float*)");
+GVX_TRACE("Tcl::fromTcl(float*)");
 
   return float(fromTcl(obj, static_cast<double*>(0)));
 }
 
 const char* Tcl::fromTcl(Tcl_Obj* obj, const char**)
 {
-DOTRACE("Tcl::fromTcl(const char**)");
+GVX_TRACE("Tcl::fromTcl(const char**)");
 
   return Tcl_GetString(obj);
 }
 
 fstring Tcl::fromTcl(Tcl_Obj* obj, fstring*)
 {
-DOTRACE("Tcl::fromTcl(fstring*)");
+GVX_TRACE("Tcl::fromTcl(fstring*)");
 
   int length;
 
   char* text = Tcl_GetStringFromObj(obj, &length);
 
-  ASSERT(length >= 0);
+  GVX_ASSERT(length >= 0);
 
   return fstring(rutz::char_range(text, static_cast<unsigned int>(length)));
 }
 
 Tcl::Dict Tcl::fromTcl(Tcl_Obj* obj, Tcl::Dict*)
 {
-DOTRACE("Tcl::fromTcl(Tcl::Dict*)");
+GVX_TRACE("Tcl::fromTcl(Tcl::Dict*)");
 
   return Tcl::Dict(obj);
 }
 
 Tcl::List Tcl::fromTcl(Tcl_Obj* obj, Tcl::List*)
 {
-DOTRACE("Tcl::fromTcl(Tcl::List*)");
+GVX_TRACE("Tcl::fromTcl(Tcl::List*)");
 
   return Tcl::List(obj);
 }
@@ -309,7 +309,7 @@ DOTRACE("Tcl::fromTcl(Tcl::List*)");
 
 Tcl::ObjPtr Tcl::toTcl(Tcl_Obj* val)
 {
-DOTRACE("Tcl::toTcl(Tcl_Obj*)");
+GVX_TRACE("Tcl::toTcl(Tcl_Obj*)");
   Tcl::ObjPtr result;
   result = val;
   return result;
@@ -317,14 +317,14 @@ DOTRACE("Tcl::toTcl(Tcl_Obj*)");
 
 Tcl::ObjPtr Tcl::toTcl(long val)
 {
-DOTRACE("Tcl::toTcl(long)");
+GVX_TRACE("Tcl::toTcl(long)");
 
   return Tcl_NewLongObj(val);
 }
 
 Tcl::ObjPtr Tcl::toTcl(unsigned long val)
 {
-DOTRACE("Tcl::toTcl(unsigned long)");
+GVX_TRACE("Tcl::toTcl(unsigned long)");
 
   long sval(val);
 
@@ -336,14 +336,14 @@ DOTRACE("Tcl::toTcl(unsigned long)");
 
 Tcl::ObjPtr Tcl::toTcl(int val)
 {
-DOTRACE("Tcl::toTcl(int)");
+GVX_TRACE("Tcl::toTcl(int)");
 
   return Tcl_NewIntObj(val);
 }
 
 Tcl::ObjPtr Tcl::toTcl(unsigned int val)
 {
-DOTRACE("Tcl::toTcl(unsigned int)");
+GVX_TRACE("Tcl::toTcl(unsigned int)");
 
   int sval(val);
 
@@ -355,70 +355,70 @@ DOTRACE("Tcl::toTcl(unsigned int)");
 
 Tcl::ObjPtr Tcl::toTcl(unsigned char val)
 {
-DOTRACE("Tcl::toTcl(unsigne char)");
+GVX_TRACE("Tcl::toTcl(unsigne char)");
 
   return Tcl_NewIntObj(val);
 }
 
 Tcl::ObjPtr Tcl::toTcl(bool val)
 {
-DOTRACE("Tcl::toTcl(bool)");
+GVX_TRACE("Tcl::toTcl(bool)");
 
   return Tcl_NewBooleanObj(val);
 }
 
 Tcl::ObjPtr Tcl::toTcl(double val)
 {
-DOTRACE("Tcl::toTcl(double)");
+GVX_TRACE("Tcl::toTcl(double)");
 
   return Tcl_NewDoubleObj(val);
 }
 
 Tcl::ObjPtr Tcl::toTcl(float val)
 {
-DOTRACE("Tcl::toTcl(float)");
+GVX_TRACE("Tcl::toTcl(float)");
 
   return Tcl_NewDoubleObj(val);
 }
 
 Tcl::ObjPtr Tcl::toTcl(const char* val)
 {
-DOTRACE("Tcl::toTcl(const char*)");
+GVX_TRACE("Tcl::toTcl(const char*)");
 
   return Tcl_NewStringObj(val, -1);
 }
 
 Tcl::ObjPtr Tcl::toTcl(const fstring& val)
 {
-DOTRACE("Tcl::toTcl(const fstring&)");
+GVX_TRACE("Tcl::toTcl(const fstring&)");
 
   return Tcl_NewStringObj(val.c_str(), val.length());
 }
 
 Tcl::ObjPtr Tcl::toTcl(const rutz::value& val)
 {
-DOTRACE("Tcl::toTcl(const rutz::value&)");
+GVX_TRACE("Tcl::toTcl(const rutz::value&)");
 
   return Tcl_NewStringObj(val.get_string().c_str(), -1);
 }
 
 Tcl::ObjPtr Tcl::toTcl(Tcl::Dict dictObj)
 {
-DOTRACE("Tcl::toTcl(Tcl::Dict)");
+GVX_TRACE("Tcl::toTcl(Tcl::Dict)");
 
   return dictObj.asObj();
 }
 
 Tcl::ObjPtr Tcl::toTcl(Tcl::List listObj)
 {
-DOTRACE("Tcl::toTcl(Tcl::List)");
+GVX_TRACE("Tcl::toTcl(Tcl::List)");
 
   return listObj.asObj();
 }
 
 Tcl::ObjPtr Tcl::toTcl(Tcl::ObjPtr val)
 {
-DOTRACE("Tcl::toTcl(Tcl::ObjPtr)");
+GVX_TRACE("Tcl::toTcl(Tcl::ObjPtr)");
 
   return val;
 }

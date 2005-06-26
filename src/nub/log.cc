@@ -63,7 +63,7 @@ namespace
 
     void print(std::ostream& os, const rutz::time& now) const
     {
-      DOTRACE("ScopeInfo::print");
+      GVX_TRACE("ScopeInfo::print");
       os << itsName << " @ ";
 
       os.setf(std::ios::showpoint | std::ios::fixed);
@@ -93,7 +93,7 @@ namespace
 
 void Nub::Log::reset()
 {
-DOTRACE("Nub::Log::reset");
+GVX_TRACE("Nub::Log::reset");
   scopes.clear();
 
   log(fstring("log reset ", rutz::time::wall_clock_now().format()));
@@ -101,13 +101,13 @@ DOTRACE("Nub::Log::reset");
 
 void Nub::Log::addScope(const fstring& name)
 {
-DOTRACE("Nub::Log::addScope");
+GVX_TRACE("Nub::Log::addScope");
   scopes.push_back(ScopeInfo(name));
 }
 
 void Nub::Log::removeScope(const fstring& name)
 {
-DOTRACE("Nub::Log::removeScope");
+GVX_TRACE("Nub::Log::removeScope");
   for (int i = int(scopes.size()); i > 0; /* decr in loop body */)
     {
       --i;
@@ -124,7 +124,7 @@ DOTRACE("Nub::Log::removeScope");
 
 void Nub::Log::addObjScope(const Nub::Object& obj)
 {
-DOTRACE("Nub::Log::addObjScope");
+GVX_TRACE("Nub::Log::addObjScope");
 
   const fstring scopename(obj.uniqueName());
 
@@ -135,7 +135,7 @@ DOTRACE("Nub::Log::addObjScope");
 
 void Nub::Log::removeObjScope(const Nub::Object& obj)
 {
-DOTRACE("Nub::Log::removeObjScope");
+GVX_TRACE("Nub::Log::removeObjScope");
 
   const fstring scopename = obj.uniqueName();
 
@@ -146,7 +146,7 @@ DOTRACE("Nub::Log::removeObjScope");
 
 void Nub::Log::setLogFilename(const fstring& filename)
 {
-DOTRACE("Nub::Log::setLogFilename");
+GVX_TRACE("Nub::Log::setLogFilename");
 
   rutz::shared_ptr<std::ofstream> newfile
     (new std::ofstream(filename.c_str(), std::ios::out | std::ios::app));
@@ -157,13 +157,13 @@ DOTRACE("Nub::Log::setLogFilename");
 
 void Nub::Log::setCopyToStdout(bool shouldcopy)
 {
-DOTRACE("Nub::Log::setCopyToStdout");
+GVX_TRACE("Nub::Log::setCopyToStdout");
   copyToStdout = shouldcopy;
 }
 
 void Nub::log(const char* msg)
 {
-DOTRACE("Nub::log");
+GVX_TRACE("Nub::log");
   if (copyToStdout)
     logImpl(std::cout, msg);
 
@@ -173,7 +173,7 @@ DOTRACE("Nub::log");
 
 void Nub::log(const fstring& msg)
 {
-DOTRACE("Nub::log");
+GVX_TRACE("Nub::log");
   if (copyToStdout)
     logImpl(std::cout, msg);
 

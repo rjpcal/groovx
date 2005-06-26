@@ -59,7 +59,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 
@@ -78,14 +78,14 @@ TrialEvent::TrialEvent(unsigned int msec) :
   itsTotalError(0.0),
   itsInvokeCount(0)
 {
-DOTRACE("TrialEvent::TrialEvent");
+GVX_TRACE("TrialEvent::TrialEvent");
 
   itsTimer.sigTimeOut.connect(this, &TrialEvent::invokeTemplate);
 }
 
 TrialEvent::~TrialEvent() throw()
 {
-DOTRACE("TrialEvent::~TrialEvent");
+GVX_TRACE("TrialEvent::~TrialEvent");
 
   dbg_eval(3, itsTotalOffset);
   dbg_eval(3, itsTotalError);
@@ -97,7 +97,7 @@ DOTRACE("TrialEvent::~TrialEvent");
 
 void TrialEvent::readFrom(IO::Reader& reader)
 {
-DOTRACE("TrialEvent::readFrom");
+GVX_TRACE("TrialEvent::readFrom");
 
   cancel(); // cancel since the event is changing state
 
@@ -106,7 +106,7 @@ DOTRACE("TrialEvent::readFrom");
 
 void TrialEvent::writeTo(IO::Writer& writer) const
 {
-DOTRACE("TrialEvent::writeTo");
+GVX_TRACE("TrialEvent::writeTo");
 
   writer.writeValue("requestedDelay", itsRequestedDelay);
 }
@@ -115,7 +115,7 @@ unsigned int TrialEvent::schedule(rutz::shared_ptr<Nub::Scheduler> s,
                                   Trial& trial,
                                   unsigned int minimum_msec)
 {
-DOTRACE("TrialEvent::schedule");
+GVX_TRACE("TrialEvent::schedule");
 
   // Remember the participants
   itsTrial = &trial;
@@ -140,13 +140,13 @@ DOTRACE("TrialEvent::schedule");
 
 void TrialEvent::cancel()
 {
-DOTRACE("TrialEvent::cancel");
+GVX_TRACE("TrialEvent::cancel");
   itsTimer.cancel();
 }
 
 void TrialEvent::invokeTemplate()
 {
-DOTRACE("TrialEvent::invokeTemplate");
+GVX_TRACE("TrialEvent::invokeTemplate");
 
   const double msec = itsTimer.elapsedMsec();
   const double error = itsTimer.delayMsec() - msec;
@@ -222,7 +222,7 @@ TrialMemFuncEvent::~TrialMemFuncEvent() throw() {}
 
 void TrialMemFuncEvent::invoke(Trial& trial)
 {
-DOTRACE("TrialMemFuncEvent::invoke");
+GVX_TRACE("TrialMemFuncEvent::invoke");
   (trial.*itsCallback)();
 }
 
@@ -402,7 +402,7 @@ void MultiEvent::writeTo(IO::Writer& writer) const
 rutz::fwd_iter<const Nub::Ref<TrialEvent> >
 MultiEvent::getEvents() const
 {
-DOTRACE("MultiEvent::getEvents");
+GVX_TRACE("MultiEvent::getEvents");
 
   return rutz::fwd_iter<const Nub::Ref<TrialEvent> >
     (itsEvents.begin(), itsEvents.end());
@@ -410,15 +410,15 @@ DOTRACE("MultiEvent::getEvents");
 
 unsigned int MultiEvent::addEvent(Nub::Ref<TrialEvent> event)
 {
-DOTRACE("MultiEvent::addEvent");
+GVX_TRACE("MultiEvent::addEvent");
   itsEvents.push_back(event);
-  ASSERT(itsEvents.size() >= 1);
+  GVX_ASSERT(itsEvents.size() >= 1);
   return itsEvents.size() - 1;
 }
 
 void MultiEvent::eraseEventAt(unsigned int index)
 {
-DOTRACE("MultiEvent::eraseEventAt");
+GVX_TRACE("MultiEvent::eraseEventAt");
   if (index >= itsEvents.size())
     throw rutz::error("index out of bounds", SRC_POS);
 
@@ -427,7 +427,7 @@ DOTRACE("MultiEvent::eraseEventAt");
 
 void MultiEvent::clearEvents()
 {
-DOTRACE("MultiEvent::clearEvents");
+GVX_TRACE("MultiEvent::clearEvents");
   itsEvents.clear();
 }
 

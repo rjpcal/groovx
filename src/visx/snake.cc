@@ -44,7 +44,7 @@
 #include <cmath>
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 using geom::vec2d;
@@ -121,7 +121,7 @@ namespace
                         vec2d* new_2, vec2d* new_3,
                         double new_theta)
   {
-  DOTRACE("squashQuadrangle");
+  GVX_TRACE("squashQuadrangle");
     {
       // Here we adjust the position of node-1 by jiggling its angle with
       // respect to node-0:
@@ -266,7 +266,7 @@ Snake::Snake(int l, double spacing, rutz::urand& urand) :
   itsLength(l),
   itsElem(itsLength)
 {
-DOTRACE("Snake::Snake");
+GVX_TRACE("Snake::Snake");
 
   const double radius = (itsLength * spacing) / (2*M_PI);
 
@@ -305,14 +305,14 @@ DOTRACE("Snake::Snake");
 
 Snake::~Snake()
 {
-DOTRACE("Snake::~Snake");
+GVX_TRACE("Snake::~Snake");
 }
 
 GaborArrayElement Snake::getElement(int n) const
 {
-DOTRACE("Snake::getElement");
+GVX_TRACE("Snake::getElement");
 
-  ASSERT(n < itsLength);
+  GVX_ASSERT(n < itsLength);
 
   GaborArrayElement result;
 
@@ -359,7 +359,7 @@ DOTRACE("Snake::getElement");
 
 bool Snake::jiggle(rutz::urand& urand)
 {
-DOTRACE("Snake::jiggle");
+GVX_TRACE("Snake::jiggle");
 
   int i[4];
   pickRandom4(itsLength, i, urand);
@@ -442,7 +442,7 @@ DOTRACE("Snake::jiggle");
 void Snake::transformPath(int i1, const vec2d& new1,
                           int i2, const vec2d& new2)
 {
-DOTRACE("Snake::transformPath");
+GVX_TRACE("Snake::transformPath");
 
   const vec2d old1 = itsElem[i1];
   const vec2d old2 = itsElem[i2];

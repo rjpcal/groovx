@@ -98,7 +98,7 @@ public:
 #include <tkMacOSX.h>
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 namespace
@@ -111,7 +111,7 @@ namespace
 
     void push(GLint v)
     {
-      ASSERT(next < MAXSIZE);
+      GVX_ASSERT(next < MAXSIZE);
       data[next++] = v;
     }
 
@@ -247,7 +247,7 @@ AglWrapper::AglWrapper(Display* dpy, GlxOpts& opts) :
   itsContext(0),
   itsCurrentWin(0)
 {
-DOTRACE("AglWrapper::AglWrapper");
+GVX_TRACE("AglWrapper::AglWrapper");
 
   // AGLDevice is a typedef for GDHandle
   AGLDevice gdev = GetMainDevice();
@@ -272,13 +272,13 @@ DOTRACE("AglWrapper::AglWrapper");
 
 AglWrapper* AglWrapper::make(Display* dpy, GlxOpts& opts)
 {
-DOTRACE("AglWrapper::make");
+GVX_TRACE("AglWrapper::make");
   return new AglWrapper(dpy, opts);
 }
 
 AglWrapper::~AglWrapper()
 {
-DOTRACE("AglWrapper::~AglWrapper");
+GVX_TRACE("AglWrapper::~AglWrapper");
 
   aglDestroyPixelFormat(itsPixFormat);
   itsPixFormat = 0;
@@ -289,7 +289,7 @@ DOTRACE("AglWrapper::~AglWrapper");
 
 bool AglWrapper::isDirect() const
 {
-DOTRACE("AglWrapper::isDirect");
+GVX_TRACE("AglWrapper::isDirect");
 
   GLint value = 0;
   int status = aglDescribePixelFormat(itsPixFormat, AGL_ACCELERATED, &value);
@@ -303,7 +303,7 @@ DOTRACE("AglWrapper::isDirect");
 
 bool AglWrapper::isDoubleBuffered() const
 {
-DOTRACE("AglWrapper::isDoubleBuffered");
+GVX_TRACE("AglWrapper::isDoubleBuffered");
 
   GLint value = 0;
   int status = aglDescribePixelFormat(itsPixFormat, AGL_DOUBLEBUFFER, &value);
@@ -317,7 +317,7 @@ DOTRACE("AglWrapper::isDoubleBuffered");
 
 unsigned int AglWrapper::bitsPerPixel() const
 {
-DOTRACE("AglWrapper::bitsPerPixel");
+GVX_TRACE("AglWrapper::bitsPerPixel");
 
   GLint value = 0;
   int status = aglDescribePixelFormat(itsPixFormat, AGL_PIXEL_SIZE, &value);
@@ -326,19 +326,19 @@ DOTRACE("AglWrapper::bitsPerPixel");
     throw rutz::error("couldn't get Apple-OpenGL pixel size attribute",
                       SRC_POS);
 
-  ASSERT(value > 0);
+  GVX_ASSERT(value > 0);
 
   return static_cast<unsigned int>(value);
 }
 
 void AglWrapper::makeCurrent(Window win)
 {
-DOTRACE("AglWrapper::makeCurrent");
+GVX_TRACE("AglWrapper::makeCurrent");
 
   // AGLDrawable is a typedef for CGrafPtr
   CGrafPtr drawable = TkMacOSXGetDrawablePort(win);
 
-  if (GET_DBG_LEVEL() >= 3)
+  if (GVX_DBG_LEVEL() >= 3)
     {
       WindowRef macWindow = GetWindowFromPort(drawable);
       Rect rectPort;
@@ -367,7 +367,7 @@ DOTRACE("AglWrapper::makeCurrent");
 
 void AglWrapper::onReshape(int /*width*/, int /*height*/)
 {
-DOTRACE("AglWrapper::onReshape");
+GVX_TRACE("AglWrapper::onReshape");
 
   int status = aglUpdateContext(itsContext);
 
@@ -377,16 +377,16 @@ DOTRACE("AglWrapper::onReshape");
 
 void AglWrapper::swapBuffers() const
 {
-DOTRACE("AglWrapper::swapBuffers");
+GVX_TRACE("AglWrapper::swapBuffers");
   aglSwapBuffers(itsContext);
 }
 
 Window AglWrapper::makeTkRealWindow(Tk_Window tkwin, Window parent,
                                     int width, int height) throw()
 {
-DOTRACE("AglWrapper::makeTkRealWindow");
+GVX_TRACE("AglWrapper::makeTkRealWindow");
 
-  ASSERT(false); // FIXME
+  GVX_ASSERT(false); // FIXME
   (void) tkwin;
   (void) parent;
   (void) width;

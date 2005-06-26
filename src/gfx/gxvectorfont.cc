@@ -51,7 +51,7 @@
 #endif
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 namespace
@@ -638,7 +638,7 @@ namespace
 
   void drawLetter(CP* cp)
   {
-    DOTRACE("<gxvectorfont.cc>::drawLetter");
+    GVX_TRACE("<gxvectorfont.cc>::drawLetter");
 
     glBegin(GL_LINE_STRIP);
     while (1)
@@ -665,7 +665,7 @@ namespace
 
   GLuint getStrokeFontListBase()
   {
-    DOTRACE("<gxvectorfont.cc>::getStrokeFontListBase");
+    GVX_TRACE("<gxvectorfont.cc>::getStrokeFontListBase");
 
     static GLuint listBase = 0;
 
@@ -793,29 +793,29 @@ namespace
 
 GxVectorFont::GxVectorFont()
 {
-DOTRACE("GxVectorFont::GxVectorFont");
+GVX_TRACE("GxVectorFont::GxVectorFont");
 }
 
 GxVectorFont::~GxVectorFont() throw()
 {
-DOTRACE("GxVectorFont::~GxVectorFont");
+GVX_TRACE("GxVectorFont::~GxVectorFont");
 }
 
 const char* GxVectorFont::fontName() const
 {
-DOTRACE("GxVectorFont::fontName");
+GVX_TRACE("GxVectorFont::fontName");
   return "vector";
 }
 
 unsigned int GxVectorFont::listBase() const
 {
-DOTRACE("GxVectorFont::listBase");
+GVX_TRACE("GxVectorFont::listBase");
   return getStrokeFontListBase();
 }
 
 void GxVectorFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
 {
-DOTRACE("GxVectorFont::bboxOf");
+GVX_TRACE("GxVectorFont::bboxOf");
   int longest = 0;
   int current = 0;
   int lines = 1;
@@ -852,7 +852,7 @@ DOTRACE("GxVectorFont::bboxOf");
 
 void GxVectorFont::drawText(const char* text, Gfx::Canvas& canvas) const
 {
-DOTRACE("GxVectorFont::drawText");
+GVX_TRACE("GxVectorFont::drawText");
 
   dbg_eval_nl(3, text);
   canvas.drawVectorText(text, *this);
@@ -860,7 +860,7 @@ DOTRACE("GxVectorFont::drawText");
 
 double GxVectorFont::vectorHeight() const
 {
-DOTRACE("GxVectorFont::vectorHeight");
+GVX_TRACE("GxVectorFont::vectorHeight");
   return 8.0;
 }
 

@@ -46,10 +46,10 @@
 
 #include "rutz/fstring.h"
 
-#define DYNAMIC_TRACE_EXPR Block::tracer.status()
+#define GVX_DYNAMIC_TRACE_EXPR Block::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -72,14 +72,14 @@ namespace
 
 Block* Block::make()
 {
-DOTRACE("Block::make");
+GVX_TRACE("Block::make");
   return new Block;
 }
 
 Block::Block() :
   itsParent( 0 )
 {
-DOTRACE("Block::Block");
+GVX_TRACE("Block::Block");
 }
 
 Block::~Block() throw()
@@ -87,13 +87,13 @@ Block::~Block() throw()
 
 IO::VersionId Block::serialVersionId() const
 {
-DOTRACE("Block::serialVersionId");
+GVX_TRACE("Block::serialVersionId");
   return BLOCK_SVID;
 }
 
 void Block::readFrom(IO::Reader& reader)
 {
-DOTRACE("Block::readFrom");
+GVX_TRACE("Block::readFrom");
 
   reader.ensureReadVersionId("Block", 3,
                              "Try cvs tag xml_conversion_20040526",
@@ -105,7 +105,7 @@ DOTRACE("Block::readFrom");
 
 void Block::writeTo(IO::Writer& writer) const
 {
-DOTRACE("Block::writeTo");
+GVX_TRACE("Block::writeTo");
 
   writer.ensureWriteVersionId("Block", BLOCK_SVID, 3,
                               "Try groovx0.8a7", SRC_POS);
@@ -122,18 +122,18 @@ DOTRACE("Block::writeTo");
 
 const Nub::SoftRef<Toglet>& Block::getWidget() const
 {
-DOTRACE("Block::getWidget");
-  PRECONDITION( itsParent != 0 );
+GVX_TRACE("Block::getWidget");
+  GVX_PRECONDITION( itsParent != 0 );
   return itsParent->getWidget();
 }
 
 void Block::vxRun(Element& e)
 {
-DOTRACE("Block::vxRun");
+GVX_TRACE("Block::vxRun");
 
   if ( isComplete() ) return;
 
-  PRECONDITION( &e != 0 );
+  GVX_PRECONDITION( &e != 0 );
 
   Nub::log( vxInfo() );
 
@@ -144,7 +144,7 @@ DOTRACE("Block::vxRun");
 
 void Block::vxEndTrialHook()
 {
-DOTRACE("Block::vxEndTrialHook");
+GVX_TRACE("Block::vxEndTrialHook");
 
   if (itsParent != 0)
     itsParent->vxEndTrialHook();
@@ -152,12 +152,12 @@ DOTRACE("Block::vxEndTrialHook");
 
 void Block::vxAllChildrenFinished()
 {
-DOTRACE("Block::vxAllChildrenFinished");
+GVX_TRACE("Block::vxAllChildrenFinished");
 
   // Release our current parent, then pass control onto it.
   Element* p = itsParent;
   itsParent = 0;
-  ASSERT( p != 0 );
+  GVX_ASSERT( p != 0 );
   p->vxReturn(CHILD_OK);
 }
 

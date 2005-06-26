@@ -47,7 +47,7 @@
 extern "C"
 int Jitter_Init(Tcl_Interp* interp)
 {
-DOTRACE("Jitter_Init");
+GVX_TRACE("Jitter_Init");
 
   PKG_CREATE(interp, "Jitter", "4.$Revision$");
   pkg->inheritPkg("GxTransform");

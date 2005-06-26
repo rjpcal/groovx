@@ -51,7 +51,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::shared_ptr;
 
@@ -142,7 +142,7 @@ XMLWriter::XMLWriter(std::ostream& os) :
   itsWrittenObjects(),
   itsNestLevel(0)
 {
-DOTRACE("XMLWriter::XMLWriter");
+GVX_TRACE("XMLWriter::XMLWriter");
 }
 
 XMLWriter::XMLWriter(const char* filename) :
@@ -151,41 +151,41 @@ XMLWriter::XMLWriter(const char* filename) :
   itsWrittenObjects(),
   itsNestLevel(0)
 {
-DOTRACE("XMLWriter::XMLWriter(const char*)");
+GVX_TRACE("XMLWriter::XMLWriter(const char*)");
 }
 
 XMLWriter::~XMLWriter () throw()
 {
-DOTRACE("XMLWriter::~XMLWriter");
+GVX_TRACE("XMLWriter::~XMLWriter");
 }
 
 void XMLWriter::writeChar(const char* name, char val)
 {
-DOTRACE("XMLWriter::writeChar");
+GVX_TRACE("XMLWriter::writeChar");
   writeBasicType(name, val, "char");
 }
 
 void XMLWriter::writeInt(const char* name, int val)
 {
-DOTRACE("XMLWriter::writeInt");
+GVX_TRACE("XMLWriter::writeInt");
   writeBasicType(name, val, "int");
 }
 
 void XMLWriter::writeBool(const char* name, bool val)
 {
-DOTRACE("XMLWriter::writeBool");
+GVX_TRACE("XMLWriter::writeBool");
   writeBasicType(name, val, "bool");
 }
 
 void XMLWriter::writeDouble(const char* name, double val)
 {
-DOTRACE("XMLWriter::writeDouble");
+GVX_TRACE("XMLWriter::writeDouble");
   writeBasicType(name, val, "double");
 }
 
 void XMLWriter::writeValueObj(const char* name, const rutz::value& v)
 {
-DOTRACE("XMLWriter::writeValueObj");
+GVX_TRACE("XMLWriter::writeValueObj");
   indent();
   itsBuf << "<valobj"
          << " type=\"" << v.value_typename() << "\""
@@ -199,18 +199,18 @@ void XMLWriter::writeRawData(const char* name,
                              const unsigned char* data,
                              unsigned int length)
 {
-DOTRACE("XMLWriter::writeRawData");
+GVX_TRACE("XMLWriter::writeRawData");
   defaultWriteRawData(name, data, length);
 }
 
 void XMLWriter::writeObject(const char* name,
                             SoftRef<const IO::IoObject> obj)
 {
-DOTRACE("XMLWriter::writeObject");
+GVX_TRACE("XMLWriter::writeObject");
 
   if (obj.isValid())
     {
-      ASSERT(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
+      GVX_ASSERT(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
 
       if (alreadyWritten(obj))
         {
@@ -234,7 +234,7 @@ DOTRACE("XMLWriter::writeObject");
 void XMLWriter::writeOwnedObject(const char* name,
                                  Ref<const IO::IoObject> obj)
 {
-DOTRACE("XMLWriter::writeOwnedObject");
+GVX_TRACE("XMLWriter::writeOwnedObject");
 
   flattenObject(obj, name, "ownedobj");
 }
@@ -242,14 +242,14 @@ DOTRACE("XMLWriter::writeOwnedObject");
 void XMLWriter::writeBaseClass(const char* baseClassName,
                                Ref<const IO::IoObject> basePart)
 {
-DOTRACE("XMLWriter::writeBaseClass");
+GVX_TRACE("XMLWriter::writeBaseClass");
 
   flattenObject(basePart, baseClassName, "baseclass");
 }
 
 void XMLWriter::writeRoot(const IO::IoObject* root)
 {
-DOTRACE("XMLWriter::writeRoot");
+GVX_TRACE("XMLWriter::writeRoot");
 
   itsBuf << "<?xml version=\"1.0\"?>\n"
          << "<!-- GroovX XML 1 -->\n";
@@ -262,7 +262,7 @@ DOTRACE("XMLWriter::writeRoot");
 
 void XMLWriter::writeCstring(const char* name, const char* val)
 {
-DOTRACE("XMLWriter::writeCstring");
+GVX_TRACE("XMLWriter::writeCstring");
 
   indent();
   // special case for empty string:
@@ -281,7 +281,7 @@ DOTRACE("XMLWriter::writeCstring");
 void XMLWriter::flattenObject(SoftRef<const IO::IoObject> obj,
                               const char* name, const char* xmltype)
 {
-DOTRACE("XMLWriter::flattenObject");
+GVX_TRACE("XMLWriter::flattenObject");
 
   indent();
   itsBuf << "<" << xmltype << " type=\"" << obj->objTypename() << "\""
@@ -301,7 +301,7 @@ DOTRACE("XMLWriter::flattenObject");
 
 void XMLWriter::writeEscaped(const char* p)
 {
-DOTRACE("XMLWriter::writeEscaped");
+GVX_TRACE("XMLWriter::writeEscaped");
 
   // Escape any special characters
   for ( ; *p != '\0'; ++p)

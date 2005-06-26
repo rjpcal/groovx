@@ -44,7 +44,7 @@
 extern "C"
 int Morphyface_Init(Tcl_Interp* interp)
 {
-DOTRACE("Morphyface_Init");
+GVX_TRACE("Morphyface_Init");
 
   PKG_CREATE(interp, "MorphyFace", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");

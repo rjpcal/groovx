@@ -66,7 +66,7 @@ void Tcl::ChannelBuf::close()
 
 int Tcl::ChannelBuf::underflow() // with help from Josuttis, p. 678
 {
-DOTRACE("Tcl::ChannelBuf::underflow");
+GVX_TRACE("Tcl::ChannelBuf::underflow");
   // is read position before end of buffer?
   if (gptr() < egptr())
     return *gptr();
@@ -108,7 +108,7 @@ DOTRACE("Tcl::ChannelBuf::underflow");
 
 int Tcl::ChannelBuf::overflow(int c)
 {
-DOTRACE("Tcl::ChannelBuf::overflow");
+GVX_TRACE("Tcl::ChannelBuf::overflow");
   if (!(mode & std::ios::out) || !opened) return EOF;
 
   if (c != EOF)

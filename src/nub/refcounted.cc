@@ -41,10 +41,10 @@
 
 #include <typeinfo>
 
-#define NO_PROF
+#define GVX_NO_PROF
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -74,37 +74,37 @@ Nub::RefCounts::RefCounts() throw() :
   itsOwnerAlive(true),
   itsVolatile(false)
 {
-DOTRACE("Nub::RefCounts::RefCounts");
+GVX_TRACE("Nub::RefCounts::RefCounts");
 }
 
 Nub::RefCounts::~RefCounts() throw()
 {
-DOTRACE("Nub::RefCounts::~RefCounts");
+GVX_TRACE("Nub::RefCounts::~RefCounts");
 
-  if (itsStrong > 0) PANIC("RefCounts object destroyed before strong refcount fell to 0");
-  if (itsWeak > 0) PANIC("RefCounts object destroyed before weak refcount fell to 0");
+  if (itsStrong > 0) GVX_PANIC("RefCounts object destroyed before strong refcount fell to 0");
+  if (itsWeak > 0) GVX_PANIC("RefCounts object destroyed before weak refcount fell to 0");
 }
 
 void Nub::RefCounts::acquireWeak() throw()
 {
-DOTRACE("Nub::RefCounts::acquireWeak");
+GVX_TRACE("Nub::RefCounts::acquireWeak");
 
-  if (itsWeak == REFCOUNT_MAX) PANIC("weak refcount overflow");
+  if (itsWeak == REFCOUNT_MAX) GVX_PANIC("weak refcount overflow");
 
   ++itsWeak;
 }
 
 Nub::RefCounts::Count Nub::RefCounts::releaseWeak() throw()
 {
-DOTRACE("Nub::RefCounts::releaseWeak");
+GVX_TRACE("Nub::RefCounts::releaseWeak");
 
-  if (itsWeak == 0) PANIC("weak refcount already 0 in releaseWeak()");
+  if (itsWeak == 0) GVX_PANIC("weak refcount already 0 in releaseWeak()");
 
   const Count result = --itsWeak;
 
   if (itsWeak == 0)
     {
-      if (itsStrong > 0) PANIC("weak refcount fell to 0 before strong refcount");
+      if (itsStrong > 0) GVX_PANIC("weak refcount fell to 0 before strong refcount");
       delete this;
     }
 
@@ -113,30 +113,30 @@ DOTRACE("Nub::RefCounts::releaseWeak");
 
 void Nub::RefCounts::acquireStrong() throw()
 {
-DOTRACE("Nub::RefCounts::acquireStrong");
+GVX_TRACE("Nub::RefCounts::acquireStrong");
 
-  if (itsVolatile) PANIC("attempt to use strong refcount with volatile object");
-  if (itsStrong == REFCOUNT_MAX) PANIC("strong refcount overflow");
+  if (itsVolatile) GVX_PANIC("attempt to use strong refcount with volatile object");
+  if (itsStrong == REFCOUNT_MAX) GVX_PANIC("strong refcount overflow");
 
   ++itsStrong;
 }
 
 Nub::RefCounts::Count Nub::RefCounts::releaseStrong() throw()
 {
-DOTRACE("Nub::RefCounts::releaseStrong");
+GVX_TRACE("Nub::RefCounts::releaseStrong");
 
-  if (itsVolatile) PANIC("attempt to use strong refcount with volatile object");
-  if (itsStrong == 0) PANIC("strong refcount already 0 in releaseStrong()");
-  if (itsWeak == 0) PANIC("weak refcount prematurely fell to 0");
+  if (itsVolatile) GVX_PANIC("attempt to use strong refcount with volatile object");
+  if (itsStrong == 0) GVX_PANIC("strong refcount already 0 in releaseStrong()");
+  if (itsWeak == 0) GVX_PANIC("weak refcount prematurely fell to 0");
 
   return --itsStrong;
 }
 
 void Nub::RefCounts::releaseStrongNoDelete() throw()
 {
-DOTRACE("Nub::RefCounts::releaseStrongNoDelete");
+GVX_TRACE("Nub::RefCounts::releaseStrongNoDelete");
 
-  if (itsStrong == 0) PANIC("strong refcount already 0 in releaseStrongNoDelete()");
+  if (itsStrong == 0) GVX_PANIC("strong refcount already 0 in releaseStrongNoDelete()");
 
   --itsStrong;
 }
@@ -157,20 +157,20 @@ void Nub::RefCounts::debug_dump() const throw()
 
 void* Nub::RefCounted::operator new(size_t bytes)
 {
-DOTRACE("Nub::RefCounted::operator new");
+GVX_TRACE("Nub::RefCounted::operator new");
   return ::operator new(bytes);
 }
 
 void Nub::RefCounted::operator delete(void* space, size_t /*bytes*/)
 {
-DOTRACE("Nub::RefCounted::operator delete");
+GVX_TRACE("Nub::RefCounted::operator delete");
   ::operator delete(space);
 }
 
 Nub::RefCounted::RefCounted() :
   itsRefCounts(new Nub::RefCounts)
 {
-DOTRACE("Nub::RefCounted::RefCounted");
+GVX_TRACE("Nub::RefCounted::RefCounted");
   dbg_print(7, "RefCounted ctor"); dbg_eval_nl(7, this);
 
   itsRefCounts->acquireWeak();
@@ -178,7 +178,7 @@ DOTRACE("Nub::RefCounted::RefCounted");
 
 Nub::RefCounted::~RefCounted() throw()
 {
-DOTRACE("Nub::RefCounted::~RefCounted");
+GVX_TRACE("Nub::RefCounted::~RefCounted");
   dbg_print(7, "RefCounted dtor"); dbg_eval_nl(7, this);
   dbg_dump(7, *itsRefCounts);
 
@@ -187,7 +187,7 @@ DOTRACE("Nub::RefCounted::~RefCounted");
   // since they'll think that the object is still alive (i.e. strong
   // refcount > 0) when it actually is already destroyed.
   if (itsRefCounts->itsStrong > 0)
-    PANIC("RefCounted object destroyed before strong refcount dropped to 0");
+    GVX_PANIC("RefCounted object destroyed before strong refcount dropped to 0");
 
   itsRefCounts->itsOwnerAlive = false;
   itsRefCounts->releaseWeak();
@@ -195,12 +195,12 @@ DOTRACE("Nub::RefCounted::~RefCounted");
 
 void Nub::RefCounted::markAsVolatile() throw()
 {
-DOTRACE("Nub::RefCounted::markAsVolatile");
+GVX_TRACE("Nub::RefCounted::markAsVolatile");
   if (itsRefCounts->itsStrong > 0)
-    PANIC("can't make volatile object that already has strong refs");
+    GVX_PANIC("can't make volatile object that already has strong refs");
 
   if (itsRefCounts->itsVolatile)
-    PANIC("object already marked as volatile");
+    GVX_PANIC("object already marked as volatile");
 
   itsRefCounts->itsVolatile = true;
 }
@@ -226,7 +226,7 @@ void Nub::RefCounted::decrRefCountNoDelete() const throw()
 
 bool Nub::RefCounted::isShared() const throw()
 {
-DOTRACE("Nub::RefCounted::isShared");
+GVX_TRACE("Nub::RefCounted::isShared");
 
   return (itsRefCounts->itsStrong > 1) || isNotShareable();
   // We check isNotShareable() so that volatile objects always appear
@@ -236,19 +236,19 @@ DOTRACE("Nub::RefCounted::isShared");
 
 bool Nub::RefCounted::isUnshared() const throw()
 {
-DOTRACE("Nub::RefCounted::isUnshared");
+GVX_TRACE("Nub::RefCounted::isUnshared");
   return !isShared();
 }
 
 bool Nub::RefCounted::isNotShareable() const throw()
 {
-DOTRACE("Nub::RefCounted::isNotShareable");
+GVX_TRACE("Nub::RefCounted::isNotShareable");
   return itsRefCounts->itsVolatile;
 }
 
 Nub::RefCounts* Nub::RefCounted::refCounts() const throw()
 {
-DOTRACE("Nub::RefCounted::refCounts");
+GVX_TRACE("Nub::RefCounted::refCounts");
   return itsRefCounts;
 }
 

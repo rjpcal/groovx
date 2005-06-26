@@ -49,7 +49,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 rutz::serial_port::serial_port(const char* serial_device) :
   m_filedes(::open(serial_device, O_RDONLY|O_NOCTTY|O_NONBLOCK)),
@@ -57,7 +57,7 @@ rutz::serial_port::serial_port(const char* serial_device) :
   m_stream(0),
   m_exit_status(0)
 {
-DOTRACE("rutz::serial_port::serial_port");
+GVX_TRACE("rutz::serial_port::serial_port");
   if (m_filedes != -1)
     {
       struct termios ti;
@@ -113,7 +113,7 @@ int rutz::serial_port::get()
 
 int rutz::serial_port::close()
 {
-DOTRACE("rutz::serial_port::close");
+GVX_TRACE("rutz::serial_port::close");
   if ( !is_closed() )
     {
       delete m_stream;

@@ -64,7 +64,7 @@ void media::save_png(const char* /*filename*/, const media::bmap_data& /*data*/)
 #include <png.h>
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 namespace
@@ -101,7 +101,7 @@ namespace
 
   void png_parser::close()
   {
-    DOTRACE("png_parser::close");
+    GVX_TRACE("png_parser::close");
     if (m_png_ptr != 0)
       {
         png_destroy_read_struct(m_png_ptr ? &m_png_ptr : 0,
@@ -118,7 +118,7 @@ namespace
 
   void png_parser::parse(const char* filename, media::bmap_data& data)
   {
-    DOTRACE("png_parser::parse");
+    GVX_TRACE("png_parser::parse");
     m_file = fopen(filename, "rb");
     if (m_file == 0)
       {
@@ -216,7 +216,7 @@ namespace
 
     dbg_eval_nl(3, nchannels);
 
-    ASSERT(row_bytes == width*nchannels);
+    GVX_ASSERT(row_bytes == width*nchannels);
 
     media::bmap_data new_data(geom::vec2<int>(width, height),
                               nchannels*8, // bits_per_pixel
@@ -264,7 +264,7 @@ namespace
 
   void png_writer::close()
   {
-    DOTRACE("png_writer::close");
+    GVX_TRACE("png_writer::close");
     if (m_png_ptr != 0)
       {
         png_destroy_write_struct(m_png_ptr ? &m_png_ptr : 0,
@@ -296,7 +296,7 @@ namespace
   void png_writer::write(const char* filename,
                          const media::bmap_data& data)
   {
-    DOTRACE("png_writer::write");
+    GVX_TRACE("png_writer::write");
 
     m_file = fopen(filename, "wb");
     if (m_file == 0)
@@ -350,7 +350,7 @@ namespace
 
 void media::load_png(const char* filename, media::bmap_data& data)
 {
-DOTRACE("media::load_png");
+GVX_TRACE("media::load_png");
   png_parser parser;
 
   parser.parse(filename, data);
@@ -358,7 +358,7 @@ DOTRACE("media::load_png");
 
 void media::save_png(const char* filename, const media::bmap_data& data)
 {
-DOTRACE("media::save_png");
+GVX_TRACE("media::save_png");
   png_writer writer;
 
   writer.write(filename, data);

@@ -45,7 +45,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -60,7 +60,7 @@ namespace
 
 const FieldMap& GxLine::classFields()
 {
-DOTRACE("GxLine::classFields");
+GVX_TRACE("GxLine::classFields");
   static const Field FIELD_ARRAY[] =
   {
     Field("start", Field::ValueType(), &GxLine::start,
@@ -79,7 +79,7 @@ DOTRACE("GxLine::classFields");
 
 GxLine* GxLine::make()
 {
-DOTRACE("GxLine::make");
+GVX_TRACE("GxLine::make");
  return new GxLine;
 }
 
@@ -89,30 +89,30 @@ GxLine::GxLine() :
   stop(0., 0., 0.),
   itsWidth(1)
 {
-DOTRACE("GxLine::GxLine");
+GVX_TRACE("GxLine::GxLine");
   setFieldMap(GxLine::classFields());
 }
 
 GxLine::~GxLine() throw()
 {
-DOTRACE("GxLine::~GxLine");
+GVX_TRACE("GxLine::~GxLine");
 }
 
 IO::VersionId GxLine::serialVersionId() const
 {
-DOTRACE("GxLine::serialVersionId");
+GVX_TRACE("GxLine::serialVersionId");
   return GXLINE_SVID;
 }
 
 void GxLine::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxLine::readFrom");
+GVX_TRACE("GxLine::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
 void GxLine::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxLine::writeTo");
+GVX_TRACE("GxLine::writeTo");
   writeFieldsTo(writer, classFields(), GXLINE_SVID);
 }
 
@@ -122,7 +122,7 @@ DOTRACE("GxLine::writeTo");
 
 void GxLine::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxColor::getBoundingCube");
+GVX_TRACE("GxColor::getBoundingCube");
 
   bbox.vertex3(start);
   bbox.vertex3(stop);
@@ -130,7 +130,7 @@ DOTRACE("GxColor::getBoundingCube");
 
 void GxLine::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxLine::draw");
+GVX_TRACE("GxLine::draw");
 
   Gfx::AttribSaver as(canvas);
 

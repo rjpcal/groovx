@@ -45,7 +45,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace Tcl
 {
@@ -158,7 +158,7 @@ void Tcl::VecDispatcher::dispatch(Tcl::Interp& interp,
                                   unsigned int objc, Tcl_Obj* const objv[],
                                   Tcl::Callback& callback)
 {
-DOTRACE("Tcl::VecDispatcher::dispatch");
+GVX_TRACE("Tcl::VecDispatcher::dispatch");
 
   unsigned int ncalls = Tcl::List::getLength(objv[itsKeyArgn]);
 

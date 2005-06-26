@@ -54,7 +54,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 using rutz::shared_ptr;
@@ -77,7 +77,7 @@ namespace
 
   fstring readAndUnEscape(std::istream& is)
   {
-  DOTRACE("<asciistreamreader.cc>::readAndUnEscape");
+  GVX_TRACE("<asciistreamreader.cc>::readAndUnEscape");
 
     static const char STRING_ENDER = '^';
 
@@ -220,7 +220,7 @@ AsciiStreamReader::AsciiStreamReader(std::istream& is) :
   itsObjects(),
   itsAttribs()
 {
-DOTRACE("AsciiStreamReader::AsciiStreamReader");
+GVX_TRACE("AsciiStreamReader::AsciiStreamReader");
 }
 
 AsciiStreamReader::AsciiStreamReader(const char* filename) :
@@ -229,47 +229,47 @@ AsciiStreamReader::AsciiStreamReader(const char* filename) :
   itsObjects(),
   itsAttribs()
 {
-DOTRACE("AsciiStreamReader::AsciiStreamReader");
+GVX_TRACE("AsciiStreamReader::AsciiStreamReader");
 }
 
 AsciiStreamReader::~AsciiStreamReader () throw()
 {
-DOTRACE("AsciiStreamReader::~AsciiStreamReader");
+GVX_TRACE("AsciiStreamReader::~AsciiStreamReader");
 }
 
 IO::VersionId AsciiStreamReader::readSerialVersionId()
 {
-DOTRACE("AsciiStreamReader::readSerialVersionId");
+GVX_TRACE("AsciiStreamReader::readSerialVersionId");
   return currentAttribs().getSerialVersionId();
 }
 
 char AsciiStreamReader::readChar(const fstring& name)
 {
-DOTRACE("AsciiStreamReader::readChar");
+GVX_TRACE("AsciiStreamReader::readChar");
   return readBasicType<char>(name);
 }
 
 int AsciiStreamReader::readInt(const fstring& name)
 {
-DOTRACE("AsciiStreamReader::readInt");
+GVX_TRACE("AsciiStreamReader::readInt");
   return readBasicType<int>(name);
 }
 
 bool AsciiStreamReader::readBool(const fstring& name)
 {
-DOTRACE("AsciiStreamReader::readBool");
+GVX_TRACE("AsciiStreamReader::readBool");
   return bool(readBasicType<int>(name));
 }
 
 double AsciiStreamReader::readDouble(const fstring& name)
 {
-DOTRACE("AsciiStreamReader::readDouble");
+GVX_TRACE("AsciiStreamReader::readDouble");
   return readBasicType<double>(name);
 }
 
 fstring AsciiStreamReader::readStringImpl(const fstring& name)
 {
-DOTRACE("AsciiStreamReader::readStringImpl");
+GVX_TRACE("AsciiStreamReader::readStringImpl");
   dbg_eval_nl(3, name);
 
   AttribMap::Attrib a = currentAttribs().get(name);
@@ -301,7 +301,7 @@ DOTRACE("AsciiStreamReader::readStringImpl");
 void AsciiStreamReader::readValueObj(const fstring& name,
                                      rutz::value& v)
 {
-DOTRACE("AsciiStreamReader::readValueObj");
+GVX_TRACE("AsciiStreamReader::readValueObj");
   dbg_eval_nl(3, name);
 
   AttribMap::Attrib a = currentAttribs().get(name);
@@ -312,7 +312,7 @@ DOTRACE("AsciiStreamReader::readValueObj");
 Ref<IO::IoObject>
 AsciiStreamReader::readObject(const fstring& name)
 {
-DOTRACE("AsciiStreamReader::readObject");
+GVX_TRACE("AsciiStreamReader::readObject");
   dbg_eval_nl(3, name);
   return Ref<IO::IoObject>(readMaybeObject(name));
 }
@@ -320,7 +320,7 @@ DOTRACE("AsciiStreamReader::readObject");
 SoftRef<IO::IoObject>
 AsciiStreamReader::readMaybeObject(const fstring& name)
 {
-DOTRACE("AsciiStreamReader::readMaybeObject");
+GVX_TRACE("AsciiStreamReader::readMaybeObject");
   dbg_eval_nl(3, name);
 
   AttribMap::Attrib attrib = currentAttribs().get(name);
@@ -341,7 +341,7 @@ DOTRACE("AsciiStreamReader::readMaybeObject");
 void AsciiStreamReader::readOwnedObject(const fstring& name,
                                         Ref<IO::IoObject> obj)
 {
-DOTRACE("AsciiStreamReader::readOwnedObject");
+GVX_TRACE("AsciiStreamReader::readOwnedObject");
   dbg_eval_nl(3, name);
 
   AttribMap::Attrib a = currentAttribs().get(name);
@@ -358,14 +358,14 @@ DOTRACE("AsciiStreamReader::readOwnedObject");
 void AsciiStreamReader::readBaseClass(const fstring& baseClassName,
                                       Ref<IO::IoObject> basePart)
 {
-DOTRACE("AsciiStreamReader::readBaseClass");
+GVX_TRACE("AsciiStreamReader::readBaseClass");
   dbg_eval_nl(3, baseClassName);
   readOwnedObject(baseClassName, basePart);
 }
 
 Ref<IO::IoObject> AsciiStreamReader::readRoot(IO::IoObject* given_root)
 {
-DOTRACE("AsciiStreamReader::readRoot");
+GVX_TRACE("AsciiStreamReader::readRoot");
 
   itsObjects.clear();
 
@@ -425,7 +425,7 @@ void AsciiStreamReader::inflateObject(std::istream& buf,
                                       const fstring& obj_tag,
                                       Ref<IO::IoObject> obj)
 {
-DOTRACE("AsciiStreamReader::inflateObject");
+GVX_TRACE("AsciiStreamReader::inflateObject");
 
   //
   // (1) read the object's attributes from the stream...
@@ -440,7 +440,7 @@ DOTRACE("AsciiStreamReader::inflateObject");
   // Check if there is a version id in the stream
   if (buf.peek() == 'v')
     {
-      int ch = buf.get();  ASSERT(ch == 'v');
+      int ch = buf.get();  GVX_ASSERT(ch == 'v');
       buf >> svid;
       if ( buf.fail() )
         throw rutz::error("input failed while reading "

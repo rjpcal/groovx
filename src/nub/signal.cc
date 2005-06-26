@@ -44,7 +44,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -54,17 +54,17 @@ DBG_REGISTER
 
 Nub::SlotBase::SlotBase()
 {
-DOTRACE("Nub::SlotBase::SlotBase");
+GVX_TRACE("Nub::SlotBase::SlotBase");
 }
 
 Nub::SlotBase::~SlotBase() throw()
 {
-DOTRACE("Nub::SlotBase::~SlotBase");
+GVX_TRACE("Nub::SlotBase::~SlotBase");
 }
 
 bool Nub::SlotBase::exists() const
 {
-DOTRACE("Nub::SlotBase::exists");
+GVX_TRACE("Nub::SlotBase::exists");
   return true;
 }
 
@@ -76,17 +76,17 @@ DOTRACE("Nub::SlotBase::exists");
 
 Nub::Slot0::Slot0()
 {
-DOTRACE("Nub::Slot0::Slot0");
+GVX_TRACE("Nub::Slot0::Slot0");
 }
 
 Nub::Slot0::~Slot0() throw()
 {
-DOTRACE("Nub::Slot0::~Slot0");
+GVX_TRACE("Nub::Slot0::~Slot0");
 }
 
 Nub::SoftRef<Nub::Slot0> Nub::Slot0::make(void (*freeFunc)())
 {
-DOTRACE("Nub::Slot0::make");
+GVX_TRACE("Nub::Slot0::make");
 
   return Nub::SoftRef<Slot0>(SlotAdapterFreeFunc0::make(freeFunc));
 }
@@ -145,13 +145,13 @@ public:
     Lock(Impl* impl) :
       itsTarget(impl)
     {
-      ASSERT(itsTarget->isItEmitting == false);
+      GVX_ASSERT(itsTarget->isItEmitting == false);
       itsTarget->isItEmitting = true;
     }
 
     ~Lock()
     {
-      ASSERT(itsTarget->isItEmitting == true);
+      GVX_ASSERT(itsTarget->isItEmitting == true);
       itsTarget->isItEmitting = false;
     }
   };
@@ -169,7 +169,7 @@ Nub::SignalBase::~SignalBase() throw()
 
 void Nub::SignalBase::doEmit(void* params) const
 {
-DOTRACE("Nub::SignalBase::doEmit");
+GVX_TRACE("Nub::SignalBase::doEmit");
   if (!rep->isItEmitting)
     {
       Impl::Lock lock(rep);
@@ -199,7 +199,7 @@ DOTRACE("Nub::SignalBase::doEmit");
 
 void Nub::SignalBase::doDisconnect(Nub::SoftRef<Nub::SlotBase> slot)
 {
-DOTRACE("Nub::SignalBase::doDisconnect");
+GVX_TRACE("Nub::SignalBase::doDisconnect");
   if (!slot.isValid()) return;
 
   rep->slots.remove(SlotRef(slot.get(), Nub::PRIVATE));
@@ -209,7 +209,7 @@ DOTRACE("Nub::SignalBase::doDisconnect");
 
 void Nub::SignalBase::doConnect(Nub::SoftRef<Nub::SlotBase> slot)
 {
-DOTRACE("Nub::SignalBase::doConnect");
+GVX_TRACE("Nub::SignalBase::doConnect");
   if (!slot.isValid()) return;
 
   rep->slots.push_back(SlotRef(slot.get(), Nub::PRIVATE));
@@ -227,12 +227,12 @@ Nub::Signal0::Signal0() :
   SignalBase(),
   slotEmitSelf(Slot0::make(this, &Nub::Signal0::emit))
 {
-DOTRACE("Nub::Signal0::Signal0");
+GVX_TRACE("Nub::Signal0::Signal0");
 }
 
 Nub::Signal0::~Signal0() throw()
 {
-DOTRACE("Nub::Signal0::~Signal0");
+GVX_TRACE("Nub::Signal0::~Signal0");
 }
 
 static const char vcid_groovx_nub_signal_cc_utc20050626084019[] = "$Id$ $HeadURL$";

@@ -47,7 +47,7 @@
 #include "io/writer.h"
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 using geom::rectd;
@@ -64,7 +64,7 @@ GxAligner::~GxAligner() throw() {}
 
 vec2d GxAligner::getCenter(const rectd& b) const
 {
-DOTRACE("GxAligner::getCenter");
+GVX_TRACE("GxAligner::getCenter");
   switch (itsMode)
     {
     case CENTER_ON_CENTER:    return vec2d::zeros();
@@ -76,13 +76,13 @@ DOTRACE("GxAligner::getCenter");
     case NATIVE_ALIGNMENT:    return b.center();
     }
 
-  ASSERT(0);
+  GVX_ASSERT(0);
   return vec2d();
 }
 
 void GxAligner::doAlignment(Gfx::Canvas& canvas, const rectd& native) const
 {
-DOTRACE("GxAligner::doAlignment");
+GVX_TRACE("GxAligner::doAlignment");
 
   if (NATIVE_ALIGNMENT == itsMode) return;
 
@@ -96,21 +96,21 @@ DOTRACE("GxAligner::doAlignment");
 
 void GxAligner::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxAligner::readFrom");
+GVX_TRACE("GxAligner::readFrom");
   reader.readValue("mode", itsMode);
   reader.readValueObj("center", itsCenter);
 }
 
 void GxAligner::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxAligner::writeTo");
+GVX_TRACE("GxAligner::writeTo");
   writer.writeValue("mode", itsMode);
   writer.writeValueObj("center", itsCenter);
 }
 
 void GxAligner::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxAligner::draw");
+GVX_TRACE("GxAligner::draw");
   Gfx::MatrixSaver state(canvas);
 
   doAlignment(canvas, child()->getBoundingBox(canvas));
@@ -120,7 +120,7 @@ DOTRACE("GxAligner::draw");
 
 void GxAligner::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxAligner::getBoundingCube");
+GVX_TRACE("GxAligner::getBoundingCube");
 
   Gfx::Bbox mybox = bbox.peer();
 

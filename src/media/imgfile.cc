@@ -112,7 +112,7 @@ namespace
   void pipe_load(const char* progname,
                  const char* filename, media::bmap_data& data)
   {
-  DOTRACE("<imgfile.cc>::pipe_load");
+  GVX_TRACE("<imgfile.cc>::pipe_load");
 
     if (access(progname, R_OK|X_OK) != 0)
       throw rutz::error(fstring("couldn't access program '", progname, "'"), SRC_POS);
@@ -133,7 +133,7 @@ namespace
 
 void media::load_image(const char* filename, media::bmap_data& data)
 {
-DOTRACE("media::load_image");
+GVX_TRACE("media::load_image");
 
   switch (get_image_file_type(filename))
     {

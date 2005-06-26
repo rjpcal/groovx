@@ -55,7 +55,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -112,7 +112,7 @@ public:
       case FROM_ABORT:    return abortEvents;
       }
 
-    ASSERT(false);
+    GVX_ASSERT(false);
 
     return abortEvents; // but we'll never get here
   }
@@ -144,32 +144,32 @@ const TimingHdlr::TimePoint TimingHdlr::FROM_ABORT;
 
 TimingHdlr* TimingHdlr::make()
 {
-DOTRACE("TimingHdlr::make");
+GVX_TRACE("TimingHdlr::make");
   return new TimingHdlr;
 }
 
 TimingHdlr::TimingHdlr() :
   rep(new Impl)
 {
-DOTRACE("TimingHdlr::TimingHdlr");
+GVX_TRACE("TimingHdlr::TimingHdlr");
 }
 
 TimingHdlr::~TimingHdlr() throw()
 {
-DOTRACE("TimingHdlr::~TimingHdlr");
+GVX_TRACE("TimingHdlr::~TimingHdlr");
 
   delete rep;
 }
 
 IO::VersionId TimingHdlr::serialVersionId() const
 {
-DOTRACE("TimingHdlr::serialVersionId");
+GVX_TRACE("TimingHdlr::serialVersionId");
   return TIMINGHDLR_SVID;
 }
 
 void TimingHdlr::readFrom(IO::Reader& reader)
 {
-DOTRACE("TimingHdlr::readFrom");
+GVX_TRACE("TimingHdlr::readFrom");
 
   reader.ensureReadVersionId("TimingHdlr", 1, "Try groovx0.8a4", SRC_POS);
 
@@ -192,7 +192,7 @@ DOTRACE("TimingHdlr::readFrom");
 
 void TimingHdlr::writeTo(IO::Writer& writer) const
 {
-DOTRACE("TimingHdlr::writeTo");
+GVX_TRACE("TimingHdlr::writeTo");
 
   writer.ensureWriteVersionId("TimingHdlr", TIMINGHDLR_SVID, 1,
                               "Try groovx0.8a4", SRC_POS);
@@ -217,13 +217,13 @@ DOTRACE("TimingHdlr::writeTo");
 Nub::Ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point,
                                           unsigned int index) const
 {
-DOTRACE("TimingHdlr::getEvent");
+GVX_TRACE("TimingHdlr::getEvent");
   return rep->eventsAt(time_point).at(index);
 }
 
 double TimingHdlr::getElapsedMsec() const
 {
-DOTRACE("TimingHdlr::getElapsedMsec");
+GVX_TRACE("TimingHdlr::getElapsedMsec");
   return rep->timer.elapsed().msec();
 }
 
@@ -234,7 +234,7 @@ DOTRACE("TimingHdlr::getElapsedMsec");
 unsigned int TimingHdlr::addEvent(Nub::Ref<TrialEvent> event_item,
                                   TimePoint time_point)
 {
-DOTRACE("TimingHdlr::addEvent");
+GVX_TRACE("TimingHdlr::addEvent");
 
   Impl::EventGroup& events = rep->eventsAt(time_point);
   events.push_back(event_item);
@@ -244,7 +244,7 @@ DOTRACE("TimingHdlr::addEvent");
 unsigned int TimingHdlr::addEventByName(const char* event_type,
                                         TimePoint timepoint, int msec_delay)
 {
-DOTRACE("TimingHdlr::addEventByName");
+GVX_TRACE("TimingHdlr::addEventByName");
 
   Nub::Ref<TrialEvent> event_item
     (Nub::ObjMgr::newTypedObj<TrialEvent>(event_type));
@@ -272,8 +272,8 @@ void TimingHdlr::Impl::scheduleAll(EventGroup& events,
                                    rutz::shared_ptr<Nub::Scheduler> s,
                                    Trial* trial)
 {
-DOTRACE("TimingHdlr::Impl::scheduleAll");
-  PRECONDITION(trial != 0);
+GVX_TRACE("TimingHdlr::Impl::scheduleAll");
+  GVX_PRECONDITION(trial != 0);
 
   // In order to ensure that events get scheduled in the proper order,
   // even if the whole event loop is getting bogged down, we do two
@@ -300,7 +300,7 @@ DOTRACE("TimingHdlr::Impl::scheduleAll");
 
 void TimingHdlr::Impl::cancelAll(EventGroup& events)
 {
-DOTRACE("TimingHdlr::Impl::cancelAll");
+GVX_TRACE("TimingHdlr::Impl::cancelAll");
   for (size_t i = 0; i < events.size(); ++i)
     {
       events[i]->cancel();
@@ -315,7 +315,7 @@ DOTRACE("TimingHdlr::Impl::cancelAll");
 
 void TimingHdlr::thBeginTrial(Trial& trial)
 {
-DOTRACE("TimingHdlr::thBeginTrial");
+GVX_TRACE("TimingHdlr::thBeginTrial");
 
   rep->timer.restart();
 
@@ -329,7 +329,7 @@ DOTRACE("TimingHdlr::thBeginTrial");
 
 void TimingHdlr::thResponseSeen()
 {
-DOTRACE("TimingHdlr::thResponseSeen");
+GVX_TRACE("TimingHdlr::thResponseSeen");
   if (rep->responseEvents.size() > 0)
     {
       Impl::cancelAll(rep->startEvents);
@@ -339,7 +339,7 @@ DOTRACE("TimingHdlr::thResponseSeen");
 
 void TimingHdlr::thAbortTrial()
 {
-DOTRACE("TimingHdlr::thAbortTrial");
+GVX_TRACE("TimingHdlr::thAbortTrial");
   if (rep->abortEvents.size() > 0)
     {
       Impl::cancelAll(rep->startEvents);
@@ -350,7 +350,7 @@ DOTRACE("TimingHdlr::thAbortTrial");
 
 void TimingHdlr::thEndTrial()
 {
-DOTRACE("TimingHdlr::thEndTrial");
+GVX_TRACE("TimingHdlr::thEndTrial");
   Impl::cancelAll(rep->immediateEvents);
   Impl::cancelAll(rep->startEvents);
   Impl::cancelAll(rep->responseEvents);
@@ -359,7 +359,7 @@ DOTRACE("TimingHdlr::thEndTrial");
 
 void TimingHdlr::thHaltExpt()
 {
-DOTRACE("TimingHdlr::thHaltExpt");
+GVX_TRACE("TimingHdlr::thHaltExpt");
   Impl::cancelAll(rep->startEvents);
   Impl::cancelAll(rep->responseEvents);
   Impl::cancelAll(rep->abortEvents);

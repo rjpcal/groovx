@@ -48,7 +48,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::shared_ptr;
 
@@ -69,14 +69,14 @@ public:
     m_row_order(TOP_FIRST),
     m_updater()
   {
-    PRECONDITION(m_size.x() >= 0);
-    PRECONDITION(m_size.y() >= 0);
+    GVX_PRECONDITION(m_size.x() >= 0);
+    GVX_PRECONDITION(m_size.y() >= 0);
 
     // If m_size.x() is 0, this is still OK, since -1/8 --> -1, so the
     // whole thing goes to 0
     int bytes_per_row = (m_size.x()*bits_per_pixel - 1)/8 + 1;
 
-    ASSERT(bytes_per_row >= 0);
+    GVX_ASSERT(bytes_per_row >= 0);
 
     unsigned int num_bytes = bytes_per_row * m_size.y();
 
@@ -127,20 +127,20 @@ media::bmap_data::update_func::~update_func() {}
 media::bmap_data::bmap_data() :
   rep(new impl(geom::vec2<int>(0, 0), 1, 1))
 {
-DOTRACE("media::bmap_data::bmap_data");
+GVX_TRACE("media::bmap_data::bmap_data");
 }
 
 media::bmap_data::bmap_data(const geom::vec2<int>& m_size,
                             int bits_per_pixel, int byte_alignment) :
   rep(new impl(m_size, bits_per_pixel, byte_alignment))
 {
-DOTRACE("media::bmap_data::bmap_data");
+GVX_TRACE("media::bmap_data::bmap_data");
 }
 
 media::bmap_data::bmap_data(const media::bmap_data& other) :
   rep(new impl(*(other.rep)))
 {
-DOTRACE("media::bmap_data::bmap_data(copy)");
+GVX_TRACE("media::bmap_data::bmap_data(copy)");
 }
 
 media::bmap_data::~bmap_data()
@@ -150,14 +150,14 @@ media::bmap_data::~bmap_data()
 
 unsigned char* media::bmap_data::bytes_ptr() const
 {
-DOTRACE("media::bmap_data::bytes_ptr");
+GVX_TRACE("media::bmap_data::bytes_ptr");
   update_if_needed();
   return rep->bytes_ptr();
 }
 
 unsigned char* media::bmap_data::row_ptr(unsigned int row) const
 {
-DOTRACE("media::bmap_data::row_ptr");
+GVX_TRACE("media::bmap_data::row_ptr");
 
   update_if_needed();
 
@@ -166,7 +166,7 @@ DOTRACE("media::bmap_data::row_ptr");
 
 long int media::bmap_data::bytes_sum() const
 {
-DOTRACE("media::bmap_data::bytes_sum");
+GVX_TRACE("media::bmap_data::bytes_sum");
 
   update_if_needed();
   long int sum = 0;
@@ -181,35 +181,35 @@ DOTRACE("media::bmap_data::bytes_sum");
 
 int media::bmap_data::width() const
 {
-DOTRACE("media::bmap_data::width");
+GVX_TRACE("media::bmap_data::width");
   update_if_needed();
   return rep->m_size.x();
 }
 
 int media::bmap_data::height() const
 {
-DOTRACE("media::bmap_data::height");
+GVX_TRACE("media::bmap_data::height");
   update_if_needed();
   return rep->m_size.y();
 }
 
 geom::vec2<int> media::bmap_data::size() const
 {
-DOTRACE("media::bmap_data::size");
+GVX_TRACE("media::bmap_data::size");
   update_if_needed();
   return rep->m_size;
 }
 
 int media::bmap_data::bits_per_pixel() const
 {
-DOTRACE("media::bmap_data::bits_per_pixel");
+GVX_TRACE("media::bmap_data::bits_per_pixel");
   update_if_needed();
   return rep->m_bits_per_pixel;
 }
 
 int media::bmap_data::bits_per_component() const
 {
-DOTRACE("media::bmap_data::bits_per_component");
+GVX_TRACE("media::bmap_data::bits_per_component");
   update_if_needed();
   return rep->m_bits_per_pixel > 1
     ? 8
@@ -218,24 +218,24 @@ DOTRACE("media::bmap_data::bits_per_component");
 
 int media::bmap_data::byte_alignment() const
 {
-DOTRACE("media::bmap_data::byte_alignment");
+GVX_TRACE("media::bmap_data::byte_alignment");
   update_if_needed();
   return rep->m_byte_alignment;
 }
 
 unsigned int media::bmap_data::byte_count() const
 {
-DOTRACE("media::bmap_data::byte_count");
+GVX_TRACE("media::bmap_data::byte_count");
   update_if_needed();
 
-  ASSERT(rep->m_bytes.size() == rep->bytes_per_row() * rep->m_size.y());
+  GVX_ASSERT(rep->m_bytes.size() == rep->bytes_per_row() * rep->m_size.y());
 
   return rep->byte_count();
 }
 
 unsigned int media::bmap_data::bytes_per_row() const
 {
-DOTRACE("media::bmap_data::bytes_per_row");
+GVX_TRACE("media::bmap_data::bytes_per_row");
   update_if_needed();
   return rep->bytes_per_row();
 }
@@ -248,7 +248,7 @@ media::bmap_data::get_row_order() const
 
 void media::bmap_data::flip_contrast()
 {
-DOTRACE("media::bmap_data::flip_contrast");
+GVX_TRACE("media::bmap_data::flip_contrast");
   update_if_needed();
 
   unsigned int num_bytes = rep->m_bytes.size();
@@ -276,7 +276,7 @@ DOTRACE("media::bmap_data::flip_contrast");
 
 void media::bmap_data::flip_vertical()
 {
-DOTRACE("media::bmap_data::flip_vertical");
+GVX_TRACE("media::bmap_data::flip_vertical");
   update_if_needed();
 
   int bytes_per_row = rep->bytes_per_row();
@@ -297,7 +297,7 @@ DOTRACE("media::bmap_data::flip_vertical");
 
 void media::bmap_data::clear()
 {
-DOTRACE("media::bmap_data::clear");
+GVX_TRACE("media::bmap_data::clear");
 
   media::bmap_data empty;
   swap(empty);
@@ -305,20 +305,20 @@ DOTRACE("media::bmap_data::clear");
 
 void media::bmap_data::swap(media::bmap_data& other)
 {
-DOTRACE("media::bmap_data::swap");
+GVX_TRACE("media::bmap_data::swap");
 
   rutz::swap2(rep, other.rep);
 }
 
 void media::bmap_data::queue_update(shared_ptr<update_func> updater) const
 {
-DOTRACE("media::bmap_data::queue_update");
+GVX_TRACE("media::bmap_data::queue_update");
   rep->m_updater = updater;
 }
 
 void media::bmap_data::update_if_needed() const
 {
-DOTRACE("media::bmap_data::update_if_needed");
+GVX_TRACE("media::bmap_data::update_if_needed");
   if (rep->m_updater.get() != 0)
     {
       shared_ptr<update_func> tmp_updater(rep->m_updater);
@@ -334,7 +334,7 @@ DOTRACE("media::bmap_data::update_if_needed");
 
 void media::bmap_data::clear_queued_update() const
 {
-DOTRACE("media::bmap_data::clear_queued_update");
+GVX_TRACE("media::bmap_data::clear_queued_update");
   rep->m_updater.reset();
 }
 
@@ -358,7 +358,7 @@ media::bmap_data::make_scrambled(int nsubimg_x, int nsubimg_y, int seed,
                                  bool allow_flip_left_right,
                                  bool allow_flip_top_bottom) const
 {
-DOTRACE("media::bmap_data::make_scrambled");
+GVX_TRACE("media::bmap_data::make_scrambled");
 
   update_if_needed();
 
@@ -461,7 +461,7 @@ DOTRACE("media::bmap_data::make_scrambled");
                   }
               else
                 {
-                  ASSERT(0);
+                  GVX_ASSERT(0);
                 }
             }
           else

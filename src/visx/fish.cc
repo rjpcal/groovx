@@ -54,10 +54,10 @@
 
 #include <fstream>
 
-#define DYNAMIC_TRACE_EXPR Fish::tracer.status()
+#define GVX_DYNAMIC_TRACE_EXPR Fish::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 
@@ -169,14 +169,14 @@ const FieldMap& Fish::classFields()
 
 Fish* Fish::make()
 {
-DOTRACE("Fish::make");
+GVX_TRACE("Fish::make");
   return new Fish;
 }
 
 Fish* Fish::makeFromFiles(const char* splinefile,
                           const char* coordfile, int index)
 {
-DOTRACE("Fish::makeFromFiles");
+GVX_TRACE("Fish::makeFromFiles");
   return new Fish(splinefile, coordfile, index);
 }
 
@@ -194,7 +194,7 @@ Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   partsMask(0),
   swimStroke(0.0)
 {
-DOTRACE("Fish::Fish");
+GVX_TRACE("Fish::Fish");
 
   setFieldMap(Fish::classFields());
 
@@ -217,13 +217,13 @@ DOTRACE("Fish::Fish");
 
 Fish::~Fish () throw()
 {
-DOTRACE("Fish::~Fish");
+GVX_TRACE("Fish::~Fish");
   delete [] itsParts;
 }
 
 void Fish::restoreToDefault()
 {
-DOTRACE("Fish::restoreToDefault");
+GVX_TRACE("Fish::restoreToDefault");
 
   static const float knots[] =
   {
@@ -308,13 +308,13 @@ DOTRACE("Fish::restoreToDefault");
 
 IO::VersionId Fish::serialVersionId() const
 {
-DOTRACE("Fish::serialVersionId");
+GVX_TRACE("Fish::serialVersionId");
   return FISH_SVID;
 }
 
 void Fish::readFrom(IO::Reader& reader)
 {
-DOTRACE("Fish::readFrom");
+GVX_TRACE("Fish::readFrom");
 
   reader.ensureReadVersionId("Fish", 4,
                              "Try cvs tag xml_conversion_20040526",
@@ -327,7 +327,7 @@ DOTRACE("Fish::readFrom");
 
 void Fish::writeTo(IO::Writer& writer) const
 {
-DOTRACE("Fish::writeTo");
+GVX_TRACE("Fish::writeTo");
 
   writer.ensureWriteVersionId("Fish", FISH_SVID, 4,
                               "Try groovx0.8a7", SRC_POS);
@@ -339,14 +339,14 @@ DOTRACE("Fish::writeTo");
 
 void Fish::updatePtrs()
 {
-DOTRACE("Fish::updatePtrs");
+GVX_TRACE("Fish::updatePtrs");
 
   itsCurrentPartBkpt = &(itsParts[itsCurrentPart].itsBkpt);
 }
 
 void Fish::readSplineFile(const char* splinefile)
 {
-DOTRACE("Fish::readSplineFile");
+GVX_TRACE("Fish::readSplineFile");
   size_t i, j;
   int k, splnb;
   fstring dummy;
@@ -445,7 +445,7 @@ DOTRACE("Fish::readSplineFile");
 
 void Fish::readCoordFile(const char* coordfile, int index)
 {
-DOTRACE("Fish::readCoordFile");
+GVX_TRACE("Fish::readCoordFile");
   fstring dummy;
 
   std::ifstream ifs(coordfile);
@@ -477,7 +477,7 @@ DOTRACE("Fish::readCoordFile");
 
 void Fish::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
-DOTRACE("Fish::grGetBoundingBox");
+GVX_TRACE("Fish::grGetBoundingBox");
 
   bbox.vertex2(vec2d(-0.75, -0.5));
   bbox.vertex2(vec2d(+0.75, +0.5));
@@ -485,7 +485,7 @@ DOTRACE("Fish::grGetBoundingBox");
 
 void Fish::grRender(Gfx::Canvas& canvas) const
 {
-DOTRACE("Fish::grRender");
+GVX_TRACE("Fish::grRender");
 
   static Gfx::RgbaColor colors[4] =
   {

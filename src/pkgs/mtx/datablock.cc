@@ -43,7 +43,7 @@
 #include <cstring>
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 namespace
@@ -67,13 +67,13 @@ namespace
   shared_data_block::shared_data_block(int length) :
     data_block(new double[length], length)
   {
-    DOTRACE("shared_data_block::shared_data_block");
+    GVX_TRACE("shared_data_block::shared_data_block");
     dbg_eval(3, this); dbg_eval_nl(3, m_storage);
   }
 
   shared_data_block::~shared_data_block()
   {
-    DOTRACE("shared_data_block::~shared_data_block");
+    GVX_TRACE("shared_data_block::~shared_data_block");
     dbg_eval(3, this); dbg_eval_nl(3, m_storage);
     delete [] m_storage;
   }
@@ -108,9 +108,9 @@ namespace
 
 void* data_block::operator new(size_t bytes)
 {
-DOTRACE("data_block::operator new");
+GVX_TRACE("data_block::operator new");
 
-  ASSERT(bytes == sizeof(data_block));
+  GVX_ASSERT(bytes == sizeof(data_block));
   if (fs_free_list == 0)
     return ::operator new(bytes);
   FreeNode* node = fs_free_list;
@@ -120,7 +120,7 @@ DOTRACE("data_block::operator new");
 
 void data_block::operator delete(void* space)
 {
-DOTRACE("data_block::operator delete");
+GVX_TRACE("data_block::operator delete");
 
   ((FreeNode*)space)->next = fs_free_list;
   fs_free_list = (FreeNode*)space;
@@ -131,17 +131,17 @@ data_block::data_block(double* data, unsigned int len) :
   m_storage(data),
   m_length(len)
 {
-DOTRACE("data_block::data_block");
+GVX_TRACE("data_block::data_block");
 }
 
 data_block::~data_block()
 {
-DOTRACE("data_block::~data_block");
+GVX_TRACE("data_block::~data_block");
 }
 
 data_block* data_block::get_empty_data_block()
 {
-DOTRACE("data_block::get_empty_data_block");
+GVX_TRACE("data_block::get_empty_data_block");
   static data_block* empty_rep = 0;
   if (empty_rep == 0)
     {
@@ -154,7 +154,7 @@ DOTRACE("data_block::get_empty_data_block");
 
 data_block* data_block::make_data_copy(const double* data, int data_length)
 {
-DOTRACE("data_block::make_data_copy");
+GVX_TRACE("data_block::make_data_copy");
   if (data == 0)
     return get_empty_data_block();
 
@@ -167,7 +167,7 @@ DOTRACE("data_block::make_data_copy");
 
 data_block* data_block::make_zeros(int length)
 {
-DOTRACE("data_block::make_zeros");
+GVX_TRACE("data_block::make_zeros");
   if (length <= 0)
     return get_empty_data_block();
 
@@ -179,7 +179,7 @@ DOTRACE("data_block::make_zeros");
 
 data_block* data_block::make_uninitialized(int length)
 {
-DOTRACE("data_block::make_uninitialized");
+GVX_TRACE("data_block::make_uninitialized");
   if (length <= 0)
     return get_empty_data_block();
 
@@ -188,13 +188,13 @@ DOTRACE("data_block::make_uninitialized");
 
 data_block* data_block::make_borrowed(double* data, int data_length)
 {
-DOTRACE("data_block::make_borrowed");
+GVX_TRACE("data_block::make_borrowed");
   return new borrowed_data_block(data, data_length);
 }
 
 data_block* data_block::make_referred(double* data, int data_length)
 {
-DOTRACE("data_block::make_referred");
+GVX_TRACE("data_block::make_referred");
   return new referred_data_block(data, data_length);
 }
 
@@ -232,7 +232,7 @@ void data_block::make_unique(data_block*& rep)
   if (rep->is_unique()) return;
 
   {
-    DOTRACE("data_block::make_unique");
+    GVX_TRACE("data_block::make_unique");
 
     data_block* rep_copy = make_data_copy(rep->m_storage, rep->m_length);
 
@@ -243,7 +243,7 @@ void data_block::make_unique(data_block*& rep)
 
     rep = rep_copy;
 
-    POSTCONDITION(rep->m_refcount == 1);
+    GVX_POSTCONDITION(rep->m_refcount == 1);
   }
 }
 

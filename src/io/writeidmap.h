@@ -64,7 +64,7 @@ namespace IO
         }
 
       // else...
-      ASSERT((*itr).second != 0);
+      GVX_ASSERT((*itr).second != 0);
       return (*itr).second;
     }
 

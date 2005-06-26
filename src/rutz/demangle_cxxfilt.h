@@ -40,14 +40,14 @@
 #include <string>
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 namespace
 {
   std::string demangle_cxxfilt(const std::string& mangled)
   {
-    DOTRACE("demangle_cxxfilt");
+    GVX_TRACE("demangle_cxxfilt");
 
     rutz::fstring command("c++filt ", mangled.c_str());
 

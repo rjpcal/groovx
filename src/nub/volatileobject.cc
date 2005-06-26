@@ -39,18 +39,18 @@
 
 Nub::VolatileObject::VolatileObject()
 {
-DOTRACE("Nub::VolatileObject::VolatileObject");
+GVX_TRACE("Nub::VolatileObject::VolatileObject");
   this->markAsVolatile();
 }
 
 Nub::VolatileObject::~VolatileObject() throw()
 {
-DOTRACE("Nub::VolatileObject::~VolatileObject");
+GVX_TRACE("Nub::VolatileObject::~VolatileObject");
 }
 
 void Nub::VolatileObject::destroy()
 {
-DOTRACE("Nub::VolatileObject::destroy");
+GVX_TRACE("Nub::VolatileObject::destroy");
   delete this;
 }
 

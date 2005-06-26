@@ -45,7 +45,7 @@
 #include <cmath>
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 namespace
@@ -59,7 +59,7 @@ GxCamera::~GxCamera() throw() {}
 
 void GxCamera::reshape(Gfx::Canvas& canvas, int w, int h)
 {
-DOTRACE("GxCamera::reshape");
+GVX_TRACE("GxCamera::reshape");
 
   dbg_eval(3, itsWidth); dbg_eval_nl(3, itsHeight);
 
@@ -90,7 +90,7 @@ GxPerspectiveCamera::~GxPerspectiveCamera() throw() {}
 
 const FieldMap& GxPerspectiveCamera::classFields()
 {
-DOTRACE("GxPerspectiveCamera::classFields");
+GVX_TRACE("GxPerspectiveCamera::classFields");
   static const Field FIELD_ARRAY[] =
   {
     Field("fovY", &GxPerspectiveCamera::itsFovY, 30.0, 1.0, 180.0, 1.0,
@@ -109,25 +109,25 @@ DOTRACE("GxPerspectiveCamera::classFields");
 
 IO::VersionId GxPerspectiveCamera::serialVersionId() const
 {
-DOTRACE("GxPerspectiveCamera::serialVersionId");
+GVX_TRACE("GxPerspectiveCamera::serialVersionId");
   return GXPC_SVID;
 }
 
 void GxPerspectiveCamera::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxPerspectiveCamera::readFrom");
+GVX_TRACE("GxPerspectiveCamera::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
 void GxPerspectiveCamera::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxPerspectiveCamera::writeTo");
+GVX_TRACE("GxPerspectiveCamera::writeTo");
   writeFieldsTo(writer, classFields(), GXPC_SVID);
 }
 
 void GxPerspectiveCamera::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxPerspectiveCamera::draw");
+GVX_TRACE("GxPerspectiveCamera::draw");
 
   dbg_eval(2, width()); dbg_eval_nl(2, height());
 
@@ -145,7 +145,7 @@ GxFixedRectCamera::~GxFixedRectCamera() throw() {}
 
 void GxFixedRectCamera::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxFixedRectCamera::draw");
+GVX_TRACE("GxFixedRectCamera::draw");
 
   canvas.viewport(0, 0, width(), height());
   canvas.orthographic(itsRect, -10.0, 10.0);
@@ -155,7 +155,7 @@ GxMinRectCamera::~GxMinRectCamera() throw() {}
 
 void GxMinRectCamera::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxMinRectCamera::draw");
+GVX_TRACE("GxMinRectCamera::draw");
 
   canvas.viewport(0, 0, width(), height());
 
@@ -206,7 +206,7 @@ GxFixedScaleCamera::~GxFixedScaleCamera() throw() {}
 
 const FieldMap& GxFixedScaleCamera::classFields()
 {
-DOTRACE("GxFixedScaleCamera::classFields");
+GVX_TRACE("GxFixedScaleCamera::classFields");
   static const Field FIELD_ARRAY[] =
   {
     Field("pixelsPerUnit",
@@ -228,19 +228,19 @@ DOTRACE("GxFixedScaleCamera::classFields");
 
 IO::VersionId GxFixedScaleCamera::serialVersionId() const
 {
-DOTRACE("GxFixedScaleCamera::serialVersionId");
+GVX_TRACE("GxFixedScaleCamera::serialVersionId");
   return GXFSC_SVID;
 }
 
 void GxFixedScaleCamera::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxFixedScaleCamera::readFrom");
+GVX_TRACE("GxFixedScaleCamera::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
 void GxFixedScaleCamera::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxFixedScaleCamera::writeTo");
+GVX_TRACE("GxFixedScaleCamera::writeTo");
   writeFieldsTo(writer, classFields(), GXFSC_SVID);
 }
 
@@ -264,7 +264,7 @@ void GxFixedScaleCamera::setPixelsPerUnit(double s)
 
 void GxFixedScaleCamera::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxFixedScaleCamera::draw");
+GVX_TRACE("GxFixedScaleCamera::draw");
 
   dbg_eval(3, width()); dbg_eval_nl(3, height());
   canvas.viewport(0, 0, width(), height());
@@ -283,7 +283,7 @@ GxPsyphyCamera::~GxPsyphyCamera() throw() {}
 
 const FieldMap& GxPsyphyCamera::classFields()
 {
-DOTRACE("GxPsyphyCamera::classFields");
+GVX_TRACE("GxPsyphyCamera::classFields");
   static const Field FIELD_ARRAY[] =
   {
     Field("unitAngle",
@@ -304,19 +304,19 @@ DOTRACE("GxPsyphyCamera::classFields");
 
 IO::VersionId GxPsyphyCamera::serialVersionId() const
 {
-DOTRACE("GxPsyphyCamera::serialVersionId");
+GVX_TRACE("GxPsyphyCamera::serialVersionId");
   return GXPPC_SVID;
 }
 
 void GxPsyphyCamera::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxPsyphyCamera::readFrom");
+GVX_TRACE("GxPsyphyCamera::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
 void GxPsyphyCamera::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxPsyphyCamera::writeTo");
+GVX_TRACE("GxPsyphyCamera::writeTo");
   writeFieldsTo(writer, classFields(), GXPPC_SVID);
 }
 
@@ -338,7 +338,7 @@ void GxPsyphyCamera::setViewingDistIn(double inches)
 
 void GxPsyphyCamera::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxPsyphyCamera::draw");
+GVX_TRACE("GxPsyphyCamera::draw");
 
   canvas.viewport(0, 0, width(), height());
 

@@ -72,7 +72,7 @@ GlxOpts::GlxOpts() :
   level( 0 ),
   transparent( false )
 {
-DOTRACE("GlxOpts::GlxOpts");
+GVX_TRACE("GlxOpts::GlxOpts");
 }
 
 static const char vcid_groovx_gfx_glxopts_cc_utc20050626084023[] = "$Id$ $HeadURL$";

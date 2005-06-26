@@ -114,7 +114,7 @@ public:
 #include "rutz/sharedptr.h"
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 namespace
@@ -130,7 +130,7 @@ namespace
 
     void push(int v)
     {
-      ASSERT(next < MAXSIZE);
+      GVX_ASSERT(next < MAXSIZE);
       data[next++] = v;
     }
 
@@ -263,7 +263,7 @@ GlxWrapper::GlxWrapper(Display* dpy, GlxOpts& opts, GlxWrapper* share) :
   itsContext(0),
   itsCurrentWin(0)
 {
-DOTRACE("GlxWrapper::GlxWrapper");
+GVX_TRACE("GlxWrapper::GlxWrapper");
 
   int dummy;
   if (!glXQueryExtension(dpy, &dummy, &dummy))
@@ -323,7 +323,7 @@ DOTRACE("GlxWrapper::GlxWrapper");
 
 GlxWrapper::~GlxWrapper()
 {
-DOTRACE("GlxWrapper::~GlxWrapper");
+GVX_TRACE("GlxWrapper::~GlxWrapper");
 
   glXDestroyContext(itsDisplay, itsContext);
   XFree(itsVisInfo);
@@ -331,7 +331,7 @@ DOTRACE("GlxWrapper::~GlxWrapper");
 
 GlxWrapper* GlxWrapper::make(Display* dpy, GlxOpts& opts, GlxWrapper* share)
 {
-DOTRACE("GlxWrapper::make");
+GVX_TRACE("GlxWrapper::make");
 
   // Create a new OpenGL rendering context.
   GlxWrapper* glx = new GlxWrapper(dpy, opts, share);
@@ -351,7 +351,7 @@ DOTRACE("GlxWrapper::make");
 
 void GlxWrapper::makeCurrent(Window win)
 {
-DOTRACE("GlxWrapper::makeCurrent");
+GVX_TRACE("GlxWrapper::makeCurrent");
 
   if (currentGlxWrapper != this || itsCurrentWin != win)
     {
@@ -368,7 +368,7 @@ void GlxWrapper::onReshape(int /*width*/, int /*height*/)
 
 bool GlxWrapper::isDoubleBuffered() const
 {
-DOTRACE("GlxWrapper::isDoubleBuffered");
+GVX_TRACE("GlxWrapper::isDoubleBuffered");
 
   int dbl_flag;
 
@@ -382,7 +382,7 @@ DOTRACE("GlxWrapper::isDoubleBuffered");
 
 unsigned int GlxWrapper::bitsPerPixel() const
 {
-DOTRACE("GlxWrapper::bitsPerPixel");
+GVX_TRACE("GlxWrapper::bitsPerPixel");
   return itsVisInfo->depth;
 }
 
@@ -394,7 +394,7 @@ void GlxWrapper::swapBuffers() const
 Window GlxWrapper::makeTkRealWindow(Tk_Window tkwin, Window parent,
                                     int width, int height) throw()
 {
-DOTRACE("GlxWrapper::makeTkRealWindow");
+GVX_TRACE("GlxWrapper::makeTkRealWindow");
 
   Display* dpy = Tk_Display(tkwin);
 

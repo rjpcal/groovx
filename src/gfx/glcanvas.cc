@@ -64,7 +64,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using geom::recti;
 using geom::rectd;
@@ -94,7 +94,7 @@ namespace
 
   geom::span<double> rawGepthRange()
   {
-    DOTRACE("<glcanvas.cc>::depthRange");
+    GVX_TRACE("<glcanvas.cc>::depthRange");
     GLdouble vals[2];
     glGetDoublev(GL_DEPTH_RANGE, &vals[0]);
     return geom::span<double>(vals[0], vals[1]);
@@ -102,7 +102,7 @@ namespace
 
   txform rawGetModelview()
   {
-    DOTRACE("<glcanvas.cc>::rawGetModelview");
+    GVX_TRACE("<glcanvas.cc>::rawGetModelview");
     GLdouble m[16];
     glGetDoublev(GL_MODELVIEW_MATRIX, &m[0]);
     return txform::copy_of(&m[0]);
@@ -110,7 +110,7 @@ namespace
 
   txform rawGetProjection()
   {
-    DOTRACE("<glcanvas.cc>::rawGetProjection");
+    GVX_TRACE("<glcanvas.cc>::rawGetProjection");
     GLdouble m[16];
     glGetDoublev(GL_PROJECTION_MATRIX, &m[0]);
     return txform::copy_of(&m[0]);
@@ -121,7 +121,7 @@ namespace
                    const recti& viewport,
                    const vec3d& screen)
   {
-    DOTRACE("<glcanvas.cc>::unproject1");
+    GVX_TRACE("<glcanvas.cc>::unproject1");
 
     const GLint v[4] = { viewport.left(), viewport.bottom(),
                          viewport.width(), viewport.height() };
@@ -148,7 +148,7 @@ namespace
                  const recti& viewport,
                  const vec3d& world_pos)
   {
-    DOTRACE("<glcanvas.cc>::project1");
+    GVX_TRACE("<glcanvas.cc>::project1");
 
     const GLint v[4] = { viewport.left(), viewport.bottom(),
                          viewport.width(), viewport.height() };
@@ -204,9 +204,9 @@ public:
 
   const txform& getModelview() const
   {
-    DOTRACE("GLCanvas::getModelview");
-    ASSERT(modelviewCache.size() > 0);
-    if (GET_DBG_LEVEL() >= 8)
+    GVX_TRACE("GLCanvas::getModelview");
+    GVX_ASSERT(modelviewCache.size() > 0);
+    if (GVX_DBG_LEVEL() >= 8)
       {
         const txform ref = rawGetModelview();
         const double sse = ref.debug_sse(modelviewCache.back());
@@ -215,7 +215,7 @@ public:
             dbg_eval_nl(0, sse);
             dbg_dump(0, ref);
             dbg_dump(0, modelviewCache.back());
-            PANIC("numerical error in modelview matrix cache");
+            GVX_PANIC("numerical error in modelview matrix cache");
           }
       }
     return modelviewCache.back();
@@ -223,9 +223,9 @@ public:
 
   const txform& getProjection() const
   {
-    DOTRACE("GLCanvas::getProjection");
-    ASSERT(projectionCache.size() > 0);
-    if (GET_DBG_LEVEL() >= 8)
+    GVX_TRACE("GLCanvas::getProjection");
+    GVX_ASSERT(projectionCache.size() > 0);
+    if (GVX_DBG_LEVEL() >= 8)
       {
         const txform ref = rawGetProjection();
         const double sse = ref.debug_sse(projectionCache.back());
@@ -234,7 +234,7 @@ public:
             dbg_eval_nl(0, sse);
             dbg_dump(0, ref);
             dbg_dump(0, projectionCache.back());
-            PANIC("numerical error in projection matrix cache");
+            GVX_PANIC("numerical error in projection matrix cache");
           }
       }
     return projectionCache.back();
@@ -252,38 +252,38 @@ GLCanvas::GLCanvas(shared_ptr<GlxOpts> opts,
                    shared_ptr<GlWindowInterface> glx) :
   rep(new Impl(opts, glx))
 {
-DOTRACE("GLCanvas::GLCanvas");
+GVX_TRACE("GLCanvas::GLCanvas");
 }
 
 GLCanvas* GLCanvas::make(shared_ptr<GlxOpts> opts,
                          shared_ptr<GlWindowInterface> glx)
 {
-DOTRACE("GLCanvas::make");
+GVX_TRACE("GLCanvas::make");
   return new GLCanvas(opts, glx);
 }
 
 GLCanvas::~GLCanvas() throw()
 {
-DOTRACE("GLCanvas::~GLCanvas");
+GVX_TRACE("GLCanvas::~GLCanvas");
   delete rep;
   rep = 0;
 }
 
 void GLCanvas::drawBufferFront() throw()
 {
-DOTRACE("GLCanvas::drawBufferFront");
+GVX_TRACE("GLCanvas::drawBufferFront");
   glDrawBuffer(GL_FRONT);
 }
 
 void GLCanvas::drawBufferBack() throw()
 {
-DOTRACE("GLCanvas::drawBufferBack");
+GVX_TRACE("GLCanvas::drawBufferBack");
   glDrawBuffer(GL_BACK);
 }
 
 vec3d GLCanvas::screenFromWorld3(const vec3d& world_pos) const
 {
-DOTRACE("GLCanvas::screenFromWorld3");
+GVX_TRACE("GLCanvas::screenFromWorld3");
 
   const txform m = rep->getModelview();
   const txform p = rep->getProjection();
@@ -294,7 +294,7 @@ DOTRACE("GLCanvas::screenFromWorld3");
   dbg_dump(3, world_pos);
   dbg_dump(3, screen_pos);
 
-  if (GET_DBG_LEVEL() >= 8)
+  if (GVX_DBG_LEVEL() >= 8)
     {
       const vec3d screen_pos1 = project1(m, p, v, world_pos);
       const vec3d diff = screen_pos - screen_pos1;
@@ -306,7 +306,7 @@ DOTRACE("GLCanvas::screenFromWorld3");
           dbg_dump(0, m);
           dbg_dump(0, screen_pos1);
           dbg_dump(0, screen_pos);
-          PANIC("numerical error during world->screen projection");
+          GVX_PANIC("numerical error during world->screen projection");
         }
     }
 
@@ -315,7 +315,7 @@ DOTRACE("GLCanvas::screenFromWorld3");
 
 vec3d GLCanvas::worldFromScreen3(const vec3d& screen_pos) const
 {
-DOTRACE("GLCanvas::worldFromScreen3");
+GVX_TRACE("GLCanvas::worldFromScreen3");
 
   dbg_dump(3, screen_pos);
 
@@ -328,7 +328,7 @@ DOTRACE("GLCanvas::worldFromScreen3");
 
   const vec3d world2 = geom::unproject(m, p, v, screen_pos);
 
-  if (GET_DBG_LEVEL() >= 8)
+  if (GVX_DBG_LEVEL() >= 8)
     {
       const vec3d world1 = unproject1(m, p, v, screen_pos);
       const vec3d diff = world2 - world1;
@@ -340,7 +340,7 @@ DOTRACE("GLCanvas::worldFromScreen3");
           dbg_dump(0, m);
           dbg_dump(0, world1);
           dbg_dump(0, world2);
-          PANIC("numerical error during screen->world reverse projection");
+          GVX_PANIC("numerical error during screen->world reverse projection");
         }
     }
 
@@ -350,7 +350,7 @@ DOTRACE("GLCanvas::worldFromScreen3");
 
 recti GLCanvas::getScreenViewport() const
 {
-DOTRACE("GLCanvas::getScreenViewport");
+GVX_TRACE("GLCanvas::getScreenViewport");
 
   return rep->viewportCache;
 }
@@ -358,28 +358,28 @@ DOTRACE("GLCanvas::getScreenViewport");
 
 bool GLCanvas::isRgba() const
 {
-DOTRACE("GLCanvas::isRgba");
+GVX_TRACE("GLCanvas::isRgba");
 
   return rep->opts->rgbaFlag;
 }
 
 bool GLCanvas::isColorIndex() const
 {
-DOTRACE("GLCanvas::isColorIndex");
+GVX_TRACE("GLCanvas::isColorIndex");
 
   return !(rep->opts->rgbaFlag);
 }
 
 bool GLCanvas::isDoubleBuffered() const
 {
-DOTRACE("GLCanvas::isDoubleBuffered");
+GVX_TRACE("GLCanvas::isDoubleBuffered");
 
   return rep->glx->isDoubleBuffered();
 }
 
 unsigned int GLCanvas::bitsPerPixel() const
 {
-DOTRACE("GLCanvas::bitsPerPixel");
+GVX_TRACE("GLCanvas::bitsPerPixel");
 
   return rep->glx->bitsPerPixel();
 }
@@ -387,7 +387,7 @@ DOTRACE("GLCanvas::bitsPerPixel");
 void GLCanvas::throwIfError(const char* where,
                             const rutz::file_pos& pos) const
 {
-DOTRACE("GLCanvas::throwIfError");
+GVX_TRACE("GLCanvas::throwIfError");
   GLenum status = glGetError();
   if (status != GL_NO_ERROR)
     {
@@ -399,57 +399,57 @@ DOTRACE("GLCanvas::throwIfError");
 
 void GLCanvas::pushAttribs(const char* /*comment*/)
 {
-DOTRACE("GLCanvas::pushAttribs");
+GVX_TRACE("GLCanvas::pushAttribs");
   glPushAttrib(GL_ALL_ATTRIB_BITS);
   dbg_eval_nl(3, attribStackDepth());
 }
 
 void GLCanvas::popAttribs()
 {
-DOTRACE("GLCanvas::popAttribs");
+GVX_TRACE("GLCanvas::popAttribs");
   glPopAttrib();
   dbg_eval_nl(3, attribStackDepth());
 }
 
 void GLCanvas::drawOnFrontBuffer()
 {
-DOTRACE("GLCanvas::drawOnFrontBuffer");
+GVX_TRACE("GLCanvas::drawOnFrontBuffer");
   glDrawBuffer(GL_FRONT);
 }
 
 void GLCanvas::drawOnBackBuffer()
 {
-DOTRACE("GLCanvas::drawOnBackBuffer");
+GVX_TRACE("GLCanvas::drawOnBackBuffer");
   glDrawBuffer(GL_BACK);
 }
 
 void GLCanvas::setColor(const Gfx::RgbaColor& rgba)
 {
-DOTRACE("GLCanvas::setColor");
+GVX_TRACE("GLCanvas::setColor");
   glColor4dv(rgba.data());
 }
 
 void GLCanvas::setClearColor(const Gfx::RgbaColor& rgba)
 {
-DOTRACE("GLCanvas::setClearColor");
+GVX_TRACE("GLCanvas::setClearColor");
   glClearColor(rgba.r(), rgba.g(), rgba.b(), rgba.a());
 }
 
 void GLCanvas::setColorIndex(unsigned int index)
 {
-DOTRACE("GLCanvas::setColorIndex");
+GVX_TRACE("GLCanvas::setColorIndex");
   glIndexi(index);
 }
 
 void GLCanvas::setClearColorIndex(unsigned int index)
 {
-DOTRACE("GLCanvas::setClearColorIndex");
+GVX_TRACE("GLCanvas::setClearColorIndex");
   glClearIndex(index);
 }
 
 void GLCanvas::swapForeBack()
 {
-DOTRACE("GLCanvas::swapForeBack");
+GVX_TRACE("GLCanvas::swapForeBack");
   if ( this->isRgba() )
     {
       GLdouble foreground[4];
@@ -479,7 +479,7 @@ DOTRACE("GLCanvas::swapForeBack");
 
 void GLCanvas::setPolygonFill(bool on)
 {
-DOTRACE("GLCanvas::setPolygonFill");
+GVX_TRACE("GLCanvas::setPolygonFill");
 
   if (on)
     {
@@ -493,27 +493,27 @@ DOTRACE("GLCanvas::setPolygonFill");
 
 void GLCanvas::setPointSize(double size)
 {
-DOTRACE("GLCanvas::setPointSize");
+GVX_TRACE("GLCanvas::setPointSize");
 
   glPointSize(size);
 }
 
 void GLCanvas::setLineWidth(double width)
 {
-DOTRACE("GLCanvas::setLineWidth");
+GVX_TRACE("GLCanvas::setLineWidth");
   glLineWidth(width);
 }
 
 void GLCanvas::setLineStipple(unsigned short bit_pattern)
 {
-DOTRACE("GLCanvas::setLineStipple");
+GVX_TRACE("GLCanvas::setLineStipple");
   glEnable(GL_LINE_STIPPLE);
   glLineStipple(1, bit_pattern);
 }
 
 void GLCanvas::enableAntialiasing()
 {
-DOTRACE("GLCanvas::enableAntialiasing");
+GVX_TRACE("GLCanvas::enableAntialiasing");
 
   if (isRgba()) // antialiasing does not work well except in RGBA mode
     {
@@ -530,11 +530,11 @@ DOTRACE("GLCanvas::enableAntialiasing");
 
 void GLCanvas::viewport(int x, int y, int w, int h)
 {
-DOTRACE("GLCanvas::viewport");
+GVX_TRACE("GLCanvas::viewport");
 
   glViewport(x, y, w, h);
   dbg_eval(2, x); dbg_eval(2, y); dbg_eval(2, w); dbg_eval_nl(2, h);
-  if (GET_DBG_LEVEL() >= 8)
+  if (GVX_DBG_LEVEL() >= 8)
     {
       GLint viewport[4];
       glGetIntegerv(GL_VIEWPORT, viewport);
@@ -550,7 +550,7 @@ DOTRACE("GLCanvas::viewport");
 void GLCanvas::orthographic(const rectd& bounds,
                             double zNear, double zFar)
 {
-DOTRACE("GLCanvas::orthographic");
+GVX_TRACE("GLCanvas::orthographic");
 
   dbg_eval(3, bounds.left()); dbg_eval_nl(3, bounds.right());
   dbg_eval(3, bounds.bottom()); dbg_eval_nl(3, bounds.top());
@@ -568,7 +568,7 @@ DOTRACE("GLCanvas::orthographic");
 void GLCanvas::perspective(double fovy, double aspect,
                            double zNear, double zFar)
 {
-DOTRACE("GLCanvas::perspective");
+GVX_TRACE("GLCanvas::perspective");
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -579,7 +579,7 @@ DOTRACE("GLCanvas::perspective");
 
 void GLCanvas::pushMatrix(const char* /*comment*/)
 {
-DOTRACE("GLCanvas::pushMatrix");
+GVX_TRACE("GLCanvas::pushMatrix");
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   rep->modelviewCache.push_back(rep->modelviewCache.back());
@@ -588,17 +588,17 @@ DOTRACE("GLCanvas::pushMatrix");
 
 void GLCanvas::popMatrix()
 {
-DOTRACE("GLCanvas::popMatrix");
+GVX_TRACE("GLCanvas::popMatrix");
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
-  ASSERT(rep->modelviewCache.size() > 0);
+  GVX_ASSERT(rep->modelviewCache.size() > 0);
   rep->modelviewCache.pop_back();
   dbg_dump(4, rep->modelviewCache.back());
 }
 
 void GLCanvas::translate(const vec3d& v)
 {
-DOTRACE("GLCanvas::translate");
+GVX_TRACE("GLCanvas::translate");
   glTranslated(v.x(), v.y(), v.z());
   rep->modelviewCache.back().translate(v);
   dbg_dump(4, rep->modelviewCache.back());
@@ -606,7 +606,7 @@ DOTRACE("GLCanvas::translate");
 
 void GLCanvas::scale(const vec3d& v)
 {
-DOTRACE("GLCanvas::scale");
+GVX_TRACE("GLCanvas::scale");
   if (v.x() == 0.0)
     {
       throw rutz::error("invalid x scaling factor", SRC_POS);
@@ -626,7 +626,7 @@ DOTRACE("GLCanvas::scale");
 
 void GLCanvas::rotate(const vec3d& v, double angle_in_degrees)
 {
-DOTRACE("GLCanvas::rotate");
+GVX_TRACE("GLCanvas::rotate");
   glRotated(angle_in_degrees, v.x(), v.y(), v.z());
   rep->modelviewCache.back().rotate(v, angle_in_degrees);
   dbg_dump(4, rep->modelviewCache.back());
@@ -634,7 +634,7 @@ DOTRACE("GLCanvas::rotate");
 
 void GLCanvas::transform(const geom::txform& tx)
 {
-DOTRACE("GLCanvas::transform");
+GVX_TRACE("GLCanvas::transform");
   glMultMatrixd(tx.col_major_data());
   rep->modelviewCache.back().transform(tx);
   dbg_dump(4, rep->modelviewCache.back());
@@ -642,7 +642,7 @@ DOTRACE("GLCanvas::transform");
 
 void GLCanvas::loadMatrix(const geom::txform& tx)
 {
-DOTRACE("GLCanvas::loadMatrix");
+GVX_TRACE("GLCanvas::loadMatrix");
   glLoadMatrixd(tx.col_major_data());
   rep->modelviewCache.back() = tx;
   dbg_dump(4, rep->modelviewCache.back());
@@ -650,7 +650,7 @@ DOTRACE("GLCanvas::loadMatrix");
 
 void GLCanvas::rasterPos(const geom::vec3<double>& world_pos)
 {
-DOTRACE("GLCanvas::rasterPos");
+GVX_TRACE("GLCanvas::rasterPos");
 
   const rectd viewport = rectd(getScreenViewport());
 
@@ -664,12 +664,12 @@ DOTRACE("GLCanvas::rasterPos");
   if (viewport.contains(screen_pos.as_vec2()) &&
       depth.contains(screen_pos.z()))
     {
-      DOTRACE("GLCanvas::rasterPos::branch-1");
+      GVX_TRACE("GLCanvas::rasterPos::branch-1");
       glRasterPos3d(world_pos.x(), world_pos.y(), world_pos.z());
     }
   else
     {
-      DOTRACE("GLCanvas::rasterPos::branch-2");
+      GVX_TRACE("GLCanvas::rasterPos::branch-2");
       // OK... in this case, our desired raster position actually
       // falls outside the onscreen viewport. If we just called
       // glRasterPos() with that position, it would recognize it as an
@@ -696,10 +696,10 @@ DOTRACE("GLCanvas::rasterPos");
                static_cast<const GLubyte*>(0));
     }
 
-  if (GET_DBG_LEVEL() >= 8)
+  if (GVX_DBG_LEVEL() >= 8)
     {
       // This operation is slow because it involves a glGet*()
-      POSTCONDITION(rasterPositionValid());
+      GVX_POSTCONDITION(rasterPositionValid());
     }
 }
 
@@ -707,7 +707,7 @@ void GLCanvas::drawPixels(const media::bmap_data& data,
                           const vec3d& world_pos,
                           const vec2d& zoom)
 {
-DOTRACE("GLCanvas::drawPixels");
+GVX_TRACE("GLCanvas::drawPixels");
 
   data.set_row_order(media::bmap_data::BOTTOM_FIRST);
 
@@ -719,19 +719,19 @@ DOTRACE("GLCanvas::drawPixels");
 
   if (data.bits_per_pixel() == 32)
     {
-      DOTRACE("GLCanvas::drawPixels[32]");
+      GVX_TRACE("GLCanvas::drawPixels[32]");
       glDrawPixels(data.width(), data.height(), GL_RGBA, GL_UNSIGNED_BYTE,
                    static_cast<GLvoid*>(data.bytes_ptr()));
     }
   else if (data.bits_per_pixel() == 24)
     {
-      DOTRACE("GLCanvas::drawPixels[24]");
+      GVX_TRACE("GLCanvas::drawPixels[24]");
       glDrawPixels(data.width(), data.height(), GL_RGB, GL_UNSIGNED_BYTE,
                    static_cast<GLvoid*>(data.bytes_ptr()));
     }
   else if (data.bits_per_pixel() == 8)
     {
-      DOTRACE("GLCanvas::drawPixels[8]");
+      GVX_TRACE("GLCanvas::drawPixels[8]");
       if (isRgba())
         {
           glDrawPixels(data.width(), data.height(),
@@ -747,7 +747,7 @@ DOTRACE("GLCanvas::drawPixels");
     }
   else if (data.bits_per_pixel() == 1)
     {
-      DOTRACE("GLCanvas::drawPixels[1]");
+      GVX_TRACE("GLCanvas::drawPixels[1]");
 
 #if 0
       if (isRgba())
@@ -777,7 +777,7 @@ DOTRACE("GLCanvas::drawPixels");
 
       while (sptr != sstop)
         {
-          ASSERT((dptr+7) < dstop);
+          GVX_ASSERT((dptr+7) < dstop);
 
           *dptr++ = ((*sptr) & (1 << 7)) ? 255 : 0;
           *dptr++ = ((*sptr) & (1 << 6)) ? 255 : 0;
@@ -803,7 +803,7 @@ DOTRACE("GLCanvas::drawPixels");
 void GLCanvas::drawBitmap(const media::bmap_data& data,
                           const vec3d& world_pos)
 {
-DOTRACE("GLCanvas::drawBitmap");
+GVX_TRACE("GLCanvas::drawBitmap");
 
   data.set_row_order(media::bmap_data::BOTTOM_FIRST);
 
@@ -816,7 +816,7 @@ DOTRACE("GLCanvas::drawBitmap");
 void GLCanvas::grabPixels(const recti& bounds,
                           media::bmap_data& data_out)
 {
-DOTRACE("GLCanvas::grabPixels");
+GVX_TRACE("GLCanvas::grabPixels");
 
   const int pixel_alignment = 1;
 
@@ -849,13 +849,13 @@ DOTRACE("GLCanvas::grabPixels");
 
 void GLCanvas::clearColorBuffer()
 {
-DOTRACE("GLCanvas::clearColorBuffer");
+GVX_TRACE("GLCanvas::clearColorBuffer");
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void GLCanvas::clearColorBuffer(const recti& screen_rect)
 {
-DOTRACE("GLCanvas::clearColorBuffer(geom::recti)");
+GVX_TRACE("GLCanvas::clearColorBuffer(geom::recti)");
 
   glPushAttrib(GL_SCISSOR_BIT);
   {
@@ -872,7 +872,7 @@ DOTRACE("GLCanvas::clearColorBuffer(geom::recti)");
 
 void GLCanvas::drawRect(const rectd& rect)
 {
-DOTRACE("GLCanvas::drawRect");
+GVX_TRACE("GLCanvas::drawRect");
 
   glRectd(rect.left(),
           rect.bottom(),
@@ -884,7 +884,7 @@ void GLCanvas::drawCircle(double inner_radius, double outer_radius,
                           bool fill,
                           unsigned int slices, unsigned int loops)
 {
-DOTRACE("GLCanvas::drawCircle");
+GVX_TRACE("GLCanvas::drawCircle");
 
   GLUquadricObj* qobj = gluNewQuadric();
 
@@ -900,7 +900,7 @@ void GLCanvas::drawCylinder(double base_radius, double top_radius,
                             double height, int slices, int stacks,
                             bool fill)
 {
-DOTRACE("GLCanvas::drawCylinder");
+GVX_TRACE("GLCanvas::drawCylinder");
 
   GLUquadric* qobj = gluNewQuadric();
 
@@ -915,7 +915,7 @@ DOTRACE("GLCanvas::drawCylinder");
 void GLCanvas::drawSphere(double radius, int slices, int stacks,
                           bool fill)
 {
-DOTRACE("GLCanvas::drawSphere");
+GVX_TRACE("GLCanvas::drawSphere");
 
   GLUquadric* qobj = gluNewQuadric();
 
@@ -933,7 +933,7 @@ void GLCanvas::drawBezier4(const vec3d& p1,
                            const vec3d& p4,
                            unsigned int subdivisions)
 {
-DOTRACE("GLCanvas::drawBezier4");
+GVX_TRACE("GLCanvas::drawBezier4");
 
 #if 1
   // Use the generic version, since it seems to actually be faster than the
@@ -962,7 +962,7 @@ void GLCanvas::drawBezierFill4(const vec3d& center,
                                const vec3d& p4,
                                unsigned int subdivisions)
 {
-DOTRACE("GLCanvas::drawBezierFill4");
+GVX_TRACE("GLCanvas::drawBezierFill4");
 
   // Looks like the the OpenGL-specific version beats the generic version
   // here, unlike for drawBezier4().
@@ -996,57 +996,57 @@ DOTRACE("GLCanvas::drawBezierFill4");
 }
 
 void GLCanvas::beginPoints(const char* /*comment*/)
-{ DOTRACE("GLCanvas::beginPoints"); glBegin(GL_POINTS); }
+{ GVX_TRACE("GLCanvas::beginPoints"); glBegin(GL_POINTS); }
 
 void GLCanvas::beginLines(const char* /*comment*/)
-{ DOTRACE("GLCanvas::beginLines"); glBegin(GL_LINES); }
+{ GVX_TRACE("GLCanvas::beginLines"); glBegin(GL_LINES); }
 
 void GLCanvas::beginLineStrip(const char* /*comment*/)
-{ DOTRACE("GLCanvas::beginLineStrip"); glBegin(GL_LINE_STRIP); }
+{ GVX_TRACE("GLCanvas::beginLineStrip"); glBegin(GL_LINE_STRIP); }
 
 void GLCanvas::beginLineLoop(const char* /*comment*/)
-{ DOTRACE("GLCanvas::beginLineLoop"); glBegin(GL_LINE_LOOP); }
+{ GVX_TRACE("GLCanvas::beginLineLoop"); glBegin(GL_LINE_LOOP); }
 
 void GLCanvas::beginTriangles(const char* /*comment*/)
-{ DOTRACE("GLCanvas::beginTriangles"); glBegin(GL_TRIANGLES); }
+{ GVX_TRACE("GLCanvas::beginTriangles"); glBegin(GL_TRIANGLES); }
 
 void GLCanvas::beginTriangleStrip(const char* /*comment*/)
-{ DOTRACE("GLCanvas::beginTriangleStrip"); glBegin(GL_TRIANGLE_STRIP); }
+{ GVX_TRACE("GLCanvas::beginTriangleStrip"); glBegin(GL_TRIANGLE_STRIP); }
 
 void GLCanvas::beginTriangleFan(const char* /*comment*/)
-{ DOTRACE("GLCanvas::beginTriangleFan"); glBegin(GL_TRIANGLE_FAN); }
+{ GVX_TRACE("GLCanvas::beginTriangleFan"); glBegin(GL_TRIANGLE_FAN); }
 
 void GLCanvas::beginQuads(const char* /*comment*/)
-{ DOTRACE("GLCanvas::beginQuads"); glBegin(GL_QUADS); }
+{ GVX_TRACE("GLCanvas::beginQuads"); glBegin(GL_QUADS); }
 
 void GLCanvas::beginQuadStrip(const char* /*comment*/)
-{ DOTRACE("GLCanvas::beginQuadStrip"); glBegin(GL_QUAD_STRIP); }
+{ GVX_TRACE("GLCanvas::beginQuadStrip"); glBegin(GL_QUAD_STRIP); }
 
 void GLCanvas::beginPolygon(const char* /*comment*/)
-{ DOTRACE("GLCanvas::beginPolygon"); glBegin(GL_POLYGON); }
+{ GVX_TRACE("GLCanvas::beginPolygon"); glBegin(GL_POLYGON); }
 
 void GLCanvas::vertex2(const vec2d& v)
 {
-DOTRACE("GLCanvas::vertex2");
+GVX_TRACE("GLCanvas::vertex2");
   glVertex2d(v.x(), v.y());
 }
 
 void GLCanvas::vertex3(const vec3d& v)
 {
-DOTRACE("GLCanvas::vertex3");
+GVX_TRACE("GLCanvas::vertex3");
   glVertex3d(v.x(), v.y(), v.z());
 }
 
 void GLCanvas::end()
 {
-DOTRACE("GLCanvas::end");
+GVX_TRACE("GLCanvas::end");
   glEnd();
 }
 
 void GLCanvas::drawRasterText(const rutz::fstring& text,
                               const GxRasterFont& font)
 {
-DOTRACE("GLCanvas::drawRasterText");
+GVX_TRACE("GLCanvas::drawRasterText");
 
   glListBase( font.listBase() );
 
@@ -1081,7 +1081,7 @@ DOTRACE("GLCanvas::drawRasterText");
         break;
 
       // else...
-      ASSERT(*p == '\n');
+      GVX_ASSERT(*p == '\n');
       ++p;
       ++line;
     }
@@ -1090,7 +1090,7 @@ DOTRACE("GLCanvas::drawRasterText");
 void GLCanvas::drawVectorText(const rutz::fstring& text,
                               const GxVectorFont& font)
 {
-DOTRACE("GLCanvas::drawVectorText");
+GVX_TRACE("GLCanvas::drawVectorText");
 
   glListBase( font.listBase() );
 
@@ -1124,7 +1124,7 @@ DOTRACE("GLCanvas::drawVectorText");
         break;
 
       // else...
-      ASSERT(*p == '\n');
+      GVX_ASSERT(*p == '\n');
       ++p;
       ++line;
     }
@@ -1132,7 +1132,7 @@ DOTRACE("GLCanvas::drawVectorText");
 
 void GLCanvas::flushOutput()
 {
-DOTRACE("GLCanvas::flushOutput");
+GVX_TRACE("GLCanvas::flushOutput");
 
   if (rep->opts->doubleFlag)
     rep->glx->swapBuffers();
@@ -1142,13 +1142,13 @@ DOTRACE("GLCanvas::flushOutput");
 
 void GLCanvas::finishDrawing()
 {
-DOTRACE("GLCanvas::finishDrawing");
+GVX_TRACE("GLCanvas::finishDrawing");
   glFinish();
 }
 
 int GLCanvas::genLists(int num)
 {
-DOTRACE("GLCanvas::genLists");
+GVX_TRACE("GLCanvas::genLists");
   const int i = glGenLists(num);
 
   if (i == 0)
@@ -1159,13 +1159,13 @@ DOTRACE("GLCanvas::genLists");
 
 void GLCanvas::deleteLists(int start, int num)
 {
-DOTRACE("GLCanvas::deleteLists");
+GVX_TRACE("GLCanvas::deleteLists");
   glDeleteLists(start, num);
 }
 
 void GLCanvas::newList(int i, bool do_execute)
 {
-DOTRACE("GLCanvas::newList");
+GVX_TRACE("GLCanvas::newList");
 
  glNewList(i,
            do_execute
@@ -1175,19 +1175,19 @@ DOTRACE("GLCanvas::newList");
 
 void GLCanvas::endList()
 {
-DOTRACE("GLCanvas::endList");
+GVX_TRACE("GLCanvas::endList");
   glEndList();
 }
 
 bool GLCanvas::isList(int i)
 {
-DOTRACE("GLCanvas::isList");
+GVX_TRACE("GLCanvas::isList");
   return i != 0 && glIsList(i) == GL_TRUE;
 }
 
 void GLCanvas::callList(int i)
 {
-DOTRACE("GLCanvas::callList");
+GVX_TRACE("GLCanvas::callList");
   glCallList(i);
 }
 
@@ -1201,7 +1201,7 @@ void GLCanvas::light(int lightnum,
                      double spotExponent,
                      double spotCutoff)
 {
-DOTRACE("GLCanvas::light");
+GVX_TRACE("GLCanvas::light");
 
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0+lightnum);

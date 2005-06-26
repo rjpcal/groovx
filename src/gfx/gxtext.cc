@@ -47,7 +47,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 
@@ -64,7 +64,7 @@ namespace
 
 GxText* GxText::make()
 {
-DOTRACE("GxText::make");
+GVX_TRACE("GxText::make");
   return new GxText;
 }
 
@@ -79,7 +79,7 @@ GxText::GxText(const char* text) :
   itsText(text ? text : ""),
   itsStrokeWidth(2)
 {
-DOTRACE("GxText::GxText(const char*)");
+GVX_TRACE("GxText::GxText(const char*)");
 
   setAlignmentMode(GxAligner::CENTER_ON_CENTER);
   setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
@@ -89,18 +89,18 @@ DOTRACE("GxText::GxText(const char*)");
 
 GxText::~GxText() throw()
 {
-DOTRACE("GxText::~GxText");
+GVX_TRACE("GxText::~GxText");
 }
 
 IO::VersionId GxText::serialVersionId() const
 {
-DOTRACE("GxText::serialVersionId");
+GVX_TRACE("GxText::serialVersionId");
   return GTEXT_SVID;
 }
 
 void GxText::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxText::readFrom");
+GVX_TRACE("GxText::readFrom");
 
   reader.ensureReadVersionId("GxText", 3,
                              "Try cvs tag xml_conversion_20040526",
@@ -114,7 +114,7 @@ DOTRACE("GxText::readFrom");
 
 void GxText::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxText::writeTo");
+GVX_TRACE("GxText::writeTo");
 
   writer.ensureWriteVersionId("GxText", GTEXT_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
@@ -147,20 +147,20 @@ const FieldMap& GxText::classFields()
 
 void GxText::setText(const fstring& text)
 {
-DOTRACE("GxText::setText");
+GVX_TRACE("GxText::setText");
   itsText = text;
   this->sigNodeChanged.emit();
 }
 
 const fstring& GxText::getText() const
 {
-DOTRACE("GxText::getText");
+GVX_TRACE("GxText::getText");
   return itsText;
 }
 
 void GxText::setStrokeWidth(int width)
 {
-DOTRACE("GxText::setStrokeWidth");
+GVX_TRACE("GxText::setStrokeWidth");
   if (width > 0)
     {
       itsStrokeWidth = width;
@@ -171,33 +171,33 @@ DOTRACE("GxText::setStrokeWidth");
 
 int GxText::getStrokeWidth() const
 {
-DOTRACE("GxText::getStrokeWidth");
+GVX_TRACE("GxText::getStrokeWidth");
   return itsStrokeWidth;
 }
 
 void GxText::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxText::grGetBoundingBox");
+GVX_TRACE("GxText::grGetBoundingBox");
 
   itsFont->bboxOf(itsText.c_str(), bbox);
 }
 
 void GxText::setFont(fstring name)
 {
-DOTRACE("GxText::setFont");
+GVX_TRACE("GxText::setFont");
   itsFont = GxFont::make(name.c_str());
   this->sigNodeChanged.emit();
 }
 
 fstring GxText::getFont() const
 {
-DOTRACE("GxText::getFont");
+GVX_TRACE("GxText::getFont");
   return itsFont->fontName();
 }
 
 void GxText::grRender(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxText::grRender");
+GVX_TRACE("GxText::grRender");
 
   Gfx::MatrixSaver msaver(canvas);
 

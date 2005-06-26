@@ -49,12 +49,12 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 extern "C"
 int Sound_Init(Tcl_Interp* interp)
 {
-DOTRACE("Sound_Init");
+GVX_TRACE("Sound_Init");
 
   Tcl::Interp intp(interp);
   PKG_CREATE(interp, "Sound", "4.$Revision$");

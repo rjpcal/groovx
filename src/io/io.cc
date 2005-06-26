@@ -43,7 +43,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -98,19 +98,19 @@ namespace
 
 IO::IoObject::IoObject() throw()
 {
-DOTRACE("IO::IoObject::IoObject");
+GVX_TRACE("IO::IoObject::IoObject");
   dbg_eval_nl(3, this);
 }
 
 // Must be defined out of line to avoid duplication of IO's vtable
 IO::IoObject::~IoObject() throw()
 {
-DOTRACE("IO::IoObject::~IoObject");
+GVX_TRACE("IO::IoObject::~IoObject");
 }
 
 unsigned int IO::IoObject::ioAttribCount() const
 {
-DOTRACE("IO::IoObject::ioAttribCount");
+GVX_TRACE("IO::IoObject::ioAttribCount");
   static DummyCountingWriter counter;
   counter.reset();
   this->writeTo(counter);
@@ -119,7 +119,7 @@ DOTRACE("IO::IoObject::ioAttribCount");
 
 IO::VersionId IO::IoObject::serialVersionId() const
 {
-DOTRACE("IO::IoObject::serialVersionId");
+GVX_TRACE("IO::IoObject::serialVersionId");
   return 0;
 }
 

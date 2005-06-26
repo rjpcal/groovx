@@ -41,7 +41,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -83,7 +83,7 @@ bool Tcl::RegExp::matchesString(const char* str)
     return true;
 
   default: // "can't happen"
-    ASSERT(false);
+    GVX_ASSERT(false);
   }
 
   return false;

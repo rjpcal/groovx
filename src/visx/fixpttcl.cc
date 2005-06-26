@@ -44,7 +44,7 @@
 extern "C"
 int Fixpt_Init(Tcl_Interp* interp)
 {
-DOTRACE("Fixpt_Init");
+GVX_TRACE("Fixpt_Init");
 
   PKG_CREATE(interp, "FixPt", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");

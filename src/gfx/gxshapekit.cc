@@ -50,10 +50,10 @@
 
 #include "nub/volatileobject.h"
 
-#define DYNAMIC_TRACE_EXPR GxShapeKit::tracer.status()
+#define GVX_DYNAMIC_TRACE_EXPR GxShapeKit::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 //  #######################################################
 //  =======================================================
@@ -115,7 +115,7 @@ public:
 
   static GxShapeKitImpl* make(GxShapeKit* obj)
   {
-    DOTRACE("GxShapeKitImpl::make");
+    GVX_TRACE("GxShapeKitImpl::make");
     return new GxShapeKitImpl(obj);
   }
 
@@ -128,7 +128,7 @@ public:
     scaler(new GxScaler(aligner), Nub::PRIVATE),
     topNode(scaler)
   {
-    DOTRACE("GxShapeKitImpl::GxShapeKitImpl");
+    GVX_TRACE("GxShapeKitImpl::GxShapeKitImpl");
     // We connect to sigNodeChanged in order to update any caches
     // according to state changes.
     obj->sigNodeChanged.connect(this, &GxShapeKitImpl::invalidateCaches);
@@ -165,7 +165,7 @@ GxShapeKit::GxShapeKit() :
   FieldContainer(&sigNodeChanged),
   rep(GxShapeKitImpl::make(this))
 {
-DOTRACE("GxShapeKit::GxShapeKit");
+GVX_TRACE("GxShapeKit::GxShapeKit");
 
   setFieldMap(GxShapeKit::classFields());
 
@@ -178,19 +178,19 @@ DOTRACE("GxShapeKit::GxShapeKit");
 // GxShapeKit destructor
 GxShapeKit::~GxShapeKit() throw()
 {
-DOTRACE("GxShapeKit::~GxShapeKit");
+GVX_TRACE("GxShapeKit::~GxShapeKit");
   rep->destroy();
 }
 
 IO::VersionId GxShapeKit::serialVersionId() const
 {
-DOTRACE("GxShapeKit::serialVersionId");
+GVX_TRACE("GxShapeKit::serialVersionId");
   return GXSHAPEKIT_SVID;
 }
 
 void GxShapeKit::readFrom(IO::Reader& reader)
 {
-DOTRACE("GxShapeKit::readFrom");
+GVX_TRACE("GxShapeKit::readFrom");
 
   const int svid =
     reader.ensureReadVersionId("GxShapeKit", 3,
@@ -209,7 +209,7 @@ DOTRACE("GxShapeKit::readFrom");
 
 void GxShapeKit::writeTo(IO::Writer& writer) const
 {
-DOTRACE("GxShapeKit::writeTo");
+GVX_TRACE("GxShapeKit::writeTo");
 
   writer.ensureWriteVersionId("GxShapeKit",
                               GXSHAPEKIT_SVID, 4,
@@ -264,74 +264,74 @@ const FieldMap& GxShapeKit::classFields()
 
 bool GxShapeKit::getBBVisibility() const
 {
-DOTRACE("GxShapeKit::getBBVisibility");
+GVX_TRACE("GxShapeKit::getBBVisibility");
   return rep->boundsOutline->isVisible();
 }
 
 void GxShapeKit::getBoundingCube(Gfx::Bbox& bbox) const
 {
-DOTRACE("GxShapeKit::getBoundingCube");
+GVX_TRACE("GxShapeKit::getBoundingCube");
 
   rep->topNode->getBoundingCube(bbox);
 }
 
 int GxShapeKit::getScalingMode() const
 {
-DOTRACE("GxShapeKit::getScalingMode");
+GVX_TRACE("GxShapeKit::getScalingMode");
   return rep->scaler->getMode();
 }
 
 double GxShapeKit::getWidth() const
 {
-DOTRACE("GxShapeKit::getWidth");
+GVX_TRACE("GxShapeKit::getWidth");
   return rep->scaler->scaledWidth();
 }
 
 double GxShapeKit::getHeight() const
 {
-DOTRACE("GxShapeKit::getHeight");
+GVX_TRACE("GxShapeKit::getHeight");
   return rep->scaler->scaledHeight();
 }
 
 double GxShapeKit::getAspectRatio() const
 {
-DOTRACE("GxShapeKit::getAspectRatio");
+GVX_TRACE("GxShapeKit::getAspectRatio");
   return rep->scaler->aspectRatio();
 }
 
 double GxShapeKit::getMaxDimension() const
 {
-DOTRACE("GxShapeKit::getMaxDimension");
+GVX_TRACE("GxShapeKit::getMaxDimension");
   return rep->scaler->scaledMaxDim();
 }
 
 int GxShapeKit::getAlignmentMode() const
 {
-DOTRACE("GxShapeKit::getAlignmentMode");
+GVX_TRACE("GxShapeKit::getAlignmentMode");
   return rep->aligner->getMode();
 }
 
 double GxShapeKit::getCenterX() const
 {
-DOTRACE("GxShapeKit::getCenterX");
+GVX_TRACE("GxShapeKit::getCenterX");
   return rep->aligner->itsCenter.x();
 }
 
 double GxShapeKit::getCenterY() const
 {
-DOTRACE("GxShapeKit::getCenterY");
+GVX_TRACE("GxShapeKit::getCenterY");
   return rep->aligner->itsCenter.y();
 }
 
 int GxShapeKit::getPercentBorder() const
 {
-DOTRACE("GxShapeKit::getPercentBorder");
+GVX_TRACE("GxShapeKit::getPercentBorder");
   return rep->boundsOutline->percentBorder();
 }
 
 int GxShapeKit::category() const
 {
-DOTRACE("GxShapeKit::category");
+GVX_TRACE("GxShapeKit::category");
   return rep->category;
 }
 
@@ -352,7 +352,7 @@ void GxShapeKit::setBBVisibility(bool visibility)
 
 void GxShapeKit::setScalingMode(int val)
 {
-DOTRACE("GxShapeKit::setScalingMode");
+GVX_TRACE("GxShapeKit::setScalingMode");
 
   rep->scaler->setMode(val);
   this->sigNodeChanged.emit();
@@ -360,7 +360,7 @@ DOTRACE("GxShapeKit::setScalingMode");
 
 void GxShapeKit::setWidth(double val)
 {
-DOTRACE("GxShapeKit::setWidth");
+GVX_TRACE("GxShapeKit::setWidth");
 
   rep->scaler->setWidth(val);
   this->sigNodeChanged.emit();
@@ -368,7 +368,7 @@ DOTRACE("GxShapeKit::setWidth");
 
 void GxShapeKit::setHeight(double val)
 {
-DOTRACE("GxShapeKit::setHeight");
+GVX_TRACE("GxShapeKit::setHeight");
 
   rep->scaler->setHeight(val);
   this->sigNodeChanged.emit();
@@ -376,7 +376,7 @@ DOTRACE("GxShapeKit::setHeight");
 
 void GxShapeKit::setAspectRatio(double val)
 {
-DOTRACE("GxShapeKit::setAspectRatio");
+GVX_TRACE("GxShapeKit::setAspectRatio");
 
   rep->scaler->setAspectRatio(val);
   this->sigNodeChanged.emit();
@@ -384,7 +384,7 @@ DOTRACE("GxShapeKit::setAspectRatio");
 
 void GxShapeKit::setMaxDimension(double val)
 {
-DOTRACE("GxShapeKit::setMaxDimension");
+GVX_TRACE("GxShapeKit::setMaxDimension");
 
   rep->scaler->setMaxDim(val);
   this->sigNodeChanged.emit();
@@ -392,7 +392,7 @@ DOTRACE("GxShapeKit::setMaxDimension");
 
 void GxShapeKit::setAlignmentMode(int val)
 {
-DOTRACE("GxShapeKit::setAlignmentMode");
+GVX_TRACE("GxShapeKit::setAlignmentMode");
 
   rep->aligner->setMode(val);
   this->sigNodeChanged.emit();
@@ -400,7 +400,7 @@ DOTRACE("GxShapeKit::setAlignmentMode");
 
 void GxShapeKit::setCenterX(double val)
 {
-DOTRACE("GxShapeKit::setCenterX");
+GVX_TRACE("GxShapeKit::setCenterX");
 
   rep->aligner->itsCenter.x() = val;
   this->sigNodeChanged.emit();
@@ -408,7 +408,7 @@ DOTRACE("GxShapeKit::setCenterX");
 
 void GxShapeKit::setCenterY(double val)
 {
-DOTRACE("GxShapeKit::setCenterY");
+GVX_TRACE("GxShapeKit::setCenterY");
 
   rep->aligner->itsCenter.y() = val;
   this->sigNodeChanged.emit();
@@ -416,19 +416,19 @@ DOTRACE("GxShapeKit::setCenterY");
 
 void GxShapeKit::setPercentBorder(int pixels)
 {
-DOTRACE("GxShapeKit::setPercentBorder");
+GVX_TRACE("GxShapeKit::setPercentBorder");
   rep->boundsOutline->setPercentBorder(pixels);
 }
 
 void GxShapeKit::setCategory(int val)
 {
-DOTRACE("GxShapeKit::setCategory");
+GVX_TRACE("GxShapeKit::setCategory");
   rep->category = val;
 }
 
 void GxShapeKit::setRenderMode(int mode)
 {
-DOTRACE("GxShapeKit::setRenderMode");
+GVX_TRACE("GxShapeKit::setRenderMode");
 
   rep->cache->setMode(mode);
   this->sigNodeChanged.emit();
@@ -441,31 +441,31 @@ DOTRACE("GxShapeKit::setRenderMode");
 
 void GxShapeKit::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GxShapeKit::draw");
+GVX_TRACE("GxShapeKit::draw");
   rep->topNode->draw(canvas);
 }
 
 double GxShapeKit::getWidthFactor() const
 {
-DOTRACE("GxShapeKit::getWidthFactor");
+GVX_TRACE("GxShapeKit::getWidthFactor");
   return rep->scaler->widthFactor();
 }
 
 void GxShapeKit::setWidthFactor(double val)
 {
-DOTRACE("GxShapeKit::setWidthFactor");
+GVX_TRACE("GxShapeKit::setWidthFactor");
   rep->scaler->setWidthFactor(val);
 }
 
 double GxShapeKit::getHeightFactor() const
 {
-DOTRACE("GxShapeKit::getHeightFactor");
+GVX_TRACE("GxShapeKit::getHeightFactor");
   return rep->scaler->heightFactor();
 }
 
 void GxShapeKit::setHeightFactor(double val)
 {
-DOTRACE("GxShapeKit::setHeightFactor");
+GVX_TRACE("GxShapeKit::setHeightFactor");
   rep->scaler->setHeightFactor(val);
 }
 

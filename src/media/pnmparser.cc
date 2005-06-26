@@ -49,7 +49,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -65,7 +65,7 @@ namespace
     throw rutz::error(rutz::fstring("invalid PNM bit depth value: ",
                                     depth), SRC_POS);
 
-    ASSERT(0); return 0; // can't get here
+    GVX_ASSERT(0); return 0; // can't get here
   }
 
   int bit_depth_for_mode(int mode)
@@ -80,12 +80,12 @@ namespace
     throw rutz::error(rutz::fstring("invalid PNM mode value: ", mode),
                       SRC_POS);
 
-    ASSERT(0); return 0; // can't happen
+    GVX_ASSERT(0); return 0; // can't happen
   }
 
   void parse_pbm_mode_1(std::istream& is, media::bmap_data& data)
   {
-    DOTRACE("parse_pbm_mode_1");
+    GVX_TRACE("parse_pbm_mode_1");
 
     int position = 0;
     int val = 0;
@@ -106,7 +106,7 @@ namespace
   void parse_pbm_mode_23(std::istream& is, media::bmap_data& data,
                          int max_grey)
   {
-  DOTRACE("parse_pbm_mode_23");
+  GVX_TRACE("parse_pbm_mode_23");
 
     const double scale = 255.0/double(max_grey);
 
@@ -131,7 +131,7 @@ namespace
                           int max_grey,
                           int mode)
   {
-  DOTRACE("parse_pbm_mode_456");
+  GVX_TRACE("parse_pbm_mode_456");
 
     dbg_eval_nl(3, data.byte_count());
 
@@ -153,7 +153,7 @@ namespace
 
         dbg_eval_nl(3, nbits);
 
-        ASSERT(nbits >= 1);
+        GVX_ASSERT(nbits >= 1);
 
         const int nbytes = ((nbits - 1) / 8) + 1;
 
@@ -199,7 +199,7 @@ void media::save_pnm(const char* filename, const media::bmap_data& data)
 
 void media::save_pnm(std::ostream& os, const media::bmap_data& data)
 {
-DOTRACE("media::save_pnm");
+GVX_TRACE("media::save_pnm");
 
   int mode = mode_for_bit_depth(data.bits_per_pixel());
 
@@ -230,7 +230,7 @@ void media::load_pnm(const char* filename, media::bmap_data& data)
 
 void media::load_pnm(std::istream& is, media::bmap_data& data)
 {
-DOTRACE("media::load_pnm");
+GVX_TRACE("media::load_pnm");
   if (is.fail())
     {
       throw rutz::error("input stream failed before reading pnm file",
@@ -304,7 +304,7 @@ DOTRACE("media::load_pnm");
     case 1:                 parse_pbm_mode_1(is, new_data); break;
     case 2: case 3:         parse_pbm_mode_23(is, new_data, max_grey); break;
     case 4: case 5: case 6: parse_pbm_mode_456(is, new_data, max_grey, mode); break;
-    default: ASSERT(false); break;
+    default: GVX_ASSERT(false); break;
     }
 
   data.swap(new_data);

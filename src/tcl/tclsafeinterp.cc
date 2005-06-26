@@ -45,7 +45,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 
@@ -67,7 +67,7 @@ namespace
 Tcl::Interp::Interp(Tcl_Interp* interp) :
   itsInterp(interp)
 {
-DOTRACE("Tcl::Interp::Interp");
+GVX_TRACE("Tcl::Interp::Interp");
   if (interp == 0)
     throw rutz::error("tried to make Tcl::Interp "
                       "with a null Tcl_Interp*", SRC_POS);
@@ -79,7 +79,7 @@ DOTRACE("Tcl::Interp::Interp");
 Tcl::Interp::Interp(const Tcl::Interp& other) throw() :
   itsInterp(other.itsInterp)
 {
-DOTRACE("Tcl::Interp::Interp(const Interp&)");
+GVX_TRACE("Tcl::Interp::Interp(const Interp&)");
 
   if (itsInterp != 0)
     {
@@ -90,7 +90,7 @@ DOTRACE("Tcl::Interp::Interp(const Interp&)");
 
 Tcl::Interp::~Interp() throw()
 {
-DOTRACE("Tcl::Interp::~Interp");
+GVX_TRACE("Tcl::Interp::~Interp");
 
   if (itsInterp != 0)
     Tcl_DontCallWhenDeleted(itsInterp, interpDeleteProc,
@@ -114,20 +114,20 @@ Tcl_Interp* Tcl::Interp::intp() const
 
 bool Tcl::Interp::interpDeleted() const throw()
 {
-DOTRACE("Tcl::Interp::interpDeleted");
+GVX_TRACE("Tcl::Interp::interpDeleted");
 
   return (itsInterp == 0) || Tcl_InterpDeleted(itsInterp);
 }
 
 void Tcl::Interp::forgetInterp() throw()
 {
-DOTRACE("Tcl::Interp::forgetInterp");
+GVX_TRACE("Tcl::Interp::forgetInterp");
   itsInterp = 0;
 }
 
 void Tcl::Interp::destroy() throw()
 {
-DOTRACE("Tcl::Interp::destroy");
+GVX_TRACE("Tcl::Interp::destroy");
 
   if (itsInterp != 0)
     {
@@ -144,7 +144,7 @@ DOTRACE("Tcl::Interp::destroy");
 
 void Tcl::Interp::pkgProvide(const char* name, const char* version)
 {
-DOTRACE("Tcl::Interp::pkgProvide");
+GVX_TRACE("Tcl::Interp::pkgProvide");
   Tcl_PkgProvide(intp(), name, version);
 }
 
@@ -156,7 +156,7 @@ DOTRACE("Tcl::Interp::pkgProvide");
 
 bool Tcl::Interp::evalBooleanExpr(const Tcl::ObjPtr& obj) const
 {
-DOTRACE("Tcl::Interp::evalBooleanExpr");
+GVX_TRACE("Tcl::Interp::evalBooleanExpr");
 
   int expr_result;
 
@@ -190,7 +190,7 @@ bool Tcl::Interp::eval(const fstring& code,
 bool Tcl::Interp::eval(const Tcl::ObjPtr& code,
                        Tcl::ErrorStrategy strategy)
 {
-DOTRACE("Tcl::Interp::eval");
+GVX_TRACE("Tcl::Interp::eval");
 
   if (!hasInterp())
     throw rutz::error("Tcl_Interp* was null "
@@ -218,13 +218,13 @@ DOTRACE("Tcl::Interp::eval");
 
 bool Tcl::Interp::evalFile(const char* fname)
 {
-DOTRACE("Tcl::Interp::evalFile");
+GVX_TRACE("Tcl::Interp::evalFile");
   return (Tcl_EvalFile(intp(), fname) == TCL_OK);
 }
 
 void Tcl::Interp::sourceRCFile()
 {
-DOTRACE("Tcl::Interp::sourceRCFile");
+GVX_TRACE("Tcl::Interp::sourceRCFile");
   Tcl_SourceRCFile(intp());
 }
 
@@ -236,35 +236,35 @@ DOTRACE("Tcl::Interp::sourceRCFile");
 
 void Tcl::Interp::resetResult() const
 {
-DOTRACE("Tcl::Interp::resetResult");
+GVX_TRACE("Tcl::Interp::resetResult");
 
   Tcl_ResetResult(intp());
 }
 
 void Tcl::Interp::appendResult(const char* msg) const
 {
-DOTRACE("Tcl::Interp::appendResult(const char*)");
+GVX_TRACE("Tcl::Interp::appendResult(const char*)");
 
   Tcl_AppendResult(intp(), msg, static_cast<char*>(0));
 }
 
 void Tcl::Interp::appendResult(const fstring& msg) const
 {
-DOTRACE("Tcl::Interp::appendResult(const fstring&)");
+GVX_TRACE("Tcl::Interp::appendResult(const fstring&)");
 
   Tcl_AppendResult(intp(), msg.c_str(), static_cast<char*>(0));
 }
 
 Tcl_Obj* Tcl::Interp::getObjResult() const
 {
-DOTRACE("Tcl::Interp::getObjResult");
+GVX_TRACE("Tcl::Interp::getObjResult");
 
   return Tcl_GetObjResult(intp());
 }
 
 void Tcl::Interp::setObjResult(Tcl_Obj* obj)
 {
-DOTRACE("Tcl::Interp::setObjResult");
+GVX_TRACE("Tcl::Interp::setObjResult");
 
   Tcl_SetObjResult(intp(), obj);
 }
@@ -278,7 +278,7 @@ DOTRACE("Tcl::Interp::setObjResult");
 void Tcl::Interp::setGlobalVar(const char* var_name,
                                const Tcl::ObjPtr& var) const
 {
-DOTRACE("Tcl::Interp::setGlobalVar");
+GVX_TRACE("Tcl::Interp::setGlobalVar");
 
   if (Tcl_SetVar2Ex(intp(), const_cast<char*>(var_name), /*name2*/0,
                     var.obj(), TCL_GLOBAL_ONLY) == 0)
@@ -290,7 +290,7 @@ DOTRACE("Tcl::Interp::setGlobalVar");
 
 void Tcl::Interp::unsetGlobalVar(const char* var_name) const
 {
-DOTRACE("Tcl::Interp::unsetGlobalVar");
+GVX_TRACE("Tcl::Interp::unsetGlobalVar");
 
   if (Tcl_UnsetVar(intp(), const_cast<char*>(var_name),
                    TCL_GLOBAL_ONLY) != TCL_OK)
@@ -303,7 +303,7 @@ DOTRACE("Tcl::Interp::unsetGlobalVar");
 Tcl_Obj* Tcl::Interp::getObjGlobalVar(const char* name1,
                                       const char* name2) const
 {
-DOTRACE("Tcl::Interp::getObjGlobalVar");
+GVX_TRACE("Tcl::Interp::getObjGlobalVar");
   Tcl_Obj* obj = Tcl_GetVar2Ex(intp(),
                                const_cast<char*>(name1),
                                const_cast<char*>(name2),
@@ -321,7 +321,7 @@ DOTRACE("Tcl::Interp::getObjGlobalVar");
 void Tcl::Interp::linkInt(const char* varName, int* addr,
                           bool readOnly)
 {
-DOTRACE("Tcl::Interp::linkInt");
+GVX_TRACE("Tcl::Interp::linkInt");
   dbg_eval_nl(3, varName);
 
   fstring temp = varName;
@@ -338,7 +338,7 @@ DOTRACE("Tcl::Interp::linkInt");
 void Tcl::Interp::linkDouble(const char* varName, double* addr,
                              bool readOnly)
 {
-DOTRACE("Tcl::Interp::linkDouble");
+GVX_TRACE("Tcl::Interp::linkDouble");
   dbg_eval_nl(3, varName);
 
   fstring temp = varName;
@@ -355,7 +355,7 @@ DOTRACE("Tcl::Interp::linkDouble");
 void Tcl::Interp::linkBoolean(const char* varName, int* addr,
                               bool readOnly)
 {
-DOTRACE("Tcl::Interp::linkBoolean");
+GVX_TRACE("Tcl::Interp::linkBoolean");
   dbg_eval_nl(3, varName);
 
   fstring temp = varName;
@@ -372,7 +372,7 @@ DOTRACE("Tcl::Interp::linkBoolean");
 void Tcl::Interp::handleLiveException(const char* where,
                                       const rutz::file_pos& pos) throw()
 {
-DOTRACE("Tcl::Interp::handleLiveException");
+GVX_TRACE("Tcl::Interp::handleLiveException");
 
   try
     {
@@ -421,7 +421,7 @@ DOTRACE("Tcl::Interp::handleLiveException");
 
 void Tcl::Interp::backgroundError() throw()
 {
-DOTRACE("Tcl::Interp::backgroundError");
+GVX_TRACE("Tcl::Interp::backgroundError");
 
   if (hasInterp())
     Tcl_BackgroundError(itsInterp);
@@ -429,21 +429,21 @@ DOTRACE("Tcl::Interp::backgroundError");
 
 void Tcl::Interp::addErrorInfo(const char* info)
 {
-DOTRACE("Tcl::Interp::addErrorInfo");
+GVX_TRACE("Tcl::Interp::addErrorInfo");
 
   Tcl_AddErrorInfo(intp(), info);
 }
 
 void Tcl::Interp::clearEventQueue()
 {
-DOTRACE("Tcl::Interp::clearEventQueue");
+GVX_TRACE("Tcl::Interp::clearEventQueue");
   while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
     { /* Empty loop body */ }
 }
 
 bool Tcl::Interp::hasCommand(const char* cmd_name) const
 {
-DOTRACE("Tcl::Interp::hasCommand");
+GVX_TRACE("Tcl::Interp::hasCommand");
   Tcl_CmdInfo info;
   int result = Tcl_GetCommandInfo(intp(), cmd_name, &info);
   return (result != 0);
@@ -451,7 +451,7 @@ DOTRACE("Tcl::Interp::hasCommand");
 
 void Tcl::Interp::deleteCommand(const char* cmd_name)
 {
-DOTRACE("Tcl::Interp::deleteCommand");
+GVX_TRACE("Tcl::Interp::deleteCommand");
 
   // We must check if the interp has been tagged for deletion already,
   // since if it is then we must not attempt to use it to delete a Tcl
@@ -467,7 +467,7 @@ DOTRACE("Tcl::Interp::deleteCommand");
 
 fstring Tcl::Interp::getProcBody(const char* proc_name)
 {
-DOTRACE("Tcl::Interp::getProcBody");
+GVX_TRACE("Tcl::Interp::getProcBody");
   if (hasCommand(proc_name))
     {
       resetResult();
@@ -486,7 +486,7 @@ DOTRACE("Tcl::Interp::getProcBody");
 void Tcl::Interp::createProc(const char* namesp, const char* proc_name,
                              const char* args, const char* body)
 {
-DOTRACE("Tcl::Interp::createProc");
+GVX_TRACE("Tcl::Interp::createProc");
 
   if (namesp == 0 || (*namesp == '\0'))
     {
@@ -505,7 +505,7 @@ DOTRACE("Tcl::Interp::createProc");
 
 void Tcl::Interp::deleteProc(const char* namesp, const char* proc_name)
 {
-DOTRACE("Tcl::Interp::deleteProc");
+GVX_TRACE("Tcl::Interp::deleteProc");
 
   fstring cmd_str;
 

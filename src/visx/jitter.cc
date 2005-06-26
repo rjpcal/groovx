@@ -47,7 +47,7 @@
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 
 namespace
 {
@@ -62,7 +62,7 @@ namespace
 
 Jitter* Jitter::make()
 {
-DOTRACE("Jitter::make");
+GVX_TRACE("Jitter::make");
   return new Jitter;
 }
 
@@ -71,25 +71,25 @@ Jitter::Jitter () :
   itsXJitter(0.0), itsYJitter(0.0), itsRJitter(0.0),
   itsXShift(0.0), itsYShift(0.0), itsRShift(0.0)
 {
-DOTRACE("Jitter::Jitter");
+GVX_TRACE("Jitter::Jitter");
   // empty
 }
 
 Jitter::~Jitter () throw()
 {
-DOTRACE("Jitter::~Jitter");
+GVX_TRACE("Jitter::~Jitter");
   // empty
 }
 
 IO::VersionId Jitter::serialVersionId() const
 {
-DOTRACE("Jitter::serialVersionId");
+GVX_TRACE("Jitter::serialVersionId");
   return JITTER_SVID;
 }
 
 void Jitter::readFrom(IO::Reader& reader)
 {
-DOTRACE("Jitter::readFrom");
+GVX_TRACE("Jitter::readFrom");
 
   reader.ensureReadVersionId("Jitter", 3,
                              "Try cvs tag xml_conversion_20040526",
@@ -104,7 +104,7 @@ DOTRACE("Jitter::readFrom");
 
 void Jitter::writeTo(IO::Writer& writer) const
 {
-DOTRACE("Jitter::writeTo");
+GVX_TRACE("Jitter::writeTo");
 
   writer.ensureWriteVersionId("Jitter", JITTER_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
@@ -122,7 +122,7 @@ DOTRACE("Jitter::writeTo");
 
 void Jitter::rejitter() const
 {
-DOTRACE("Jitter::rejitter");
+GVX_TRACE("Jitter::rejitter");
   itsXShift = rutz::rand_range(-itsXJitter, itsXJitter);
   itsYShift = rutz::rand_range(-itsYJitter, itsYJitter);
   itsRShift = rutz::rand_range(-itsRJitter, itsRJitter);
@@ -130,7 +130,7 @@ DOTRACE("Jitter::rejitter");
 
 void Jitter::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("Jitter::draw");
+GVX_TRACE("Jitter::draw");
   rejitter();
   // Translate
   canvas.translate(translation +

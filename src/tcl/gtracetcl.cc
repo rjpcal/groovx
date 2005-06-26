@@ -43,7 +43,7 @@
 #include <sstream>
 
 #include "rutz/debug.h"
-DBG_REGISTER
+GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 namespace
@@ -72,7 +72,7 @@ namespace
       throw rutz::error(rutz::fstring("no debug key for file '", fname, "'"),
                         SRC_POS);
 
-    ASSERT(key >= 0 && key < rutz::debug::MAX_KEYS);
+    GVX_ASSERT(key >= 0 && key < rutz::debug::MAX_KEYS);
 
     rutz::debug::key_levels[key] = level;
   }
@@ -81,7 +81,7 @@ namespace
 extern "C"
 int Gtrace_Init(Tcl_Interp* interp)
 {
-DOTRACE("Gtrace_Init");
+GVX_TRACE("Gtrace_Init");
 
   PKG_CREATE(interp, "Gtrace", "4.$Revision$");
   pkg->def("::gtrace", "on_off", &rutz::trace::set_global_trace, SRC_POS);
@@ -99,7 +99,7 @@ DOTRACE("Gtrace_Init");
 extern "C"
 int Prof_Init(Tcl_Interp* interp)
 {
-DOTRACE("Prof_Init");
+GVX_TRACE("Prof_Init");
 
   PKG_CREATE(interp, "Prof", "4.$Revision$");
   pkg->def("summary", "", &profSummary, SRC_POS);
