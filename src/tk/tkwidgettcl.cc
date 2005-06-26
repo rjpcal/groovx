@@ -48,7 +48,7 @@ int Tkwidget_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Tkwidget_Init");
 
-  PKG_CREATE(interp, "TkWidget", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "TkWidget", "4.$Revision$");
 
   pkg->inheritPkg("Obj");
   Tcl::defGenericObjCmds<Tcl::TkWidget>(pkg, SRC_POS);
@@ -73,7 +73,7 @@ GVX_TRACE("Tkwidget_Init");
 
   pkg->defAction("hook", &Tcl::TkWidget::hook, SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_tk_tkwidgettcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";

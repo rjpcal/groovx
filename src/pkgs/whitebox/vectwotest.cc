@@ -125,7 +125,7 @@ GVX_TRACE("Vectwotest_Init");
 
   // Package can't be named "vec2test" because Tcl doesn't like numerals in
   // package names
-  PKG_CREATE(interp, "Vectwotest", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Vectwotest", "4.$Revision$");
 
   DEF_TEST(pkg, testAbs);
   DEF_TEST(pkg, testLength);
@@ -134,7 +134,7 @@ GVX_TRACE("Vectwotest_Init");
   DEF_TEST(pkg, testThetaDeg);
   DEF_TEST(pkg, testSetThetaDeg);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 // Need these to avoid dyld errors on Mac OS X

@@ -47,12 +47,12 @@ int House_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("House_Init");
 
-  PKG_CREATE(interp, "House", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "House", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<House>(pkg, SRC_POS);
   Tcl::defCreator<House>(pkg);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_housetcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";

@@ -67,7 +67,7 @@ int Elementcontainer_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Elementcontainer_Init");
 
-  PKG_CREATE(interp, "ElementContainer", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "ElementContainer", "4.$Revision$");
   pkg->inheritPkg("Element");
   Tcl::defGenericObjCmds<Element>(pkg, SRC_POS);
 
@@ -90,7 +90,7 @@ GVX_TRACE("Elementcontainer_Init");
   pkg->defVec("shuffle", "objref(s) rand_seed", &ElementContainer::shuffle, 1, SRC_POS);
   pkg->defGetter("elements", &ElementContainer::getElements, SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_elementcontainertcl_cc_utc20050626084016[] = "$Id$ $HeadURL$";

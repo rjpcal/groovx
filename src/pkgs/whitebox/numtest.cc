@@ -115,12 +115,12 @@ int Numtest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Numtest_Init");
 
-  PKG_CREATE(interp, "Numtest", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Numtest", "4.$Revision$");
 
   DEF_TEST(pkg, testErfc);
   DEF_TEST(pkg, testGammaln);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 // Need these to avoid dyld errors on Mac OS X

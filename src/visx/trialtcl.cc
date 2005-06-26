@@ -56,7 +56,7 @@ int Trial_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Trial_Init");
 
-  PKG_CREATE(interp, "Trial", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Trial", "4.$Revision$");
   pkg->inheritPkg("Element");
   Tcl::defTracing(pkg, Trial::tracer);
 
@@ -96,7 +96,7 @@ GVX_TRACE("Trial_Init");
 
   Nub::ObjFactory::theOne().register_creator(&Trial::make);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_trialtcl_cc_utc20050626084016[] = "$Id$ $HeadURL$";

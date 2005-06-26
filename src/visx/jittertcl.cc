@@ -49,7 +49,7 @@ int Jitter_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Jitter_Init");
 
-  PKG_CREATE(interp, "Jitter", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Jitter", "4.$Revision$");
   pkg->inheritPkg("GxTransform");
   Tcl::defGenericObjCmds<Jitter>(pkg, SRC_POS);
 
@@ -59,7 +59,7 @@ GVX_TRACE("Jitter_Init");
 
   Nub::ObjFactory::theOne().register_creator(&Jitter::make);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_jittertcl_cc_utc20050626084016[] = "$Id$ $HeadURL$";

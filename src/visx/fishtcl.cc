@@ -61,7 +61,7 @@ int Fish_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Fish_Init");
 
-  PKG_CREATE(interp, "Fish", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Fish", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
 
   Tcl::defTracing(pkg, Fish::tracer);
@@ -73,7 +73,7 @@ GVX_TRACE("Fish_Init");
 
   Nub::ObjFactory::theOne().register_creator(&Fish::make);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_fishtcl_cc_utc20050626084017[] = "$Id$ $HeadURL$";

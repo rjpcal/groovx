@@ -53,7 +53,7 @@ int Element_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Element_Init");
 
-  PKG_CREATE(interp, "Element", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Element", "4.$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<Element>(pkg, SRC_POS);
 
@@ -65,7 +65,7 @@ GVX_TRACE("Element_Init");
   pkg->defAction("undo", &Element::vxUndo, SRC_POS);
   pkg->defAction("reset", &Element::vxReset, SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_elementtcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";

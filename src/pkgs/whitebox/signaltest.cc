@@ -192,14 +192,14 @@ int Signaltest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Signaltest_Init");
 
-  PKG_CREATE(interp, "Signaltest", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Signaltest", "4.$Revision$");
 
   DEF_TEST(pkg, testSlotAdapterFreeFunc0);
   DEF_TEST(pkg, testSignalSlotChain);
   DEF_TEST(pkg, testCyclicSignalSlotChain);
   DEF_TEST(pkg, testSlotAdapterFreeFunc1);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 // Need these to avoid dyld errors on Mac OS X

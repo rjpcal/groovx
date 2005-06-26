@@ -57,11 +57,11 @@ namespace
                    CreatorFunc* func,
                    const char* name) throw()
   {
-    PKG_CREATE(interp, name, "4.$Revision$");
+    GVX_PKG_CREATE(pkg, interp, name, "4.$Revision$");
     Nub::ObjFactory::theOne().register_creator(func, name);
     pkg->inheritPkg("TrialEvent");
 
-    PKG_RETURN;
+    GVX_PKG_RETURN(pkg);
   }
 
   void addEvents(Nub::Ref<MultiEvent> multi, Tcl::List event_ids)
@@ -83,13 +83,13 @@ int Trialevent_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Trialevent_Init");
 
-  PKG_CREATE(interp, "TrialEvent", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "TrialEvent", "4.$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TrialEvent>(pkg, SRC_POS);
 
   pkg->defAttrib("delay", &TrialEvent::getDelay, &TrialEvent::setDelay, SRC_POS);
 
-  PKG_FINISH;
+  GVX_PKG_FINISH(pkg);
 
   addEventType(interp, &makeAbortTrialEvent, "AbortTrialEvent");
   addEventType(interp, &makeDrawEvent, "DrawEvent");
@@ -105,7 +105,7 @@ GVX_TRACE("Trialevent_Init");
   addEventType(interp, &makeClearBufferEvent, "ClearBufferEvent");
   addEventType(interp, &makeFinishDrawingEvent, "FinishDrawingEvent");
 
-  return PKG_STATUS;
+  return GVX_PKG_STATUS;
 }
 
 extern "C"
@@ -113,11 +113,11 @@ int Nulltrialevent_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Nulltrialevent_Init");
 
-  PKG_CREATE(interp, "NullTrialEvent", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "NullTrialEvent", "4.$Revision$");
   pkg->inheritPkg("TrialEvent");
   Tcl::defCreator<NullTrialEvent>(pkg);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -125,7 +125,7 @@ int Filewriteevent_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Filewriteevent_Init");
 
-  PKG_CREATE(interp, "FileWriteEvent", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "FileWriteEvent", "4.$Revision$");
   pkg->inheritPkg("TrialEvent");
   Tcl::defCreator<FileWriteEvent>(pkg);
 
@@ -138,7 +138,7 @@ GVX_TRACE("Filewriteevent_Init");
                  &FileWriteEvent::setByte,
                  SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -146,14 +146,14 @@ int Genericevent_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Genericevent_Init");
 
-  PKG_CREATE(interp, "GenericEvent", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "GenericEvent", "4.$Revision$");
   pkg->inheritPkg("TrialEvent");
   Tcl::defCreator<GenericEvent>(pkg);
 
   pkg->defGetter("callback", &GenericEvent::getCallback, SRC_POS);
   pkg->defSetter("callback", &GenericEvent::setCallback, SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -161,7 +161,7 @@ int Multievent_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Multievent_Init");
 
-  PKG_CREATE(interp, "MultiEvent", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "MultiEvent", "4.$Revision$");
   pkg->inheritPkg("TrialEvent");
   Tcl::defCreator<MultiEvent>(pkg);
 
@@ -171,7 +171,7 @@ GVX_TRACE("Multievent_Init");
   pkg->def("eraseEventAt", "<this> index", &MultiEvent::eraseEventAt, SRC_POS);
   pkg->def("clearEvents", "<this>", &MultiEvent::clearEvents, SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_trialeventtcl_cc_utc20050626084016[] = "$Id$ $HeadURL$";

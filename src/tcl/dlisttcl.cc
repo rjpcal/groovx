@@ -711,7 +711,7 @@ int Dlist_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Dlist_Init");
 
-  PKG_CREATE(interp, "dlist", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "dlist", "4.$Revision$");
 
   pkg->def( "choose", "source_list index_list", &Dlist::choose, SRC_POS );
   pkg->def( "cycle_left", "list n", &Dlist::cycle_left, SRC_POS );
@@ -739,7 +739,7 @@ GVX_TRACE("Dlist_Init");
   pkg->def( "sum", "list", &Dlist::sum, SRC_POS );
   pkg->def( "zeros", "num_zeros", &Dlist::zeros, SRC_POS );
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_tcl_dlisttcl_cc_utc20050626084017[] = "$Id$ $HeadURL$";

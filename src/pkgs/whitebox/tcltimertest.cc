@@ -195,14 +195,14 @@ int Tcltimertest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Tcltimertest_Init");
 
-  PKG_CREATE(interp, "Tcltimertest", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Tcltimertest", "4.$Revision$");
 
   DEF_TEST(pkg, testTimer1);
   DEF_TEST(pkg, testTimerCancel);
   DEF_TEST(pkg, testTimerNoInfiniteLoop);
   DEF_TEST(pkg, testTimerCallbackError);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 // Need these to avoid dyld errors on Mac OS X

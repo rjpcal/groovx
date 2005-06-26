@@ -155,7 +155,7 @@ int Matlabengine_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Matlabengine_Init");
 
-  PKG_CREATE(interp, "MatlabEngine", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "MatlabEngine", "4.$Revision$");
   Tcl::defGenericObjCmds<MatlabEngine>(pkg, SRC_POS);
 
   pkg->def( "eval", "engine_id command", &MatlabEngine::evalString, SRC_POS );
@@ -166,7 +166,7 @@ GVX_TRACE("Matlabengine_Init");
 
   Nub::ObjFactory::theOne().register_creator(&MatlabEngine::make);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_pkgs_matlabengine_matlabtcl_cc_utc20050626084022[] = "$Id$ $HeadURL$";

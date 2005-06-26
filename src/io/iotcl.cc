@@ -126,7 +126,7 @@ int Io_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Io_Init");
 
-  PKG_CREATE(interp, "IO", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "IO", "4.$Revision$");
   pkg->inheritPkg("Obj");
   Tcl::defGenericObjCmds<IO::IoObject>(pkg, SRC_POS);
 
@@ -153,7 +153,7 @@ GVX_TRACE("Io_Init");
 
   pkg->def( "xmlDebug", "filename", IO::xmlDebug, SRC_POS );
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -161,7 +161,7 @@ int Outputfile_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Outputfile_Init");
 
-  PKG_CREATE(interp, "OutputFile", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "OutputFile", "4.$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defCreator<OutputFile>(pkg);
   Tcl::defGenericObjCmds<IO::IoObject>(pkg, SRC_POS);
@@ -171,7 +171,7 @@ GVX_TRACE("Outputfile_Init");
                  &OutputFile::setFilename,
                  SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_io_iotcl_cc_utc20050626084021[] = "$Id$ $HeadURL$";

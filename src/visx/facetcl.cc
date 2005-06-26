@@ -66,7 +66,7 @@ int Face_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Face_Init");
 
-  PKG_CREATE(interp, "Face", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Face", "4.$Revision$");
 
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<Face>(pkg, SRC_POS);
@@ -78,7 +78,7 @@ GVX_TRACE("Face_Init");
   Nub::ObjFactory::theOne().register_creator( &makeFilledFace,
                                               "FilledFace" );
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -86,12 +86,12 @@ int Cloneface_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Cloneface_Init");
 
-  PKG_CREATE(interp, "CloneFace", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "CloneFace", "4.$Revision$");
   pkg->inheritPkg("Face");
   Tcl::defFieldContainer<CloneFace>(pkg, SRC_POS);
   Tcl::defCreator<CloneFace>(pkg);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_facetcl_cc_utc20050626084016[] = "$Id$ $HeadURL$";

@@ -113,7 +113,7 @@ int Objdb_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Objdb_Init");
 
-  PKG_CREATE(interp, "ObjDb", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "ObjDb", "4.$Revision$");
 
   pkg->onExit( &dbClearOnExit );
 
@@ -121,7 +121,7 @@ GVX_TRACE("Objdb_Init");
   pkg->def( "purge", 0, &dbPurge, SRC_POS );
   pkg->def( "release", 0, &dbRelease, SRC_POS );
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -129,7 +129,7 @@ int Obj_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Obj_Init");
 
-  PKG_CREATE(interp, "Obj", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Obj", "4.$Revision$");
   Tcl::defGenericObjCmds<Nub::Object>(pkg, SRC_POS);
 
   pkg->defGetter("refCount", &Nub::Object::dbg_RefCount, SRC_POS);
@@ -158,7 +158,7 @@ GVX_TRACE("Obj_Init");
             "  namespace eval $namesp $cmd\n"
             "}");
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_tcl_objtcl_cc_utc20050626084018[] = "$Id$ $HeadURL$";

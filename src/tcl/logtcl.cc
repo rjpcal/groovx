@@ -50,7 +50,7 @@ int Log_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Log_Init");
 
-  PKG_CREATE(interp, "Log", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Log", "4.$Revision$");
   pkg->def("reset", "", &Nub::Log::reset, SRC_POS);
   pkg->def("addScope", "scopename", &::Nub::Log::addScope, SRC_POS);
   pkg->def("removeScope", "scopename", &::Nub::Log::removeScope, SRC_POS);
@@ -59,7 +59,7 @@ GVX_TRACE("Log_Init");
 
   pkg->def("log", "msg", (void (*)(const char*)) &Nub::log, SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_tcl_logtcl_cc_utc20050626084017[] = "$Id$ $HeadURL$";

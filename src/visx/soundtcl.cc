@@ -57,7 +57,7 @@ int Sound_Init(Tcl_Interp* interp)
 GVX_TRACE("Sound_Init");
 
   Tcl::Interp intp(interp);
-  PKG_CREATE(interp, "Sound", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Sound", "4.$Revision$");
 
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<Sound>(pkg, SRC_POS);
@@ -84,7 +84,7 @@ GVX_TRACE("Sound_Init");
   ERR = err_sound.id();
   pkg->linkVarConst("Sound::err", ERR);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_soundtcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";

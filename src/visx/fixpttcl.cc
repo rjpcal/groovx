@@ -46,12 +46,12 @@ int Fixpt_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Fixpt_Init");
 
-  PKG_CREATE(interp, "FixPt", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "FixPt", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<FixPt>(pkg, SRC_POS);
   Tcl::defCreator<FixPt>(pkg);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_fixpttcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";

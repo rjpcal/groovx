@@ -50,14 +50,14 @@ int Block_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Block_Init");
 
-  PKG_CREATE(interp, "Block", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Block", "4.$Revision$");
   pkg->inheritPkg("ElementContainer");
   Tcl::defGenericObjCmds<Block>(pkg, SRC_POS);
   Tcl::defCreator<Block>(pkg);
 
   Tcl::defTracing(pkg, Block::tracer);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_blocktcl_cc_utc20050626084016[] = "$Id$ $HeadURL$";

@@ -272,7 +272,7 @@ int Fstringtest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Fstringtest_Init");
 
-  PKG_CREATE(interp, "Fstringtest", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Fstringtest", "4.$Revision$");
 
   DEF_TEST(pkg, testDefaultConstruct);
   DEF_TEST(pkg, testConstruct1);
@@ -293,7 +293,7 @@ GVX_TRACE("Fstringtest_Init");
   DEF_TEST(pkg, testReadline2);
   DEF_TEST(pkg, testWrite);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 // Need these to avoid dyld errors on Mac OS X

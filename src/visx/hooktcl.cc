@@ -371,7 +371,7 @@ namespace
 extern "C"
 int Hook_Init(Tcl_Interp* interp)
 {
-  PKG_CREATE(interp, "Hook", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Hook", "4.$Revision$");
 
   pkg->def( "::bug", "", &bug, SRC_POS );
 
@@ -392,7 +392,7 @@ int Hook_Init(Tcl_Interp* interp)
 
   pkg->def( "::dictGet", "dict key", dictGet, SRC_POS );
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_hooktcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";

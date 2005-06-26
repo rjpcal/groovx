@@ -60,7 +60,7 @@ int Timinghdlr_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Timinghdlr_Init");
 
-  PKG_CREATE(interp, "TimingHdlr", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "TimingHdlr", "4.$Revision$");
   Tcl::defCreator<TimingHdlr>(pkg);
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TimingHdlr>(pkg, SRC_POS);
@@ -97,7 +97,7 @@ GVX_TRACE("Timinghdlr_Init");
 
   pkg->namespaceAlias("Th");
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -105,7 +105,7 @@ int Timinghandler_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Timinghandler_Init");
 
-  PKG_CREATE(interp, "TimingHandler", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "TimingHandler", "4.$Revision$");
   Tcl::defCreator<TimingHandler>(pkg);
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TimingHandler>(pkg, SRC_POS);
@@ -129,7 +129,7 @@ GVX_TRACE("Timinghandler_Init");
 
   pkg->namespaceAlias("SimpleTh");
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_thtcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";

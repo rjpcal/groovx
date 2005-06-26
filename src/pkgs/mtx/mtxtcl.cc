@@ -49,7 +49,7 @@ int Mtx_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Mtx_Init");
 
-  PKG_CREATE(interp, "mtx", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "mtx", "4.$Revision$");
   pkg->inheritPkg("Obj");
   Tcl::defGenericObjCmds<MtxObj>(pkg, SRC_POS);
 
@@ -66,7 +66,7 @@ GVX_TRACE("Mtx_Init");
   Nub::ObjFactory::theOne().register_creator(&MtxObj::make);
   Nub::ObjFactory::theOne().register_alias("MtxObj", "mtx");
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_pkgs_mtx_mtxtcl_cc_utc20050626084022[] = "$Id$ $HeadURL$";

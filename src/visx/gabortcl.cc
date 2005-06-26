@@ -47,13 +47,13 @@ int Gabor_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Gabor_Init");
 
-  PKG_CREATE(interp, "Gabor", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Gabor", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<Gabor>(pkg, SRC_POS);
   Tcl::defCreator<Gabor>(pkg);
   pkg->def("saveImage", "objref filename", &Gabor::saveImage, SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -61,7 +61,7 @@ int Gaborarray_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Gaborarray_Init");
 
-  PKG_CREATE(interp, "GaborArray", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "GaborArray", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<GaborArray>(pkg, SRC_POS);
   Tcl::defCreator<GaborArray>(pkg);
@@ -70,7 +70,7 @@ GVX_TRACE("Gaborarray_Init");
            &GaborArray::saveContourOnlyImage,
            SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_gabortcl_cc_utc20050626084017[] = "$Id$ $HeadURL$";

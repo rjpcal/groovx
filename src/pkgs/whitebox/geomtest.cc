@@ -91,11 +91,11 @@ int Geomtest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Geomtest_Init");
 
-  PKG_CREATE(interp, "Geomtest", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Geomtest", "4.$Revision$");
 
   DEF_TEST(pkg, testInvert);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 // Need these to avoid dyld errors on Mac OS X

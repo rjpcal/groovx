@@ -112,7 +112,7 @@ GVX_TRACE("Misc_Init");
 
   using namespace rutz;
 
-  PKG_CREATE(interp, "Misc", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Misc", "4.$Revision$");
 
   pkg->def( "::rand", "min max", &rand_draw, SRC_POS);
   pkg->def( "::rand", "min max ?n=1?", &rand_draw_n, SRC_POS);
@@ -153,7 +153,7 @@ GVX_TRACE("Misc_Init");
 
   pkg->defRaw( "::?", 1, "cmd_name", &cmdUsage, SRC_POS );
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_tcl_misctcl_cc_utc20050626084017[] = "$Id$ $HeadURL$";

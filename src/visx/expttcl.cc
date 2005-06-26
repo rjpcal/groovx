@@ -119,7 +119,7 @@ int Exptdriver_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Exptdriver_Init");
 
-  PKG_CREATE(interp, "ExptDriver", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "ExptDriver", "4.$Revision$");
   pkg->inheritPkg("ElementContainer");
   Tcl::defCreator<ExptDriver>(pkg);
   Tcl::defGenericObjCmds<ExptDriver>(pkg, SRC_POS);
@@ -150,7 +150,7 @@ GVX_TRACE("Exptdriver_Init");
   pkg->defGetter("doWhenComplete", &ExptDriver::getDoWhenComplete, SRC_POS);
   pkg->defSetter("doWhenComplete", &ExptDriver::setDoWhenComplete, SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_expttcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";

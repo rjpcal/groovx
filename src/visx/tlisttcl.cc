@@ -49,7 +49,7 @@ int Tlist_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Tlist_Init");
 
-  PKG_CREATE(interp, "Tlist", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Tlist", "4.$Revision$");
   pkg->def( "createPreview", "objids viewport num_cols_hint use_text_labels",
             &TlistUtils::createPreview,
             SRC_POS );
@@ -79,7 +79,7 @@ GVX_TRACE("Tlist_Init");
   pkg->def( "writeIncidenceMatrix", "filename", &TlistUtils::writeIncidenceMatrix, SRC_POS );
   pkg->def( "writeMatlab", "filename", &TlistUtils::writeMatlab, SRC_POS );
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_tlisttcl_cc_utc20050626084017[] = "$Id$ $HeadURL$";

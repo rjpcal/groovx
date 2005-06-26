@@ -92,7 +92,7 @@ GVX_TRACE("Toglet_Init");
   if (Tcl_PkgRequire(interp, "Tk", 0, 0) == 0)
     return 1;
 
-  PKG_CREATE(interp, "Toglet", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Toglet", "4.$Revision$");
 
   pkg->onExit( &clearOnExit );
 
@@ -129,7 +129,7 @@ GVX_TRACE("Toglet_Init");
             "proc ::undraw {} { Toglet::undraw [Toglet::current] }\n"
             );
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_gfx_toglettcl_cc_utc20050626084023[] = "$Id$ $HeadURL$";

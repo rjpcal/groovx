@@ -111,14 +111,14 @@ int Algotest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Algotest_Init");
 
-  PKG_CREATE(interp, "Algotest", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Algotest", "4.$Revision$");
 
   DEF_TEST(pkg, testAlgoMinMax);
   DEF_TEST(pkg, testAlgoAbs);
   DEF_TEST(pkg, testAlgoClamp);
   DEF_TEST(pkg, testAlgoSwap2);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 // Need these to avoid dyld errors on Mac OS X

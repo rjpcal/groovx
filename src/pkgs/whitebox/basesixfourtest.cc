@@ -210,7 +210,7 @@ int Basesixfourtest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Basesixfourtest_Init");
 
-  PKG_CREATE(interp, "Basesixfourtest", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Basesixfourtest", "4.$Revision$");
 
   DEF_TEST(pkg, testBase64EncodeDecode1);
   DEF_TEST(pkg, testBase64EncodeDecode2);
@@ -218,7 +218,7 @@ GVX_TRACE("Basesixfourtest_Init");
   DEF_TEST(pkg, testBase64EncodeDecode4);
   DEF_TEST(pkg, testBase64EncodeDecode5);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 // Need these to avoid dyld errors on Mac OS X

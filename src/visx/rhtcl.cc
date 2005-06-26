@@ -158,12 +158,12 @@ int Responsehandler_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Responsehandler_Init");
 
-  PKG_CREATE(interp, "ResponseHandler", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "ResponseHandler", "4.$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<ResponseHandler>(pkg, SRC_POS);
   pkg->namespaceAlias("Rh");
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -171,7 +171,7 @@ int Eventresponsehdlr_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Eventresponsehdlr_Init");
 
-  PKG_CREATE(interp, "EventResponseHdlr", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "EventResponseHdlr", "4.$Revision$");
   Tcl::defCreator<EventResponseHdlr>(pkg);
   pkg->inheritPkg("ResponseHandler");
   Tcl::defTracing(pkg, EventResponseHdlr::tracer);
@@ -212,7 +212,7 @@ GVX_TRACE("Eventresponsehdlr_Init");
 
   pkg->namespaceAlias("EventRh");
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -220,14 +220,14 @@ int Kbdresponsehdlr_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Kbdresponsehdlr_Init");
 
-  PKG_CREATE(interp, "KbdResponseHdlr", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "KbdResponseHdlr", "4.$Revision$");
   Tcl::defCreator<KbdResponseHdlr>(pkg);
   pkg->inheritPkg("EventResponseHdlr");
   Tcl::defGenericObjCmds<KbdResponseHdlr>(pkg, SRC_POS);
 
   pkg->namespaceAlias("KbdRh");
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -235,13 +235,13 @@ int Nullresponsehdlr_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Nullresponsehdlr_Init");
 
-  PKG_CREATE(interp, "NullResponseHdlr", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "NullResponseHdlr", "4.$Revision$");
   Tcl::defCreator<NullResponseHdlr>(pkg);
   pkg->inheritPkg("ResponseHandler");
   Tcl::defGenericObjCmds<NullResponseHdlr>(pkg, SRC_POS);
   pkg->namespaceAlias("NullRh");
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -249,7 +249,7 @@ int Serialrh_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Serialrh_Init");
 
-  PKG_CREATE(interp, "SerialRh", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "SerialRh", "4.$Revision$");
   pkg->def( "SerialRh::SerialRh", "device=/dev/tty0p0",
             rutz::bind_first(&startSerial, interp),
             SRC_POS );
@@ -258,7 +258,7 @@ GVX_TRACE("Serialrh_Init");
                             "/dev/tty0p0"),
             SRC_POS );
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_rhtcl_cc_utc20050626084016[] = "$Id$ $HeadURL$";

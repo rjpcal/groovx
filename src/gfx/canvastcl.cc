@@ -100,7 +100,7 @@ int Canvas_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Canvas_Init");
 
-  PKG_CREATE(interp, "Canvas", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Canvas", "4.$Revision$");
   pkg->inheritPkg("Obj");
   Tcl::defGenericObjCmds<Gfx::Canvas>(pkg, SRC_POS);
 
@@ -114,7 +114,7 @@ GVX_TRACE("Canvas_Init");
            bind_last(bind_last(mem_func(&Gfx::Canvas::throwIfError), SRC_POS), ""),
            SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -122,14 +122,14 @@ int Glcanvas_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Glcanvas_Init");
 
-  PKG_CREATE(interp, "GLCanvas", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "GLCanvas", "4.$Revision$");
   pkg->inheritPkg("Canvas");
   Tcl::defGenericObjCmds<GLCanvas>(pkg, SRC_POS);
 
   pkg->def( "pixelCheckSum", "glcanvas x y w h", &pixelCheckSum, SRC_POS );
   pkg->def( "pixelCheckSum", "glcanvas", &pixelCheckSumAll, SRC_POS );
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_gfx_canvastcl_cc_utc20050626084023[] = "$Id$ $HeadURL$";

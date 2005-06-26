@@ -83,7 +83,7 @@ int Gtrace_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Gtrace_Init");
 
-  PKG_CREATE(interp, "Gtrace", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Gtrace", "4.$Revision$");
   pkg->def("::gtrace", "on_off", &rutz::trace::set_global_trace, SRC_POS);
   pkg->def("::gtrace", "", &rutz::trace::get_global_trace, SRC_POS);
   pkg->def("maxDepth", "level", &rutz::trace::set_max_level, SRC_POS);
@@ -93,7 +93,7 @@ GVX_TRACE("Gtrace_Init");
   pkg->def("::dbglevelc", "filename level", &setOneLevelc, SRC_POS);
   pkg->def("::dbgkey", "filename", &rutz::debug::lookup_key, SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 extern "C"
@@ -101,11 +101,11 @@ int Prof_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Prof_Init");
 
-  PKG_CREATE(interp, "Prof", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "Prof", "4.$Revision$");
   pkg->def("summary", "", &profSummary, SRC_POS);
   pkg->def("reset", "", &rutz::prof::reset_all_prof_data, SRC_POS);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_tcl_gtracetcl_cc_utc20050626084018[] = "$Id$ $HeadURL$";

@@ -46,12 +46,12 @@ int Maskhatch_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Maskhatch_Init");
 
-  PKG_CREATE(interp, "MaskHatch", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "MaskHatch", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<MaskHatch>(pkg, SRC_POS);
   Tcl::defCreator<MaskHatch>(pkg);
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_masktcl_cc_utc20050626084016[] = "$Id$ $HeadURL$";

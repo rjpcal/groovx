@@ -320,10 +320,13 @@ GVX_DBG_REGISTER
     package version. The version string should be in the form MM.mm
     where MM is major version, and mm is minor version. This
     constructor can also correctly parse a version string such as
-    given by the RCS revision tag. */
-#define PKG_CREATE(interp, pkgname, pkgversion)                       \
+    given by the RCS revision tag. If you're using svn, the suggested
+    form is to choose a fixed major version number, and let the svn
+    revision be the minor number, so you would pass a version string
+    such as "4.$Revision$". */
+#define GVX_PKG_CREATE(pkg, interp, pkgname, pkgversion)              \
                                                                       \
-int PKG_STATUS = Tcl::Pkg::STATUS_ERR;                                \
+int GVX_PKG_STATUS = Tcl::Pkg::STATUS_ERR;                            \
 {                                                                     \
   Tcl::Pkg* pkg = 0;                                                  \
                                                                       \
@@ -331,34 +334,34 @@ int PKG_STATUS = Tcl::Pkg::STATUS_ERR;                                \
   catch (...) { return 1; }                                           \
                                                                       \
   static bool recursive_initialization = false;                       \
-  GVX_ASSERT(!recursive_initialization);                                  \
+  GVX_ASSERT(!recursive_initialization);                              \
   recursive_initialization = true;                                    \
                                                                       \
   try                                                                 \
-  {                                                                   \
+  {
 
 
 /// This macro should go at the end of each *_Init() function.
-#define PKG_RETURN                                \
-  }                                               \
-  catch(...)                                      \
-  {                                               \
-    pkg->handleLiveException(SRC_POS);            \
-  }                                               \
-  recursive_initialization = false;               \
-  PKG_STATUS = pkg->finishInit();                 \
-}                                                 \
-return PKG_STATUS;
+#define GVX_PKG_RETURN(pkg)                     \
+  }                                             \
+  catch(...)                                    \
+  {                                             \
+    pkg->handleLiveException(SRC_POS);          \
+  }                                             \
+  recursive_initialization = false;             \
+  GVX_PKG_STATUS = pkg->finishInit();           \
+}                                               \
+return GVX_PKG_STATUS;
 
-/// Use this instead of PKG_RETURN if more work needs to be done after the package is initialized.
-#define PKG_FINISH                                \
-  }                                               \
-  catch(...)                                      \
-  {                                               \
-    pkg->handleLiveException(SRC_POS);            \
-  }                                               \
-  recursive_initialization = false;               \
-  PKG_STATUS = pkg->finishInit();                 \
+/// Use this instead of GVX_PKG_RETURN(pkg) if more work needs to be done after the package is initialized.
+#define GVX_PKG_FINISH(pkg)                     \
+  }                                             \
+  catch(...)                                    \
+  {                                             \
+    pkg->handleLiveException(SRC_POS);          \
+  }                                             \
+  recursive_initialization = false;             \
+  GVX_PKG_STATUS = pkg->finishInit();           \
 }
 
 

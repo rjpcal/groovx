@@ -460,7 +460,7 @@ int Gl_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Gl_Init");
 
-  PKG_CREATE(interp, "GL", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "GL", "4.$Revision$");
   GLTcl::loadGet(pkg);
   GLTcl::loadEnums(pkg);
 
@@ -532,7 +532,7 @@ GVX_TRACE("Gl_Init");
   pkg->def( "::drawThickLine", "x1 y1 x2 y2 thickness", GLTcl::drawThickLine, SRC_POS );
   pkg->def( "::lineInfo", 0, GLTcl::lineInfo, SRC_POS );
 
-  PKG_RETURN;
+  GVX_PKG_RETURN(pkg);
 }
 
 static const char vcid_groovx_visx_gltcl_cc_utc20050626084016[] = "$Id$ $HeadURL$";
