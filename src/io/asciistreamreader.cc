@@ -135,7 +135,7 @@ namespace
 
 // This is a hack to help shorten up names for assemblers on systems
 // that need short identifier names.
-#if defined(SHORTEN_SYMBOL_NAMES)
+#if defined(GVX_SHORTEN_SYMBOL_NAMES)
 #define AsciiStreamReader ASR
 #endif
 

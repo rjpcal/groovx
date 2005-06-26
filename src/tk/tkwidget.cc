@@ -64,7 +64,7 @@ namespace WindowSystem
   void ungrabKeyboard(Tk_Window tkWin);
 }
 
-#if defined(GL_PLATFORM_GLX)
+#if defined(GVX_GL_PLATFORM_GLX)
 
 void WindowSystem::winInfo(Tk_Window tkWin)
 {
@@ -148,7 +148,7 @@ GVX_TRACE("WindowSystem::ungrabKeyboard[glx]");
   XUngrabKeyboard(Tk_Display(tkWin), CurrentTime);
 }
 
-#elif defined(GL_PLATFORM_AGL)
+#elif defined(GVX_GL_PLATFORM_AGL)
 
 void WindowSystem::winInfo(Tk_Window /*tkWin*/)
 {
@@ -330,10 +330,10 @@ GVX_TRACE("TkWidgImpl::keyEventProc");
   ev->state &= ~ControlMask;
 
   char buf[32];
-#if defined(GL_PLATFORM_GLX)
+#if defined(GVX_GL_PLATFORM_GLX)
   const int len = XLookupString(ev, &buf[0], 30, 0, 0);
   buf[len] = '\0';
-#elif defined(GL_PLATFORM_AGL)
+#elif defined(GVX_GL_PLATFORM_AGL)
   strncpy(buf, ev->trans_chars, 31);
   buf[31] = '\0';
 #endif

@@ -44,7 +44,7 @@ GxRasterFont::~GxRasterFont() throw()
 GVX_TRACE("GxRasterFont::~GxRasterFont");
 }
 
-#if defined(GL_PLATFORM_GLX)
+#if defined(GVX_GL_PLATFORM_GLX)
 
 #include "gfx/glxrasterfont.h"
 
@@ -54,7 +54,7 @@ GVX_TRACE("GxRasterFont::make[glx]");
   return rutz::make_shared(new GlxRasterFont(fontname));
 }
 
-#elif defined(GL_PLATFORM_AGL)
+#elif defined(GVX_GL_PLATFORM_AGL)
 
 #include "gfx/aglrasterfont.h"
 
@@ -65,7 +65,7 @@ GVX_TRACE("GxRasterFont::make[agl]");
 }
 
 #else
-#  error no GL_PLATFORM macro defined
+#  error no GVX_GL_PLATFORM macro defined
 #endif
 
 static const char vcid_groovx_gfx_gxrasterfont_cc_utc20050626084023[] = "$Id$ $HeadURL$";

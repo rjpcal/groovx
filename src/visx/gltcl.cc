@@ -54,11 +54,11 @@
 #include <cmath>                // for sqrt() in drawThickLine
 #include <map>
 
-#if defined(GL_PLATFORM_GLX)
+#if defined(GVX_GL_PLATFORM_GLX)
 #  include <GL/gl.h>
 #  include <GL/glu.h>
 #  include <GL/glx.h>
-#elif defined(GL_PLATFORM_AGL)
+#elif defined(GVX_GL_PLATFORM_AGL)
 #  include <AGL/gl.h>
 #  include <AGL/glu.h>
 #endif
@@ -235,7 +235,7 @@ namespace GLTcl
       { NAMEVAL(GL_POLYGON_OFFSET_POINT) },
       { NAMEVAL(GL_POLYGON_OFFSET_LINE) },
       { NAMEVAL(GL_POLYGON_OFFSET_FILL) },
-#ifdef GL_PLATFORM_GLX
+#ifdef GVX_GL_PLATFORM_GLX
       { NAMEVAL(GL_RESCALE_NORMAL_EXT) },
 #endif
 
@@ -274,7 +274,7 @@ namespace GLTcl
 
   template <class T>
   Tcl::List get(GLenum param_tag
-#ifdef BROKEN_TEMPLATE_FUNCTIONS
+#ifdef GVX_BROKEN_TEMPLATE_FUNCTIONS
                 , T* /*dummy*/=0
 #endif
                 )
@@ -292,7 +292,7 @@ namespace GLTcl
     return result;
   }
 
-#ifdef BROKEN_TEMPLATE_FUNCTIONS
+#ifdef GVX_BROKEN_TEMPLATE_FUNCTIONS
   Tcl::List getBoolean(GLenum param_tag)
   { return get<GLboolean>(param_tag, (GLboolean*) 0); }
 
@@ -508,7 +508,7 @@ GVX_TRACE("Gl_Init");
   pkg->def( "::glVertex2", "x y", glVertex2d, SRC_POS );
   pkg->def( "::glVertex3", "x y z", glVertex3d, SRC_POS );
   pkg->def( "::glVertex4", "x y z w", glVertex4d, SRC_POS );
-#if defined(GL_PLATFORM_GLX)
+#if defined(GVX_GL_PLATFORM_GLX)
   pkg->def( "::glXWaitX", 0, glXWaitX, SRC_POS );
   pkg->def( "::glXWaitGL", 0, glXWaitGL, SRC_POS );
 #endif
@@ -517,7 +517,7 @@ GVX_TRACE("Gl_Init");
   pkg->def( "::gluPerspective", "field_of_view_y aspect zNear zFar",
             gluPerspective, SRC_POS );
 
-#ifndef BROKEN_TEMPLATE_FUNCTIONS
+#ifndef GVX_BROKEN_TEMPLATE_FUNCTIONS
   pkg->def( "::glGetBoolean", "param_name", GLTcl::get<GLboolean>, SRC_POS );
   pkg->def( "::glGetDouble", "param_name", GLTcl::get<GLdouble>, SRC_POS );
   pkg->def( "::glGetInteger", "param_name", GLTcl::get<GLint>, SRC_POS );

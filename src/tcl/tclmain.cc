@@ -45,7 +45,11 @@
 #include <tk.h>
 #include <unistd.h>
 
-#ifdef WITH_READLINE
+#ifndef GVX_NO_READLINE
+#define GVX_WITH_READLINE
+#endif
+
+#ifdef GVX_WITH_READLINE
 #  include <cstdlib> // for malloc/free
 #  include <readline/readline.h>
 #  include <readline/history.h>
@@ -64,7 +68,7 @@ namespace
 {
   void exitHandler(ClientData /*clientData*/)
   {
-#ifdef WITH_READLINE
+#ifdef GVX_WITH_READLINE
     rl_callback_handler_remove();
 #endif
   }
@@ -142,7 +146,7 @@ public:
 
   rutz::fstring commandLine() const { return itsCommandLine; }
 
-#ifdef WITH_READLINE
+#ifdef GVX_WITH_READLINE
   static void readlineLineComplete(char* line);
 #endif
 };
@@ -209,7 +213,7 @@ GVX_TRACE("Tcl::MainImpl::MainImpl");
   itsSafeInterp.setGlobalVar("tcl_interactive",
                              Tcl::toTcl(isItInteractive ? 1 : 0));
 
-#ifdef WITH_READLINE
+#ifdef GVX_WITH_READLINE
   using_history();
 #endif
 }
@@ -224,7 +228,7 @@ int Tcl::MainImpl::historyNext()
 {
 GVX_TRACE("Tcl::MainImpl::historyNext");
 
-#ifdef WITH_READLINE
+#ifdef GVX_WITH_READLINE
   return history_length+1;
 #else
   Tcl::ObjPtr obj = itsSafeInterp.getResult<Tcl_Obj*>();
@@ -246,7 +250,7 @@ GVX_TRACE("Tcl::MainImpl::historyNext");
 //---------------------------------------------------------------------
 
 void Tcl::MainImpl::doPrompt(const char* text,
-#ifdef WITH_READLINE
+#ifdef GVX_WITH_READLINE
                              unsigned int /*length*/
 #else
                              unsigned int length
@@ -255,7 +259,7 @@ void Tcl::MainImpl::doPrompt(const char* text,
 {
 GVX_TRACE("Tcl::MainImpl::doPrompt");
 
-#ifdef WITH_READLINE
+#ifdef GVX_WITH_READLINE
   rl_callback_handler_install(text, readlineLineComplete);
 #else
   if (length > 0)
@@ -282,7 +286,7 @@ GVX_TRACE("Tcl::MainImpl::prompt");
     }
   else
     {
-#ifdef WITH_READLINE
+#ifdef GVX_WITH_READLINE
       rutz::fstring text(itsArgv0, " ", historyNext(), ">>> ");
 #else
       rutz::fstring text(itsArgv0, " ", historyNext(), "> ");
@@ -299,7 +303,7 @@ GVX_TRACE("Tcl::MainImpl::prompt");
 //
 //---------------------------------------------------------------------
 
-#ifdef WITH_READLINE
+#ifdef GVX_WITH_READLINE
 
 void Tcl::MainImpl::readlineLineComplete(char* line)
 {
@@ -325,7 +329,7 @@ void Tcl::MainImpl::grabInput()
 {
 GVX_TRACE("Tcl::MainImpl::grabInput");
 
-#ifndef WITH_READLINE
+#ifndef GVX_WITH_READLINE
   Tcl_DString line;
 
   Tcl_DStringInit(&line);
@@ -336,7 +340,7 @@ GVX_TRACE("Tcl::MainImpl::grabInput");
 
   Tcl_DStringFree(&line);
 
-#else // WITH_READLINE
+#else // GVX_WITH_READLINE
   rl_callback_read_char();
 #endif
 }
@@ -416,7 +420,7 @@ GVX_TRACE("Tcl::MainImpl::execCommand");
 
   bool should_display_result = false;
 
-#ifdef WITH_READLINE
+#ifdef GVX_WITH_READLINE
   char* expansion = 0;
   const int status =
     history_expand(const_cast<char*>(itsCommand.c_str()), &expansion);
@@ -474,7 +478,7 @@ GVX_TRACE("Tcl::MainImpl::execCommand");
           int code = Tcl_RecordAndEval(itsSafeInterp.intp(),
                                        trimmed, TCL_EVAL_GLOBAL);
 
-#ifdef WITH_READLINE
+#ifdef GVX_WITH_READLINE
           char c = trimmed[len-1];
 
           if (c == '\n')
@@ -514,7 +518,7 @@ GVX_TRACE("Tcl::MainImpl::execCommand");
 
   itsCommand.clear();
 
-#ifdef WITH_READLINE
+#ifdef GVX_WITH_READLINE
   free(expansion);
 #endif
 }

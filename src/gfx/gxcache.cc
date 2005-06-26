@@ -137,7 +137,7 @@ GVX_TRACE("GxCache::invalidate");
 void GxCache::setMode(Mode new_mode) throw()
 {
 GVX_TRACE("GxCache::setMode");
-#ifdef BROKEN_GL_DISPLAY_LISTS
+#ifdef GVX_BROKEN_GL_DISPLAY_LISTS
   if (new_mode == GLCOMPILE) new_mode = DIRECT;
 #endif
 

@@ -44,7 +44,7 @@ GlWindowInterface::~GlWindowInterface()
 GVX_TRACE("GlWindowInterface::~GlWindowInterface");
 }
 
-#if defined(GL_PLATFORM_GLX)
+#if defined(GVX_GL_PLATFORM_GLX)
 #  include "gfx/glxwrapper.h"
 rutz::shared_ptr<GlWindowInterface>
 GlWindowInterface::make(Display* dpy, GlxOpts& opts)
@@ -53,7 +53,7 @@ GVX_TRACE("GlWindowInterface::make[glx]");
   return rutz::make_shared
     (GlxWrapper::make(dpy, opts, (GlxWrapper*)0 /*shared context*/));
 }
-#elif defined(GL_PLATFORM_AGL)
+#elif defined(GVX_GL_PLATFORM_AGL)
 #  include "gfx/aglwrapper.h"
 rutz::shared_ptr<GlWindowInterface>
 GlWindowInterface::make(Display* dpy, GlxOpts& opts)
@@ -62,7 +62,7 @@ GVX_TRACE("GlWindowInterface::make[agl]");
   return rutz::make_shared(AglWrapper::make(dpy, opts));
 }
 #else
-#  error no GL_PLATFORM macro defined!
+#  error no GVX_GL_PLATFORM macro defined!
 #endif
 
 static const char vcid_groovx_gfx_glwindowinterface_cc_utc20050626084023[] = "$Id$ $HeadURL$";

@@ -140,15 +140,15 @@ GVX_TRACE("media::load_image");
     case PNM:  media::load_pnm(filename, data); break;
     case PNG:  media::load_png(filename, data); break;
     case JPEG: media::load_jpeg(filename, data); break;
-#ifdef GIFTOPNM_PROG
-    case GIF:  pipe_load(GIFTOPNM_PROG, filename, data); break;
+#ifdef GVX_GIFTOPNM_PROG
+    case GIF:  pipe_load(GVX_GIFTOPNM_PROG, filename, data); break;
 #endif
-#ifdef ANYTOPNM_PROG
+#ifdef GVX_ANYTOPNM_PROG
       // A fallback to try to read just about any image type, given
       // that the program "anytopnm" is installed on the host
       // machine. In that case, we can process the image file with
       // anytopnm, and pipe the output via a stream into a pnm parser.
-    default:   pipe_load(ANYTOPNM_PROG, filename, data); break;
+    default:   pipe_load(GVX_ANYTOPNM_PROG, filename, data); break;
 #else
     default:   throw rutz::error(fstring("unknown image file format: ",
                                          filename), SRC_POS);

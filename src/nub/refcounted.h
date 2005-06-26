@@ -127,7 +127,21 @@ private:
   RefCounted(const RefCounted& other);
   RefCounted& operator=(const RefCounted& other);
 
+  // If GVX_ENFORCE_FACTORY_FUNCTIONS, then we make operator new() and
+  // delete() protected, as well as the default constructor and
+  // destructor. This means that only derived classes can use operator
+  // new() and delete(), and that thus derived classes are required to
+  // define functions of the form "static Nub::Ref<DerivedClass>
+  // make() { return Nub::Ref<DerivedClass>(new DerivedClass)." While
+  // this is a bit of extra typing, it helps ensure that RefCounted
+  // objects are not constructed on the stack, and are not handled by
+  // the wrong type of smart pointer (such as a shared_ptr).
+#ifdef GVX_ENFORCE_FACTORY_FUNCTIONS
 protected:
+#else
+public:
+#endif
+
   /** Class-specific operator new; protected to ensure that clients
       use factory functions. */
   void* operator new(size_t bytes);

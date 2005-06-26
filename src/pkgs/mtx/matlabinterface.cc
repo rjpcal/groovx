@@ -16,7 +16,7 @@
 
 #include "matlabinterface.h"
 
-#ifdef WITH_MATLAB
+#ifndef GVX_NO_MATLAB
 
 #include "mtx/mtx.h"
 

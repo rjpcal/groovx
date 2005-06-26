@@ -35,7 +35,7 @@
 
 #include "rutz/demangle.h"
 
-#if defined(NO_TYPENAME_MANGLING)
+#if defined(GVX_NO_TYPENAME_MANGLING)
 
 namespace
 {
@@ -44,7 +44,7 @@ namespace
 
 #  define DEMANGLE_IMPL demangle_impl
 
-#else
+#else // !defined(GVX_NO_TYPENAME_MANGLING)
 
 // Here we pick the appropriate system-dependent header that defines a
 // function for demangling mangled names with the following prototype:
@@ -57,7 +57,7 @@ namespace
 #  elif defined(__GNUC__) && __GNUC__ < 3
 #    include "rutz/demangle_gcc_v2.h"
 #    define DEMANGLE_IMPL demangle_gcc_v2
-#  elif defined(HAVE_PROG_CXXFILT)
+#  elif defined(GVX_HAVE_PROG_CXXFILT)
 #    include "rutz/demangle_cxxfilt.h"
 #    define DEMANGLE_IMPL demangle_cxxfilt
 #  else
@@ -65,7 +65,7 @@ namespace
 #    include "rutz/demangle_gcc_v3.h"
 #    define DEMANGLE_IMPL demangle_gcc_v3
 #  endif
-#endif // defined(NO_TYPENAME_MANGLING)
+#endif // !defined(GVX_NO_TYPENAME_MANGLING)
 
 #include <map>
 #include <string>

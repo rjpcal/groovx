@@ -38,7 +38,7 @@
 #include "rutz/trace.h"
 
 GlxOpts::GlxOpts() :
-#if defined(NO_RGBA) && NO_RGBA != 0
+#if defined(GVX_NO_RGBA) && GVX_NO_RGBA != 0
   rgbaFlag( false ),
 #else
   rgbaFlag( true ),
@@ -49,7 +49,7 @@ GlxOpts::GlxOpts() :
   alphaFlag( false ),
   alphaSize( 1 ),
   colorIndexSize( 8 ),
-#if defined(NO_DOUBLE_BUFFER) && NO_DOUBLE_BUFFER != 0
+#if defined(GVX_NO_DOUBLE_BUFFER) && GVX_NO_DOUBLE_BUFFER != 0
   doubleFlag( false ),
 #else
   doubleFlag( true ),
@@ -64,7 +64,7 @@ GlxOpts::GlxOpts() :
   stencilFlag( false ),
   stencilSize( 1 ),
   auxNumber( 0 ),
-#if defined(NO_DIRECT_RENDER) && NO_DIRECT_RENDER != 0
+#if defined(GVX_NO_DIRECT_RENDER) && GVX_NO_DIRECT_RENDER != 0
   indirect( true ),
 #else
   indirect( false ),

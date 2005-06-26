@@ -49,7 +49,7 @@
 
 #include "rutz/trace.h"
 
-#ifdef WITH_MATLAB
+#ifndef GVX_NO_MATLAB
 
 #include <engine.h>
 
@@ -121,7 +121,7 @@ private:
   char* itsBuf;
 };
 
-#else // !WITH_MATLAB
+#else // defined(GVX_NO_MATLAB)
 
 class MatlabEngine : public Nub::Object
 {

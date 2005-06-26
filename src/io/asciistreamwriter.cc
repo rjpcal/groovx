@@ -102,7 +102,7 @@ namespace
 // re-introduces AsciiStreamWriter as a typedef for ASW, so that
 // client code should be able to use the typename AsciiStreamWriter in
 // all cases.
-#if defined(SHORTEN_SYMBOL_NAMES)
+#if defined(GVX_SHORTEN_SYMBOL_NAMES)
 #define AsciiStreamWriter ASW
 #endif
 

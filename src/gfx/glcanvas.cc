@@ -54,10 +54,10 @@
 
 #include <vector>
 
-#if defined(GL_PLATFORM_GLX)
+#if defined(GVX_GL_PLATFORM_GLX)
 #  include <GL/gl.h>
 #  include <GL/glu.h>
-#elif defined(GL_PLATFORM_AGL)
+#elif defined(GVX_GL_PLATFORM_AGL)
 #  include <AGL/gl.h>
 #  include <AGL/glu.h>
 #endif

@@ -159,7 +159,7 @@ static const char vcid_groovx_rutz_debug_h_utc20050626084020[] = "$Id$ $HeadURL$
 // Everything here gets re-processed every time that this file is #include'ed.
 //
 
-#if !defined(NO_DEBUG)
+#if !defined(GVX_NO_DEBUG)
 #  define dbg_eval(lev, x)     do { if (GVX_DBG_LEVEL() >= lev) rutz::debug::eval(#x, lev, __FILE__, __LINE__, false, x); } while (0)
 #  define dbg_eval_nl(lev, x)  do { if (GVX_DBG_LEVEL() >= lev) rutz::debug::eval(#x, lev, __FILE__, __LINE__, true, x); } while (0)
 #  define dbg_print(lev, x)    do { if (GVX_DBG_LEVEL() >= lev) rutz::debug::eval(0, lev, __FILE__, __LINE__, false, x); } while (0)
@@ -172,7 +172,7 @@ static const char vcid_groovx_rutz_debug_h_utc20050626084020[] = "$Id$ $HeadURL$
 #  define GVX_PRECONDITION(expr)  do { if ( !(expr) ) rutz::debug::precondition_aux(#expr, __FILE__, __LINE__); } while(0)
 #  define GVX_POSTCONDITION(expr) do { if ( !(expr) ) rutz::debug::postcondition_aux(#expr, __FILE__, __LINE__); } while(0)
 
-#else // defined(NO_DEBUG)
+#else // defined(GVX_NO_DEBUG)
 
 #  define dbg_eval(lev, x)     do {} while (0)
 #  define dbg_eval_nl(lev, x)  do {} while (0)
