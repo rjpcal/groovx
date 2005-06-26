@@ -61,7 +61,9 @@ namespace
 #    include "rutz/demangle_cxxfilt.h"
 #    define DEMANGLE_IMPL demangle_cxxfilt
 #  else
-#    error no method specified for typename demangling
+// use the cxxabi demangler by default
+#    include "rutz/demangle_gcc_v3.h"
+#    define DEMANGLE_IMPL demangle_gcc_v3
 #  endif
 #endif // defined(NO_TYPENAME_MANGLING)
 
