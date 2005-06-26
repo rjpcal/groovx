@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef DEMANGLE_CXXFILT_H_DEFINED
-#define DEMANGLE_CXXFILT_H_DEFINED
+#ifndef GROOVX_RUTZ_DEMANGLE_CXXFILT_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_DEMANGLE_CXXFILT_H_UTC20050626084020_DEFINED
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
@@ -68,5 +68,5 @@ namespace
   }
 }
 
-static const char vcid_demangle_cxxfilt_h[] = "$Id$ $URL$";
-#endif // !DEMANGLE_CXXFILT_H_DEFINED
+static const char vcid_groovx_rutz_demangle_cxxfilt_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_DEMANGLE_CXXFILT_H_UTC20050626084020_DEFINED

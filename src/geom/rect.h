@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef RECT_H_DEFINED
-#define RECT_H_DEFINED
+#ifndef GROOVX_GEOM_RECT_H_UTC20050626084022_DEFINED
+#define GROOVX_GEOM_RECT_H_UTC20050626084022_DEFINED
 
 #include "geom/span.h"
 #include "geom/vec2.h"
@@ -228,5 +228,5 @@ namespace geom
 
 } // end namespace geom
 
-static const char vcid_rect_h[] = "$Id$ $URL$";
-#endif // !RECT_H_DEFINED
+static const char vcid_groovx_geom_rect_h_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GEOM_RECT_H_UTC20050626084022_DEFINED

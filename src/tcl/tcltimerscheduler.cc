@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLTIMERSCHEDULER_CC_DEFINED
-#define TCLTIMERSCHEDULER_CC_DEFINED
+#ifndef GROOVX_TCL_TCLTIMERSCHEDULER_CC_UTC20050626084017_DEFINED
+#define GROOVX_TCL_TCLTIMERSCHEDULER_CC_UTC20050626084017_DEFINED
 
 #include "tcltimerscheduler.h"
 
@@ -142,5 +142,5 @@ DOTRACE("Tcl::TimerScheduler::schedule");
     (new Tcl::TimerSchedulerToken(msec, callback, clientdata));
 }
 
-static const char vcid_tcltimerscheduler_cc[] = "$Id$ $URL$";
-#endif // !TCLTIMERSCHEDULER_CC_DEFINED
+static const char vcid_groovx_tcl_tcltimerscheduler_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLTIMERSCHEDULER_CC_UTC20050626084017_DEFINED

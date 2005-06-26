@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GABORPATCH_H_DEFINED
-#define GABORPATCH_H_DEFINED
+#ifndef GROOVX_VISX_GABORPATCH_H_UTC20050626084017_DEFINED
+#define GROOVX_VISX_GABORPATCH_H_UTC20050626084017_DEFINED
 
 #include "geom/geom.h"
 
@@ -101,5 +101,5 @@ private:
   double* itsData;
 };
 
-static const char vcid_gaborpatch_h[] = "$Id$ $URL$";
-#endif // !GABORPATCH_H_DEFINED
+static const char vcid_groovx_visx_gaborpatch_h_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_GABORPATCH_H_UTC20050626084017_DEFINED

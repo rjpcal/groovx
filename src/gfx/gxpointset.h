@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXPOINTSET_H_DEFINED
-#define GXPOINTSET_H_DEFINED
+#ifndef GROOVX_GFX_GXPOINTSET_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXPOINTSET_H_UTC20050626084024_DEFINED
 
 #include "gfx/gbvec.h"
 #include "gfx/gxnode.h"
@@ -91,5 +91,5 @@ private:
   GxPointSet& operator=(const GxPointSet&);
 };
 
-static const char vcid_gxpointset_h[] = "$Id$ $URL$";
-#endif // !GXPOINTSET_H_DEFINED
+static const char vcid_groovx_gfx_gxpointset_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXPOINTSET_H_UTC20050626084024_DEFINED

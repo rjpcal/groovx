@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ALGOTEST_CC_DEFINED
-#define ALGOTEST_CC_DEFINED
+#ifndef GROOVX_PKGS_WHITEBOX_ALGOTEST_CC_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_WHITEBOX_ALGOTEST_CC_UTC20050626084022_DEFINED
 
 #include "pkgs/whitebox/algotest.h"
 
@@ -134,5 +134,5 @@ DOTRACE("Algotest_Unload");
 extern "C" int Algotest_SafeUnload(Tcl_Interp*, int /*flags*/)
 { return 1; }
 
-static const char vcid_algotest_cc[] = "$Id$ $URL$";
-#endif // !ALGOTEST_CC_DEFINED
+static const char vcid_groovx_pkgs_whitebox_algotest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_WHITEBOX_ALGOTEST_CC_UTC20050626084022_DEFINED

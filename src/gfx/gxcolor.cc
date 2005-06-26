@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXCOLOR_CC_DEFINED
-#define GXCOLOR_CC_DEFINED
+#ifndef GROOVX_GFX_GXCOLOR_CC_UTC20050626084025_DEFINED
+#define GROOVX_GFX_GXCOLOR_CC_UTC20050626084025_DEFINED
 
 #include "gfx/gxcolor.h"
 
@@ -99,5 +99,5 @@ void GxColor::draw(Gfx::Canvas& canvas) const
   canvas.setColor(rgbaColor);
 }
 
-static const char vcid_gxcolor_cc[] = "$Id$ $URL$";
-#endif // !GXCOLOR_CC_DEFINED
+static const char vcid_groovx_gfx_gxcolor_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXCOLOR_CC_UTC20050626084025_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef LOG_CC_DEFINED
-#define LOG_CC_DEFINED
+#ifndef GROOVX_NUB_LOG_CC_UTC20050626084019_DEFINED
+#define GROOVX_NUB_LOG_CC_UTC20050626084019_DEFINED
 
 #include "log.h"
 
@@ -181,5 +181,5 @@ DOTRACE("Nub::log");
     logImpl(*logFile, msg);
 }
 
-static const char vcid_log_cc[] = "$Id$ $URL$";
-#endif // !LOG_CC_DEFINED
+static const char vcid_groovx_nub_log_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_LOG_CC_UTC20050626084019_DEFINED

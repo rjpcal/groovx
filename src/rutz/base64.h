@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BASE64_H_DEFINED
-#define BASE64_H_DEFINED
+#ifndef GROOVX_RUTZ_BASE64_H_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_BASE64_H_UTC20050626084019_DEFINED
 
 namespace rutz
 {
@@ -58,5 +58,5 @@ namespace rutz
                      rutz::byte_array& dst);
 }
 
-static const char vcid_base64_h[] = "$Id$ $URL$";
-#endif // !BASE64_H_DEFINED
+static const char vcid_groovx_rutz_base64_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_BASE64_H_UTC20050626084019_DEFINED

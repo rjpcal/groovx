@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TRACE_CC_DEFINED
-#define TRACE_CC_DEFINED
+#ifndef GROOVX_RUTZ_TRACE_CC_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_TRACE_CC_UTC20050626084020_DEFINED
 
 #define LOCAL_PROF
 #include "rutz/trace.h"
@@ -413,5 +413,5 @@ void rutz::trace::print_out() throw()
     std::cerr << '\n';
 }
 
-static const char vcid_trace_cc[] = "$Id$ $URL$";
-#endif // TRACE_CC_DEFINED
+static const char vcid_groovx_rutz_trace_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_TRACE_CC_UTC20050626084020_DEFINED

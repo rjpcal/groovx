@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ASSOCARRAY_CC_DEFINED
-#define ASSOCARRAY_CC_DEFINED
+#ifndef GROOVX_RUTZ_ASSOCARRAY_CC_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_ASSOCARRAY_CC_UTC20050626084020_DEFINED
 
 #include "assocarray.h"
 
@@ -129,5 +129,5 @@ DOTRACE("rutz::assoc_array_base::set_value_for_key");
   ptr_slot = ptr;
 }
 
-static const char vcid_assocarray_cc[] = "$Id$ $URL$";
-#endif // !ASSOCARRAY_CC_DEFINED
+static const char vcid_groovx_rutz_assocarray_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_ASSOCARRAY_CC_UTC20050626084020_DEFINED

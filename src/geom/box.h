@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BOX_H_DEFINED
-#define BOX_H_DEFINED
+#ifndef GROOVX_GEOM_BOX_H_UTC20050626084023_DEFINED
+#define GROOVX_GEOM_BOX_H_UTC20050626084023_DEFINED
 
 #include "geom/span.h"
 #include "geom/vec3.h"
@@ -198,5 +198,5 @@ namespace geom
 
 } // end namespace geom
 
-static const char vcid_box_h[] = "$Id$ $URL$";
-#endif // !BOX_H_DEFINED
+static const char vcid_groovx_geom_box_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GEOM_BOX_H_UTC20050626084023_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXCACHE_CC_DEFINED
-#define GXCACHE_CC_DEFINED
+#ifndef GROOVX_GFX_GXCACHE_CC_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXCACHE_CC_UTC20050626084023_DEFINED
 
 #include "gxcache.h"
 
@@ -147,5 +147,5 @@ DOTRACE("GxCache::setMode");
   itsMode = new_mode;
 }
 
-static const char vcid_gxcache_cc[] = "$Id$ $URL$";
-#endif // !GXCACHE_CC_DEFINED
+static const char vcid_groovx_gfx_gxcache_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXCACHE_CC_UTC20050626084023_DEFINED

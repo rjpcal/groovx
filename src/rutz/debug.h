@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef DEBUG_H_DEFINED
-#define DEBUG_H_DEFINED
+#ifndef GROOVX_RUTZ_DEBUG_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_DEBUG_H_UTC20050626084020_DEFINED
 
 namespace rutz
 {
@@ -99,7 +99,7 @@ static inline int CONCAT(dbg_level_, ext) ()                    \
 #define DBG_REGISTER DO_DBG_REGISTER(1)
 #define GET_DBG_LEVEL dbg_level_1
 
-static const char vcid_debug_h[] = "$Id$ $URL$";
+static const char vcid_groovx_rutz_debug_h_utc20050626084020[] = "$Id$ $HeadURL$";
 
 #else // DEBUG_H_DEFINED
 
@@ -153,7 +153,7 @@ static const char vcid_debug_h[] = "$Id$ $URL$";
 #undef PRECONDITION
 #undef POSTCONDITION
 
-#endif // DEBUG_H_DEFINED
+#endif // !GROOVX_RUTZ_DEBUG_H_UTC20050626084020_DEFINED
 
 //
 // Everything here gets re-processed every time that this file is #include'ed.

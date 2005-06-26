@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJFACTORY_H_DEFINED
-#define OBJFACTORY_H_DEFINED
+#ifndef GROOVX_NUB_OBJFACTORY_H_UTC20050626084019_DEFINED
+#define GROOVX_NUB_OBJFACTORY_H_UTC20050626084019_DEFINED
 
 #include "nub/object.h"
 #include "nub/ref.h"
@@ -60,5 +60,5 @@ public:
   static ObjFactory& theOne();
 };
 
-static const char vcid_objfactory_h[] = "$Id$ $URL$";
-#endif // !OBJFACTORY_H_DEFINED
+static const char vcid_groovx_nub_objfactory_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_OBJFACTORY_H_UTC20050626084019_DEFINED

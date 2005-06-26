@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXFONT_H_DEFINED
-#define GXFONT_H_DEFINED
+#ifndef GROOVX_GFX_GXFONT_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXFONT_H_UTC20050626084023_DEFINED
 
 namespace rutz
 {
@@ -72,5 +72,5 @@ public:
   virtual void drawText(const char* text, Gfx::Canvas& canvas) const = 0;
 };
 
-static const char vcid_gxfont_h[] = "$Id$ $URL$";
-#endif // !GXFONT_H_DEFINED
+static const char vcid_groovx_gfx_gxfont_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXFONT_H_UTC20050626084023_DEFINED

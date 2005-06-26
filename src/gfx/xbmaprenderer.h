@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef XBMAPRENDERER_H_DEFINED
-#define XBMAPRENDERER_H_DEFINED
+#ifndef GROOVX_GFX_XBMAPRENDERER_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_XBMAPRENDERER_H_UTC20050626084024_DEFINED
 
 #include <X11/Xlib.h>
 
@@ -154,5 +154,5 @@ DOTRACE("XBmapRenderer::doRender");
   XFree(image);
 }
 
-static const char vcid_xbmaprenderer_h[] = "$Id$ $URL$";
-#endif // !XBMAPRENDERER_H_DEFINED
+static const char vcid_groovx_gfx_xbmaprenderer_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_XBMAPRENDERER_H_UTC20050626084024_DEFINED

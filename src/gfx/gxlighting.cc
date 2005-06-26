@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXLIGHTING_CC_DEFINED
-#define GXLIGHTING_CC_DEFINED
+#ifndef GROOVX_GFX_GXLIGHTING_CC_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXLIGHTING_CC_UTC20050626084024_DEFINED
 
 #include "gfx/gxlighting.h"
 
@@ -150,5 +150,5 @@ DOTRACE("GxLighting::draw");
                   spotCutoff);
 }
 
-static const char vcid_gxlighting_cc[] = "$Id$ $URL$";
-#endif // !GXLIGHTING_CC_DEFINED
+static const char vcid_groovx_gfx_gxlighting_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXLIGHTING_CC_UTC20050626084024_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ELEMENT_H_DEFINED
-#define ELEMENT_H_DEFINED
+#ifndef GROOVX_VISX_ELEMENT_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_ELEMENT_H_UTC20050626084015_DEFINED
 
 #include "io/io.h"
 
@@ -101,5 +101,5 @@ public:
   virtual void vxReset() = 0;
 };
 
-static const char vcid_element_h[] = "$Id$ $URL$";
-#endif // !ELEMENT_H_DEFINED
+static const char vcid_groovx_visx_element_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_ELEMENT_H_UTC20050626084015_DEFINED

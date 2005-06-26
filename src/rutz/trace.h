@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TRACE_H_DEFINED
-#define TRACE_H_DEFINED
+#ifndef GROOVX_RUTZ_TRACE_H_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_TRACE_H_UTC20050626084019_DEFINED
 
 // This file defines two classes and several macros that can be used
 // to achieve function profiling and tracing. The basic idea is that
@@ -181,5 +181,5 @@ private:
 #  define DOTRACE(x) {}
 #endif
 
-static const char vcid_trace_h[] = "$Id$ $URL$";
-#endif // !TRACE_H_DEFINED
+static const char vcid_groovx_rutz_trace_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_TRACE_H_UTC20050626084019_DEFINED

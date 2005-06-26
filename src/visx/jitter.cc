@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef JITTER_CC_DEFINED
-#define JITTER_CC_DEFINED
+#ifndef GROOVX_VISX_JITTER_CC_UTC20050626084016_DEFINED
+#define GROOVX_VISX_JITTER_CC_UTC20050626084016_DEFINED
 
 #include "visx/jitter.h"
 
@@ -143,5 +143,5 @@ DOTRACE("Jitter::draw");
   canvas.rotate(rotationAxis, itsRotationAngle+itsRShift);
 }
 
-static const char vcid_jitter_cc[] = "$Id$ $URL$";
-#endif // !JITTER_CC_DEFINED
+static const char vcid_groovx_visx_jitter_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_JITTER_CC_UTC20050626084016_DEFINED

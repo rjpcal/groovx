@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXSCALER_CC_DEFINED
-#define GXSCALER_CC_DEFINED
+#ifndef GROOVX_GFX_GXSCALER_CC_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXSCALER_CC_UTC20050626084023_DEFINED
 
 #include "gxscaler.h"
 
@@ -251,5 +251,5 @@ DOTRACE("GxScaler::getBoundingCube");
   dbg_dump(2, bbox.cube());
 }
 
-static const char vcid_gxscaler_cc[] = "$Id$ $URL$";
-#endif // !GXSCALER_CC_DEFINED
+static const char vcid_groovx_gfx_gxscaler_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXSCALER_CC_UTC20050626084023_DEFINED

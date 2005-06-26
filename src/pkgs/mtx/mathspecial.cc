@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MATHSPECIAL_CC_DEFINED
-#define MATHSPECIAL_CC_DEFINED
+#ifndef GROOVX_PKGS_MTX_MATHSPECIAL_CC_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_MTX_MATHSPECIAL_CC_UTC20050626084022_DEFINED
 
 #include "mathspecial.h"
 
@@ -59,5 +59,5 @@ DOTRACE("dash::detail::gammaln_engine");
   return -tmp+log(2.5066282746310005*ser/xx);
 }
 
-static const char vcid_mathspecial_cc[] = "$Id$ $URL$";
-#endif // !MATHSPECIAL_CC_DEFINED
+static const char vcid_groovx_pkgs_mtx_mathspecial_cc_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_MTX_MATHSPECIAL_CC_UTC20050626084022_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef WRITER_CC_DEFINED
-#define WRITER_CC_DEFINED
+#ifndef GROOVX_IO_WRITER_CC_UTC20050626084021_DEFINED
+#define GROOVX_IO_WRITER_CC_UTC20050626084021_DEFINED
 
 #include "io/writer.h"
 
@@ -109,5 +109,5 @@ DOTRACE("IO::Writer::defaultWriteRawData");
   writeCstring(name, reinterpret_cast<char*>(&encoded.vec[0]));
 }
 
-static const char vcid_writer_cc[] = "$Id$ $URL$";
-#endif // !WRITER_CC_DEFINED
+static const char vcid_groovx_io_writer_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_WRITER_CC_UTC20050626084021_DEFINED

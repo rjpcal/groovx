@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXVECTORFONT_CC_DEFINED
-#define GXVECTORFONT_CC_DEFINED
+#ifndef GROOVX_GFX_GXVECTORFONT_CC_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXVECTORFONT_CC_UTC20050626084024_DEFINED
 
 #include "gxvectorfont.h"
 
@@ -864,5 +864,5 @@ DOTRACE("GxVectorFont::vectorHeight");
   return 8.0;
 }
 
-static const char vcid_gxvectorfont_cc[] = "$Id$ $URL$";
-#endif // !GXVECTORFONT_CC_DEFINED
+static const char vcid_groovx_gfx_gxvectorfont_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXVECTORFONT_CC_UTC20050626084024_DEFINED

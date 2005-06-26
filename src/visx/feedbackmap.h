@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FEEDBACKMAP_H_DEFINED
-#define FEEDBACKMAP_H_DEFINED
+#ifndef GROOVX_VISX_FEEDBACKMAP_H_UTC20050626084017_DEFINED
+#define GROOVX_VISX_FEEDBACKMAP_H_UTC20050626084017_DEFINED
 
 #include "tcl/tcllistobj.h"
 #include "tcl/tclobjptr.h"
@@ -141,5 +141,5 @@ private:
   mutable bool isItDirty;
 };
 
-static const char vcid_feedbackmap_h[] = "$Id$ $URL$";
-#endif // !FEEDBACKMAP_H_DEFINED
+static const char vcid_groovx_visx_feedbackmap_h_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_FEEDBACKMAP_H_UTC20050626084017_DEFINED

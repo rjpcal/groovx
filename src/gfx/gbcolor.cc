@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GBCOLOR_CC_DEFINED
-#define GBCOLOR_CC_DEFINED
+#ifndef GROOVX_GFX_GBCOLOR_CC_UTC20050626084025_DEFINED
+#define GROOVX_GFX_GBCOLOR_CC_UTC20050626084025_DEFINED
 
 #include "gfx/gbcolor.h"
 
@@ -64,5 +64,5 @@ const double* GbColor::const_begin() const
   return Gfx::RgbaColor::data();
 }
 
-static const char vcid_gbcolor_cc[] = "$Id$ $URL$";
-#endif // !GBCOLOR_CC_DEFINED
+static const char vcid_groovx_gfx_gbcolor_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GBCOLOR_CC_UTC20050626084025_DEFINED

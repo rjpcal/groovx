@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef STDERROR_H_DEFINED
-#define STDERROR_H_DEFINED
+#ifndef GROOVX_RUTZ_STDERROR_H_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_STDERROR_H_UTC20050626084019_DEFINED
 
 #include <typeinfo>
 
@@ -47,5 +47,5 @@ namespace rutz
                       const rutz::file_pos& pos);
 }
 
-static const char vcid_stderror_h[] = "$Id$ $URL$";
-#endif // !STDERROR_H_DEFINED
+static const char vcid_groovx_rutz_stderror_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_STDERROR_H_UTC20050626084019_DEFINED

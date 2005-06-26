@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef UID_H_DEFINED
-#define UID_H_DEFINED
+#ifndef GROOVX_NUB_UID_H_UTC20050626084019_DEFINED
+#define GROOVX_NUB_UID_H_UTC20050626084019_DEFINED
 
 namespace Nub
 {
@@ -39,5 +39,5 @@ namespace Nub
   typedef unsigned long UID;
 }
 
-static const char vcid_uid_h[] = "$Id$ $URL$";
-#endif // !UID_H_DEFINED
+static const char vcid_groovx_nub_uid_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_UID_H_UTC20050626084019_DEFINED

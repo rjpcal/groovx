@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MASKTCL_H_DEFINED
-#define MASKTCL_H_DEFINED
+#ifndef GROOVX_VISX_MASKTCL_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_MASKTCL_H_UTC20050626084016_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Maskhatch_Init(Tcl_Interp* interp);
 
-static const char vcid_masktcl_h[] = "$Id$ $URL$";
-#endif // !MASKTCL_H_DEFINED
+static const char vcid_groovx_visx_masktcl_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_MASKTCL_H_UTC20050626084016_DEFINED

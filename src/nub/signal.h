@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SIGNAL_H_DEFINED
-#define SIGNAL_H_DEFINED
+#ifndef GROOVX_NUB_SIGNAL_H_UTC20050626084019_DEFINED
+#define GROOVX_NUB_SIGNAL_H_UTC20050626084019_DEFINED
 
 #include "nub/object.h"
 #include "nub/ref.h"
@@ -414,5 +414,5 @@ namespace Nub
 
 } // end namespace Nub
 
-static const char vcid_signal_h[] = "$Id$ $URL$";
-#endif // !SIGNAL_H_DEFINED
+static const char vcid_groovx_nub_signal_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_SIGNAL_H_UTC20050626084019_DEFINED

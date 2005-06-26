@@ -28,8 +28,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJPKG_CC_DEFINED
-#define OBJPKG_CC_DEFINED
+#ifndef GROOVX_TCL_OBJPKG_CC_UTC20050626084017_DEFINED
+#define GROOVX_TCL_OBJPKG_CC_UTC20050626084017_DEFINED
 
 #include "objpkg.h"
 
@@ -146,5 +146,5 @@ DOTRACE("Tcl::defGenericObjCmds");
             rutz::bind_first(getSizeof, caster), src_pos, flags );
 }
 
-static const char vcid_objpkg_cc[] = "$Id$ $URL$";
-#endif // !OBJPKG_CC_DEFINED
+static const char vcid_groovx_tcl_objpkg_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_OBJPKG_CC_UTC20050626084017_DEFINED

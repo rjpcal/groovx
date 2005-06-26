@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJMGR_H_DEFINED
-#define OBJMGR_H_DEFINED
+#ifndef GROOVX_NUB_OBJMGR_H_UTC20050626084018_DEFINED
+#define GROOVX_NUB_OBJMGR_H_UTC20050626084018_DEFINED
 
 #include "nub/ref.h"
 
@@ -58,5 +58,5 @@ namespace Nub
   }
 }
 
-static const char vcid_objmgr_h[] = "$Id$ $URL$";
-#endif // !OBJMGR_H_DEFINED
+static const char vcid_groovx_nub_objmgr_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_OBJMGR_H_UTC20050626084018_DEFINED

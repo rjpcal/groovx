@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef PNGPARSER_CC_DEFINED
-#define PNGPARSER_CC_DEFINED
+#ifndef GROOVX_MEDIA_PNGPARSER_CC_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_PNGPARSER_CC_UTC20050626084018_DEFINED
 
 #include "pngparser.h"
 
@@ -366,5 +366,5 @@ DOTRACE("media::save_png");
 
 #endif // HAVE_LIBPNG
 
-static const char vcid_pngparser_cc[] = "$Id$ $URL$";
-#endif // !PNGPARSER_CC_DEFINED
+static const char vcid_groovx_media_pngparser_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_PNGPARSER_CC_UTC20050626084018_DEFINED

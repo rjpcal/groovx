@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef PIPE_CC_DEFINED
-#define PIPE_CC_DEFINED
+#ifndef GROOVX_RUTZ_PIPE_CC_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_PIPE_CC_UTC20050626084019_DEFINED
 
 #include "rutz/pipe.h"
 
@@ -320,5 +320,5 @@ int rutz::bidir_pipe::exit_status() throw()
   return 0;
 }
 
-static const char vcid_pipe_cc[] = "$Id$ $URL$";
-#endif // !PIPE_CC_DEFINED
+static const char vcid_groovx_rutz_pipe_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_PIPE_CC_UTC20050626084019_DEFINED

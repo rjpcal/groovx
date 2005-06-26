@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXLINE_H_DEFINED
-#define GXLINE_H_DEFINED
+#ifndef GROOVX_GFX_GXLINE_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXLINE_H_UTC20050626084024_DEFINED
 
 #include "gfx/gbvec.h"
 #include "gfx/gxnode.h"
@@ -96,5 +96,5 @@ private:
   GxLine& operator=(const GxLine&);
 };
 
-static const char vcid_gxline_h[] = "$Id$ $URL$";
-#endif // !GXLINE_H_DEFINED
+static const char vcid_groovx_gfx_gxline_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXLINE_H_UTC20050626084024_DEFINED

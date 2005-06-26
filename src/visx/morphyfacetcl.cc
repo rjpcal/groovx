@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MORPHYFACETCL_CC_DEFINED
-#define MORPHYFACETCL_CC_DEFINED
+#ifndef GROOVX_VISX_MORPHYFACETCL_CC_UTC20050626084015_DEFINED
+#define GROOVX_VISX_MORPHYFACETCL_CC_UTC20050626084015_DEFINED
 
 #include "visx/morphyfacetcl.h"
 
@@ -54,5 +54,5 @@ DOTRACE("Morphyface_Init");
   PKG_RETURN;
 }
 
-static const char vcid_morphyfacetcl_cc[] = "$Id$ $URL$";
-#endif // !MORPHYFACETCL_CC_DEFINED
+static const char vcid_groovx_visx_morphyfacetcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_MORPHYFACETCL_CC_UTC20050626084015_DEFINED

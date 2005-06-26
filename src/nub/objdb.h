@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJDB_H_DEFINED
-#define OBJDB_H_DEFINED
+#ifndef GROOVX_NUB_OBJDB_H_UTC20050626084019_DEFINED
+#define GROOVX_NUB_OBJDB_H_UTC20050626084019_DEFINED
 
 #include "nub/ref.h"
 #include "nub/uid.h"
@@ -178,5 +178,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_objdb_h[] = "$Id$ $URL$";
-#endif // !OBJDB_H_DEFINED
+static const char vcid_groovx_nub_objdb_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_OBJDB_H_UTC20050626084019_DEFINED

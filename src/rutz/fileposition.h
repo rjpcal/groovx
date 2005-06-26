@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FILEPOSITION_H_DEFINED
-#define FILEPOSITION_H_DEFINED
+#ifndef GROOVX_RUTZ_FILEPOSITION_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_FILEPOSITION_H_UTC20050626084020_DEFINED
 
 namespace rutz
 {
@@ -50,5 +50,5 @@ namespace rutz
 /// This macro can be used to capture the current source filename and line-number.
 #define SRC_POS rutz::file_pos(__FILE__, __LINE__)
 
-static const char vcid_fileposition_h[] = "$Id$ $URL$";
-#endif // !FILEPOSITION_H_DEFINED
+static const char vcid_groovx_rutz_fileposition_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_FILEPOSITION_H_UTC20050626084020_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GABORARRAY_CC_DEFINED
-#define GABORARRAY_CC_DEFINED
+#ifndef GROOVX_VISX_GABORARRAY_CC_UTC20050626084015_DEFINED
+#define GROOVX_VISX_GABORARRAY_CC_UTC20050626084015_DEFINED
 
 #include "gaborarray.h"
 
@@ -669,5 +669,5 @@ DOTRACE("GaborArray::backgJitter");
     }
 }
 
-static const char vcid_gaborarray_cc[] = "$Id$ $URL$";
-#endif // !GABORARRAY_CC_DEFINED
+static const char vcid_groovx_visx_gaborarray_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_GABORARRAY_CC_UTC20050626084015_DEFINED

@@ -11,8 +11,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MATLABINTERFACE_CC_DEFINED
-#define MATLABINTERFACE_CC_DEFINED
+#ifndef GROOVX_PKGS_MTX_MATLABINTERFACE_CC_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_MTX_MATLABINTERFACE_CC_UTC20050626084022_DEFINED
 
 #include "matlabinterface.h"
 
@@ -79,5 +79,5 @@ DOTRACE("make_mxarray");
 
 #endif // HAVE_MATLAB
 
-static const char vcid_matlabinterface_cc[] = "$Id$ $URL$";
-#endif // !MATLABINTERFACE_CC_DEFINED
+static const char vcid_groovx_pkgs_mtx_matlabinterface_cc_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_MTX_MATLABINTERFACE_CC_UTC20050626084022_DEFINED

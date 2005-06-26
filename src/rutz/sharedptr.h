@@ -41,8 +41,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SHAREDPTR_H_DEFINED
-#define SHAREDPTR_H_DEFINED
+#ifndef GROOVX_RUTZ_SHAREDPTR_H_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_SHAREDPTR_H_UTC20050626084019_DEFINED
 
 #include "rutz/algo.h"
 
@@ -189,5 +189,5 @@ namespace rutz
   shared_ptr<T> make_shared(T* t) { return shared_ptr<T>(t); }
 }
 
-static const char vcid_sharedptr_h[] = "$Id$ $URL$";
-#endif // !SHAREDPTR_H_DEFINED
+static const char vcid_groovx_rutz_sharedptr_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_SHAREDPTR_H_UTC20050626084019_DEFINED

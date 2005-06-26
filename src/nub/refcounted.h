@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef REFCOUNTED_H_DEFINED
-#define REFCOUNTED_H_DEFINED
+#ifndef GROOVX_NUB_REFCOUNTED_H_UTC20050626084018_DEFINED
+#define GROOVX_NUB_REFCOUNTED_H_UTC20050626084018_DEFINED
 
 #include <cstdlib>
 
@@ -203,5 +203,5 @@ public:
   int dbg_WeakRefCount() const throw();
 };
 
-static const char vcid_refcounted_h[] = "$Id$ $URL$";
-#endif // !REFCOUNTED_H_DEFINED
+static const char vcid_groovx_nub_refcounted_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_REFCOUNTED_H_UTC20050626084018_DEFINED

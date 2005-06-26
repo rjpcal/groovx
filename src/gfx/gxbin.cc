@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXBIN_CC_DEFINED
-#define GXBIN_CC_DEFINED
+#ifndef GROOVX_GFX_GXBIN_CC_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXBIN_CC_UTC20050626084024_DEFINED
 
 #include "gxbin.h"
 
@@ -51,5 +51,5 @@ void GxBin::setChild(const Nub::Ref<GxNode>& child)
   this->sigNodeChanged.emit();
 }
 
-static const char vcid_gxbin_cc[] = "$Id$ $URL$";
-#endif // !GXBIN_CC_DEFINED
+static const char vcid_groovx_gfx_gxbin_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXBIN_CC_UTC20050626084024_DEFINED

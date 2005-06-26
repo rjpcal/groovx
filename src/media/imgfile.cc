@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IMGFILE_CC_DEFINED
-#define IMGFILE_CC_DEFINED
+#ifndef GROOVX_MEDIA_IMGFILE_CC_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_IMGFILE_CC_UTC20050626084018_DEFINED
 
 #include "imgfile.h"
 
@@ -173,5 +173,5 @@ void media::save_image(const char* filename,
   Nub::log(fstring("saved image file ", filename));
 }
 
-static const char vcid_imgfile_cc[] = "$Id$ $URL$";
-#endif // !IMGFILE_CC_DEFINED
+static const char vcid_groovx_media_imgfile_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_IMGFILE_CC_UTC20050626084018_DEFINED

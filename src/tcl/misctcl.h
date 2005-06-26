@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MISCTCL_H_DEFINED
-#define MISCTCL_H_DEFINED
+#ifndef GROOVX_TCL_MISCTCL_H_UTC20050626084018_DEFINED
+#define GROOVX_TCL_MISCTCL_H_UTC20050626084018_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Misc_Init(Tcl_Interp* interp);
 
-static const char vcid_misctcl_h[] = "$Id$ $URL$";
-#endif // !MISCTCL_H_DEFINED
+static const char vcid_groovx_tcl_misctcl_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_MISCTCL_H_UTC20050626084018_DEFINED

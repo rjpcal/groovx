@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BBOX_H_DEFINED
-#define BBOX_H_DEFINED
+#ifndef GROOVX_GFX_BBOX_H_UTC20050626084025_DEFINED
+#define GROOVX_GFX_BBOX_H_UTC20050626084025_DEFINED
 
 namespace geom
 {
@@ -91,5 +91,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_bbox_h[] = "$Id$ $URL$";
-#endif // !BBOX_H_DEFINED
+static const char vcid_groovx_gfx_bbox_h_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_BBOX_H_UTC20050626084025_DEFINED

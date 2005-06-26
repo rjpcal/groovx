@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLPROCWRAPPER_CC_DEFINED
-#define TCLPROCWRAPPER_CC_DEFINED
+#ifndef GROOVX_IO_TCLPROCWRAPPER_CC_UTC20050626084021_DEFINED
+#define GROOVX_IO_TCLPROCWRAPPER_CC_UTC20050626084021_DEFINED
 
 #include "io/tclprocwrapper.h"
 
@@ -120,5 +120,5 @@ fstring Tcl::ProcWrapper::fullSpec() const
   return result;
 }
 
-static const char vcid_tclprocwrapper_cc[] = "$Id$ $URL$";
-#endif // !TCLPROCWRAPPER_CC_DEFINED
+static const char vcid_groovx_io_tclprocwrapper_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_TCLPROCWRAPPER_CC_UTC20050626084021_DEFINED

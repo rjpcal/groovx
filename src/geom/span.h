@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SPAN_H_DEFINED
-#define SPAN_H_DEFINED
+#ifndef GROOVX_GEOM_SPAN_H_UTC20050626084023_DEFINED
+#define GROOVX_GEOM_SPAN_H_UTC20050626084023_DEFINED
 
 #include "rutz/algo.h"
 #include "rutz/error.h"
@@ -128,5 +128,5 @@ namespace geom
   };
 }
 
-static const char vcid_span_h[] = "$Id$ $URL$";
-#endif // !SPAN_H_DEFINED
+static const char vcid_groovx_geom_span_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GEOM_SPAN_H_UTC20050626084023_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IMGFILE_H_DEFINED
-#define IMGFILE_H_DEFINED
+#ifndef GROOVX_MEDIA_IMGFILE_H_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_IMGFILE_H_UTC20050626084018_DEFINED
 
 namespace media
 {
@@ -44,5 +44,5 @@ namespace media
   void save_image(const char* filename, const media::bmap_data& data);
 }
 
-static const char vcid_imgfile_h[] = "$Id$ $URL$";
-#endif // !IMGFILE_H_DEFINED
+static const char vcid_groovx_media_imgfile_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_IMGFILE_H_UTC20050626084018_DEFINED

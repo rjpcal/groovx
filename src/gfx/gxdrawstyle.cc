@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXDRAWSTYLE_CC_DEFINED
-#define GXDRAWSTYLE_CC_DEFINED
+#ifndef GROOVX_GFX_GXDRAWSTYLE_CC_UTC20050626084025_DEFINED
+#define GROOVX_GFX_GXDRAWSTYLE_CC_UTC20050626084025_DEFINED
 
 #include "gfx/gxdrawstyle.h"
 
@@ -107,5 +107,5 @@ void GxDrawStyle::draw(Gfx::Canvas& canvas) const
   canvas.setLineStipple(static_cast<unsigned short>(linePattern));
 }
 
-static const char vcid_gxdrawstyle_cc[] = "$Id$ $URL$";
-#endif // !GXDRAWSTYLE_CC_DEFINED
+static const char vcid_groovx_gfx_gxdrawstyle_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXDRAWSTYLE_CC_UTC20050626084025_DEFINED

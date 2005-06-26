@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FIXPTTCL_CC_DEFINED
-#define FIXPTTCL_CC_DEFINED
+#ifndef GROOVX_VISX_FIXPTTCL_CC_UTC20050626084015_DEFINED
+#define GROOVX_VISX_FIXPTTCL_CC_UTC20050626084015_DEFINED
 
 #include "visx/fixpttcl.h"
 
@@ -54,5 +54,5 @@ DOTRACE("Fixpt_Init");
   PKG_RETURN;
 }
 
-static const char vcid_fixpttcl_cc[] = "$Id$ $URL$";
-#endif // !FIXPTTCL_CC_DEFINED
+static const char vcid_groovx_visx_fixpttcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_FIXPTTCL_CC_UTC20050626084015_DEFINED

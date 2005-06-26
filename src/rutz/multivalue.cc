@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MULTIVALUE_CC_DEFINED
-#define MULTIVALUE_CC_DEFINED
+#ifndef GROOVX_RUTZ_MULTIVALUE_CC_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_MULTIVALUE_CC_UTC20050626084019_DEFINED
 
 #include "rutz/multivalue.h"
 
@@ -100,5 +100,5 @@ DOTRACE("rutz::multi_value<T>::scan_from");
 template class rutz::multi_value<int>;
 template class rutz::multi_value<double>;
 
-static const char vcid_multivalue_cc[] = "$Id$ $URL$";
-#endif // !MULTIVALUE_CC_DEFINED
+static const char vcid_groovx_rutz_multivalue_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_MULTIVALUE_CC_UTC20050626084019_DEFINED

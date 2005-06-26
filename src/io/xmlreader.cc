@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef XMLREADER_CC_DEFINED
-#define XMLREADER_CC_DEFINED
+#ifndef GROOVX_IO_XMLREADER_CC_UTC20050626084021_DEFINED
+#define GROOVX_IO_XMLREADER_CC_UTC20050626084021_DEFINED
 
 #include "io/xmlreader.h"
 
@@ -599,5 +599,5 @@ DOTRACE("IO::xmlDebug");
   root.trace(std::cout, 0, "root");
 }
 
-static const char vcid_xmlreader_cc[] = "$Id$ $URL$";
-#endif // !XMLREADER_CC_DEFINED
+static const char vcid_groovx_io_xmlreader_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_XMLREADER_CC_UTC20050626084021_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXTEXT_CC_DEFINED
-#define GXTEXT_CC_DEFINED
+#ifndef GROOVX_GFX_GXTEXT_CC_UTC20050626084025_DEFINED
+#define GROOVX_GFX_GXTEXT_CC_UTC20050626084025_DEFINED
 
 #include "gxtext.h"
 
@@ -207,5 +207,5 @@ DOTRACE("GxText::grRender");
   itsFont->drawText(itsText.c_str(), canvas);
 }
 
-static const char vcid_gxtext_cc[] = "$Id$ $URL$";
-#endif // !GXTEXT_CC_DEFINED
+static const char vcid_groovx_gfx_gxtext_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXTEXT_CC_UTC20050626084025_DEFINED

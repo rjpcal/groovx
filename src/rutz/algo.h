@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ALGO_H_DEFINED
-#define ALGO_H_DEFINED
+#ifndef GROOVX_RUTZ_ALGO_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_ALGO_H_UTC20050626084020_DEFINED
 
 namespace rutz
 {
@@ -70,5 +70,5 @@ namespace rutz
   }
 }
 
-static const char vcid_algo_h[] = "$Id$ $URL$";
-#endif // !ALGO_H_DEFINED
+static const char vcid_groovx_rutz_algo_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_ALGO_H_UTC20050626084020_DEFINED

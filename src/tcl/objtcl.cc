@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJTCL_CC_DEFINED
-#define OBJTCL_CC_DEFINED
+#ifndef GROOVX_TCL_OBJTCL_CC_UTC20050626084018_DEFINED
+#define GROOVX_TCL_OBJTCL_CC_UTC20050626084018_DEFINED
 
 #include "tcl/objtcl.h"
 
@@ -161,5 +161,5 @@ DOTRACE("Obj_Init");
   PKG_RETURN;
 }
 
-static const char vcid_objtcl_cc[] = "$Id$ $URL$";
-#endif // !OBJTCL_CC_DEFINED
+static const char vcid_groovx_tcl_objtcl_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_OBJTCL_CC_UTC20050626084018_DEFINED

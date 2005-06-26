@@ -30,13 +30,13 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FACETCL_H_DEFINED
-#define FACETCL_H_DEFINED
+#ifndef GROOVX_VISX_FACETCL_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_FACETCL_H_UTC20050626084015_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Face_Init(Tcl_Interp* interp);
 extern "C" int Cloneface_Init(Tcl_Interp* interp);
 
-static const char vcid_facetcl_h[] = "$Id$ $URL$";
-#endif // !FACETCL_H_DEFINED
+static const char vcid_groovx_visx_facetcl_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_FACETCL_H_UTC20050626084015_DEFINED

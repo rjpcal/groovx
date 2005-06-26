@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef HOOKTCL_H_DEFINED
-#define HOOKTCL_H_DEFINED
+#ifndef GROOVX_VISX_HOOKTCL_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_HOOKTCL_H_UTC20050626084016_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Hook_Init(Tcl_Interp* interp);
 
-static const char vcid_hooktcl_h[] = "$Id$ $URL$";
-#endif // !HOOKTCL_H_DEFINED
+static const char vcid_groovx_visx_hooktcl_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_HOOKTCL_H_UTC20050626084016_DEFINED

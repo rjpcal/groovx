@@ -28,8 +28,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FACE_CC_DEFINED
-#define FACE_CC_DEFINED
+#ifndef GROOVX_VISX_FACE_CC_UTC20050626084016_DEFINED
+#define GROOVX_VISX_FACE_CC_UTC20050626084016_DEFINED
 
 #include "visx/face.h"
 
@@ -357,5 +357,5 @@ DOTRACE("Face::getVertOffset");
   return 0.0;
 }
 
-static const char vcid_face_cc[] = "$Id$ $URL$";
-#endif // !FACE_CC_DEFINED
+static const char vcid_groovx_visx_face_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_FACE_CC_UTC20050626084016_DEFINED

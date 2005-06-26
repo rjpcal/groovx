@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SERIALPORT_H_DEFINED
-#define SERIALPORT_H_DEFINED
+#ifndef GROOVX_RUTZ_SERIALPORT_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_SERIALPORT_H_UTC20050626084020_DEFINED
 
 #include <iosfwd>
 
@@ -71,5 +71,5 @@ private:
   int                m_exit_status;
 };
 
-static const char vcid_serialport_h[] = "$Id$ $URL$";
-#endif // !SERIALPORT_H_DEFINED
+static const char vcid_groovx_rutz_serialport_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_SERIALPORT_H_UTC20050626084020_DEFINED

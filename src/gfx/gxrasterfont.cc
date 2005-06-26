@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXRASTERFONT_CC_DEFINED
-#define GXRASTERFONT_CC_DEFINED
+#ifndef GROOVX_GFX_GXRASTERFONT_CC_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXRASTERFONT_CC_UTC20050626084023_DEFINED
 
 #include "gxrasterfont.h"
 
@@ -68,5 +68,5 @@ DOTRACE("GxRasterFont::make[agl]");
 #  error no GL_PLATFORM macro defined
 #endif
 
-static const char vcid_gxrasterfont_cc[] = "$Id$ $URL$";
-#endif // !GXRASTERFONT_CC_DEFINED
+static const char vcid_groovx_gfx_gxrasterfont_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXRASTERFONT_CC_UTC20050626084023_DEFINED

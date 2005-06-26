@@ -391,4 +391,4 @@ DOTRACE("main");
   return 1;
 }
 
-static const char vcid_grshAppInit_cc[] = "$URL$ $Id$";
+static const char vcid_groovx_groovx_groovx_cc_utc20050626084019[] = "$Id$ $HeadURL$";

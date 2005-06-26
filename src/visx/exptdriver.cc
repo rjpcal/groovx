@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef EXPTDRIVER_CC_DEFINED
-#define EXPTDRIVER_CC_DEFINED
+#ifndef GROOVX_VISX_EXPTDRIVER_CC_UTC20050626084017_DEFINED
+#define GROOVX_VISX_EXPTDRIVER_CC_UTC20050626084017_DEFINED
 
 #include "visx/exptdriver.h"
 
@@ -500,5 +500,5 @@ DOTRACE("ExptDriver::storeData");
   rep->addLogInfo("Experiment saved.");
 }
 
-static const char vcid_exptdriver_cc[] = "$Id$ $URL$";
-#endif // !EXPTDRIVER_CC_DEFINED
+static const char vcid_groovx_visx_exptdriver_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_EXPTDRIVER_CC_UTC20050626084017_DEFINED

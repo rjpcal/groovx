@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef KBDRESPONSEHDLR_H_DEFINED
-#define KBDRESPONSEHDLR_H_DEFINED
+#ifndef GROOVX_VISX_KBDRESPONSEHDLR_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_KBDRESPONSEHDLR_H_UTC20050626084015_DEFINED
 
 #include "visx/eventresponsehdlr.h"
 
@@ -47,5 +47,5 @@ public:
   virtual ~KbdResponseHdlr() throw();
 };
 
-static const char vcid_kbdresponsehdlr_h[] = "$Id$ $URL$";
-#endif // !KBDRESPONSEHDLR_H_DEFINED
+static const char vcid_groovx_visx_kbdresponsehdlr_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_KBDRESPONSEHDLR_H_UTC20050626084015_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef LOGTCL_CC_DEFINED
-#define LOGTCL_CC_DEFINED
+#ifndef GROOVX_TCL_LOGTCL_CC_UTC20050626084017_DEFINED
+#define GROOVX_TCL_LOGTCL_CC_UTC20050626084017_DEFINED
 
 #include "tcl/logtcl.h"
 
@@ -62,5 +62,5 @@ DOTRACE("Log_Init");
   PKG_RETURN;
 }
 
-static const char vcid_logtcl_cc[] = "$Id$ $URL$";
-#endif // !LOGTCL_CC_DEFINED
+static const char vcid_groovx_tcl_logtcl_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_LOGTCL_CC_UTC20050626084017_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLPKG_H_DEFINED
-#define TCLPKG_H_DEFINED
+#ifndef GROOVX_TCL_TCLPKG_H_UTC20050626084017_DEFINED
+#define GROOVX_TCL_TCLPKG_H_UTC20050626084017_DEFINED
 
 #include "tcl/tclfunctor.h"
 
@@ -362,5 +362,5 @@ return PKG_STATUS;
 }
 
 
-static const char vcid_tclpkg_h[] = "$Id$ $URL$";
-#endif // !TCLPKG_H_DEFINED
+static const char vcid_groovx_tcl_tclpkg_h_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLPKG_H_UTC20050626084017_DEFINED

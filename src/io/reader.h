@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef READER_H_DEFINED
-#define READER_H_DEFINED
+#ifndef GROOVX_IO_READER_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_READER_H_UTC20050626084021_DEFINED
 
 #include "io/io.h"
 
@@ -180,5 +180,5 @@ protected:
   void defaultReadRawData(const rutz::fstring& name, rutz::byte_array& data);
 };
 
-static const char vcid_reader_h[] = "$Id$ $URL$";
-#endif // !READER_H_DEFINED
+static const char vcid_groovx_io_reader_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_READER_H_UTC20050626084021_DEFINED

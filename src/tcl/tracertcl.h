@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TRACERTCL_H_DEFINED
-#define TRACERTCL_H_DEFINED
+#ifndef GROOVX_TCL_TRACERTCL_H_UTC20050626084018_DEFINED
+#define GROOVX_TCL_TRACERTCL_H_UTC20050626084018_DEFINED
 
 namespace rutz
 {
@@ -45,5 +45,5 @@ namespace Tcl
   void defTracing(Tcl::Pkg* pkg, rutz::tracer& tracer);
 }
 
-static const char vcid_tracertcl_h[] = "$Id$ $URL$";
-#endif // !TRACERTCL_H_DEFINED
+static const char vcid_groovx_tcl_tracertcl_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TRACERTCL_H_UTC20050626084018_DEFINED

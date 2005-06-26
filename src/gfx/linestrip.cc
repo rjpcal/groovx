@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef LINESTRIP_CC_DEFINED
-#define LINESTRIP_CC_DEFINED
+#ifndef GROOVX_GFX_LINESTRIP_CC_UTC20050626084024_DEFINED
+#define GROOVX_GFX_LINESTRIP_CC_UTC20050626084024_DEFINED
 
 #include "linestrip.h"
 
@@ -217,5 +217,5 @@ DOTRACE("Gfx::LineStrip::drawJoinedLineStrip");
   canvas->end();
 }
 
-static const char vcid_linestrip_cc[] = "$Id$ $URL$";
-#endif // !LINESTRIP_CC_DEFINED
+static const char vcid_groovx_gfx_linestrip_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_LINESTRIP_CC_UTC20050626084024_DEFINED

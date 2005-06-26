@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GLXOPTS_H_DEFINED
-#define GLXOPTS_H_DEFINED
+#ifndef GROOVX_GFX_GLXOPTS_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GLXOPTS_H_UTC20050626084024_DEFINED
 
 /// Setup options for controlling the OpenGL-windowsystem interface.
 struct GlxOpts
@@ -62,5 +62,5 @@ struct GlxOpts
   bool transparent;      ///< whether to request transparency
 };
 
-static const char vcid_glxopts_h[] = "$Id$ $URL$";
-#endif // !GLXOPTS_H_DEFINED
+static const char vcid_groovx_gfx_glxopts_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GLXOPTS_H_UTC20050626084024_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SYSTEM_CC_DEFINED
-#define SYSTEM_CC_DEFINED
+#ifndef GROOVX_RUTZ_UNIXCALL_CC_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_UNIXCALL_CC_UTC20050626084019_DEFINED
 
 #include "unixcall.h"
 
@@ -129,5 +129,5 @@ DOTRACE("rutz::unixcall::getcwd");
   return rutz::fstring(&buf[0]);
 }
 
-static const char vcid_system_cc[] = "$Id$ $URL$";
-#endif // !SYSTEM_CC_DEFINED
+static const char vcid_groovx_rutz_unixcall_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_UNIXCALL_CC_UTC20050626084019_DEFINED

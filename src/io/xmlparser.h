@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef XMLPARSER_H_DEFINED
-#define XMLPARSER_H_DEFINED
+#ifndef GROOVX_IO_XMLPARSER_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_XMLPARSER_H_UTC20050626084021_DEFINED
 
 #include <expat.h>
 #include <iosfwd>
@@ -65,5 +65,5 @@ private:
   const int itsBufSize;
 };
 
-static const char vcid_xmlparser_h[] = "$Id$ $URL$";
-#endif // !XMLPARSER_H_DEFINED
+static const char vcid_groovx_io_xmlparser_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_XMLPARSER_H_UTC20050626084021_DEFINED

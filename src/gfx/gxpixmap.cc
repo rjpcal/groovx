@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXPIXMAP_CC_DEFINED
-#define GXPIXMAP_CC_DEFINED
+#ifndef GROOVX_GFX_GXPIXMAP_CC_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXPIXMAP_CC_UTC20050626084023_DEFINED
 
 #include "gxpixmap.h"
 
@@ -542,5 +542,5 @@ DOTRACE("GxPixmap::scramble");
   this->sigNodeChanged.emit();
 }
 
-static const char vcid_gxpixmap_cc[] = "$Id$ $URL$";
-#endif // !GXPIXMAP_CC_DEFINED
+static const char vcid_groovx_gfx_gxpixmap_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXPIXMAP_CC_UTC20050626084023_DEFINED

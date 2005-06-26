@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXRASTERFONT_H_DEFINED
-#define GXRASTERFONT_H_DEFINED
+#ifndef GROOVX_GFX_GXRASTERFONT_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXRASTERFONT_H_UTC20050626084023_DEFINED
 
 #include "gfx/gxfont.h"
 
@@ -61,5 +61,5 @@ public:
   virtual int rasterHeight() const = 0;
 };
 
-static const char vcid_gxrasterfont_h[] = "$Id$ $URL$";
-#endif // !GXRASTERFONT_H_DEFINED
+static const char vcid_groovx_gfx_gxrasterfont_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXRASTERFONT_H_UTC20050626084023_DEFINED

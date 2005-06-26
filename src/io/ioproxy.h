@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IOPROXY_H_DEFINED
-#define IOPROXY_H_DEFINED
+#ifndef GROOVX_IO_IOPROXY_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_IOPROXY_H_UTC20050626084021_DEFINED
 
 #include "io/io.h"
 
@@ -132,5 +132,5 @@ inline Nub::Ref<const IoObject> makeConstProxy(const C* ref)
 
 } // end namespace IO
 
-static const char vcid_ioproxy_h[] = "$Id$ $URL$";
-#endif // !IOPROXY_H_DEFINED
+static const char vcid_groovx_io_ioproxy_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_IOPROXY_H_UTC20050626084021_DEFINED

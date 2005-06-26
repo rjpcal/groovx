@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MATHSPECIAL_H_DEFINED
-#define MATHSPECIAL_H_DEFINED
+#ifndef GROOVX_PKGS_MTX_MATHSPECIAL_H_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_MTX_MATHSPECIAL_H_UTC20050626084022_DEFINED
 
 #include <cmath>
 
@@ -89,5 +89,5 @@ namespace dash
   }
 }
 
-static const char vcid_mathspecial_h[] = "$Id$ $URL$";
-#endif // !MATHSPECIAL_H_DEFINED
+static const char vcid_groovx_pkgs_mtx_mathspecial_h_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_MTX_MATHSPECIAL_H_UTC20050626084022_DEFINED

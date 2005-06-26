@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJPKG_H_DEFINED
-#define OBJPKG_H_DEFINED
+#ifndef GROOVX_TCL_OBJPKG_H_UTC20050626084018_DEFINED
+#define GROOVX_TCL_OBJPKG_H_UTC20050626084018_DEFINED
 
 #include "nub/objfactory.h"
 
@@ -114,5 +114,5 @@ namespace Tcl
   }
 }
 
-static const char vcid_objpkg_h[] = "$Id$ $URL$";
-#endif // !OBJPKG_H_DEFINED
+static const char vcid_groovx_tcl_objpkg_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_OBJPKG_H_UTC20050626084018_DEFINED

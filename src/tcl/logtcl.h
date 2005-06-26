@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef LOGTCL_H_DEFINED
-#define LOGTCL_H_DEFINED
+#ifndef GROOVX_TCL_LOGTCL_H_UTC20050626084017_DEFINED
+#define GROOVX_TCL_LOGTCL_H_UTC20050626084017_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Log_Init(Tcl_Interp* interp);
 
-static const char vcid_logtcl_h[] = "$Id$ $URL$";
-#endif // !LOGTCL_H_DEFINED
+static const char vcid_groovx_tcl_logtcl_h_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_LOGTCL_H_UTC20050626084017_DEFINED

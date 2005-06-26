@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef HOOKTCL_CC_DEFINED
-#define HOOKTCL_CC_DEFINED
+#ifndef GROOVX_VISX_HOOKTCL_CC_UTC20050626084015_DEFINED
+#define GROOVX_VISX_HOOKTCL_CC_UTC20050626084015_DEFINED
 
 #include "visx/hooktcl.h"
 
@@ -395,5 +395,5 @@ int Hook_Init(Tcl_Interp* interp)
   PKG_RETURN;
 }
 
-static const char vcid_hooktcl_cc[] = "$Id$ $URL$";
-#endif // !HOOKTCL_CC_DEFINED
+static const char vcid_groovx_visx_hooktcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_HOOKTCL_CC_UTC20050626084015_DEFINED

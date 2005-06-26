@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ERROR_CC_DEFINED
-#define ERROR_CC_DEFINED
+#ifndef GROOVX_RUTZ_ERROR_CC_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_ERROR_CC_UTC20050626084020_DEFINED
 
 #include "rutz/error.h"
 
@@ -130,5 +130,5 @@ const rutz::backtrace& rutz::error::last_backtrace()
   return *last;
 }
 
-static const char vcid_error_cc[] = "$Id$ $URL$";
-#endif // !ERROR_CC_DEFINED
+static const char vcid_groovx_rutz_error_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_ERROR_CC_UTC20050626084020_DEFINED

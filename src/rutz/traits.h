@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TRAITS_H_DEFINED
-#define TRAITS_H_DEFINED
+#ifndef GROOVX_RUTZ_TRAITS_H_UTC20050626084021_DEFINED
+#define GROOVX_RUTZ_TRAITS_H_UTC20050626084021_DEFINED
 
 namespace rutz
 {
@@ -105,5 +105,5 @@ namespace rutz
   };
 }
 
-static const char vcid_traits_h[] = "$Id$ $URL$";
-#endif // !TRAITS_H_DEFINED
+static const char vcid_groovx_rutz_traits_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_TRAITS_H_UTC20050626084021_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MAPPEDFILE_H_DEFINED
-#define MAPPEDFILE_H_DEFINED
+#ifndef GROOVX_RUTZ_MAPPEDFILE_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_MAPPEDFILE_H_UTC20050626084020_DEFINED
 
 #include <sys/stat.h>  // for stat()
 
@@ -59,5 +59,5 @@ namespace rutz
   };
 }
 
-static const char vcid_mappedfile_h[] = "$Id$ $URL$";
-#endif // !MAPPEDFILE_H_DEFINED
+static const char vcid_groovx_rutz_mappedfile_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_MAPPEDFILE_H_UTC20050626084020_DEFINED

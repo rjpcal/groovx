@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GBVEC_CC_DEFINED
-#define GBVEC_CC_DEFINED
+#ifndef GROOVX_GFX_GBVEC_CC_UTC20050626084025_DEFINED
+#define GROOVX_GFX_GBVEC_CC_UTC20050626084025_DEFINED
 
 #include "gfx/gbvec.h"
 
@@ -79,5 +79,5 @@ template class GbVec2<double>;
 template class GbVec3<int>;
 template class GbVec3<double>;
 
-static const char vcid_gbvec_cc[] = "$Id$ $URL$";
-#endif // !GBVEC_CC_DEFINED
+static const char vcid_groovx_gfx_gbvec_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GBVEC_CC_UTC20050626084025_DEFINED

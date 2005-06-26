@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXLINE_CC_DEFINED
-#define GXLINE_CC_DEFINED
+#ifndef GROOVX_GFX_GXLINE_CC_UTC20050626084025_DEFINED
+#define GROOVX_GFX_GXLINE_CC_UTC20050626084025_DEFINED
 
 #include "gxline.h"
 
@@ -142,5 +142,5 @@ DOTRACE("GxLine::draw");
   canvas.vertex3(stop.vec());
 }
 
-static const char vcid_gxline_cc[] = "$Id$ $URL$";
-#endif // !GXLINE_CC_DEFINED
+static const char vcid_groovx_gfx_gxline_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXLINE_CC_UTC20050626084025_DEFINED

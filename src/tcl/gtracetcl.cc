@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GTRACE_CC_DEFINED
-#define GTRACE_CC_DEFINED
+#ifndef GROOVX_TCL_GTRACETCL_CC_UTC20050626084018_DEFINED
+#define GROOVX_TCL_GTRACETCL_CC_UTC20050626084018_DEFINED
 
 #include "tcl/gtracetcl.h"
 
@@ -108,5 +108,5 @@ DOTRACE("Prof_Init");
   PKG_RETURN;
 }
 
-static const char vcid_gtrace_cc[] = "$Id$ $URL$";
-#endif // !GTRACE_CC_DEFINED
+static const char vcid_groovx_tcl_gtracetcl_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_GTRACETCL_CC_UTC20050626084018_DEFINED

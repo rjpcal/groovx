@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TOGLETTCL_CC_DEFINED
-#define TOGLETTCL_CC_DEFINED
+#ifndef GROOVX_GFX_TOGLETTCL_CC_UTC20050626084023_DEFINED
+#define GROOVX_GFX_TOGLETTCL_CC_UTC20050626084023_DEFINED
 
 #include "gfx/toglettcl.h"
 
@@ -132,5 +132,5 @@ DOTRACE("Toglet_Init");
   PKG_RETURN;
 }
 
-static const char vcid_toglettcl_cc[] = "$Id$ $URL$";
-#endif // !TOGLETTCL_CC_DEFINED
+static const char vcid_groovx_gfx_toglettcl_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_TOGLETTCL_CC_UTC20050626084023_DEFINED

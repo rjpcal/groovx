@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef AGLWRAPPER_H_DEFINED
-#define AGLWRAPPER_H_DEFINED
+#ifndef GROOVX_GFX_AGLWRAPPER_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_AGLWRAPPER_H_UTC20050626084024_DEFINED
 
 #include "gfx/glwindowinterface.h"
 
@@ -394,5 +394,5 @@ DOTRACE("AglWrapper::makeTkRealWindow");
   return (Window) 0;
 }
 
-static const char vcid_aglwrapper_h[] = "$Id$ $URL$";
-#endif // !AGLWRAPPER_H_DEFINED
+static const char vcid_groovx_gfx_aglwrapper_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_AGLWRAPPER_H_UTC20050626084024_DEFINED

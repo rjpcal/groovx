@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef VALUE_H_DEFINED
-#define VALUE_H_DEFINED
+#ifndef GROOVX_RUTZ_VALUE_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_VALUE_H_UTC20050626084020_DEFINED
 
 #include <iosfwd>
 
@@ -103,5 +103,5 @@ inline std::istream& operator>>(std::istream& is,
   return is;
 }
 
-static const char vcid_value_h[] = "$Id$ $URL$";
-#endif // !VALUE_H_DEFINED
+static const char vcid_groovx_rutz_value_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_VALUE_H_UTC20050626084020_DEFINED

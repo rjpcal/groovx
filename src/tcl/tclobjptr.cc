@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLOBJPTR_CC_DEFINED
-#define TCLOBJPTR_CC_DEFINED
+#ifndef GROOVX_TCL_TCLOBJPTR_CC_UTC20050626084017_DEFINED
+#define GROOVX_TCL_TCLOBJPTR_CC_UTC20050626084017_DEFINED
 
 #include "tcl/tclobjptr.h"
 
@@ -76,5 +76,5 @@ void Tcl::ObjPtr::decrRef(Tcl_Obj* obj)
   Tcl_DecrRefCount(obj);
 }
 
-static const char vcid_tclobjptr_cc[] = "$Id$ $URL$";
-#endif // !TCLOBJPTR_CC_DEFINED
+static const char vcid_groovx_tcl_tclobjptr_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLOBJPTR_CC_UTC20050626084017_DEFINED

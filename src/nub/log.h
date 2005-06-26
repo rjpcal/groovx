@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef LOG_H_DEFINED
-#define LOG_H_DEFINED
+#ifndef GROOVX_NUB_LOG_H_UTC20050626084019_DEFINED
+#define GROOVX_NUB_LOG_H_UTC20050626084019_DEFINED
 
 namespace rutz
 {
@@ -66,5 +66,5 @@ namespace Nub
   void log(const rutz::fstring& msg);
 }
 
-static const char vcid_log_h[] = "$Id$ $URL$";
-#endif // !LOG_H_DEFINED
+static const char vcid_groovx_nub_log_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_LOG_H_UTC20050626084019_DEFINED

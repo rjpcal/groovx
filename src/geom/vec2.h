@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef VEC2_H_DEFINED
-#define VEC2_H_DEFINED
+#ifndef GROOVX_GEOM_VEC2_H_UTC20050626084023_DEFINED
+#define GROOVX_GEOM_VEC2_H_UTC20050626084023_DEFINED
 
 #include "geom/geom.h"
 
@@ -234,5 +234,5 @@ namespace geom
 
 } // end namespace Gfx
 
-static const char vcid_point_h[] = "$Id$ $URL$";
-#endif // !VEC2_H_DEFINED
+static const char vcid_groovx_geom_vec2_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GEOM_VEC2_H_UTC20050626084023_DEFINED

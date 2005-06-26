@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ITER_CC_DEFINED
-#define ITER_CC_DEFINED
+#ifndef GROOVX_RUTZ_ITER_CC_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_ITER_CC_UTC20050626084020_DEFINED
 
 #include "rutz/iter.h"
 
 const rutz::iter_end_t rutz::iter_end = {};
 
-static const char vcid_iter_cc[] = "$Id$ $URL$";
-#endif // !ITER_CC_DEFINED
+static const char vcid_groovx_rutz_iter_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_ITER_CC_UTC20050626084020_DEFINED

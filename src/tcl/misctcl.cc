@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MISCTCL_CC_DEFINED
-#define MISCTCL_CC_DEFINED
+#ifndef GROOVX_TCL_MISCTCL_CC_UTC20050626084017_DEFINED
+#define GROOVX_TCL_MISCTCL_CC_UTC20050626084017_DEFINED
 
 #include "tcl/misctcl.h"
 
@@ -156,5 +156,5 @@ DOTRACE("Misc_Init");
   PKG_RETURN;
 }
 
-static const char vcid_misctcl_cc[] = "$Id$ $URL$";
-#endif // !MISCTCL_CC_DEFINED
+static const char vcid_groovx_tcl_misctcl_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_MISCTCL_CC_UTC20050626084017_DEFINED

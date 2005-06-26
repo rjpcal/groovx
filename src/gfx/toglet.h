@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TOGLET_H_DEFINED
-#define TOGLET_H_DEFINED
+#ifndef GROOVX_GFX_TOGLET_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_TOGLET_H_UTC20050626084023_DEFINED
 
 #include "tk/tkwidget.h"
 
@@ -122,5 +122,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_toglet_h[] = "$Id$ $URL$";
-#endif // !TOGLET_H_DEFINED
+static const char vcid_groovx_gfx_toglet_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_TOGLET_H_UTC20050626084023_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef QUICKTIMESOUND_H_DEFINED
-#define QUICKTIMESOUND_H_DEFINED
+#ifndef GROOVX_MEDIA_QUICKTIMESOUND_H_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_QUICKTIMESOUND_H_UTC20050626084018_DEFINED
 
 #include "media/soundrep.h"
 
@@ -156,5 +156,5 @@ DOTRACE("quicktime_sound_rep::close_sound");
     }
 }
 
-static const char vcid_quicktimesound_h[] = "$Id$ $URL$";
-#endif // !QUICKTIMESOUND_H_DEFINED
+static const char vcid_groovx_media_quicktimesound_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_QUICKTIMESOUND_H_UTC20050626084018_DEFINED

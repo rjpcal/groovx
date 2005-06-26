@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TIMER_H_DEFINED
-#define TIMER_H_DEFINED
+#ifndef GROOVX_NUB_TIMER_H_UTC20050626084019_DEFINED
+#define GROOVX_NUB_TIMER_H_UTC20050626084019_DEFINED
 
 #include "nub/scheduler.h"
 #include "nub/signal.h"
@@ -83,5 +83,5 @@ private:
   mutable rutz::stopwatch itsStopWatch;
 };
 
-static const char vcid_timer_h[] = "$Id$ $URL$";
-#endif // !TIMER_H_DEFINED
+static const char vcid_groovx_nub_timer_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_TIMER_H_UTC20050626084019_DEFINED

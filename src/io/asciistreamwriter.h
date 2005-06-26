@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ASCIISTREAMWRITER_H_DEFINED
-#define ASCIISTREAMWRITER_H_DEFINED
+#ifndef GROOVX_IO_ASCIISTREAMWRITER_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_ASCIISTREAMWRITER_H_UTC20050626084021_DEFINED
 
 #include "rutz/sharedptr.h"
 
@@ -53,5 +53,5 @@ namespace IO
   rutz::shared_ptr<IO::Writer> makeAsciiStreamWriter(const char* filename);
 }
 
-static const char vcid_asciistreamwriter_h[] = "$Id$ $URL$";
-#endif // !ASCIISTREAMWRITER_H_DEFINED
+static const char vcid_groovx_io_asciistreamwriter_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_ASCIISTREAMWRITER_H_UTC20050626084021_DEFINED

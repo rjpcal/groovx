@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXEMPTYNODE_CC_DEFINED
-#define GXEMPTYNODE_CC_DEFINED
+#ifndef GROOVX_GFX_GXEMPTYNODE_CC_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXEMPTYNODE_CC_UTC20050626084023_DEFINED
 
 #include "gxemptynode.h"
 
@@ -59,5 +59,5 @@ GxEmptyNode* GxEmptyNode::make()
   return p;
 }
 
-static const char vcid_gxemptynode_cc[] = "$Id$ $URL$";
-#endif // !GXEMPTYNODE_CC_DEFINED
+static const char vcid_groovx_gfx_gxemptynode_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXEMPTYNODE_CC_UTC20050626084023_DEFINED

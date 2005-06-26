@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef VEC2_CC_DEFINED
-#define VEC2_CC_DEFINED
+#ifndef GROOVX_GEOM_VEC2_CC_UTC20050626084023_DEFINED
+#define GROOVX_GEOM_VEC2_CC_UTC20050626084023_DEFINED
 
-static const char vcid_vec2_cc[] = "$Id$ $URL$";
-#endif // !VEC2_CC_DEFINED
+static const char vcid_groovx_geom_vec2_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GEOM_VEC2_CC_UTC20050626084023_DEFINED

@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MTXTCL_H_DEFINED
-#define MTXTCL_H_DEFINED
+#ifndef GROOVX_PKGS_MTX_MTXTCL_H_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_MTX_MTXTCL_H_UTC20050626084022_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Mtx_Init(Tcl_Interp* interp);
 
-static const char vcid_mtxtcl_h[] = "$Id$ $URL$";
-#endif // !MTXTCL_H_DEFINED
+static const char vcid_groovx_pkgs_mtx_mtxtcl_h_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_MTX_MTXTCL_H_UTC20050626084022_DEFINED

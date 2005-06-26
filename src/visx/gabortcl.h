@@ -30,13 +30,13 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GABORTCL_H_DEFINED
-#define GABORTCL_H_DEFINED
+#ifndef GROOVX_VISX_GABORTCL_H_UTC20050626084017_DEFINED
+#define GROOVX_VISX_GABORTCL_H_UTC20050626084017_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Gabor_Init(Tcl_Interp* interp);
 extern "C" int Gaborarray_Init(Tcl_Interp* interp);
 
-static const char vcid_gabortcl_h[] = "$Id$ $URL$";
-#endif // !GABORTCL_H_DEFINED
+static const char vcid_groovx_visx_gabortcl_h_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_GABORTCL_H_UTC20050626084017_DEFINED

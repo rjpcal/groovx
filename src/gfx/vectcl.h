@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef VECTCL_H_DEFINED
-#define VECTCL_H_DEFINED
+#ifndef GROOVX_GFX_VECTCL_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_VECTCL_H_UTC20050626084023_DEFINED
 
 #include "geom/vec2.h"
 #include "geom/vec3.h"
@@ -84,5 +84,5 @@ namespace Tcl
   }
 }
 
-static const char vcid_vectcl_h[] = "$Id$ $URL$";
-#endif // !VECTCL_H_DEFINED
+static const char vcid_groovx_gfx_vectcl_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_VECTCL_H_UTC20050626084023_DEFINED

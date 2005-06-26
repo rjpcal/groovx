@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MTX_CC_DEFINED
-#define MTX_CC_DEFINED
+#ifndef GROOVX_PKGS_MTX_MTX_CC_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_MTX_MTX_CC_UTC20050626084022_DEFINED
 
 #include "mtx.h"
 
@@ -1017,5 +1017,5 @@ DOTRACE("max(mtx, mtx)");
   return binary_op(m1, m2, dash::max());
 }
 
-static const char vcid_mtx_cc[] = "$Id$ $URL$";
-#endif // !MTX_CC_DEFINED
+static const char vcid_groovx_pkgs_mtx_mtx_cc_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_MTX_MTX_CC_UTC20050626084022_DEFINED

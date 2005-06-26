@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef STDERROR_CC_DEFINED
-#define STDERROR_CC_DEFINED
+#ifndef GROOVX_RUTZ_STDERROR_CC_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_STDERROR_CC_UTC20050626084019_DEFINED
 
 #include "rutz/stderror.h"
 
@@ -48,5 +48,5 @@ void rutz::throw_bad_cast(const std::type_info& to,
                                   rutz::demangled_name(from)), pos);
 }
 
-static const char vcid_stderror_cc[] = "$Id$ $URL$";
-#endif // !STDERROR_CC_DEFINED
+static const char vcid_groovx_rutz_stderror_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_STDERROR_CC_UTC20050626084019_DEFINED

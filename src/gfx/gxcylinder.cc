@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXCYLINDER_CC_DEFINED
-#define GXCYLINDER_CC_DEFINED
+#ifndef GROOVX_GFX_GXCYLINDER_CC_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXCYLINDER_CC_UTC20050626084024_DEFINED
 
 #include "gxcylinder.h"
 
@@ -139,5 +139,5 @@ DOTRACE("GxCylinder::draw");
                       itsSlices, itsStacks, itsFilled);
 }
 
-static const char vcid_gxcylinder_cc[] = "$Id$ $URL$";
-#endif // !GXCYLINDER_CC_DEFINED
+static const char vcid_groovx_gfx_gxcylinder_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXCYLINDER_CC_UTC20050626084024_DEFINED

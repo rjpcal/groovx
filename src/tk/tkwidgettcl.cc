@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TKWIDGETTCL_CC_DEFINED
-#define TKWIDGETTCL_CC_DEFINED
+#ifndef GROOVX_TK_TKWIDGETTCL_CC_UTC20050626084015_DEFINED
+#define GROOVX_TK_TKWIDGETTCL_CC_UTC20050626084015_DEFINED
 
 #include "tk/tkwidgettcl.h"
 
@@ -76,5 +76,5 @@ DOTRACE("Tkwidget_Init");
   PKG_RETURN;
 }
 
-static const char vcid_tkwidgettcl_cc[] = "$Id$ $URL$";
-#endif // !TKWIDGETTCL_CC_DEFINED
+static const char vcid_groovx_tk_tkwidgettcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TK_TKWIDGETTCL_CC_UTC20050626084015_DEFINED

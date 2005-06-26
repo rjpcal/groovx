@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SIGNAL_CC_DEFINED
-#define SIGNAL_CC_DEFINED
+#ifndef GROOVX_NUB_SIGNAL_CC_UTC20050626084019_DEFINED
+#define GROOVX_NUB_SIGNAL_CC_UTC20050626084019_DEFINED
 
 #include "signal.h"
 
@@ -235,5 +235,5 @@ Nub::Signal0::~Signal0() throw()
 DOTRACE("Nub::Signal0::~Signal0");
 }
 
-static const char vcid_signal_cc[] = "$Id$ $URL$";
-#endif // !SIGNAL_CC_DEFINED
+static const char vcid_groovx_nub_signal_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_SIGNAL_CC_UTC20050626084019_DEFINED

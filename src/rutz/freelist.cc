@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FREELIST_CC_DEFINED
-#define FREELIST_CC_DEFINED
+#ifndef GROOVX_RUTZ_FREELIST_CC_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_FREELIST_CC_UTC20050626084019_DEFINED
 
 #include "rutz/freelist.h"
 
@@ -61,5 +61,5 @@ void rutz::free_list_base::deallocate(void* space)
   m_node_list = n;
 }
 
-static const char vcid_freelist_cc[] = "$Id$ $URL$";
-#endif // !FREELIST_CC_DEFINED
+static const char vcid_groovx_rutz_freelist_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_FREELIST_CC_UTC20050626084019_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IOLEGACY_CC_DEFINED
-#define IOLEGACY_CC_DEFINED
+#ifndef GROOVX_IO_IOLEGACY_CC_UTC20050626084021_DEFINED
+#define GROOVX_IO_IOLEGACY_CC_UTC20050626084021_DEFINED
 
 #include "io/iolegacy.h"
 
@@ -643,5 +643,5 @@ DOTRACE("IO::LegacyWriter::writeRoot");
                                          Nub::PRIVATE));
 }
 
-static const char vcid_iolegacy_cc[] = "$Id$ $URL$";
-#endif // !IOLEGACY_CC_DEFINED
+static const char vcid_groovx_io_iolegacy_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_IOLEGACY_CC_UTC20050626084021_DEFINED

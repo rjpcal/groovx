@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TRIAL_CC_DEFINED
-#define TRIAL_CC_DEFINED
+#ifndef GROOVX_VISX_TRIAL_CC_UTC20050626084015_DEFINED
+#define GROOVX_VISX_TRIAL_CC_UTC20050626084015_DEFINED
 
 #include "trial.h"
 
@@ -680,5 +680,5 @@ DOTRACE("Trial::trDenyResponses");
   rep->activeState->rh->rhDenyResponses();
 }
 
-static const char vcid_trial_cc[] = "$Id$ $URL$";
-#endif // !TRIAL_CC_DEFINED
+static const char vcid_groovx_visx_trial_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_TRIAL_CC_UTC20050626084015_DEFINED

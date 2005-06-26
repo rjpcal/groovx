@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef KBDRESPONSEHDLR_CC_DEFINED
-#define KBDRESPONSEHDLR_CC_DEFINED
+#ifndef GROOVX_VISX_KBDRESPONSEHDLR_CC_UTC20050626084016_DEFINED
+#define GROOVX_VISX_KBDRESPONSEHDLR_CC_UTC20050626084016_DEFINED
 
 #include "visx/kbdresponsehdlr.h"
 
@@ -60,5 +60,5 @@ KbdResponseHdlr::KbdResponseHdlr() :
 
 KbdResponseHdlr::~KbdResponseHdlr() throw() {}
 
-static const char vcid_kbdresponsehdlr_cc[] = "$Id$ $URL$";
-#endif // !KBDRESPONSEHDLR_CC_DEFINED
+static const char vcid_groovx_visx_kbdresponsehdlr_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_KBDRESPONSEHDLR_CC_UTC20050626084016_DEFINED

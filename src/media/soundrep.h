@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SOUNDREP_H_DEFINED
-#define SOUNDREP_H_DEFINED
+#ifndef GROOVX_MEDIA_SOUNDREP_H_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_SOUNDREP_H_UTC20050626084018_DEFINED
 
 namespace media
 {
@@ -52,5 +52,5 @@ namespace media
   };
 }
 
-static const char vcid_soundrep_h[] = "$Id$ $URL$";
-#endif // !SOUNDREP_H_DEFINED
+static const char vcid_groovx_media_soundrep_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_SOUNDREP_H_UTC20050626084018_DEFINED

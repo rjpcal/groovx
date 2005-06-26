@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJMGR_CC_DEFINED
-#define OBJMGR_CC_DEFINED
+#ifndef GROOVX_NUB_OBJMGR_CC_UTC20050626084019_DEFINED
+#define GROOVX_NUB_OBJMGR_CC_UTC20050626084019_DEFINED
 
 #include "objmgr.h"
 
@@ -52,5 +52,5 @@ DOTRACE("Nub::ObjMgr::newObj(const fstring&)");
   return SoftRef<Object>(ObjFactory::theOne().new_checked_object(type));
 }
 
-static const char vcid_objmgr_cc[] = "$Id$ $URL$";
-#endif // !OBJMGR_CC_DEFINED
+static const char vcid_groovx_nub_objmgr_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_OBJMGR_CC_UTC20050626084019_DEFINED

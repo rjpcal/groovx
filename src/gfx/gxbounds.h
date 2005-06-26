@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXBOUNDS_H_DEFINED
-#define GXBOUNDS_H_DEFINED
+#ifndef GROOVX_GFX_GXBOUNDS_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXBOUNDS_H_UTC20050626084024_DEFINED
 
 #include "gfx/gxbin.h"
 
@@ -77,5 +77,5 @@ private:
   mutable unsigned short itsMask;
 };
 
-static const char vcid_gxbounds_h[] = "$Id$ $URL$";
-#endif // !GXBOUNDS_H_DEFINED
+static const char vcid_groovx_gfx_gxbounds_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXBOUNDS_H_UTC20050626084024_DEFINED

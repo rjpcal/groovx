@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXCAMERA_H_DEFINED
-#define GXCAMERA_H_DEFINED
+#ifndef GROOVX_GFX_GXCAMERA_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXCAMERA_H_UTC20050626084024_DEFINED
 
 #include "geom/rect.h"
 
@@ -233,5 +233,5 @@ private:
   double itsViewingDistance;    // inches
 };
 
-static const char vcid_gxcamera_h[] = "$Id$ $URL$";
-#endif // !GXCAMERA_H_DEFINED
+static const char vcid_groovx_gfx_gxcamera_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXCAMERA_H_UTC20050626084024_DEFINED

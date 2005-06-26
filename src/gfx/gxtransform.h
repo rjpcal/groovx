@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXTRANSFORM_H_DEFINED
-#define GXTRANSFORM_H_DEFINED
+#ifndef GROOVX_GFX_GXTRANSFORM_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXTRANSFORM_H_UTC20050626084024_DEFINED
 
 #include "gfx/gbvec.h"
 #include "gfx/gxnode.h"
@@ -115,5 +115,5 @@ private:
   friend class GxTransformImpl;
 };
 
-static const char vcid_gxtransform_h[] = "$Id$ $URL$";
-#endif // !GXTRANSFORM_H_DEFINED
+static const char vcid_groovx_gfx_gxtransform_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXTRANSFORM_H_UTC20050626084024_DEFINED

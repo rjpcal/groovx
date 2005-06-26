@@ -30,13 +30,13 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef CANVASTCL_H_DEFINED
-#define CANVASTCL_H_DEFINED
+#ifndef GROOVX_GFX_CANVASTCL_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_CANVASTCL_H_UTC20050626084024_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Canvas_Init(Tcl_Interp* interp);
 extern "C" int Glcanvas_Init(Tcl_Interp* interp);
 
-static const char vcid_canvastcl_h[] = "$Id$ $URL$";
-#endif // !CANVASTCL_H_DEFINED
+static const char vcid_groovx_gfx_canvastcl_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_CANVASTCL_H_UTC20050626084024_DEFINED

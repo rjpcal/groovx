@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXDISK_H_DEFINED
-#define GXDISK_H_DEFINED
+#ifndef GROOVX_GFX_GXDISK_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXDISK_H_UTC20050626084023_DEFINED
 
 #include "gfx/gxnode.h"
 
@@ -89,5 +89,5 @@ private:
   GxDisk& operator=(const GxDisk&);
 };
 
-static const char vcid_gxdisk_h[] = "$Id$ $URL$";
-#endif // !GXDISK_H_DEFINED
+static const char vcid_groovx_gfx_gxdisk_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXDISK_H_UTC20050626084023_DEFINED

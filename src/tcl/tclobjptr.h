@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLOBJPTR_H_DEFINED
-#define TCLOBJPTR_H_DEFINED
+#ifndef GROOVX_TCL_TCLOBJPTR_H_UTC20050626084017_DEFINED
+#define GROOVX_TCL_TCLOBJPTR_H_UTC20050626084017_DEFINED
 
 typedef struct Tcl_Obj Tcl_Obj;
 
@@ -140,5 +140,5 @@ inline void Tcl::ObjPtr::append(const T& other)
   append(Tcl::toTcl(other));
 }
 
-static const char vcid_tclobjptr_h[] = "$Id$ $URL$";
-#endif // !TCLOBJPTR_H_DEFINED
+static const char vcid_groovx_tcl_tclobjptr_h_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLOBJPTR_H_UTC20050626084017_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef READATTRIBMAP_H_DEFINED
-#define READATTRIBMAP_H_DEFINED
+#ifndef GROOVX_IO_READATTRIBMAP_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_READATTRIBMAP_H_UTC20050626084021_DEFINED
 
 #include "io/io.h"
 
@@ -147,5 +147,5 @@ void IO::AttribMap::addNewAttrib(const rutz::fstring& attrib_name,
   itsMap.push_back(ValueType(attrib_name, Attrib(type,value)));
 }
 
-static const char vcid_readattribmap_h[] = "$Id$ $URL$";
-#endif // !READATTRIBMAP_H_DEFINED
+static const char vcid_groovx_io_readattribmap_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_READATTRIBMAP_H_UTC20050626084021_DEFINED

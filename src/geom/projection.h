@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef PROJECTION_H_DEFINED
-#define PROJECTION_H_DEFINED
+#ifndef GROOVX_GEOM_PROJECTION_H_UTC20050626084022_DEFINED
+#define GROOVX_GEOM_PROJECTION_H_UTC20050626084022_DEFINED
 
 namespace geom
 {
@@ -50,5 +50,5 @@ namespace geom
                        const vec3<double>& world_pos);
 }
 
-static const char vcid_projection_h[] = "$Id$ $URL$";
-#endif // !PROJECTION_H_DEFINED
+static const char vcid_groovx_geom_projection_h_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GEOM_PROJECTION_H_UTC20050626084022_DEFINED

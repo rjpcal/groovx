@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TIMINGHANDLER_CC_DEFINED
-#define TIMINGHANDLER_CC_DEFINED
+#ifndef GROOVX_VISX_TIMINGHANDLER_CC_UTC20050626084016_DEFINED
+#define GROOVX_VISX_TIMINGHANDLER_CC_UTC20050626084016_DEFINED
 
 #include "timinghandler.h"
 
@@ -149,5 +149,5 @@ void TimingHandler::setTimeout(int msec)
   getEvent(FROM_START, timeout_start_id)->setDelay(msec);
 }
 
-static const char vcid_timinghandler_cc[] = "$Id$ $URL$";
-#endif // !TIMINGHANDLER_CC_DEFINED
+static const char vcid_groovx_visx_timinghandler_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_TIMINGHANDLER_CC_UTC20050626084016_DEFINED

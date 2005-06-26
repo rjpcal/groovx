@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef READOBJECTMAP_H_DEFINED
-#define READOBJECTMAP_H_DEFINED
+#ifndef GROOVX_IO_READOBJECTMAP_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_READOBJECTMAP_H_UTC20050626084021_DEFINED
 
 #include "nub/uid.h"
 
@@ -149,5 +149,5 @@ void IO::ObjectMap::clear()
   itsMap.clear();
 }
 
-static const char vcid_readobjectmap_h[] = "$Id$ $URL$";
-#endif // !READOBJECTMAP_H_DEFINED
+static const char vcid_groovx_io_readobjectmap_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_READOBJECTMAP_H_UTC20050626084021_DEFINED

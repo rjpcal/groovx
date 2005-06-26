@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ITERTCL_H_DEFINED
-#define ITERTCL_H_DEFINED
+#ifndef GROOVX_TCL_ITERTCL_H_UTC20050626084017_DEFINED
+#define GROOVX_TCL_ITERTCL_H_UTC20050626084017_DEFINED
 
 #include "rutz/iter.h"
 
@@ -59,5 +59,5 @@ namespace Tcl
   }
 }
 
-static const char vcid_itertcl_h[] = "$Id$ $URL$";
-#endif // !ITERTCL_H_DEFINED
+static const char vcid_groovx_tcl_itertcl_h_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_ITERTCL_H_UTC20050626084017_DEFINED

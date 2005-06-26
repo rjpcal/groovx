@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ELEMENTCONTAINER_H_DEFINED
-#define ELEMENTCONTAINER_H_DEFINED
+#ifndef GROOVX_VISX_ELEMENTCONTAINER_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_ELEMENTCONTAINER_H_UTC20050626084016_DEFINED
 
 #include "visx/element.h"
 
@@ -139,5 +139,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_elementcontainer_h[] = "$Id$ $URL$";
-#endif // !ELEMENTCONTAINER_H_DEFINED
+static const char vcid_groovx_visx_elementcontainer_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_ELEMENTCONTAINER_H_UTC20050626084016_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef PSCANVAS_CC_DEFINED
-#define PSCANVAS_CC_DEFINED
+#ifndef GROOVX_GFX_PSCANVAS_CC_UTC20050626084023_DEFINED
+#define GROOVX_GFX_PSCANVAS_CC_UTC20050626084023_DEFINED
 
 #include "pscanvas.h"
 
@@ -1094,5 +1094,5 @@ DOTRACE("Gfx::PSCanvas::flushOutput");
   rep->itsFstream << std::flush;
 }
 
-static const char vcid_pscanvas_cc[] = "$Id$ $URL$";
-#endif // !PSCANVAS_CC_DEFINED
+static const char vcid_groovx_gfx_pscanvas_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_PSCANVAS_CC_UTC20050626084023_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TRIALEVENT_CC_DEFINED
-#define TRIALEVENT_CC_DEFINED
+#ifndef GROOVX_VISX_TRIALEVENT_CC_UTC20050626084017_DEFINED
+#define GROOVX_VISX_TRIALEVENT_CC_UTC20050626084017_DEFINED
 
 #include "visx/trialevent.h"
 
@@ -431,5 +431,5 @@ DOTRACE("MultiEvent::clearEvents");
   itsEvents.clear();
 }
 
-static const char vcid_trialevent_cc[] = "$Id$ $URL$";
-#endif // !TRIALEVENT_CC_DEFINED
+static const char vcid_groovx_visx_trialevent_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_TRIALEVENT_CC_UTC20050626084017_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef CSTRSTREAM_CC_DEFINED
-#define CSTRSTREAM_CC_DEFINED
+#ifndef GROOVX_RUTZ_CSTRSTREAM_CC_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_CSTRSTREAM_CC_UTC20050626084020_DEFINED
 
 #include "cstrstream.h"
 
@@ -100,5 +100,5 @@ rutz::icstrstream::icstrstream(const char* s)
   m_buf.make_owning();
 }
 
-static const char vcid_cstrstream_cc[] = "$Id$ $URL$";
-#endif // !CSTRSTREAM_CC_DEFINED
+static const char vcid_groovx_rutz_cstrstream_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_CSTRSTREAM_CC_UTC20050626084020_DEFINED

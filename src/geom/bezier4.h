@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BEZIER4_H_DEFINED
-#define BEZIER4_H_DEFINED
+#ifndef GROOVX_GEOM_BEZIER4_H_UTC20050626084023_DEFINED
+#define GROOVX_GEOM_BEZIER4_H_UTC20050626084023_DEFINED
 
 #include "rutz/algo.h"
 
@@ -176,5 +176,5 @@ inline double geom::bezier4::eval_min()
   return m_val_min;
 }
 
-static const char vcid_bezier4_h[] = "$Id$ $URL$";
-#endif // !BEZIER4_H_DEFINED
+static const char vcid_groovx_geom_bezier4_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GEOM_BEZIER4_H_UTC20050626084023_DEFINED

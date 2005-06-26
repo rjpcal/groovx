@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FACTORY_H_DEFINED
-#define FACTORY_H_DEFINED
+#ifndef GROOVX_RUTZ_FACTORY_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_FACTORY_H_UTC20050626084020_DEFINED
 
 #include "rutz/assocarray.h"
 #include "rutz/demangle.h"
@@ -229,5 +229,5 @@ namespace rutz
 } // end namespace rutz
 
 
-static const char vcid_factory_h[] = "$Id$ $URL$";
-#endif // !FACTORY_H_DEFINED
+static const char vcid_groovx_rutz_factory_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_FACTORY_H_UTC20050626084020_DEFINED

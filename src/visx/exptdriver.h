@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef EXPTDRIVER_H_DEFINED
-#define EXPTDRIVER_H_DEFINED
+#ifndef GROOVX_VISX_EXPTDRIVER_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_EXPTDRIVER_H_UTC20050626084016_DEFINED
 
 #include "io/io.h"
 
@@ -164,5 +164,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_exptdriver_h[] = "$Id$ $URL$";
-#endif // !EXPTDRIVER_H_DEFINED
+static const char vcid_groovx_visx_exptdriver_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_EXPTDRIVER_H_UTC20050626084016_DEFINED

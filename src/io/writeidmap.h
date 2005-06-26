@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef WRITEIDMAP_H_DEFINED
-#define WRITEIDMAP_H_DEFINED
+#ifndef GROOVX_IO_WRITEIDMAP_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_WRITEIDMAP_H_UTC20050626084021_DEFINED
 
 #include <map>
 
@@ -75,5 +75,5 @@ namespace IO
   };
 }
 
-static const char vcid_writeidmap_h[] = "$Id$ $URL$";
-#endif // !WRITEIDMAP_H_DEFINED
+static const char vcid_groovx_io_writeidmap_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_WRITEIDMAP_H_UTC20050626084021_DEFINED

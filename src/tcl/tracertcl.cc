@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TRACERTCL_CC_DEFINED
-#define TRACERTCL_CC_DEFINED
+#ifndef GROOVX_TCL_TRACERTCL_CC_UTC20050626084018_DEFINED
+#define GROOVX_TCL_TRACERTCL_CC_UTC20050626084018_DEFINED
 
 #include "tcl/tracertcl.h"
 
@@ -49,5 +49,5 @@ void Tcl::defTracing(Tcl::Pkg* pkg, rutz::tracer& t)
   pkg->def( "traceStatus", "", bind_first(mem_func(&tracer::status), &t), SRC_POS );
 }
 
-static const char vcid_tracertcl_cc[] = "$Id$ $URL$";
-#endif // !TRACERTCL_CC_DEFINED
+static const char vcid_groovx_tcl_tracertcl_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TRACERTCL_CC_UTC20050626084018_DEFINED

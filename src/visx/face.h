@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FACE_H_DEFINED
-#define FACE_H_DEFINED
+#ifndef GROOVX_VISX_FACE_H_UTC20050626084017_DEFINED
+#define GROOVX_VISX_FACE_H_UTC20050626084017_DEFINED
 
 #include "gfx/gxshapekit.h"
 
@@ -130,5 +130,5 @@ private:
   Face& operator=(const Face&);
 };
 
-static const char vcid_face_h[] = "$Id$ $URL$";
-#endif // !FACE_H_DEFINED
+static const char vcid_groovx_visx_face_h_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_FACE_H_UTC20050626084017_DEFINED

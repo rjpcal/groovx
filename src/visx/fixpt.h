@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FIXPT_H_DEFINED
-#define FIXPT_H_DEFINED
+#ifndef GROOVX_VISX_FIXPT_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_FIXPT_H_UTC20050626084015_DEFINED
 
 #include "gfx/gxshapekit.h"
 
@@ -78,5 +78,5 @@ private:
   int itsWidth;
 };
 
-static const char vcid_fixpt_h[] = "$Id$ $URL$";
-#endif // !FIXPT_H_DEFINED
+static const char vcid_groovx_visx_fixpt_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_FIXPT_H_UTC20050626084015_DEFINED

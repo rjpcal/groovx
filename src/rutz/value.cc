@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef VALUE_CC_DEFINED
-#define VALUE_CC_DEFINED
+#ifndef GROOVX_RUTZ_VALUE_CC_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_VALUE_CC_UTC20050626084019_DEFINED
 
 #include "rutz/value.h"
 
@@ -68,5 +68,5 @@ void rutz::value::set_string(rutz::fstring val)
   scan_from(ist);
 }
 
-static const char vcid_value_cc[] = "$Id$ $URL$";
-#endif // !VALUE_CC_DEFINED
+static const char vcid_groovx_rutz_value_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_VALUE_CC_UTC20050626084019_DEFINED

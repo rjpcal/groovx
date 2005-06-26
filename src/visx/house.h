@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef HOUSE_H_DEFINED
-#define HOUSE_H_DEFINED
+#ifndef GROOVX_VISX_HOUSE_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_HOUSE_H_UTC20050626084016_DEFINED
 
 #include "gfx/gxshapekit.h"
 
@@ -139,5 +139,5 @@ private:
   House& operator=(const House&);
 };
 
-static const char vcid_house_h[] = "$Id$ $URL$";
-#endif // !HOUSE_H_DEFINED
+static const char vcid_groovx_visx_house_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_HOUSE_H_UTC20050626084016_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TLISTUTILS_H_DEFINED
-#define TLISTUTILS_H_DEFINED
+#ifndef GROOVX_VISX_TLISTUTILS_H_UTC20050626084017_DEFINED
+#define GROOVX_VISX_TLISTUTILS_H_UTC20050626084017_DEFINED
 
 #include "nub/uid.h"
 
@@ -81,5 +81,5 @@ namespace TlistUtils
                           Tcl::List posids, int num_lines);
 }
 
-static const char vcid_tlistutils_h[] = "$Id$ $URL$";
-#endif // !TLISTUTILS_H_DEFINED
+static const char vcid_groovx_visx_tlistutils_h_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_TLISTUTILS_H_UTC20050626084017_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FSTRING_H_DEFINED
-#define FSTRING_H_DEFINED
+#ifndef GROOVX_RUTZ_FSTRING_H_UTC20050626084021_DEFINED
+#define GROOVX_RUTZ_FSTRING_H_UTC20050626084021_DEFINED
 
 #include <cstddef>
 
@@ -462,5 +462,5 @@ namespace rutz
 
 } // end namespace rutz
 
-static const char vcid_fstring_h[] = "$Id$ $URL$";
-#endif // !FSTRING_H_DEFINED
+static const char vcid_groovx_rutz_fstring_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_FSTRING_H_UTC20050626084021_DEFINED

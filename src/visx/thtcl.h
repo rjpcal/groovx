@@ -30,13 +30,13 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef THTCL_H_DEFINED
-#define THTCL_H_DEFINED
+#ifndef GROOVX_VISX_THTCL_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_THTCL_H_UTC20050626084016_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Timinghdlr_Init(Tcl_Interp* interp);
 extern "C" int Timinghandler_Init(Tcl_Interp* interp);
 
-static const char vcid_thtcl_h[] = "$Id$ $URL$";
-#endif // !THTCL_H_DEFINED
+static const char vcid_groovx_visx_thtcl_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_THTCL_H_UTC20050626084016_DEFINED

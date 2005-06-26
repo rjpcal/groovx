@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TXFORM_H_DEFINED
-#define TXFORM_H_DEFINED
+#ifndef GROOVX_GEOM_TXFORM_H_UTC20050626084022_DEFINED
+#define GROOVX_GEOM_TXFORM_H_UTC20050626084022_DEFINED
 
 namespace geom
 {
@@ -108,5 +108,5 @@ namespace geom
 
 } // end namespace geom
 
-static const char vcid_txform_h[] = "$Id$ $URL$";
-#endif // !TXFORM_H_DEFINED
+static const char vcid_groovx_geom_txform_h_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GEOM_TXFORM_H_UTC20050626084022_DEFINED

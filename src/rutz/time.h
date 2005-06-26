@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TIME_H_DEFINED
-#define TIME_H_DEFINED
+#ifndef GROOVX_RUTZ_TIME_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_TIME_H_UTC20050626084020_DEFINED
 
 #include <sys/time.h>
 // struct timeval {
@@ -309,5 +309,5 @@ private:
   timeval m_timeval;
 };
 
-static const char vcid_time_h[] = "$Id$ $URL$";
-#endif // !TIME_H_DEFINED
+static const char vcid_groovx_rutz_time_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_TIME_H_UTC20050626084020_DEFINED

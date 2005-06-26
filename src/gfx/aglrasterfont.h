@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef AGLRASTERFONT_H_DEFINED
-#define AGLRASTERFONT_H_DEFINED
+#ifndef GROOVX_GFX_AGLRASTERFONT_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_AGLRASTERFONT_H_UTC20050626084024_DEFINED
 
 #include "geom/rect.h"
 #include "geom/vec3.h"
@@ -431,5 +431,5 @@ DOTRACE("AglRasterFont::rasterHeight");
   return itsFontInfo.ascent + itsFontInfo.descent + itsFontInfo.leading;
 }
 
-static const char vcid_aglrasterfont_h[] = "$Id$ $URL$";
-#endif // !AGLRASTERFONT_H_DEFINED
+static const char vcid_groovx_gfx_aglrasterfont_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_AGLRASTERFONT_H_UTC20050626084024_DEFINED

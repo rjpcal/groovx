@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef XMLPARSER_CC_DEFINED
-#define XMLPARSER_CC_DEFINED
+#ifndef GROOVX_IO_XMLPARSER_CC_UTC20050626084021_DEFINED
+#define GROOVX_IO_XMLPARSER_CC_UTC20050626084021_DEFINED
 
 #include "io/xmlparser.h"
 
@@ -197,5 +197,5 @@ void Outliner::elementEnd(const char* el)
 }
 #endif
 
-static const char vcid_xmlparser_cc[] = "$Id$ $URL$";
-#endif // !XMLPARSER_CC_DEFINED
+static const char vcid_groovx_io_xmlparser_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_XMLPARSER_CC_UTC20050626084021_DEFINED

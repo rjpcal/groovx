@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXSCALER_H_DEFINED
-#define GXSCALER_H_DEFINED
+#ifndef GROOVX_GFX_GXSCALER_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXSCALER_H_UTC20050626084024_DEFINED
 
 #include "gfx/gxbin.h"
 
@@ -129,5 +129,5 @@ private:
 };
 
 
-static const char vcid_gxscaler_h[] = "$Id$ $URL$";
-#endif // !GXSCALER_H_DEFINED
+static const char vcid_groovx_gfx_gxscaler_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXSCALER_H_UTC20050626084024_DEFINED

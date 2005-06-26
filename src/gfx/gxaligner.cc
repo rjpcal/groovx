@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXALIGNER_CC_DEFINED
-#define GXALIGNER_CC_DEFINED
+#ifndef GROOVX_GFX_GXALIGNER_CC_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXALIGNER_CC_UTC20050626084023_DEFINED
 
 #include "gxaligner.h"
 
@@ -137,5 +137,5 @@ DOTRACE("GxAligner::getBoundingCube");
   dbg_dump(2, bbox.cube());
 }
 
-static const char vcid_gxaligner_cc[] = "$Id$ $URL$";
-#endif // !GXALIGNER_CC_DEFINED
+static const char vcid_groovx_gfx_gxaligner_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXALIGNER_CC_UTC20050626084023_DEFINED

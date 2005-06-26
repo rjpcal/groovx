@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GZSTREAMBUF_H_DEFINED
-#define GZSTREAMBUF_H_DEFINED
+#ifndef GROOVX_RUTZ_GZSTREAMBUF_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_GZSTREAMBUF_H_UTC20050626084020_DEFINED
 
 #include <iostream>
 #include <zlib.h>
@@ -102,5 +102,5 @@ namespace rutz
                                    std::ios::openmode(0));
 }
 
-static const char vcid_gzstreambuf_h[] = "$Id$ $URL$";
-#endif // !GZSTREAMBUF_H_DEFINED
+static const char vcid_groovx_rutz_gzstreambuf_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_GZSTREAMBUF_H_UTC20050626084020_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BASE64_CC_DEFINED
-#define BASE64_CC_DEFINED
+#ifndef GROOVX_RUTZ_BASE64_CC_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_BASE64_CC_UTC20050626084020_DEFINED
 
 #include "base64.h"
 
@@ -260,5 +260,5 @@ void rutz::base64_decode(const rutz::byte_array& src,
                 dst);
 }
 
-static const char vcid_base64_cc[] = "$Id$ $URL$";
-#endif // !BASE64_CC_DEFINED
+static const char vcid_groovx_rutz_base64_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_BASE64_CC_UTC20050626084020_DEFINED

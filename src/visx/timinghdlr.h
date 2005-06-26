@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TIMINGHDLR_H_DEFINED
-#define TIMINGHDLR_H_DEFINED
+#ifndef GROOVX_VISX_TIMINGHDLR_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_TIMINGHDLR_H_UTC20050626084015_DEFINED
 
 #include "io/io.h"
 
@@ -105,5 +105,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_timinghdlr_h[] = "$Id$ $URL$";
-#endif // !TIMINGHDLR_H_DEFINED
+static const char vcid_groovx_visx_timinghdlr_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_TIMINGHDLR_H_UTC20050626084015_DEFINED

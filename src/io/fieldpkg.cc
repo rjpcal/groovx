@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FIELDPKG_CC_DEFINED
-#define FIELDPKG_CC_DEFINED
+#ifndef GROOVX_IO_FIELDPKG_CC_UTC20050626084021_DEFINED
+#define GROOVX_IO_FIELDPKG_CC_UTC20050626084021_DEFINED
 
 #include "io/fieldpkg.h"
 
@@ -166,5 +166,5 @@ DOTRACE("Tcl::defAllFields");
               FieldsLister(fieldmap, true), src_pos);
 }
 
-static const char vcid_fieldpkg_cc[] = "$Id$ $URL$";
-#endif // !FIELDPKG_CC_DEFINED
+static const char vcid_groovx_io_fieldpkg_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_FIELDPKG_CC_UTC20050626084021_DEFINED

@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLTIMERTEST_H_DEFINED
-#define TCLTIMERTEST_H_DEFINED
+#ifndef GROOVX_PKGS_WHITEBOX_TCLTIMERTEST_H_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_WHITEBOX_TCLTIMERTEST_H_UTC20050626084022_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Tcltimertest_Init(Tcl_Interp* interp);
 
-static const char vcid_tcltimertest_h[] = "$Id$ $URL$";
-#endif // !TCLTIMERTEST_H_DEFINED
+static const char vcid_groovx_pkgs_whitebox_tcltimertest_h_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_WHITEBOX_TCLTIMERTEST_H_UTC20050626084022_DEFINED

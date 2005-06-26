@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TLISTUTILS_CC_DEFINED
-#define TLISTUTILS_CC_DEFINED
+#ifndef GROOVX_VISX_TLISTUTILS_CC_UTC20050626084015_DEFINED
+#define GROOVX_VISX_TLISTUTILS_CC_UTC20050626084015_DEFINED
 
 #include "tlistutils.h"
 
@@ -548,5 +548,5 @@ Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
   return result;
 }
 
-static const char vcid_tlistutils_cc[] = "$Id$ $URL$";
-#endif // !TLISTUTILS_CC_DEFINED
+static const char vcid_groovx_visx_tlistutils_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_TLISTUTILS_CC_UTC20050626084015_DEFINED

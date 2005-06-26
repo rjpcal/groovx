@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BMAPDATA_CC_DEFINED
-#define BMAPDATA_CC_DEFINED
+#ifndef GROOVX_MEDIA_BMAPDATA_CC_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_BMAPDATA_CC_UTC20050626084018_DEFINED
 
 #include "bmapdata.h"
 
@@ -474,5 +474,5 @@ DOTRACE("media::bmap_data::make_scrambled");
   return result;
 }
 
-static const char vcid_bmapdata_cc[] = "$Id$ $URL$";
-#endif // !BMAPDATA_CC_DEFINED
+static const char vcid_groovx_media_bmapdata_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_BMAPDATA_CC_UTC20050626084018_DEFINED

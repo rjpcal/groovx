@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXVECTORFONT_H_DEFINED
-#define GXVECTORFONT_H_DEFINED
+#ifndef GROOVX_GFX_GXVECTORFONT_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXVECTORFONT_H_UTC20050626084023_DEFINED
 
 #include "gfx/gxfont.h"
 
@@ -59,5 +59,5 @@ private:
   GxVectorFont& operator=(const GxVectorFont&);
 };
 
-static const char vcid_gxvectorfont_h[] = "$Id$ $URL$";
-#endif // !GXVECTORFONT_H_DEFINED
+static const char vcid_groovx_gfx_gxvectorfont_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXVECTORFONT_H_UTC20050626084023_DEFINED

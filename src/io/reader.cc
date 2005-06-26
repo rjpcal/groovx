@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef READER_CC_DEFINED
-#define READER_CC_DEFINED
+#ifndef GROOVX_IO_READER_CC_UTC20050626084021_DEFINED
+#define GROOVX_IO_READER_CC_UTC20050626084021_DEFINED
 
 #include "io/reader.h"
 
@@ -107,5 +107,5 @@ DOTRACE("IO::Reader::defaultReadRawData");
                       data);
 }
 
-static const char vcid_reader_cc[] = "$Id$ $URL$";
-#endif // !READER_CC_DEFINED
+static const char vcid_groovx_io_reader_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_READER_CC_UTC20050626084021_DEFINED

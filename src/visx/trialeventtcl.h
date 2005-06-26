@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TRIALEVENTTCL_H_DEFINED
-#define TRIALEVENTTCL_H_DEFINED
+#ifndef GROOVX_VISX_TRIALEVENTTCL_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_TRIALEVENTTCL_H_UTC20050626084015_DEFINED
 
 struct Tcl_Interp;
 
@@ -41,5 +41,5 @@ extern "C" int Filewriteevent_Init(Tcl_Interp* interp);
 extern "C" int Genericevent_Init(Tcl_Interp* interp);
 extern "C" int Multievent_Init(Tcl_Interp* interp);
 
-static const char vcid_trialeventtcl_h[] = "$Id$ $URL$";
-#endif // !TRIALEVENTTCL_H_DEFINED
+static const char vcid_groovx_visx_trialeventtcl_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_TRIALEVENTTCL_H_UTC20050626084015_DEFINED

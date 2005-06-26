@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLLISTOBJ_H_DEFINED
-#define TCLLISTOBJ_H_DEFINED
+#ifndef GROOVX_TCL_TCLLISTOBJ_H_UTC20050626084018_DEFINED
+#define GROOVX_TCL_TCLLISTOBJ_H_UTC20050626084018_DEFINED
 
 #include "tcl/tclobjptr.h"
 
@@ -293,5 +293,5 @@ inline Tcl::List::Iterator<T> Tcl::List::end(T* /*dummy*/)
   return Iterator<T>(*this, IteratorBase::END);
 }
 
-static const char vcid_tcllistobj_h[] = "$Id$ $URL$";
-#endif // !TCLLISTOBJ_H_DEFINED
+static const char vcid_groovx_tcl_tcllistobj_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLLISTOBJ_H_UTC20050626084018_DEFINED

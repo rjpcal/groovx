@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TKWIDGET_CC_DEFINED
-#define TKWIDGET_CC_DEFINED
+#ifndef GROOVX_TK_TKWIDGET_CC_UTC20050626084015_DEFINED
+#define GROOVX_TK_TKWIDGET_CC_UTC20050626084015_DEFINED
 
 #include "tkwidget.h"
 
@@ -791,5 +791,5 @@ void Tcl::TkWidget::hook()
   sigKeyPressed.connect(rep, &TkWidgImpl::dbgKeyPress);
 }
 
-static const char vcid_tkwidget_cc[] = "$Id$ $URL$";
-#endif // !TKWIDGET_CC_DEFINED
+static const char vcid_groovx_tk_tkwidget_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TK_TKWIDGET_CC_UTC20050626084015_DEFINED

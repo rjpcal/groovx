@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IOERROR_H_DEFINED
-#define IOERROR_H_DEFINED
+#ifndef GROOVX_RUTZ_IOERROR_H_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_IOERROR_H_UTC20050626084019_DEFINED
 
 #include "rutz/error.h"
 
@@ -52,5 +52,5 @@ namespace rutz
 
 }
 
-static const char vcid_ioerror_h[] = "$Id$ $URL$";
-#endif // !IOERROR_H_DEFINED
+static const char vcid_groovx_rutz_ioerror_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_IOERROR_H_UTC20050626084019_DEFINED

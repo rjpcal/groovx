@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef HPSOUND_H_DEFINED
-#define HPSOUND_H_DEFINED
+#ifndef GROOVX_MEDIA_HPSOUND_H_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_HPSOUND_H_UTC20050626084018_DEFINED
 
 #include "media/soundrep.h"
 
@@ -179,5 +179,5 @@ DOTRACE("media::hp_audio_sound_rep::error_handler");
   return 0;
 }
 
-static const char vcid_hpsound_h[] = "$Id$ $URL$";
-#endif // !HPSOUND_H_DEFINED
+static const char vcid_groovx_media_hpsound_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_HPSOUND_H_UTC20050626084018_DEFINED

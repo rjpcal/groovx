@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJECT_H_DEFINED
-#define OBJECT_H_DEFINED
+#ifndef GROOVX_NUB_OBJECT_H_UTC20050626084018_DEFINED
+#define GROOVX_NUB_OBJECT_H_UTC20050626084018_DEFINED
 
 #include "nub/refcounted.h"
 #include "nub/uid.h"
@@ -95,5 +95,5 @@ private:
   Nub::UID itsId;
 };
 
-static const char vcid_object_h[] = "$Id$ $URL$";
-#endif // !OBJECT_H_DEFINED
+static const char vcid_groovx_nub_object_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_OBJECT_H_UTC20050626084018_DEFINED

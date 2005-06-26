@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXFONT_CC_DEFINED
-#define GXFONT_CC_DEFINED
+#ifndef GROOVX_GFX_GXFONT_CC_UTC20050626084025_DEFINED
+#define GROOVX_GFX_GXFONT_CC_UTC20050626084025_DEFINED
 
 #include "gxfont.h"
 
@@ -73,5 +73,5 @@ rutz::shared_ptr<GxFont> GxFont::make(const char* name_cstr)
 
 GxFont::~GxFont() throw() {}
 
-static const char vcid_gxfont_cc[] = "$Id$ $URL$";
-#endif // !GXFONT_CC_DEFINED
+static const char vcid_groovx_gfx_gxfont_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXFONT_CC_UTC20050626084025_DEFINED

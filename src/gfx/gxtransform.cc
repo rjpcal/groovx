@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXTRANSFORM_CC_DEFINED
-#define GXTRANSFORM_CC_DEFINED
+#ifndef GROOVX_GFX_GXTRANSFORM_CC_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXTRANSFORM_CC_UTC20050626084023_DEFINED
 
 #include "gxtransform.h"
 
@@ -228,5 +228,5 @@ DOTRACE("GxTransform::draw");
     }
 }
 
-static const char vcid_gxtransform_cc[] = "$Id$ $URL$";
-#endif // !GXTRANSFORM_CC_DEFINED
+static const char vcid_groovx_gfx_gxtransform_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXTRANSFORM_CC_UTC20050626084023_DEFINED

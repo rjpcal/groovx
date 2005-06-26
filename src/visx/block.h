@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BLOCK_H_DEFINED
-#define BLOCK_H_DEFINED
+#ifndef GROOVX_VISX_BLOCK_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_BLOCK_H_UTC20050626084015_DEFINED
 
 #include "io/io.h"
 
@@ -100,5 +100,5 @@ private:
   Element* itsParent;
 };
 
-static const char vcid_block_h[] = "$Id$ $URL$";
-#endif // !BLOCK_H_DEFINED
+static const char vcid_groovx_visx_block_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_BLOCK_H_UTC20050626084015_DEFINED

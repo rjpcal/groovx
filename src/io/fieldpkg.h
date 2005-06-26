@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FIELDPKG_H_DEFINED
-#define FIELDPKG_H_DEFINED
+#ifndef GROOVX_IO_FIELDPKG_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_FIELDPKG_H_UTC20050626084021_DEFINED
 
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
@@ -62,5 +62,5 @@ namespace Tcl
   }
 }
 
-static const char vcid_fieldpkg_h[] = "$Id$ $URL$";
-#endif // !FIELDPKG_H_DEFINED
+static const char vcid_groovx_io_fieldpkg_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_FIELDPKG_H_UTC20050626084021_DEFINED

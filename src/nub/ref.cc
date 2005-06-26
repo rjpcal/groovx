@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef REF_CC_DEFINED
-#define REF_CC_DEFINED
+#ifndef GROOVX_NUB_REF_CC_UTC20050626084019_DEFINED
+#define GROOVX_NUB_REF_CC_UTC20050626084019_DEFINED
 
 #include "ref.h"
 
@@ -86,5 +86,5 @@ void Nub::Detail::throwSoftRefInvalid(const std::type_info& info,
                     pos);
 }
 
-static const char vcid_ref_cc[] = "$Id$ $URL$";
-#endif // !REF_CC_DEFINED
+static const char vcid_groovx_nub_ref_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_REF_CC_UTC20050626084019_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IO_H_DEFINED
-#define IO_H_DEFINED
+#ifndef GROOVX_IO_IO_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_IO_H_UTC20050626084021_DEFINED
 
 #include "nub/object.h"
 
@@ -111,5 +111,5 @@ public:
 };
 
 
-static const char vcid_io_h[] = "$Id$ $URL$";
-#endif // !IO_H_DEFINED
+static const char vcid_groovx_io_io_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_IO_H_UTC20050626084021_DEFINED

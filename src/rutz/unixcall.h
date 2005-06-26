@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SYSTEM_H_DEFINED
-#define SYSTEM_H_DEFINED
+#ifndef GROOVX_RUTZ_UNIXCALL_H_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_UNIXCALL_H_UTC20050626084019_DEFINED
 
 #include <sys/types.h>
 
@@ -127,5 +127,5 @@ namespace rutz
 
 } // end namespace rutz
 
-static const char vcid_system_h[] = "$Id$ $URL$";
-#endif // !SYSTEM_H_DEFINED
+static const char vcid_groovx_rutz_unixcall_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_UNIXCALL_H_UTC20050626084019_DEFINED

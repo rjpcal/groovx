@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef RESPONSE_CC_DEFINED
-#define RESPONSE_CC_DEFINED
+#ifndef GROOVX_VISX_RESPONSE_CC_UTC20050626084016_DEFINED
+#define GROOVX_VISX_RESPONSE_CC_UTC20050626084016_DEFINED
 
 #include "visx/response.h"
 
@@ -71,5 +71,5 @@ DOTRACE("Response::scan_from");
   is >> itsVal >> itsMsec;
 }
 
-static const char vcid_response_cc[] = "$Id$ $URL$";
-#endif // !RESPONSE_CC_DEFINED
+static const char vcid_groovx_visx_response_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_RESPONSE_CC_UTC20050626084016_DEFINED

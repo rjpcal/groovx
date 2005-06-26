@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OUTPUTFILE_CC_DEFINED
-#define OUTPUTFILE_CC_DEFINED
+#ifndef GROOVX_IO_OUTPUTFILE_CC_UTC20050626084021_DEFINED
+#define GROOVX_IO_OUTPUTFILE_CC_UTC20050626084021_DEFINED
 
 #include "outputfile.h"
 
@@ -103,5 +103,5 @@ std::ostream& OutputFile::stream()
   return *itsStream;
 }
 
-static const char vcid_outputfile_cc[] = "$Id$ $URL$";
-#endif // !OUTPUTFILE_CC_DEFINED
+static const char vcid_groovx_io_outputfile_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_OUTPUTFILE_CC_UTC20050626084021_DEFINED

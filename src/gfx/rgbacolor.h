@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef RGBACOLOR_H_DEFINED
-#define RGBACOLOR_H_DEFINED
+#ifndef GROOVX_GFX_RGBACOLOR_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_RGBACOLOR_H_UTC20050626084023_DEFINED
 
 namespace Gfx
 {
@@ -73,5 +73,5 @@ public:
   const double* data() const { return &itsData[0]; }
 };
 
-static const char vcid_rgbacolor_h[] = "$Id$ $URL$";
-#endif // !RGBACOLOR_H_DEFINED
+static const char vcid_groovx_gfx_rgbacolor_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_RGBACOLOR_H_UTC20050626084023_DEFINED

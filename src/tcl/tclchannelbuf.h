@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLCHANNELBUF_H_DEFINED
-#define TCLCHANNELBUF_H_DEFINED
+#ifndef GROOVX_TCL_TCLCHANNELBUF_H_UTC20050626084018_DEFINED
+#define GROOVX_TCL_TCLCHANNELBUF_H_UTC20050626084018_DEFINED
 
 #include <iostream>
 
@@ -94,5 +94,5 @@ namespace Tcl
             std::ios::openmode flags = std::ios::openmode(0));
 }
 
-static const char vcid_tclchannelbuf_h[] = "$Id$ $URL$";
-#endif // !TCLCHANNELBUF_H_DEFINED
+static const char vcid_groovx_tcl_tclchannelbuf_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLCHANNELBUF_H_UTC20050626084018_DEFINED

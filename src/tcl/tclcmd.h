@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLCMD_H_DEFINED
-#define TCLCMD_H_DEFINED
+#ifndef GROOVX_TCL_TCLCMD_H_UTC20050626084018_DEFINED
+#define GROOVX_TCL_TCLCMD_H_UTC20050626084018_DEFINED
 
 #include "tcl/tclconvert.h"
 #include "tcl/tclobjptr.h"
@@ -244,5 +244,5 @@ private:
   Tcl_Obj* const* const itsObjv;
 };
 
-static const char vcid_tclcmd_h[] = "$Id$ $URL$";
-#endif // !TCLCMD_H_DEFINED
+static const char vcid_groovx_tcl_tclcmd_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLCMD_H_UTC20050626084018_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef DLISTTCL_CC_DEFINED
-#define DLISTTCL_CC_DEFINED
+#ifndef GROOVX_TCL_DLISTTCL_CC_UTC20050626084017_DEFINED
+#define GROOVX_TCL_DLISTTCL_CC_UTC20050626084017_DEFINED
 
 #include "tcl/dlisttcl.h"
 
@@ -742,5 +742,5 @@ DOTRACE("Dlist_Init");
   PKG_RETURN;
 }
 
-static const char vcid_dlisttcl_cc[] = "$Id$ $URL$";
-#endif // !DLISTTCL_CC_DEFINED
+static const char vcid_groovx_tcl_dlisttcl_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_DLISTTCL_CC_UTC20050626084017_DEFINED

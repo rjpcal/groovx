@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXDISK_CC_DEFINED
-#define GXDISK_CC_DEFINED
+#ifndef GROOVX_GFX_GXDISK_CC_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXDISK_CC_UTC20050626084024_DEFINED
 
 #include "gxdisk.h"
 
@@ -135,5 +135,5 @@ DOTRACE("GxDisk::draw");
                     itsNumSlices, itsNumLoops);
 }
 
-static const char vcid_gxdisk_cc[] = "$Id$ $URL$";
-#endif // !GXDISK_CC_DEFINED
+static const char vcid_groovx_gfx_gxdisk_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXDISK_CC_UTC20050626084024_DEFINED

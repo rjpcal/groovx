@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef RHTCL_H_DEFINED
-#define RHTCL_H_DEFINED
+#ifndef GROOVX_VISX_RHTCL_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_RHTCL_H_UTC20050626084015_DEFINED
 
 struct Tcl_Interp;
 
@@ -41,5 +41,5 @@ extern "C" int Kbdresponsehdlr_Init(Tcl_Interp* interp);
 extern "C" int Nullresponsehdlr_Init(Tcl_Interp* interp);
 extern "C" int Serialrh_Init(Tcl_Interp* interp);
 
-static const char vcid_rhtcl_h[] = "$Id$ $URL$";
-#endif // !RHTCL_H_DEFINED
+static const char vcid_groovx_visx_rhtcl_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_RHTCL_H_UTC20050626084015_DEFINED

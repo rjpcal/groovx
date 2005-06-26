@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FIELDS_CC_DEFINED
-#define FIELDS_CC_DEFINED
+#ifndef GROOVX_IO_FIELDS_CC_UTC20050626084021_DEFINED
+#define GROOVX_IO_FIELDS_CC_UTC20050626084021_DEFINED
 
 #include "io/fields.h"
 
@@ -228,5 +228,5 @@ DOTRACE("FieldContainer::child");
   return 0;
 }
 
-static const char vcid_fields_cc[] = "$Id$ $URL$";
-#endif // !FIELDS_CC_DEFINED
+static const char vcid_groovx_io_fields_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_FIELDS_CC_UTC20050626084021_DEFINED

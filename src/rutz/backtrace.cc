@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BACKTRACE_CC_DEFINED
-#define BACKTRACE_CC_DEFINED
+#ifndef GROOVX_RUTZ_BACKTRACE_CC_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_BACKTRACE_CC_UTC20050626084019_DEFINED
 
 #include "backtrace.h"
 
@@ -189,5 +189,5 @@ rutz::fstring rutz::backtrace::format() const
   return result;
 }
 
-static const char vcid_backtrace_cc[] = "$Id$ $URL$";
-#endif // !BACKTRACE_CC_DEFINED
+static const char vcid_groovx_rutz_backtrace_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_BACKTRACE_CC_UTC20050626084019_DEFINED

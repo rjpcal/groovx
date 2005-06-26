@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MTXOPS_H_DEFINED
-#define MTXOPS_H_DEFINED
+#ifndef GROOVX_PKGS_MTX_MTXOPS_H_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_MTX_MTXOPS_H_UTC20050626084022_DEFINED
 
 class mtx;
 
@@ -42,5 +42,5 @@ mtx squared(const mtx& src);
 mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
             int* ppadtop=0, int* ppadleft=0);
 
-static const char vcid_mtxops_h[] = "$Id$ $URL$";
-#endif // !MTXOPS_H_DEFINED
+static const char vcid_groovx_pkgs_mtx_mtxops_h_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_MTX_MTXOPS_H_UTC20050626084022_DEFINED

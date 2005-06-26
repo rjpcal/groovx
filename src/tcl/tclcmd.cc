@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLCMD_CC_DEFINED
-#define TCLCMD_CC_DEFINED
+#ifndef GROOVX_TCL_TCLCMD_CC_UTC20050626084018_DEFINED
+#define GROOVX_TCL_TCLCMD_CC_UTC20050626084018_DEFINED
 
 #include "tcl/tclcmd.h"
 
@@ -240,5 +240,5 @@ DOTRACE("Tcl::Context::setObjResult");
   itsInterp.setResult(obj);
 }
 
-static const char vcid_tclcmd_cc[] = "$Id$ $URL$";
-#endif // !TCLCMD_CC_DEFINED
+static const char vcid_groovx_tcl_tclcmd_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLCMD_CC_UTC20050626084018_DEFINED

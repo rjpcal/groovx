@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TIMINGHDLR_CC_DEFINED
-#define TIMINGHDLR_CC_DEFINED
+#ifndef GROOVX_VISX_TIMINGHDLR_CC_UTC20050626084016_DEFINED
+#define GROOVX_VISX_TIMINGHDLR_CC_UTC20050626084016_DEFINED
 
 #include "timinghdlr.h"
 
@@ -365,5 +365,5 @@ DOTRACE("TimingHdlr::thHaltExpt");
   Impl::cancelAll(rep->abortEvents);
 }
 
-static const char vcid_timinghdlr_cc[] = "$Id$ $URL$";
-#endif // !TIMINGHDLR_CC_DEFINED
+static const char vcid_groovx_visx_timinghdlr_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_TIMINGHDLR_CC_UTC20050626084016_DEFINED

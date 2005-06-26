@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJDB_CC_DEFINED
-#define OBJDB_CC_DEFINED
+#ifndef GROOVX_NUB_OBJDB_CC_UTC20050626084019_DEFINED
+#define GROOVX_NUB_OBJDB_CC_UTC20050626084019_DEFINED
 
 #include "objdb.h"
 
@@ -363,5 +363,5 @@ DOTRACE("Nub::ObjDb::insertObjWeak");
   rep->insertObj(obj, false);
 }
 
-static const char vcid_objdb_cc[] = "$Id$ $URL$";
-#endif // !OBJDB_CC_DEFINED
+static const char vcid_groovx_nub_objdb_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_OBJDB_CC_UTC20050626084019_DEFINED

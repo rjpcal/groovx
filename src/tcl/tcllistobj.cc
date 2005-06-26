@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLLISTOBJ_CC_DEFINED
-#define TCLLISTOBJ_CC_DEFINED
+#ifndef GROOVX_TCL_TCLLISTOBJ_CC_UTC20050626084018_DEFINED
+#define GROOVX_TCL_TCLLISTOBJ_CC_UTC20050626084018_DEFINED
 
 #include "tcl/tcllistobj.h"
 
@@ -123,5 +123,5 @@ DOTRACE("Tcl::List::getLength");
   return static_cast<unsigned int>(len);
 }
 
-static const char vcid_tcllistobj_cc[] = "$Id$ $URL$";
-#endif // !TCLLISTOBJ_CC_DEFINED
+static const char vcid_groovx_tcl_tcllistobj_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLLISTOBJ_CC_UTC20050626084018_DEFINED

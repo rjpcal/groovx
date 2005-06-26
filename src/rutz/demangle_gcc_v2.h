@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef DEMANGLE_GCC_V2_H_DEFINED
-#define DEMANGLE_GCC_V2_H_DEFINED
+#ifndef GROOVX_RUTZ_DEMANGLE_GCC_V2_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_DEMANGLE_GCC_V2_H_UTC20050626084020_DEFINED
 
 #include <cctype>
 #include <cstdlib>
@@ -264,5 +264,5 @@ namespace
   }
 }
 
-static const char vcid_demangle_gcc_v2_h[] = "$Id$ $URL$";
-#endif // !DEMANGLE_GCC_V2_H_DEFINED
+static const char vcid_groovx_rutz_demangle_gcc_v2_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_DEMANGLE_GCC_V2_H_UTC20050626084020_DEFINED

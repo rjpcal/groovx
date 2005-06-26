@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BASESIXFOURTEST_H_DEFINED
-#define BASESIXFOURTEST_H_DEFINED
+#ifndef GROOVX_PKGS_WHITEBOX_BASESIXFOURTEST_H_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_WHITEBOX_BASESIXFOURTEST_H_UTC20050626084022_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Basesixfourtest_Init(Tcl_Interp* interp);
 
-static const char vcid_basesixfourtest_h[] = "$Id$ $URL$";
-#endif // !BASESIXFOURTEST_H_DEFINED
+static const char vcid_groovx_pkgs_whitebox_basesixfourtest_h_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_WHITEBOX_BASESIXFOURTEST_H_UTC20050626084022_DEFINED

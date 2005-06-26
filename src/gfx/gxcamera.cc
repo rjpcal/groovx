@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXCAMERA_CC_DEFINED
-#define GXCAMERA_CC_DEFINED
+#ifndef GROOVX_GFX_GXCAMERA_CC_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXCAMERA_CC_UTC20050626084024_DEFINED
 
 #include "gxcamera.h"
 
@@ -356,5 +356,5 @@ DOTRACE("GxPsyphyCamera::draw");
   orthoFixed(canvas, width(), height(), pixels_per_unit);
 }
 
-static const char vcid_gxcamera_cc[] = "$Id$ $URL$";
-#endif // !GXCAMERA_CC_DEFINED
+static const char vcid_groovx_gfx_gxcamera_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXCAMERA_CC_UTC20050626084024_DEFINED

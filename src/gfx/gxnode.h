@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXNODE_H_DEFINED
-#define GXNODE_H_DEFINED
+#ifndef GROOVX_GFX_GXNODE_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXNODE_H_UTC20050626084023_DEFINED
 
 #include "io/io.h"
 
@@ -110,5 +110,5 @@ public:
   void undraw(Gfx::Canvas& canvas) const;
 };
 
-static const char vcid_gxnode_h[] = "$Id$ $URL$";
-#endif // !GXNODE_H_DEFINED
+static const char vcid_groovx_gfx_gxnode_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXNODE_H_UTC20050626084023_DEFINED

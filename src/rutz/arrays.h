@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ARRAYS_H_DEFINED
-#define ARRAYS_H_DEFINED
+#ifndef GROOVX_RUTZ_ARRAYS_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_ARRAYS_H_UTC20050626084020_DEFINED
 
 #include "rutz/algo.h"
 
@@ -487,5 +487,5 @@ namespace rutz
   };
 }
 
-static const char vcid_arrays_h[] = "$Id$ $URL$";
-#endif // !ARRAYS_H_DEFINED
+static const char vcid_groovx_rutz_arrays_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_ARRAYS_H_UTC20050626084020_DEFINED

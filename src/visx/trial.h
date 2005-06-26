@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TRIAL_H_DEFINED
-#define TRIAL_H_DEFINED
+#ifndef GROOVX_VISX_TRIAL_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_TRIAL_H_UTC20050626084016_DEFINED
 
 #include "io/fields.h"
 
@@ -178,5 +178,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_trial_h[] = "$Id$ $URL$";
-#endif // !TRIAL_H_DEFINED
+static const char vcid_groovx_visx_trial_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_TRIAL_H_UTC20050626084016_DEFINED

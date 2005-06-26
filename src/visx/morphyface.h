@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MORPHYFACE_H_DEFINED
-#define MORPHYFACE_H_DEFINED
+#ifndef GROOVX_VISX_MORPHYFACE_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_MORPHYFACE_H_UTC20050626084015_DEFINED
 
 #include "gfx/gxshapekit.h"
 
@@ -158,5 +158,5 @@ private:
   MorphyFace& operator=(const MorphyFace&); // assignment operator not to be used
 };
 
-static const char vcid_morphyface_h[] = "$Id$ $URL$";
-#endif // !MORPHYFACE_H_DEFINED
+static const char vcid_groovx_visx_morphyface_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_MORPHYFACE_H_UTC20050626084015_DEFINED

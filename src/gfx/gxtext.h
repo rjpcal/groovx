@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXTEXT_H_DEFINED
-#define GXTEXT_H_DEFINED
+#ifndef GROOVX_GFX_GXTEXT_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXTEXT_H_UTC20050626084024_DEFINED
 
 #include "gfx/gxshapekit.h"
 
@@ -98,5 +98,5 @@ private:
   int itsStrokeWidth;
 };
 
-static const char vcid_gxtext_h[] = "$Id$ $URL$";
-#endif // !GXTEXT_H_DEFINED
+static const char vcid_groovx_gfx_gxtext_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXTEXT_H_UTC20050626084024_DEFINED

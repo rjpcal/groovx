@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FIXPT_CC_DEFINED
-#define FIXPT_CC_DEFINED
+#ifndef GROOVX_VISX_FIXPT_CC_UTC20050626084016_DEFINED
+#define GROOVX_VISX_FIXPT_CC_UTC20050626084016_DEFINED
 
 #include "visx/fixpt.h"
 
@@ -150,5 +150,5 @@ DOTRACE("FixPt::grRender");
   }
 }
 
-static const char vcid_fixpt_cc[] = "$Id$ $URL$";
-#endif // !FIXPT_CC_DEFINED
+static const char vcid_groovx_visx_fixpt_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_FIXPT_CC_UTC20050626084016_DEFINED

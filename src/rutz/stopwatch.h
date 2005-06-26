@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef STOPWATCH_H_DEFINED
-#define STOPWATCH_H_DEFINED
+#ifndef GROOVX_RUTZ_STOPWATCH_H_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_STOPWATCH_H_UTC20050626084019_DEFINED
 
 #include "rutz/time.h"
 
@@ -67,5 +67,5 @@ private:
   rutz::time m_start_time;
 };
 
-static const char vcid_stopwatch_h[] = "$Id$ $URL$";
-#endif // !STOPWATCH_H_DEFINED
+static const char vcid_groovx_rutz_stopwatch_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_STOPWATCH_H_UTC20050626084019_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef STDIOBUF_CC_DEFINED
-#define STDIOBUF_CC_DEFINED
+#ifndef GROOVX_RUTZ_STDIOBUF_CC_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_STDIOBUF_CC_UTC20050626084020_DEFINED
 
 #include "rutz/stdiobuf.h"
 
@@ -183,5 +183,5 @@ int rutz::stdiobuf::flushoutput()
   return num;
 }
 
-static const char vcid_stdiobuf_cc[] = "$Id$ $URL$";
-#endif // !STDIOBUF_CC_DEFINED
+static const char vcid_groovx_rutz_stdiobuf_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_STDIOBUF_CC_UTC20050626084020_DEFINED

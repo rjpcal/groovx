@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BLOCKTCL_H_DEFINED
-#define BLOCKTCL_H_DEFINED
+#ifndef GROOVX_VISX_BLOCKTCL_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_BLOCKTCL_H_UTC20050626084016_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Block_Init(Tcl_Interp* interp);
 
-static const char vcid_blocktcl_h[] = "$Id$ $URL$";
-#endif // !BLOCKTCL_H_DEFINED
+static const char vcid_groovx_visx_blocktcl_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_BLOCKTCL_H_UTC20050626084016_DEFINED

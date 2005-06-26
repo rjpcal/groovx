@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef PSCANVAS_H_DEFINED
-#define PSCANVAS_H_DEFINED
+#ifndef GROOVX_GFX_PSCANVAS_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_PSCANVAS_H_UTC20050626084024_DEFINED
 
 #include "gfx/canvas.h"
 
@@ -180,5 +180,5 @@ private:
   Impl* rep;
 };
 
-static const char vcid_pscanvas_h[] = "$Id$ $URL$";
-#endif // !PSCANVAS_H_DEFINED
+static const char vcid_groovx_gfx_pscanvas_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_PSCANVAS_H_UTC20050626084024_DEFINED

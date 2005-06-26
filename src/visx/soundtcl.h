@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SOUNDTCL_H_DEFINED
-#define SOUNDTCL_H_DEFINED
+#ifndef GROOVX_VISX_SOUNDTCL_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_SOUNDTCL_H_UTC20050626084015_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Sound_Init(Tcl_Interp* interp);
 
-static const char vcid_soundtcl_h[] = "$Id$ $URL$";
-#endif // !SOUNDTCL_H_DEFINED
+static const char vcid_groovx_visx_soundtcl_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_SOUNDTCL_H_UTC20050626084015_DEFINED

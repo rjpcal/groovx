@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef CANVAS_H_DEFINED
-#define CANVAS_H_DEFINED
+#ifndef GROOVX_GFX_CANVAS_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_CANVAS_H_UTC20050626084023_DEFINED
 
 #include "nub/object.h"
 #include "nub/ref.h"
@@ -439,5 +439,5 @@ public:
 
 } // end namespace Gfx
 
-static const char vcid_canvas_h[] = "$Id$ $URL$";
-#endif // !CANVAS_H_DEFINED
+static const char vcid_groovx_gfx_canvas_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_CANVAS_H_UTC20050626084023_DEFINED

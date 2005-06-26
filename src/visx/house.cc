@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef HOUSE_CC_DEFINED
-#define HOUSE_CC_DEFINED
+#ifndef GROOVX_VISX_HOUSE_CC_UTC20050626084015_DEFINED
+#define GROOVX_VISX_HOUSE_CC_UTC20050626084015_DEFINED
 
 #include "house.h"
 
@@ -427,5 +427,5 @@ DOTRACE("House::grRender");
   }
 }
 
-static const char vcid_house_cc[] = "$Id$ $URL$";
-#endif // !HOUSE_CC_DEFINED
+static const char vcid_groovx_visx_house_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_HOUSE_CC_UTC20050626084015_DEFINED

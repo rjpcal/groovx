@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef RECTTCL_H_DEFINED
-#define RECTTCL_H_DEFINED
+#ifndef GROOVX_GFX_RECTTCL_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_RECTTCL_H_UTC20050626084023_DEFINED
 
 #include "geom/rect.h"
 
@@ -74,5 +74,5 @@ namespace Tcl
   }
 }
 
-static const char vcid_recttcl_h[] = "$Id$ $URL$";
-#endif // !RECTTCL_H_DEFINED
+static const char vcid_groovx_gfx_recttcl_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_RECTTCL_H_UTC20050626084023_DEFINED

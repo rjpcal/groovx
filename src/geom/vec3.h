@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef VEC3_H_DEFINED
-#define VEC3_H_DEFINED
+#ifndef GROOVX_GEOM_VEC3_H_UTC20050626084023_DEFINED
+#define GROOVX_GEOM_VEC3_H_UTC20050626084023_DEFINED
 
 #include "geom/vec2.h"
 
@@ -154,5 +154,5 @@ namespace geom
 
 } // end namespace geom
 
-static const char vcid_vec3_h[] = "$Id$ $URL$";
-#endif // !VEC3_H_DEFINED
+static const char vcid_groovx_geom_vec3_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GEOM_VEC3_H_UTC20050626084023_DEFINED

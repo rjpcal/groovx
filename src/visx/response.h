@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef RESPONSE_H_DEFINED
-#define RESPONSE_H_DEFINED
+#ifndef GROOVX_VISX_RESPONSE_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_RESPONSE_H_UTC20050626084016_DEFINED
 
 #include "rutz/value.h"
 
@@ -78,5 +78,5 @@ private:
   int itsMsec;
 };
 
-static const char vcid_response_h[] = "$Id$ $URL$";
-#endif // !RESPONSE_H_DEFINED
+static const char vcid_groovx_visx_response_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_RESPONSE_H_UTC20050626084016_DEFINED

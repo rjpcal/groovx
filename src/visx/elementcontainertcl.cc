@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ELEMENTCONTAINERTCL_CC_DEFINED
-#define ELEMENTCONTAINERTCL_CC_DEFINED
+#ifndef GROOVX_VISX_ELEMENTCONTAINERTCL_CC_UTC20050626084016_DEFINED
+#define GROOVX_VISX_ELEMENTCONTAINERTCL_CC_UTC20050626084016_DEFINED
 
 #include "visx/elementcontainertcl.h"
 
@@ -93,5 +93,5 @@ DOTRACE("Elementcontainer_Init");
   PKG_RETURN;
 }
 
-static const char vcid_elementcontainertcl_cc[] = "$Id$ $URL$";
-#endif // !ELEMENTCONTAINERTCL_CC_DEFINED
+static const char vcid_groovx_visx_elementcontainertcl_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_ELEMENTCONTAINERTCL_CC_UTC20050626084016_DEFINED

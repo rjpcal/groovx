@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SNAKE_H_DEFINED
-#define SNAKE_H_DEFINED
+#ifndef GROOVX_VISX_SNAKE_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_SNAKE_H_UTC20050626084016_DEFINED
 
 #include "geom/vec2.h"
 
@@ -93,5 +93,5 @@ private:
                      int i2, const geom::vec2<double>& new2);
 };
 
-static const char vcid_snake_h[] = "$Id$ $URL$";
-#endif // !SNAKE_H_DEFINED
+static const char vcid_groovx_visx_snake_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_SNAKE_H_UTC20050626084016_DEFINED

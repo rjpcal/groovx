@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BACKTRACE_H_DEFINED
-#define BACKTRACE_H_DEFINED
+#ifndef GROOVX_RUTZ_BACKTRACE_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_BACKTRACE_H_UTC20050626084020_DEFINED
 
 #include <iosfwd>
 
@@ -93,5 +93,5 @@ private:
   impl* const rep;
 };
 
-static const char vcid_backtrace_h[] = "$Id$ $URL$";
-#endif // !BACKTRACE_H_DEFINED
+static const char vcid_groovx_rutz_backtrace_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_BACKTRACE_H_UTC20050626084020_DEFINED

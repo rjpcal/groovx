@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SNAKE_CC_DEFINED
-#define SNAKE_CC_DEFINED
+#ifndef GROOVX_VISX_SNAKE_CC_UTC20050626084015_DEFINED
+#define GROOVX_VISX_SNAKE_CC_UTC20050626084015_DEFINED
 
 #include "snake.h"
 
@@ -502,5 +502,5 @@ DOTRACE("Snake::transformPath");
     }
 }
 
-static const char vcid_snake_cc[] = "$Id$ $URL$";
-#endif // !SNAKE_CC_DEFINED
+static const char vcid_groovx_visx_snake_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_SNAKE_CC_UTC20050626084015_DEFINED

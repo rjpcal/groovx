@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXLIGHTING_H_DEFINED
-#define GXLIGHTING_H_DEFINED
+#ifndef GROOVX_GFX_GXLIGHTING_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXLIGHTING_H_UTC20050626084024_DEFINED
 
 #include "gfx/gbcolor.h"
 #include "gfx/gbvec.h"
@@ -94,5 +94,5 @@ private:
   GxLighting& operator=(const GxLighting&);
 };
 
-static const char vcid_gxlighting_h[] = "$Id$ $URL$";
-#endif // !GXLIGHTING_H_DEFINED
+static const char vcid_groovx_gfx_gxlighting_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXLIGHTING_H_UTC20050626084024_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FUNCTORS_H_DEFINED
-#define FUNCTORS_H_DEFINED
+#ifndef GROOVX_RUTZ_FUNCTORS_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_FUNCTORS_H_UTC20050626084020_DEFINED
 
 namespace rutz
 {
@@ -751,5 +751,5 @@ namespace rutz
 
 } // end namespace rutz
 
-static const char vcid_functors_h[] = "$Id$ $URL$";
-#endif // !FUNCTORS_H_DEFINED
+static const char vcid_groovx_rutz_functors_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_FUNCTORS_H_UTC20050626084020_DEFINED

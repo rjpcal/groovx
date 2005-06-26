@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MTX_H_DEFINED
-#define MTX_H_DEFINED
+#ifndef GROOVX_PKGS_MTX_MTX_H_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_MTX_MTX_H_UTC20050626084022_DEFINED
 
 #include "datablock.h"
 
@@ -1093,5 +1093,5 @@ mtx arr_div(const mtx& m1, const mtx& m2);
 mtx min(const mtx& m1, const mtx& m2);
 mtx max(const mtx& m1, const mtx& m2);
 
-static const char vcid_mtx_h[] = "$Id$ $URL$";
-#endif // !MTX_H_DEFINED
+static const char vcid_groovx_pkgs_mtx_mtx_h_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_MTX_MTX_H_UTC20050626084022_DEFINED

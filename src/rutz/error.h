@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ERROR_H_DEFINED
-#define ERROR_H_DEFINED
+#ifndef GROOVX_RUTZ_ERROR_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_ERROR_H_UTC20050626084020_DEFINED
 
 #include "rutz/fileposition.h"
 #include "rutz/fstring.h"
@@ -93,5 +93,5 @@ private:
   const rutz::backtrace* m_backtrace;
 };
 
-static const char vcid_error_h[] = "$Id$ $URL$";
-#endif // !ERROR_H_DEFINED
+static const char vcid_groovx_rutz_error_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_ERROR_H_UTC20050626084020_DEFINED

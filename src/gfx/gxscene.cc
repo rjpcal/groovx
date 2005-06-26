@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXSCENE_CC_DEFINED
-#define GXSCENE_CC_DEFINED
+#ifndef GROOVX_GFX_GXSCENE_CC_UTC20050626084025_DEFINED
+#define GROOVX_GFX_GXSCENE_CC_UTC20050626084025_DEFINED
 
 #include "gxscene.h"
 
@@ -215,5 +215,5 @@ DOTRACE("GxScene::animate");
     }
 }
 
-static const char vcid_gxscene_cc[] = "$Id$ $URL$";
-#endif // !GXSCENE_CC_DEFINED
+static const char vcid_groovx_gfx_gxscene_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXSCENE_CC_UTC20050626084025_DEFINED

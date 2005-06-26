@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXCACHE_H_DEFINED
-#define GXCACHE_H_DEFINED
+#ifndef GROOVX_GFX_GXCACHE_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXCACHE_H_UTC20050626084023_DEFINED
 
 #include "gfx/gxbin.h"
 
@@ -101,5 +101,5 @@ private:
   mutable Nub::SoftRef<GLCanvas> itsCanvas;
 };
 
-static const char vcid_gxcache_h[] = "$Id$ $URL$";
-#endif // !GXCACHE_H_DEFINED
+static const char vcid_groovx_gfx_gxcache_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXCACHE_H_UTC20050626084023_DEFINED

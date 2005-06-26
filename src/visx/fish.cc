@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FISH_CC_DEFINED
-#define FISH_CC_DEFINED
+#ifndef GROOVX_VISX_FISH_CC_UTC20050626084016_DEFINED
+#define GROOVX_VISX_FISH_CC_UTC20050626084016_DEFINED
 
 #include "fish.h"
 
@@ -571,5 +571,5 @@ DOTRACE("Fish::grRender");
 }
 
 
-static const char vcid_fish_cc[] = "$Id$ $URL$";
-#endif // !FISH_CC_DEFINED
+static const char vcid_groovx_visx_fish_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_FISH_CC_UTC20050626084016_DEFINED

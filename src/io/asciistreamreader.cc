@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ASCIISTREAMREADER_CC_DEFINED
-#define ASCIISTREAMREADER_CC_DEFINED
+#ifndef GROOVX_IO_ASCIISTREAMREADER_CC_UTC20050626084021_DEFINED
+#define GROOVX_IO_ASCIISTREAMREADER_CC_UTC20050626084021_DEFINED
 
 #include "io/asciistreamreader.h"
 
@@ -508,5 +508,5 @@ shared_ptr<IO::Reader> IO::makeAsciiStreamReader(const char* filename)
   return rutz::make_shared( new AsciiStreamReader(filename) );
 }
 
-static const char vcid_asciistreamreader_cc[] = "$Id$ $URL$";
-#endif // !ASCIISTREAMREADER_CC_DEFINED
+static const char vcid_groovx_io_asciistreamreader_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_ASCIISTREAMREADER_CC_UTC20050626084021_DEFINED

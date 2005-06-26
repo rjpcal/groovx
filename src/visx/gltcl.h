@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GLTCL_H_DEFINED
-#define GLTCL_H_DEFINED
+#ifndef GROOVX_VISX_GLTCL_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_GLTCL_H_UTC20050626084016_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Gl_Init(Tcl_Interp* interp);
 
-static const char vcid_gltcl_h[] = "$Id$ $URL$";
-#endif // !GLTCL_H_DEFINED
+static const char vcid_groovx_visx_gltcl_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_GLTCL_H_UTC20050626084016_DEFINED

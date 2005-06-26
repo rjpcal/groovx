@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef RESPONSEHANDLER_CC_DEFINED
-#define RESPONSEHANDLER_CC_DEFINED
+#ifndef GROOVX_VISX_RESPONSEHANDLER_CC_UTC20050626084017_DEFINED
+#define GROOVX_VISX_RESPONSEHANDLER_CC_UTC20050626084017_DEFINED
 
 #include "visx/responsehandler.h"
 
@@ -53,5 +53,5 @@ ResponseHandler::~ResponseHandler() throw()
 DOTRACE("ResponseHandler::~ResponseHandler");
 }
 
-static const char vcid_responsehandler_cc[] = "$Id$ $URL$";
-#endif // !RESPONSEHANDLER_CC_DEFINED
+static const char vcid_groovx_visx_responsehandler_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_RESPONSEHANDLER_CC_UTC20050626084017_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GLWINDOWINTERFACE_H_DEFINED
-#define GLWINDOWINTERFACE_H_DEFINED
+#ifndef GROOVX_GFX_GLWINDOWINTERFACE_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GLWINDOWINTERFACE_H_UTC20050626084024_DEFINED
 
 #include <tk.h>
 
@@ -75,5 +75,5 @@ public:
                                                   GlxOpts& opts);
 };
 
-static const char vcid_glwindowinterface_h[] = "$Id$ $URL$";
-#endif // !GLWINDOWINTERFACE_H_DEFINED
+static const char vcid_groovx_gfx_glwindowinterface_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GLWINDOWINTERFACE_H_UTC20050626084024_DEFINED

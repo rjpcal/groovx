@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef PIPE_H_DEFINED
-#define PIPE_H_DEFINED
+#ifndef GROOVX_RUTZ_PIPE_H_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_PIPE_H_UTC20050626084019_DEFINED
 
 #include "rutz/stdiobuf.h"
 
@@ -187,5 +187,5 @@ private:
   rutz::stdiostream* m_out_stream;
 };
 
-static const char vcid_pipe_h[] = "$Id$ $URL$";
-#endif // !PIPE_H_DEFINED
+static const char vcid_groovx_rutz_pipe_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_PIPE_H_UTC20050626084019_DEFINED

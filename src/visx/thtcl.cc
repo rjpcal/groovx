@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef THTCL_CC_DEFINED
-#define THTCL_CC_DEFINED
+#ifndef GROOVX_VISX_THTCL_CC_UTC20050626084015_DEFINED
+#define GROOVX_VISX_THTCL_CC_UTC20050626084015_DEFINED
 
 #include "visx/thtcl.h"
 
@@ -132,5 +132,5 @@ DOTRACE("Timinghandler_Init");
   PKG_RETURN;
 }
 
-static const char vcid_thtcl_cc[] = "$Id$ $URL$";
-#endif // !THTCL_CC_DEFINED
+static const char vcid_groovx_visx_thtcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_THTCL_CC_UTC20050626084015_DEFINED

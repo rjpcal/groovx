@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SOUNDTCL_CC_DEFINED
-#define SOUNDTCL_CC_DEFINED
+#ifndef GROOVX_VISX_SOUNDTCL_CC_UTC20050626084015_DEFINED
+#define GROOVX_VISX_SOUNDTCL_CC_UTC20050626084015_DEFINED
 
 #include "visx/soundtcl.h"
 
@@ -87,5 +87,5 @@ DOTRACE("Sound_Init");
   PKG_RETURN;
 }
 
-static const char vcid_soundtcl_cc[] = "$Id$ $URL$";
-#endif // !SOUNDTCL_CC_DEFINED
+static const char vcid_groovx_visx_soundtcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_SOUNDTCL_CC_UTC20050626084015_DEFINED

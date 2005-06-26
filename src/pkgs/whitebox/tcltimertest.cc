@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLTIMERTEST_CC_DEFINED
-#define TCLTIMERTEST_CC_DEFINED
+#ifndef GROOVX_PKGS_WHITEBOX_TCLTIMERTEST_CC_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_WHITEBOX_TCLTIMERTEST_CC_UTC20050626084022_DEFINED
 
 #include "pkgs/whitebox/tcltimertest.h"
 
@@ -218,5 +218,5 @@ DOTRACE("Tcltimertest_Unload");
 extern "C" int Tcltimertest_SafeUnload(Tcl_Interp*, int /*flags*/)
 { return 1; }
 
-static const char vcid_tcltimertest_cc[] = "$Id$ $URL$";
-#endif // !TCLTIMERTEST_CC_DEFINED
+static const char vcid_groovx_pkgs_whitebox_tcltimertest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_WHITEBOX_TCLTIMERTEST_CC_UTC20050626084022_DEFINED

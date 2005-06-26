@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GABOR_CC_DEFINED
-#define GABOR_CC_DEFINED
+#ifndef GROOVX_VISX_GABOR_CC_UTC20050626084017_DEFINED
+#define GROOVX_VISX_GABOR_CC_UTC20050626084017_DEFINED
 
 #include "visx/gabor.h"
 
@@ -310,5 +310,5 @@ DOTRACE("Gabor::grRender");
                     vec2d(itsPointSize, itsPointSize));
 }
 
-static const char vcid_gabor_cc[] = "$Id$ $URL$";
-#endif // !GABOR_CC_DEFINED
+static const char vcid_groovx_visx_gabor_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_GABOR_CC_UTC20050626084017_DEFINED

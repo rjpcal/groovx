@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLCOMMANDGROUP_CC_DEFINED
-#define TCLCOMMANDGROUP_CC_DEFINED
+#ifndef GROOVX_TCL_TCLCOMMANDGROUP_CC_UTC20050626084018_DEFINED
+#define GROOVX_TCL_TCLCOMMANDGROUP_CC_UTC20050626084018_DEFINED
 
 #include "tcl/tclcommandgroup.h"
 
@@ -444,5 +444,5 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
   return TCL_ERROR;
 }
 
-static const char vcid_tclcommandgroup_cc[] = "$Id$ $URL$";
-#endif // !TCLCOMMANDGROUP_CC_DEFINED
+static const char vcid_groovx_tcl_tclcommandgroup_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLCOMMANDGROUP_CC_UTC20050626084018_DEFINED

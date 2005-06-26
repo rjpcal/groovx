@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef REFCOUNTED_CC_DEFINED
-#define REFCOUNTED_CC_DEFINED
+#ifndef GROOVX_NUB_REFCOUNTED_CC_UTC20050626084018_DEFINED
+#define GROOVX_NUB_REFCOUNTED_CC_UTC20050626084018_DEFINED
 
 #include "refcounted.h"
 
@@ -262,5 +262,5 @@ int Nub::RefCounted::dbg_WeakRefCount() const throw()
   return itsRefCounts->itsWeak;
 }
 
-static const char vcid_refcounted_cc[] = "$Id$ $URL$";
-#endif // !REFCOUNTED_CC_DEFINED
+static const char vcid_groovx_nub_refcounted_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_REFCOUNTED_CC_UTC20050626084018_DEFINED

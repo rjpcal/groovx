@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXMATERIAL_CC_DEFINED
-#define GXMATERIAL_CC_DEFINED
+#ifndef GROOVX_GFX_GXMATERIAL_CC_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXMATERIAL_CC_UTC20050626084024_DEFINED
 
 #include "gfx/gxmaterial.h"
 
@@ -133,5 +133,5 @@ DOTRACE("GxMaterial::draw");
                      &shininess);
 }
 
-static const char vcid_gxmaterial_cc[] = "$Id$ $URL$";
-#endif // !GXMATERIAL_CC_DEFINED
+static const char vcid_groovx_gfx_gxmaterial_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXMATERIAL_CC_UTC20050626084024_DEFINED

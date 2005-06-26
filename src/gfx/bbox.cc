@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BBOX_CC_DEFINED
-#define BBOX_CC_DEFINED
+#ifndef GROOVX_GFX_BBOX_CC_UTC20050626084024_DEFINED
+#define GROOVX_GFX_BBOX_CC_UTC20050626084024_DEFINED
 
 #include "bbox.h"
 
@@ -236,5 +236,5 @@ DOTRACE("Gfx::Bbox::rect");
   return rep->cube.rect();
 }
 
-static const char vcid_bbox_cc[] = "$Id$ $URL$";
-#endif // !BBOX_CC_DEFINED
+static const char vcid_groovx_gfx_bbox_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_BBOX_CC_UTC20050626084024_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXSHAPEKIT_CC_DEFINED
-#define GXSHAPEKIT_CC_DEFINED
+#ifndef GROOVX_GFX_GXSHAPEKIT_CC_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXSHAPEKIT_CC_UTC20050626084023_DEFINED
 
 #include "gfx/gxshapekit.h"
 
@@ -469,5 +469,5 @@ DOTRACE("GxShapeKit::setHeightFactor");
   rep->scaler->setHeightFactor(val);
 }
 
-static const char vcid_gxshapekit_cc[] = "$Id$ $URL$";
-#endif // !GXSHAPEKIT_CC_DEFINED
+static const char vcid_groovx_gfx_gxshapekit_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXSHAPEKIT_CC_UTC20050626084023_DEFINED

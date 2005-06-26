@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef WRITER_H_DEFINED
-#define WRITER_H_DEFINED
+#ifndef GROOVX_IO_WRITER_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_WRITER_H_UTC20050626084021_DEFINED
 
 #include "io/io.h"
 
@@ -173,5 +173,5 @@ protected:
                            unsigned int length);
 };
 
-static const char vcid_writer_h[] = "$Id$ $URL$";
-#endif // !WRITER_H_DEFINED
+static const char vcid_groovx_io_writer_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_WRITER_H_UTC20050626084021_DEFINED

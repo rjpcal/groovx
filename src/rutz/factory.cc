@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FACTORY_CC_DEFINED
-#define FACTORY_CC_DEFINED
+#ifndef GROOVX_RUTZ_FACTORY_CC_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_FACTORY_CC_UTC20050626084020_DEFINED
 
 #include "factory.h"
 
@@ -64,5 +64,5 @@ DOTRACE("rutz::factory_base::try_fallback");
     }
 }
 
-static const char vcid_factory_cc[] = "$Id$ $URL$";
-#endif // !FACTORY_CC_DEFINED
+static const char vcid_groovx_rutz_factory_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_FACTORY_CC_UTC20050626084020_DEFINED

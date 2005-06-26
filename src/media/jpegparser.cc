@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef JPEGPARSER_CC_DEFINED
-#define JPEGPARSER_CC_DEFINED
+#ifndef GROOVX_MEDIA_JPEGPARSER_CC_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_JPEGPARSER_CC_UTC20050626084018_DEFINED
 
 #include "jpegparser.h"
 
@@ -180,5 +180,5 @@ DOTRACE("media::load_jpeg");
 
 #endif // HAVE_LIBJPEG
 
-static const char vcid_jpegparser_cc[] = "$Id$ $URL$";
-#endif // !JPEGPARSER_CC_DEFINED
+static const char vcid_groovx_media_jpegparser_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_JPEGPARSER_CC_UTC20050626084018_DEFINED

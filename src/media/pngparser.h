@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef PNGPARSER_H_DEFINED
-#define PNGPARSER_H_DEFINED
+#ifndef GROOVX_MEDIA_PNGPARSER_H_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_PNGPARSER_H_UTC20050626084018_DEFINED
 
 namespace media
 {
@@ -44,5 +44,5 @@ namespace media
   void save_png(const char* filename, const media::bmap_data& data);
 }
 
-static const char vcid_pngparser_h[] = "$Id$ $URL$";
-#endif // !PNGPARSER_H_DEFINED
+static const char vcid_groovx_media_pngparser_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_PNGPARSER_H_UTC20050626084018_DEFINED

@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MORPHYFACETCL_H_DEFINED
-#define MORPHYFACETCL_H_DEFINED
+#ifndef GROOVX_VISX_MORPHYFACETCL_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_MORPHYFACETCL_H_UTC20050626084016_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Morphyface_Init(Tcl_Interp* interp);
 
-static const char vcid_morphyfacetcl_h[] = "$Id$ $URL$";
-#endif // !MORPHYFACETCL_H_DEFINED
+static const char vcid_groovx_visx_morphyfacetcl_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_MORPHYFACETCL_H_UTC20050626084016_DEFINED

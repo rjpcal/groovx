@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef JITTER_H_DEFINED
-#define JITTER_H_DEFINED
+#ifndef GROOVX_VISX_JITTER_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_JITTER_H_UTC20050626084016_DEFINED
 
 #include "gfx/gxtransform.h"
 
@@ -94,5 +94,5 @@ private:
   mutable double itsRShift;
 };
 
-static const char vcid_jitter_h_[] = "$Id$ $URL$";
-#endif // !JITTER_H_DEFINED
+static const char vcid_groovx_visx_jitter_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_JITTER_H_UTC20050626084016_DEFINED

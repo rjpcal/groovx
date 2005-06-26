@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLSAFEINTERP_CC_DEFINED
-#define TCLSAFEINTERP_CC_DEFINED
+#ifndef GROOVX_TCL_TCLSAFEINTERP_CC_UTC20050626084017_DEFINED
+#define GROOVX_TCL_TCLSAFEINTERP_CC_UTC20050626084017_DEFINED
 
 #include "tcl/tclsafeinterp.h"
 
@@ -522,5 +522,5 @@ DOTRACE("Tcl::Interp::deleteProc");
   eval(cmd_str);
 }
 
-static const char vcid_tclsafeinterp_cc[] = "$Id$ $URL$";
-#endif // !TCLSAFEINTERP_CC_DEFINED
+static const char vcid_groovx_tcl_tclsafeinterp_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLSAFEINTERP_CC_UTC20050626084017_DEFINED

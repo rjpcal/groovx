@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef CLONEFACE_CC_DEFINED
-#define CLONEFACE_CC_DEFINED
+#ifndef GROOVX_VISX_CLONEFACE_CC_UTC20050626084017_DEFINED
+#define GROOVX_VISX_CLONEFACE_CC_UTC20050626084017_DEFINED
 
 #include "visx/cloneface.h"
 
@@ -143,5 +143,5 @@ DOTRACE("CloneFace::getVertOffset");
   return itsVertOffset;
 }
 
-static const char vcid_cloneface_cc[] = "$Id$ $URL$";
-#endif // !CLONEFACE_CC_DEFINED
+static const char vcid_groovx_visx_cloneface_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_CLONEFACE_CC_UTC20050626084017_DEFINED

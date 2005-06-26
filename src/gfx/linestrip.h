@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef LINESTRIP_H_DEFINED
-#define LINESTRIP_H_DEFINED
+#ifndef GROOVX_GFX_LINESTRIP_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_LINESTRIP_H_UTC20050626084024_DEFINED
 
 #include <vector>
 
@@ -85,5 +85,5 @@ namespace Gfx
 
 } // end namespace Gfx
 
-static const char vcid_linestrip_h[] = "$Id$ $URL$";
-#endif // !LINESTRIP_H_DEFINED
+static const char vcid_groovx_gfx_linestrip_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_LINESTRIP_H_UTC20050626084024_DEFINED

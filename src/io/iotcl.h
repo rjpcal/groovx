@@ -30,13 +30,13 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IOTCL_H_DEFINED
-#define IOTCL_H_DEFINED
+#ifndef GROOVX_IO_IOTCL_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_IOTCL_H_UTC20050626084021_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Io_Init(Tcl_Interp* interp);
 extern "C" int Outputfile_Init(Tcl_Interp* interp);
 
-static const char vcid_iotcl_h[] = "$Id$ $URL$";
-#endif // !IOTCL_H_DEFINED
+static const char vcid_groovx_io_iotcl_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_IOTCL_H_UTC20050626084021_DEFINED

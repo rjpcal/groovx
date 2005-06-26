@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLCHANNELBUF_CC_DEFINED
-#define TCLCHANNELBUF_CC_DEFINED
+#ifndef GROOVX_TCL_TCLCHANNELBUF_CC_UTC20050626084017_DEFINED
+#define GROOVX_TCL_TCLCHANNELBUF_CC_UTC20050626084017_DEFINED
 
 #include "tcl/tclchannelbuf.h"
 
@@ -185,5 +185,5 @@ shared_ptr<std::istream> Tcl::ichanopen(Tcl_Interp* interp,
 }
 
 
-static const char vcid_tclchannelbuf_cc[] = "$Id$ $URL$";
-#endif // !TCLCHANNELBUF_CC_DEFINED
+static const char vcid_groovx_tcl_tclchannelbuf_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLCHANNELBUF_CC_UTC20050626084017_DEFINED

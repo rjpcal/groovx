@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLVECCMD_H_DEFINED
-#define TCLVECCMD_H_DEFINED
+#ifndef GROOVX_TCL_TCLVECCMD_H_UTC20050626084018_DEFINED
+#define GROOVX_TCL_TCLVECCMD_H_UTC20050626084018_DEFINED
 
 namespace Tcl
 {
@@ -40,5 +40,5 @@ namespace Tcl
   void useVecDispatch(Tcl::Command& cmd, unsigned int key_argn);
 }
 
-static const char vcid_tclveccmd_h[] = "$Id$ $URL$";
-#endif // !TCLVECCMD_H_DEFINED
+static const char vcid_groovx_tcl_tclveccmd_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLVECCMD_H_UTC20050626084018_DEFINED

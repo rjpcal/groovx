@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef READUTILS_H_DEFINED
-#define READUTILS_H_DEFINED
+#ifndef GROOVX_IO_READUTILS_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_READUTILS_H_UTC20050626084021_DEFINED
 
 #include "io/reader.h"
 
@@ -128,5 +128,5 @@ namespace ReadUtils
 
 }} // end namespace IO::ReadUtils
 
-static const char vcid_readutils_h[] = "$Id$ $URL$";
-#endif // !READUTILS_H_DEFINED
+static const char vcid_groovx_io_readutils_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_READUTILS_H_UTC20050626084021_DEFINED

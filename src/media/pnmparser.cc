@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef PBM_CC_DEFINED
-#define PBM_CC_DEFINED
+#ifndef GROOVX_MEDIA_PNMPARSER_CC_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_PNMPARSER_CC_UTC20050626084018_DEFINED
 
 #include "pnmparser.h"
 
@@ -310,5 +310,5 @@ DOTRACE("media::load_pnm");
   data.swap(new_data);
 }
 
-static const char vcid_pbm_cc[] = "$Id$ $URL$";
-#endif // !PBM_CC_DEFINED
+static const char vcid_groovx_media_pnmparser_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_PNMPARSER_CC_UTC20050626084018_DEFINED

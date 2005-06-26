@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef DEMANGLE_GCC_V3_H_DEFINED
-#define DEMANGLE_GCC_V3_H_DEFINED
+#ifndef GROOVX_RUTZ_DEMANGLE_GCC_V3_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_DEMANGLE_GCC_V3_H_UTC20050626084020_DEFINED
 
 #include "rutz/error.h"
 
@@ -144,5 +144,5 @@ namespace
 //    printboth(typeid(Tplate3<int>::Xt).name());
 //  }
 
-static const char vcid_demangle_gcc_v3_h[] = "$Id$ $URL$";
-#endif // !DEMANGLE_GCC_V3_H_DEFINED
+static const char vcid_groovx_rutz_demangle_gcc_v3_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_DEMANGLE_GCC_V3_H_UTC20050626084020_DEFINED

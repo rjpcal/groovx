@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OUTPUTFILE_H_DEFINED
-#define OUTPUTFILE_H_DEFINED
+#ifndef GROOVX_IO_OUTPUTFILE_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_OUTPUTFILE_H_UTC20050626084021_DEFINED
 
 #include "io/io.h"
 
@@ -74,5 +74,5 @@ private:
   rutz::shared_ptr<std::ostream> itsStream;
 };
 
-static const char vcid_outputfile_h[] = "$Id$ $URL$";
-#endif // !OUTPUTFILE_H_DEFINED
+static const char vcid_groovx_io_outputfile_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_OUTPUTFILE_H_UTC20050626084021_DEFINED

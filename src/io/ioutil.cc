@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IOUTIL_CC_DEFINED
-#define IOUTIL_CC_DEFINED
+#ifndef GROOVX_IO_IOUTIL_CC_UTC20050626084021_DEFINED
+#define GROOVX_IO_IOUTIL_CC_UTC20050626084021_DEFINED
 
 #include "io/ioutil.h"
 
@@ -128,5 +128,5 @@ Nub::Ref<IO::IoObject> IO::retrieveASW(fstring fname)
   return reader->readRoot();
 }
 
-static const char vcid_ioutil_cc[] = "$Id$ $URL$";
-#endif // !IOUTIL_CC_DEFINED
+static const char vcid_groovx_io_ioutil_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_IOUTIL_CC_UTC20050626084021_DEFINED

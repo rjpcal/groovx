@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef WRITEUTILS_CC_DEFINED
-#define WRITEUTILS_CC_DEFINED
+#ifndef GROOVX_IO_WRITEUTILS_CC_UTC20050626084021_DEFINED
+#define GROOVX_IO_WRITEUTILS_CC_UTC20050626084021_DEFINED
 
 #include "io/writeutils.h"
 
@@ -50,5 +50,5 @@ fstring IO::WriteUtils::makeSeqCountString(const fstring& seq_name)
   return ReadUtils::makeSeqCountString(seq_name);
 }
 
-static const char vcid_writeutils_cc[] = "$Id$ $URL$";
-#endif // !WRITEUTILS_CC_DEFINED
+static const char vcid_groovx_io_writeutils_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_WRITEUTILS_CC_UTC20050626084021_DEFINED

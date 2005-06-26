@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef WRITEUTILS_H_DEFINED
-#define WRITEUTILS_H_DEFINED
+#ifndef GROOVX_IO_WRITEUTILS_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_WRITEUTILS_H_UTC20050626084021_DEFINED
 
 #include "io/writer.h"
 
@@ -131,5 +131,5 @@ namespace WriteUtils
 
 }} // end namespace IO::WriteUtils
 
-static const char vcid_writeutils_h[] = "$Id$ $URL$";
-#endif // !WRITEUTILS_H_DEFINED
+static const char vcid_groovx_io_writeutils_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_WRITEUTILS_H_UTC20050626084021_DEFINED

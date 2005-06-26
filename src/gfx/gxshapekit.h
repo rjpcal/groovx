@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXSHAPEKIT_H_DEFINED
-#define GXSHAPEKIT_H_DEFINED
+#ifndef GROOVX_GFX_GXSHAPEKIT_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXSHAPEKIT_H_UTC20050626084023_DEFINED
 
 #include "gfx/gxnode.h"
 
@@ -242,5 +242,5 @@ private:
   GxShapeKitImpl* const rep;    // opaque pointer to implementation
 };
 
-static const char vcid_gxshapekit_h[] = "$Id$ $URL$";
-#endif // !GXSHAPEKIT_H_DEFINED
+static const char vcid_groovx_gfx_gxshapekit_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXSHAPEKIT_H_UTC20050626084023_DEFINED

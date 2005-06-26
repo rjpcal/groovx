@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXNODE_CC_DEFINED
-#define GXNODE_CC_DEFINED
+#ifndef GROOVX_GFX_GXNODE_CC_UTC20050626084025_DEFINED
+#define GROOVX_GFX_GXNODE_CC_UTC20050626084025_DEFINED
 
 #include "gxnode.h"
 
@@ -117,5 +117,5 @@ DOTRACE("GxNode::undraw");
   canvas.clearColorBuffer(screen_box);
 }
 
-static const char vcid_gxnode_cc[] = "$Id$ $URL$";
-#endif // !GXNODE_CC_DEFINED
+static const char vcid_groovx_gfx_gxnode_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXNODE_CC_UTC20050626084025_DEFINED

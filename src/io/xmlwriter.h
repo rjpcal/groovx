@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef XMLWRITER_H_DEFINED
-#define XMLWRITER_H_DEFINED
+#ifndef GROOVX_IO_XMLWRITER_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_XMLWRITER_H_UTC20050626084021_DEFINED
 
 #include "rutz/sharedptr.h"
 
@@ -48,5 +48,5 @@ namespace IO
   rutz::shared_ptr<IO::Writer> makeXMLWriter(const char* filename);
 }
 
-static const char vcid_xmlwriter_h[] = "$Id$ $URL$";
-#endif // !XMLWRITER_H_DEFINED
+static const char vcid_groovx_io_xmlwriter_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_XMLWRITER_H_UTC20050626084021_DEFINED

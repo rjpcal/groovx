@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef NULLRESPONSEHDLR_CC_DEFINED
-#define NULLRESPONSEHDLR_CC_DEFINED
+#ifndef GROOVX_VISX_NULLRESPONSEHDLR_CC_UTC20050626084016_DEFINED
+#define GROOVX_VISX_NULLRESPONSEHDLR_CC_UTC20050626084016_DEFINED
 
 #include "gfx/toglet.h"
 
@@ -98,5 +98,5 @@ void NullResponseHdlr::rhDenyResponses() const
 DOTRACE("NullResponseHdlr::rhDenyResponses");
 }
 
-static const char vcid_nullresponsehdlr_cc[] = "$Id$ $URL$";
-#endif // !NULLRESPONSEHDLR_CC_DEFINED
+static const char vcid_groovx_visx_nullresponsehdlr_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_NULLRESPONSEHDLR_CC_UTC20050626084016_DEFINED

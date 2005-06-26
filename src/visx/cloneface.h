@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef CLONEFACE_H_DEFINED
-#define CLONEFACE_H_DEFINED
+#ifndef GROOVX_VISX_CLONEFACE_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_CLONEFACE_H_UTC20050626084016_DEFINED
 
 #include "visx/face.h"
 
@@ -88,5 +88,5 @@ private:
   double itsCtrlPnts[24];       // Bezier control points for face outline
 };
 
-static const char vcid_cloneface_h[] = "$Id$ $URL$";
-#endif // !CLONEFACE_H_DEFINED
+static const char vcid_groovx_visx_cloneface_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_CLONEFACE_H_UTC20050626084016_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MTXOPS_CC_DEFINED
-#define MTXOPS_CC_DEFINED
+#ifndef GROOVX_PKGS_MTX_MTXOPS_CC_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_MTX_MTXOPS_CC_UTC20050626084022_DEFINED
 
 #include "mtxops.h"
 
@@ -100,5 +100,5 @@ mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
   return result;
 }
 
-static const char vcid_mtxops_cc[] = "$Id$ $URL$";
-#endif // !MTXOPS_CC_DEFINED
+static const char vcid_groovx_pkgs_mtx_mtxops_cc_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_MTX_MTXOPS_CC_UTC20050626084022_DEFINED

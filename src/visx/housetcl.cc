@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef HOUSETCL_CC_DEFINED
-#define HOUSETCL_CC_DEFINED
+#ifndef GROOVX_VISX_HOUSETCL_CC_UTC20050626084015_DEFINED
+#define GROOVX_VISX_HOUSETCL_CC_UTC20050626084015_DEFINED
 
 #include "visx/housetcl.h"
 
@@ -55,5 +55,5 @@ DOTRACE("House_Init");
   PKG_RETURN;
 }
 
-static const char vcid_housetcl_cc[] = "$Id$ $URL$";
-#endif // !HOUSETCL_CC_DEFINED
+static const char vcid_groovx_visx_housetcl_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_HOUSETCL_CC_UTC20050626084015_DEFINED

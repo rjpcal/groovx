@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SERIALPORT_CC_DEFINED
-#define SERIALPORT_CC_DEFINED
+#ifndef GROOVX_RUTZ_SERIALPORT_CC_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_SERIALPORT_CC_UTC20050626084020_DEFINED
 
 #include "rutz/serialport.h"
 
@@ -127,5 +127,5 @@ DOTRACE("rutz::serial_port::close");
   return m_exit_status;
 }
 
-static const char vcid_serialport_cc[] = "$Id$ $URL$";
-#endif // !SERIALPORT_CC_DEFINED
+static const char vcid_groovx_rutz_serialport_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_SERIALPORT_CC_UTC20050626084020_DEFINED

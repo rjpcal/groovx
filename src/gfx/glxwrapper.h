@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GLXWRAPPER_H_DEFINED
-#define GLXWRAPPER_H_DEFINED
+#ifndef GROOVX_GFX_GLXWRAPPER_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GLXWRAPPER_H_UTC20050626084024_DEFINED
 
 #include "gfx/glwindowinterface.h"
 
@@ -448,5 +448,5 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
   return win;
 }
 
-static const char vcid_glxwrapper_h[] = "$Id$ $URL$";
-#endif // !GLXWRAPPER_H_DEFINED
+static const char vcid_groovx_gfx_glxwrapper_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GLXWRAPPER_H_UTC20050626084024_DEFINED

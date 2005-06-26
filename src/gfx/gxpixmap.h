@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXPIXMAP_H_DEFINED
-#define GXPIXMAP_H_DEFINED
+#ifndef GROOVX_GFX_GXPIXMAP_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXPIXMAP_H_UTC20050626084023_DEFINED
 
 #include "gfx/gxshapekit.h"
 
@@ -197,5 +197,5 @@ private:
   GxPixmapImpl* const rep;
 };
 
-static const char vcid_gxpixmap_h[] = "$Id$ $URL$";
-#endif // !GXPIXMAP_H_DEFINED
+static const char vcid_groovx_gfx_gxpixmap_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXPIXMAP_H_UTC20050626084023_DEFINED

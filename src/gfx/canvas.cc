@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef CANVAS_CC_DEFINED
-#define CANVAS_CC_DEFINED
+#ifndef GROOVX_GFX_CANVAS_CC_UTC20050626084025_DEFINED
+#define GROOVX_GFX_CANVAS_CC_UTC20050626084025_DEFINED
 
 #include "canvas.h"
 
@@ -261,4 +261,4 @@ DOTRACE("Gfx::Canvas::finishDrawing");
 }
 
 const char vcid_canvas_cc[] = "$Id$ $URL$";
-#endif // !CANVAS_CC_DEFINED
+#endif // !GROOVX_GFX_CANVAS_CC_UTC20050626084025_DEFINED

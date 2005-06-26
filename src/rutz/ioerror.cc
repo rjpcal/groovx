@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IOERROR_CC_DEFINED
-#define IOERROR_CC_DEFINED
+#ifndef GROOVX_RUTZ_IOERROR_CC_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_IOERROR_CC_UTC20050626084020_DEFINED
 
 #include "ioerror.h"
 
@@ -47,5 +47,5 @@ DOTRACE("rutz::filename_error::filename_error");
 
 rutz::filename_error::~filename_error() throw() {}
 
-static const char vcid_ioerror_cc[] = "$Id$ $URL$";
-#endif // !IOERROR_CC_DEFINED
+static const char vcid_groovx_rutz_ioerror_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_IOERROR_CC_UTC20050626084020_DEFINED

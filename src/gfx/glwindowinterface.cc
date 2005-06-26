@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GLWINDOWINTERFACE_CC_DEFINED
-#define GLWINDOWINTERFACE_CC_DEFINED
+#ifndef GROOVX_GFX_GLWINDOWINTERFACE_CC_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GLWINDOWINTERFACE_CC_UTC20050626084023_DEFINED
 
 #include "glwindowinterface.h"
 
@@ -65,5 +65,5 @@ DOTRACE("GlWindowInterface::make[agl]");
 #  error no GL_PLATFORM macro defined!
 #endif
 
-static const char vcid_glwindowinterface_cc[] = "$Id$ $URL$";
-#endif // !GLWINDOWINTERFACE_CC_DEFINED
+static const char vcid_groovx_gfx_glwindowinterface_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GLWINDOWINTERFACE_CC_UTC20050626084023_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FACETCL_CC_DEFINED
-#define FACETCL_CC_DEFINED
+#ifndef GROOVX_VISX_FACETCL_CC_UTC20050626084016_DEFINED
+#define GROOVX_VISX_FACETCL_CC_UTC20050626084016_DEFINED
 
 #include "visx/facetcl.h"
 
@@ -94,5 +94,5 @@ DOTRACE("Cloneface_Init");
   PKG_RETURN;
 }
 
-static const char vcid_facetcl_cc[] = "$Id$ $URL$";
-#endif // !FACETCL_CC_DEFINED
+static const char vcid_groovx_visx_facetcl_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_FACETCL_CC_UTC20050626084016_DEFINED

@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TLISTTCL_H_DEFINED
-#define TLISTTCL_H_DEFINED
+#ifndef GROOVX_VISX_TLISTTCL_H_UTC20050626084017_DEFINED
+#define GROOVX_VISX_TLISTTCL_H_UTC20050626084017_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Tlist_Init(Tcl_Interp* interp);
 
-static const char vcid_tlisttcl_h[] = "$Id$ $URL$";
-#endif // !TLISTTCL_H_DEFINED
+static const char vcid_groovx_visx_tlisttcl_h_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_TLISTTCL_H_UTC20050626084017_DEFINED

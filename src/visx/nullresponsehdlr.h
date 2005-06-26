@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef NULLRESPONSEHDLR_H_DEFINED
-#define NULLRESPONSEHDLR_H_DEFINED
+#ifndef GROOVX_VISX_NULLRESPONSEHDLR_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_NULLRESPONSEHDLR_H_UTC20050626084015_DEFINED
 
 #include "visx/responsehandler.h"
 
@@ -58,5 +58,5 @@ public:
   virtual void rhDenyResponses() const;
 };
 
-static const char vcid_nullresponsehdlr_h[] = "$Id$ $URL$";
-#endif // !NULLRESPONSEHDLR_H_DEFINED
+static const char vcid_groovx_visx_nullresponsehdlr_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_NULLRESPONSEHDLR_H_UTC20050626084015_DEFINED

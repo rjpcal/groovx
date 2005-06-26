@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef UNITTEST_H_DEFINED
-#define UNITTEST_H_DEFINED
+#ifndef GROOVX_RUTZ_UNITTEST_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_UNITTEST_H_UTC20050626084020_DEFINED
 
 #include "rutz/error.h"
 
@@ -122,5 +122,5 @@ namespace rutz
 
 #define DEF_TEST(pkg, func) pkg->def(#func, "", &func, SRC_POS)
 
-static const char vcid_unittest_h[] = "$Id$ $URL$";
-#endif // !UNITTEST_H_DEFINED
+static const char vcid_groovx_rutz_unittest_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_UNITTEST_H_UTC20050626084020_DEFINED

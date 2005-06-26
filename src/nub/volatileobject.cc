@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef VOLATILEOBJECT_CC_DEFINED
-#define VOLATILEOBJECT_CC_DEFINED
+#ifndef GROOVX_NUB_VOLATILEOBJECT_CC_UTC20050626084018_DEFINED
+#define GROOVX_NUB_VOLATILEOBJECT_CC_UTC20050626084018_DEFINED
 
 #include "volatileobject.h"
 
@@ -54,5 +54,5 @@ DOTRACE("Nub::VolatileObject::destroy");
   delete this;
 }
 
-static const char vcid_volatileobject_cc[] = "$Id$ $URL$";
-#endif // !VOLATILEOBJECT_CC_DEFINED
+static const char vcid_groovx_nub_volatileobject_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_VOLATILEOBJECT_CC_UTC20050626084018_DEFINED

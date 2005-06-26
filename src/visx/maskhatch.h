@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef MASKHATCH_H_DEFINED
-#define MASKHATCH_H_DEFINED
+#ifndef GROOVX_VISX_MASKHATCH_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_MASKHATCH_H_UTC20050626084016_DEFINED
 
 #include "gfx/gxshapekit.h"
 
@@ -85,5 +85,5 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const;
 };
 
-static const char vcid_maskhatch_h[] = "$Id$ $URL$";
-#endif // !MASKHATCH_H_DEFINED
+static const char vcid_groovx_visx_maskhatch_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_MASKHATCH_H_UTC20050626084016_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef JPEGPARSER_H_DEFINED
-#define JPEGPARSER_H_DEFINED
+#ifndef GROOVX_MEDIA_JPEGPARSER_H_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_JPEGPARSER_H_UTC20050626084018_DEFINED
 
 namespace media
 {
@@ -41,5 +41,5 @@ namespace media
   void load_jpeg(const char* filename, media::bmap_data& data);
 }
 
-static const char vcid_jpegparser_h[] = "$Id$ $URL$";
-#endif // !JPEGPARSER_H_DEFINED
+static const char vcid_groovx_media_jpegparser_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_JPEGPARSER_H_UTC20050626084018_DEFINED

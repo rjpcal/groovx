@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IO_CC_DEFINED
-#define IO_CC_DEFINED
+#ifndef GROOVX_IO_IO_CC_UTC20050626084021_DEFINED
+#define GROOVX_IO_IO_CC_UTC20050626084021_DEFINED
 
 #include "io/io.h"
 
@@ -123,5 +123,5 @@ DOTRACE("IO::IoObject::serialVersionId");
   return 0;
 }
 
-static const char vcid_io_cc[] = "$Id$ $URL$";
-#endif // !IO_CC_DEFINED
+static const char vcid_groovx_io_io_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_IO_CC_UTC20050626084021_DEFINED

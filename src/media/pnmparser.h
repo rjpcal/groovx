@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef PBM_H_DEFINED
-#define PBM_H_DEFINED
+#ifndef GROOVX_MEDIA_PNMPARSER_H_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_PNMPARSER_H_UTC20050626084018_DEFINED
 
 #include <iosfwd>
 
@@ -52,5 +52,5 @@ namespace media
   void save_pnm(std::ostream& os, const media::bmap_data& data);
 };
 
-static const char vcid_pbm_h[] = "$Id$ $URL$";
-#endif // !PBM_H_DEFINED
+static const char vcid_groovx_media_pnmparser_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_PNMPARSER_H_UTC20050626084018_DEFINED

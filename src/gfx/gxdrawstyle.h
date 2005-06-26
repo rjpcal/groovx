@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXDRAWSTYLE_H_DEFINED
-#define GXDRAWSTYLE_H_DEFINED
+#ifndef GROOVX_GFX_GXDRAWSTYLE_H_UTC20050626084025_DEFINED
+#define GROOVX_GFX_GXDRAWSTYLE_H_UTC20050626084025_DEFINED
 
 #include "gfx/gxnode.h"
 
@@ -74,5 +74,5 @@ public:
   virtual void draw(Gfx::Canvas& canvas) const;
 };
 
-static const char vcid_gxdrawstyle_h[] = "$Id$ $URL$";
-#endif // !GXDRAWSTYLE_H_DEFINED
+static const char vcid_groovx_gfx_gxdrawstyle_h_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXDRAWSTYLE_H_UTC20050626084025_DEFINED

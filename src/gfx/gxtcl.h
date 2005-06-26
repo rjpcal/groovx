@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXTCL_H_DEFINED
-#define GXTCL_H_DEFINED
+#ifndef GROOVX_GFX_GXTCL_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXTCL_H_UTC20050626084024_DEFINED
 
 struct Tcl_Interp;
 
@@ -57,5 +57,5 @@ extern "C" int Gxpsyphycamera_Init(Tcl_Interp* interp);
 extern "C" int Gxperspectivecamera_Init(Tcl_Interp* interp);
 extern "C" int Gxdisk_Init(Tcl_Interp* interp);
 
-static const char vcid_gxtcl_h[] = "$Id$ $URL$";
-#endif // !GXTCL_H_DEFINED
+static const char vcid_groovx_gfx_gxtcl_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXTCL_H_UTC20050626084024_DEFINED

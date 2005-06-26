@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ARITHFUNCTOR_H_DEFINED
-#define ARITHFUNCTOR_H_DEFINED
+#ifndef GROOVX_PKGS_MTX_ARITHFUNCTOR_H_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_MTX_ARITHFUNCTOR_H_UTC20050626084022_DEFINED
 
 #include <cmath>
 
@@ -105,5 +105,5 @@ namespace dash
   };
 }
 
-static const char vcid_arithfunctor_h[] = "$Id$ $URL$";
-#endif // !ARITHFUNCTOR_H_DEFINED
+static const char vcid_groovx_pkgs_mtx_arithfunctor_h_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_MTX_ARITHFUNCTOR_H_UTC20050626084022_DEFINED

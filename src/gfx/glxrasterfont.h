@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GLXRASTERFONT_H_DEFINED
-#define GLXRASTERFONT_H_DEFINED
+#ifndef GROOVX_GFX_GLXRASTERFONT_H_UTC20050626084025_DEFINED
+#define GROOVX_GFX_GLXRASTERFONT_H_UTC20050626084025_DEFINED
 
 #include "geom/rect.h"
 #include "geom/vec3.h"
@@ -332,5 +332,5 @@ DOTRACE("GlxRasterFont::rasterHeight");
   return asc + desc;
 }
 
-static const char vcid_glxrasterfont_h[] = "$Id$ $URL$";
-#endif // !GLXRASTERFONT_H_DEFINED
+static const char vcid_groovx_gfx_glxrasterfont_h_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GLXRASTERFONT_H_UTC20050626084025_DEFINED

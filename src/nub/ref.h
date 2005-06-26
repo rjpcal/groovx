@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef REF_H_DEFINED
-#define REF_H_DEFINED
+#ifndef GROOVX_NUB_REF_H_UTC20050626084019_DEFINED
+#define GROOVX_NUB_REF_H_UTC20050626084019_DEFINED
 
 #include "nub/object.h"
 
@@ -507,5 +507,5 @@ inline Nub::Ref<T>::Ref(const SoftRef<U>& other) :
   itsHandle(other.get())
 {}
 
-static const char vcid_ref_h[] = "$Id$ $URL$";
-#endif // !REF_H_DEFINED
+static const char vcid_groovx_nub_ref_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_REF_H_UTC20050626084019_DEFINED

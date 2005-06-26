@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SOUND_CC_DEFINED
-#define SOUND_CC_DEFINED
+#ifndef GROOVX_VISX_SOUND_CC_UTC20050626084015_DEFINED
+#define GROOVX_VISX_SOUND_CC_UTC20050626084015_DEFINED
 
 #include "sound.h"
 
@@ -177,5 +177,5 @@ DOTRACE("Sound::getFile");
   return itsFilename.c_str();
 }
 
-static const char vcid_sound_cc[] = "$Id$ $URL$";
-#endif // !SOUND_CC_DEFINED
+static const char vcid_groovx_visx_sound_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_SOUND_CC_UTC20050626084015_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXMATERIAL_H_DEFINED
-#define GXMATERIAL_H_DEFINED
+#ifndef GROOVX_GFX_GXMATERIAL_H_UTC20050626084025_DEFINED
+#define GROOVX_GFX_GXMATERIAL_H_UTC20050626084025_DEFINED
 
 #include "gfx/gbcolor.h"
 #include "gfx/gxnode.h"
@@ -89,5 +89,5 @@ private:
   GxMaterial& operator=(const GxMaterial&);
 };
 
-static const char vcid_gxmaterial_h[] = "$Id$ $URL$";
-#endif // !GXMATERIAL_H_DEFINED
+static const char vcid_groovx_gfx_gxmaterial_h_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXMATERIAL_H_UTC20050626084025_DEFINED

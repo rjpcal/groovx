@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IOLEGACY_H_DEFINED
-#define IOLEGACY_H_DEFINED
+#ifndef GROOVX_IO_IOLEGACY_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_IOLEGACY_H_UTC20050626084021_DEFINED
 
 #include "io/io.h"
 #include "io/reader.h"
@@ -137,5 +137,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_iolegacy_h[] = "$Id$ $URL$";
-#endif // !IOLEGACY_H_DEFINED
+static const char vcid_groovx_io_iolegacy_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_IOLEGACY_H_UTC20050626084021_DEFINED

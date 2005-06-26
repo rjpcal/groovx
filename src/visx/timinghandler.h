@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TIMINGHANDLER_H_DEFINED
-#define TIMINGHANDLER_H_DEFINED
+#ifndef GROOVX_VISX_TIMINGHANDLER_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_TIMINGHANDLER_H_UTC20050626084015_DEFINED
 
 #include "visx/timinghdlr.h"
 
@@ -72,5 +72,5 @@ private:
   unsigned int abortwait_abort_id;
 };
 
-static const char vcid_timinghandler_h[] = "$Id$ $URL$";
-#endif // !TIMINGHANDLER_H_DEFINED
+static const char vcid_groovx_visx_timinghandler_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_TIMINGHANDLER_H_UTC20050626084015_DEFINED

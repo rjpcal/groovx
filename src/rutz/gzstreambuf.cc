@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GZSTREAMBUF_CC_DEFINED
-#define GZSTREAMBUF_CC_DEFINED
+#ifndef GROOVX_RUTZ_GZSTREAMBUF_CC_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_GZSTREAMBUF_CC_UTC20050626084020_DEFINED
 
 #include "rutz/gzstreambuf.h"
 
@@ -288,5 +288,5 @@ shared_ptr<std::istream> rutz::igzopen(const fstring& filename,
 //    return 0;
 //  }
 
-static const char vcid_gzstreambuf_cc[] = "$Id$ $URL$";
-#endif // !GZSTREAMBUF_CC_DEFINED
+static const char vcid_groovx_rutz_gzstreambuf_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_GZSTREAMBUF_CC_UTC20050626084020_DEFINED

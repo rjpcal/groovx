@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXSEPARATOR_CC_DEFINED
-#define GXSEPARATOR_CC_DEFINED
+#ifndef GROOVX_GFX_GXSEPARATOR_CC_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXSEPARATOR_CC_UTC20050626084024_DEFINED
 
 #include "gxseparator.h"
 
@@ -368,5 +368,5 @@ DOTRACE("GxSeparator::draw");
     }
 }
 
-static const char vcid_gxseparator_cc[] = "$Id$ $URL$";
-#endif // !GXSEPARATOR_CC_DEFINED
+static const char vcid_groovx_gfx_gxseparator_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXSEPARATOR_CC_UTC20050626084024_DEFINED

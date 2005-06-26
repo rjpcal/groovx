@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXBOUNDS_CC_DEFINED
-#define GXBOUNDS_CC_DEFINED
+#ifndef GROOVX_GFX_GXBOUNDS_CC_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXBOUNDS_CC_UTC20050626084023_DEFINED
 
 #include "gxbounds.h"
 
@@ -140,5 +140,5 @@ DOTRACE("GxBounds::getBoundingCube");
   dbg_dump(2, bbox.cube());
 }
 
-static const char vcid_gxbounds_cc[] = "$Id$ $URL$";
-#endif // !GXBOUNDS_CC_DEFINED
+static const char vcid_groovx_gfx_gxbounds_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXBOUNDS_CC_UTC20050626084023_DEFINED

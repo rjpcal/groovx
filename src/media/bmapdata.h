@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BMAPDATA_H_DEFINED
-#define BMAPDATA_H_DEFINED
+#ifndef GROOVX_MEDIA_BMAPDATA_H_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_BMAPDATA_H_UTC20050626084018_DEFINED
 
 namespace rutz
 {
@@ -214,5 +214,5 @@ namespace media
 
 } // end namespace media
 
-static const char vcid_bmapdata_h[] = "$Id$ $URL$";
-#endif // !BMAPDATA_H_DEFINED
+static const char vcid_groovx_media_bmapdata_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_BMAPDATA_H_UTC20050626084018_DEFINED

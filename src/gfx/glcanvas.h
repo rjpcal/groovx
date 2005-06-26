@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GLCANVAS_H_DEFINED
-#define GLCANVAS_H_DEFINED
+#ifndef GROOVX_GFX_GLCANVAS_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GLCANVAS_H_UTC20050626084024_DEFINED
 
 #include "gfx/canvas.h"
 
@@ -234,5 +234,5 @@ private:
   Impl* rep;
 };
 
-static const char vcid_glcanvas_h[] = "$Id$ $URL$";
-#endif // !GLCANVAS_H_DEFINED
+static const char vcid_groovx_gfx_glcanvas_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GLCANVAS_H_UTC20050626084024_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SOUNDREP_CC_DEFINED
-#define SOUNDREP_CC_DEFINED
+#ifndef GROOVX_MEDIA_SOUNDREP_CC_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_SOUNDREP_CC_UTC20050626084018_DEFINED
 
 #include "soundrep.h"
 
@@ -58,5 +58,5 @@ DOTRACE("sound_rep::check_filename");
     }
 }
 
-static const char vcid_soundrep_cc[] = "$Id$ $URL$";
-#endif // !SOUNDREP_CC_DEFINED
+static const char vcid_groovx_media_soundrep_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_SOUNDREP_CC_UTC20050626084018_DEFINED

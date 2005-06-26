@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLREGEXP_H_DEFINED
-#define TCLREGEXP_H_DEFINED
+#ifndef GROOVX_TCL_TCLREGEXP_H_UTC20050626084017_DEFINED
+#define GROOVX_TCL_TCLREGEXP_H_UTC20050626084017_DEFINED
 
 #include "tcl/tclobjptr.h"
 
@@ -55,5 +55,5 @@ private:
   Tcl::ObjPtr itsPatternObj;
 };
 
-static const char vcid_tclregexp_h[] = "$Id$ $URL$";
-#endif // !TCLREGEXP_H_DEFINED
+static const char vcid_groovx_tcl_tclregexp_h_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLREGEXP_H_UTC20050626084017_DEFINED

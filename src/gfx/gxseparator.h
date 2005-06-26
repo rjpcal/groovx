@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXSEPARATOR_H_DEFINED
-#define GXSEPARATOR_H_DEFINED
+#ifndef GROOVX_GFX_GXSEPARATOR_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXSEPARATOR_H_UTC20050626084023_DEFINED
 
 #include "gfx/gxnode.h"
 
@@ -114,5 +114,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_gxseparator_h[] = "$Id$ $URL$";
-#endif // !GXSEPARATOR_H_DEFINED
+static const char vcid_groovx_gfx_gxseparator_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXSEPARATOR_H_UTC20050626084023_DEFINED

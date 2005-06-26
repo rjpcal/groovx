@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef BEZIER_H_DEFINED
-#define BEZIER_H_DEFINED
+#ifndef GROOVX_GEOM_BEZIER_H_UTC20050626084023_DEFINED
+#define GROOVX_GEOM_BEZIER_H_UTC20050626084023_DEFINED
 
 #include "rutz/algo.h"
 #include "rutz/arrays.h"
@@ -216,5 +216,5 @@ double geom::bezier::eval_deriv(double u)
   return result;
 }
 
-static const char vcid_bezier_h[] = "$Id$ $URL$";
-#endif // !BEZIER_H_DEFINED
+static const char vcid_groovx_geom_bezier_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GEOM_BEZIER_H_UTC20050626084023_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ELEMENT_CC_DEFINED
-#define ELEMENT_CC_DEFINED
+#ifndef GROOVX_VISX_ELEMENT_CC_UTC20050626084016_DEFINED
+#define GROOVX_VISX_ELEMENT_CC_UTC20050626084016_DEFINED
 
 #include "visx/element.h"
 
@@ -39,5 +39,5 @@ Element::~Element() throw() {}
 
 void Element::vxEndTrialHook() { /* no-op */ }
 
-static const char vcid_element_cc[] = "$Id$ $URL$";
-#endif // !ELEMENT_CC_DEFINED
+static const char vcid_groovx_visx_element_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_ELEMENT_CC_UTC20050626084016_DEFINED

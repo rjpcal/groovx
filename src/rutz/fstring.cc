@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FSTRING_CC_DEFINED
-#define FSTRING_CC_DEFINED
+#ifndef GROOVX_RUTZ_FSTRING_CC_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_FSTRING_CC_UTC20050626084020_DEFINED
 
 #include "fstring.h"
 
@@ -477,5 +477,5 @@ void rutz::fstring::debug_dump() const throw()
   m_rep->debug_dump();
 }
 
-static const char vcid_fstring_cc[] = "$Id$ $URL$";
-#endif // !FSTRING_CC_DEFINED
+static const char vcid_groovx_rutz_fstring_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_FSTRING_CC_UTC20050626084020_DEFINED

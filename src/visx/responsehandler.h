@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef RESPONSEHANDLER_H_DEFINED
-#define RESPONSEHANDLER_H_DEFINED
+#ifndef GROOVX_VISX_RESPONSEHANDLER_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_RESPONSEHANDLER_H_UTC20050626084015_DEFINED
 
 #include "io/io.h"
 
@@ -101,5 +101,5 @@ private:
   ResponseHandler& operator=(const ResponseHandler&);
 };
 
-static const char vcid_responsehandler_h[] = "$Id$ $URL$";
-#endif // !RESPONSEHANDLER_H_DEFINED
+static const char vcid_groovx_visx_responsehandler_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_RESPONSEHANDLER_H_UTC20050626084015_DEFINED

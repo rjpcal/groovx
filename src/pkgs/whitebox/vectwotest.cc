@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef VECTWOTEST_CC_DEFINED
-#define VECTWOTEST_CC_DEFINED
+#ifndef GROOVX_PKGS_WHITEBOX_VECTWOTEST_CC_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_WHITEBOX_VECTWOTEST_CC_UTC20050626084022_DEFINED
 
 #include "pkgs/whitebox/vectwotest.h"
 
@@ -148,5 +148,5 @@ DOTRACE("Vectwotest_Unload");
 
 extern "C" int Vectwotest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }
 
-static const char vcid_vectwotest_cc[] = "$Id$ $URL$";
-#endif // !VECTWOTEST_CC_DEFINED
+static const char vcid_groovx_pkgs_whitebox_vectwotest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_WHITEBOX_VECTWOTEST_CC_UTC20050626084022_DEFINED

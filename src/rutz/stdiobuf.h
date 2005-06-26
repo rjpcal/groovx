@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef STDIOBUF_H_DEFINED
-#define STDIOBUF_H_DEFINED
+#ifndef GROOVX_RUTZ_STDIOBUF_H_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_STDIOBUF_H_UTC20050626084019_DEFINED
 
 #include <cstdio>
 #include <streambuf>
@@ -133,5 +133,5 @@ public:
   void close() { m_buf.close(); }
 };
 
-static const char vcid_stdiobuf_h[] = "$Id$ $URL$";
-#endif // !STDIOBUF_H_DEFINED
+static const char vcid_groovx_rutz_stdiobuf_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_STDIOBUF_H_UTC20050626084019_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXALIGNER_H_DEFINED
-#define GXALIGNER_H_DEFINED
+#ifndef GROOVX_GFX_GXALIGNER_H_UTC20050626084023_DEFINED
+#define GROOVX_GFX_GXALIGNER_H_UTC20050626084023_DEFINED
 
 #include "geom/vec2.h"
 
@@ -114,5 +114,5 @@ public:
 };
 
 
-static const char vcid_gxaligner_h[] = "$Id$ $URL$";
-#endif // !GXALIGNER_H_DEFINED
+static const char vcid_groovx_gfx_gxaligner_h_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXALIGNER_H_UTC20050626084023_DEFINED

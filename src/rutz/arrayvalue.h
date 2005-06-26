@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ARRAYVALUE_H_DEFINED
-#define ARRAYVALUE_H_DEFINED
+#ifndef GROOVX_RUTZ_ARRAYVALUE_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_ARRAYVALUE_H_UTC20050626084020_DEFINED
 
 #include "rutz/fstring.h"
 #include "rutz/value.h"
@@ -84,5 +84,5 @@ namespace rutz
   };
 }
 
-static const char vcid_arrayvalue_h[] = "$Id$ $URL$";
-#endif // !ARRAYVALUE_H_DEFINED
+static const char vcid_groovx_rutz_arrayvalue_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_ARRAYVALUE_H_UTC20050626084020_DEFINED

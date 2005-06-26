@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GEOM_H_DEFINED
-#define GEOM_H_DEFINED
+#ifndef GROOVX_GEOM_GEOM_H_UTC20050626084022_DEFINED
+#define GROOVX_GEOM_GEOM_H_UTC20050626084022_DEFINED
 
 #include <cmath>
 
@@ -80,5 +80,5 @@ namespace geom
   }
 }
 
-static const char vcid_geom_h[] = "$Id$ $URL$";
-#endif // !GEOM_H_DEFINED
+static const char vcid_groovx_geom_geom_h_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GEOM_GEOM_H_UTC20050626084022_DEFINED

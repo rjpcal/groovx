@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXTCL_CC_DEFINED
-#define GXTCL_CC_DEFINED
+#ifndef GROOVX_GFX_GXTCL_CC_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXTCL_CC_UTC20050626084024_DEFINED
 
 #include "gfx/gxtcl.h"
 
@@ -542,5 +542,5 @@ DOTRACE("Gxdisk_Init");
   PKG_RETURN;
 }
 
-static const char vcid_gxtcl_cc[] = "$Id$ $URL$";
-#endif // !GXTCL_CC_DEFINED
+static const char vcid_groovx_gfx_gxtcl_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXTCL_CC_UTC20050626084024_DEFINED

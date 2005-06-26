@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IRIXSOUND_H_DEFINED
-#define IRIXSOUND_H_DEFINED
+#ifndef GROOVX_MEDIA_IRIXSOUND_H_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_IRIXSOUND_H_UTC20050626084018_DEFINED
 
 #include "media/soundrep.h"
 
@@ -203,5 +203,5 @@ DOTRACE("media::irix_audio_sound_rep::play");
     }
 }
 
-static const char vcid_irixsound_h[] = "$Id$ $URL$";
-#endif // !IRIXSOUND_H_DEFINED
+static const char vcid_groovx_media_irixsound_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_IRIXSOUND_H_UTC20050626084018_DEFINED

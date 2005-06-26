@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLPKG_CC_DEFINED
-#define TCLPKG_CC_DEFINED
+#ifndef GROOVX_TCL_TCLPKG_CC_UTC20050626084017_DEFINED
+#define GROOVX_TCL_TCLPKG_CC_UTC20050626084017_DEFINED
 
 #include "tcl/tclpkg.h"
 
@@ -545,5 +545,5 @@ const char* const Tcl::Pkg::actionUsage = "objref(s)";
 const char* const Tcl::Pkg::getterUsage = "objref(s)";
 const char* const Tcl::Pkg::setterUsage = "objref(s) new_value(s)";
 
-static const char vcid_tclpkg_cc[] = "$Id$ $URL$";
-#endif // !TCLPKG_CC_DEFINED
+static const char vcid_groovx_tcl_tclpkg_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLPKG_CC_UTC20050626084017_DEFINED

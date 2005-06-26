@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXCOLOR_H_DEFINED
-#define GXCOLOR_H_DEFINED
+#ifndef GROOVX_GFX_GXCOLOR_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXCOLOR_H_UTC20050626084024_DEFINED
 
 #include "gfx/gbcolor.h"
 #include "gfx/gxnode.h"
@@ -70,5 +70,5 @@ public:
   virtual void draw(Gfx::Canvas& canvas) const;
 };
 
-static const char vcid_gxcolor_h[] = "$Id$ $URL$";
-#endif // !GXCOLOR_H_DEFINED
+static const char vcid_groovx_gfx_gxcolor_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXCOLOR_H_UTC20050626084024_DEFINED

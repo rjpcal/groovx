@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TXFORM_CC_DEFINED
-#define TXFORM_CC_DEFINED
+#ifndef GROOVX_GEOM_TXFORM_CC_UTC20050626084023_DEFINED
+#define GROOVX_GEOM_TXFORM_CC_UTC20050626084023_DEFINED
 
 #include "txform.h"
 
@@ -553,5 +553,5 @@ DOTRACE("geom::txform::debug_sse");
   return result;
 }
 
-static const char vcid_txform_cc[] = "$Id$ $URL$";
-#endif // !TXFORM_CC_DEFINED
+static const char vcid_groovx_geom_txform_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GEOM_TXFORM_CC_UTC20050626084023_DEFINED

@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef SOUND_H_DEFINED
-#define SOUND_H_DEFINED
+#ifndef GROOVX_VISX_SOUND_H_UTC20050626084016_DEFINED
+#define GROOVX_VISX_SOUND_H_UTC20050626084016_DEFINED
 
 #include "io/io.h"
 
@@ -94,5 +94,5 @@ private:
   rutz::shared_ptr<media::sound_rep> itsRep;
 };
 
-static const char vcid_sound_h[] = "$Id$ $URL$";
-#endif // !SOUND_H_DEFINED
+static const char vcid_groovx_visx_sound_h_utc20050626084016[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_SOUND_H_UTC20050626084016_DEFINED

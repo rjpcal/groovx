@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef NUMTEST_CC_DEFINED
-#define NUMTEST_CC_DEFINED
+#ifndef GROOVX_PKGS_WHITEBOX_NUMTEST_CC_UTC20050626084022_DEFINED
+#define GROOVX_PKGS_WHITEBOX_NUMTEST_CC_UTC20050626084022_DEFINED
 
 #include "pkgs/whitebox/numtest.h"
 
@@ -134,5 +134,5 @@ DOTRACE("Numtest_Unload");
 
 extern "C" int Numtest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }
 
-static const char vcid_numtest_cc[] = "$Id$ $URL$";
-#endif // !NUMTEST_CC_DEFINED
+static const char vcid_groovx_pkgs_whitebox_numtest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_WHITEBOX_NUMTEST_CC_UTC20050626084022_DEFINED

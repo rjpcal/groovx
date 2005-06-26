@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLMAIN_CC_DEFINED
-#define TCLMAIN_CC_DEFINED
+#ifndef GROOVX_TCL_TCLMAIN_CC_UTC20050626084018_DEFINED
+#define GROOVX_TCL_TCLMAIN_CC_UTC20050626084018_DEFINED
 
 #include "tcl/tclmain.h"
 
@@ -653,5 +653,5 @@ DOTRACE("Tcl::Main::commandLine");
   return Tcl::MainImpl::get()->commandLine();
 }
 
-static const char vcid_tclmain_cc[] = "$Id$ $URL$";
-#endif // !TCLMAIN_CC_DEFINED
+static const char vcid_groovx_tcl_tclmain_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLMAIN_CC_UTC20050626084018_DEFINED

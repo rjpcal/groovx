@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLDICTOBJ_CC_DEFINED
-#define TCLDICTOBJ_CC_DEFINED
+#ifndef GROOVX_TCL_TCLDICTOBJ_CC_UTC20050626084017_DEFINED
+#define GROOVX_TCL_TCLDICTOBJ_CC_UTC20050626084017_DEFINED
 
 #include "tcl/tcldictobj.h"
 
@@ -109,5 +109,5 @@ DOTRACE("Tcl::Dict::doGet");
 
 #endif // defined(HAVE_TCL_DICT)
 
-static const char vcid_tcldictobj_cc[] = "$Id$ $URL$";
-#endif // !TCLDICTOBJ_CC_DEFINED
+static const char vcid_groovx_tcl_tcldictobj_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLDICTOBJ_CC_UTC20050626084017_DEFINED

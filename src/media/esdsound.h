@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ESDSOUND_H_DEFINED
-#define ESDSOUND_H_DEFINED
+#ifndef GROOVX_MEDIA_ESDSOUND_H_UTC20050626084018_DEFINED
+#define GROOVX_MEDIA_ESDSOUND_H_UTC20050626084018_DEFINED
 
 #include "media/soundrep.h"
 
@@ -310,5 +310,5 @@ void media::esd_sound_rep::play()
     }
 }
 
-static const char vcid_esdsound_h[] = "$Id$ $URL$";
-#endif // !ESDSOUND_H_DEFINED
+static const char vcid_groovx_media_esdsound_h_utc20050626084018[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_MEDIA_ESDSOUND_H_UTC20050626084018_DEFINED

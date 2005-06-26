@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GBCOLOR_H_DEFINED
-#define GBCOLOR_H_DEFINED
+#ifndef GROOVX_GFX_GBCOLOR_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GBCOLOR_H_UTC20050626084024_DEFINED
 
 #include "rutz/multivalue.h"
 
@@ -58,5 +58,5 @@ public:
   virtual const double* const_begin() const;
 };
 
-static const char vcid_gbcolor_h[] = "$Id$ $URL$";
-#endif // !GBCOLOR_H_DEFINED
+static const char vcid_groovx_gfx_gbcolor_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GBCOLOR_H_UTC20050626084024_DEFINED

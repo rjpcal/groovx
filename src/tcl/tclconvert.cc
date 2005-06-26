@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLCONVERT_CC_DEFINED
-#define TCLCONVERT_CC_DEFINED
+#ifndef GROOVX_TCL_TCLCONVERT_CC_UTC20050626084017_DEFINED
+#define GROOVX_TCL_TCLCONVERT_CC_UTC20050626084017_DEFINED
 
 #include "tcl/tclconvert.h"
 
@@ -423,5 +423,5 @@ DOTRACE("Tcl::toTcl(Tcl::ObjPtr)");
   return val;
 }
 
-static const char vcid_tclconvert_cc[] = "$Id$ $URL$";
-#endif // !TCLCONVERT_CC_DEFINED
+static const char vcid_groovx_tcl_tclconvert_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLCONVERT_CC_UTC20050626084017_DEFINED

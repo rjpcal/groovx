@@ -33,8 +33,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef RAND_H_DEFINED
-#define RAND_H_DEFINED
+#ifndef GROOVX_RUTZ_RAND_H_UTC20050626084020_DEFINED
+#define GROOVX_RUTZ_RAND_H_UTC20050626084020_DEFINED
 
 #include <cstdlib> // for rand()
 
@@ -101,5 +101,5 @@ public:
   int operator()(int n) { return idraw(n); }
 };
 
-static const char vcid_rand_h[] = "$Id$ $URL$";
-#endif // !RAND_H_DEFINED
+static const char vcid_groovx_rutz_rand_h_utc20050626084020[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_RAND_H_UTC20050626084020_DEFINED

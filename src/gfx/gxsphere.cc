@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXSPHERE_CC_DEFINED
-#define GXSPHERE_CC_DEFINED
+#ifndef GROOVX_GFX_GXSPHERE_CC_UTC20050626084025_DEFINED
+#define GROOVX_GFX_GXSPHERE_CC_UTC20050626084025_DEFINED
 
 #include "gfx/gxsphere.h"
 
@@ -132,5 +132,5 @@ DOTRACE("GxSphere::draw");
   canvas.drawSphere(itsRadius, itsSlices, itsStacks, itsFilled);
 }
 
-static const char vcid_gxsphere_cc[] = "$Id$ $URL$";
-#endif // !GXSPHERE_CC_DEFINED
+static const char vcid_groovx_gfx_gxsphere_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXSPHERE_CC_UTC20050626084025_DEFINED

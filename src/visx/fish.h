@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FISH_H_DEFINED
-#define FISH_H_DEFINED
+#ifndef GROOVX_VISX_FISH_H_UTC20050626084015_DEFINED
+#define GROOVX_VISX_FISH_H_UTC20050626084015_DEFINED
 
 #include "gfx/gxshapekit.h"
 
@@ -149,5 +149,5 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const;
 };
 
-static const char vcid_fish_h[] = "$Id$ $URL$";
-#endif // !FISH_H_DEFINED
+static const char vcid_groovx_visx_fish_h_utc20050626084015[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_VISX_FISH_H_UTC20050626084015_DEFINED

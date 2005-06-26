@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ITER_H_DEFINED
-#define ITER_H_DEFINED
+#ifndef GROOVX_RUTZ_ITER_H_UTC20050626084019_DEFINED
+#define GROOVX_RUTZ_ITER_H_UTC20050626084019_DEFINED
 
 #include "rutz/sharedptr.h"
 
@@ -371,5 +371,5 @@ namespace rutz
 
 } // end namespace rutz
 
-static const char vcid_iter_h[] = "$Id$ $URL$";
-#endif // !ITER_H_DEFINED
+static const char vcid_groovx_rutz_iter_h_utc20050626084019[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_ITER_H_UTC20050626084019_DEFINED

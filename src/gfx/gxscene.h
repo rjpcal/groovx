@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GXSCENE_H_DEFINED
-#define GXSCENE_H_DEFINED
+#ifndef GROOVX_GFX_GXSCENE_H_UTC20050626084024_DEFINED
+#define GROOVX_GFX_GXSCENE_H_UTC20050626084024_DEFINED
 
 #include "gfx/canvas.h"
 #include "gfx/gxcamera.h"
@@ -138,5 +138,5 @@ private:
   Nub::Ref<Nub::Slot0> slotNodeChanged;
 };
 
-static const char vcid_gxscene_h[] = "$Id$ $URL$";
-#endif // !GXSCENE_H_DEFINED
+static const char vcid_groovx_gfx_gxscene_h_utc20050626084024[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_GXSCENE_H_UTC20050626084024_DEFINED

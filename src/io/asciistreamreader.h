@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef ASCIISTREAMREADER_H_DEFINED
-#define ASCIISTREAMREADER_H_DEFINED
+#ifndef GROOVX_IO_ASCIISTREAMREADER_H_UTC20050626084021_DEFINED
+#define GROOVX_IO_ASCIISTREAMREADER_H_UTC20050626084021_DEFINED
 
 #include "rutz/sharedptr.h"
 
@@ -53,5 +53,5 @@ namespace IO
   rutz::shared_ptr<IO::Reader> makeAsciiStreamReader(const char* filename);
 }
 
-static const char vcid_asciistreamreader_h[] = "$Id$ $URL$";
-#endif // !ASCIISTREAMREADER_H_DEFINED
+static const char vcid_groovx_io_asciistreamreader_h_utc20050626084021[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_ASCIISTREAMREADER_H_UTC20050626084021_DEFINED
