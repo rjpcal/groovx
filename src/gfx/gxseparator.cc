@@ -47,13 +47,13 @@
 #include "nub/ref.h"
 #include "nub/volatileobject.h"
 
-#include "util/error.h"
-#include "util/iter.h"
+#include "rutz/error.h"
+#include "rutz/iter.h"
 
 #include <list>
 #include <vector>
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using rutz::shared_ptr;
 

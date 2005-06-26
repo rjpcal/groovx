@@ -37,7 +37,7 @@
 
 #include "tcl/tclpkg.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {
@@ -62,7 +62,7 @@ void operator delete(void* space)
 }
 #endif
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
 using rutz::fstring;
 
@@ -125,7 +125,7 @@ namespace HookTcl
   size_t memUsage() { return TOTAL; }
 }
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 #include <cstring>
@@ -295,8 +295,8 @@ public:
 int MyObj::counter = 0;
 
 #include "gfx/gbvec.h"
-#include "util/arrayvalue.h"
-#include "util/iter.h"
+#include "rutz/arrayvalue.h"
+#include "rutz/iter.h"
 #include "tcl/itertcl.h"
 #include "tcl/tcldictobj.h"
 

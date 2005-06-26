@@ -35,7 +35,7 @@
 
 #include "volatileobject.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 Nub::VolatileObject::VolatileObject()
 {

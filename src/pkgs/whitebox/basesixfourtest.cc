@@ -35,17 +35,17 @@
 
 #include "pkgs/whitebox/basesixfourtest.h"
 
-#include "util/base64.h"
-#include "util/bytearray.h"
-#include "util/fstring.h"
-#include "util/rand.h"
-#include "util/unittest.h"
+#include "rutz/base64.h"
+#include "rutz/bytearray.h"
+#include "rutz/fstring.h"
+#include "rutz/rand.h"
+#include "rutz/unittest.h"
 
 #include "tcl/tclpkg.h"
 
 #include <cstring> // for memcmp()
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

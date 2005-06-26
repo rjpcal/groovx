@@ -36,10 +36,10 @@
 #include "geom/span.h"
 #include "geom/vec2.h"
 
-#include "util/algo.h"
-#include "util/error.h"
+#include "rutz/algo.h"
+#include "rutz/error.h"
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 namespace geom

@@ -36,8 +36,8 @@
 #include "tcl/tclconvert.h"
 #include "tcl/tclobjptr.h"
 
-#include "util/fileposition.h"
-#include "util/sharedptr.h"
+#include "rutz/fileposition.h"
+#include "rutz/sharedptr.h"
 
 struct Tcl_Interp;
 typedef struct Tcl_Obj Tcl_Obj;

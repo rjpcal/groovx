@@ -37,9 +37,9 @@
 
 #include "tcl/tclsafeinterp.h"
 
-#include "util/backtrace.h"
-#include "util/error.h"
-#include "util/fstring.h"
+#include "rutz/backtrace.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
 
 #include <iostream>
 #include <tk.h>
@@ -51,8 +51,8 @@
 #  include <readline/history.h>
 #endif
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 namespace Tcl

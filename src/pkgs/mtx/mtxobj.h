@@ -37,7 +37,7 @@
 
 #include "nub/object.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
 /// Adapter class for fitting mtx to the Nub::Object interface.
 class MtxObj : public mtx, public Nub::Object

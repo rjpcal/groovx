@@ -42,8 +42,8 @@
 
 #include "tcl/tcllistobj.h"
 
-#include "util/error.h"
-#include "util/fstring.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
 
 #include <cctype>
 #include <cstdio>
@@ -53,8 +53,8 @@
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 class GlxRasterFont : public GxRasterFont

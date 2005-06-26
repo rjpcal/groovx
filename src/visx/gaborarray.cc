@@ -49,17 +49,17 @@
 #include "media/bmapdata.h"
 #include "media/imgfile.h"
 
-#include "util/error.h"
-#include "util/rand.h"
+#include "rutz/error.h"
+#include "rutz/rand.h"
 
 #include "visx/gaborpatch.h"
 #include "visx/snake.h"
 
 #include <cstdio>
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using geom::vec2i;
 using geom::vec2d;

@@ -35,13 +35,13 @@
 
 #include "io/writer.h"
 
-#include "util/base64.h"
-#include "util/bytearray.h" // for use with rutz::base64_encode()
-#include "util/error.h"
-#include "util/fstring.h"
+#include "rutz/base64.h"
+#include "rutz/bytearray.h" // for use with rutz::base64_encode()
+#include "rutz/error.h"
+#include "rutz/fstring.h"
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 namespace IO

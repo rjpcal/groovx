@@ -37,14 +37,14 @@
 
 #include "tcl/tclpkg.h"
 
-#include "util/error.h"
-#include "util/fstring.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
 
 #include <sstream>
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

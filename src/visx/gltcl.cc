@@ -48,8 +48,8 @@
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 
-#include "util/arrays.h"
-#include "util/error.h"
+#include "rutz/arrays.h"
+#include "rutz/error.h"
 
 #include <cmath>                // for sqrt() in drawThickLine
 #include <map>
@@ -63,7 +63,7 @@
 #  include <AGL/glu.h>
 #endif
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

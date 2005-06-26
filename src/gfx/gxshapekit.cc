@@ -51,8 +51,8 @@
 #include "nub/volatileobject.h"
 
 #define DYNAMIC_TRACE_EXPR GxShapeKit::tracer.status()
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 //  #######################################################

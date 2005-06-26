@@ -36,7 +36,7 @@
 #include "nub/object.h"
 #include "nub/ref.h"
 
-#include "util/factory.h"
+#include "rutz/factory.h"
 
 namespace Nub
 {

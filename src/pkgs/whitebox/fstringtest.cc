@@ -37,13 +37,13 @@
 
 #include "tcl/tclpkg.h"
 
-#include "util/fstring.h"
-#include "util/unittest.h"
+#include "rutz/fstring.h"
+#include "rutz/unittest.h"
 
 #include <cstring>
 #include <sstream>
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using rutz::char_range;
 using rutz::fstring;

@@ -38,7 +38,7 @@
 #include "tcl/tclconvert.h"
 #include "tcl/tcllistobj.h"
 
-#include "util/error.h"
+#include "rutz/error.h"
 
 namespace Tcl
 {

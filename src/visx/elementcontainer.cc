@@ -43,16 +43,16 @@
 #include "nub/log.h"
 #include "nub/ref.h"
 
-#include "util/error.h"
-#include "util/iter.h"
-#include "util/rand.h"
+#include "rutz/error.h"
+#include "rutz/iter.h"
+#include "rutz/rand.h"
 
 #include <algorithm>
 #include <vector>
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using Nub::Ref;
 

@@ -43,7 +43,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

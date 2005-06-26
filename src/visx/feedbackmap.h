@@ -37,8 +37,8 @@
 #include "tcl/tclobjptr.h"
 #include "tcl/tclsafeinterp.h"
 
-#include "util/error.h"
-#include "util/fstring.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
 
 #include <vector>
 

@@ -35,9 +35,9 @@
 
 #include "visx/kbdresponsehdlr.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -33,7 +33,7 @@
 #ifndef GBVEC_H_DEFINED
 #define GBVEC_H_DEFINED
 
-#include "util/multivalue.h"
+#include "rutz/multivalue.h"
 
 #include "geom/vec2.h"
 #include "geom/vec3.h"

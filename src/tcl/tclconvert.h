@@ -33,7 +33,7 @@
 #ifndef TCLCONVERT_H_DEFINED
 #define TCLCONVERT_H_DEFINED
 
-#include "util/traits.h"
+#include "rutz/traits.h"
 
 typedef struct Tcl_Obj Tcl_Obj;
 

@@ -35,7 +35,7 @@
 
 #include "nub/objfactory.h"
 
-#include "util/sharedptr.h"
+#include "rutz/sharedptr.h"
 
 namespace rutz
 {

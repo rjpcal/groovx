@@ -42,9 +42,9 @@
 
 #include "nub/ref.h"
 
-#include "util/iter.h"
+#include "rutz/iter.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using rutz::shared_ptr;
 

@@ -50,13 +50,13 @@
 #include "media/imgfile.h"
 #include "media/pnmparser.h"
 
-#include "util/bytearray.h"
-#include "util/cstrstream.h"
-#include "util/fstring.h"
-#include "util/mappedfile.h"
-#include "util/sharedptr.h"
+#include "rutz/bytearray.h"
+#include "rutz/cstrstream.h"
+#include "rutz/fstring.h"
+#include "rutz/mappedfile.h"
+#include "rutz/sharedptr.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using geom::recti;
 using geom::rectd;

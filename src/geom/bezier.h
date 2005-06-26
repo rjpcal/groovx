@@ -33,8 +33,8 @@
 #ifndef BEZIER_H_DEFINED
 #define BEZIER_H_DEFINED
 
-#include "util/algo.h"
-#include "util/arrays.h"
+#include "rutz/algo.h"
+#include "rutz/arrays.h"
 
 #include <cmath>
 

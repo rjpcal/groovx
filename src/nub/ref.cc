@@ -37,8 +37,8 @@
 
 #include "nub/objdb.h"
 
-#include "util/error.h"
-#include "util/demangle.h"
+#include "rutz/error.h"
+#include "rutz/demangle.h"
 
 bool Nub::Detail::isValidId(Nub::UID id) throw()
 {

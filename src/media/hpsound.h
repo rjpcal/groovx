@@ -35,13 +35,13 @@
 
 #include "media/soundrep.h"
 
-#include "util/error.h"
-#include "util/fstring.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
 
 #include <Alib.h>
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 
 namespace media
 {

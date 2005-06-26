@@ -43,8 +43,8 @@
 
 #include "visx/trialevent.h"
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 namespace

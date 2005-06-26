@@ -44,7 +44,7 @@
 
 #include "visx/fish.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

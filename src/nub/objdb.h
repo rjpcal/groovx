@@ -36,8 +36,8 @@
 #include "nub/ref.h"
 #include "nub/uid.h"
 
-#include "util/error.h"
-#include "util/iter.h"
+#include "rutz/error.h"
+#include "rutz/iter.h"
 
 namespace Nub
 {

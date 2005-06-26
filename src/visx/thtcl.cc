@@ -44,7 +44,7 @@
 #include "visx/timinghdlr.h"
 #include "visx/trialevent.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

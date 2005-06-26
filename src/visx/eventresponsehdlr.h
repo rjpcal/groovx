@@ -33,7 +33,7 @@
 #ifndef EVENTRESPONSEHDLR_H_DEFINED
 #define EVENTRESPONSEHDLR_H_DEFINED
 
-#include "util/tracer.h"
+#include "rutz/tracer.h"
 
 #include "visx/responsehandler.h"
 

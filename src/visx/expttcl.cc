@@ -44,11 +44,11 @@
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
 #include "visx/exptdriver.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using rutz::fstring;
 

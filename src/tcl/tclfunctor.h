@@ -39,8 +39,8 @@
 #include "tcl/tclcmd.h"
 #include "tcl/tclveccmd.h"
 
-#include "util/functors.h"
-#include "util/sharedptr.h"
+#include "rutz/functors.h"
+#include "rutz/sharedptr.h"
 
 namespace rutz
 {

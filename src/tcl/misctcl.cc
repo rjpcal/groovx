@@ -43,14 +43,14 @@
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 
-#include "util/backtrace.h"
-#include "util/error.h"
-#include "util/fstring.h"
-#include "util/rand.h"
+#include "rutz/backtrace.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
+#include "rutz/rand.h"
 
 #include <unistd.h>
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

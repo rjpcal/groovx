@@ -37,9 +37,9 @@
 
 #include "nub/object.h"
 
-#include "util/fstring.h"
-#include "util/sharedptr.h"
-#include "util/stopwatch.h"
+#include "rutz/fstring.h"
+#include "rutz/sharedptr.h"
+#include "rutz/stopwatch.h"
 
 #include <algorithm>
 #include <fstream>
@@ -48,7 +48,7 @@
 #include <iostream>
 #include <vector>
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using rutz::fstring;
 

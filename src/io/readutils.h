@@ -37,7 +37,7 @@
 
 #include "nub/ref.h"    // for dynamicCast
 
-#include "util/error.h"
+#include "rutz/error.h"
 
 namespace IO
 {

@@ -51,17 +51,17 @@
 
 #include "tcl/tcllistobj.h"
 
-#include "util/arrays.h"
-#include "util/cstrstream.h"
-#include "util/error.h"
-#include "util/iter.h"
+#include "rutz/arrays.h"
+#include "rutz/cstrstream.h"
+#include "rutz/error.h"
+#include "rutz/iter.h"
 
 #include "visx/trial.h"
 
 #include <fstream>
 #include <iomanip>
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using Nub::Ref;
 

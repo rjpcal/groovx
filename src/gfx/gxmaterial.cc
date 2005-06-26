@@ -40,9 +40,9 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "util/error.h"
+#include "rutz/error.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

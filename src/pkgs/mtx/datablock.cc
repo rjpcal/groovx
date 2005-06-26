@@ -35,16 +35,16 @@
 
 #include "datablock.h"
 
-#include "util/error.h"
+#include "rutz/error.h"
 
 #include <algorithm>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

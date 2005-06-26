@@ -36,7 +36,7 @@
 #include "tcl/tclconvert.h"
 #include "tcl/tclobjptr.h"
 
-#include "util/sharedptr.h"
+#include "rutz/sharedptr.h"
 
 typedef struct Tcl_Obj Tcl_Obj;
 

@@ -73,9 +73,9 @@
 #include "tcl/tclsafeinterp.h"
 #include "tcl/tracertcl.h"
 
-#include "util/error.h"
+#include "rutz/error.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace GxTcl
 {

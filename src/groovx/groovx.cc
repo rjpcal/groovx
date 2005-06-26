@@ -40,10 +40,10 @@
 #include "tcl/tclpkg.h"
 #include "tcl/tclsafeinterp.h"
 
-#include "util/demangle.h"
-#include "util/error.h"
-#include "util/fstring.h"
-#include "util/time.h"
+#include "rutz/demangle.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
+#include "rutz/time.h"
 
 #include <cstdlib> // for atoi()
 #include <cstring> // for strcmp()
@@ -86,9 +86,9 @@
 #include "visx/trialeventtcl.h"              // for Trialevent_Init(), Nulltrialevent_Init(), Filewriteevent_Init(), Genericevent_Init(), Multievent_Init(),
 #include "visx/trialtcl.h"                   // for Trial_Init(),
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 //
 // Info about the packages to be loaded

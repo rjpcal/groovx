@@ -35,7 +35,7 @@
 
 #include "tcl/tclobjptr.h"
 
-#include "util/sharedptr.h"
+#include "rutz/sharedptr.h"
 
 namespace Tcl
 {

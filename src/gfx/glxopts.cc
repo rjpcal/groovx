@@ -35,7 +35,7 @@
 
 #include "glxopts.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 GlxOpts::GlxOpts() :
 #if defined(NO_RGBA) && NO_RGBA != 0

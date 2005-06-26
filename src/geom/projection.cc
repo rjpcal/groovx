@@ -39,7 +39,7 @@
 #include "geom/txform.h"
 #include "geom/vec3.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using geom::recti;
 using geom::txform;

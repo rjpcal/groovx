@@ -35,7 +35,7 @@
 
 #include "geom/vec2.h"
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 namespace geom

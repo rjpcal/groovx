@@ -35,16 +35,16 @@
 
 #include "tcl/tclsafeinterp.h"
 
-#include "util/demangle.h"
-#include "util/error.h"
-#include "util/fstring.h"
+#include "rutz/demangle.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
 
 #include <exception>
 #include <tcl.h>
 #include <typeinfo>
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 using rutz::fstring;

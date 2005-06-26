@@ -40,15 +40,15 @@
 #include "tcl/tclpkg.h"
 #include "tcl/tcltimerscheduler.h"
 
-#include "util/sharedptr.h"
-#include "util/unittest.h"
+#include "rutz/sharedptr.h"
+#include "rutz/unittest.h"
 
 #include <cstdlib> // for abs()
 #include <tcl.h>
 #include <unistd.h> // for usleep()
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 namespace

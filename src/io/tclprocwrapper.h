@@ -37,7 +37,7 @@
 
 #include "tcl/tclsafeinterp.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
 namespace Tcl
 {

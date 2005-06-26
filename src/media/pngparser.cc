@@ -37,7 +37,7 @@
 
 #ifndef HAVE_LIBPNG
 
-#include "util/error.h"
+#include "rutz/error.h"
 
 void media::load_png(const char* /*filename*/, media::bmap_data& /*data*/)
 {
@@ -57,15 +57,15 @@ void media::save_png(const char* /*filename*/, const media::bmap_data& /*data*/)
 
 #include "media/bmapdata.h"
 
-#include "util/arrays.h"
-#include "util/error.h"
+#include "rutz/arrays.h"
+#include "rutz/error.h"
 
 #include <cstdio>
 #include <png.h>
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

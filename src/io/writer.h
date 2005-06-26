@@ -35,8 +35,8 @@
 
 #include "io/io.h"
 
-#include "util/fileposition.h"
-#include "util/fstring.h"
+#include "rutz/fileposition.h"
+#include "rutz/fstring.h"
 
 namespace rutz
 {

@@ -74,12 +74,12 @@ namespace XBmapRenderer
 
 #include "media/bmapdata.h"
 
-#include "util/error.h"
+#include "rutz/error.h"
 
 #include <GL/glx.h>
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 void XBmapRenderer::doRender(Display* display,

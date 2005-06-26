@@ -35,7 +35,7 @@
 
 #include "gfx/gxshapekit.h"
 
-#include "util/tracer.h"
+#include "rutz/tracer.h"
 
 ///////////////////////////////////////////////////////////////////////
 /**

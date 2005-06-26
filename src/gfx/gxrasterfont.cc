@@ -35,9 +35,9 @@
 
 #include "gxrasterfont.h"
 
-#include "util/sharedptr.h"
+#include "rutz/sharedptr.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 GxRasterFont::~GxRasterFont() throw()
 {

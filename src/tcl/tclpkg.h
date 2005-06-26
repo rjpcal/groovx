@@ -35,7 +35,7 @@
 
 #include "tcl/tclfunctor.h"
 
-#include "util/fileposition.h"
+#include "rutz/fileposition.h"
 
 struct Tcl_Interp;
 
@@ -306,7 +306,7 @@ private:
   Impl* rep;
 };
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 /*

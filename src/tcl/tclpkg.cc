@@ -39,9 +39,9 @@
 #include "tcl/tcllistobj.h"
 #include "tcl/tclsafeinterp.h"
 
-#include "util/error.h"
-#include "util/fstring.h"
-#include "util/sharedptr.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
+#include "rutz/sharedptr.h"
 
 #include <tcl.h>
 #include <tclInt.h> // for Tcl_FindNamespace() etc.
@@ -51,8 +51,8 @@
 #include <string>
 #include <vector>
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 #if (TCL_MAJOR_VERSION > 8) || (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION >= 5)

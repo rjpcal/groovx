@@ -84,8 +84,8 @@ namespace IO
 #include "nub/objmgr.h"
 #include "nub/ref.h"
 
-#include "util/error.h"
-#include "util/fstring.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
 
 inline
 IO::ObjectMap::ObjectMap() : itsMap() {}

@@ -38,11 +38,11 @@
 #include "tcl/tclcommandgroup.h"
 #include "tcl/tclsafeinterp.h"
 
-#include "util/fstring.h"
-#include "util/sharedptr.h"
+#include "rutz/fstring.h"
+#include "rutz/sharedptr.h"
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 using rutz::shared_ptr;

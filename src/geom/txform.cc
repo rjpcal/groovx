@@ -38,14 +38,14 @@
 #include "geom/rect.h"
 #include "geom/vec3.h"
 
-#include "util/rand.h"
+#include "rutz/rand.h"
 
 #include <cmath>
 #include <cstring>
 
 #define NO_PROF
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 using geom::vec2d;

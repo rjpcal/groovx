@@ -41,12 +41,12 @@
 #include "geom/box.h"
 #include "geom/vec3.h"
 
-#include "util/arrays.h"
-#include "util/error.h"
+#include "rutz/arrays.h"
+#include "rutz/error.h"
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using geom::recti;
 using geom::rectd;

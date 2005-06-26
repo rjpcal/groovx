@@ -37,7 +37,7 @@
 
 #include "io/fields.h"
 
-#include "util/tracer.h"
+#include "rutz/tracer.h"
 
 class GxShapeKitImpl;
 

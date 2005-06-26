@@ -35,12 +35,12 @@
 
 #include "object.h"
 
-#include "util/demangle.h"
-#include "util/fstring.h"
+#include "rutz/demangle.h"
+#include "rutz/fstring.h"
 
 #include <typeinfo>
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

@@ -37,8 +37,8 @@
 
 #include "nub/ref.h"
 
-#include "util/fstring.h"
-#include "util/demangle.h"
+#include "rutz/fstring.h"
+#include "rutz/demangle.h"
 
 #include <typeinfo>
 

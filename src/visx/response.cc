@@ -35,11 +35,11 @@
 
 #include "visx/response.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
 #include <iostream>
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

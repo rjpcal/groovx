@@ -35,7 +35,7 @@
 
 #include "io/io.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
 #include <utility>
 #include <vector>
@@ -89,7 +89,7 @@ namespace IO
   };
 }
 
-#include "util/error.h"
+#include "rutz/error.h"
 
 inline
 IO::AttribMap::AttribMap(const rutz::fstring& obj_tag) :

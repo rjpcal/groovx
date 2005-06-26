@@ -37,17 +37,17 @@
 
 #include "geom/vec2.h"
 
-#include "util/algo.h"
-#include "util/arrays.h"
-#include "util/error.h"
-#include "util/rand.h"
-#include "util/sharedptr.h"
+#include "rutz/algo.h"
+#include "rutz/arrays.h"
+#include "rutz/error.h"
+#include "rutz/rand.h"
+#include "rutz/sharedptr.h"
 
 #include <algorithm>
 #include <cstring>              // for memcpy
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 using rutz::shared_ptr;

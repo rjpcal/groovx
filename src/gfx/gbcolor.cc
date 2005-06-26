@@ -35,7 +35,7 @@
 
 #include "gfx/gbcolor.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
 GbColor::GbColor(double v) :
   Gfx::RgbaColor(v),

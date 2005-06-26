@@ -37,7 +37,7 @@
 
 #ifndef HAVE_LIBJPEG
 
-#include "util/error.h"
+#include "rutz/error.h"
 
 void media::load_jpeg(const char* /*filename*/, media::bmap_data& /*data*/)
 {
@@ -51,7 +51,7 @@ void media::load_jpeg(const char* /*filename*/, media::bmap_data& /*data*/)
 
 #include "media/bmapdata.h"
 
-#include "util/error.h"
+#include "rutz/error.h"
 
 #include <csetjmp>
 #include <cstdio>
@@ -59,7 +59,7 @@ extern "C"
 {
 #include <jpeglib.h>
 }
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

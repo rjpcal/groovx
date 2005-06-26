@@ -35,11 +35,11 @@
 
 #include "tcl/tclchannelbuf.h"
 
-#include "util/error.h"
-#include "util/fstring.h"
-#include "util/sharedptr.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
+#include "rutz/sharedptr.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 Tcl::ChannelBuf::ChannelBuf(Tcl_Interp* interp,
                             const char* channame, int /*om*/) :

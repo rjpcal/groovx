@@ -39,16 +39,16 @@
 #include "tcl/tclobjptr.h"
 #include "tcl/tclsafeinterp.h"
 
-#include "util/fileposition.h"
-#include "util/fstring.h"
-#include "util/sharedptr.h"
+#include "rutz/fileposition.h"
+#include "rutz/fstring.h"
+#include "rutz/sharedptr.h"
 
 #include <list>
 #include <tcl.h>
 #include <tclInt.h> // for Tcl_GetFullCommandName()
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 using rutz::fstring;

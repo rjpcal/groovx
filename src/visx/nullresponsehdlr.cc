@@ -39,7 +39,7 @@
 
 #include "visx/nullresponsehdlr.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 NullResponseHdlr* NullResponseHdlr::make()
 {

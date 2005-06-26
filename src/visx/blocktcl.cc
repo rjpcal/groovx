@@ -43,7 +43,7 @@
 
 #include "visx/block.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 extern "C"
 int Block_Init(Tcl_Interp* interp)

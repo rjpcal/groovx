@@ -35,7 +35,7 @@
 
 #include "media/soundrep.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace media
 {

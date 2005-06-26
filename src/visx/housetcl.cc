@@ -39,7 +39,7 @@
 
 #include "visx/house.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 
 extern "C"

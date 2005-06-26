@@ -39,7 +39,7 @@
 
 #include "visx/morphyface.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 extern "C"
 int Morphyface_Init(Tcl_Interp* interp)

@@ -41,12 +41,12 @@
 
 #include "nub/log.h"
 
-#include "util/error.h"
-#include "util/pipe.h"
+#include "rutz/error.h"
+#include "rutz/pipe.h"
 
 #include <cctype>
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using rutz::fstring;
 

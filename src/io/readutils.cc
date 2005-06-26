@@ -35,7 +35,7 @@
 
 #include "io/readutils.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
 using rutz::fstring;
 

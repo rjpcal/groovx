@@ -33,10 +33,10 @@
 #ifndef SPAN_H_DEFINED
 #define SPAN_H_DEFINED
 
-#include "util/algo.h"
-#include "util/error.h"
+#include "rutz/algo.h"
+#include "rutz/error.h"
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 
 namespace geom
 {

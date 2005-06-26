@@ -42,7 +42,7 @@
 #include "visx/cloneface.h"
 #include "visx/face.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

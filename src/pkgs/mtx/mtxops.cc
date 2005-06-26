@@ -38,10 +38,10 @@
 #include "mtx/arithfunctor.h"
 #include "mtx/mtx.h"
 
-#include "util/error.h"
-#include "util/rand.h"
+#include "rutz/error.h"
+#include "rutz/rand.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 mtx rand_mtx(int mrows, int ncols)
 {

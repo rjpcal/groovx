@@ -39,11 +39,11 @@
 
 #include "tcl/tclpkg.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 extern "C"
 int Log_Init(Tcl_Interp* interp)

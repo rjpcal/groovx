@@ -35,7 +35,7 @@
 
 #include "geom/vec2.h"
 
-#include "util/arrays.h"
+#include "rutz/arrays.h"
 
 namespace rutz
 {

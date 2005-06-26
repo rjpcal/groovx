@@ -49,8 +49,8 @@
 
 #include "media/bmapdata.h"
 
-#include "util/error.h"
-#include "util/sharedptr.h"
+#include "rutz/error.h"
+#include "rutz/sharedptr.h"
 
 #include <vector>
 
@@ -62,8 +62,8 @@
 #  include <AGL/glu.h>
 #endif
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 using geom::recti;

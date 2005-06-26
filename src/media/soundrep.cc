@@ -35,11 +35,11 @@
 
 #include "soundrep.h"
 
-#include "util/ioerror.h"
+#include "rutz/ioerror.h"
 
 #include <fstream>            // to check if files exist
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 media::sound_rep::~sound_rep() throw() {}
 

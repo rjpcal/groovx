@@ -33,7 +33,7 @@
 #ifndef BEZIER4_H_DEFINED
 #define BEZIER4_H_DEFINED
 
-#include "util/algo.h"
+#include "rutz/algo.h"
 
 #include <cmath>
 

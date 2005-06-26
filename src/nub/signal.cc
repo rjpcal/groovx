@@ -37,13 +37,13 @@
 
 #include "nub/ref.h"
 
-#include "util/demangle.h"
+#include "rutz/demangle.h"
 
 #include <list>
 #include <typeinfo>
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////

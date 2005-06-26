@@ -37,9 +37,9 @@
 
 #include "nub/objfactory.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 Nub::SoftRef<Nub::Object> Nub::ObjMgr::newObj(const char* type)
 {

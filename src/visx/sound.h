@@ -35,8 +35,8 @@
 
 #include "io/io.h"
 
-#include "util/fstring.h"
-#include "util/sharedptr.h"
+#include "rutz/fstring.h"
+#include "rutz/sharedptr.h"
 
 namespace media
 {

@@ -35,16 +35,16 @@
 
 #include "media/soundrep.h"
 
-#include "util/arrays.h"
-#include "util/error.h"
-#include "util/fstring.h"
+#include "rutz/arrays.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
 
 #include <dmedia/audio.h>
 #include <dmedia/audiofile.h>
 #include <unistd.h>
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 
 namespace media
 {

@@ -92,14 +92,14 @@ public:
 
 #include "gfx/glxopts.h"
 
-#include "util/error.h"
+#include "rutz/error.h"
 
 #define HAVE_LIMITS_H
 #include <tkMacOSX.h>
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

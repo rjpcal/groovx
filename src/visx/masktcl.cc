@@ -39,7 +39,7 @@
 
 #include "visx/maskhatch.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 extern "C"
 int Maskhatch_Init(Tcl_Interp* interp)

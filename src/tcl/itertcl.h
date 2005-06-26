@@ -33,7 +33,7 @@
 #ifndef ITERTCL_H_DEFINED
 #define ITERTCL_H_DEFINED
 
-#include "util/iter.h"
+#include "rutz/iter.h"
 
 #include "tcl/tcllistobj.h"
 

@@ -42,11 +42,11 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "util/algo.h"
-#include "util/fstring.h"
+#include "rutz/algo.h"
+#include "rutz/fstring.h"
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 using geom::vec2d;

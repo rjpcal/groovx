@@ -48,15 +48,15 @@
 
 #include "nub/ref.h"
 
-#include "util/arrays.h"
-#include "util/error.h"
-#include "util/fstring.h"
+#include "rutz/arrays.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
 
 #include <fstream>
 
 #define DYNAMIC_TRACE_EXPR Fish::tracer.status()
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 using rutz::fstring;

@@ -33,7 +33,7 @@
 #ifndef GBCOLOR_H_DEFINED
 #define GBCOLOR_H_DEFINED
 
-#include "util/multivalue.h"
+#include "rutz/multivalue.h"
 
 #include "gfx/rgbacolor.h"
 

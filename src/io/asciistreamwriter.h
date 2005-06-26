@@ -33,7 +33,7 @@
 #ifndef ASCIISTREAMWRITER_H_DEFINED
 #define ASCIISTREAMWRITER_H_DEFINED
 
-#include "util/sharedptr.h"
+#include "rutz/sharedptr.h"
 
 #include <iosfwd>
 

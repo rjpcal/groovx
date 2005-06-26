@@ -35,7 +35,7 @@
 
 #include "io/io.h"
 
-#include "util/tracer.h"
+#include "rutz/tracer.h"
 
 #include "visx/elementcontainer.h"
 

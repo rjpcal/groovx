@@ -35,12 +35,12 @@
 
 #include "pkgs/whitebox/algotest.h"
 
-#include "util/algo.h"
-#include "util/unittest.h"
+#include "rutz/algo.h"
+#include "rutz/unittest.h"
 
 #include "tcl/tclpkg.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

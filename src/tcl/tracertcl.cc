@@ -37,7 +37,7 @@
 
 #include "tcl/tclpkg.h"
 
-#include "util/tracer.h"
+#include "rutz/tracer.h"
 
 void Tcl::defTracing(Tcl::Pkg* pkg, rutz::tracer& t)
 {

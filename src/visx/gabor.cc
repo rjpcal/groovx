@@ -49,13 +49,13 @@
 #include "media/bmapdata.h"
 #include "media/imgfile.h"
 
-#include "util/algo.h"
-#include "util/rand.h"
+#include "rutz/algo.h"
+#include "rutz/rand.h"
 
 #include <cmath>
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 using geom::vec2i;

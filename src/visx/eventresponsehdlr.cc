@@ -48,10 +48,10 @@
 #include "tcl/tclmain.h"
 #include "tcl/tclsafeinterp.h"
 
-#include "util/fileposition.h"
-#include "util/fstring.h"
-#include "util/sharedptr.h"
-#include "util/scopedptr.h"
+#include "rutz/fileposition.h"
+#include "rutz/fstring.h"
+#include "rutz/sharedptr.h"
+#include "rutz/scopedptr.h"
 
 #include "visx/feedbackmap.h"
 #include "visx/sound.h"
@@ -59,8 +59,8 @@
 #include "visx/trial.h"
 
 #define DYNAMIC_TRACE_EXPR EventResponseHdlr::tracer.status()
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 using rutz::fstring;

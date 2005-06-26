@@ -38,9 +38,9 @@
 #include "gfx/gxrasterfont.h"
 #include "gfx/gxvectorfont.h"
 
-#include "util/error.h"
-#include "util/fstring.h"
-#include "util/sharedptr.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
+#include "rutz/sharedptr.h"
 
 #include <map>
 

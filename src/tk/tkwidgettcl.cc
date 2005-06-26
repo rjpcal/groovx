@@ -39,9 +39,9 @@
 #include "tcl/tclpkg.h"
 #include "tk/tkwidget.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 extern "C"
 int Tkwidget_Init(Tcl_Interp* interp)

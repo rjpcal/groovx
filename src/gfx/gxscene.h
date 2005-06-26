@@ -42,7 +42,7 @@
 #include "nub/timer.h"
 #include "nub/volatileobject.h"
 
-#include "util/sharedptr.h"
+#include "rutz/sharedptr.h"
 
 namespace Nub
 {

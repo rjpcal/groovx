@@ -45,12 +45,12 @@
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 
-#include "util/error.h"
-#include "util/fstring.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
 
 #include <fstream>
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using Nub::Ref;
 

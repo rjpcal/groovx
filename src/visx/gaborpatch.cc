@@ -37,7 +37,7 @@
 
 #include <map>
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

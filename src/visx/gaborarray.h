@@ -37,8 +37,8 @@
 
 #include "gfx/gbvec.h"
 
-#include "util/arrays.h"
-#include "util/sharedptr.h"
+#include "rutz/arrays.h"
+#include "rutz/sharedptr.h"
 
 class GaborArrayElement;
 class Snake;

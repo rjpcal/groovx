@@ -35,7 +35,7 @@
 
 #include "gfx/gbvec.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
 template <class T>
 GbVec2<T>::GbVec2(T x_, T y_) :

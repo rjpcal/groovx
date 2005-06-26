@@ -42,11 +42,11 @@
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
 #include "visx/element.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 extern "C"
 int Element_Init(Tcl_Interp* interp)

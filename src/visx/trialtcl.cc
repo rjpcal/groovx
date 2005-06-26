@@ -49,7 +49,7 @@
 #include "visx/timinghdlr.h"
 #include "visx/trial.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 extern "C"
 int Trial_Init(Tcl_Interp* interp)

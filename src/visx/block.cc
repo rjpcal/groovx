@@ -44,11 +44,11 @@
 #include "nub/log.h"
 #include "nub/ref.h"
 
-#include "util/fstring.h"
+#include "rutz/fstring.h"
 
 #define DYNAMIC_TRACE_EXPR Block::tracer.status()
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////

@@ -49,10 +49,10 @@
 #include "tcl/tclmain.h"
 #include "tcl/tclsafeinterp.h"
 
-#include "util/error.h"
-#include "util/fstring.h"
-#include "util/iter.h"
-#include "util/unixcall.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
+#include "rutz/iter.h"
+#include "rutz/unixcall.h"
 
 #include "visx/tlistutils.h"
 
@@ -62,8 +62,8 @@
 #include <unistd.h> // for sleep()
 
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 using rutz::fstring;

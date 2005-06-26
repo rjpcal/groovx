@@ -42,13 +42,13 @@
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 
-#include "util/algo.h"
-#include "util/arrays.h"
-#include "util/error.h"
-#include "util/rand.h"
+#include "rutz/algo.h"
+#include "rutz/arrays.h"
+#include "rutz/error.h"
+#include "rutz/rand.h"
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 #include <algorithm> // for std::random_shuffle

@@ -42,9 +42,9 @@
 
 #include "tcl/tcllistobj.h"
 
-#include "util/cstrstream.h"
-#include "util/error.h"
-#include "util/fstring.h"
+#include "rutz/cstrstream.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
 
 #include <cctype>
 #include <cstdio>
@@ -52,8 +52,8 @@
 #include <AGL/agl.h>
 #include <AGL/gl.h>
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 class AglRasterFont : public GxRasterFont

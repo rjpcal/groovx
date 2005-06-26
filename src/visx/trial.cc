@@ -45,9 +45,9 @@
 #include "nub/log.h"
 #include "nub/ref.h"
 
-#include "util/fstring.h"
-#include "util/iter.h"
-#include "util/scopedptr.h"
+#include "rutz/fstring.h"
+#include "rutz/iter.h"
+#include "rutz/scopedptr.h"
 
 #include "visx/response.h"
 #include "visx/responsehandler.h"
@@ -56,8 +56,8 @@
 #include <vector>
 
 #define DYNAMIC_TRACE_EXPR Trial::tracer.status()
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 using rutz::fstring;

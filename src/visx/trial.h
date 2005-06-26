@@ -35,7 +35,7 @@
 
 #include "io/fields.h"
 
-#include "util/tracer.h"
+#include "rutz/tracer.h"
 
 #include "visx/element.h"
 

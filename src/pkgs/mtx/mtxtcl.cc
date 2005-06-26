@@ -42,7 +42,7 @@
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 extern "C"
 int Mtx_Init(Tcl_Interp* interp)

@@ -35,7 +35,7 @@
 
 #include "mathspecial.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 double dash::detail::gammaln_engine(const double xx)
 {

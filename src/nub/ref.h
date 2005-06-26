@@ -35,10 +35,10 @@
 
 #include "nub/object.h"
 
-#include "util/algo.h"
-#include "util/fileposition.h"
-#include "util/stderror.h"
-#include "util/traits.h"
+#include "rutz/algo.h"
+#include "rutz/fileposition.h"
+#include "rutz/stderror.h"
+#include "rutz/traits.h"
 
 #include <typeinfo>
 

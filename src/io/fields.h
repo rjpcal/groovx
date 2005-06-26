@@ -40,13 +40,13 @@
 
 #include "tcl/tclobjptr.h"
 
-#include "util/algo.h"
-#include "util/fileposition.h"
-#include "util/fstring.h"
-#include "util/sharedptr.h"
-#include "util/stderror.h"
-#include "util/traits.h"
-#include "util/value.h"
+#include "rutz/algo.h"
+#include "rutz/fileposition.h"
+#include "rutz/fstring.h"
+#include "rutz/sharedptr.h"
+#include "rutz/stderror.h"
+#include "rutz/traits.h"
+#include "rutz/value.h"
 
 #include <limits>
 

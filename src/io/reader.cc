@@ -35,12 +35,12 @@
 
 #include "io/reader.h"
 
-#include "util/base64.h"
-#include "util/bytearray.h"
-#include "util/error.h"
+#include "rutz/base64.h"
+#include "rutz/bytearray.h"
+#include "rutz/error.h"
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 namespace IO

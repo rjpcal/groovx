@@ -47,7 +47,7 @@
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

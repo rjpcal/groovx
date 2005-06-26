@@ -33,7 +33,7 @@
 #ifndef RESPONSE_H_DEFINED
 #define RESPONSE_H_DEFINED
 
-#include "util/value.h"
+#include "rutz/value.h"
 
 /// A rutz::value subclass for observers' responses in a experiment trials.
 class Response : public rutz::value

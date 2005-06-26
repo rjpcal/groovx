@@ -35,8 +35,8 @@
 
 #include "gfx/gxshapekit.h"
 
-#include "util/fstring.h"
-#include "util/sharedptr.h"
+#include "rutz/fstring.h"
+#include "rutz/sharedptr.h"
 
 class GxFont;
 

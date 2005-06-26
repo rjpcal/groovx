@@ -42,7 +42,7 @@
 
 #include "visx/jitter.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 extern "C"
 int Jitter_Init(Tcl_Interp* interp)

@@ -40,13 +40,13 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "util/error.h"
+#include "rutz/error.h"
 
 #include <cmath>
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

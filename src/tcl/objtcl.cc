@@ -43,9 +43,9 @@
 #include "tcl/tcllistobj.h"
 #include "tcl/tclsafeinterp.h"
 
-#include "util/demangle.h"
+#include "rutz/demangle.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 using Nub::SoftRef;
 

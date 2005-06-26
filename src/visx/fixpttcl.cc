@@ -39,7 +39,7 @@
 
 #include "visx/fixpt.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 extern "C"
 int Fixpt_Init(Tcl_Interp* interp)

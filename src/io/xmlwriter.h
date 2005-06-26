@@ -33,7 +33,7 @@
 #ifndef XMLWRITER_H_DEFINED
 #define XMLWRITER_H_DEFINED
 
-#include "util/sharedptr.h"
+#include "rutz/sharedptr.h"
 
 #include <iosfwd>
 

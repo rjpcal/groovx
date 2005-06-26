@@ -40,9 +40,9 @@
 
 #include "tcl/tclpkg.h"
 
-#include "util/unittest.h"
+#include "rutz/unittest.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 namespace
 {

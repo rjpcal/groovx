@@ -40,7 +40,7 @@
 #include "visx/gabor.h"
 #include "visx/gaborarray.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 extern "C"
 int Gabor_Init(Tcl_Interp* interp)

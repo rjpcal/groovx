@@ -41,18 +41,18 @@
 
 #include "nub/ref.h"
 
-#include "util/arrays.h"
-#include "util/fstring.h"
-#include "util/gzstreambuf.h"
-#include "util/value.h"
+#include "rutz/arrays.h"
+#include "rutz/fstring.h"
+#include "rutz/gzstreambuf.h"
+#include "rutz/value.h"
 
 #include <ostream>
 #include <string>
 #include <set>
 #include <vector>
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 using rutz::fstring;

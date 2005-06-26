@@ -35,16 +35,16 @@
 
 #include "media/soundrep.h"
 
-#include "util/error.h"
-#include "util/fstring.h"
-#include "util/sharedptr.h"
+#include "rutz/error.h"
+#include "rutz/fstring.h"
+#include "rutz/sharedptr.h"
 
 #include <cstring> // for strncpy()
 #include <esd.h>
 #include <unistd.h> // for write(), close()
 
-#include "util/trace.h"
-#include "util/debug.h"
+#include "rutz/trace.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 namespace media

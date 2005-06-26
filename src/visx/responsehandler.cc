@@ -35,7 +35,7 @@
 
 #include "visx/responsehandler.h"
 
-#include "util/trace.h"
+#include "rutz/trace.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

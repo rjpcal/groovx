@@ -37,9 +37,9 @@
 #include "geom/vec3.h"
 #include "geom/rect.h"
 
-#include "util/algo.h"
+#include "rutz/algo.h"
 
-#include "util/debug.h"
+#include "rutz/debug.h"
 DBG_REGISTER
 
 namespace geom
