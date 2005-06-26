@@ -36,8 +36,6 @@ struct Tcl_Interp;
 
 extern "C" int Objdb_Init(Tcl_Interp* interp);
 extern "C" int Obj_Init(Tcl_Interp* interp);
-extern "C" int Objdb_Init(Tcl_Interp* interp);
-extern "C" int Obj_Init(Tcl_Interp* interp);
 
 static const char vcid_objtcl_h[] = "$Id$ $URL$";
 #endif // !OBJTCL_H_DEFINED
