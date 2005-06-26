@@ -4,12 +4,12 @@
 
 # Script use to transform the output of devscripts/cdeps
 # --output-ldep-raw into a format that is usable the graph-drawing
-# tool 'dot'. See 'make ldeps.png'.
+# tool 'dot'. See 'make ldep-modules.png'.
 
 proc strip_qt_junk { dirname } {
 
-    if { [regexp {^qt/(.*)} $dirname - stripped] } {
-	return "qt"
+    if { [regexp {^(qt|pkgs)/(.*)} $dirname - dir subdir] } {
+	return $dir
     }
 
     return $dirname
@@ -72,19 +72,28 @@ while { [gets $fd line] >= 0 } {
     if { ![string equal $d1 $d2] } {
 
 	set DEPS([list $d1 $d2]) 1
+
+	set NODES($d1) 1
+	set NODES($d2) 1
     }
 }
 
 set out stdout
 
-puts $out "digraph main {"
-puts $out "\tgraph \[size=\"14,\"10\];"
-puts $out "\tnode \[shape=box, fontname=\"Courier-Bold\", peripheries=2, color=salmon, fontcolor=black, style=filled\];"
-puts $out "\tedge \[color=gray25\];"
+set bordercolor "royalblue3"
+set fillcolor   "lightskyblue1"
+set edgecolor   "gray25"
+
+puts $out "digraph modules {"
+puts $out "\tgraph \[rankdir=RL];"
+puts $out "\tnode \[shape=box, height=0.25, fontname=\"Helvetica-Bold\", fontsize=10, peripheries=2, color=$bordercolor, fillcolor=$fillcolor, fontcolor=black, style=\"bold,filled\"\];"
+foreach node [array names NODES] {
+    puts $out "\t\"$node\" \[URL=\"${node}.html\"\];"
+}
 foreach dep [array names DEPS] {
     set d1 [lindex $dep 0]
     set d2 [lindex $dep 1]
-    puts $out "\t\"$d1\" -> \"$d2\";"
+    puts $out "\t\"$d1\" -> \"$d2\" \[color=$edgecolor\];"
 }
 puts $out "}"
 

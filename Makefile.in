@@ -207,25 +207,12 @@ $(DEP)/ldeplevelsv: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
 	  --output-ldep-levelsv \
 	  |sort -n | sed -e 's/\[\[\[#.*\]\]\]//' > $@
 
-$(DEP)/ldepraw: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
+$(DEP)/ldeps: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) \
 	  --output-ldep-raw > $@
 
-# This is a series of shell pipes to build a PNG image showing the
-# link dependencies among our src subdirectories. First,
-# devscripts/cdeps output a raw list (probably 20,000+ lines long) in
-# which each line lists two files, indicating that the first file
-# link-depends on the second file. Then,
-# devscripts/dot-ldep-modules.tcl transforms this into DOT
-# format. Next, 'tred' prunes out superfluous transitive edges from
-# the graph. Finally, 'dot' renders the graph into a PNG image.
-ldep-modules.png: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) \
-	   --output-ldep-raw \
-	   | $(DEVSCRIPTS)/dot-ldep-modules.tcl \
-	   | tred \
-	   | dot -Tpng \
-	   > $@
+ldep-html: $(DEP)/ldeps
+	time $(DEVSCRIPTS)/make-ldep-html.sh $< $(SRC)/ ldepdoc
 
 $(DEP)/altdeps: $(DEVSCRIPTS)/cppdeps.tcl $(DEVSCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cppdeps.tcl --include $(SRC)/pkgs --src $(SRC) --objdir $(OBJ)/ > $@
