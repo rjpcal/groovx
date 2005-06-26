@@ -1,25 +1,61 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
 /* full path to anytopnm program */
-#undef ANYTOPNM_PROG
+#undef GVX_ANYTOPNM_PROG
+
+/* use Mac OS X aqua port of Tk */
+#undef GVX_AQUA_TK
 
 /* broken OpenGL display lists? */
-#undef BROKEN_GL_DISPLAY_LISTS
+#undef GVX_BROKEN_GL_DISPLAY_LISTS
 
 /* can take address of template funtions? */
-#undef BROKEN_TEMPLATE_FUNCTIONS
+#undef GVX_BROKEN_TEMPLATE_FUNCTIONS
+
+/* make operator new+delete protected to force factory functions? */
+#undef GVX_ENFORCE_FACTORY_FUNCTIONS
 
 /* Darwin esd workaround */
-#undef ESD_WORKAROUND
+#undef GVX_ESD_WORKAROUND
 
 /* full path to giftopnm program */
-#undef GIFTOPNM_PROG
+#undef GVX_GIFTOPNM_PROG
 
 /* use Apple OpenGL windowsystem interface (agl) */
-#undef GL_PLATFORM_AGL
+#undef GVX_GL_PLATFORM_AGL
 
 /* use X11 OpenGL windowsystem interface (glx) */
-#undef GL_PLATFORM_GLX
+#undef GVX_GL_PLATFORM_GLX
+
+/* do we have a 'c++filt' program? */
+#undef GVX_HAVE_PROG_CXXFILT
+
+/* statically turn off all debug statements? */
+#undef GVX_NO_DEBUG
+
+/* use indirect instead of direct-rendering? */
+#undef GVX_NO_DIRECT_RENDER
+
+/* use single- instead of double-buffering? */
+#undef GVX_NO_DOUBLE_BUFFER
+
+/* without matlab support? */
+#undef GVX_NO_MATLAB
+
+/* don't do readline support? */
+#undef GVX_NO_READLINE
+
+/* disable rgba color? */
+#undef GVX_NO_RGBA
+
+/* is typeid().name() unmangled? */
+#undef GVX_NO_TYPENAME_MANGLING
+
+/* enable profiling? */
+#undef GVX_PROF
+
+/* shorten symbol names? */
+#undef GVX_SHORTEN_SYMBOL_NAMES
 
 /* have Alib.h? */
 #undef HAVE_ALIB_H
@@ -75,9 +111,6 @@
 /* Define to 1 if you have the <png.h> header file. */
 #undef HAVE_PNG_H
 
-/* do we have a 'c++filt' program? */
-#undef HAVE_PROG_CXXFILT
-
 /* have QuickTime/Movies.h? */
 #undef HAVE_QUICKTIME_MOVIES_H
 
@@ -102,24 +135,6 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* use Mac OS X aqua port of Tk */
-#undef MAC_OSX_TK
-
-/* statically turn off all debug statements? */
-#undef NO_DEBUG
-
-/* use indirect instead of direct-rendering? */
-#undef NO_DIRECT_RENDER
-
-/* use single- instead of double-buffering? */
-#undef NO_DOUBLE_BUFFER
-
-/* disable rgba color? */
-#undef NO_RGBA
-
-/* is typeid().name() unmangled? */
-#undef NO_TYPENAME_MANGLING
-
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 
@@ -134,18 +149,6 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
-
-/* enable profiling? */
-#undef PROF
-
-/* shorten symbol names? */
-#undef SHORTEN_SYMBOL_NAMES
-
-/* with matlab support? */
-#undef WITH_MATLAB
-
-/* with readline support? */
-#undef WITH_READLINE
 
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING
