@@ -32,6 +32,8 @@
 #ifndef FISHTCL_CC_DEFINED
 #define FISHTCL_CC_DEFINED
 
+#include "visx/fishtcl.h"
+
 #include "io/fieldpkg.h"
 
 #include "nub/objfactory.h"

@@ -52,82 +52,41 @@
 #include <tk.h>
 #include <typeinfo>
 
+// #include's for all the *_Init() procedures
+#include "gfx/canvastcl.h"                   // for Canvas_Init(), Glcanvas_Init(),
+#include "gfx/gxtcl.h"                       // for Gx_Init(), Gxnode_Init(), Gxseparator_Init(), Gxcolor_Init(), Gxdrawstyle_Init(), Gxline_Init(), Gxcylinder_Init(), Gxsphere_Init(), Gxlighting_Init(), Gxmaterial_Init(), Gxpointset_Init(), Gxscaler_Init(), Gxemptynode_Init(), Gxtransform_Init(), Gxshapekit_Init(), Gxpixmap_Init(), Gxtext_Init(), Gxfixedscalecamera_Init(), Gxpsyphycamera_Init(), Gxperspectivecamera_Init(), Gxdisk_Init(),
+#include "gfx/toglettcl.h"                   // for Toglet_Init(),
+#include "io/iotcl.h"                        // for Io_Init(), Outputfile_Init(),
+#include "io/objtcl.h"                       // for Objdb_Init(), Obj_Init(), Objdb_Init(), Obj_Init(),
+#include "tcl/dlisttcl.h"                    // for Dlist_Init(),
+#include "tcl/gtracetcl.h"                   // for Gtrace_Init(), Prof_Init(),
+#include "tcl/logtcl.h"                      // for Log_Init(),
+#include "tcl/misctcl.h"                     // for Misc_Init(),
+#include "tk/tkwidgettcl.h"                  // for Tkwidget_Init(),
+#include "visx/blocktcl.h"                   // for Block_Init(),
+#include "visx/elementcontainertcl.h"        // for Elementcontainer_Init(),
+#include "visx/elementtcl.h"                 // for Element_Init(),
+#include "visx/expttcl.h"                    // for Exptdriver_Init(),
+#include "visx/facetcl.h"                    // for Face_Init(), Cloneface_Init(),
+#include "visx/fishtcl.h"                    // for Fish_Init(),
+#include "visx/fixpttcl.h"                   // for Fixpt_Init(),
+#include "visx/gabortcl.h"                   // for Gabor_Init(), Gaborarray_Init(),
+#include "visx/gltcl.h"                      // for Gl_Init(),
+#include "visx/hooktcl.h"                    // for Hook_Init(),
+#include "visx/housetcl.h"                   // for House_Init(),
+#include "visx/jittertcl.h"                  // for Jitter_Init(),
+#include "visx/masktcl.h"                    // for Maskhatch_Init(),
+#include "visx/morphyfacetcl.h"              // for Morphyface_Init(),
+#include "visx/rhtcl.h"                      // for Responsehandler_Init(), Eventresponsehdlr_Init(), Kbdresponsehdlr_Init(), Nullresponsehdlr_Init(), Serialrh_Init(),
+#include "visx/soundtcl.h"                   // for Sound_Init(),
+#include "visx/thtcl.h"                      // for Timinghdlr_Init(), Timinghandler_Init(),
+#include "visx/tlisttcl.h"                   // for Tlist_Init(),
+#include "visx/trialeventtcl.h"              // for Trialevent_Init(), Nulltrialevent_Init(), Filewriteevent_Init(), Genericevent_Init(), Multievent_Init(),
+#include "visx/trialtcl.h"                   // for Trial_Init(),
+
 #include "util/debug.h"
 DBG_REGISTER
 #include "util/trace.h"
-
-//
-// Forward declarations of package init procedures
-//
-
-extern "C"
-{
-  Tcl_PackageInitProc Block_Init;
-  Tcl_PackageInitProc Canvas_Init;
-  Tcl_PackageInitProc Cloneface_Init;
-  Tcl_PackageInitProc Dlist_Init;
-  Tcl_PackageInitProc Element_Init;
-  Tcl_PackageInitProc Elementcontainer_Init;
-  Tcl_PackageInitProc Eventresponsehdlr_Init;
-  Tcl_PackageInitProc Exptdriver_Init;
-  Tcl_PackageInitProc Face_Init;
-  Tcl_PackageInitProc Filewriteevent_Init;
-  Tcl_PackageInitProc Fish_Init;
-  Tcl_PackageInitProc Fixpt_Init;
-  Tcl_PackageInitProc Gabor_Init;
-  Tcl_PackageInitProc Gaborarray_Init;
-  Tcl_PackageInitProc Gl_Init;
-  Tcl_PackageInitProc Glcanvas_Init;
-  Tcl_PackageInitProc Gtrace_Init;
-  Tcl_PackageInitProc Gx_Init;
-  Tcl_PackageInitProc Gxcolor_Init;
-  Tcl_PackageInitProc Gxcylinder_Init;
-  Tcl_PackageInitProc Gxdisk_Init;
-  Tcl_PackageInitProc Gxdrawstyle_Init;
-  Tcl_PackageInitProc Gxemptynode_Init;
-  Tcl_PackageInitProc Gxfixedscalecamera_Init;
-  Tcl_PackageInitProc Gxlighting_Init;
-  Tcl_PackageInitProc Gxline_Init;
-  Tcl_PackageInitProc Gxmaterial_Init;
-  Tcl_PackageInitProc Gxnode_Init;
-  Tcl_PackageInitProc Gxperspectivecamera_Init;
-  Tcl_PackageInitProc Gxpixmap_Init;
-  Tcl_PackageInitProc Gxpointset_Init;
-  Tcl_PackageInitProc Gxpsyphycamera_Init;
-  Tcl_PackageInitProc Gxscaler_Init;
-  Tcl_PackageInitProc Gxseparator_Init;
-  Tcl_PackageInitProc Gxshapekit_Init;
-  Tcl_PackageInitProc Gxsphere_Init;
-  Tcl_PackageInitProc Gxtext_Init;
-  Tcl_PackageInitProc Gxtransform_Init;
-  Tcl_PackageInitProc Hook_Init;
-  Tcl_PackageInitProc House_Init;
-  Tcl_PackageInitProc Io_Init;
-  Tcl_PackageInitProc Jitter_Init;
-  Tcl_PackageInitProc Kbdresponsehdlr_Init;
-  Tcl_PackageInitProc Log_Init;
-  Tcl_PackageInitProc Maskhatch_Init;
-  Tcl_PackageInitProc Misc_Init;
-  Tcl_PackageInitProc Morphyface_Init;
-  Tcl_PackageInitProc Multievent_Init;
-  Tcl_PackageInitProc Nullresponsehdlr_Init;
-  Tcl_PackageInitProc Nulltrialevent_Init;
-  Tcl_PackageInitProc Obj_Init;
-  Tcl_PackageInitProc Objdb_Init;
-  Tcl_PackageInitProc Outputfile_Init;
-  Tcl_PackageInitProc Prof_Init;
-  Tcl_PackageInitProc Responsehandler_Init;
-  Tcl_PackageInitProc Serialrh_Init;
-  Tcl_PackageInitProc Sound_Init;
-  Tcl_PackageInitProc Timinghandler_Init;
-  Tcl_PackageInitProc Timinghdlr_Init;
-  Tcl_PackageInitProc Tkwidget_Init;
-  Tcl_PackageInitProc Tlist_Init;
-  Tcl_PackageInitProc Toglet_Init;
-  Tcl_PackageInitProc Trial_Init;
-  Tcl_PackageInitProc Trialevent_Init;
-  Tcl_PackageInitProc Genericevent_Init;
-}
 
 //
 // Info about the packages to be loaded

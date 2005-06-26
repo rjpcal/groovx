@@ -32,6 +32,8 @@
 #ifndef GABORTCL_CC_DEFINED
 #define GABORTCL_CC_DEFINED
 
+#include "visx/gabortcl.h"
+
 #include "io/fieldpkg.h"
 
 #include "visx/gabor.h"

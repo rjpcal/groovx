@@ -32,6 +32,10 @@
 #ifndef RHTCL_CC_DEFINED
 #define RHTCL_CC_DEFINED
 
+#include "visx/rhtcl.h"
+
+#include "visx/rhtcl.h"
+
 #include "nub/objfactory.h"
 
 #include "tcl/objpkg.h"

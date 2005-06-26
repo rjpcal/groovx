@@ -32,6 +32,8 @@
 #ifndef OBJTCL_CC_DEFINED
 #define OBJTCL_CC_DEFINED
 
+#include "io/objtcl.h"
+
 #include "io/io.h"
 #include "io/iolegacy.h"
 
@@ -269,6 +271,8 @@ static const char vcid_objtcl_cc[] = "$Id$ $URL$";
 
 #ifndef OBJTCL_CC_DEFINED
 #define OBJTCL_CC_DEFINED
+
+#include "io/objtcl.h"
 
 #include "nub/objdb.h"
 #include "nub/objmgr.h"

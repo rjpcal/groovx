@@ -32,6 +32,8 @@
 #ifndef FSTRINGTEST_CC_DEFINED
 #define FSTRINGTEST_CC_DEFINED
 
+#include "pkgs/whitebox/fstringtest.h"
+
 #include "tcl/tclpkg.h"
 
 #include "util/fstring.h"

@@ -32,6 +32,8 @@
 #ifndef GLTCL_CC_DEFINED
 #define GLTCL_CC_DEFINED
 
+#include "visx/gltcl.h"
+
 // This Tcl package provides some simple Tcl wrappers for C OpenGL
 // functions. The function names, argument lists, and symbolic
 // constants for the Tcl functions are identical to those in the

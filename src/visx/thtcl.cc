@@ -32,6 +32,8 @@
 #ifndef THTCL_CC_DEFINED
 #define THTCL_CC_DEFINED
 
+#include "visx/thtcl.h"
+
 #include "nub/objfactory.h"
 
 #include "tcl/objpkg.h"

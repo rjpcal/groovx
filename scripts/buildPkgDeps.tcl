@@ -55,7 +55,7 @@ proc print { chan txt } {
 
 
 
-proc setup_package { pkgname ccfiles libdir } {
+proc setup_package { pkgname ccfiles libdir doreqs } {
 
     if { [llength $ccfiles] == 0 } { return }
 
@@ -88,12 +88,15 @@ proc setup_package { pkgname ccfiles libdir } {
 
 	set revision [extractPkgRevision $contents]
 
-	set pkgreqs [extractPkgReqs $contents]
-
 	print $::indexfile "package ifneeded $pkgtitle $revision \{\n"
 
-	foreach req $pkgreqs {
-	    print $::indexfile "\tpackage require $req\n"
+	if { $doreqs } {
+
+	    set pkgreqs [extractPkgReqs $contents]
+
+	    foreach req $pkgreqs {
+		print $::indexfile "\tpackage require $req\n"
+	    }
 	}
 
 	print $::indexfile "\tload $shlib\n\}\n"
@@ -139,7 +142,7 @@ foreach pkgdir $pkgdirs {
 
 	set ccfiles [glob -nocomplain ${dir}/*.cc]
 
-	setup_package $pkgname $ccfiles $LIBDIR
+	setup_package $pkgname $ccfiles $LIBDIR 1
     } else {
 
 	# For the special case of the whitebox tests, each .cc file becomes
@@ -151,7 +154,7 @@ foreach pkgdir $pkgdirs {
 	foreach ccfile $ccfiles {
 	    set pkgname [file tail [file rootname $ccfile]]
 
-	    setup_package $pkgname $ccfile $LIBDIR
+	    setup_package $pkgname $ccfile $LIBDIR 0
 	}
     }
 }

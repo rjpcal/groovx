@@ -32,6 +32,8 @@
 #ifndef IOTCL_CC_DEFINED
 #define IOTCL_CC_DEFINED
 
+#include "io/iotcl.h"
+
 #include "io/io.h"
 #include "io/ioutil.h"
 #include "io/outputfile.h"

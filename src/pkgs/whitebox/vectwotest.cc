@@ -32,6 +32,8 @@
 #ifndef VECTWOTEST_CC_DEFINED
 #define VECTWOTEST_CC_DEFINED
 
+#include "pkgs/whitebox/vectwotest.h"
+
 #include "geom/vec2.h"
 
 #include "tcl/tclpkg.h"

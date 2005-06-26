@@ -32,6 +32,10 @@
 #ifndef CANVASTCL_CC_DEFINED
 #define CANVASTCL_CC_DEFINED
 
+#include "gfx/canvastcl.h"
+
+#include "gfx/canvastcl.h"
+
 #include "gfx/canvas.h"
 #include "gfx/glcanvas.h"
 #include "gfx/recttcl.h"

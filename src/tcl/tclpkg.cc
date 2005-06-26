@@ -43,6 +43,7 @@
 #include "util/sharedptr.h"
 
 #include <tcl.h>
+#include <tclInt.h> // for Tcl_FindNamespace() etc.
 #include <cctype>
 #include <iostream>
 #include <typeinfo>

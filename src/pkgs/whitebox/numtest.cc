@@ -32,6 +32,8 @@
 #ifndef NUMTEST_CC_DEFINED
 #define NUMTEST_CC_DEFINED
 
+#include "pkgs/whitebox/numtest.h"
+
 #include "pkgs/mtx/mathspecial.h"
 
 #include "tcl/tclpkg.h"

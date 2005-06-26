@@ -32,6 +32,8 @@
 #ifndef SIGNALTEST_CC_DEFINED
 #define SIGNALTEST_CC_DEFINED
 
+#include "pkgs/whitebox/signaltest.h"
+
 #include "nub/signal.h"
 
 #include "tcl/tclpkg.h"

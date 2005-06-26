@@ -32,6 +32,10 @@
 #ifndef DLISTTCL_CC_DEFINED
 #define DLISTTCL_CC_DEFINED
 
+#include "tcl/dlisttcl.h"
+
+#include "tcl/dlisttcl.h"
+
 // This file implements additional Tcl list manipulation functions
 
 #include "tcl/tcllistobj.h"

@@ -32,6 +32,8 @@
 #ifndef MTXTCL_CC_DEFINED
 #define MTXTCL_CC_DEFINED
 
+#include "pkgs/mtx/mtxtcl.h"
+
 #include "mtxobj.h"
 
 #include "nub/objfactory.h"

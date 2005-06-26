@@ -32,6 +32,8 @@
 #ifndef FIXPTTCL_CC_DEFINED
 #define FIXPTTCL_CC_DEFINED
 
+#include "visx/fixpttcl.h"
+
 #include "io/fieldpkg.h"
 
 #include "visx/fixpt.h"

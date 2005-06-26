@@ -32,6 +32,10 @@
 #ifndef FACETCL_CC_DEFINED
 #define FACETCL_CC_DEFINED
 
+#include "visx/facetcl.h"
+
+#include "visx/facetcl.h"
+
 #include "io/fieldpkg.h"
 
 #include "visx/cloneface.h"

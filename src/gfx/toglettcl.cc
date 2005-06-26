@@ -32,6 +32,8 @@
 #ifndef TOGLETTCL_CC_DEFINED
 #define TOGLETTCL_CC_DEFINED
 
+#include "gfx/toglettcl.h"
+
 #include "gfx/canvas.h"
 #include "gfx/gxcamera.h"
 #include "gfx/gxnode.h"

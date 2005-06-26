@@ -32,6 +32,8 @@
 #ifndef HOUSETCL_CC_DEFINED
 #define HOUSETCL_CC_DEFINED
 
+#include "visx/housetcl.h"
+
 #include "io/fieldpkg.h"
 
 #include "visx/house.h"

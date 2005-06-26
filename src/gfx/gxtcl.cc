@@ -32,6 +32,8 @@
 #ifndef GXTCL_CC_DEFINED
 #define GXTCL_CC_DEFINED
 
+#include "gfx/gxtcl.h"
+
 #include "geom/bezier4.h"
 
 #include "gfx/gxaligner.h"

@@ -32,6 +32,8 @@
 #ifndef GEOMTEST_CC_DEFINED
 #define GEOMTEST_CC_DEFINED
 
+#include "pkgs/whitebox/geomtest.h"
+
 #include "geom/txform.h"
 
 #include "tcl/tclpkg.h"

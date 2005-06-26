@@ -32,6 +32,8 @@
 #ifndef SOUNDTCL_CC_DEFINED
 #define SOUNDTCL_CC_DEFINED
 
+#include "visx/soundtcl.h"
+
 #include "nub/objfactory.h"
 
 #include "tcl/objpkg.h"

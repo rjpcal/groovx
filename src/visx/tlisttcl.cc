@@ -32,6 +32,8 @@
 #ifndef TLISTTCL_CC_DEFINED
 #define TLISTTCL_CC_DEFINED
 
+#include "visx/tlisttcl.h"
+
 #include "gfx/recttcl.h"
 
 #include "tcl/tcllistobj.h"

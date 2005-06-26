@@ -32,6 +32,8 @@
 #ifndef MTXTEST_CC_DEFINED
 #define MTXTEST_CC_DEFINED
 
+#include "pkgs/whitebox/mtxtest.h"
+
 #include "pkgs/mtx/mtx.h"
 #include "pkgs/mtx/mtxops.h"
 

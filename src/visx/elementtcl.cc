@@ -32,6 +32,10 @@
 #ifndef ELEMENTTCL_CC_DEFINED
 #define ELEMENTTCL_CC_DEFINED
 
+#include "visx/elementtcl.h"
+
+#include "visx/elementtcl.h"
+
 #include "gfx/toglet.h"
 
 #include "tcl/objpkg.h"

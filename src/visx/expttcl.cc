@@ -32,6 +32,8 @@
 #ifndef EXPTTCL_CC_DEFINED
 #define EXPTTCL_CC_DEFINED
 
+#include "visx/expttcl.h"
+
 #include "gfx/toglet.h"
 
 #include "nub/ref.h"

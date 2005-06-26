@@ -32,6 +32,8 @@
 #ifndef HOOKTCL_CC_DEFINED
 #define HOOKTCL_CC_DEFINED
 
+#include "visx/hooktcl.h"
+
 #include "tcl/tclpkg.h"
 
 #include "util/trace.h"
@@ -68,7 +70,7 @@ const char* sformat_partial(char x, fstring& str, const char* format,
                             const T& arg)
 {
   const char* p = format;
-  for (; p != '\0'; ++p)
+  for (; *p != '\0'; ++p)
     {
       if (*p == x)
         {

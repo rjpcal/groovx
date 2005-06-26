@@ -32,6 +32,8 @@
 #ifndef TRIALEVENTTCL_CC_DEFINED
 #define TRIALEVENTTCL_CC_DEFINED
 
+#include "visx/trialeventtcl.h"
+
 #include "io/outputfile.h"
 
 #include "nub/objfactory.h"

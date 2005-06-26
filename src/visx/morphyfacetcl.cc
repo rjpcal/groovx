@@ -32,6 +32,8 @@
 #ifndef MORPHYFACETCL_CC_DEFINED
 #define MORPHYFACETCL_CC_DEFINED
 
+#include "visx/morphyfacetcl.h"
+
 #include "io/fieldpkg.h"
 
 #include "visx/morphyface.h"

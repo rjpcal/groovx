@@ -32,6 +32,8 @@
 #ifndef TKWIDGETTCL_CC_DEFINED
 #define TKWIDGETTCL_CC_DEFINED
 
+#include "tk/tkwidgettcl.h"
+
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 #include "tk/tkwidget.h"

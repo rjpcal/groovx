@@ -44,6 +44,7 @@
 
 #include <list>
 #include <tcl.h>
+#include <tclInt.h> // for Tcl_GetFullCommandName()
 
 #include "util/trace.h"
 #include "util/debug.h"

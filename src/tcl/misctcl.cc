@@ -32,6 +32,8 @@
 #ifndef MISCTCL_CC_DEFINED
 #define MISCTCL_CC_DEFINED
 
+#include "tcl/misctcl.h"
+
 // this file contains the implementations for some simple Tcl
 // functions that are basically wrappers for standard C library
 // functions, including rand(), sleep(), and usleep()

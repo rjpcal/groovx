@@ -32,6 +32,8 @@
 #ifndef MASKTCL_CC_DEFINED
 #define MASKTCL_CC_DEFINED
 
+#include "visx/masktcl.h"
+
 #include "io/fieldpkg.h"
 
 #include "visx/maskhatch.h"

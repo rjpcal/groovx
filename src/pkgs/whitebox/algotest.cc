@@ -32,6 +32,8 @@
 #ifndef ALGOTEST_CC_DEFINED
 #define ALGOTEST_CC_DEFINED
 
+#include "pkgs/whitebox/algotest.h"
+
 #include "util/algo.h"
 #include "util/unittest.h"
 

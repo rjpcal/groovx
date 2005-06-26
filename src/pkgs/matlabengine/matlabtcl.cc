@@ -32,6 +32,8 @@
 #ifndef MATLABTCL_CC_DEFINED
 #define MATLABTCL_CC_DEFINED
 
+#include "pkgs/matlabengine/matlabtcl.h"
+
 #include "pkgs/mtx/matlabinterface.h"
 #include "pkgs/mtx/mtxobj.h"
 

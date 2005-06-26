@@ -32,6 +32,8 @@
 #ifndef TCLTIMERTEST_CC_DEFINED
 #define TCLTIMERTEST_CC_DEFINED
 
+#include "pkgs/whitebox/tcltimertest.h"
+
 #include "nub/timer.h"
 
 #include "tcl/tclpkg.h"

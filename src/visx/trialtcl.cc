@@ -32,6 +32,8 @@
 #ifndef TRIALTCL_CC_DEFINED
 #define TRIALTCL_CC_DEFINED
 
+#include "visx/trialtcl.h"
+
 #include "io/fieldpkg.h"
 
 #include "gfx/gxnode.h"

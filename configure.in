@@ -520,13 +520,13 @@ LDFLAGS="$LDFLAGS -L\${exec_prefix}/lib"
 
 ### --with-tcltk
 
-AC_MSG_CHECKING([for location of tcl+tk >= 8.5])
+AC_MSG_CHECKING([for location of tcl+tk >= 8.4])
 
 AC_ARG_WITH(tcltk,
 	    [AC_HELP_STRING([--with-tcltk=DIR],
-			    [specify where tcl+tk >= 8.5 are installed [/usr/local]])],
+			    [specify where tcl+tk >= 8.4 are installed [/usr]])],
 	    ,
-	    with_tcltk=/usr/local)
+	    with_tcltk=/usr)
 
 AC_MSG_RESULT($with_tcltk)
 
@@ -555,6 +555,11 @@ case $windowsystem in
 
       TCL_VERSION=`sh -c ". ${with_tcltk}/lib/tclConfig.sh ; echo \\$TCL_VERSION"`
       TK_VERSION=`sh -c ". ${with_tcltk}/lib/tkConfig.sh ; echo \\$TK_VERSION"`
+
+      TCL_SRC_DIR=`sh -c ". ${with_tcltk}/lib/tclConfig.sh ; echo \\$TCL_SRC_DIR"`
+      TK_SRC_DIR=`sh -c ". ${with_tcltk}/lib/tkConfig.sh ; echo \\$TK_SRC_DIR"`
+
+      CPPFLAGS="-I$TCL_SRC_DIR/generic -I$TK_SRC_DIR/generic $CPPFLAGS"
 
       AC_MSG_RESULT([tcl ($TCL_VERSION), tk ($TK_VERSION)])
 

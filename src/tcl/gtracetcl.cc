@@ -32,6 +32,8 @@
 #ifndef GTRACE_CC_DEFINED
 #define GTRACE_CC_DEFINED
 
+#include "tcl/gtracetcl.h"
+
 #include "tcl/tclpkg.h"
 
 #include "util/error.h"

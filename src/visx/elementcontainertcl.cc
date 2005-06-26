@@ -32,6 +32,10 @@
 #ifndef ELEMENTCONTAINERTCL_CC_DEFINED
 #define ELEMENTCONTAINERTCL_CC_DEFINED
 
+#include "visx/elementcontainertcl.h"
+
+#include "visx/elementcontainertcl.h"
+
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
 #include "tcl/tcllistobj.h"

@@ -32,6 +32,8 @@
 #ifndef JITTERTCL_CC_DEFINED
 #define JITTERTCL_CC_DEFINED
 
+#include "visx/jittertcl.h"
+
 #include "nub/objfactory.h"
 
 #include "tcl/objpkg.h"

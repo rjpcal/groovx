@@ -32,6 +32,8 @@
 #ifndef BASESIXFOURTEST_CC_DEFINED
 #define BASESIXFOURTEST_CC_DEFINED
 
+#include "pkgs/whitebox/basesixfourtest.h"
+
 #include "util/base64.h"
 #include "util/bytearray.h"
 #include "util/fstring.h"
