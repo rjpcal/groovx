@@ -7,6 +7,7 @@
 //
 // created: Tue Dec  1 08:00:00 1998
 // commit: $Id$
+// $HeadURL$
 //
 // This file is part of GroovX.
 //   [http://www.klab.caltech.edu/rjpeters/groovx/]

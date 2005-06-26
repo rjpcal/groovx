@@ -7,6 +7,7 @@
 //
 // created: Mon Nov  2 08:00:00 1998
 // commit: $Id$
+// $HeadURL$
 //
 // This is the main application file for a Tcl/Tk application that
 // runs visual experiments.

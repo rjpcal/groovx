@@ -7,6 +7,7 @@
 //
 // created: Fri Jun 25 14:09:24 1999
 // commit: $Id$
+// $HeadURL$
 //
 // The random number generator classes here are taken from _The C++
 // Programming Language_, 3rd ed., by Bjarne Stroustrup.

@@ -7,6 +7,7 @@
 //
 // created: Tue May 27 16:02:04 2003
 // commit: $Id$
+// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -31,8 +32,6 @@
 
 #ifndef ELEMENTCONTAINERTCL_CC_DEFINED
 #define ELEMENTCONTAINERTCL_CC_DEFINED
-
-#include "visx/elementcontainertcl.h"
 
 #include "visx/elementcontainertcl.h"
 
