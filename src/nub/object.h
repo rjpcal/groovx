@@ -64,10 +64,13 @@ class Nub::Object : public Nub::RefCounted
 {
 protected:
   /// Default constructor.
-  Object() throw();
+  /** Can't have an empty throw() spec here, because RefCounted's
+      constructor might throw (because it has to allocate memory for
+      a RefCounts object). */
+  Object();
 
   /// Virtual destructor.
-  virtual ~Object() throw();
+  virtual ~Object() GVX_DTOR_NOTHROW;
 
 public:
   /** Returns the unique id for this object. The unique id will always

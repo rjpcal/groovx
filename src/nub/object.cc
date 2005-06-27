@@ -47,12 +47,12 @@ namespace
   Nub::UID idCounter = 0;
 }
 
-Nub::Object::Object() throw() : itsId(++idCounter)
+Nub::Object::Object() : itsId(++idCounter)
 {
 GVX_TRACE("Nub::Object::Object");
 }
 
-Nub::Object::~Object() throw()
+Nub::Object::~Object() GVX_DTOR_NOTHROW
 {
 GVX_TRACE("Nub::Object::~Object");
 }

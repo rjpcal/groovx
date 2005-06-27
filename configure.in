@@ -118,6 +118,8 @@ LDFLAGS="$LDFLAGS -L${BUILD}/compat/lib"
 
 AC_DEFINE(GVX_ENFORCE_FACTORY_FUNCTIONS,1,
 	  [make operator new+delete protected to force factory functions?])
+AC_DEFINE(GVX_DTOR_NOTHROW,[throw()],
+	  [should Nub::RefCounted and Nub::Object have a no-throw destructor?])
 
 case ${CXX}-${OS} in
    *g++*)

@@ -42,6 +42,13 @@ namespace Nub
 }
 
 
+// If we want to enforce that destructors of objects derived form
+// Nub::RefCounted (and Nub::Object) should have an empty throw-spec
+// (i.e. "throw()"), then need "#define GVX_DTOR_NOTHROW throw()",
+// otherwise we just define GVX_DTOR_NOTHROW to be empty
+#ifndef GVX_DTOR_NOTHROW
+#  define GVX_DTOR_NOTHROW
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -160,7 +167,7 @@ public:
       reference count falls to zero or below. Clients are forced to
       create RefCounted objects dynamically using \c new, which is
       what we need in order for 'delete this' to be valid later on. */
-  virtual ~RefCounted() throw();
+  virtual ~RefCounted() GVX_DTOR_NOTHROW;
 
   /// Mark this object as a volatile (unshareable) object.
   void markAsVolatile() throw();

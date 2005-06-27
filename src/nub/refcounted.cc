@@ -176,7 +176,7 @@ GVX_TRACE("Nub::RefCounted::RefCounted");
   itsRefCounts->acquireWeak();
 }
 
-Nub::RefCounted::~RefCounted() throw()
+Nub::RefCounted::~RefCounted() GVX_DTOR_NOTHROW
 {
 GVX_TRACE("Nub::RefCounted::~RefCounted");
   dbg_print(7, "RefCounted dtor"); dbg_eval_nl(7, this);
