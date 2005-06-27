@@ -48,10 +48,17 @@ namespace Nub
 
   enum RefVis
     {
-      PRIVATE,   // Nub::ObjDb gets no reference to the object
-      PROTECTED, // Nub::ObjDb gets a weak reference to the object
-      PUBLIC     // Nub::ObjDb gets a strong reference to the object
+      DEFAULT,   //! equivalent to result of getDefaultRefVis()
+      PRIVATE,   //! Nub::ObjDb gets no reference to the object
+      PROTECTED, //! Nub::ObjDb gets a weak reference to the object
+      PUBLIC     //! Nub::ObjDb gets a strong reference to the object
     };
+
+  //! Get the current default visibility (will control RefVis DEFAULT).
+  RefVis getDefaultRefVis();
+
+  //! Set the current default visibility (will control RefVis DEFAULT).
+  void setDefaultRefVis(RefVis vis);
 
   template <class T> class Ref;
   template <class T> class SoftRef;
@@ -69,8 +76,7 @@ namespace Nub
     bool isValidId(Nub::UID id) throw();
     Nub::Object* getCheckedItem(Nub::UID id);
 
-    void insertItem(Nub::Object* obj);
-    void insertItemWeak(Nub::Object* obj);
+    void insertItem(Nub::Object* obj, RefVis vis);
 
     void throwRefNull(const std::type_info& info, const rutz::file_pos& pos);
     void throwRefUnshareable(const std::type_info& msg, const rutz::file_pos& pos);
@@ -224,12 +230,10 @@ namespace Nub
     explicit Ref(Nub::UID id)
       : itsHandle(Detail::getCastedItem<T>(id)) {}
 
-    explicit Ref(T* ptr, RefVis vis = PUBLIC) :
+    explicit Ref(T* ptr, RefVis vis = DEFAULT) :
       itsHandle(ptr)
     {
-      if      (vis == PUBLIC)    Detail::insertItem(ptr);
-      else if (vis == PROTECTED) Detail::insertItemWeak(ptr);
-      // else vis == PRIVATE, so don't insert into the Nub::ObjDb
+      Detail::insertItem(ptr, vis);
     }
 
     template <class U>
@@ -430,15 +434,14 @@ namespace Nub
                 tp)
     {}
 
-    explicit SoftRef(T* master, RefType tp = STRONG, RefVis vis = PUBLIC)
+    explicit SoftRef(T* master,
+                     RefType tp = STRONG, RefVis vis = DEFAULT)
       :
       itsHandle(master,tp)
     {
       if (itsHandle.isValid())
         {
-          if      (vis == PUBLIC)    Detail::insertItem(itsHandle.get());
-          else if (vis == PROTECTED) Detail::insertItemWeak(itsHandle.get());
-          // else vis == PRIVATE, so don't insert into the Nub::ObjDb
+          Detail::insertItem(itsHandle.get(), vis);
         }
     }
 

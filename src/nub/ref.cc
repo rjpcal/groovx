@@ -40,6 +40,28 @@
 #include "rutz/error.h"
 #include "rutz/demangle.h"
 
+#include "rutz/debug.h"
+GVX_DBG_REGISTER
+
+#ifndef GVX_DEFAULT_REFVIS
+#  define GVX_DEFAULT_REFVIS PRIVATE
+#endif
+
+namespace
+{
+  Nub::RefVis defaultVis = Nub::GVX_DEFAULT_REFVIS;
+}
+
+Nub::RefVis Nub::getDefaultRefVis()
+{
+  return defaultVis;
+}
+
+void Nub::setDefaultRefVis(Nub::RefVis vis)
+{
+  defaultVis = vis;
+}
+
 bool Nub::Detail::isValidId(Nub::UID id) throw()
 {
   return Nub::ObjDb::theDb().isValidId(id);
@@ -50,14 +72,21 @@ Nub::Object* Nub::Detail::getCheckedItem(Nub::UID id)
   return Nub::ObjDb::theDb().getCheckedObj(id);
 }
 
-void Nub::Detail::insertItem(Nub::Object* obj)
+void Nub::Detail::insertItem(Nub::Object* obj, RefVis vis)
 {
-  Nub::ObjDb::theDb().insertObj(obj);
-}
+  if (vis == DEFAULT)
+    {
+      vis = defaultVis;
+    }
 
-void Nub::Detail::insertItemWeak(Nub::Object* obj)
-{
-  Nub::ObjDb::theDb().insertObjWeak(obj);
+  switch (vis)
+    {
+    case PUBLIC:    Nub::ObjDb::theDb().insertObj(obj); break;
+    case PROTECTED: Nub::ObjDb::theDb().insertObjWeak(obj); break;
+    case PRIVATE:   /* nothing */ break;
+    default:
+      GVX_PANIC("unknown RefVis enum value");
+    }
 }
 
 void Nub::Detail::throwRefNull(const std::type_info& info,
