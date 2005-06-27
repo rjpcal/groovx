@@ -12,6 +12,10 @@
 /* can take address of template funtions? */
 #undef GVX_BROKEN_TEMPLATE_FUNCTIONS
 
+/* initial default RefVis to use when Nub::Ref and Nub::SoftRef objects are
+   constructed? */
+#undef GVX_DEFAULT_REFVIS
+
 /* should Nub::RefCounted and Nub::Object have a no-throw destructor? */
 #undef GVX_DTOR_NOTHROW
 
