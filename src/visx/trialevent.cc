@@ -275,7 +275,7 @@ void FileWriteEvent::invoke(Trial& /*trial*/)
 
 void FileWriteEvent::readFrom(IO::Reader& reader)
 {
-  itsFile = dynamicCast<OutputFile>(reader.readObject("file"));
+  itsFile = dynCast<OutputFile>(reader.readObject("file"));
   reader.readValue("byte", itsByte);
 
   reader.readBaseClass("TrialEvent",

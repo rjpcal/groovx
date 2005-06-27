@@ -35,7 +35,7 @@
 
 #include "io/reader.h"
 
-#include "nub/ref.h"    // for dynamicCast
+#include "nub/ref.h"    // for dynCast
 
 #include "rutz/error.h"
 
@@ -119,7 +119,7 @@ namespace ReadUtils
 
       for (int i = 0; i < count; ++i)
         {
-          *inserter = dynamicCast<C>(
+          *inserter = dynCast<C>(
                  reader.readObject(makeElementNameString(seq_name, i)));
 
           ++inserter;

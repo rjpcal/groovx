@@ -245,8 +245,8 @@ GVX_TRACE("Trial::readFrom");
 
   reader.readValue("type", rep->trialType);
 
-  rep->rh = dynamicCast<ResponseHandler>(reader.readMaybeObject("rh"));
-  rep->th = dynamicCast<TimingHdlr>(reader.readMaybeObject("th"));
+  rep->rh = dynCast<ResponseHandler>(reader.readMaybeObject("rh"));
+  rep->th = dynCast<TimingHdlr>(reader.readMaybeObject("th"));
 
   reader.readValue("info", rep->info);
 }

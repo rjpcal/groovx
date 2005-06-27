@@ -53,7 +53,7 @@ namespace Nub
     template <class T, class S>
     Nub::SoftRef<T> newTypedObj(S type)
     {
-      return dynamicCast<T>(newObj(type));
+      return dynCast<T>(newObj(type));
     }
   }
 }

@@ -282,7 +282,7 @@ namespace rutz
 }
 
 template <class To, class Fr>
-Nub::Ref<To> dynamicCast(Nub::Ref<Fr> p)
+Nub::Ref<To> dynCast(Nub::Ref<Fr> p)
 {
   Fr* f = p.get();
   To* t = dynamic_cast<To*>(f);
@@ -292,9 +292,9 @@ Nub::Ref<To> dynamicCast(Nub::Ref<Fr> p)
 }
 
 template <class To, class Fr>
-void dynamicCastToFrom(Nub::Ref<To>& dest, Nub::Ref<Fr> p)
+void dynCastToFrom(Nub::Ref<To>& dest, Nub::Ref<Fr> p)
 {
-  dest = dynamicCast<To>(p);
+  dest = dynCast<To>(p);
 }
 
 
@@ -503,7 +503,7 @@ namespace rutz
 }
 
 template <class To, class Fr>
-Nub::SoftRef<To> dynamicCast(Nub::SoftRef<Fr> p)
+Nub::SoftRef<To> dynCast(Nub::SoftRef<Fr> p)
 {
   if (p.isValid())
     {
@@ -517,14 +517,14 @@ Nub::SoftRef<To> dynamicCast(Nub::SoftRef<Fr> p)
 }
 
 template <class To, class Fr>
-void dynamicCastToFrom(Nub::SoftRef<To>& dest, Nub::SoftRef<Fr> p)
+void dynCastToFrom(Nub::SoftRef<To>& dest, Nub::SoftRef<Fr> p)
 {
-  dest = dynamicCast<To>(p);
+  dest = dynCast<To>(p);
 }
 
 
 template <class To, class Fr>
-Nub::SoftRef<To> dynamicCastWeak(Nub::SoftRef<Fr> p)
+Nub::SoftRef<To> dynCastWeak(Nub::SoftRef<Fr> p)
 {
   if (p.isValid())
     {
@@ -538,9 +538,9 @@ Nub::SoftRef<To> dynamicCastWeak(Nub::SoftRef<Fr> p)
 }
 
 template <class To, class Fr>
-void dynamicCastWeakToFrom(Nub::SoftRef<To>& dest, Nub::SoftRef<Fr> p)
+void dynCastWeakToFrom(Nub::SoftRef<To>& dest, Nub::SoftRef<Fr> p)
 {
-  dest = dynamicCast<To>(p);
+  dest = dynCast<To>(p);
 }
 
 ///////////////////////////////////////////////////////////////////////
