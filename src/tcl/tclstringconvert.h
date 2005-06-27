@@ -41,8 +41,12 @@
 
 namespace Tcl
 {
-  Tcl::ObjPtr toTcl(std::string s) { return toTcl(s.c_str()); }
-  std::string fromTcl(Tcl_Obj* obj, std::string*)
+  inline Tcl::ObjPtr toTcl(std::string s)
+  {
+    return toTcl(s.c_str());
+  }
+
+  inline std::string fromTcl(Tcl_Obj* obj, std::string*)
   {
     return std::string(fromTcl(obj, (rutz::fstring*)0).c_str());
   }
