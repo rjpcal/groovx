@@ -1,7 +1,5 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// $URL$
-//
 // Copyright (c) 1998-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
@@ -33,7 +31,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#include "nub/objfactory.h"
 #include "tcl/tclscriptapp.h"
 
 // #include's for forward decls of all the *_Init() procedures
@@ -151,8 +148,6 @@ static Tcl::PackageInfo GROOVX_PKGS[] =
 int main(int argc, char** argv)
 {
   GVX_SCRIPT_PROG_BEGIN(app, "iNVT", argc, argv);
-
-  Nub::setDefaultRefVis(Nub::PUBLIC);
 
   app.pkgDir(VISX_LIB_DIR);
 
