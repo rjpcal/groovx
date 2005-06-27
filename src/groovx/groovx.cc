@@ -137,6 +137,8 @@ static Tcl::PackageInfo GROOVX_PKGS[] =
     { "Toglet",              Toglet_Init,              "4.0", true },
     { "Trial",               Trial_Init,               "4.0", false },
     { "Trialevent",          Trialevent_Init,          "4.0", false },
+    // WARNING! Keep this entry last
+    { 0, 0, 0, 0 }
   };
 
 ///////////////////////////////////////////////////////////////////////
