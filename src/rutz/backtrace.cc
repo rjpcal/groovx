@@ -172,7 +172,10 @@ rutz::fstring rutz::backtrace::format() const
   const int LINELEN = 256;
   char line[LINELEN];
 
-  const int width = int(log10(rep->vec.size()-1) + 1.0);
+  unsigned int s = rep->vec.size();
+  int width = 0;
+  while (s != 0)
+    { s /= 10; ++width; }
 
   for (unsigned int i = rep->vec.size(); i > 0; --i)
     {
