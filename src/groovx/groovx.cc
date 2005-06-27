@@ -149,7 +149,7 @@ static Tcl::PackageInfo GROOVX_PKGS[] =
 
 int main(int argc, char** argv)
 {
-  GVX_SCRIPT_PROG_BEGIN(app, "iNVT", argc, argv);
+  GVX_SCRIPT_PROG_BEGIN(app, "GroovX", argc, argv);
 
   app.pkgDir(VISX_LIB_DIR);
 
