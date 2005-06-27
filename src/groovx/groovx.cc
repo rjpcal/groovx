@@ -34,26 +34,9 @@
 ///////////////////////////////////////////////////////////////////////
 
 #include "nub/objfactory.h"
+#include "tcl/tclscriptapp.h"
 
-#include "tcl/tcllistobj.h"
-#include "tcl/tclmain.h"
-#include "tcl/tclpkg.h"
-#include "tcl/tclsafeinterp.h"
-
-#include "rutz/demangle.h"
-#include "rutz/error.h"
-#include "rutz/fstring.h"
-#include "rutz/time.h"
-
-#include <cstdlib> // for atoi()
-#include <cstring> // for strcmp()
-#include <exception>
-#include <iostream>
-#include <signal.h>
-#include <tk.h>
-#include <typeinfo>
-
-// #include's for all the *_Init() procedures
+// #include's for forward decls of all the *_Init() procedures
 
 #include "gfx/canvastcl.h"                   // for Canvas_Init(), Glcanvas_Init(),
 #include "gfx/gxtcl.h"                       // for Gx_Init(), Gxnode_Init(), Gxseparator_Init(), Gxcolor_Init(), Gxdrawstyle_Init(), Gxline_Init(), Gxcylinder_Init(), Gxsphere_Init(), Gxlighting_Init(), Gxmaterial_Init(), Gxpointset_Init(), Gxscaler_Init(), Gxemptynode_Init(), Gxtransform_Init(), Gxshapekit_Init(), Gxpixmap_Init(), Gxtext_Init(), Gxfixedscalecamera_Init(), Gxpsyphycamera_Init(), Gxperspectivecamera_Init(), Gxdisk_Init(),
@@ -86,32 +69,11 @@
 #include "visx/trialeventtcl.h"              // for Trialevent_Init(), Nulltrialevent_Init(), Filewriteevent_Init(), Genericevent_Init(), Multievent_Init(),
 #include "visx/trialtcl.h"                   // for Trial_Init(),
 
-#include "rutz/debug.h"
-GVX_DBG_REGISTER
-#include "rutz/trace.h"
-
 //
 // Info about the packages to be loaded
 //
 
-namespace
-{
-
-struct PackageInfo
-{
-  const char* pkgName;
-  Tcl_PackageInitProc *pkgInitProc;
-  const char* pkgVersion;
-  bool skipIfNoWindow;
-};
-
-PackageInfo IMMEDIATE_PKGS[] =
-  {
-    { "Tcl",      Tcl_Init,  "", false },
-    { "Tk",       Tk_Init,   "", true },
-  };
-
-PackageInfo DELAYED_PKGS[] =
+static Tcl::PackageInfo GROOVX_PKGS[] =
   {
     { "Block",               Block_Init,               "4.0", false },
     { "Canvas",              Canvas_Init,              "4.0", false },
@@ -180,215 +142,34 @@ PackageInfo DELAYED_PKGS[] =
     { "Trialevent",          Trialevent_Init,          "4.0", false },
   };
 
-  void sigHandler(int signum)
-  {
-    switch (signum)
-      {
-        case SIGSEGV: GVX_PANIC("Segmentation fault (SIGSEGV)");
-        case SIGFPE:  GVX_PANIC("Floating point exception (SIGFPE)");
-        case SIGBUS:  GVX_PANIC("Bus error (SIGBUS)");
-      }
-    GVX_ASSERT(0);
-  }
-
-  // This is a fallback function to be used by the object
-  // factory... if the factory can't figure out how to create a given
-  // type, it will call this fallback function first before giving up
-  // for good. This callback function tries to load a Tcl package
-  // named after the desired object type.
-  void factoryPkgLoader(const rutz::fstring& type)
-  {
-    dbg_eval_nl(3, type);
-
-    Tcl::Pkg::lookup(Tcl::Main::interp(), type.c_str());
-  }
-
-} // end anonymous namespace
-
 ///////////////////////////////////////////////////////////////////////
 //
-// main procedure
+// main()
 //
 ///////////////////////////////////////////////////////////////////////
 
 int main(int argc, char** argv)
 {
-GVX_TRACE("main");
+  GVX_SCRIPT_PROG_BEGIN(app, "iNVT", argc, argv);
 
-  signal(SIGSEGV, &sigHandler);
-  signal(SIGFPE, &sigHandler);
-  signal(SIGBUS, &sigHandler);
+  Nub::setDefaultRefVis(Nub::PUBLIC);
 
-  bool minimal = false;
-  bool nowindow = false;
+  app.pkgDir(VISX_LIB_DIR);
 
-  try
-    {
-      // Quick check argv to optionally turn on global tracing and/or set
-      // the global debug level. This method is particularly useful for
-      // helping to diagnose problems that are occurring during application
-      // startup, before we have a chance to get to the command-line prompt
-      // and do a "::gtrace 1" or a "::dbgLevel 9".
-      for (int i = 0; i < argc; ++i)
-        {
-          if (strcmp(argv[i], "-dbglevel") == 0)
-            {
-              if (argv[i+1] != 0)
-                rutz::debug::set_global_level( atoi(argv[i+1]) );
-            }
-          else if (strcmp(argv[i], "-gtrace") == 0)
-            {
-              rutz::trace::set_global_trace(true);
-            }
-          else if (strcmp(argv[i], "-showinit") == 0)
-            {
-              Tcl::Pkg::verboseInit(true);
-            }
-          else if (strcmp(argv[i], "-minimal") == 0)
-            {
-              minimal = true;
-            }
-          else if (strcmp(argv[i], "-nw") == 0)
-            {
-              nowindow = true;
-            }
-        }
+  app.splash(PACKAGE_STRING " (" __DATE__ ")\n"
+             "\n"
+             "Copyright (c) 1998-2005 Rob Peters\n"
+             "<http://ilab.usc.edu/rjpeters/groovx/>\n"
+             PACKAGE_NAME " is free software, covered by "
+             "the GNU General Public License, and you are "
+             "welcome to change it and/or distribute copies "
+             "of it under certain conditions.\n");
 
-      Tcl::Main app(argc, argv, nowindow);
+  app.packages(GROOVX_PKGS);
 
-      if (Tcl::Main::isInteractive())
-        {
-          std::cerr << PACKAGE_STRING << " (" << __DATE__ << ")\n"
-                    << "Copyright (c) 1998-2005 Rob Peters <rjpeters at klab dot caltech dot edu>\n"
-                    << PACKAGE_NAME << " is free software, covered by the GNU General Public License, and you are\n"
-                    << "welcome to change it and/or distribute copies of it under certain conditions.\n";
-        }
+  app.run();
 
-      Tcl::Interp& interp = app.interp();
-
-      Nub::ObjFactory::theOne().set_fallback(&factoryPkgLoader);
-
-      const rutz::time ru1 = rutz::time::user_rusage();
-      const rutz::time rs1 = rutz::time::sys_rusage();
-      const rutz::time wc1 = rutz::time::wall_clock_now();
-
-      for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i)
-        {
-          if (nowindow && IMMEDIATE_PKGS[i].skipIfNoWindow)
-            continue;
-
-          int result = IMMEDIATE_PKGS[i].pkgInitProc(interp.intp());
-          if (result != TCL_OK)
-            {
-              std::cerr << "fatal initialization error (package '"
-                        << IMMEDIATE_PKGS[i].pkgName << "'):\n";
-              rutz::fstring msg = interp.getResult<const char*>();
-              if ( !msg.is_empty() )
-                std::cerr << '\t' << msg << '\n';
-              interp.resetResult();
-
-              return 2;
-            }
-        }
-
-      if (Tcl::Main::isInteractive())
-        {
-          const rutz::time ru = rutz::time::user_rusage() - ru1;
-          const rutz::time rs = rutz::time::sys_rusage() - rs1;
-          const rutz::time wc = rutz::time::wall_clock_now() - wc1;
-
-          fprintf(stderr, "\tstartup time (tcl+tk) "
-                  "%6.3fs (user) %6.3fs (sys) %6.3fs (wall)\n",
-                  ru.sec(), rs.sec(), wc.sec());
-        }
-
-      const rutz::time ru2 = rutz::time::user_rusage();
-      const rutz::time rs2 = rutz::time::sys_rusage();
-      const rutz::time wc2 = rutz::time::wall_clock_now();
-
-      for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i)
-        {
-          Tcl_StaticPackage(static_cast<Tcl_Interp*>(0),
-                            // (Tcl_Interp*) 0 means this package
-                            // hasn't yet been loaded into any
-                            // interpreter
-                            DELAYED_PKGS[i].pkgName,
-                            DELAYED_PKGS[i].pkgInitProc,
-                            0);
-
-          rutz::fstring ifneededcmd("package ifneeded ",
-                                    DELAYED_PKGS[i].pkgName,
-                                    " ",
-                                    DELAYED_PKGS[i].pkgVersion,
-                                    " {load {} ",
-                                    DELAYED_PKGS[i].pkgName,
-                                    " }");
-
-          interp.eval(ifneededcmd);
-        }
-
-      if (!minimal)
-        {
-          for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i)
-            {
-              if (nowindow && DELAYED_PKGS[i].skipIfNoWindow)
-                continue;
-
-              const char* ver =
-                Tcl_PkgRequire(interp.intp(),
-                               DELAYED_PKGS[i].pkgName,
-                               DELAYED_PKGS[i].pkgVersion,
-                               0);
-
-              if (ver == 0)
-                {
-                  std::cerr << "initialization error (package '"
-                            << DELAYED_PKGS[i].pkgName << "'):\n";
-                  rutz::fstring msg = interp.getResult<const char*>();
-                  if ( !msg.is_empty() )
-                    std::cerr << '\t' << msg << '\n';
-                  interp.resetResult();
-                }
-            }
-        }
-
-      if (Tcl::Main::isInteractive())
-        {
-          const rutz::time ru = rutz::time::user_rusage() - ru2;
-          const rutz::time rs = rutz::time::sys_rusage() - rs2;
-          const rutz::time wc = rutz::time::wall_clock_now() - wc2;
-
-          fprintf(stderr, "\tstartup time (GroovX) "
-                  "%6.3fs (user) %6.3fs (sys) %6.3fs (wall)\n",
-                  ru.sec(), rs.sec(), wc.sec());
-        }
-
-      Tcl::List path = interp.getGlobalVar<Tcl::List>("auto_path");
-
-      path.append(VISX_LIB_DIR);
-
-      interp.setGlobalVar("auto_path", path.asObj());
-
-      // specifies a file to be 'source'd upon startup
-      interp.setGlobalVar("tcl_rcFileName",
-                          Tcl::toTcl("./groovx_startup.tcl"));
-
-      app.run();
-      return 0;
-    }
-  catch (std::exception& err)
-    {
-      std::cerr << "caught in main: ("
-                << rutz::demangled_name(typeid(err))
-                << "): " << err.what() << '\n';
-    }
-  catch (...)
-    {
-      std::cerr << "caught in main: (an exception of unknown type)\n";
-    }
-
-  // if we got here, then some error occurred
-  return 1;
+  GVX_SCRIPT_PROG_END(app);
 }
 
 static const char vcid_groovx_groovx_groovx_cc_utc20050626084019[] = "$Id$ $HeadURL$";
