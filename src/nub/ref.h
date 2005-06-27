@@ -458,7 +458,7 @@ namespace Nub
     /** Given Ref<T> rr and T* p, then rr.reset(p) is shorthand for
         rr=Ref<T>(p). But of course, rr.reset(p) is much less typing
         if T happens to be spelt SomeLongType<WithTemplateParams>. */
-    void reset(T* p) { *this = SoftRef(p); }
+    void reset(T* p = 0) { *this = SoftRef(p); }
 
     /** Returns the pointee, or if throws an exception if there is not a
         valid pointee. */
