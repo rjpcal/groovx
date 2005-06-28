@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLSTRINGCONVERT_H_UTC20050626193402_DEFINED
-#define GROOVX_TCL_TCLSTRINGCONVERT_H_UTC20050626193402_DEFINED
+#ifndef GROOVX_TCL_STDCONVERSIONS_H_UTC20050628163220_DEFINED
+#define GROOVX_TCL_STDCONVERSIONS_H_UTC20050628163220_DEFINED
 
 #include "rutz/fstring.h"
-#include "tcl/tclconvert.h"
-#include "tcl/tclobjptr.h"
+#include "tcl/conversions.h"
+#include "tcl/obj.h"
 
 #include <string>
 
@@ -52,5 +52,5 @@ namespace Tcl
   }
 }
 
-static const char vcid_groovx_tcl_tclstringconvert_h_utc20050626193402[] = "$Id$ $URL$";
-#endif // !GROOVX_TCL_TCLSTRINGCONVERT_H_UTC20050626193402DEFINED
+static const char vcid_groovx_tcl_stdconversions_h_utc20050628163220[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_STDCONVERSIONS_H_UTC20050628163220_DEFINED
