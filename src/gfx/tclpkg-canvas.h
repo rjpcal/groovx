@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// matlabtcl.h
+// canvastcl.h
 //
 // Copyright (c) 2005-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Sat Jun 25 16:59:06 2005
+// created: Sat Jun 25 16:59:01 2005
 // commit: $Id$
 // $HeadURL$
 //
@@ -30,12 +30,13 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_MATLABENGINE_MATLABTCL_H_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_MATLABENGINE_MATLABTCL_H_UTC20050626084022_DEFINED
+#ifndef GROOVX_GFX_TCLPKG_CANVAS_H_UTC20050628170310_DEFINED
+#define GROOVX_GFX_TCLPKG_CANVAS_H_UTC20050628170310_DEFINED
 
 struct Tcl_Interp;
 
-extern "C" int Matlabengine_Init(Tcl_Interp* interp);
+extern "C" int Canvas_Init(Tcl_Interp* interp);
+extern "C" int Glcanvas_Init(Tcl_Interp* interp);
 
-static const char vcid_groovx_pkgs_matlabengine_matlabtcl_h_utc20050626084022[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_PKGS_MATLABENGINE_MATLABTCL_H_UTC20050626084022_DEFINED
+static const char vcid_groovx_gfx_tclpkg_canvas_h_utc20050628170310[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_TCLPKG_CANVAS_H_UTC20050628170310_DEFINED

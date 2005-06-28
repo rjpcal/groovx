@@ -30,10 +30,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_MATLABENGINE_MATLABTCL_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_MATLABENGINE_MATLABTCL_CC_UTC20050626084022_DEFINED
+#ifndef GROOVX_PKGS_MATLABENGINE_TCLPKG_MATLABENGINE_CC_UTC20050628170029_DEFINED
+#define GROOVX_PKGS_MATLABENGINE_TCLPKG_MATLABENGINE_CC_UTC20050628170029_DEFINED
 
-#include "pkgs/matlabengine/matlabtcl.h"
+#include "pkgs/matlabengine/tclpkg-matlabengine.h"
 
 #include "pkgs/mtx/matlabinterface.h"
 #include "pkgs/mtx/mtxobj.h"
@@ -169,5 +169,5 @@ GVX_TRACE("Matlabengine_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_pkgs_matlabengine_matlabtcl_cc_utc20050626084022[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_PKGS_MATLABENGINE_MATLABTCL_CC_UTC20050626084022_DEFINED
+static const char vcid_groovx_pkgs_matlabengine_tclpkg_matlabengine_cc_utc20050628170029[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_MATLABENGINE_TCLPKG_MATLABENGINE_CC_UTC20050628170029_DEFINED

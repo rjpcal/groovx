@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// canvastcl.h
+// mtxtcl.h
 //
 // Copyright (c) 2005-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Sat Jun 25 16:59:01 2005
+// created: Sat Jun 25 16:59:19 2005
 // commit: $Id$
 // $HeadURL$
 //
@@ -30,13 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_CANVASTCL_H_UTC20050626084024_DEFINED
-#define GROOVX_GFX_CANVASTCL_H_UTC20050626084024_DEFINED
+#ifndef GROOVX_PKGS_MTX_TCLPKG_MTX_H_UTC20050628170148_DEFINED
+#define GROOVX_PKGS_MTX_TCLPKG_MTX_H_UTC20050628170148_DEFINED
 
 struct Tcl_Interp;
 
-extern "C" int Canvas_Init(Tcl_Interp* interp);
-extern "C" int Glcanvas_Init(Tcl_Interp* interp);
+extern "C" int Mtx_Init(Tcl_Interp* interp);
 
-static const char vcid_groovx_gfx_canvastcl_h_utc20050626084024[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_GFX_CANVASTCL_H_UTC20050626084024_DEFINED
+static const char vcid_groovx_pkgs_mtx_tclpkg_mtx_h_utc20050628170148[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_MTX_TCLPKG_MTX_H_UTC20050628170148_DEFINED

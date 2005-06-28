@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// mtxtcl.h
+// iotcl.h
 //
 // Copyright (c) 2005-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Sat Jun 25 16:59:19 2005
+// created: Sat Jun 25 16:59:56 2005
 // commit: $Id$
 // $HeadURL$
 //
@@ -30,12 +30,13 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_MTX_MTXTCL_H_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_MTX_MTXTCL_H_UTC20050626084022_DEFINED
+#ifndef GROOVX_IO_TCLPKG_IO_H_UTC20050628165656_DEFINED
+#define GROOVX_IO_TCLPKG_IO_H_UTC20050628165656_DEFINED
 
 struct Tcl_Interp;
 
-extern "C" int Mtx_Init(Tcl_Interp* interp);
+extern "C" int Io_Init(Tcl_Interp* interp);
+extern "C" int Outputfile_Init(Tcl_Interp* interp);
 
-static const char vcid_groovx_pkgs_mtx_mtxtcl_h_utc20050626084022[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_PKGS_MTX_MTXTCL_H_UTC20050626084022_DEFINED
+static const char vcid_groovx_io_tclpkg_io_h_utc20050628165656[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_TCLPKG_IO_H_UTC20050628165656_DEFINED

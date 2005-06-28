@@ -30,10 +30,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_TOGLETTCL_CC_UTC20050626084023_DEFINED
-#define GROOVX_GFX_TOGLETTCL_CC_UTC20050626084023_DEFINED
+#ifndef GROOVX_GFX_TCLPKG_TOGLET_CC_UTC20050628170310_DEFINED
+#define GROOVX_GFX_TCLPKG_TOGLET_CC_UTC20050628170310_DEFINED
 
-#include "gfx/toglettcl.h"
+#include "gfx/tclpkg-toglet.h"
 
 #include "gfx/canvas.h"
 #include "gfx/gxcamera.h"
@@ -132,5 +132,5 @@ GVX_TRACE("Toglet_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_gfx_toglettcl_cc_utc20050626084023[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_GFX_TOGLETTCL_CC_UTC20050626084023_DEFINED
+static const char vcid_groovx_gfx_tclpkg_toglet_cc_utc20050628170310[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_TCLPKG_TOGLET_CC_UTC20050628170310_DEFINED

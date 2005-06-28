@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// iotcl.h
+// matlabtcl.h
 //
 // Copyright (c) 2005-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Sat Jun 25 16:59:56 2005
+// created: Sat Jun 25 16:59:06 2005
 // commit: $Id$
 // $HeadURL$
 //
@@ -30,13 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_IOTCL_H_UTC20050626084021_DEFINED
-#define GROOVX_IO_IOTCL_H_UTC20050626084021_DEFINED
+#ifndef GROOVX_PKGS_MATLABENGINE_TCLPKG_MATLABENGINE_H_UTC20050628170029_DEFINED
+#define GROOVX_PKGS_MATLABENGINE_TCLPKG_MATLABENGINE_H_UTC20050628170029_DEFINED
 
 struct Tcl_Interp;
 
-extern "C" int Io_Init(Tcl_Interp* interp);
-extern "C" int Outputfile_Init(Tcl_Interp* interp);
+extern "C" int Matlabengine_Init(Tcl_Interp* interp);
 
-static const char vcid_groovx_io_iotcl_h_utc20050626084021[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_IO_IOTCL_H_UTC20050626084021_DEFINED
+static const char vcid_groovx_pkgs_matlabengine_tclpkg_matlabengine_h_utc20050628170029[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_MATLABENGINE_TCLPKG_MATLABENGINE_H_UTC20050628170029_DEFINED

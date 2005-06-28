@@ -33,7 +33,7 @@
 #ifndef GROOVX_GFX_TOGLET_H_UTC20050626084023_DEFINED
 #define GROOVX_GFX_TOGLET_H_UTC20050626084023_DEFINED
 
-#include "tk/tkwidget.h"
+#include "tk/widget.h"
 
 class GxCamera;
 class GxNode;

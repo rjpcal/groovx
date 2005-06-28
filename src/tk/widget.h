@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TK_TKWIDGET_H_UTC20050626084015_DEFINED
-#define GROOVX_TK_TKWIDGET_H_UTC20050626084015_DEFINED
+#ifndef GROOVX_TK_WIDGET_H_UTC20050628165845_DEFINED
+#define GROOVX_TK_WIDGET_H_UTC20050628165845_DEFINED
 
 #include "nub/object.h"
 #include "nub/signal.h"
@@ -169,5 +169,5 @@ private:
   TkWidgImpl* const rep;
 };
 
-static const char vcid_groovx_tk_tkwidget_h_utc20050626084015[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TK_TKWIDGET_H_UTC20050626084015_DEFINED
+static const char vcid_groovx_tk_widget_h_utc20050628165845[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TK_WIDGET_H_UTC20050628165845_DEFINED

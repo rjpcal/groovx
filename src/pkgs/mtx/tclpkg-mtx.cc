@@ -30,10 +30,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_MTX_MTXTCL_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_MTX_MTXTCL_CC_UTC20050626084022_DEFINED
+#ifndef GROOVX_PKGS_MTX_TCLPKG_MTX_CC_UTC20050628170148_DEFINED
+#define GROOVX_PKGS_MTX_TCLPKG_MTX_CC_UTC20050628170148_DEFINED
 
-#include "pkgs/mtx/mtxtcl.h"
+#include "pkgs/mtx/tclpkg-mtx.h"
 
 #include "mtxobj.h"
 
@@ -69,5 +69,5 @@ GVX_TRACE("Mtx_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_pkgs_mtx_mtxtcl_cc_utc20050626084022[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_PKGS_MTX_MTXTCL_CC_UTC20050626084022_DEFINED
+static const char vcid_groovx_pkgs_mtx_tclpkg_mtx_cc_utc20050628170148[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_PKGS_MTX_TCLPKG_MTX_CC_UTC20050628170148_DEFINED

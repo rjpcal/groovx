@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_TOGLETTCL_H_UTC20050626084024_DEFINED
-#define GROOVX_GFX_TOGLETTCL_H_UTC20050626084024_DEFINED
+#ifndef GROOVX_GFX_TCLPKG_TOGLET_H_UTC20050628170310_DEFINED
+#define GROOVX_GFX_TCLPKG_TOGLET_H_UTC20050628170310_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Toglet_Init(Tcl_Interp* interp);
 
-static const char vcid_groovx_gfx_toglettcl_h_utc20050626084024[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_GFX_TOGLETTCL_H_UTC20050626084024_DEFINED
+static const char vcid_groovx_gfx_tclpkg_toglet_h_utc20050628170310[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_TCLPKG_TOGLET_H_UTC20050628170310_DEFINED

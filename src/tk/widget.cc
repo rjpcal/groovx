@@ -30,10 +30,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TK_TKWIDGET_CC_UTC20050626084015_DEFINED
-#define GROOVX_TK_TKWIDGET_CC_UTC20050626084015_DEFINED
+#ifndef GROOVX_TK_WIDGET_CC_UTC20050628165845_DEFINED
+#define GROOVX_TK_WIDGET_CC_UTC20050628165845_DEFINED
 
-#include "tkwidget.h"
+#include "tk/widget.h"
 
 #include "geom/vec2.h"
 
@@ -791,5 +791,5 @@ void Tcl::TkWidget::hook()
   sigKeyPressed.connect(rep, &TkWidgImpl::dbgKeyPress);
 }
 
-static const char vcid_groovx_tk_tkwidget_cc_utc20050626084015[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TK_TKWIDGET_CC_UTC20050626084015_DEFINED
+static const char vcid_groovx_tk_widget_cc_utc20050628165845[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TK_WIDGET_CC_UTC20050628165845_DEFINED

@@ -30,10 +30,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXTCL_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_GXTCL_CC_UTC20050626084024_DEFINED
+#ifndef GROOVX_GFX_TCLPKG_GX_CC_UTC20050628170310_DEFINED
+#define GROOVX_GFX_TCLPKG_GX_CC_UTC20050628170310_DEFINED
 
-#include "gfx/gxtcl.h"
+#include "gfx/tclpkg-gx.h"
 
 #include "geom/bezier4.h"
 
@@ -543,5 +543,5 @@ GVX_TRACE("Gxdisk_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_gfx_gxtcl_cc_utc20050626084024[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_GFX_GXTCL_CC_UTC20050626084024_DEFINED
+static const char vcid_groovx_gfx_tclpkg_gx_cc_utc20050628170310[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_TCLPKG_GX_CC_UTC20050628170310_DEFINED

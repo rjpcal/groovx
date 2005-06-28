@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TK_TKWIDGETTCL_H_UTC20050626084015_DEFINED
-#define GROOVX_TK_TKWIDGETTCL_H_UTC20050626084015_DEFINED
+#ifndef GROOVX_TK_TCLPKG_WIDGET_H_UTC20050628165845_DEFINED
+#define GROOVX_TK_TCLPKG_WIDGET_H_UTC20050628165845_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Tkwidget_Init(Tcl_Interp* interp);
 
-static const char vcid_groovx_tk_tkwidgettcl_h_utc20050626084015[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TK_TKWIDGETTCL_H_UTC20050626084015_DEFINED
+static const char vcid_groovx_tk_tclpkg_widget_h_utc20050628165845[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TK_TCLPKG_WIDGET_H_UTC20050628165845_DEFINED

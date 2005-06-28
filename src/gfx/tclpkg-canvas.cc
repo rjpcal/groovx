@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_CANVASTCL_CC_UTC20050626084023_DEFINED
-#define GROOVX_GFX_CANVASTCL_CC_UTC20050626084023_DEFINED
+#ifndef GROOVX_GFX_TCLPKG_CANVAS_CC_UTC20050628170310_DEFINED
+#define GROOVX_GFX_TCLPKG_CANVAS_CC_UTC20050628170310_DEFINED
 
-#include "gfx/canvastcl.h"
+#include "gfx/tclpkg-canvas.h"
 
-#include "gfx/canvastcl.h"
+#include "gfx/tclpkg-canvas.h"
 
 #include "gfx/canvas.h"
 #include "gfx/glcanvas.h"
@@ -132,5 +132,5 @@ GVX_TRACE("Glcanvas_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_gfx_canvastcl_cc_utc20050626084023[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_GFX_CANVASTCL_CC_UTC20050626084023_DEFINED
+static const char vcid_groovx_gfx_tclpkg_canvas_cc_utc20050628170310[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_GFX_TCLPKG_CANVAS_CC_UTC20050628170310_DEFINED
