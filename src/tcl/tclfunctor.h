@@ -35,6 +35,7 @@
 
 #include "nub/ref.h"
 
+#include "tcl/argspec.h"
 #include "tcl/tclconvert.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclveccmd.h"
@@ -418,14 +419,14 @@ namespace Tcl
                  Functor f,
                  const char* cmd_name,
                  const char* usage,
-                 int nargs,
+                 const ArgSpec& spec,
                  const rutz::file_pos& src_pos)
   {
     typedef typename rutz::func_traits<Functor>::retn_t retn_t;
     return Command::make(interp, GenericCallback<retn_t, Functor>::make(f),
-                         cmd_name, usage, nargs+1,
-                         -1 /*default for objc_max*/,
-                         false /*default for exact_objc*/,
+                         cmd_name, usage, spec.nargMin+1,
+                         spec.nargMax+1,
+                         spec.isExact,
                          src_pos);
   }
 

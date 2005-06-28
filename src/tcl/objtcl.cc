@@ -48,6 +48,7 @@
 #include "rutz/trace.h"
 
 using Nub::SoftRef;
+using Nub::Object;
 
 namespace
 {
@@ -58,16 +59,16 @@ namespace
 
   // This is just here to select between the const char* +
   // rutz::fstring versions of newObj().
-  SoftRef<Nub::Object> objNew(const char* type)
+  SoftRef<Object> objNew(const char* type)
   {
     return Nub::ObjMgr::newObj(type);
   }
 
-  SoftRef<Nub::Object> objNewArgs(const char* type,
-                                  Tcl::List init_args,
-                                  Tcl::Interp interp)
+  SoftRef<Object> objNewArgs(const char* type,
+                             Tcl::List init_args,
+                             Tcl::Interp interp)
   {
-    SoftRef<Nub::Object> obj(Nub::ObjMgr::newObj(type));
+    SoftRef<Object> obj(Nub::ObjMgr::newObj(type));
 
     for (unsigned int i = 0; i+1 < init_args.length(); i+=2)
       {
@@ -88,7 +89,7 @@ namespace
 
     while (array_size-- > 0)
       {
-        SoftRef<Nub::Object> item(Nub::ObjMgr::newObj(type));
+        SoftRef<Object> item(Nub::ObjMgr::newObj(type));
         result.append(item.id());
       }
 
@@ -105,6 +106,51 @@ namespace
         Nub::ObjDb::theDb().remove(*itr);
         ++itr;
       }
+  }
+
+  void arrowDispatch(Tcl::Context& ctx)
+  {
+    /* old implementation was this:
+
+       pkg->eval("proc ::-> {args} {\n"
+                 "  set ids [lindex $args 0]\n"
+                 "  set namesp [Obj::type [lindex $ids 0]]\n"
+                 "  set cmd [lreplace $args 0 1 [lindex $args 1] $ids]\n"
+                 "  namespace eval $namesp $cmd\n"
+                 "}");
+
+       but the problem was that it involved a string conversion cycle
+       of the trailing args, which meant that we lost the internal rep
+    */
+
+    // e.g.      "-> {3 4} foo 4.5"
+    // becomes   "Namesp::foo {3 4} 4.5"
+
+    if (ctx.objc() < 3)
+      throw rutz::error("bad objc", SRC_POS);
+
+    Tcl_Obj* const* origargs = ctx.getRawArgs();
+
+    Tcl::List objrefs(origargs[1]);
+
+    const rutz::fstring namesp =
+      objrefs.get<SoftRef<Object> >(0)->objTypename();
+
+    rutz::fstring origcmdname = ctx.getValFromArg<rutz::fstring>(2);
+
+    rutz::fstring newcmdname(namesp, "::", origcmdname);
+
+    Tcl::List newargs;
+
+    newargs.append(newcmdname);
+    newargs.append(objrefs);
+
+    for (unsigned int i = 3; i < ctx.objc(); ++i)
+      {
+        newargs.append(origargs[i]);
+      }
+
+    ctx.interp().eval(newargs.asObj());
   }
 }
 
@@ -130,15 +176,15 @@ int Obj_Init(Tcl_Interp* interp)
 GVX_TRACE("Obj_Init");
 
   GVX_PKG_CREATE(pkg, interp, "Obj", "4.$Revision$");
-  Tcl::defGenericObjCmds<Nub::Object>(pkg, SRC_POS);
+  Tcl::defGenericObjCmds<Object>(pkg, SRC_POS);
 
-  pkg->defGetter("refCount", &Nub::Object::dbg_RefCount, SRC_POS);
-  pkg->defGetter("weakRefCount", &Nub::Object::dbg_WeakRefCount, SRC_POS);
-  pkg->defAction("incrRefCount", &Nub::Object::incrRefCount, SRC_POS);
-  pkg->defAction("decrRefCount", &Nub::Object::decrRefCount, SRC_POS);
+  pkg->defGetter("refCount", &Object::dbg_RefCount, SRC_POS);
+  pkg->defGetter("weakRefCount", &Object::dbg_WeakRefCount, SRC_POS);
+  pkg->defAction("incrRefCount", &Object::incrRefCount, SRC_POS);
+  pkg->defAction("decrRefCount", &Object::decrRefCount, SRC_POS);
 
-  pkg->defGetter( "type", &Nub::Object::objTypename, SRC_POS );
-  pkg->defGetter( "realType", &Nub::Object::realTypename, SRC_POS );
+  pkg->defGetter( "type", &Object::objTypename, SRC_POS );
+  pkg->defGetter( "realType", &Object::realTypename, SRC_POS );
 
   pkg->def( "new", "typename", &objNew, SRC_POS );
   pkg->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",
@@ -147,16 +193,13 @@ GVX_TRACE("Obj_Init");
   pkg->def( "newarr", "typename array_size=1", &objNewArr, SRC_POS );
   pkg->def( "delete", "objref(s)", &objDelete, SRC_POS );
 
+  pkg->defRaw( "::->", Tcl::ArgSpec(2).max(1000),
+               "objref(s) cmdname ?arg1 arg2 ...?",
+               &arrowDispatch, SRC_POS );
+
   pkg->namespaceAlias("::", "new");
   pkg->namespaceAlias("::", "newarr");
   pkg->namespaceAlias("::", "delete");
-
-  pkg->eval("proc ::-> {args} {\n"
-            "  set ids [lindex $args 0]\n"
-            "  set namesp [Obj::type [lindex $ids 0]]\n"
-            "  set cmd [lreplace $args 0 1 [lindex $args 1] $ids]\n"
-            "  namespace eval $namesp $cmd\n"
-            "}");
 
   GVX_PKG_RETURN(pkg);
 }

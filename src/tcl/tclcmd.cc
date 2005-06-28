@@ -196,7 +196,9 @@ bool Tcl::Command::rejectsObjc(unsigned int objc) const
 rutz::fstring Tcl::Command::usageString() const
 {
 GVX_TRACE("Tcl::Command::usageString");
-  return rep->usage;
+  return rutz::fstring(rep->usage,
+                       " (argc=[", rep->objcMin,
+                       "..", rep->objcMax, "])");
 }
 
 void Tcl::Command::call(Tcl::Interp& interp,

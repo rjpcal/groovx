@@ -220,12 +220,12 @@ public:
   }
 
   template <class Func>
-  inline void defRaw(const char* cmd_name, unsigned int nargs,
+  inline void defRaw(const char* cmd_name, const ArgSpec& spec,
                      const char* usage, Func f,
                      const rutz::file_pos& src_pos, int flags = 0)
   {
     makeGenericCmd(interp(), f, makePkgCmdName(cmd_name, flags),
-                   usage, nargs, src_pos);
+                   usage, spec, src_pos);
   }
 
   template <class Func>

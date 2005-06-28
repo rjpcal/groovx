@@ -599,7 +599,8 @@ GVX_TRACE("Tcl::MainImpl::run");
   // Loop indefinitely, waiting for commands to execute, until there
   // are no main windows left, then exit.
 
-  while (itsNoWindow || Tk_GetNumMainWindows() > 0)
+  while ((isItInteractive && itsNoWindow)
+         || Tk_GetNumMainWindows() > 0)
     {
       Tcl_DoOneEvent(0);
     }
