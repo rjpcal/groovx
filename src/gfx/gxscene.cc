@@ -37,7 +37,7 @@
 
 #include "nub/scheduler.h"
 
-#include "tcl/tcltimerscheduler.h"
+#include "tcl/timerscheduler.h"
 
 #include "rutz/sharedptr.h"
 

@@ -35,7 +35,7 @@
 
 #include "pkgs/whitebox/fstringtest.h"
 
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 #include "rutz/fstring.h"
 #include "rutz/unittest.h"

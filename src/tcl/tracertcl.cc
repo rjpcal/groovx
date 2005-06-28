@@ -35,7 +35,7 @@
 
 #include "tcl/tracertcl.h"
 
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 #include "rutz/tracer.h"
 

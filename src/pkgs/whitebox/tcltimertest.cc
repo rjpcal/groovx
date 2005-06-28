@@ -37,8 +37,8 @@
 
 #include "nub/timer.h"
 
-#include "tcl/tclpkg.h"
-#include "tcl/tcltimerscheduler.h"
+#include "tcl/pkg.h"
+#include "tcl/timerscheduler.h"
 
 #include "rutz/sharedptr.h"
 #include "rutz/unittest.h"

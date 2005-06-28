@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLOBJPTR_H_UTC20050626084017_DEFINED
-#define GROOVX_TCL_TCLOBJPTR_H_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_OBJ_H_UTC20050628162421_DEFINED
+#define GROOVX_TCL_OBJ_H_UTC20050628162421_DEFINED
 
 typedef struct Tcl_Obj Tcl_Obj;
 
@@ -126,7 +126,7 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-#include "tcl/tclconvert.h"
+#include "tcl/conversions.h"
 
 template <class T>
 inline T Tcl::ObjPtr::as() const
@@ -140,5 +140,5 @@ inline void Tcl::ObjPtr::append(const T& other)
   append(Tcl::toTcl(other));
 }
 
-static const char vcid_groovx_tcl_tclobjptr_h_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLOBJPTR_H_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_obj_h_utc20050628162421[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_OBJ_H_UTC20050628162421_DEFINED

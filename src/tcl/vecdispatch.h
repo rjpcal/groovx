@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// tcltimerscheduler.h
+// tclveccmd.h
 //
-// Copyright (c) 2004-2005
+// Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Thu Oct 14 10:02:37 2004
+// created: Thu Jul 12 12:14:43 2001
 // commit: $Id$
 // $HeadURL$
 //
@@ -30,27 +30,15 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLTIMERSCHEDULER_H_UTC20050626084017_DEFINED
-#define GROOVX_TCL_TCLTIMERSCHEDULER_H_UTC20050626084017_DEFINED
-
-#include "nub/scheduler.h"
+#ifndef GROOVX_TCL_VECDISPATCH_H_UTC20050628162421_DEFINED
+#define GROOVX_TCL_VECDISPATCH_H_UTC20050628162421_DEFINED
 
 namespace Tcl
 {
-  class TimerScheduler;
+  class Command;
+
+  void useVecDispatch(Tcl::Command& cmd, unsigned int key_argn);
 }
 
-class Tcl::TimerScheduler : public Nub::Scheduler
-{
-public:
-  TimerScheduler();
-  virtual ~TimerScheduler() throw();
-
-  virtual rutz::shared_ptr<Nub::TimerToken>
-  schedule(int msec,
-           void (*callback)(void*),
-           void* clientdata);
-};
-
-static const char vcid_groovx_tcl_tcltimerscheduler_h_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLTIMERSCHEDULER_H_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_vecdispatch_h_utc20050628162421[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_VECDISPATCH_H_UTC20050628162421_DEFINED

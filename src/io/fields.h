@@ -38,7 +38,7 @@
 
 #include "nub/object.h"
 
-#include "tcl/tclobjptr.h"
+#include "tcl/obj.h"
 
 #include "rutz/algo.h"
 #include "rutz/fileposition.h"

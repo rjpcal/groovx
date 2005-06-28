@@ -37,8 +37,8 @@
 
 #include "gfx/recttcl.h"
 
-#include "tcl/tcllistobj.h"
-#include "tcl/tclpkg.h"
+#include "tcl/list.h"
+#include "tcl/pkg.h"
 
 #include "visx/tlistutils.h"
 

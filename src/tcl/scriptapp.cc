@@ -30,16 +30,16 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLSCRIPTAPP_CC_UTC20050627203419_DEFINED
-#define GROOVX_TCL_TCLSCRIPTAPP_CC_UTC20050627203419_DEFINED
+#ifndef GROOVX_TCL_SCRIPTAPP_CC_UTC20050628162421_DEFINED
+#define GROOVX_TCL_SCRIPTAPP_CC_UTC20050628162421_DEFINED
 
-#include "tcl/tclscriptapp.h"
+#include "tcl/scriptapp.h"
 
 #include "nub/objfactory.h"
-#include "tcl/tcllistobj.h"
-#include "tcl/tclmain.h"
-#include "tcl/tclpkg.h"
-#include "tcl/tclsafeinterp.h"
+#include "tcl/list.h"
+#include "tcl/eventloop.h"
+#include "tcl/pkg.h"
+#include "tcl/interp.h"
 
 #include <cstring>
 #include <iostream>
@@ -390,5 +390,5 @@ void Tcl::ScriptApp::run()
   tclmain.run();
 }
 
-static const char vcid_groovx_tcl_tclscriptapp_cc_utc20050627203419[] = "$Id$ $URL$";
-#endif // !GROOVX_TCL_TCLSCRIPTAPP_CC_UTC20050627203419DEFINED
+static const char vcid_groovx_tcl_scriptapp_cc_utc20050628162421[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_SCRIPTAPP_CC_UTC20050628162421_DEFINED

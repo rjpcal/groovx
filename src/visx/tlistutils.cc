@@ -49,7 +49,7 @@
 #include "nub/objdb.h"
 #include "nub/ref.h"
 
-#include "tcl/tcllistobj.h"
+#include "tcl/list.h"
 
 #include "rutz/arrays.h"
 #include "rutz/cstrstream.h"

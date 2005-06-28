@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLSCRIPTAPP_H_UTC20050627202346_DEFINED
-#define GROOVX_TCL_TCLSCRIPTAPP_H_UTC20050627202346_DEFINED
+#ifndef GROOVX_TCL_SCRIPTAPP_H_UTC20050628162420_DEFINED
+#define GROOVX_TCL_SCRIPTAPP_H_UTC20050628162420_DEFINED
 
 #include "rutz/fstring.h"
 #include "rutz/trace.h"
@@ -126,5 +126,5 @@ private:
     }                                                           \
   return -1;
 
-static const char vcid_groovx_tcl_tclscriptapp_h_utc20050627202346[] = "$Id$ $URL$";
-#endif // !GROOVX_TCL_TCLSCRIPTAPP_H_UTC20050627202346DEFINED
+static const char vcid_groovx_tcl_scriptapp_h_utc20050628162420[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_SCRIPTAPP_H_UTC20050628162420_DEFINED

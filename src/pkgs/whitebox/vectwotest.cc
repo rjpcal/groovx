@@ -37,7 +37,7 @@
 
 #include "geom/vec2.h"
 
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 #include "rutz/unittest.h"
 

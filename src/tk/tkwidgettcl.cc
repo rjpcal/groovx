@@ -36,7 +36,7 @@
 #include "tk/tkwidgettcl.h"
 
 #include "tcl/objpkg.h"
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 #include "tk/tkwidget.h"
 
 #include "rutz/fstring.h"

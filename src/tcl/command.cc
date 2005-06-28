@@ -30,13 +30,13 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLCMD_CC_UTC20050626084018_DEFINED
-#define GROOVX_TCL_TCLCMD_CC_UTC20050626084018_DEFINED
+#ifndef GROOVX_TCL_COMMAND_CC_UTC20050628162421_DEFINED
+#define GROOVX_TCL_COMMAND_CC_UTC20050628162421_DEFINED
 
-#include "tcl/tclcmd.h"
+#include "tcl/command.h"
 
-#include "tcl/tclcommandgroup.h"
-#include "tcl/tclsafeinterp.h"
+#include "tcl/commandgroup.h"
+#include "tcl/interp.h"
 
 #include "rutz/fstring.h"
 #include "rutz/sharedptr.h"
@@ -228,5 +228,5 @@ GVX_TRACE("Tcl::Context::setObjResult");
   itsInterp.setResult(obj);
 }
 
-static const char vcid_groovx_tcl_tclcmd_cc_utc20050626084018[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLCMD_CC_UTC20050626084018_DEFINED
+static const char vcid_groovx_tcl_command_cc_utc20050628162421[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_COMMAND_CC_UTC20050628162421_DEFINED

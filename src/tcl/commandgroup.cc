@@ -30,14 +30,14 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLCOMMANDGROUP_CC_UTC20050626084018_DEFINED
-#define GROOVX_TCL_TCLCOMMANDGROUP_CC_UTC20050626084018_DEFINED
+#ifndef GROOVX_TCL_COMMANDGROUP_CC_UTC20050628162421_DEFINED
+#define GROOVX_TCL_COMMANDGROUP_CC_UTC20050628162421_DEFINED
 
-#include "tcl/tclcommandgroup.h"
+#include "tcl/commandgroup.h"
 
-#include "tcl/tclcmd.h"
-#include "tcl/tclobjptr.h"
-#include "tcl/tclsafeinterp.h"
+#include "tcl/command.h"
+#include "tcl/obj.h"
+#include "tcl/interp.h"
 
 #include "rutz/fileposition.h"
 #include "rutz/fstring.h"
@@ -444,5 +444,5 @@ GVX_TRACE("Tcl::CommandGroup::rawInvoke");
   return TCL_ERROR;
 }
 
-static const char vcid_groovx_tcl_tclcommandgroup_cc_utc20050626084018[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLCOMMANDGROUP_CC_UTC20050626084018_DEFINED
+static const char vcid_groovx_tcl_commandgroup_cc_utc20050628162421[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_COMMANDGROUP_CC_UTC20050628162421_DEFINED

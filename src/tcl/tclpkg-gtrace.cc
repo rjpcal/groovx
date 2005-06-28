@@ -35,7 +35,7 @@
 
 #include "tcl/tclpkg-gtrace.h"
 
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"

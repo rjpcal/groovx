@@ -38,7 +38,7 @@
 #include "pkgs/mtx/mtx.h"
 #include "pkgs/mtx/mtxops.h"
 
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 #include "rutz/unittest.h"
 

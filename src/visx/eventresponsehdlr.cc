@@ -44,9 +44,9 @@
 #include "nub/log.h"
 #include "nub/ref.h"
 
-#include "tcl/tclfunctor.h"
-#include "tcl/tclmain.h"
-#include "tcl/tclsafeinterp.h"
+#include "tcl/makecmd.h"
+#include "tcl/eventloop.h"
+#include "tcl/interp.h"
 
 #include "rutz/fileposition.h"
 #include "rutz/fstring.h"

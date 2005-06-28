@@ -35,8 +35,8 @@
 
 #include "geom/rect.h"
 
-#include "tcl/tclconvert.h"
-#include "tcl/tcllistobj.h"
+#include "tcl/conversions.h"
+#include "tcl/list.h"
 
 #include "rutz/error.h"
 

@@ -30,15 +30,15 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLFUNCTOR_H_UTC20050626084017_DEFINED
-#define GROOVX_TCL_TCLFUNCTOR_H_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_MAKECMD_H_UTC20050628162421_DEFINED
+#define GROOVX_TCL_MAKECMD_H_UTC20050628162421_DEFINED
 
 #include "nub/ref.h"
 
 #include "tcl/argspec.h"
-#include "tcl/tclconvert.h"
-#include "tcl/tclcmd.h"
-#include "tcl/tclveccmd.h"
+#include "tcl/conversions.h"
+#include "tcl/command.h"
+#include "tcl/vecdispatch.h"
 
 #include "rutz/functors.h"
 #include "rutz/sharedptr.h"
@@ -493,5 +493,5 @@ namespace Tcl
 
 } // end namespace Tcl
 
-static const char vcid_groovx_tcl_tclfunctor_h_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLFUNCTOR_H_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_makecmd_h_utc20050628162421[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_MAKECMD_H_UTC20050628162421_DEFINED

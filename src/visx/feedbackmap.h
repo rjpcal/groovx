@@ -33,9 +33,9 @@
 #ifndef GROOVX_VISX_FEEDBACKMAP_H_UTC20050626084017_DEFINED
 #define GROOVX_VISX_FEEDBACKMAP_H_UTC20050626084017_DEFINED
 
-#include "tcl/tcllistobj.h"
-#include "tcl/tclobjptr.h"
-#include "tcl/tclsafeinterp.h"
+#include "tcl/list.h"
+#include "tcl/obj.h"
+#include "tcl/interp.h"
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"

@@ -38,8 +38,8 @@
 #include "nub/objfactory.h"
 
 #include "tcl/objpkg.h"
-#include "tcl/tclpkg.h"
-#include "tcl/tclsafeinterp.h"
+#include "tcl/pkg.h"
+#include "tcl/interp.h"
 
 #include "rutz/fstring.h"
 

@@ -36,8 +36,8 @@
 #include "geom/vec2.h"
 #include "geom/vec3.h"
 
-#include "tcl/tclconvert.h"
-#include "tcl/tcllistobj.h"
+#include "tcl/conversions.h"
+#include "tcl/list.h"
 
 namespace Tcl
 {

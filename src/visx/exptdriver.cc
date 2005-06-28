@@ -46,8 +46,8 @@
 #include "nub/log.h"
 #include "nub/ref.h"
 
-#include "tcl/tclmain.h"
-#include "tcl/tclsafeinterp.h"
+#include "tcl/eventloop.h"
+#include "tcl/interp.h"
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"

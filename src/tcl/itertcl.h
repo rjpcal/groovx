@@ -35,7 +35,7 @@
 
 #include "rutz/iter.h"
 
-#include "tcl/tcllistobj.h"
+#include "tcl/list.h"
 
 namespace Tcl
 {

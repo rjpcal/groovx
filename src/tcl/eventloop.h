@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// tclregexp.h
+// tclmain.h
 //
-// Copyright (c) 2001-2005
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Mon Jul 16 13:05:59 2001
+// created: Mon Jul 22 16:32:01 2002
 // commit: $Id$
 // $HeadURL$
 //
@@ -30,30 +30,49 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLREGEXP_H_UTC20050626084017_DEFINED
-#define GROOVX_TCL_TCLREGEXP_H_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_EVENTLOOP_H_UTC20050628162420_DEFINED
+#define GROOVX_TCL_EVENTLOOP_H_UTC20050628162420_DEFINED
 
-#include "tcl/tclobjptr.h"
+namespace rutz
+{
+  class fstring;
+}
 
 namespace Tcl
 {
-  class RegExp;
+  class Interp;
+  class Main;
 }
 
-/// Regular-expression class implemented with Tcl's regexp facilities.
-class Tcl::RegExp
+/// Singleton class that operates the main Tcl event loop.
+/** Its responsibilities include gathering text commands from standard
+    input, dispatching window-system events, and dispatching
+    timer-callbacks and idle-callbacks. */
+class Tcl::Main
 {
 public:
-  RegExp() : itsPatternObj() {}
+  Main(int argc, char** argv, bool nowindow);
+  ~Main();
 
-  template <class T>
-  RegExp(T val) : itsPatternObj(val) {}
+  static bool isInteractive();
 
-  bool matchesString(const char* str);
+  static Tcl::Interp& interp();
+
+  static void run();
+
+  /// Get the application's number of command-line arguments.
+  static int argc();
+
+  /// Get the application's command-line arguments.
+  static const char* const* argv();
+
+  /// Get the whole command-line as a single string.
+  static rutz::fstring commandLine();
 
 private:
-  Tcl::ObjPtr itsPatternObj;
+  Main(const Main&);
+  Main& operator=(const Main&);
 };
 
-static const char vcid_groovx_tcl_tclregexp_h_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLREGEXP_H_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_eventloop_h_utc20050628162420[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_EVENTLOOP_H_UTC20050628162420_DEFINED

@@ -40,7 +40,7 @@
 #include "gfx/toglet.h"
 
 #include "tcl/objpkg.h"
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 #include "rutz/fstring.h"
 

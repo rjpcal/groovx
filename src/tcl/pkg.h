@@ -30,10 +30,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLPKG_H_UTC20050626084017_DEFINED
-#define GROOVX_TCL_TCLPKG_H_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_PKG_H_UTC20050628162421_DEFINED
+#define GROOVX_TCL_PKG_H_UTC20050628162421_DEFINED
 
-#include "tcl/tclfunctor.h"
+#include "tcl/makecmd.h"
 
 #include "rutz/fileposition.h"
 
@@ -365,5 +365,5 @@ return GVX_PKG_STATUS;
 }
 
 
-static const char vcid_groovx_tcl_tclpkg_h_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLPKG_H_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_pkg_h_utc20050628162421[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_PKG_H_UTC20050628162421_DEFINED

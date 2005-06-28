@@ -30,10 +30,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLDICTOBJ_CC_UTC20050626084017_DEFINED
-#define GROOVX_TCL_TCLDICTOBJ_CC_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_DICT_CC_UTC20050628162420_DEFINED
+#define GROOVX_TCL_DICT_CC_UTC20050628162420_DEFINED
 
-#include "tcl/tcldictobj.h"
+#include "tcl/dict.h"
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
@@ -109,5 +109,5 @@ GVX_TRACE("Tcl::Dict::doGet");
 
 #endif // defined(HAVE_TCL_DICT)
 
-static const char vcid_groovx_tcl_tcldictobj_cc_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLDICTOBJ_CC_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_dict_cc_utc20050628162420[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_DICT_CC_UTC20050628162420_DEFINED

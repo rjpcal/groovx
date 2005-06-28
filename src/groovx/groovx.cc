@@ -31,7 +31,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#include "tcl/tclscriptapp.h"
+#include "tcl/scriptapp.h"
 
 // #include's for forward decls of all the *_Init() procedures
 

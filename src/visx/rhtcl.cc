@@ -40,7 +40,7 @@
 #include "nub/objfactory.h"
 
 #include "tcl/objpkg.h"
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 #include "tcl/tracertcl.h"
 
 #include "rutz/error.h"

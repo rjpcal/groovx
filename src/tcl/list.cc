@@ -30,10 +30,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLLISTOBJ_CC_UTC20050626084018_DEFINED
-#define GROOVX_TCL_TCLLISTOBJ_CC_UTC20050626084018_DEFINED
+#ifndef GROOVX_TCL_LIST_CC_UTC20050628162420_DEFINED
+#define GROOVX_TCL_LIST_CC_UTC20050628162420_DEFINED
 
-#include "tcl/tcllistobj.h"
+#include "tcl/list.h"
 
 #include "rutz/error.h"
 
@@ -123,5 +123,5 @@ GVX_TRACE("Tcl::List::getLength");
   return static_cast<unsigned int>(len);
 }
 
-static const char vcid_groovx_tcl_tcllistobj_cc_utc20050626084018[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLLISTOBJ_CC_UTC20050626084018_DEFINED
+static const char vcid_groovx_tcl_list_cc_utc20050628162420[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_LIST_CC_UTC20050628162420_DEFINED

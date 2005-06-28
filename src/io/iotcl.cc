@@ -42,8 +42,8 @@
 #include "io/xmlreader.h"
 
 #include "tcl/objpkg.h"
-#include "tcl/tcllistobj.h"
-#include "tcl/tclpkg.h"
+#include "tcl/list.h"
+#include "tcl/pkg.h"
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"

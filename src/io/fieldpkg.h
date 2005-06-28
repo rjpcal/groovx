@@ -34,7 +34,7 @@
 #define GROOVX_IO_FIELDPKG_H_UTC20050626084021_DEFINED
 
 #include "tcl/objpkg.h"
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 namespace rutz
 {

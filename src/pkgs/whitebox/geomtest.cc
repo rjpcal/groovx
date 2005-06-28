@@ -37,7 +37,7 @@
 
 #include "geom/txform.h"
 
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 #include "rutz/unittest.h"
 

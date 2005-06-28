@@ -67,10 +67,10 @@
 
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
-#include "tcl/tcllistobj.h"
-#include "tcl/tclchannelbuf.h"
-#include "tcl/tclpkg.h"
-#include "tcl/tclsafeinterp.h"
+#include "tcl/list.h"
+#include "tcl/channelbuf.h"
+#include "tcl/pkg.h"
+#include "tcl/interp.h"
 #include "tcl/tracertcl.h"
 
 #include "rutz/error.h"

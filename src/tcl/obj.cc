@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// tclveccmd.h
+// tclobjptr.cc
 //
 // Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Thu Jul 12 12:14:43 2001
+// created: Wed Jul 11 18:30:47 2001
 // commit: $Id$
 // $HeadURL$
 //
@@ -30,15 +30,51 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLVECCMD_H_UTC20050626084018_DEFINED
-#define GROOVX_TCL_TCLVECCMD_H_UTC20050626084018_DEFINED
+#ifndef GROOVX_TCL_OBJ_CC_UTC20050628162420_DEFINED
+#define GROOVX_TCL_OBJ_CC_UTC20050628162420_DEFINED
 
-namespace Tcl
+#include "tcl/obj.h"
+
+#include <tcl.h>
+
+Tcl::ObjPtr::ObjPtr() : itsObj(Tcl_NewObj()) { incrRef(itsObj); }
+
+void Tcl::ObjPtr::append(const Tcl::ObjPtr& other)
 {
-  class Command;
-
-  void useVecDispatch(Tcl::Command& cmd, unsigned int key_argn);
+  ensureUnique();
+  Tcl_AppendObjToObj(itsObj, other.itsObj);
 }
 
-static const char vcid_groovx_tcl_tclveccmd_h_utc20050626084018[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLVECCMD_H_UTC20050626084018_DEFINED
+bool Tcl::ObjPtr::isShared() const
+{
+  return Tcl_IsShared(itsObj);
+}
+
+void Tcl::ObjPtr::ensureUnique() const
+{
+  if (isShared())
+    {
+      Tcl_Obj* newObj = Tcl_DuplicateObj(itsObj);
+      assign(newObj);
+    }
+}
+
+const char* Tcl::ObjPtr::typeName() const
+{
+  Tcl_ObjType* type = itsObj->typePtr;
+
+  return type ? type->name : "(none)";
+}
+
+void Tcl::ObjPtr::incrRef(Tcl_Obj* obj)
+{
+  Tcl_IncrRefCount(obj);
+}
+
+void Tcl::ObjPtr::decrRef(Tcl_Obj* obj)
+{
+  Tcl_DecrRefCount(obj);
+}
+
+static const char vcid_groovx_tcl_obj_cc_utc20050628162420[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_OBJ_CC_UTC20050628162420_DEFINED

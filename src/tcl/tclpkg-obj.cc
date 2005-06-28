@@ -39,9 +39,9 @@
 #include "nub/objmgr.h"
 
 #include "tcl/objpkg.h"
-#include "tcl/tclpkg.h"
-#include "tcl/tcllistobj.h"
-#include "tcl/tclsafeinterp.h"
+#include "tcl/pkg.h"
+#include "tcl/list.h"
+#include "tcl/interp.h"
 
 #include "rutz/demangle.h"
 

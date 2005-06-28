@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// tclobjptr.cc
+// tclregexp.h
 //
 // Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Wed Jul 11 18:30:47 2001
+// created: Mon Jul 16 13:05:59 2001
 // commit: $Id$
 // $HeadURL$
 //
@@ -30,51 +30,30 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLOBJPTR_CC_UTC20050626084017_DEFINED
-#define GROOVX_TCL_TCLOBJPTR_CC_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_REGEXP_H_UTC20050628162421_DEFINED
+#define GROOVX_TCL_REGEXP_H_UTC20050628162421_DEFINED
 
-#include "tcl/tclobjptr.h"
+#include "tcl/obj.h"
 
-#include <tcl.h>
-
-Tcl::ObjPtr::ObjPtr() : itsObj(Tcl_NewObj()) { incrRef(itsObj); }
-
-void Tcl::ObjPtr::append(const Tcl::ObjPtr& other)
+namespace Tcl
 {
-  ensureUnique();
-  Tcl_AppendObjToObj(itsObj, other.itsObj);
+  class RegExp;
 }
 
-bool Tcl::ObjPtr::isShared() const
+/// Regular-expression class implemented with Tcl's regexp facilities.
+class Tcl::RegExp
 {
-  return Tcl_IsShared(itsObj);
-}
+public:
+  RegExp() : itsPatternObj() {}
 
-void Tcl::ObjPtr::ensureUnique() const
-{
-  if (isShared())
-    {
-      Tcl_Obj* newObj = Tcl_DuplicateObj(itsObj);
-      assign(newObj);
-    }
-}
+  template <class T>
+  RegExp(T val) : itsPatternObj(val) {}
 
-const char* Tcl::ObjPtr::typeName() const
-{
-  Tcl_ObjType* type = itsObj->typePtr;
+  bool matchesString(const char* str);
 
-  return type ? type->name : "(none)";
-}
+private:
+  Tcl::ObjPtr itsPatternObj;
+};
 
-void Tcl::ObjPtr::incrRef(Tcl_Obj* obj)
-{
-  Tcl_IncrRefCount(obj);
-}
-
-void Tcl::ObjPtr::decrRef(Tcl_Obj* obj)
-{
-  Tcl_DecrRefCount(obj);
-}
-
-static const char vcid_groovx_tcl_tclobjptr_cc_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLOBJPTR_CC_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_regexp_h_utc20050628162421[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_REGEXP_H_UTC20050628162421_DEFINED

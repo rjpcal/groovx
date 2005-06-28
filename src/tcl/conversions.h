@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLCONVERT_H_UTC20050626084017_DEFINED
-#define GROOVX_TCL_TCLCONVERT_H_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_CONVERSIONS_H_UTC20050628162420_DEFINED
+#define GROOVX_TCL_CONVERSIONS_H_UTC20050628162420_DEFINED
 
 #include "rutz/traits.h"
 
@@ -152,5 +152,5 @@ namespace Tcl
   Tcl::ObjPtr toTcl( rutz::fwd_iter<T> iter );
 }
 
-static const char vcid_groovx_tcl_tclconvert_h_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLCONVERT_H_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_conversions_h_utc20050628162420[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_CONVERSIONS_H_UTC20050628162420_DEFINED

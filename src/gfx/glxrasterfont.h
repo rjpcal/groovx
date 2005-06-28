@@ -40,7 +40,7 @@
 #include "gfx/glcanvas.h"
 #include "gfx/gxrasterfont.h"
 
-#include "tcl/tcllistobj.h"
+#include "tcl/list.h"
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"

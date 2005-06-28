@@ -38,7 +38,7 @@
 #include "visx/blocktcl.h"
 
 #include "tcl/objpkg.h"
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 #include "tcl/tracertcl.h"
 
 #include "visx/block.h"

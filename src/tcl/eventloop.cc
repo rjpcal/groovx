@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLMAIN_CC_UTC20050626084018_DEFINED
-#define GROOVX_TCL_TCLMAIN_CC_UTC20050626084018_DEFINED
+#ifndef GROOVX_TCL_EVENTLOOP_CC_UTC20050628162420_DEFINED
+#define GROOVX_TCL_EVENTLOOP_CC_UTC20050628162420_DEFINED
 
-#include "tcl/tclmain.h"
+#include "tcl/eventloop.h"
 
-#include "tcl/tclsafeinterp.h"
+#include "tcl/interp.h"
 
 #include "rutz/backtrace.h"
 #include "rutz/error.h"
@@ -658,5 +658,5 @@ GVX_TRACE("Tcl::Main::commandLine");
   return Tcl::MainImpl::get()->commandLine();
 }
 
-static const char vcid_groovx_tcl_tclmain_cc_utc20050626084018[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLMAIN_CC_UTC20050626084018_DEFINED
+static const char vcid_groovx_tcl_eventloop_cc_utc20050628162420[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_EVENTLOOP_CC_UTC20050628162420_DEFINED

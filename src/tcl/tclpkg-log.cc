@@ -37,7 +37,7 @@
 
 #include "nub/log.h"
 
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 #include "rutz/fstring.h"
 

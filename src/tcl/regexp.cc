@@ -30,10 +30,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLREGEXP_CC_UTC20050626084017_DEFINED
-#define GROOVX_TCL_TCLREGEXP_CC_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_REGEXP_CC_UTC20050628162420_DEFINED
+#define GROOVX_TCL_REGEXP_CC_UTC20050628162420_DEFINED
 
-#include "tcl/tclregexp.h"
+#include "tcl/regexp.h"
 
 #include "rutz/error.h"
 
@@ -89,5 +89,5 @@ bool Tcl::RegExp::matchesString(const char* str)
   return false;
 }
 
-static const char vcid_groovx_tcl_tclregexp_cc_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLREGEXP_CC_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_regexp_cc_utc20050628162420[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_REGEXP_CC_UTC20050628162420_DEFINED

@@ -39,9 +39,9 @@
 // functions that are basically wrappers for standard C library
 // functions, including rand(), sleep(), and usleep()
 
-#include "tcl/tclcommandgroup.h"
-#include "tcl/tcllistobj.h"
-#include "tcl/tclpkg.h"
+#include "tcl/commandgroup.h"
+#include "tcl/list.h"
+#include "tcl/pkg.h"
 
 #include "rutz/backtrace.h"
 #include "rutz/error.h"

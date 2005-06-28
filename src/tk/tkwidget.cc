@@ -39,7 +39,7 @@
 
 #include "nub/ref.h"
 
-#include "tcl/tclsafeinterp.h"
+#include "tcl/interp.h"
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"

@@ -35,7 +35,7 @@
 
 #include "visx/hooktcl.h"
 
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 #include "rutz/trace.h"
 
@@ -298,7 +298,7 @@ int MyObj::counter = 0;
 #include "rutz/arrayvalue.h"
 #include "rutz/iter.h"
 #include "tcl/itertcl.h"
-#include "tcl/tcldictobj.h"
+#include "tcl/dict.h"
 
 namespace
 {

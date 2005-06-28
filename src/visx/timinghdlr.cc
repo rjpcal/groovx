@@ -42,7 +42,7 @@
 #include "nub/objmgr.h"
 #include "nub/ref.h"
 
-#include "tcl/tcltimerscheduler.h"
+#include "tcl/timerscheduler.h"
 
 #include "rutz/error.h"
 #include "rutz/sharedptr.h"

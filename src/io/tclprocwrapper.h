@@ -35,7 +35,7 @@
 
 #include "io/io.h"
 
-#include "tcl/tclsafeinterp.h"
+#include "tcl/interp.h"
 
 #include "rutz/fstring.h"
 

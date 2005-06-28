@@ -30,10 +30,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLLISTOBJ_H_UTC20050626084018_DEFINED
-#define GROOVX_TCL_TCLLISTOBJ_H_UTC20050626084018_DEFINED
+#ifndef GROOVX_TCL_LIST_H_UTC20050628162420_DEFINED
+#define GROOVX_TCL_LIST_H_UTC20050628162420_DEFINED
 
-#include "tcl/tclobjptr.h"
+#include "tcl/obj.h"
 
 #include "rutz/sharedptr.h"
 
@@ -273,7 +273,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-#include "tcl/tclconvert.h"
+#include "tcl/conversions.h"
 
 template <class T>
 inline T Tcl::List::get(unsigned int index, T* /*dummy*/) const
@@ -293,5 +293,5 @@ inline Tcl::List::Iterator<T> Tcl::List::end(T* /*dummy*/)
   return Iterator<T>(*this, IteratorBase::END);
 }
 
-static const char vcid_groovx_tcl_tcllistobj_h_utc20050626084018[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLLISTOBJ_H_UTC20050626084018_DEFINED
+static const char vcid_groovx_tcl_list_h_utc20050628162420[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_LIST_H_UTC20050628162420_DEFINED

@@ -30,14 +30,14 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLPKG_CC_UTC20050626084017_DEFINED
-#define GROOVX_TCL_TCLPKG_CC_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_PKG_CC_UTC20050628162420_DEFINED
+#define GROOVX_TCL_PKG_CC_UTC20050628162420_DEFINED
 
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
-#include "tcl/tclcmd.h"
-#include "tcl/tcllistobj.h"
-#include "tcl/tclsafeinterp.h"
+#include "tcl/command.h"
+#include "tcl/list.h"
+#include "tcl/interp.h"
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
@@ -545,5 +545,5 @@ const char* const Tcl::Pkg::actionUsage = "objref(s)";
 const char* const Tcl::Pkg::getterUsage = "objref(s)";
 const char* const Tcl::Pkg::setterUsage = "objref(s) new_value(s)";
 
-static const char vcid_groovx_tcl_tclpkg_cc_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLPKG_CC_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_pkg_cc_utc20050628162420[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_PKG_CC_UTC20050628162420_DEFINED

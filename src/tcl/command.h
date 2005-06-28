@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLCMD_H_UTC20050626084018_DEFINED
-#define GROOVX_TCL_TCLCMD_H_UTC20050626084018_DEFINED
+#ifndef GROOVX_TCL_COMMAND_H_UTC20050628162421_DEFINED
+#define GROOVX_TCL_COMMAND_H_UTC20050628162421_DEFINED
 
 #include "tcl/argspec.h"
-#include "tcl/tclconvert.h"
-#include "tcl/tclobjptr.h"
+#include "tcl/conversions.h"
+#include "tcl/obj.h"
 
 #include "rutz/sharedptr.h"
 
@@ -237,5 +237,5 @@ private:
   Tcl_Obj* const* const itsObjv;
 };
 
-static const char vcid_groovx_tcl_tclcmd_h_utc20050626084018[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLCMD_H_UTC20050626084018_DEFINED
+static const char vcid_groovx_tcl_command_h_utc20050628162421[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_COMMAND_H_UTC20050628162421_DEFINED

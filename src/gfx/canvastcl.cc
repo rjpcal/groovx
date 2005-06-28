@@ -45,7 +45,7 @@
 #include "media/bmapdata.h"
 
 #include "tcl/objpkg.h"
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 #include "rutz/trace.h"
 

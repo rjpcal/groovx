@@ -41,7 +41,7 @@
 
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 #include "visx/trialevent.h"
 

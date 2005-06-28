@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// tclmain.h
+// tcltimerscheduler.h
 //
-// Copyright (c) 2002-2005
+// Copyright (c) 2004-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Mon Jul 22 16:32:01 2002
+// created: Thu Oct 14 10:02:37 2004
 // commit: $Id$
 // $HeadURL$
 //
@@ -30,49 +30,27 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLMAIN_H_UTC20050626084018_DEFINED
-#define GROOVX_TCL_TCLMAIN_H_UTC20050626084018_DEFINED
+#ifndef GROOVX_TCL_TIMERSCHEDULER_H_UTC20050628162421_DEFINED
+#define GROOVX_TCL_TIMERSCHEDULER_H_UTC20050628162421_DEFINED
 
-namespace rutz
-{
-  class fstring;
-}
+#include "nub/scheduler.h"
 
 namespace Tcl
 {
-  class Interp;
-  class Main;
+  class TimerScheduler;
 }
 
-/// Singleton class that operates the main Tcl event loop.
-/** Its responsibilities include gathering text commands from standard
-    input, dispatching window-system events, and dispatching
-    timer-callbacks and idle-callbacks. */
-class Tcl::Main
+class Tcl::TimerScheduler : public Nub::Scheduler
 {
 public:
-  Main(int argc, char** argv, bool nowindow);
-  ~Main();
+  TimerScheduler();
+  virtual ~TimerScheduler() throw();
 
-  static bool isInteractive();
-
-  static Tcl::Interp& interp();
-
-  static void run();
-
-  /// Get the application's number of command-line arguments.
-  static int argc();
-
-  /// Get the application's command-line arguments.
-  static const char* const* argv();
-
-  /// Get the whole command-line as a single string.
-  static rutz::fstring commandLine();
-
-private:
-  Main(const Main&);
-  Main& operator=(const Main&);
+  virtual rutz::shared_ptr<Nub::TimerToken>
+  schedule(int msec,
+           void (*callback)(void*),
+           void* clientdata);
 };
 
-static const char vcid_groovx_tcl_tclmain_h_utc20050626084018[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLMAIN_H_UTC20050626084018_DEFINED
+static const char vcid_groovx_tcl_timerscheduler_h_utc20050628162421[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TIMERSCHEDULER_H_UTC20050628162421_DEFINED

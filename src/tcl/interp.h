@@ -30,11 +30,11 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLSAFEINTERP_H_UTC20050626084017_DEFINED
-#define GROOVX_TCL_TCLSAFEINTERP_H_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_INTERP_H_UTC20050628162420_DEFINED
+#define GROOVX_TCL_INTERP_H_UTC20050628162420_DEFINED
 
-#include "tcl/tclconvert.h"
-#include "tcl/tclobjptr.h"
+#include "tcl/conversions.h"
+#include "tcl/obj.h"
 
 #include "rutz/fileposition.h"
 #include "rutz/sharedptr.h"
@@ -184,5 +184,5 @@ private:
   Tcl_Interp* itsInterp;
 };
 
-static const char vcid_groovx_tcl_tclsafeinterp_h_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLSAFEINTERP_H_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_interp_h_utc20050628162420[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_INTERP_H_UTC20050628162420_DEFINED

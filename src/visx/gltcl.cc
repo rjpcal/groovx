@@ -45,8 +45,8 @@
 #include "gfx/canvas.h"
 #include "gfx/glcanvas.h"
 
-#include "tcl/tcllistobj.h"
-#include "tcl/tclpkg.h"
+#include "tcl/list.h"
+#include "tcl/pkg.h"
 
 #include "rutz/arrays.h"
 #include "rutz/error.h"

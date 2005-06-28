@@ -38,7 +38,7 @@
 #include "nub/objfactory.h"
 
 #include "tcl/objpkg.h"
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 #include "visx/timinghandler.h"
 #include "visx/timinghdlr.h"

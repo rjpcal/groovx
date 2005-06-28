@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLCOMMANDGROUP_H_UTC20050626084018_DEFINED
-#define GROOVX_TCL_TCLCOMMANDGROUP_H_UTC20050626084018_DEFINED
+#ifndef GROOVX_TCL_COMMANDGROUP_H_UTC20050628162421_DEFINED
+#define GROOVX_TCL_COMMANDGROUP_H_UTC20050628162421_DEFINED
 
 typedef struct Tcl_Obj Tcl_Obj;
 struct Tcl_Interp;
@@ -98,5 +98,5 @@ private:
   CommandGroup& operator=(const CommandGroup&); // not implemented
 };
 
-static const char vcid_groovx_tcl_tclcommandgroup_h_utc20050626084018[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLCOMMANDGROUP_H_UTC20050626084018_DEFINED
+static const char vcid_groovx_tcl_commandgroup_h_utc20050628162421[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_COMMANDGROUP_H_UTC20050628162421_DEFINED

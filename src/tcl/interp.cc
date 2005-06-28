@@ -30,16 +30,16 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLSAFEINTERP_CC_UTC20050626084017_DEFINED
-#define GROOVX_TCL_TCLSAFEINTERP_CC_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_INTERP_CC_UTC20050628162421_DEFINED
+#define GROOVX_TCL_INTERP_CC_UTC20050628162421_DEFINED
 
-#include "tcl/tclsafeinterp.h"
+#include "tcl/interp.h"
 
 #include "rutz/demangle.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 
-#include "tcl/tcllistobj.h" // for evalObjv()
+#include "tcl/list.h" // for evalObjv()
 
 #include <exception>
 #include <tcl.h>
@@ -563,5 +563,5 @@ GVX_TRACE("Tcl::Interp::deleteProc");
   eval(cmd_str);
 }
 
-static const char vcid_groovx_tcl_tclsafeinterp_cc_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_TCLSAFEINTERP_CC_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_interp_cc_utc20050628162421[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_INTERP_CC_UTC20050628162421_DEFINED

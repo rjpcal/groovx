@@ -39,8 +39,8 @@
 
 // This file implements additional Tcl list manipulation functions
 
-#include "tcl/tcllistobj.h"
-#include "tcl/tclpkg.h"
+#include "tcl/list.h"
+#include "tcl/pkg.h"
 
 #include "rutz/algo.h"
 #include "rutz/arrays.h"

@@ -45,8 +45,8 @@
 #include "nub/log.h"
 #include "nub/ref.h"
 
-#include "tcl/tclmain.h"
-#include "tcl/tcltimerscheduler.h"
+#include "tcl/eventloop.h"
+#include "tcl/timerscheduler.h"
 
 #include "rutz/algo.h"
 #include "rutz/error.h"

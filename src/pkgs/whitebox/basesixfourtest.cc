@@ -41,7 +41,7 @@
 #include "rutz/rand.h"
 #include "rutz/unittest.h"
 
-#include "tcl/tclpkg.h"
+#include "tcl/pkg.h"
 
 #include <cstring> // for memcmp()
 
