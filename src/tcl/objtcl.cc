@@ -45,6 +45,8 @@
 
 #include "rutz/demangle.h"
 
+#include <tcl.h>
+
 #include "rutz/trace.h"
 
 using Nub::SoftRef;
@@ -150,7 +152,9 @@ namespace
         newargs.append(origargs[i]);
       }
 
-    ctx.interp().eval(newargs.asObj());
+    // use evalObjv() instead of eval(), so that we don't break any
+    // objects with fragile internal representations:
+    ctx.interp().evalObjv(newargs);
   }
 }
 

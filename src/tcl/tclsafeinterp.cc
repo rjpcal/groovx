@@ -39,6 +39,8 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 
+#include "tcl/tcllistobj.h" // for evalObjv()
+
 #include <exception>
 #include <tcl.h>
 #include <typeinfo>
@@ -55,6 +57,32 @@ namespace
   {
     Tcl::Interp* intp = static_cast<Tcl::Interp*>(clientData);
     intp->forgetInterp();
+  }
+
+  bool reportError(Tcl::Interp& interp, const Tcl::ObjPtr& code,
+                   Tcl::ErrorStrategy strategy,
+                   const rutz::file_pos& where)
+  {
+    switch (strategy)
+      {
+      case Tcl::THROW_ERROR:
+        {
+          const fstring msg("error while evaluating ",
+                            Tcl_GetString(code.obj()),
+                            ":\n", interp.getResult<const char*>());
+
+          // Now clear the interpreter's result string, since we've
+          // already incorporated that message into our error message:
+          interp.resetResult();
+
+          throw rutz::error(msg, where);
+        }
+        break;
+      case Tcl::IGNORE_ERROR:
+        return false;
+      }
+
+    return false;
   }
 }
 
@@ -196,31 +224,37 @@ GVX_TRACE("Tcl::Interp::eval");
     throw rutz::error("Tcl_Interp* was null "
                       "in Tcl::Interp::eval", SRC_POS);
 
-  if ( Tcl_EvalObjEx(intp(), code.obj(), TCL_EVAL_GLOBAL) == TCL_OK )
+  // We want to use TCL_EVAL_DIRECT here because that will avoid a
+  // string conversion cycle -- that may be important if we have
+  // objects with fragile representations (i.e., objects that can't
+  // survive a object->string->object cycle because their string
+  // representations don't represent the full object value).
+
+  if ( Tcl_EvalObjEx(intp(), code.obj(),
+                     TCL_EVAL_DIRECT | TCL_EVAL_GLOBAL) == TCL_OK )
     return true;
 
   // else, there was some error during the Tcl eval...
 
-  switch (strategy)
-    {
-    case THROW_ERROR:
-      {
-        const fstring msg("error while evaluating ",
-                          Tcl_GetString(code.obj()),
-                          ":\n", this->getResult<const char*>());
+  return reportError(*this, code, strategy, SRC_POS);
+}
 
-        // Now clear the interpreter's result string, since we've
-        // already incorporated that message into our error message:
-        this->resetResult();
+bool Tcl::Interp::evalObjv(const Tcl::List& objv,
+                           Tcl::ErrorStrategy strategy)
+{
+GVX_TRACE("Tcl::Interp::evalObjv");
 
-        throw rutz::error(msg, SRC_POS);
-      }
-      break;
-    case IGNORE_ERROR:
-      return false;
-    }
+  if (!this->hasInterp())
+    throw rutz::error("Tcl_Interp* was null "
+                      "in Tcl::Interp::eval", SRC_POS);
 
-  return false; // to indicate error
+  if ( Tcl_EvalObjv(this->intp(), objv.length(), objv.elements(),
+                    TCL_EVAL_GLOBAL) == TCL_OK )
+    return true;
+
+  // else, there was some error during the Tcl eval...
+
+  return reportError(*this, objv.asObj(), strategy, SRC_POS);
 }
 
 bool Tcl::Interp::evalFile(const char* fname)

@@ -50,6 +50,7 @@ namespace rutz
 namespace Tcl
 {
   class Interp;
+  class List;
 
   /// Different error-handling strategies for Tcl::Interp::eval().
   enum ErrorStrategy
@@ -111,6 +112,13 @@ public:
       a return value of true indicates a successful evaluation, and a
       return value of false indicates an error during evaluation. */
   bool eval(const Tcl::ObjPtr& code, ErrorStrategy strategy = THROW_ERROR);
+
+  /// Evaluates code using Tcl_EvalObjv(), exploiting the fact that the object is already a list.
+  /** If strategy is THROW_ERROR, then an exception is thrown if the
+      evaluation produces an error. If strategy is IGNORE_ERROR, then
+      a return value of true indicates a successful evaluation, and a
+      return value of false indicates an error during evaluation. */
+  bool evalObjv(const Tcl::List& objv, ErrorStrategy strategy = THROW_ERROR);
 
   /// Evaluate the tcl code in the named file.
   /** Returns true on success, or false on failure. */
