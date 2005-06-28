@@ -26,10 +26,10 @@ test "Obj::new Jitter" "normal create" {
 ### Jitter::setJitter ###
 test "Jitter::setJitter" "too few args" {
     Jitter::setJitter
-} {wrong \# args: should be "Jitter::setJitter posid x_jitter y_jitter r_jitter"}
+} {wrong \# args: should be}
 test "Jitter::setJitter" "too many args" {
     Jitter::setJitter j u n k y
-} {wrong \# args: should be "Jitter::setJitter posid x_jitter y_jitter r_jitter"}
+} {wrong \# args: should be}
 test "Jitter::setJitter" "normal use" {
     set jit [new Jitter]
     -> $jit setJitter 1.0 1.0 1.0

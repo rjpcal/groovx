@@ -75,11 +75,11 @@ test "Sound::forceLoad" "error on junk binary file" {
 
 test "Sound::play" "too few args" {
     Sound::play
-} {wrong \# args: should be "Sound::play objref\(s\)"}
+} {wrong \# args: should be}
 
 test "Sound::play" "too many args" {
     Sound::play item junk
-} {wrong \# args: should be "Sound::play objref\(s\)"}
+} {wrong \# args: should be}
 
 test "Sound::play" "normal play test sound" {
     set s [new Sound]

@@ -61,10 +61,10 @@ test "TlistTcl-Tlist::loadObjidFile" "error on junk binary file" {
 ### Tlist::dealSinglesCmd ###
 test "TlistTcl-Tlist::dealSingles" "too few args" {
     Tlist::dealSingles j
-} {wrong \# args: should be "Tlist::dealSingles objid\(s\) posid"}
+} {wrong \# args: should be}
 test "TlistTcl-Tlist::dealSingles" "too many args" {
     Tlist::dealSingles j u n
-} {wrong \# args: should be "Tlist::dealSingles objid\(s\) posid"}
+} {wrong \# args: should be}
 test "TlistTcl-Tlist::dealSingles" "normal use with several GxShapeKit's" {
     set f1 [Obj::new Face]
     set f2 [Obj::new Face]
@@ -82,10 +82,10 @@ test "TlistTcl-Tlist::dealSingles" "normal use with empty ObjList" {
 ### Tlist::dealPairsCmd ###
 test "TlistTcl-Tlist::dealPairs" "too few args" {
     Tlist::dealPairs j u n
-} {wrong \# args: should be "Tlist::dealPairs objids1 objids2 posid1 posid2"}
+} {wrong \# args: should be}
 test "TlistTcl-Tlist::dealPairs" "too many args" {
     Tlist::dealPairs j u n k y
-} {wrong \# args: should be "Tlist::dealPairs objids1 objids2 posid1 posid2"}
+} {wrong \# args: should be}
 test "TlistTcl-Tlist::dealPairs" "normal use on two GxShapeKit's" {
     set o1 [Obj::new Face]
     set o2 [Obj::new Face]
@@ -104,10 +104,10 @@ test "TlistTcl-Tlist::dealPairs" "normal use with empty objids" {
 ### Tlist::dealTriadsCmd ###
 test "TlistTcl-Tlist::dealTriads" "too few args" {
     Tlist::dealTriads a b c
-} {wrong \# args: should be "Tlist::dealTriads objids posid1 posid2 posid3"}
+} {wrong \# args: should be}
 test "TlistTcl-Tlist::dealTriads" "too many args" {
     Tlist::dealTriads a b c d e
-} {wrong \# args: should be "Tlist::dealTriads objids posid1 posid2 posid3"}
+} {wrong \# args: should be}
 test "TlistTcl-Tlist::dealTriads" "normal use on three GxShapeKit's" {
     set objs "[Obj::new Face] [Obj::new Face] [Obj::new Face]"
     set p1 [Obj::new GxTransform]
@@ -133,7 +133,7 @@ test "TlistTcl-Tlist::dealTriads" "normal use on empty ObjList" {
 ### Tlist::write_responsesCmd ###
 test "TlistTcl-Tlist::write_responses" "too few args" {
     Tlist::write_responses
-} {wrong \# args: should be "Tlist::write_responses filename"}
+} {wrong \# args: should be}
 test "TlistTcl-Tlist::write_responses" "too many args" {
     Tlist::write_responses j u
-} {wrong \# args: should be "Tlist::write_responses filename"}
+} {wrong \# args: should be}

@@ -10,7 +10,7 @@
 ### dlist::choose ###
 test "Dlist-dlist::choose" "args" {
     dlist::choose junk
-} {wrong \# args: should be "dlist::choose source_list index_list"}
+} {wrong \# args: should be}
 test "Dlist-dlist::choose" "norm1" {
     catch {dlist::choose {} {}}
 } {^0$}
@@ -27,7 +27,7 @@ test "Dlist-dlist::choose" "err2" {
 ### dlist::index ###
 test "Dlist-dlist::index" "args" {
     dlist::index
-} {wrong \# args: should be "dlist::index list index"}
+} {wrong \# args: should be}
 test "Dlist-dlist::index" "norm" {
     set a { 3 5 9 }
     dlist::index $a 1
@@ -40,7 +40,7 @@ test "Dlist-dlist::index" "err" {
 ### dlist::not ###
 test "Dlist-dlist::not" "args" {
     dlist::not
-} {wrong \# args: should be "dlist::not list"}
+} {wrong \# args: should be}
 test "Dlist-dlist::not" "norm1" {
     catch {dlist::not {}}
 } {^0$}
@@ -54,7 +54,7 @@ test "Dlist-dlist::not" "error" {
 ### dlist::ones ###
 test "Dlist-dlist::ones" "args" {
     dlist::ones
-} {wrong \# args: should be "dlist::ones num_ones"}
+} {wrong \# args: should be}
 test "Dlist-dlist::ones" "norm1" {
     catch {dlist::ones 0}
 } {^0$}
@@ -71,7 +71,7 @@ test "Dlist-dlist::ones" "err2" {
 ### dlist::pickone ###
 test "Dlist-dlist::pickone" "args" {
     dlist::pickone
-} {wrong \# args: should be "dlist::pickone list"}
+} {wrong \# args: should be}
 test "Dlist-dlist::pickone" "norm1" {
     dlist::pickone {1 3 5 7 9}
 } {[13579]}
@@ -85,7 +85,7 @@ test "Dlist-dlist::pickone" "error" {
 ### dlist::range ###
 test "Dlist-dlist::range" "args" {
     dlist::range
-} {wrong \# args: should be one of}
+} {wrong \# args: should be}
 test "Dlist-dlist::range" "norm1" { dlist::range 0  0}   {^0$}
 test "Dlist-dlist::range" "norm2" { dlist::range 0  5}   {0 1 2 3 4 5}
 test "Dlist-dlist::range" "norm3" { dlist::range 0 -1}   {^$}
@@ -101,7 +101,7 @@ test "Dlist-dlist::range" "err1" {
 ### dlist::repeat ###
 test "Dlist-dlist::repeat" "args" {
     dlist::repeat
-} {wrong \# args: should be "dlist::repeat source_list times_list"}
+} {wrong \# args: should be}
 test "Dlist-dlist::repeat" "norm1" {
     catch {dlist::repeat {} {}}
 } {^0$}
@@ -121,7 +121,7 @@ test "Dlist-dlist::repeat" "err2" {
 ### dlist::select ###
 test "Dlist-dlist::select" "args" {
     dlist::select
-} {wrong \# args: should be "dlist::select source_list flags_list"}
+} {wrong \# args: should be}
 test "Dlist-dlist::select" "norm1" {
     dlist::select {1 2 3 4 5} {1 0 0 1 1}
 } {1 4 5}
@@ -135,7 +135,7 @@ test "Dlist-dlist::select" "error" {
 ### dlist::slice ###
 test "Dlist-dlist::slice" "args" {
     dlist::slice
-} {wrong \# args: should be "dlist::slice list n"}
+} {wrong \# args: should be}
 test "Dlist-dlist::slice" "norm1" {
     dlist::slice {{1 2 3} {4 5 6} {7 8 9}} 1
 } {^2 5 8$}
@@ -152,7 +152,7 @@ test "Dlist-dlist::slice" "err2" {
 ### dlist::sum ###
 test "Dlist-dlist::sum" "args" {
     dlist::sum
-} {wrong \# args: should be "dlist::sum list"}
+} {wrong \# args: should be}
 test "Dlist-dlist::sum" "norm int" {
     dlist::sum { -3 6 0 9 17}
 } {^29$}
@@ -169,7 +169,7 @@ test "Dlist-dlist::sum" "error" {
 ### dlist::zeros ###
 test "Dlist-dlist::zeros" "args" {
     dlist::zeros
-} {wrong \# args: should be "dlist::zeros num_zeros"}
+} {wrong \# args: should be}
 test "Dlist-dlist::zeros" "norm1" {
     catch {dlist::zeros 0}
 } {^0$}

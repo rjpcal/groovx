@@ -32,10 +32,10 @@ test "::rand" "error from non-numeric input" {
 ### srandCmd ###
 test "::srand" "too few args" {
     srand
-} {wrong \# args: should be "srand seed"}
+} {wrong \# args: should be}
 test "::srand" "too few args" {
     srand j u
-} {wrong \# args: should be "srand seed"}
+} {wrong \# args: should be}
 test "::srand" "normal use" {
     srand 10
     expr [rand 0 1] == 0.138649044093
