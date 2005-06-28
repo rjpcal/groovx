@@ -1,7 +1,7 @@
 #!/bin/sh
 
-for f in `./devscripts/list-sources.sh`; do
-    g=${f#./devscripts/../src/}
+for f in "$@"; do
+    g=${f#src/}
 
     datestring="UTC`date -u +%Y%m%d%H%M%S`"
     incguard=`echo $g | tr [a-z] [A-Z] | tr ./- ___ `

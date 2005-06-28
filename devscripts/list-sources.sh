@@ -5,7 +5,7 @@
 # Just print a list of all source files to stdout, for use in other
 # scripts.
 
-find `dirname $0`/../src \
+flz=$(find `dirname $0`/../src \
     -name \*.H \
     -or -name \*.C \
     -or -name \*.cc \
@@ -13,4 +13,9 @@ find `dirname $0`/../src \
     -or -name \*.c \
     -or -name \*.h \
     -or -name \*.hpp \
-    -or -name \*.cpp
+    -or -name \*.cpp)
+
+for f in $flz; do
+    g=${f#`dirname $0`/../}
+    echo $g
+done
