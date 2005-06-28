@@ -229,13 +229,13 @@ public:
   }
 
   template <class Func>
-  inline void defVecRaw(const char* cmd_name, unsigned int nargs,
+  inline void defVecRaw(const char* cmd_name, const ArgSpec& spec,
                         const char* usage, Func f,
                         unsigned int keyarg /*default is 1*/,
                         const rutz::file_pos& src_pos, int flags = 0)
   {
     makeGenericVecCmd(interp(), f, makePkgCmdName(cmd_name, flags),
-                      usage, nargs, keyarg, src_pos);
+                      usage, spec, keyarg, src_pos);
   }
 
   template <class C>

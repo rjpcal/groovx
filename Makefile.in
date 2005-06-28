@@ -188,7 +188,11 @@ $(DEVSCRIPTS)/cppdeps: $(DEVSCRIPTS)/cppdeps.cc
 	$(CXX) -O2 -Wall $(LDFLAGS) $^ -o $@
 
 $(DEP)/cppdepends: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs --objdir $(OBJ)/ --srcdir $(SRC) |sort> $@
+	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs \
+		--objdir $(OBJ)/ \
+		--srcdir $(SRC) \
+		| sort > $(@).tmp
+	mv $(@).tmp $@
 
 LDEPOPTS := --verbosity 2 --includedir $(SRC)/pkgs --objdir $(OBJ)/ --srcdir $(SRC)
 

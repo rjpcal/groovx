@@ -37,6 +37,13 @@
 
 namespace Tcl
 {
+  /// Specify how many args a command can take.
+  /** By convention, nargMin and nargMax INCLUDE the zero'th argument
+      (i.e. the command name) in the arg count. Thus a command that
+      takes no parameters would have an arg count of 1. If isExact is
+      true, then the argc of a command invocation is required to be
+      exactly equal either nargMin or nargMax; if it is false, then
+      argc must be between nargMin and nargMax, inclusive. */
   struct ArgSpec
   {
     ArgSpec()
@@ -46,22 +53,41 @@ namespace Tcl
       isExact(false)
     {}
 
-    ArgSpec(int mi, int ma = -1, bool ex = false)
+    /// Construct with initial values for nargMin/nargMax/isExact.
+    /** If the value given for nmax is negative, then nargMax will be
+        set to the same value as nmin. */
+    explicit ArgSpec(int nmin, int nmax = -1, bool ex = false)
       :
-      nargMin(mi),
-      nargMax(ma == -1 ? mi : ma),
+      nargMin(nmin < 0
+              ? 0
+              : static_cast<unsigned int>(nmin)),
+      nargMax(nmax == -1
+              ? nargMin
+              : static_cast<unsigned int>(nmax)),
       isExact(ex)
     {}
 
-    ArgSpec& min(int mi) { nargMin = mi; return *this; }
-    ArgSpec& max(int ma) { nargMax = ma; return *this; }
-    ArgSpec& exact(bool e) { isExact = e; return *this; }
+    ArgSpec& min(int nmin) { nargMin = nmin; return *this; }
+    ArgSpec& max(int nmax) { nargMax = nmax; return *this; }
+    ArgSpec& exact(bool ex) { isExact = ex; return *this; }
 
     ArgSpec& nolimit()
     {
       nargMax = std::numeric_limits<unsigned int>::max();
       isExact = false;
       return *this;
+    }
+
+    bool allowsObjc(unsigned int objc) const
+    {
+      if (this->isExact)
+        {
+          return (objc == this->nargMin ||
+                  objc == this->nargMax);
+        }
+      // else...
+      return (objc >= this->nargMin &&
+              objc <= this->nargMax);
     }
 
     unsigned int nargMin;

@@ -151,7 +151,7 @@ GVX_TRACE("Misc_Init");
 
   pkg->def( "::tcl_valuetype", "value", &tcl_valuetype, SRC_POS );
 
-  pkg->defRaw( "::?", 1, "cmd_name", &cmdUsage, SRC_POS );
+  pkg->defRaw( "::?", Tcl::ArgSpec(2), "cmd_name", &cmdUsage, SRC_POS );
 
   GVX_PKG_RETURN(pkg);
 }

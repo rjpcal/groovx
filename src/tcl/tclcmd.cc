@@ -101,15 +101,12 @@ private:
 
 public:
   Impl(shared_ptr<Tcl::Callback> cback,
-       const char* usg,
-       int objc_min, int objc_max, bool exact_objc)
+       const char* usg, const ArgSpec& spec)
     :
     callback(cback),
     dispatcher(theDefaultDispatcher),
     usage(usg ? usg : ""),
-    objcMin(objc_min < 0 ? 0 : static_cast<unsigned int>(objc_min)),
-    objcMax(objc_max > 0 ? static_cast<unsigned int>(objc_max) : objcMin),
-    exactObjc(exact_objc)
+    argSpec(spec)
   {}
 
   ~Impl() throw() {}
@@ -118,9 +115,7 @@ public:
   shared_ptr<Tcl::Callback> callback;
   shared_ptr<Tcl::Dispatcher> dispatcher;
   const rutz::fstring usage;
-  const unsigned int objcMin;
-  const unsigned int objcMax;
-  const bool exactObjc;
+  const ArgSpec argSpec;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -130,10 +125,9 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 Tcl::Command::Command(shared_ptr<Tcl::Callback> callback,
-                      const char* usage,
-                      int objc_min, int objc_max, bool exact_objc)
+                      const char* usage, const ArgSpec& spec)
   :
-  rep(new Impl(callback, usage, objc_min, objc_max, exact_objc))
+  rep(new Impl(callback, usage, spec))
 {
 GVX_TRACE("Tcl::Command::Command");
 }
@@ -142,7 +136,7 @@ shared_ptr<Tcl::Command> Tcl::Command::make(
           Tcl::Interp& interp,
           shared_ptr<Tcl::Callback> callback,
           const char* cmd_name, const char* usage,
-          int objc_min, int objc_max, bool exact_objc,
+          const Tcl::ArgSpec& spec,
           const rutz::file_pos& src_pos)
 {
 GVX_TRACE("Tcl::Command::make");
@@ -152,10 +146,7 @@ GVX_TRACE("Tcl::Command::make");
 
   GVX_ASSERT(group != 0);
 
-  shared_ptr<Command> cmd( new Command(callback,
-                                       usage,
-                                       objc_min, objc_max,
-                                       exact_objc) );
+  shared_ptr<Command> cmd( new Command(callback, usage, spec) );
 
   // We don't want to have to keep 'group' as a member of Tcl::Command
   // since it involves circular references -- Tcl::CommandGroup keeps
@@ -180,12 +171,7 @@ GVX_TRACE("Tcl::Command::~Command");
 bool Tcl::Command::allowsObjc(unsigned int objc) const
 {
 GVX_TRACE("Tcl::Command::allowsObjc");
-  if (rep->exactObjc)
-    {
-      return (objc == rep->objcMin || objc == rep->objcMax);
-    }
-
-  return (objc >= rep->objcMin && objc <= rep->objcMax);
+  return rep->argSpec.allowsObjc(objc);
 }
 
 bool Tcl::Command::rejectsObjc(unsigned int objc) const
@@ -197,8 +183,8 @@ rutz::fstring Tcl::Command::usageString() const
 {
 GVX_TRACE("Tcl::Command::usageString");
   return rutz::fstring(rep->usage,
-                       " (argc=[", rep->objcMin,
-                       "..", rep->objcMax, "])");
+                       " (argc=[", rep->argSpec.nargMin,
+                       "..", rep->argSpec.nargMin, "])");
 }
 
 void Tcl::Command::call(Tcl::Interp& interp,

@@ -193,7 +193,7 @@ GVX_TRACE("Obj_Init");
   pkg->def( "newarr", "typename array_size=1", &objNewArr, SRC_POS );
   pkg->def( "delete", "objref(s)", &objDelete, SRC_POS );
 
-  pkg->defRaw( "::->", Tcl::ArgSpec(2).max(1000),
+  pkg->defRaw( "::->", Tcl::ArgSpec(3).nolimit(),
                "objref(s) cmdname ?arg1 arg2 ...?",
                &arrowDispatch, SRC_POS );
 

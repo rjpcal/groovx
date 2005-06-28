@@ -159,10 +159,10 @@ GVX_TRACE("Tcl::defAllFields");
         }
     }
 
-  pkg->defRaw("fields", 0, "",
+  pkg->defRaw("fields", Tcl::ArgSpec(1), "",
               FieldsLister(fieldmap, false), src_pos);
 
-  pkg->defRaw("allFields", 0, "",
+  pkg->defRaw("allFields", Tcl::ArgSpec(1), "",
               FieldsLister(fieldmap, true), src_pos);
 }
 

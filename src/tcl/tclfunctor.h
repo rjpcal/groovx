@@ -423,11 +423,9 @@ namespace Tcl
                  const rutz::file_pos& src_pos)
   {
     typedef typename rutz::func_traits<Functor>::retn_t retn_t;
-    return Command::make(interp, GenericCallback<retn_t, Functor>::make(f),
-                         cmd_name, usage, spec.nargMin+1,
-                         spec.nargMax+1,
-                         spec.isExact,
-                         src_pos);
+    return Command::make(interp,
+                         GenericCallback<retn_t, Functor>::make(f),
+                         cmd_name, usage, spec, src_pos);
   }
 
 
@@ -440,17 +438,14 @@ namespace Tcl
                     Functor f,
                     const char* cmd_name,
                     const char* usage,
-                    int nargs,
+                    const ArgSpec& spec,
                     unsigned int keyarg,
                     const rutz::file_pos& src_pos)
   {
     typedef typename rutz::func_traits<Functor>::retn_t retn_t;
     rutz::shared_ptr<Command> cmd =
       Command::make(interp, GenericCallback<retn_t, Functor>::make(f),
-                    cmd_name, usage, nargs+1,
-                    -1 /*default for objc_max*/,
-                    false /*default for exact_objc*/,
-                    src_pos);
+                    cmd_name, usage, spec, src_pos);
     Tcl::useVecDispatch(*cmd, keyarg);
     return cmd;
   }
@@ -474,7 +469,8 @@ namespace Tcl
   {
     return makeGenericCmd
       (interp, buildTclFunctor(f), cmd_name, usage,
-       rutz::func_traits<Func>::num_args, src_pos);
+       ArgSpec(rutz::func_traits<Func>::num_args + 1, -1, true),
+       src_pos);
   }
 
 // ########################################################
@@ -491,7 +487,8 @@ namespace Tcl
   {
     return makeGenericVecCmd
       (interp, buildTclFunctor(f), cmd_name, usage,
-       rutz::func_traits<Func>::num_args, keyarg, src_pos);
+       ArgSpec(rutz::func_traits<Func>::num_args + 1, -1, true),
+       keyarg, src_pos);
   }
 
 } // end namespace Tcl

@@ -453,7 +453,8 @@ GVX_TRACE("Gxpixmap_Init");
   pkg->defVec("grabWorldRect", "objref(s) canvas {left top right bottom}",
               &GxPixmap::grabWorldRect, 1,
               SRC_POS );
-  pkg->defRaw("loadImageStream", 2, "objref channame", &loadImageStream, SRC_POS);
+  pkg->defRaw("loadImageStream", Tcl::ArgSpec(3),
+              "objref channame", &loadImageStream, SRC_POS);
   pkg->defVec("loadImage", "objref(s) filename(s)", &GxPixmap::loadImage, 1, SRC_POS );
   pkg->defAttrib("purgeable", &GxPixmap::isPurgeable, &GxPixmap::setPurgeable, SRC_POS);
   pkg->defVec("queueImage", "objref(s) filename(s)", &GxPixmap::queueImage, 1, SRC_POS );

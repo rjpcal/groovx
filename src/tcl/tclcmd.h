@@ -33,6 +33,7 @@
 #ifndef GROOVX_TCL_TCLCMD_H_UTC20050626084018_DEFINED
 #define GROOVX_TCL_TCLCMD_H_UTC20050626084018_DEFINED
 
+#include "tcl/argspec.h"
 #include "tcl/tclconvert.h"
 #include "tcl/tclobjptr.h"
 
@@ -49,6 +50,7 @@ namespace rutz
 
 namespace Tcl
 {
+  class ArgSpec;
   class Callback;
   class Command;
   class Context;
@@ -99,20 +101,12 @@ class Tcl::Command
 {
 public:
   /// Construct with basic properties for the command.
-  /** If \a exact_objc is true, then the \a objc of a command
-      invocation is required to be exactly equal either \a objc_min or
-      \a objc_max; if it is false, then \a objc must be between \a
-      objc_min and \a objc_max, inclusive. If the value given for \a
-      objc_max is negative, then the maximum objc will be set to the
-      same value as \a objc_min. */
   static rutz::shared_ptr<Command>
   make(Tcl::Interp& interp,
        rutz::shared_ptr<Tcl::Callback> callback,
        const char* cmd_name,
        const char* usage,
-       int objc_min,
-       int objc_max,
-       bool exact_objc,
+       const ArgSpec& spec,
        const rutz::file_pos& src_pos);
 
   /// Non-virtual destructor since this class is not for use as a base class.
@@ -139,8 +133,7 @@ public:
 
 private:
   Command(rutz::shared_ptr<Tcl::Callback> callback,
-          const char* usage,
-          int objc_min=0, int objc_max=-1, bool exact_objc=false);
+          const char* usage, const ArgSpec& spec);
 
   Command(const Command&); // not implemented
   Command& operator=(const Command&); // not implemented
