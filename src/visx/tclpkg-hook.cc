@@ -327,9 +327,9 @@ namespace
       }
   }
 
-  Tcl::ObjPtr dictGet(Tcl::Dict dict, const char* key)
+  Tcl::Obj dictGet(Tcl::Dict dict, const char* key)
   {
-    return dict.get<Tcl::ObjPtr>(key);
+    return dict.get<Tcl::Obj>(key);
   }
 }
 

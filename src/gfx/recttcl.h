@@ -61,9 +61,9 @@ namespace Tcl
     return result;
   }
 
-  /// Conversion routine for geom::rect to Tcl::ObjPtr.
+  /// Conversion routine for geom::rect to Tcl::Obj.
   template <class T>
-  inline Tcl::ObjPtr toTcl( const geom::rect<T>& rect )
+  inline Tcl::Obj toTcl( const geom::rect<T>& rect )
   {
     Tcl::List listObj;
     listObj.append(rect.left());

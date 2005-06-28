@@ -52,7 +52,7 @@ public:
   bool matchesString(const char* str);
 
 private:
-  Tcl::ObjPtr itsPatternObj;
+  Tcl::Obj itsPatternObj;
 };
 
 static const char vcid_groovx_tcl_regexp_h_utc20050628162421[] = "$Id$ $HeadURL$";

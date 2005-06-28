@@ -128,8 +128,8 @@ private:
     }
 
   private:
-    Tcl::ObjPtr itsCondition;
-    Tcl::ObjPtr itsResultCmd;
+    Tcl::Obj itsCondition;
+    Tcl::Obj itsResultCmd;
   };
 
 public:

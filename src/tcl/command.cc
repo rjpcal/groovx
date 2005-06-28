@@ -222,7 +222,7 @@ Tcl::Context::Context(Tcl::Interp& interp,
 Tcl::Context::~Context() throw()
 {}
 
-void Tcl::Context::setObjResult(const Tcl::ObjPtr& obj)
+void Tcl::Context::setObjResult(const Tcl::Obj& obj)
 {
 GVX_TRACE("Tcl::Context::setObjResult");
   itsInterp.setResult(obj);

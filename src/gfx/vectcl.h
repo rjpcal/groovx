@@ -51,9 +51,9 @@ namespace Tcl
                          listObj.template get<T>(1));
   }
 
-  /// Conversion routine for geom::vec2 to Tcl::ObjPtr.
+  /// Conversion routine for geom::vec2 to Tcl::Obj.
   template <class T>
-  inline Tcl::ObjPtr toTcl( const geom::vec2<T>& v )
+  inline Tcl::Obj toTcl( const geom::vec2<T>& v )
   {
     Tcl::List listObj;
     listObj.append(v.x());
@@ -72,9 +72,9 @@ namespace Tcl
                          listObj.template get<T>(2));
   }
 
-  /// Conversion routine for geom::vec3 to Tcl::ObjPtr.
+  /// Conversion routine for geom::vec3 to Tcl::Obj.
   template <class T>
-  inline Tcl::ObjPtr toTcl( const geom::vec3<T>& v )
+  inline Tcl::Obj toTcl( const geom::vec3<T>& v )
   {
     Tcl::List listObj;
     listObj.append(v.x());

@@ -108,7 +108,7 @@ protected:
     return *(itsArgs.at(argn-1));
   }
 
-  virtual void setObjResult(const Tcl::ObjPtr& obj)
+  virtual void setObjResult(const Tcl::Obj& obj)
   {
     itsResult.append(obj);
   }

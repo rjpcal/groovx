@@ -49,14 +49,14 @@ GVX_DBG_REGISTER
 
 namespace Tcl
 {
-  Tcl::ObjPtr getField(const Field& field,
+  Tcl::Obj getField(const Field& field,
                        Nub::Ref<FieldContainer> item)
   {
     return item->getField(field);
   }
 
   void setField(const Field& field, Nub::Ref<FieldContainer> item,
-                const Tcl::ObjPtr& newValue)
+                const Tcl::Obj& newValue)
   {
     return item->setField(field, newValue);
   }

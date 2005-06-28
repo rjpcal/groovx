@@ -54,7 +54,7 @@ public:
   /// Default constructor makes an empty dict
   Dict();
 
-  Dict(const Tcl::ObjPtr& dictObj) :
+  Dict(const Tcl::Obj& dictObj) :
     itsDictObj(dictObj)
   {}
 
@@ -80,13 +80,13 @@ public:
     return Tcl::toNative<T>(doGet(key).obj());
   }
 
-  Tcl::ObjPtr asObj() const { return itsDictObj; }
+  Tcl::Obj asObj() const { return itsDictObj; }
 
 private:
-  void doPut(const char* key, Tcl::ObjPtr val);
-  Tcl::ObjPtr doGet(const char* key) const;
+  void doPut(const char* key, Tcl::Obj val);
+  Tcl::Obj doGet(const char* key) const;
 
-  Tcl::ObjPtr itsDictObj;
+  Tcl::Obj itsDictObj;
 };
 
 static const char vcid_groovx_tcl_dict_h_utc20050628162420[] = "$Id$ $HeadURL$";

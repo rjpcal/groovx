@@ -45,7 +45,7 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  Tcl_RegExp getCheckedRegexp(const Tcl::ObjPtr& patrn)
+  Tcl_RegExp getCheckedRegexp(const Tcl::Obj& patrn)
   {
     const int flags = 0;
     // OK to pass Tcl_Interp*==0

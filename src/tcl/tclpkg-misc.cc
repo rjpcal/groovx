@@ -86,7 +86,7 @@ namespace
   unsigned long get_default_seed() { return rutz::default_rand_seed; }
   void set_default_seed(unsigned long x) { rutz::default_rand_seed = x; }
 
-  rutz::fstring tcl_valuetype(Tcl::ObjPtr obj)
+  rutz::fstring tcl_valuetype(Tcl::Obj obj)
   {
     return obj.typeName();
   }

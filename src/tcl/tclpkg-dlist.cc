@@ -173,7 +173,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::ObjPtr index(Tcl::List source_list, unsigned int n)
+  Tcl::Obj index(Tcl::List source_list, unsigned int n)
   {
     return source_list.at(n);
   }
@@ -188,8 +188,8 @@ namespace Dlist
 
   Tcl::List not_(Tcl::List source_list)
   {
-    Tcl::ObjPtr one = Tcl::toTcl(int(1));
-    Tcl::ObjPtr zero = Tcl::toTcl(int(0));
+    Tcl::Obj one = Tcl::toTcl(int(1));
+    Tcl::Obj zero = Tcl::toTcl(int(0));
     Tcl::List result;
 
     for (unsigned int i = 0; i < source_list.length(); ++i)
@@ -227,7 +227,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::ObjPtr pickone(Tcl::List source_list)
+  Tcl::Obj pickone(Tcl::List source_list)
   {
     if (source_list.length() == 0)
       {
@@ -582,8 +582,8 @@ namespace Dlist
 
   Tcl::List shuffle(Tcl::List src, int seed)
   {
-    rutz::fixed_block<Tcl::ObjPtr> objs(src.begin<Tcl::ObjPtr>(),
-                                        src.end<Tcl::ObjPtr>());
+    rutz::fixed_block<Tcl::Obj> objs(src.begin<Tcl::Obj>(),
+                                        src.end<Tcl::Obj>());
 
     rutz::urand generator(seed);
 
@@ -653,7 +653,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::ObjPtr sum(Tcl::List source_list)
+  Tcl::Obj sum(Tcl::List source_list)
   {
     int isum=0;
     double dsum=0.0;

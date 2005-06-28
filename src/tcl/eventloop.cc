@@ -231,7 +231,7 @@ GVX_TRACE("Tcl::MainImpl::historyNext");
 #ifdef GVX_WITH_READLINE
   return history_length+1;
 #else
-  Tcl::ObjPtr obj = itsSafeInterp.getResult<Tcl_Obj*>();
+  Tcl::Obj obj = itsSafeInterp.getResult<Tcl_Obj*>();
 
   itsSafeInterp.eval("history nextid", Tcl::IGNORE_ERROR);
 

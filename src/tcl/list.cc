@@ -52,7 +52,7 @@ GVX_TRACE("Tcl::List::List");
   split();
 }
 
-Tcl::List::List(const Tcl::ObjPtr& listObj) :
+Tcl::List::List(const Tcl::Obj& listObj) :
   itsList(listObj),
   itsElements(0),
   itsLength(0)
@@ -76,7 +76,7 @@ GVX_TRACE("Tcl::List::split");
   itsLength = static_cast<unsigned int>(count);
 }
 
-void Tcl::List::doAppend(const Tcl::ObjPtr& obj, unsigned int times)
+void Tcl::List::doAppend(const Tcl::Obj& obj, unsigned int times)
 {
 GVX_TRACE("Tcl::List::doAppend");
 

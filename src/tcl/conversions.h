@@ -54,7 +54,7 @@ namespace Tcl
 {
   class Dict;
   class List;
-  class ObjPtr;
+  class Obj;
 
   /// Trait class for extracting an appropriate return-type from T.
   template <class T>
@@ -94,7 +94,7 @@ namespace Tcl
   //
 
   Tcl_Obj*      fromTcl(Tcl_Obj* obj, Tcl_Obj**);
-  Tcl::ObjPtr   fromTcl(Tcl_Obj* obj, Tcl::ObjPtr*);
+  Tcl::Obj   fromTcl(Tcl_Obj* obj, Tcl::Obj*);
   int           fromTcl(Tcl_Obj* obj, int*);
   unsigned int  fromTcl(Tcl_Obj* obj, unsigned int*);
   long          fromTcl(Tcl_Obj* obj, long*);
@@ -117,39 +117,39 @@ namespace Tcl
   // Functions for converting from C++ types to Tcl objects.
   //
 
-  Tcl::ObjPtr toTcl(Tcl_Obj* val);
-  Tcl::ObjPtr toTcl(long val);
-  Tcl::ObjPtr toTcl(unsigned long val);
-  Tcl::ObjPtr toTcl(int val);
-  Tcl::ObjPtr toTcl(unsigned int val);
-  Tcl::ObjPtr toTcl(unsigned char val);
-  Tcl::ObjPtr toTcl(bool val);
-  Tcl::ObjPtr toTcl(double val);
-  Tcl::ObjPtr toTcl(float val);
-  Tcl::ObjPtr toTcl(const char* val);
-  Tcl::ObjPtr toTcl(const rutz::fstring& val);
-  Tcl::ObjPtr toTcl(const rutz::value& v);
-  Tcl::ObjPtr toTcl(Tcl::Dict dictObj);
-  Tcl::ObjPtr toTcl(Tcl::List listObj);
-  Tcl::ObjPtr toTcl(Tcl::ObjPtr val);
+  Tcl::Obj toTcl(Tcl_Obj* val);
+  Tcl::Obj toTcl(long val);
+  Tcl::Obj toTcl(unsigned long val);
+  Tcl::Obj toTcl(int val);
+  Tcl::Obj toTcl(unsigned int val);
+  Tcl::Obj toTcl(unsigned char val);
+  Tcl::Obj toTcl(bool val);
+  Tcl::Obj toTcl(double val);
+  Tcl::Obj toTcl(float val);
+  Tcl::Obj toTcl(const char* val);
+  Tcl::Obj toTcl(const rutz::fstring& val);
+  Tcl::Obj toTcl(const rutz::value& v);
+  Tcl::Obj toTcl(Tcl::Dict dictObj);
+  Tcl::Obj toTcl(Tcl::List listObj);
+  Tcl::Obj toTcl(Tcl::Obj val);
 
   template <class T>
   Nub::Ref<T> fromTcl(Tcl_Obj* obj, Nub::Ref<T>*);
 
   template <class T>
-  Tcl::ObjPtr toTcl(Nub::Ref<T> obj);
+  Tcl::Obj toTcl(Nub::Ref<T> obj);
 
   template <class T>
   Nub::SoftRef<T> fromTcl(Tcl_Obj* obj, Nub::SoftRef<T>*);
 
   template <class T>
-  Tcl::ObjPtr toTcl(Nub::SoftRef<T> obj);
+  Tcl::Obj toTcl(Nub::SoftRef<T> obj);
 
   template <class T>
   rutz::fwd_iter<T> fromTcl(Tcl_Obj* obj, rutz::fwd_iter<T>*);
 
   template <class T>
-  Tcl::ObjPtr toTcl( rutz::fwd_iter<T> iter );
+  Tcl::Obj toTcl( rutz::fwd_iter<T> iter );
 }
 
 static const char vcid_groovx_tcl_conversions_h_utc20050628162420[] = "$Id$ $HeadURL$";

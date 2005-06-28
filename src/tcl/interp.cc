@@ -59,7 +59,7 @@ namespace
     intp->forgetInterp();
   }
 
-  bool reportError(Tcl::Interp& interp, const Tcl::ObjPtr& code,
+  bool reportError(Tcl::Interp& interp, const Tcl::Obj& code,
                    Tcl::ErrorStrategy strategy,
                    const rutz::file_pos& where)
   {
@@ -182,7 +182,7 @@ GVX_TRACE("Tcl::Interp::pkgProvide");
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool Tcl::Interp::evalBooleanExpr(const Tcl::ObjPtr& obj) const
+bool Tcl::Interp::evalBooleanExpr(const Tcl::Obj& obj) const
 {
 GVX_TRACE("Tcl::Interp::evalBooleanExpr");
 
@@ -204,18 +204,18 @@ GVX_TRACE("Tcl::Interp::evalBooleanExpr");
 
 bool Tcl::Interp::eval(const char* code, Tcl::ErrorStrategy strategy)
 {
-  Tcl::ObjPtr obj(Tcl::toTcl(code));
+  Tcl::Obj obj(Tcl::toTcl(code));
   return eval(obj, strategy);
 }
 
 bool Tcl::Interp::eval(const fstring& code,
                        Tcl::ErrorStrategy strategy)
 {
-  Tcl::ObjPtr obj(Tcl::toTcl(code));
+  Tcl::Obj obj(Tcl::toTcl(code));
   return eval(obj, strategy);
 }
 
-bool Tcl::Interp::eval(const Tcl::ObjPtr& code,
+bool Tcl::Interp::eval(const Tcl::Obj& code,
                        Tcl::ErrorStrategy strategy)
 {
 GVX_TRACE("Tcl::Interp::eval");
@@ -317,7 +317,7 @@ GVX_TRACE("Tcl::Interp::setObjResult");
 ///////////////////////////////////////////////////////////////////////
 
 void Tcl::Interp::setGlobalVar(const char* var_name,
-                               const Tcl::ObjPtr& var) const
+                               const Tcl::Obj& var) const
 {
 GVX_TRACE("Tcl::Interp::setGlobalVar");
 

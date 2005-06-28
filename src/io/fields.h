@@ -97,9 +97,9 @@ public:
   virtual ~FieldImpl();
 
   /// Change the value of the given object's referred-to field.
-  virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const = 0;
+  virtual void set(FieldContainer* obj, const Tcl::Obj& new_val) const = 0;
   /// Get the value of the given object's referred-to field.
-  virtual Tcl::ObjPtr get(const FieldContainer* obj) const = 0;
+  virtual Tcl::Obj get(const FieldContainer* obj) const = 0;
 
   /// Read the value of the given object's referred-to field from the IO::Reader.
   virtual void readValueFrom(FieldContainer* obj,
@@ -190,7 +190,7 @@ public:
   }
 
   /// Change the value of the given object's pointed-to data member.
-  virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
+  virtual void set(FieldContainer* obj, const Tcl::Obj& new_val) const
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
@@ -200,7 +200,7 @@ public:
   }
 
   /// Get the value of the given object's pointed-to data member.
-  virtual Tcl::ObjPtr get(const FieldContainer* obj) const
+  virtual Tcl::Obj get(const FieldContainer* obj) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
@@ -263,7 +263,7 @@ public:
   }
 
   /// Change the value of the given object's pointed-to data member.
-  virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
+  virtual void set(FieldContainer* obj, const Tcl::Obj& new_val) const
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
@@ -273,7 +273,7 @@ public:
   }
 
   /// Get the value of the given object's pointed-to data member.
-  virtual Tcl::ObjPtr get(const FieldContainer* obj) const
+  virtual Tcl::Obj get(const FieldContainer* obj) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
@@ -326,7 +326,7 @@ public:
   /// Construct with a member pointer for the rutz::value field.
   ValueFieldImpl(V C::* memptr) : itsValueMember(memptr) {}
 
-  virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
+  virtual void set(FieldContainer* obj, const Tcl::Obj& new_val) const
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
@@ -335,7 +335,7 @@ public:
     dereference(cobj, itsValueMember).set_string(sval);
   }
 
-  virtual Tcl::ObjPtr get(const FieldContainer* obj) const
+  virtual Tcl::Obj get(const FieldContainer* obj) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
@@ -386,7 +386,7 @@ public:
   /// Construct with pointers to getter and setter member functions.
   FuncMemberFieldImpl(Getter g, Setter s) : itsGetter(g), itsSetter(s) {}
 
-  virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
+  virtual void set(FieldContainer* obj, const Tcl::Obj& new_val) const
   {
     if (itsSetter == 0) FieldAux::throwNotAllowed("set", SRC_POS);
 
@@ -397,7 +397,7 @@ public:
     (cobj.*itsSetter)(new_val.template as<stack_t>());
   }
 
-  virtual Tcl::ObjPtr get(const FieldContainer* obj) const
+  virtual Tcl::Obj get(const FieldContainer* obj) const
   {
     if (itsGetter == 0) FieldAux::throwNotAllowed("get", SRC_POS);
 
@@ -600,13 +600,13 @@ public:
   }
 
   /// Set the value of this field for \a obj.
-  void setValue(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
+  void setValue(FieldContainer* obj, const Tcl::Obj& new_val) const
   {
     itsFieldImpl->set(obj, new_val);
   }
 
   /// Get the value of this field for \a obj.
-  Tcl::ObjPtr getValue(const FieldContainer* obj) const
+  Tcl::Obj getValue(const FieldContainer* obj) const
   {
     return itsFieldImpl->get(obj);
   }
@@ -727,14 +727,14 @@ public:
   void setFieldMap(const FieldMap& fields);
 
   /// Get the value associated with the named field.
-  Tcl::ObjPtr getField(const rutz::fstring& name) const;
+  Tcl::Obj getField(const rutz::fstring& name) const;
   /// Get the value associated with the given field.
-  Tcl::ObjPtr getField(const Field& field) const;
+  Tcl::Obj getField(const Field& field) const;
 
   /// Set the value associated with the named field.
-  void setField(const rutz::fstring& name, const Tcl::ObjPtr& new_val);
+  void setField(const rutz::fstring& name, const Tcl::Obj& new_val);
   /// Set the value associated with the given field.
-  void setField(const Field& field, const Tcl::ObjPtr& new_val);
+  void setField(const Field& field, const Tcl::Obj& new_val);
 
   /// Read all fields from the IO::Reader.
   void readFieldsFrom(IO::Reader& reader, const FieldMap& fields);

@@ -62,26 +62,26 @@ namespace
   }
 }
 
-void Tcl::Dict::doPut(const char*, Tcl::ObjPtr)
+void Tcl::Dict::doPut(const char*, Tcl::Obj)
 {
   noDictError();
   GVX_ASSERT(0);
 }
 
-Tcl::ObjPtr Tcl::Dict::doGet(const char*) const
+Tcl::Obj Tcl::Dict::doGet(const char*) const
 {
   noDictError();
   GVX_ASSERT(0);
-  return Tcl::ObjPtr(); // can't happen, but placate compiler
+  return Tcl::Obj(); // can't happen, but placate compiler
 }
 
 #else
 
-void Tcl::Dict::doPut(const char* key, Tcl::ObjPtr val)
+void Tcl::Dict::doPut(const char* key, Tcl::Obj val)
 {
 GVX_TRACE("Tcl::Dict::doPut");
 
-  Tcl::ObjPtr keyObj = Tcl::toTcl(key);
+  Tcl::Obj keyObj = Tcl::toTcl(key);
   if (Tcl_DictObjPut(0, itsDictObj.obj(), keyObj.obj(), val.obj()) != TCL_OK)
     {
       throw rutz::error(rutz::fstring("couldn't put object in dict "
@@ -89,18 +89,18 @@ GVX_TRACE("Tcl::Dict::doPut");
     }
 }
 
-Tcl::ObjPtr Tcl::Dict::doGet(const char* key) const
+Tcl::Obj Tcl::Dict::doGet(const char* key) const
 {
 GVX_TRACE("Tcl::Dict::doGet");
 
   Tcl_Obj* dest = 0;
 
-  Tcl::ObjPtr keyObj = Tcl::toTcl(key);
+  Tcl::Obj keyObj = Tcl::toTcl(key);
 
   if (Tcl_DictObjGet(0, itsDictObj.obj(), keyObj.obj(), &dest) == TCL_OK)
     {
       if (dest != 0)
-        return Tcl::ObjPtr(dest);
+        return Tcl::Obj(dest);
     }
 
   throw rutz::error(rutz::fstring("couldn't get value from dict "

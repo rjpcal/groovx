@@ -100,7 +100,7 @@ namespace
 Tcl_Obj* Tcl::fromTcl(Tcl_Obj* obj, Tcl_Obj**)
 { return obj; }
 
-Tcl::ObjPtr Tcl::fromTcl(Tcl_Obj* obj, Tcl::ObjPtr*)
+Tcl::Obj Tcl::fromTcl(Tcl_Obj* obj, Tcl::Obj*)
 { return obj; }
 
 int Tcl::fromTcl(Tcl_Obj* obj, int*)
@@ -307,22 +307,22 @@ GVX_TRACE("Tcl::fromTcl(Tcl::List*)");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::ObjPtr Tcl::toTcl(Tcl_Obj* val)
+Tcl::Obj Tcl::toTcl(Tcl_Obj* val)
 {
 GVX_TRACE("Tcl::toTcl(Tcl_Obj*)");
-  Tcl::ObjPtr result;
+  Tcl::Obj result;
   result = val;
   return result;
 }
 
-Tcl::ObjPtr Tcl::toTcl(long val)
+Tcl::Obj Tcl::toTcl(long val)
 {
 GVX_TRACE("Tcl::toTcl(long)");
 
   return Tcl_NewLongObj(val);
 }
 
-Tcl::ObjPtr Tcl::toTcl(unsigned long val)
+Tcl::Obj Tcl::toTcl(unsigned long val)
 {
 GVX_TRACE("Tcl::toTcl(unsigned long)");
 
@@ -334,14 +334,14 @@ GVX_TRACE("Tcl::toTcl(unsigned long)");
   return Tcl_NewLongObj(sval);
 }
 
-Tcl::ObjPtr Tcl::toTcl(int val)
+Tcl::Obj Tcl::toTcl(int val)
 {
 GVX_TRACE("Tcl::toTcl(int)");
 
   return Tcl_NewIntObj(val);
 }
 
-Tcl::ObjPtr Tcl::toTcl(unsigned int val)
+Tcl::Obj Tcl::toTcl(unsigned int val)
 {
 GVX_TRACE("Tcl::toTcl(unsigned int)");
 
@@ -353,72 +353,72 @@ GVX_TRACE("Tcl::toTcl(unsigned int)");
   return Tcl_NewIntObj(sval);
 }
 
-Tcl::ObjPtr Tcl::toTcl(unsigned char val)
+Tcl::Obj Tcl::toTcl(unsigned char val)
 {
 GVX_TRACE("Tcl::toTcl(unsigne char)");
 
   return Tcl_NewIntObj(val);
 }
 
-Tcl::ObjPtr Tcl::toTcl(bool val)
+Tcl::Obj Tcl::toTcl(bool val)
 {
 GVX_TRACE("Tcl::toTcl(bool)");
 
   return Tcl_NewBooleanObj(val);
 }
 
-Tcl::ObjPtr Tcl::toTcl(double val)
+Tcl::Obj Tcl::toTcl(double val)
 {
 GVX_TRACE("Tcl::toTcl(double)");
 
   return Tcl_NewDoubleObj(val);
 }
 
-Tcl::ObjPtr Tcl::toTcl(float val)
+Tcl::Obj Tcl::toTcl(float val)
 {
 GVX_TRACE("Tcl::toTcl(float)");
 
   return Tcl_NewDoubleObj(val);
 }
 
-Tcl::ObjPtr Tcl::toTcl(const char* val)
+Tcl::Obj Tcl::toTcl(const char* val)
 {
 GVX_TRACE("Tcl::toTcl(const char*)");
 
   return Tcl_NewStringObj(val, -1);
 }
 
-Tcl::ObjPtr Tcl::toTcl(const fstring& val)
+Tcl::Obj Tcl::toTcl(const fstring& val)
 {
 GVX_TRACE("Tcl::toTcl(const fstring&)");
 
   return Tcl_NewStringObj(val.c_str(), val.length());
 }
 
-Tcl::ObjPtr Tcl::toTcl(const rutz::value& val)
+Tcl::Obj Tcl::toTcl(const rutz::value& val)
 {
 GVX_TRACE("Tcl::toTcl(const rutz::value&)");
 
   return Tcl_NewStringObj(val.get_string().c_str(), -1);
 }
 
-Tcl::ObjPtr Tcl::toTcl(Tcl::Dict dictObj)
+Tcl::Obj Tcl::toTcl(Tcl::Dict dictObj)
 {
 GVX_TRACE("Tcl::toTcl(Tcl::Dict)");
 
   return dictObj.asObj();
 }
 
-Tcl::ObjPtr Tcl::toTcl(Tcl::List listObj)
+Tcl::Obj Tcl::toTcl(Tcl::List listObj)
 {
 GVX_TRACE("Tcl::toTcl(Tcl::List)");
 
   return listObj.asObj();
 }
 
-Tcl::ObjPtr Tcl::toTcl(Tcl::ObjPtr val)
+Tcl::Obj Tcl::toTcl(Tcl::Obj val)
 {
-GVX_TRACE("Tcl::toTcl(Tcl::ObjPtr)");
+GVX_TRACE("Tcl::toTcl(Tcl::Obj)");
 
   return val;
 }

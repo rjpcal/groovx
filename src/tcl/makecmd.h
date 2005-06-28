@@ -74,7 +74,7 @@ namespace Tcl
   /** This allows us to pass Nub::Ref objects to Tcl via the
       Nub::UID's of the referred-to objects. */
   template <class T>
-  inline Tcl::ObjPtr toTcl(Nub::Ref<T> obj)
+  inline Tcl::Obj toTcl(Nub::Ref<T> obj)
   {
     return toTcl(obj.id());
   }
@@ -93,7 +93,7 @@ namespace Tcl
   /** This allows us to pass Nub::SoftRef objects to Tcl via the
       Nub::UID's of the referred-to objects. */
   template <class T>
-  inline Tcl::ObjPtr toTcl(Nub::SoftRef<T> obj)
+  inline Tcl::Obj toTcl(Nub::SoftRef<T> obj)
   {
     return toTcl(obj.id());
   }

@@ -226,7 +226,7 @@ protected:
   virtual Tcl_Obj* getObjv(unsigned int n) throw() { return itsObjv[n]; }
 
   /// Return a Tcl_Obj*.
-  virtual void setObjResult(const Tcl::ObjPtr& obj);
+  virtual void setObjResult(const Tcl::Obj& obj);
 
 private:
   Context(const Context&);

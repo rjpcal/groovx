@@ -37,20 +37,20 @@
 
 #include <tcl.h>
 
-Tcl::ObjPtr::ObjPtr() : itsObj(Tcl_NewObj()) { incrRef(itsObj); }
+Tcl::Obj::Obj() : itsObj(Tcl_NewObj()) { incrRef(itsObj); }
 
-void Tcl::ObjPtr::append(const Tcl::ObjPtr& other)
+void Tcl::Obj::append(const Tcl::Obj& other)
 {
   ensureUnique();
   Tcl_AppendObjToObj(itsObj, other.itsObj);
 }
 
-bool Tcl::ObjPtr::isShared() const
+bool Tcl::Obj::isShared() const
 {
   return Tcl_IsShared(itsObj);
 }
 
-void Tcl::ObjPtr::ensureUnique() const
+void Tcl::Obj::ensureUnique() const
 {
   if (isShared())
     {
@@ -59,19 +59,19 @@ void Tcl::ObjPtr::ensureUnique() const
     }
 }
 
-const char* Tcl::ObjPtr::typeName() const
+const char* Tcl::Obj::typeName() const
 {
   Tcl_ObjType* type = itsObj->typePtr;
 
   return type ? type->name : "(none)";
 }
 
-void Tcl::ObjPtr::incrRef(Tcl_Obj* obj)
+void Tcl::Obj::incrRef(Tcl_Obj* obj)
 {
   Tcl_IncrRefCount(obj);
 }
 
-void Tcl::ObjPtr::decrRef(Tcl_Obj* obj)
+void Tcl::Obj::decrRef(Tcl_Obj* obj)
 {
   Tcl_DecrRefCount(obj);
 }

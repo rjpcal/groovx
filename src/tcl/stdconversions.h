@@ -41,7 +41,7 @@
 
 namespace Tcl
 {
-  inline Tcl::ObjPtr toTcl(std::string s)
+  inline Tcl::Obj toTcl(std::string s)
   {
     return toTcl(s.c_str());
   }

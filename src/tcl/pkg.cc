@@ -125,7 +125,7 @@ namespace
 
   Tcl::List getCommandList(Tcl::Interp& interp, const char* namesp)
   {
-    Tcl::ObjPtr saveresult = interp.getResult<Tcl::ObjPtr>();
+    Tcl::Obj saveresult = interp.getResult<Tcl::Obj>();
     rutz::fstring cmd("info commands ::", namesp, "::*");
     interp.eval(cmd);
     Tcl::List cmdlist = interp.getResult<Tcl::List>();
@@ -306,7 +306,7 @@ GVX_TRACE("Tcl::Pkg::lookup");
 
   const std::string cleanName = makeCleanPkgName(name);
 
-  Tcl::ObjPtr saveresult = interp.getResult<Tcl::ObjPtr>();
+  Tcl::Obj saveresult = interp.getResult<Tcl::Obj>();
 
   const char* ver =
     Tcl_PkgRequireEx(interp.intp(), cleanName.c_str(),
@@ -374,7 +374,7 @@ GVX_TRACE("Tcl::Pkg::inherit");
     throw rutz::error(rutz::fstring("no Tcl namespace '", namesp, "'"),
                       SRC_POS);
 
-  Tcl::ObjPtr obj;
+  Tcl::Obj obj;
   Tcl_AppendExportList(interp, othernsptr, obj.obj());
 
   Tcl_Namespace* const thisnsptr = rep->tclNamespace();

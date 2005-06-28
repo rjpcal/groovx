@@ -49,45 +49,43 @@ namespace Tcl
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class ObjPtr
+class Obj
 {
 public:
   /// Default constructor with a shared and empty Tcl_Obj*.
-  ObjPtr();
+  Obj();
 
   /// Construct with a Tcl_Obj*.
-  ObjPtr(Tcl_Obj* obj) : itsObj(obj) { incrRef(itsObj); }
+  Obj(Tcl_Obj* obj) : itsObj(obj) { incrRef(itsObj); }
 
   /// Destructor.
-  ~ObjPtr() { decrRef(itsObj); }
+  ~Obj() { decrRef(itsObj); }
 
   /// Copy constructor.
-  ObjPtr(const ObjPtr& x) :
+  Obj(const Obj& x) :
     itsObj(x.itsObj)
     {
       incrRef(itsObj);
     }
 
-  /// Assignment operator from ObjPtr.
-  ObjPtr& operator=(const ObjPtr& x)
+  /// Assignment operator from Obj.
+  Obj& operator=(const Obj& x)
     {
       assign(x.itsObj); return *this;
     }
 
   /// Assignment operator from Tcl_Obj*.
-  ObjPtr& operator=(Tcl_Obj* x)
+  Obj& operator=(Tcl_Obj* x)
     {
       assign(x); return *this;
     }
-
-  typedef Tcl_Obj* Tcl_ObjPtr;
 
   Tcl_Obj* obj() const { return itsObj; }
 
   template <class T>
   inline T as() const;
 
-  void append(const Tcl::ObjPtr& other);
+  void append(const Tcl::Obj& other);
 
   template <class T>
   inline void append(const T& other);
@@ -129,13 +127,13 @@ private:
 #include "tcl/conversions.h"
 
 template <class T>
-inline T Tcl::ObjPtr::as() const
+inline T Tcl::Obj::as() const
 {
   return Tcl::toNative<T>(itsObj);
 }
 
 template <class T>
-inline void Tcl::ObjPtr::append(const T& other)
+inline void Tcl::Obj::append(const T& other)
 {
   append(Tcl::toTcl(other));
 }

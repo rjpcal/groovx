@@ -47,7 +47,7 @@ namespace Tcl
   }
 
   template <class T>
-  inline Tcl::ObjPtr toTcl( rutz::fwd_iter<T> iter )
+  inline Tcl::Obj toTcl( rutz::fwd_iter<T> iter )
   {
     Tcl::List result;
     while ( !iter.at_end() )

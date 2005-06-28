@@ -170,22 +170,22 @@ void FieldContainer::setFieldMap(const FieldMap& fields)
   itsFieldMap = &fields;
 }
 
-Tcl::ObjPtr FieldContainer::getField(const fstring& name) const
+Tcl::Obj FieldContainer::getField(const fstring& name) const
 {
   return getField(itsFieldMap->field(name));
 }
 
-Tcl::ObjPtr FieldContainer::getField(const Field& field) const
+Tcl::Obj FieldContainer::getField(const Field& field) const
 {
   return field.getValue(this);
 }
 
-void FieldContainer::setField(const fstring& name, const Tcl::ObjPtr& new_val)
+void FieldContainer::setField(const fstring& name, const Tcl::Obj& new_val)
 {
   setField(itsFieldMap->field(name), new_val);
 }
 
-void FieldContainer::setField(const Field& field, const Tcl::ObjPtr& new_val)
+void FieldContainer::setField(const Field& field, const Tcl::Obj& new_val)
 {
   field.setValue(this, new_val);
   if (itsSignal)

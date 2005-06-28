@@ -90,7 +90,7 @@ public:
   void pkgProvide(const char* name, const char* version);
 
   /// Evaluate the given expression, return its result as a bool.
-  bool evalBooleanExpr(const Tcl::ObjPtr& obj) const;
+  bool evalBooleanExpr(const Tcl::Obj& obj) const;
 
   /// Evaluates code.
   /** If strategy is THROW_ERROR, then an exception is thrown if the
@@ -111,7 +111,7 @@ public:
       evaluation produces an error. If strategy is IGNORE_ERROR, then
       a return value of true indicates a successful evaluation, and a
       return value of false indicates an error during evaluation. */
-  bool eval(const Tcl::ObjPtr& code, ErrorStrategy strategy = THROW_ERROR);
+  bool eval(const Tcl::Obj& code, ErrorStrategy strategy = THROW_ERROR);
 
   /// Evaluates code using Tcl_EvalObjv(), exploiting the fact that the object is already a list.
   /** If strategy is THROW_ERROR, then an exception is thrown if the
@@ -144,7 +144,7 @@ public:
   }
 
   // Variables
-  void setGlobalVar(const char* var_name, const Tcl::ObjPtr& var) const;
+  void setGlobalVar(const char* var_name, const Tcl::Obj& var) const;
   void unsetGlobalVar(const char* var_name) const;
 
   template <class T>

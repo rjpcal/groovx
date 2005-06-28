@@ -57,7 +57,7 @@ namespace
 {
   fstring getFullCommandName(Tcl::Interp& interp, Tcl_Command token)
   {
-    Tcl::ObjPtr result;
+    Tcl::Obj result;
     // Note, this Tcl API call requires Tcl 8.4.6 or greater (or 8.5
     // or greater)
     Tcl_GetCommandFullName(interp.intp(), token, result.obj());

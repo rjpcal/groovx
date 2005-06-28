@@ -56,7 +56,7 @@ public:
   /// Default constructor makes an empty list
   List();
 
-  List(const Tcl::ObjPtr& listObj);
+  List(const Tcl::Obj& listObj);
 
   List(const List& other) :
     itsList(other.itsList),
@@ -72,7 +72,7 @@ public:
     return *this;
   }
 
-  Tcl::ObjPtr asObj() const { return itsList; }
+  Tcl::Obj asObj() const { return itsList; }
 
   /// Checked access to element at \a index.
   Tcl_Obj* at(unsigned int index) const;
@@ -144,7 +144,7 @@ public:
   static unsigned int getLength(Tcl_Obj* obj);
 
 private:
-  void doAppend(const Tcl::ObjPtr& obj, unsigned int times);
+  void doAppend(const Tcl::Obj& obj, unsigned int times);
 
   void update() const
     {
@@ -156,7 +156,7 @@ private:
 
   void invalidate() { itsElements = 0; itsLength = 0; }
 
-  mutable Tcl::ObjPtr itsList;
+  mutable Tcl::Obj itsList;
   mutable Tcl_Obj** itsElements;
   mutable unsigned int itsLength;
 };
