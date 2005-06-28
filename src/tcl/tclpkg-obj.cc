@@ -30,10 +30,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_OBJTCL_CC_UTC20050626084018_DEFINED
-#define GROOVX_TCL_OBJTCL_CC_UTC20050626084018_DEFINED
+#ifndef GROOVX_TCL_TCLPKG_OBJ_CC_UTC20050628161246_DEFINED
+#define GROOVX_TCL_TCLPKG_OBJ_CC_UTC20050628161246_DEFINED
 
-#include "tcl/objtcl.h"
+#include "tcl/tclpkg-obj.h"
 
 #include "nub/objdb.h"
 #include "nub/objmgr.h"
@@ -208,5 +208,5 @@ GVX_TRACE("Obj_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_tcl_objtcl_cc_utc20050626084018[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_OBJTCL_CC_UTC20050626084018_DEFINED
+static const char vcid_groovx_tcl_tclpkg_obj_cc_utc20050628161246[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLPKG_OBJ_CC_UTC20050628161246_DEFINED

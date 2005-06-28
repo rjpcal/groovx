@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// logtcl.cc
+// dlisttcl.h
 //
-// Copyright (c) 2004-2005
+// Copyright (c) 2005-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Wed Jan 14 15:19:06 2004
+// created: Sat Jun 25 16:59:52 2005
 // commit: $Id$
 // $HeadURL$
 //
@@ -30,37 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_LOGTCL_CC_UTC20050626084017_DEFINED
-#define GROOVX_TCL_LOGTCL_CC_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_TCLPKG_DLIST_H_UTC20050628161246_DEFINED
+#define GROOVX_TCL_TCLPKG_DLIST_H_UTC20050628161246_DEFINED
 
-#include "tcl/logtcl.h"
+struct Tcl_Interp;
 
-#include "nub/log.h"
+extern "C" int Dlist_Init(Tcl_Interp* interp);
 
-#include "tcl/tclpkg.h"
-
-#include "rutz/fstring.h"
-
-#include "rutz/debug.h"
-GVX_DBG_REGISTER
-#include "rutz/trace.h"
-
-extern "C"
-int Log_Init(Tcl_Interp* interp)
-{
-GVX_TRACE("Log_Init");
-
-  GVX_PKG_CREATE(pkg, interp, "Log", "4.$Revision$");
-  pkg->def("reset", "", &Nub::Log::reset, SRC_POS);
-  pkg->def("addScope", "scopename", &::Nub::Log::addScope, SRC_POS);
-  pkg->def("removeScope", "scopename", &::Nub::Log::removeScope, SRC_POS);
-  pkg->def("logFilename", "filename", &Nub::Log::setLogFilename, SRC_POS);
-  pkg->def("copyToStdout", "shouldcopy", &Nub::Log::setCopyToStdout, SRC_POS);
-
-  pkg->def("log", "msg", (void (*)(const char*)) &Nub::log, SRC_POS);
-
-  GVX_PKG_RETURN(pkg);
-}
-
-static const char vcid_groovx_tcl_logtcl_cc_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_LOGTCL_CC_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_tclpkg_dlist_h_utc20050628161246[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLPKG_DLIST_H_UTC20050628161246_DEFINED

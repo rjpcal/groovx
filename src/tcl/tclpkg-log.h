@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// misctcl.h
+// logtcl.h
 //
 // Copyright (c) 2005-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Sat Jun 25 16:59:54 2005
+// created: Sat Jun 25 16:59:53 2005
 // commit: $Id$
 // $HeadURL$
 //
@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_MISCTCL_H_UTC20050626084018_DEFINED
-#define GROOVX_TCL_MISCTCL_H_UTC20050626084018_DEFINED
+#ifndef GROOVX_TCL_TCLPKG_LOG_H_UTC20050628161246_DEFINED
+#define GROOVX_TCL_TCLPKG_LOG_H_UTC20050628161246_DEFINED
 
 struct Tcl_Interp;
 
-extern "C" int Misc_Init(Tcl_Interp* interp);
+extern "C" int Log_Init(Tcl_Interp* interp);
 
-static const char vcid_groovx_tcl_misctcl_h_utc20050626084018[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_MISCTCL_H_UTC20050626084018_DEFINED
+static const char vcid_groovx_tcl_tclpkg_log_h_utc20050628161246[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLPKG_LOG_H_UTC20050628161246_DEFINED

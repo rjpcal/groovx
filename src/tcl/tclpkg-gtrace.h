@@ -30,13 +30,13 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_GTRACETCL_H_UTC20050626084018_DEFINED
-#define GROOVX_TCL_GTRACETCL_H_UTC20050626084018_DEFINED
+#ifndef GROOVX_TCL_TCLPKG_GTRACE_H_UTC20050628161246_DEFINED
+#define GROOVX_TCL_TCLPKG_GTRACE_H_UTC20050628161246_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Gtrace_Init(Tcl_Interp* interp);
 extern "C" int Prof_Init(Tcl_Interp* interp);
 
-static const char vcid_groovx_tcl_gtracetcl_h_utc20050626084018[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_GTRACETCL_H_UTC20050626084018_DEFINED
+static const char vcid_groovx_tcl_tclpkg_gtrace_h_utc20050628161246[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLPKG_GTRACE_H_UTC20050628161246_DEFINED

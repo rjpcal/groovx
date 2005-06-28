@@ -30,13 +30,13 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_OBJTCL_H_UTC20050626084018_DEFINED
-#define GROOVX_TCL_OBJTCL_H_UTC20050626084018_DEFINED
+#ifndef GROOVX_TCL_TCLPKG_OBJ_H_UTC20050628161246_DEFINED
+#define GROOVX_TCL_TCLPKG_OBJ_H_UTC20050628161246_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Objdb_Init(Tcl_Interp* interp);
 extern "C" int Obj_Init(Tcl_Interp* interp);
 
-static const char vcid_groovx_tcl_objtcl_h_utc20050626084018[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_OBJTCL_H_UTC20050626084018_DEFINED
+static const char vcid_groovx_tcl_tclpkg_obj_h_utc20050628161246[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLPKG_OBJ_H_UTC20050628161246_DEFINED

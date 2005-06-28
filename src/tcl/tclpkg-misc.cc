@@ -30,10 +30,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_MISCTCL_CC_UTC20050626084017_DEFINED
-#define GROOVX_TCL_MISCTCL_CC_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_TCLPKG_MISC_CC_UTC20050628161246_DEFINED
+#define GROOVX_TCL_TCLPKG_MISC_CC_UTC20050628161246_DEFINED
 
-#include "tcl/misctcl.h"
+#include "tcl/tclpkg-misc.h"
 
 // this file contains the implementations for some simple Tcl
 // functions that are basically wrappers for standard C library
@@ -156,5 +156,5 @@ GVX_TRACE("Misc_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_tcl_misctcl_cc_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_MISCTCL_CC_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_tclpkg_misc_cc_utc20050628161246[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLPKG_MISC_CC_UTC20050628161246_DEFINED

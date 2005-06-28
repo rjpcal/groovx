@@ -30,12 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_DLISTTCL_CC_UTC20050626084017_DEFINED
-#define GROOVX_TCL_DLISTTCL_CC_UTC20050626084017_DEFINED
+#ifndef GROOVX_TCL_TCLPKG_DLIST_CC_UTC20050628161246_DEFINED
+#define GROOVX_TCL_TCLPKG_DLIST_CC_UTC20050628161246_DEFINED
 
-#include "tcl/dlisttcl.h"
+#include "tcl/tclpkg-dlist.h"
 
-#include "tcl/dlisttcl.h"
+#include "tcl/tclpkg-dlist.h"
 
 // This file implements additional Tcl list manipulation functions
 
@@ -742,5 +742,5 @@ GVX_TRACE("Dlist_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_tcl_dlisttcl_cc_utc20050626084017[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_TCL_DLISTTCL_CC_UTC20050626084017_DEFINED
+static const char vcid_groovx_tcl_tclpkg_dlist_cc_utc20050628161246[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_TCLPKG_DLIST_CC_UTC20050628161246_DEFINED
