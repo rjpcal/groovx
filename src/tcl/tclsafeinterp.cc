@@ -204,10 +204,17 @@ GVX_TRACE("Tcl::Interp::eval");
   switch (strategy)
     {
     case THROW_ERROR:
-      throw rutz::error(fstring("error while evaluating ",
-                                Tcl_GetString(code.obj()),
-                                ":\n", getResult<const char*>()),
-                        SRC_POS);
+      {
+        const fstring msg("error while evaluating ",
+                          Tcl_GetString(code.obj()),
+                          ":\n", this->getResult<const char*>());
+
+        // Now clear the interpreter's result string, since we've
+        // already incorporated that message into our error message:
+        this->resetResult();
+
+        throw rutz::error(msg, SRC_POS);
+      }
       break;
     case IGNORE_ERROR:
       return false;
