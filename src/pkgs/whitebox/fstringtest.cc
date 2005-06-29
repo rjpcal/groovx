@@ -3,7 +3,7 @@
 // fstringtest.cc
 //
 // Copyright (c) 2002-2005
-// Rob Peters <rjpeters at klab dot caltech dot edu>
+// Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jun 24 17:14:36 2002
 // commit: $Id$
@@ -12,7 +12,7 @@
 // --------------------------------------------------------------------
 //
 // This file is part of GroovX.
-//   [http://www.klab.caltech.edu/rjpeters/groovx/]
+//   [http://ilab.usc.edu/rjpeters/groovx/]
 //
 // GroovX is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by

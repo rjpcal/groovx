@@ -3,7 +3,7 @@
 // elementtcl.cc
 //
 // Copyright (c) 2003-2005
-// Rob Peters <rjpeters at klab dot caltech dot edu>
+// Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue May 27 15:38:33 2003
 // commit: $Id$
@@ -12,7 +12,7 @@
 // --------------------------------------------------------------------
 //
 // This file is part of GroovX.
-//   [http://www.klab.caltech.edu/rjpeters/groovx/]
+//   [http://ilab.usc.edu/rjpeters/groovx/]
 //
 // GroovX is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by

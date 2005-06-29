@@ -2,7 +2,7 @@
 #
 # Ad-hoc tutorial information
 #
-# Copyright (c) 1998-2005 Rob Peters rjpeters at klab dot caltech dot edu
+# Copyright (c) 1998-2005 Rob Peters rjpeters at usc dot edu
 #
 # $Id$
 #
@@ -35,24 +35,18 @@ Table of contents:
 
    You can find a daily tarball of groovx here:
 
-     - http://www.klab.caltech.edu/rjpeters/code/groovx_current.tar.gz
+     - http://ilab.usc.edu/rjpeters/code/groovx_current.tar.gz
 
    or here (substitute today's date for YYYYMMDD):
 
-     - http://www.klab.caltech.edu/rjpeters/code/groovx_YYYYMMDD.tar.gz
-
-   Also, you'll need the latest alpha versions of tcl+tk in order to
-   build groovx, so I've put those tarballs on my website as well:
-
-     - http://www.klab.caltech.edu/rjpeters/code/tcl8.5a1-src.tar.gz
-     - http://www.klab.caltech.edu/rjpeters/code/tk8.5a1-src.tar.gz
+     - http://ilab.usc.edu/rjpeters/code/groovx_YYYYMMDD.tar.gz
 
    Optionally, if you're interested in playing around with the visual
    object editor program, you can also build itcl (incr tcl) and
    iwidgets (incr widgets), for which I also have tarballs:
 
-     - http://www.klab.caltech.edu/rjpeters/code/itcl3.2.1_src.tgz
-     - http://www.klab.caltech.edu/rjpeters/code/iwidgets4.0.1.tar.gz
+     - http://ilab.usc.edu/rjpeters/code/itcl3.2.1_src.tgz
+     - http://ilab.usc.edu/rjpeters/code/iwidgets4.0.1.tar.gz
 
 
 <!--############################################################--><hr>
@@ -153,7 +147,7 @@ Table of contents:
      [sideswipe 13:26 53]$ groovx
 
      GroovX 1.0a1 (Feb 22 2005)
-     Copyright (c) 1998-2005 Rob Peters <rjpeters at klab dot caltech dot edu>
+     Copyright (c) 1998-2005 Rob Peters <rjpeters at usc dot edu>
      GroovX is free software, covered by the GNU General Public License, and you are
      welcome to change it and/or distribute copies of it under certain conditions.
              startup time (tcl+tk)  0.160s (user)  0.019s (sys)  0.198s (wall)
@@ -568,7 +562,7 @@ Table of contents:
      <?xml version="1.0"?>
      <!-- GroovX XML 1 -->
      <object type="ExptDriver" id="1" name="root" version="6">
-             <string name="hostname">hume.klab.caltech.edu</string>
+             <string name="hostname">localhost.localdomain</string>
              <string name="subject">/home/rjpeters/tmp/groovx_20041004</string>
              <string name="beginDate">Mon Oct 04 19:27:10 PDT 2004</string>
              <string name="endDate">Mon Oct 04 19:28:11 PDT 2004</string>

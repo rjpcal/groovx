@@ -3,7 +3,7 @@
 // matlabinterface.h
 //
 // Copyright (c) 2004-2005
-// Rob Peters <rjpeters at klab dot caltech dot edu>
+// Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Dec 21 11:10:49 2004
 // commit: $Id$

@@ -6,7 +6,7 @@
 # "Makefile.in", then it is a template for the real Makefile, so to
 # generate the real Makefile, run the "configure" script.
 #
-# Copyright (c) 1998-2005 Rob Peters <rjpeters at klab dot caltech dot edu>
+# Copyright (c) 1998-2005 Rob Peters <rjpeters at usc dot edu>
 #
 # $Id$
 #
