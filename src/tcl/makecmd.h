@@ -60,42 +60,42 @@ namespace rutz
 
 namespace Tcl
 {
-  /// Overload of fromTcl for Nub::Ref.
+  /// Overload of fromTclImpl for Nub::Ref.
   /** This allows us to receive Nub::Ref objects from Tcl via the
       Nub::UID's of the referred-to objects. */
   template <class T>
-  inline Nub::Ref<T> fromTcl(Tcl_Obj* obj, Nub::Ref<T>*)
+  inline Nub::Ref<T> fromTclImpl(Tcl_Obj* obj, Nub::Ref<T>*)
   {
-    Nub::UID uid = Tcl::toNative<Nub::UID>(obj);
+    Nub::UID uid = Tcl::fromTcl<Nub::UID>(obj);
     return Nub::Ref<T>(uid);
   }
 
-  /// Overload of toTcl for Nub::Ref.
+  /// Overload of toTclImpl for Nub::Ref.
   /** This allows us to pass Nub::Ref objects to Tcl via the
       Nub::UID's of the referred-to objects. */
   template <class T>
-  inline Tcl::Obj toTcl(Nub::Ref<T> obj)
+  inline Tcl::Obj toTclImpl(Nub::Ref<T> obj)
   {
-    return toTcl(obj.id());
+    return toTcl<Nub::UID>(obj.id());
   }
 
-  /// Overload of fromTcl for Nub::SoftRef.
+  /// Overload of fromTclImpl for Nub::SoftRef.
   /** This allows us to receive Nub::SoftRef objects from Tcl via the
       Nub::UID's of the referred-to objects. */
   template <class T>
-  inline Nub::SoftRef<T> fromTcl(Tcl_Obj* obj, Nub::SoftRef<T>*)
+  inline Nub::SoftRef<T> fromTclImpl(Tcl_Obj* obj, Nub::SoftRef<T>*)
   {
-    Nub::UID uid = Tcl::toNative<Nub::UID>(obj);
+    Nub::UID uid = Tcl::fromTcl<Nub::UID>(obj);
     return Nub::SoftRef<T>(uid);
   }
 
-  /// Overload of toTcl for Nub::SoftRef.
+  /// Overload of toTclImpl for Nub::SoftRef.
   /** This allows us to pass Nub::SoftRef objects to Tcl via the
       Nub::UID's of the referred-to objects. */
   template <class T>
-  inline Tcl::Obj toTcl(Nub::SoftRef<T> obj)
+  inline Tcl::Obj toTclImpl(Nub::SoftRef<T> obj)
   {
-    return toTcl(obj.id());
+    return toTcl<Nub::UID>(obj.id());
   }
 
 

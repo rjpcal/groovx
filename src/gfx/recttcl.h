@@ -44,7 +44,7 @@ namespace Tcl
 {
   /// Conversion routines for Tcl object to geom::rect.
   template <class T>
-  inline geom::rect<T> fromTcl(Tcl_Obj* obj, geom::rect<T>*)
+  inline geom::rect<T> fromTclImpl(Tcl_Obj* obj, geom::rect<T>*)
   {
     Tcl::List listObj(obj);
     geom::rect<T> result = geom::rect<T>::ltrb(listObj.template get<T>(0),
@@ -63,7 +63,7 @@ namespace Tcl
 
   /// Conversion routine for geom::rect to Tcl::Obj.
   template <class T>
-  inline Tcl::Obj toTcl( const geom::rect<T>& rect )
+  inline Tcl::Obj toTclImpl( const geom::rect<T>& rect )
   {
     Tcl::List listObj;
     listObj.append(rect.left());

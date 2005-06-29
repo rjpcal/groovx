@@ -77,7 +77,7 @@ public:
   template <class T>
   T get(const char* key, T* /*dummy*/=0) const
   {
-    return Tcl::toNative<T>(doGet(key).obj());
+    return Tcl::fromTcl<T>(doGet(key).obj());
   }
 
   Tcl::Obj asObj() const { return itsDictObj; }

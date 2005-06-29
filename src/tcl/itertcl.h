@@ -40,14 +40,14 @@
 namespace Tcl
 {
   template <class T>
-  inline rutz::fwd_iter<T> fromTcl(Tcl_Obj* obj, rutz::fwd_iter<T>*)
+  inline rutz::fwd_iter<T> fromTclImpl(Tcl_Obj* obj, rutz::fwd_iter<T>*)
   {
     Tcl::List l(obj);
     return rutz::fwd_iter<T>(l.template begin<T>(), l.template end<T>());
   }
 
   template <class T>
-  inline Tcl::Obj toTcl( rutz::fwd_iter<T> iter )
+  inline Tcl::Obj toTclImpl( rutz::fwd_iter<T> iter )
   {
     Tcl::List result;
     while ( !iter.at_end() )

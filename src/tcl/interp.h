@@ -134,7 +134,7 @@ public:
   template <class T>
   T getResult() const
   {
-    return Tcl::toNative<T>(getObjResult());
+    return Tcl::fromTcl<T>(getObjResult());
   }
 
   template <class T>
@@ -150,7 +150,7 @@ public:
   template <class T>
   T getGlobalVar(const char* name1, const char* name2=0) const
   {
-    return Tcl::toNative<T>(getObjGlobalVar(name1, name2));
+    return Tcl::fromTcl<T>(getObjGlobalVar(name1, name2));
   }
 
   void linkInt(const char* varName, int* addr, bool readOnly);

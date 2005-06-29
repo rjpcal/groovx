@@ -93,63 +93,51 @@ namespace Tcl
   // Functions for converting from Tcl objects to C++ types.
   //
 
-  Tcl_Obj*      fromTcl(Tcl_Obj* obj, Tcl_Obj**);
-  Tcl::Obj   fromTcl(Tcl_Obj* obj, Tcl::Obj*);
-  int           fromTcl(Tcl_Obj* obj, int*);
-  unsigned int  fromTcl(Tcl_Obj* obj, unsigned int*);
-  long          fromTcl(Tcl_Obj* obj, long*);
-  unsigned long fromTcl(Tcl_Obj* obj, unsigned long*);
-  bool          fromTcl(Tcl_Obj* obj, bool*);
-  double        fromTcl(Tcl_Obj* obj, double*);
-  float         fromTcl(Tcl_Obj* obj, float*);
-  const char*   fromTcl(Tcl_Obj* obj, const char**);
-  rutz::fstring fromTcl(Tcl_Obj* obj, rutz::fstring*);
-  Tcl::Dict     fromTcl(Tcl_Obj* obj, Tcl::Dict*);
-  Tcl::List     fromTcl(Tcl_Obj* obj, Tcl::List*);
+  Tcl_Obj*      fromTclImpl(Tcl_Obj* obj, Tcl_Obj**);
+  Tcl::Obj      fromTclImpl(Tcl_Obj* obj, Tcl::Obj*);
+  int           fromTclImpl(Tcl_Obj* obj, int*);
+  unsigned int  fromTclImpl(Tcl_Obj* obj, unsigned int*);
+  long          fromTclImpl(Tcl_Obj* obj, long*);
+  unsigned long fromTclImpl(Tcl_Obj* obj, unsigned long*);
+  bool          fromTclImpl(Tcl_Obj* obj, bool*);
+  double        fromTclImpl(Tcl_Obj* obj, double*);
+  float         fromTclImpl(Tcl_Obj* obj, float*);
+  const char*   fromTclImpl(Tcl_Obj* obj, const char**);
+  rutz::fstring fromTclImpl(Tcl_Obj* obj, rutz::fstring*);
+  Tcl::Dict     fromTclImpl(Tcl_Obj* obj, Tcl::Dict*);
+  Tcl::List     fromTclImpl(Tcl_Obj* obj, Tcl::List*);
 
   template <class T>
-  inline typename Return<T>::Type toNative( Tcl_Obj* obj )
+  inline typename Return<T>::Type fromTcl( Tcl_Obj* obj )
   {
-    return fromTcl(obj, static_cast<typename Return<T>::Type*>(0));
+    return fromTclImpl(obj, static_cast<typename Return<T>::Type*>(0));
   }
 
   //
   // Functions for converting from C++ types to Tcl objects.
   //
 
-  Tcl::Obj toTcl(Tcl_Obj* val);
-  Tcl::Obj toTcl(long val);
-  Tcl::Obj toTcl(unsigned long val);
-  Tcl::Obj toTcl(int val);
-  Tcl::Obj toTcl(unsigned int val);
-  Tcl::Obj toTcl(unsigned char val);
-  Tcl::Obj toTcl(bool val);
-  Tcl::Obj toTcl(double val);
-  Tcl::Obj toTcl(float val);
-  Tcl::Obj toTcl(const char* val);
-  Tcl::Obj toTcl(const rutz::fstring& val);
-  Tcl::Obj toTcl(const rutz::value& v);
-  Tcl::Obj toTcl(Tcl::Dict dictObj);
-  Tcl::Obj toTcl(Tcl::List listObj);
-  Tcl::Obj toTcl(Tcl::Obj val);
+  Tcl::Obj toTclImpl(Tcl_Obj* val);
+  Tcl::Obj toTclImpl(long val);
+  Tcl::Obj toTclImpl(unsigned long val);
+  Tcl::Obj toTclImpl(int val);
+  Tcl::Obj toTclImpl(unsigned int val);
+  Tcl::Obj toTclImpl(unsigned char val);
+  Tcl::Obj toTclImpl(bool val);
+  Tcl::Obj toTclImpl(double val);
+  Tcl::Obj toTclImpl(float val);
+  Tcl::Obj toTclImpl(const char* val);
+  Tcl::Obj toTclImpl(const rutz::fstring& val);
+  Tcl::Obj toTclImpl(const rutz::value& v);
+  Tcl::Obj toTclImpl(Tcl::Dict dictObj);
+  Tcl::Obj toTclImpl(Tcl::List listObj);
+  Tcl::Obj toTclImpl(Tcl::Obj val);
 
   template <class T>
-  Nub::Ref<T> fromTcl(Tcl_Obj* obj, Nub::Ref<T>*);
-
-  template <class T>
-  Tcl::Obj toTcl(Nub::Ref<T> obj);
-
-  template <class T>
-  Nub::SoftRef<T> fromTcl(Tcl_Obj* obj, Nub::SoftRef<T>*);
-
-  template <class T>
-  Tcl::Obj toTcl(Nub::SoftRef<T> obj);
-
-  template <class T>
-  rutz::fwd_iter<T> fromTcl(Tcl_Obj* obj, rutz::fwd_iter<T>*);
-
-  template <class T>
-  Tcl::Obj toTcl( rutz::fwd_iter<T> iter );
+  inline Tcl::Obj toTcl(const T& val)
+  {
+    return toTclImpl(val);
+  }
 }
 
 static const char vcid_groovx_tcl_conversions_h_utc20050628162420[] = "$Id$ $HeadURL$";

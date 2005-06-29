@@ -204,7 +204,7 @@ public:
   template <class T>
   typename Return<T>::Type getValFromArg(unsigned int argn)
     {
-      return Tcl::toNative<T>(getObjv(argn));
+      return Tcl::fromTcl<T>(getObjv(argn));
     }
 
 
@@ -212,7 +212,7 @@ public:
   template <class T>
   void setResult(T t)
     {
-      setObjResult(Tcl::toTcl(t));
+      setObjResult(Tcl::toTcl<T>(t));
     }
 
   /// Get the raw objv array.

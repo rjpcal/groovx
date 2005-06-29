@@ -93,19 +93,19 @@ namespace
 
 ///////////////////////////////////////////////////////////////////////
 //
-// (Tcl --> C++) fromTcl specializations
+// (Tcl --> C++) fromTclImpl specializations
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl_Obj* Tcl::fromTcl(Tcl_Obj* obj, Tcl_Obj**)
+Tcl_Obj* Tcl::fromTclImpl(Tcl_Obj* obj, Tcl_Obj**)
 { return obj; }
 
-Tcl::Obj Tcl::fromTcl(Tcl_Obj* obj, Tcl::Obj*)
+Tcl::Obj Tcl::fromTclImpl(Tcl_Obj* obj, Tcl::Obj*)
 { return obj; }
 
-int Tcl::fromTcl(Tcl_Obj* obj, int*)
+int Tcl::fromTclImpl(Tcl_Obj* obj, int*)
 {
-GVX_TRACE("Tcl::fromTcl(int*)");
+GVX_TRACE("Tcl::fromTclImpl(int*)");
 
   int val;
 
@@ -124,11 +124,11 @@ GVX_TRACE("Tcl::fromTcl(int*)");
   return val;
 }
 
-unsigned int Tcl::fromTcl(Tcl_Obj* obj, unsigned int*)
+unsigned int Tcl::fromTclImpl(Tcl_Obj* obj, unsigned int*)
 {
-GVX_TRACE("Tcl::fromTcl(unsigned int*)");
+GVX_TRACE("Tcl::fromTclImpl(unsigned int*)");
 
-  int sval = fromTcl(obj, static_cast<int*>(0));
+  int sval = fromTclImpl(obj, static_cast<int*>(0));
 
   if (sval < 0)
     {
@@ -140,9 +140,9 @@ GVX_TRACE("Tcl::fromTcl(unsigned int*)");
   return static_cast<unsigned int>(sval);
 }
 
-long Tcl::fromTcl(Tcl_Obj* obj, long*)
+long Tcl::fromTclImpl(Tcl_Obj* obj, long*)
 {
-GVX_TRACE("Tcl::fromTcl(long*)");
+GVX_TRACE("Tcl::fromTclImpl(long*)");
 
   Tcl_WideInt wideval;
 
@@ -181,9 +181,9 @@ GVX_TRACE("Tcl::fromTcl(long*)");
   return static_cast<long>(wideval);
 }
 
-unsigned long Tcl::fromTcl(Tcl_Obj* obj, unsigned long*)
+unsigned long Tcl::fromTclImpl(Tcl_Obj* obj, unsigned long*)
 {
-GVX_TRACE("Tcl::fromTcl(unsigned long*)");
+GVX_TRACE("Tcl::fromTclImpl(unsigned long*)");
 
   Tcl_WideInt wideval;
 
@@ -219,9 +219,9 @@ GVX_TRACE("Tcl::fromTcl(unsigned long*)");
   return static_cast<unsigned long>(wideval);
 }
 
-bool Tcl::fromTcl(Tcl_Obj* obj, bool*)
+bool Tcl::fromTclImpl(Tcl_Obj* obj, bool*)
 {
-GVX_TRACE("Tcl::fromTcl(bool*)");
+GVX_TRACE("Tcl::fromTclImpl(bool*)");
 
   int int_val;
 
@@ -239,9 +239,9 @@ GVX_TRACE("Tcl::fromTcl(bool*)");
   return bool(int_val);
 }
 
-double Tcl::fromTcl(Tcl_Obj* obj, double*)
+double Tcl::fromTclImpl(Tcl_Obj* obj, double*)
 {
-GVX_TRACE("Tcl::fromTcl(double*)");
+GVX_TRACE("Tcl::fromTclImpl(double*)");
 
   double val;
 
@@ -259,23 +259,23 @@ GVX_TRACE("Tcl::fromTcl(double*)");
   return val;
 }
 
-float Tcl::fromTcl(Tcl_Obj* obj, float*)
+float Tcl::fromTclImpl(Tcl_Obj* obj, float*)
 {
-GVX_TRACE("Tcl::fromTcl(float*)");
+GVX_TRACE("Tcl::fromTclImpl(float*)");
 
-  return float(fromTcl(obj, static_cast<double*>(0)));
+  return float(fromTclImpl(obj, static_cast<double*>(0)));
 }
 
-const char* Tcl::fromTcl(Tcl_Obj* obj, const char**)
+const char* Tcl::fromTclImpl(Tcl_Obj* obj, const char**)
 {
-GVX_TRACE("Tcl::fromTcl(const char**)");
+GVX_TRACE("Tcl::fromTclImpl(const char**)");
 
   return Tcl_GetString(obj);
 }
 
-fstring Tcl::fromTcl(Tcl_Obj* obj, fstring*)
+fstring Tcl::fromTclImpl(Tcl_Obj* obj, fstring*)
 {
-GVX_TRACE("Tcl::fromTcl(fstring*)");
+GVX_TRACE("Tcl::fromTclImpl(fstring*)");
 
   int length;
 
@@ -286,16 +286,16 @@ GVX_TRACE("Tcl::fromTcl(fstring*)");
   return fstring(rutz::char_range(text, static_cast<unsigned int>(length)));
 }
 
-Tcl::Dict Tcl::fromTcl(Tcl_Obj* obj, Tcl::Dict*)
+Tcl::Dict Tcl::fromTclImpl(Tcl_Obj* obj, Tcl::Dict*)
 {
-GVX_TRACE("Tcl::fromTcl(Tcl::Dict*)");
+GVX_TRACE("Tcl::fromTclImpl(Tcl::Dict*)");
 
   return Tcl::Dict(obj);
 }
 
-Tcl::List Tcl::fromTcl(Tcl_Obj* obj, Tcl::List*)
+Tcl::List Tcl::fromTclImpl(Tcl_Obj* obj, Tcl::List*)
 {
-GVX_TRACE("Tcl::fromTcl(Tcl::List*)");
+GVX_TRACE("Tcl::fromTclImpl(Tcl::List*)");
 
   return Tcl::List(obj);
 }
@@ -303,28 +303,28 @@ GVX_TRACE("Tcl::fromTcl(Tcl::List*)");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// (C++ --> Tcl) toTcl specializations
+// (C++ --> Tcl) toTclImpl specializations
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::Obj Tcl::toTcl(Tcl_Obj* val)
+Tcl::Obj Tcl::toTclImpl(Tcl_Obj* val)
 {
-GVX_TRACE("Tcl::toTcl(Tcl_Obj*)");
+GVX_TRACE("Tcl::toTclImpl(Tcl_Obj*)");
   Tcl::Obj result;
   result = val;
   return result;
 }
 
-Tcl::Obj Tcl::toTcl(long val)
+Tcl::Obj Tcl::toTclImpl(long val)
 {
-GVX_TRACE("Tcl::toTcl(long)");
+GVX_TRACE("Tcl::toTclImpl(long)");
 
   return Tcl_NewLongObj(val);
 }
 
-Tcl::Obj Tcl::toTcl(unsigned long val)
+Tcl::Obj Tcl::toTclImpl(unsigned long val)
 {
-GVX_TRACE("Tcl::toTcl(unsigned long)");
+GVX_TRACE("Tcl::toTclImpl(unsigned long)");
 
   long sval(val);
 
@@ -334,16 +334,16 @@ GVX_TRACE("Tcl::toTcl(unsigned long)");
   return Tcl_NewLongObj(sval);
 }
 
-Tcl::Obj Tcl::toTcl(int val)
+Tcl::Obj Tcl::toTclImpl(int val)
 {
-GVX_TRACE("Tcl::toTcl(int)");
+GVX_TRACE("Tcl::toTclImpl(int)");
 
   return Tcl_NewIntObj(val);
 }
 
-Tcl::Obj Tcl::toTcl(unsigned int val)
+Tcl::Obj Tcl::toTclImpl(unsigned int val)
 {
-GVX_TRACE("Tcl::toTcl(unsigned int)");
+GVX_TRACE("Tcl::toTclImpl(unsigned int)");
 
   int sval(val);
 
@@ -353,72 +353,72 @@ GVX_TRACE("Tcl::toTcl(unsigned int)");
   return Tcl_NewIntObj(sval);
 }
 
-Tcl::Obj Tcl::toTcl(unsigned char val)
+Tcl::Obj Tcl::toTclImpl(unsigned char val)
 {
-GVX_TRACE("Tcl::toTcl(unsigne char)");
+GVX_TRACE("Tcl::toTclImpl(unsigne char)");
 
   return Tcl_NewIntObj(val);
 }
 
-Tcl::Obj Tcl::toTcl(bool val)
+Tcl::Obj Tcl::toTclImpl(bool val)
 {
-GVX_TRACE("Tcl::toTcl(bool)");
+GVX_TRACE("Tcl::toTclImpl(bool)");
 
   return Tcl_NewBooleanObj(val);
 }
 
-Tcl::Obj Tcl::toTcl(double val)
+Tcl::Obj Tcl::toTclImpl(double val)
 {
-GVX_TRACE("Tcl::toTcl(double)");
+GVX_TRACE("Tcl::toTclImpl(double)");
 
   return Tcl_NewDoubleObj(val);
 }
 
-Tcl::Obj Tcl::toTcl(float val)
+Tcl::Obj Tcl::toTclImpl(float val)
 {
-GVX_TRACE("Tcl::toTcl(float)");
+GVX_TRACE("Tcl::toTclImpl(float)");
 
   return Tcl_NewDoubleObj(val);
 }
 
-Tcl::Obj Tcl::toTcl(const char* val)
+Tcl::Obj Tcl::toTclImpl(const char* val)
 {
-GVX_TRACE("Tcl::toTcl(const char*)");
+GVX_TRACE("Tcl::toTclImpl(const char*)");
 
   return Tcl_NewStringObj(val, -1);
 }
 
-Tcl::Obj Tcl::toTcl(const fstring& val)
+Tcl::Obj Tcl::toTclImpl(const fstring& val)
 {
-GVX_TRACE("Tcl::toTcl(const fstring&)");
+GVX_TRACE("Tcl::toTclImpl(const fstring&)");
 
   return Tcl_NewStringObj(val.c_str(), val.length());
 }
 
-Tcl::Obj Tcl::toTcl(const rutz::value& val)
+Tcl::Obj Tcl::toTclImpl(const rutz::value& val)
 {
-GVX_TRACE("Tcl::toTcl(const rutz::value&)");
+GVX_TRACE("Tcl::toTclImpl(const rutz::value&)");
 
   return Tcl_NewStringObj(val.get_string().c_str(), -1);
 }
 
-Tcl::Obj Tcl::toTcl(Tcl::Dict dictObj)
+Tcl::Obj Tcl::toTclImpl(Tcl::Dict dictObj)
 {
-GVX_TRACE("Tcl::toTcl(Tcl::Dict)");
+GVX_TRACE("Tcl::toTclImpl(Tcl::Dict)");
 
   return dictObj.asObj();
 }
 
-Tcl::Obj Tcl::toTcl(Tcl::List listObj)
+Tcl::Obj Tcl::toTclImpl(Tcl::List listObj)
 {
-GVX_TRACE("Tcl::toTcl(Tcl::List)");
+GVX_TRACE("Tcl::toTclImpl(Tcl::List)");
 
   return listObj.asObj();
 }
 
-Tcl::Obj Tcl::toTcl(Tcl::Obj val)
+Tcl::Obj Tcl::toTclImpl(Tcl::Obj val)
 {
-GVX_TRACE("Tcl::toTcl(Tcl::Obj)");
+GVX_TRACE("Tcl::toTclImpl(Tcl::Obj)");
 
   return val;
 }

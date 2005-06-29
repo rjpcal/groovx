@@ -261,7 +261,7 @@ public:
 
   const T& operator*() const
   {
-    itsCurrent.reset(new T(Tcl::toNative<T>(current())));
+    itsCurrent.reset(new T(Tcl::fromTcl<T>(current())));
     return *itsCurrent;
   }
 };
@@ -278,7 +278,7 @@ public:
 template <class T>
 inline T Tcl::List::get(unsigned int index, T* /*dummy*/) const
 {
-  return Tcl::toNative<T>(at(index));
+  return Tcl::fromTcl<T>(at(index));
 }
 
 template <class T>

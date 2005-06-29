@@ -188,8 +188,8 @@ namespace Dlist
 
   Tcl::List not_(Tcl::List source_list)
   {
-    Tcl::Obj one = Tcl::toTcl(int(1));
-    Tcl::Obj zero = Tcl::toTcl(int(0));
+    Tcl::Obj one = Tcl::toTcl<int>(1);
+    Tcl::Obj zero = Tcl::toTcl<int>(0);
     Tcl::List result;
 
     for (unsigned int i = 0; i < source_list.length(); ++i)
@@ -683,9 +683,9 @@ namespace Dlist
       }
 
     if ( !seen_double )
-      return Tcl::toTcl(isum);
+      return Tcl::toTcl<int>(isum);
     else
-      return Tcl::toTcl(dsum);
+      return Tcl::toTcl<double>(dsum);
   }
 
   //---------------------------------------------------------

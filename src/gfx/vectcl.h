@@ -43,7 +43,7 @@ namespace Tcl
 {
   /// Conversion routine for Tcl object to geom::vec2.
   template <class T>
-  inline geom::vec2<T> fromTcl(Tcl_Obj* obj, geom::vec2<T>*)
+  inline geom::vec2<T> fromTclImpl(Tcl_Obj* obj, geom::vec2<T>*)
   {
     Tcl::List listObj(obj);
 
@@ -53,7 +53,7 @@ namespace Tcl
 
   /// Conversion routine for geom::vec2 to Tcl::Obj.
   template <class T>
-  inline Tcl::Obj toTcl( const geom::vec2<T>& v )
+  inline Tcl::Obj toTclImpl( const geom::vec2<T>& v )
   {
     Tcl::List listObj;
     listObj.append(v.x());
@@ -63,7 +63,7 @@ namespace Tcl
 
   /// Conversion routine for Tcl object to geom::vec3.
   template <class T>
-  inline geom::vec3<T> fromTcl(Tcl_Obj* obj, geom::vec3<T>*)
+  inline geom::vec3<T> fromTclImpl(Tcl_Obj* obj, geom::vec3<T>*)
   {
     Tcl::List listObj(obj);
 
@@ -74,7 +74,7 @@ namespace Tcl
 
   /// Conversion routine for geom::vec3 to Tcl::Obj.
   template <class T>
-  inline Tcl::Obj toTcl( const geom::vec3<T>& v )
+  inline Tcl::Obj toTclImpl( const geom::vec3<T>& v )
   {
     Tcl::List listObj;
     listObj.append(v.x());

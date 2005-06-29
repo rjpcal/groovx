@@ -129,7 +129,7 @@ private:
 template <class T>
 inline T Tcl::Obj::as() const
 {
-  return Tcl::toNative<T>(itsObj);
+  return Tcl::fromTcl<T>(itsObj);
 }
 
 template <class T>

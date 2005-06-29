@@ -41,14 +41,14 @@
 
 namespace Tcl
 {
-  inline Tcl::Obj toTcl(std::string s)
+  inline Tcl::Obj toTclImpl(std::string s)
   {
-    return toTcl(s.c_str());
+    return toTcl<const char*>(s.c_str());
   }
 
-  inline std::string fromTcl(Tcl_Obj* obj, std::string*)
+  inline std::string fromTclImpl(Tcl_Obj* obj, std::string*)
   {
-    return std::string(fromTcl(obj, (rutz::fstring*)0).c_str());
+    return std::string(fromTclImpl(obj, (rutz::fstring*)0).c_str());
   }
 }
 
