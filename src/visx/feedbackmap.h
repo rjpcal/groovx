@@ -62,13 +62,13 @@ public:
   }
 
   /// Generate any feedback associated with the given response.
-  void giveFeedback(Tcl::Interp& intp, int response) const
+  void giveFeedback(tcl::interpreter& intp, int response) const
   {
     if (!itsUseFeedback) return;
 
     update();
 
-    intp.setGlobalVar("resp_val", Tcl::toTcl(response));
+    intp.set_global_var("resp_val", tcl::convert_from(response));
 
     bool feedbackGiven = false;
     for (size_t i = 0; i<itsItems.size() && !feedbackGiven; ++i)
@@ -76,7 +76,7 @@ public:
         feedbackGiven = itsItems[i].invokeIfTrue(intp);
       }
 
-    intp.unsetGlobalVar("resp_val");
+    intp.unset_global_var("resp_val");
   }
 
 private:
@@ -86,13 +86,13 @@ private:
   {
     if (!isItDirty) return;
 
-    Tcl::List pairs_list(Tcl::toTcl(itsRep));
+    tcl::list pairs_list(tcl::convert_from(itsRep));
 
     itsItems.clear();
 
     for (unsigned int i = 0; i < pairs_list.length(); ++i)
       {
-        Tcl::List current_pair(pairs_list[i]);
+        tcl::list current_pair(pairs_list[i]);
 
         if (current_pair.length() != 2)
           {
@@ -117,9 +117,9 @@ private:
     {}
 
     /// Invoke the associated feedback script if the Item's condition is true.
-    bool invokeIfTrue(Tcl::Interp& interp)
+    bool invokeIfTrue(tcl::interpreter& interp)
     {
-      if (interp.evalBooleanExpr(itsCondition))
+      if (interp.eval_boolean_expr(itsCondition))
         {
           interp.eval(itsResultCmd);
           return true;
@@ -128,8 +128,8 @@ private:
     }
 
   private:
-    Tcl::Obj itsCondition;
-    Tcl::Obj itsResultCmd;
+    tcl::obj itsCondition;
+    tcl::obj itsResultCmd;
   };
 
 public:

@@ -35,16 +35,16 @@
 
 #include "nub/scheduler.h"
 
-namespace Tcl
+namespace tcl
 {
-  class TimerScheduler;
+  class timer_scheduler;
 }
 
-class Tcl::TimerScheduler : public nub::scheduler
+class tcl::timer_scheduler : public nub::scheduler
 {
 public:
-  TimerScheduler();
-  virtual ~TimerScheduler() throw();
+  timer_scheduler();
+  virtual ~timer_scheduler() throw();
 
   virtual rutz::shared_ptr<nub::timer_token>
   schedule(int msec,

@@ -49,50 +49,50 @@ using rutz::shared_ptr;
 
 //---------------------------------------------------------------------
 //
-// ObjCaster
+// obj_caster
 //
 //---------------------------------------------------------------------
 
-Tcl::ObjCaster::ObjCaster() {}
+tcl::obj_caster::obj_caster() {}
 
-Tcl::ObjCaster::~ObjCaster() {}
+tcl::obj_caster::~obj_caster() {}
 
-bool Tcl::ObjCaster::isIdMyType(nub::uid uid) const
+bool tcl::obj_caster::is_id_my_type(nub::uid uid) const
 {
   nub::soft_ref<nub::object> item(uid);
-  return (item.is_valid() && isMyType(item.get()));
+  return (item.is_valid() && is_my_type(item.get()));
 }
 
 namespace
 {
-  int countAll(shared_ptr<Tcl::ObjCaster> caster)
+  int count_all(shared_ptr<tcl::obj_caster> caster)
   {
     nub::objectdb& instance = nub::objectdb::instance();
     int count = 0;
     for (nub::objectdb::iterator itr(instance.objects()); itr.is_valid(); ++itr)
       {
-        if (caster->isMyType((*itr).get_weak()))
+        if (caster->is_my_type((*itr).get_weak()))
           ++count;
       }
     return count;
   }
 
-  Tcl::List findAll(shared_ptr<Tcl::ObjCaster> caster)
+  tcl::list find_all(shared_ptr<tcl::obj_caster> caster)
   {
     nub::objectdb& instance = nub::objectdb::instance();
 
-    Tcl::List result;
+    tcl::list result;
 
     for (nub::objectdb::iterator itr(instance.objects()); itr.is_valid(); ++itr)
       {
-        if (caster->isMyType((*itr).get_weak()))
+        if (caster->is_my_type((*itr).get_weak()))
           result.append((*itr).id());
       }
 
     return result;
   }
 
-  void removeAll(shared_ptr<Tcl::ObjCaster> caster)
+  void remove_all(shared_ptr<tcl::obj_caster> caster)
   {
     nub::objectdb& instance = nub::objectdb::instance();
     for (nub::objectdb::iterator itr(instance.objects());
@@ -102,7 +102,7 @@ namespace
         dbg_eval(3, (*itr)->id());
         dbg_dump(3, *(*itr)->get_counts());
 
-        if (caster->isMyType((*itr).get_weak()) && (*itr)->is_unshared())
+        if (caster->is_my_type((*itr).get_weak()) && (*itr)->is_unshared())
           {
             nub::uid remove_me = (*itr)->id();
             ++itr;
@@ -115,35 +115,35 @@ namespace
       }
   }
 
-  bool isMyType(shared_ptr<Tcl::ObjCaster> caster, nub::uid id)
+  bool is_my_type(shared_ptr<tcl::obj_caster> caster, nub::uid id)
   {
-    return caster->isIdMyType(id);
+    return caster->is_id_my_type(id);
   }
 
-  unsigned int getSizeof(shared_ptr<Tcl::ObjCaster> caster)
+  unsigned int get_sizeof(shared_ptr<tcl::obj_caster> caster)
   {
-    return caster->getSizeof();
+    return caster->get_sizeof();
   }
 }
 
-void Tcl::defGenericObjCmds(Tcl::Pkg* pkg,
-                            shared_ptr<Tcl::ObjCaster> caster,
-                            const rutz::file_pos& src_pos)
+void tcl::def_basic_type_cmds(tcl::pkg* pkg,
+                              shared_ptr<tcl::obj_caster> caster,
+                              const rutz::file_pos& src_pos)
 {
-GVX_TRACE("Tcl::defGenericObjCmds");
+GVX_TRACE("tcl::def_basic_type_cmds");
 
-  const int flags = Tcl::NO_EXPORT;
+  const int flags = tcl::NO_EXPORT;
 
-  pkg->defVec( "is", "objref(s)",
-               rutz::bind_first(isMyType, caster), 1, src_pos, flags );
-  pkg->def( "countAll", "",
-            rutz::bind_first(countAll, caster), src_pos, flags );
-  pkg->def( "findAll", "",
-            rutz::bind_first(findAll, caster), src_pos, flags );
-  pkg->def( "removeAll", "",
-            rutz::bind_first(removeAll, caster), src_pos, flags );
+  pkg->def_vec( "is", "objref(s)",
+                rutz::bind_first(is_my_type, caster), 1, src_pos, flags );
+  pkg->def( "count_all", "",
+            rutz::bind_first(count_all, caster), src_pos, flags );
+  pkg->def( "find_all", "",
+            rutz::bind_first(find_all, caster), src_pos, flags );
+  pkg->def( "remove_all", "",
+            rutz::bind_first(remove_all, caster), src_pos, flags );
   pkg->def( "sizeof", "",
-            rutz::bind_first(getSizeof, caster), src_pos, flags );
+            rutz::bind_first(get_sizeof, caster), src_pos, flags );
 }
 
 static const char vcid_groovx_tcl_objpkg_cc_utc20050626084017[] = "$Id$ $HeadURL$";

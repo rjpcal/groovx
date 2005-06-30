@@ -179,14 +179,14 @@ namespace
   // type, it will call this fallback function first before giving up
   // for good. This callback function tries to load a Tcl package
   // named after the desired object type.
-  void factoryPkgLoader(const rutz::fstring& type)
+  void factory_pkg_loader(const rutz::fstring& type)
   {
     dbg_eval_nl(3, type);
 
-    Tcl::Pkg::lookup(Tcl::Main::interp(), type.c_str());
+    tcl::pkg::lookup(tcl::event_loop::interp(), type.c_str());
   }
 
-  void sigHandler(int signum)
+  void sig_handler(int signum)
   {
     switch (signum)
       {
@@ -199,14 +199,14 @@ namespace
 
 }
 
-void Tcl::ScriptApp::init_in_macro_only()
+void tcl::script_app::init_in_macro_only()
 {
-  signal(SIGSEGV, &sigHandler);
-  signal(SIGFPE, &sigHandler);
-  signal(SIGBUS, &sigHandler);
+  signal(SIGSEGV, &sig_handler);
+  signal(SIGFPE, &sig_handler);
+  signal(SIGBUS, &sig_handler);
 }
 
-void Tcl::ScriptApp::handle_exception_in_macro_only
+void tcl::script_app::handle_exception_in_macro_only
                                          (const std::exception* e)
 {
   if (e != 0)
@@ -217,50 +217,50 @@ void Tcl::ScriptApp::handle_exception_in_macro_only
     std::cerr << "caught in main: (an exception of unknown type)\n";
 }
 
-Tcl::ScriptApp::ScriptApp(const char* appname,
-                          int argc_, char**argv_) throw()
+tcl::script_app::script_app(const char* appname,
+                            int argc_, char**argv_) throw()
   :
-  appname(appname),
-  argc(argc_),
-  argv(argv_),
-  minimal(havearg(argv_, "-minimal")),
-  nowindow(havearg(argv_, "-nw")),
-  splashmsg(),
-  pkgdir(),
-  pkgs(0),
-  exitcode(0)
+  m_appname(appname),
+  m_argc(argc_),
+  m_argv(argv_),
+  m_minimal(havearg(argv_, "-minimal")),
+  m_nowindow(havearg(argv_, "-nw")),
+  m_splashmsg(),
+  m_pkgdir(),
+  m_pkgs(0),
+  m_exitcode(0)
 {
   // Quick check argv to optionally turn on global tracing and/or set
   // the global debug level. This method is particularly useful for
   // helping to diagnose problems that are occurring during
   // application startup, before we have a chance to get to the
   // command-line prompt and do a "::gtrace 1" or a "::dbgLevel 9".
-  for (int i = 0; i < this->argc; ++i)
+  for (int i = 0; i < this->m_argc; ++i)
     {
-      if (strcmp(this->argv[i], "-dbglevel") == 0)
+      if (strcmp(this->m_argv[i], "-dbglevel") == 0)
         {
-          if (this->argv[i+1] != 0)
-            rutz::debug::set_global_level( atoi(this->argv[i+1]) );
+          if (this->m_argv[i+1] != 0)
+            rutz::debug::set_global_level( atoi(this->m_argv[i+1]) );
         }
-      else if (strcmp(this->argv[i], "-gtrace") == 0)
+      else if (strcmp(this->m_argv[i], "-gtrace") == 0)
         {
           rutz::trace::set_global_trace(true);
         }
-      else if (strcmp(this->argv[i], "-showinit") == 0)
+      else if (strcmp(this->m_argv[i], "-showinit") == 0)
         {
-          Tcl::Pkg::verboseInit(true);
+          tcl::pkg::verbose_init(true);
         }
     }
 }
 
-Tcl::ScriptApp::~ScriptApp() throw()
+tcl::script_app::~script_app() throw()
 {}
 
-void Tcl::ScriptApp::run()
+void tcl::script_app::run()
 {
-  Tcl::Main tclmain(this->argc, this->argv, this->nowindow);
+  tcl::event_loop tclmain(this->m_argc, this->m_argv, this->m_nowindow);
 
-  if (Tcl::Main::isInteractive())
+  if (tcl::event_loop::is_interactive())
     {
       const char* const pfx = "###  ";
       const char* const sfx = "  ###";
@@ -270,45 +270,45 @@ void Tcl::ScriptApp::run()
       std::cerr << hashes
                 << '\n'
                 << wrapcenterlines(linelen, pfx, sfx,
-                                   splashmsg.c_str(), hashes)
+                                   m_splashmsg.c_str(), hashes)
                 << hashes << '\n' << '\n';
     }
 
-  Tcl::Interp& interp = tclmain.interp();
+  tcl::interpreter& interp = tclmain.interp();
 
-  nub::obj_factory::instance().set_fallback(&factoryPkgLoader);
+  nub::obj_factory::instance().set_fallback(&factory_pkg_loader);
   nub::set_default_ref_vis(nub::PUBLIC);
 
   const rutz::time ru1 = rutz::time::user_rusage();
   const rutz::time rs1 = rutz::time::sys_rusage();
   const rutz::time wc1 = rutz::time::wall_clock_now();
 
-  PackageInfo IMMEDIATE_PKGS[] =
+  package_info IMMEDIATE_PKGS[] =
     {
       { "Tcl",      Tcl_Init,  "", false },
       { "Tk",       Tk_Init,   "", true },
     };
 
-  for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i)
+  for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(package_info); ++i)
     {
-      if (nowindow && IMMEDIATE_PKGS[i].requiresGui)
+      if (m_nowindow && IMMEDIATE_PKGS[i].requires_gui)
         continue;
 
-      int result = IMMEDIATE_PKGS[i].pkgInitProc(interp.intp());
+      int result = IMMEDIATE_PKGS[i].init_proc(interp.intp());
       if (result != TCL_OK)
         {
           std::cerr << "fatal initialization error (package '"
-                    << IMMEDIATE_PKGS[i].pkgName << "'):\n";
-          rutz::fstring msg = interp.getResult<const char*>();
+                    << IMMEDIATE_PKGS[i].name << "'):\n";
+          rutz::fstring msg = interp.get_result<const char*>();
           if ( !msg.is_empty() )
             std::cerr << '\t' << msg << '\n';
-          interp.resetResult();
+          interp.reset_result();
 
-          this->exitcode = 2; return;
+          this->m_exitcode = 2; return;
         }
     }
 
-  if (Tcl::Main::isInteractive())
+  if (tcl::event_loop::is_interactive())
     {
       const rutz::time ru = rutz::time::user_rusage() - ru1;
       const rutz::time rs = rutz::time::sys_rusage() - rs1;
@@ -323,49 +323,46 @@ void Tcl::ScriptApp::run()
   const rutz::time rs2 = rutz::time::sys_rusage();
   const rutz::time wc2 = rutz::time::wall_clock_now();
 
-  for (const PackageInfo* pkg = pkgs; pkg->pkgName != 0; ++pkg)
+  for (const package_info* pkg = m_pkgs; pkg->name != 0; ++pkg)
     {
       Tcl_StaticPackage(static_cast<Tcl_Interp*>(0),
                         // (Tcl_Interp*) 0 means this package
                         // hasn't yet been loaded into any
                         // interpreter
-                        pkg->pkgName,
-                        pkg->pkgInitProc,
+                        pkg->name,
+                        pkg->init_proc,
                         0);
 
       rutz::fstring ifneededcmd("package ifneeded ",
-                                pkg->pkgName, " ", pkg->pkgVersion,
-                                " {load {} ", pkg->pkgName, " }");
+                                pkg->name, " ", pkg->version,
+                                " {load {} ", pkg->name, " }");
 
       interp.eval(ifneededcmd);
     }
 
-  if (!minimal)
+  if (!m_minimal)
     {
-      for (const PackageInfo* pkg = pkgs; pkg->pkgName != 0; ++pkg)
+      for (const package_info* pkg = m_pkgs; pkg->name != 0; ++pkg)
         {
-          if (nowindow && pkg->requiresGui)
+          if (m_nowindow && pkg->requires_gui)
             continue;
 
           const char* ver =
-            Tcl_PkgRequire(interp.intp(),
-                           pkg->pkgName,
-                           pkg->pkgVersion,
-                           0);
+            Tcl_PkgRequire(interp.intp(), pkg->name, pkg->version, 0);
 
           if (ver == 0)
             {
               std::cerr << "initialization error (package '"
-                        << pkg->pkgName << "'):\n";
-              rutz::fstring msg = interp.getResult<const char*>();
+                        << pkg->name << "'):\n";
+              rutz::fstring msg = interp.get_result<const char*>();
               if ( !msg.is_empty() )
                 std::cerr << '\t' << msg << '\n';
-              interp.resetResult();
+              interp.reset_result();
             }
         }
     }
 
-  if (Tcl::Main::isInteractive())
+  if (tcl::event_loop::is_interactive())
     {
       const rutz::time ru = rutz::time::user_rusage() - ru2;
       const rutz::time rs = rutz::time::sys_rusage() - rs2;
@@ -373,19 +370,19 @@ void Tcl::ScriptApp::run()
 
       fprintf(stderr, "\tstartup time (%6s) "
               "%6.3fs (user) %6.3fs (sys) %6.3fs (wall)\n",
-              appname.c_str(), ru.sec(), rs.sec(), wc.sec());
+              m_appname.c_str(), ru.sec(), rs.sec(), wc.sec());
     }
 
-  Tcl::List path = interp.getGlobalVar<Tcl::List>("auto_path");
+  tcl::list path = interp.get_global_var<tcl::list>("auto_path");
 
-  if (pkgdir.length() > 0)
-    path.append(pkgdir);
+  if (m_pkgdir.length() > 0)
+    path.append(m_pkgdir);
 
-  interp.setGlobalVar("auto_path", path.asObj());
+  interp.set_global_var("auto_path", path.as_obj());
 
   // specifies a file to be 'source'd upon startup
-  interp.setGlobalVar("tcl_rcFileName",
-                      Tcl::toTcl("./groovx_startup.tcl"));
+  interp.set_global_var("tcl_rcFileName",
+                      tcl::convert_from("./groovx_startup.tcl"));
 
   tclmain.run();
 }

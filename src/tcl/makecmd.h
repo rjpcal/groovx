@@ -58,56 +58,57 @@ namespace rutz
   };
 }
 
-namespace Tcl
+namespace tcl
 {
-  /// Overload of fromTclImpl for nub::ref.
+  /// Overload of aux_convert_to for nub::ref.
   /** This allows us to receive nub::ref objects from Tcl via the
       nub::uid's of the referred-to objects. */
   template <class T>
-  inline nub::ref<T> fromTclImpl(Tcl_Obj* obj, nub::ref<T>*)
+  inline nub::ref<T> aux_convert_to(Tcl_Obj* obj, nub::ref<T>*)
   {
-    nub::uid uid = Tcl::fromTcl<nub::uid>(obj);
+    nub::uid uid = tcl::convert_to<nub::uid>(obj);
     return nub::ref<T>(uid);
   }
 
-  /// Overload of toTclImpl for nub::ref.
+  /// Overload of aux_convert_from for nub::ref.
   /** This allows us to pass nub::ref objects to Tcl via the
       nub::uid's of the referred-to objects. */
   template <class T>
-  inline Tcl::Obj toTclImpl(nub::ref<T> obj)
+  inline tcl::obj aux_convert_from(nub::ref<T> obj)
   {
-    return toTcl<nub::uid>(obj.id());
+    return convert_from<nub::uid>(obj.id());
   }
 
-  /// Overload of fromTclImpl for nub::soft_ref.
+  /// Overload of aux_convert_to for nub::soft_ref.
   /** This allows us to receive nub::soft_ref objects from Tcl via the
       nub::uid's of the referred-to objects. */
   template <class T>
-  inline nub::soft_ref<T> fromTclImpl(Tcl_Obj* obj, nub::soft_ref<T>*)
+  inline nub::soft_ref<T> aux_convert_to(Tcl_Obj* obj, nub::soft_ref<T>*)
   {
-    nub::uid uid = Tcl::fromTcl<nub::uid>(obj);
+    nub::uid uid = tcl::convert_to<nub::uid>(obj);
     return nub::soft_ref<T>(uid);
   }
 
-  /// Overload of toTclImpl for nub::soft_ref.
+  /// Overload of aux_convert_from for nub::soft_ref.
   /** This allows us to pass nub::soft_ref objects to Tcl via the
       nub::uid's of the referred-to objects. */
   template <class T>
-  inline Tcl::Obj toTclImpl(nub::soft_ref<T> obj)
+  inline tcl::obj aux_convert_from(nub::soft_ref<T> obj)
   {
-    return toTcl<nub::uid>(obj.id());
+    return convert_from<nub::uid>(obj.id());
   }
 
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Functor<> template definitions. Each specialization takes a
+// func_wrapper<> template definitions. Each specialization takes a
 // C++-style functor (could be a free function, or struct with
 // operator()), and transforms it into a functor with an
-// operator()(Tcl::Context&) which can be called from a
-// Tcl::Command. This transformation requires extracting the
-// appropriate parameters from the Tcl::Context, passing them to the
-// C++ functor, and returning the result back to the Tcl::Context.
+// operator()(tcl::call_context&) which can be called from a
+// tcl::command. This transformation requires extracting the
+// appropriate parameters from the tcl::call_context, passing them to
+// the C++ functor, and returning the result back to the
+// tcl::call_context.
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -117,381 +118,382 @@ namespace Tcl
 
 #define EXTRACT_PARAM(N) \
   typename rutz::func_traits<Func>::arg##N##_t p##N = \
-  ctx.template getValFromArg<typename rutz::func_traits<Func>::arg##N##_t>(N);
+  ctx.template get_arg<typename rutz::func_traits<Func>::arg##N##_t>(N);
 
-  /// Generic Tcl::Functor definition.
+  /// Generic tcl::func_wrapper definition.
   template <unsigned int N, class R, class Func>
-  class Functor
+  class func_wrapper
   {};
 }
 
 namespace rutz
 {
-  /// Specialization of func_traits for Tcl::Functor.
+  /// Specialization of func_traits for tcl::func_wrapper.
   template <unsigned int N, class F, class Func>
-  struct func_traits<Tcl::Functor<N, F, Func> >
+  struct func_traits<tcl::func_wrapper<N, F, Func> >
   {
     typedef typename rutz::func_traits<Func>::retn_t retn_t;
   };
 }
 
-namespace Tcl
+namespace tcl
 {
 
 
 // ########################################################
-/// Tcl::Functor<0> -- zero arguments
+/// tcl::func_wrapper<0> -- zero arguments
 
   template <class R, class Func>
-  struct Functor<0, R, Func>
+  struct func_wrapper<0, R, Func>
   {
   private:
-    Func itsHeldFunc;
+    Func m_held_func;
 
   public:
-    Functor<0, R, Func>(Func f) : itsHeldFunc(f) {}
+    func_wrapper<0, R, Func>(Func f) : m_held_func(f) {}
 
-    ~Functor() throw() {}
+    ~func_wrapper() throw() {}
 
-    R operator()(Tcl::Context& /*ctx*/)
+    R operator()(tcl::call_context& /*ctx*/)
     {
-      return itsHeldFunc();
+      return m_held_func();
     }
   };
 
 
 // ########################################################
-/// Tcl::Functor<1> -- one argument
+/// tcl::func_wrapper<1> -- one argument
 
   template <class R, class Func>
-  struct Functor<1, R, Func>
+  struct func_wrapper<1, R, Func>
   {
   private:
-    Func itsHeldFunc;
+    Func m_held_func;
 
   public:
-    Functor<1, R, Func>(Func f) : itsHeldFunc(f) {}
+    func_wrapper<1, R, Func>(Func f) : m_held_func(f) {}
 
-    ~Functor() throw() {}
+    ~func_wrapper() throw() {}
 
-    R operator()(Tcl::Context& ctx)
+    R operator()(tcl::call_context& ctx)
     {
       EXTRACT_PARAM(1);
-      return itsHeldFunc(p1);
+      return m_held_func(p1);
     }
   };
 
 
 // ########################################################
-/// Tcl::Functor<2> -- two arguments
+/// tcl::func_wrapper<2> -- two arguments
 
   template <class R, class Func>
-  struct Functor<2, R, Func>
+  struct func_wrapper<2, R, Func>
   {
   private:
-    Func itsHeldFunc;
+    Func m_held_func;
 
   public:
-    Functor<2, R, Func>(Func f) : itsHeldFunc(f) {}
+    func_wrapper<2, R, Func>(Func f) : m_held_func(f) {}
 
-    ~Functor() throw() {}
+    ~func_wrapper() throw() {}
 
-    R operator()(Tcl::Context& ctx)
+    R operator()(tcl::call_context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2);
-      return itsHeldFunc(p1, p2);
+      return m_held_func(p1, p2);
     }
   };
 
 
 // ########################################################
-/// Tcl::Functor<3> -- three arguments
+/// tcl::func_wrapper<3> -- three arguments
 
   template <class R, class Func>
-  struct Functor<3, R, Func>
+  struct func_wrapper<3, R, Func>
   {
   private:
-    Func itsHeldFunc;
+    Func m_held_func;
 
   public:
-    Functor<3, R, Func>(Func f) : itsHeldFunc(f) {}
+    func_wrapper<3, R, Func>(Func f) : m_held_func(f) {}
 
-    ~Functor() throw() {}
+    ~func_wrapper() throw() {}
 
-    R operator()(Tcl::Context& ctx)
+    R operator()(tcl::call_context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      return itsHeldFunc(p1, p2, p3);
+      return m_held_func(p1, p2, p3);
     }
   };
 
 
 // ########################################################
-/// Tcl::Functor<4> -- four arguments
+/// tcl::func_wrapper<4> -- four arguments
 
   template <class R, class Func>
-  struct Functor<4, R, Func>
+  struct func_wrapper<4, R, Func>
   {
   private:
-    Func itsHeldFunc;
+    Func m_held_func;
 
   public:
-    Functor<4, R, Func>(Func f) : itsHeldFunc(f) {}
+    func_wrapper<4, R, Func>(Func f) : m_held_func(f) {}
 
-    ~Functor() throw() {}
+    ~func_wrapper() throw() {}
 
-    R operator()(Tcl::Context& ctx)
+    R operator()(tcl::call_context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       EXTRACT_PARAM(4);
-      return itsHeldFunc(p1, p2, p3, p4);
+      return m_held_func(p1, p2, p3, p4);
     }
   };
 
 
 // ########################################################
-/// Tcl::Functor<5> -- five arguments
+/// tcl::func_wrapper<5> -- five arguments
 
   template <class R, class Func>
-  struct Functor<5, R, Func>
+  struct func_wrapper<5, R, Func>
   {
   private:
-    Func itsHeldFunc;
+    Func m_held_func;
 
   public:
-    Functor<5, R, Func>(Func f) : itsHeldFunc(f) {}
+    func_wrapper<5, R, Func>(Func f) : m_held_func(f) {}
 
-    ~Functor() throw() {}
+    ~func_wrapper() throw() {}
 
-    R operator()(Tcl::Context& ctx)
+    R operator()(tcl::call_context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       EXTRACT_PARAM(4); EXTRACT_PARAM(5);
-      return itsHeldFunc(p1, p2, p3, p4, p5);
+      return m_held_func(p1, p2, p3, p4, p5);
     }
   };
 
 
 // ########################################################
-/// Tcl::Functor<6> -- six arguments
+/// tcl::func_wrapper<6> -- six arguments
 
   template <class R, class Func>
-  struct Functor<6, R, Func>
+  struct func_wrapper<6, R, Func>
   {
   private:
-    Func itsHeldFunc;
+    Func m_held_func;
 
   public:
-    Functor<6, R, Func>(Func f) : itsHeldFunc(f) {}
+    func_wrapper<6, R, Func>(Func f) : m_held_func(f) {}
 
-    ~Functor() throw() {}
+    ~func_wrapper() throw() {}
 
-    R operator()(Tcl::Context& ctx)
+    R operator()(tcl::call_context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
-      return itsHeldFunc(p1, p2, p3, p4, p5, p6);
+      return m_held_func(p1, p2, p3, p4, p5, p6);
     }
   };
 
 // ########################################################
-/// Tcl::Functor<7> -- seven arguments
+/// tcl::func_wrapper<7> -- seven arguments
 
   template <class R, class Func>
-  struct Functor<7, R, Func>
+  struct func_wrapper<7, R, Func>
   {
   private:
-    Func itsHeldFunc;
+    Func m_held_func;
 
   public:
-    Functor<7, R, Func>(Func f) : itsHeldFunc(f) {}
+    func_wrapper<7, R, Func>(Func f) : m_held_func(f) {}
 
-    ~Functor() throw() {}
+    ~func_wrapper() throw() {}
 
-    R operator()(Tcl::Context& ctx)
+    R operator()(tcl::call_context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
       EXTRACT_PARAM(7);
-      return itsHeldFunc(p1, p2, p3, p4, p5, p6, p7);
+      return m_held_func(p1, p2, p3, p4, p5, p6, p7);
     }
   };
 
 // ########################################################
-/// Tcl::Functor<8> -- eight arguments
+/// tcl::func_wrapper<8> -- eight arguments
 
   template <class R, class Func>
-  struct Functor<8, R, Func>
+  struct func_wrapper<8, R, Func>
   {
   private:
-    Func itsHeldFunc;
+    Func m_held_func;
 
   public:
-    Functor<8, R, Func>(Func f) : itsHeldFunc(f) {}
+    func_wrapper<8, R, Func>(Func f) : m_held_func(f) {}
 
-    ~Functor() throw() {}
+    ~func_wrapper() throw() {}
 
-    R operator()(Tcl::Context& ctx)
+    R operator()(tcl::call_context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
       EXTRACT_PARAM(7); EXTRACT_PARAM(8);
-      return itsHeldFunc(p1, p2, p3, p4, p5, p6, p7, p8);
+      return m_held_func(p1, p2, p3, p4, p5, p6, p7, p8);
     }
   };
 
 #undef EXTRACT_PARAM
 
 // ########################################################
-/// Factory function to make Tcl::Functor's from any functor or function ptr.
+/// Factory function to make tcl::func_wrapper's from any functor or function ptr.
 
   template <class Fptr>
-  inline Functor<rutz::func_traits<Fptr>::num_args,
-                 typename rutz::func_traits<Fptr>::retn_t,
-                 typename rutz::functor_of<Fptr>::type>
-  buildTclFunctor(Fptr f)
+  inline func_wrapper<rutz::func_traits<Fptr>::num_args,
+                      typename rutz::func_traits<Fptr>::retn_t,
+                      typename rutz::functor_of<Fptr>::type>
+  build_func_wrapper(Fptr f)
   {
     return rutz::build_functor(f);
   }
 
 
 // ########################################################
-/// GenericCmd implements Tcl::Command using a held functor.
+/// generic_function implements tcl::command using a held functor.
 
-  template <class R, class Functor>
-  class GenericCallback : public Callback
+  template <class R, class func_wrapper>
+  class generic_function : public tcl::function
   {
   protected:
-    GenericCallback<R, Functor>(Functor f) : itsHeldFunc(f) {}
+    generic_function<R, func_wrapper>(func_wrapper f) : m_held_func(f) {}
 
   public:
-    static rutz::shared_ptr<Callback> make(Functor f)
+    static rutz::shared_ptr<tcl::function> make(func_wrapper f)
     {
-      return rutz::shared_ptr<Callback>(new GenericCallback(f));
+      return rutz::shared_ptr<tcl::function>(new generic_function(f));
     }
 
-    virtual ~GenericCallback() throw() {}
+    virtual ~generic_function() throw() {}
 
   protected:
-    virtual void invoke(Tcl::Context& ctx)
+    virtual void invoke(tcl::call_context& ctx)
     {
-      R res(itsHeldFunc(ctx)); ctx.setResult(res);
+      R res(m_held_func(ctx)); ctx.set_result(res);
     }
 
   private:
-    Functor itsHeldFunc;
+    func_wrapper m_held_func;
   };
 
 // ########################################################
 /// Specialization for functors with void return types.
 
-  template <class Functor>
-  class GenericCallback<void, Functor> : public Callback
+  template <class func_wrapper>
+  class generic_function<void, func_wrapper> : public tcl::function
   {
   protected:
-    GenericCallback<void, Functor>(Functor f) : itsHeldFunc(f) {}
+    generic_function<void, func_wrapper>(func_wrapper f) : m_held_func(f) {}
 
   public:
-    static rutz::shared_ptr<Callback> make(Functor f)
+    static rutz::shared_ptr<tcl::function> make(func_wrapper f)
     {
-      return rutz::shared_ptr<Callback>(new GenericCallback(f));
+      return rutz::shared_ptr<tcl::function>(new generic_function(f));
     }
 
-    virtual ~GenericCallback() throw() {}
+    virtual ~generic_function() throw() {}
 
   protected:
-    virtual void invoke(Tcl::Context& ctx)
+    virtual void invoke(tcl::call_context& ctx)
     {
-      itsHeldFunc(ctx);
+      m_held_func(ctx);
     }
 
   private:
-    Functor itsHeldFunc;
+    func_wrapper m_held_func;
   };
 
 
 // ########################################################
-/// Factory function for Tcl::Command's from functors.
+/// Factory function for tcl::command's from functors.
 
-  template <class Functor>
-  inline rutz::shared_ptr<Command>
-  makeGenericCmd(Tcl::Interp& interp,
-                 Functor f,
-                 const char* cmd_name,
-                 const char* usage,
-                 const ArgSpec& spec,
-                 const rutz::file_pos& src_pos)
+  template <class func_wrapper>
+  inline rutz::shared_ptr<tcl::command>
+  make_generic_command(tcl::interpreter& interp,
+                       func_wrapper f,
+                       const char* cmd_name,
+                       const char* usage,
+                       const arg_spec& spec,
+                       const rutz::file_pos& src_pos)
   {
-    typedef typename rutz::func_traits<Functor>::retn_t retn_t;
-    return Command::make(interp,
-                         GenericCallback<retn_t, Functor>::make(f),
-                         cmd_name, usage, spec, src_pos);
+    typedef typename rutz::func_traits<func_wrapper>::retn_t retn_t;
+    return tcl::command::make(interp,
+                              generic_function<retn_t, func_wrapper>::make(f),
+                              cmd_name, usage, spec, src_pos);
   }
 
 
 // ########################################################
-/// Factory function for vectorized Tcl::Command's from functors.
+/// Factory function for vectorized tcl::command's from functors.
 
-  template <class Functor>
-  inline rutz::shared_ptr<Command>
-  makeGenericVecCmd(Tcl::Interp& interp,
-                    Functor f,
-                    const char* cmd_name,
-                    const char* usage,
-                    const ArgSpec& spec,
-                    unsigned int keyarg,
-                    const rutz::file_pos& src_pos)
+  template <class func_wrapper>
+  inline rutz::shared_ptr<tcl::command>
+  make_generic_vec_command(tcl::interpreter& interp,
+                           func_wrapper f,
+                           const char* cmd_name,
+                           const char* usage,
+                           const arg_spec& spec,
+                           unsigned int keyarg,
+                           const rutz::file_pos& src_pos)
   {
-    typedef typename rutz::func_traits<Functor>::retn_t retn_t;
-    rutz::shared_ptr<Command> cmd =
-      Command::make(interp, GenericCallback<retn_t, Functor>::make(f),
-                    cmd_name, usage, spec, src_pos);
-    Tcl::useVecDispatch(*cmd, keyarg);
+    typedef typename rutz::func_traits<func_wrapper>::retn_t retn_t;
+    rutz::shared_ptr<tcl::command> cmd =
+      tcl::command::make(interp,
+                         generic_function<retn_t, func_wrapper>::make(f),
+                         cmd_name, usage, spec, src_pos);
+    tcl::use_vec_dispatch(*cmd, keyarg);
     return cmd;
   }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// And finally... makeCmd
+// And finally... make_command
 //
 ///////////////////////////////////////////////////////////////////////
 
 // ########################################################
-/// Factory function for Tcl::Command's from function pointers.
+/// Factory function for tcl::command's from function pointers.
 
   template <class Func>
-  inline rutz::shared_ptr<Command>
-  makeCmd(Tcl::Interp& interp,
+  inline rutz::shared_ptr<tcl::command>
+  make_command(tcl::interpreter& interp,
           Func f,
           const char* cmd_name,
           const char* usage,
           const rutz::file_pos& src_pos)
   {
-    return makeGenericCmd
-      (interp, buildTclFunctor(f), cmd_name, usage,
-       ArgSpec(rutz::func_traits<Func>::num_args + 1, -1, true),
+    return make_generic_command
+      (interp, build_func_wrapper(f), cmd_name, usage,
+       arg_spec(rutz::func_traits<Func>::num_args + 1, -1, true),
        src_pos);
   }
 
 // ########################################################
-/// Factory function for vectorized Tcl::Command's from function pointers.
+/// Factory function for vectorized tcl::command's from function pointers.
 
   template <class Func>
-  inline rutz::shared_ptr<Command>
-  makeVecCmd(Tcl::Interp& interp,
-             Func f,
-             const char* cmd_name,
-             const char* usage,
-             unsigned int keyarg /*default is 1*/,
-             const rutz::file_pos& src_pos)
+  inline rutz::shared_ptr<tcl::command>
+  make_vec_command(tcl::interpreter& interp,
+                   Func f,
+                   const char* cmd_name,
+                   const char* usage,
+                   unsigned int keyarg /*default is 1*/,
+                   const rutz::file_pos& src_pos)
   {
-    return makeGenericVecCmd
-      (interp, buildTclFunctor(f), cmd_name, usage,
-       ArgSpec(rutz::func_traits<Func>::num_args + 1, -1, true),
+    return make_generic_vec_command
+      (interp, build_func_wrapper(f), cmd_name, usage,
+       arg_spec(rutz::func_traits<Func>::num_args + 1, -1, true),
        keyarg, src_pos);
   }
 
-} // end namespace Tcl
+} // end namespace tcl
 
 static const char vcid_groovx_tcl_makecmd_h_utc20050628162421[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_MAKECMD_H_UTC20050628162421_DEFINED

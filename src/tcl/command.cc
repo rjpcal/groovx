@@ -49,183 +49,183 @@ using rutz::shared_ptr;
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::Callback
+// tcl::function
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::Callback::~Callback() throw() {}
+tcl::function::~function() throw() {}
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::Dispatcher
+// tcl::arg_dispatcher
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::Dispatcher::~Dispatcher() throw() {}
+tcl::arg_dispatcher::~arg_dispatcher() throw() {}
 
 ///////////////////////////////////////////////////////////////////////
 //
-// DefaultDispatcher
+// default_dispatcher
 //
 ///////////////////////////////////////////////////////////////////////
 
 namespace
 {
-  class DefaultDispatcher : public Tcl::Dispatcher
+  class default_dispatcher : public tcl::arg_dispatcher
   {
   public:
-    virtual void dispatch(Tcl::Interp& interp,
+    virtual void dispatch(tcl::interpreter& interp,
                           unsigned int objc, Tcl_Obj* const objv[],
-                          Tcl::Callback& callback)
+                          tcl::function& callback)
     {
-      Tcl::Context ctx(interp, objc, objv);
+      tcl::call_context ctx(interp, objc, objv);
       callback.invoke(ctx);
     }
   };
 
-  shared_ptr<DefaultDispatcher>
-    theDefaultDispatcher(new DefaultDispatcher);
+  shared_ptr<default_dispatcher>
+    g_default_dispatcher(new default_dispatcher);
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::Command::Impl class definition
+// tcl::command::impl class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::Command::Impl
+class tcl::command::impl
 {
 private:
-  Impl(const Impl&);
-  Impl& operator=(const Impl&);
+  impl(const impl&);
+  impl& operator=(const impl&);
 
 public:
-  Impl(shared_ptr<Tcl::Callback> cback,
-       const char* usg, const ArgSpec& spec)
+  impl(shared_ptr<tcl::function> cback,
+       const char* usg, const arg_spec& spec)
     :
     callback(cback),
-    dispatcher(theDefaultDispatcher),
+    dispatcher(g_default_dispatcher),
     usage(usg ? usg : ""),
-    argSpec(spec)
+    argspec(spec)
   {}
 
-  ~Impl() throw() {}
+  ~impl() throw() {}
 
   // These are set once per command object
-  shared_ptr<Tcl::Callback> callback;
-  shared_ptr<Tcl::Dispatcher> dispatcher;
-  const rutz::fstring usage;
-  const ArgSpec argSpec;
+  shared_ptr<tcl::function>             callback;
+  shared_ptr<tcl::arg_dispatcher>       dispatcher;
+  rutz::fstring                   const usage;
+  arg_spec                        const argspec;
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::Command member definitions
+// tcl::command member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::Command::Command(shared_ptr<Tcl::Callback> callback,
-                      const char* usage, const ArgSpec& spec)
+tcl::command::command(shared_ptr<tcl::function> callback,
+                      const char* usage, const arg_spec& spec)
   :
-  rep(new Impl(callback, usage, spec))
+  rep(new impl(callback, usage, spec))
 {
-GVX_TRACE("Tcl::Command::Command");
+GVX_TRACE("tcl::command::command");
 }
 
-shared_ptr<Tcl::Command> Tcl::Command::make(
-          Tcl::Interp& interp,
-          shared_ptr<Tcl::Callback> callback,
+shared_ptr<tcl::command> tcl::command::make(
+          tcl::interpreter& interp,
+          shared_ptr<tcl::function> callback,
           const char* cmd_name, const char* usage,
-          const Tcl::ArgSpec& spec,
+          const tcl::arg_spec& spec,
           const rutz::file_pos& src_pos)
 {
-GVX_TRACE("Tcl::Command::make");
+GVX_TRACE("tcl::command::make");
 
-  CommandGroup* const group =
-    Tcl::CommandGroup::make(interp, cmd_name, src_pos);
+  command_group* const group =
+    tcl::command_group::make(interp, cmd_name, src_pos);
 
   GVX_ASSERT(group != 0);
 
-  shared_ptr<Command> cmd( new Command(callback, usage, spec) );
+  shared_ptr<tcl::command> cmd( new tcl::command(callback, usage, spec) );
 
-  // We don't want to have to keep 'group' as a member of Tcl::Command
-  // since it involves circular references -- Tcl::CommandGroup keeps
-  // a list of Tcl::Command objects, so we'd prefer not to have a
+  // We don't want to have to keep 'group' as a member of tcl::command
+  // since it involves circular references -- tcl::command_group keeps
+  // a list of tcl::command objects, so we'd prefer not to have a
   // back-reference here. If it becomes necessary to keep a
   // back-reference, then there needs to be a way for
-  // Tcl::CommandGroup to notify its Tcl::Command list that it is
-  // destructing, so that the Tcl::Command objects can "forget" their
+  // tcl::command_group to notify its tcl::command list that it is
+  // destructing, so that the tcl::command objects can "forget" their
   // back-reference.
   group->add(cmd);
 
   return cmd;
 }
 
-Tcl::Command::~Command() throw()
+tcl::command::~command() throw()
 {
-GVX_TRACE("Tcl::Command::~Command");
+GVX_TRACE("tcl::command::~command");
 
   delete rep;
 }
 
-bool Tcl::Command::allowsObjc(unsigned int objc) const
+bool tcl::command::allows_argc(unsigned int objc) const
 {
-GVX_TRACE("Tcl::Command::allowsObjc");
-  return rep->argSpec.allowsObjc(objc);
+GVX_TRACE("tcl::command::allows_argc");
+  return rep->argspec.allows_argc(objc);
 }
 
-bool Tcl::Command::rejectsObjc(unsigned int objc) const
+bool tcl::command::rejects_argc(unsigned int objc) const
 {
-  return !allowsObjc(objc);
+  return !this->allows_argc(objc);
 }
 
-rutz::fstring Tcl::Command::usageString() const
+rutz::fstring tcl::command::usage_string() const
 {
-GVX_TRACE("Tcl::Command::usageString");
+GVX_TRACE("tcl::command::usage_string");
   return rutz::fstring(rep->usage,
-                       " (argc=[", rep->argSpec.nargMin,
-                       "..", rep->argSpec.nargMin, "])");
+                       " (argc=[", rep->argspec.argc_min(),
+                       "..", rep->argspec.argc_min(), "])");
 }
 
-void Tcl::Command::call(Tcl::Interp& interp,
+void tcl::command::call(tcl::interpreter& interp,
                         unsigned int objc, Tcl_Obj* const objv[])
 {
   rep->dispatcher->dispatch(interp, objc, objv, *rep->callback);
 }
 
-shared_ptr<Tcl::Dispatcher> Tcl::Command::getDispatcher() const
+shared_ptr<tcl::arg_dispatcher> tcl::command::get_dispatcher() const
 {
-GVX_TRACE("Tcl::Command::getDispatcher");
+GVX_TRACE("tcl::command::get_dispatcher");
   return rep->dispatcher;
 }
 
-void Tcl::Command::setDispatcher(shared_ptr<Tcl::Dispatcher> dpx)
+void tcl::command::set_dispatcher(shared_ptr<tcl::arg_dispatcher> dpx)
 {
-GVX_TRACE("Tcl::Command::setDispatcher");
+GVX_TRACE("tcl::command::set_dispatcher");
   rep->dispatcher = dpx;
 }
 
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::Context member definitions
+// tcl::call_context member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::Context::Context(Tcl::Interp& interp,
-                      unsigned int objc, Tcl_Obj* const* objv) :
-  itsInterp(interp),
-  itsObjc(objc),
-  itsObjv(objv)
+tcl::call_context::call_context(tcl::interpreter& interp,
+                                unsigned int objc, Tcl_Obj* const* objv) :
+  m_interp(interp),
+  m_objc(objc),
+  m_objv(objv)
 {}
 
-Tcl::Context::~Context() throw()
+tcl::call_context::~call_context() throw()
 {}
 
-void Tcl::Context::setObjResult(const Tcl::Obj& obj)
+void tcl::call_context::set_obj_result(const tcl::obj& obj)
 {
-GVX_TRACE("Tcl::Context::setObjResult");
-  itsInterp.setResult(obj);
+GVX_TRACE("tcl::call_context::set_obj_result");
+  m_interp.set_result(obj);
 }
 
 static const char vcid_groovx_tcl_command_cc_utc20050628162421[] = "$Id$ $HeadURL$";

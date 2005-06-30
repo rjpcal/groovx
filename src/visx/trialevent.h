@@ -300,7 +300,7 @@ public:
   void setCallback(const rutz::fstring& script);
 
 private:
-  nub::ref<Tcl::ProcWrapper> itsCallback;
+  nub::ref<tcl::ProcWrapper> itsCallback;
 };
 
 //  #######################################################

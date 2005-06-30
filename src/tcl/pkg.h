@@ -44,28 +44,28 @@ namespace rutz
   struct file_pos;
 }
 
-namespace Tcl
+namespace tcl
 {
-  class Command;
-  class Interp;
-  class Pkg;
+  class command;
+  class interpreter;
+  class pkg;
 
   const int NO_EXPORT = 1 << 0;
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::Pkg class definition
+// tcl::pkg class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////
 /**
 
-    \c Tcl::Pkg is a class more managing groups of related \c
-    Tcl::Command's. It provides several facilities:
+    \c tcl::pkg is a class more managing groups of related \c
+    tcl::command's. It provides several facilities:
 
-    -- stores a list of \c Command's, and ensures that these are
+    -- stores a list of \c tcl::command's, and ensures that these are
        properly destroyed upon exit from Tcl
 
     -- ensures that the package is provided to Tcl so that other
@@ -77,42 +77,42 @@ namespace Tcl
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::Pkg
+class tcl::pkg
 {
 private:
   /// Private constructor.
   /** Clients should use the PKG_CREATE macro instead. */
-  Pkg(Tcl_Interp* interp, const char* name, const char* version);
+  pkg(Tcl_Interp* interp, const char* name, const char* version);
 
-  /// Destructor destroys all \c Command's owned by the package.
-  ~Pkg() throw();
+  /// Destructor destroys all \c tcl::command's owned by the package.
+  ~pkg() throw();
 
 public:
   static const int STATUS_OK;
   static const int STATUS_ERR;
 
   /// Don't call this directly! Use the PKG_CREATE macro instead.
-  static Pkg* createInMacro(Tcl_Interp* interp,
-                            const char* name, const char* version)
+  static pkg* create_in_macro(Tcl_Interp* interp,
+                              const char* name, const char* version)
   {
-    return new Pkg(interp, name, version);
+    return new pkg(interp, name, version);
   }
 
-  typedef void (ExitCallback)();
+  typedef void (exit_callback)();
 
   /// Specify a function to be called when the package is destroyed.
   /** (Package destruction typically occurs at application exit, when
       the Tcl interpreter and all associated objects are
       destroyed.) */
-  void onExit(ExitCallback* callback);
+  void on_exit(exit_callback* callback);
 
-  /// Looks up the Tcl::Pkg associated with pkgname, and destroys it.
+  /// Looks up the tcl::pkg associated with pkgname, and destroys it.
   /** This is intended to be called from pkg_Unload procedures called
       by Tcl when a dynamic library is unloaded. The return value can
       be returned as the return value of the pkg_Unload procedure; it
-      will be TCL_OK (1) if the Tcl::Pkg was successfully found and
+      will be TCL_OK (1) if the tcl::pkg was successfully found and
       destroyed and TCL_ERROR (0) otherwise. */
-  static int unloadDestroy(Tcl_Interp* interp, const char* pkgname);
+  static int destroy_on_unload(Tcl_Interp* interp, const char* pkgname);
 
   /// Find a package given its name and version.
   /** If the package is not already loaded, this function will attempt
@@ -120,28 +120,28 @@ public:
       (the default), then any version will be acceptable. If no
       suitable package cannot be found or loaded, a null pointer will
       be returned. */
-  static Pkg* lookup(Tcl::Interp& interp,
+  static pkg* lookup(tcl::interpreter& interp,
                      const char* name, const char* version = 0) throw();
 
   /** Returns a Tcl status code indicating whether the package
       initialization was successful. */
-  int initStatus() const throw();
+  int init_status() const throw();
 
   /// Mark the package as having failed its initialization.
-  void setInitStatusError() throw();
+  void set_init_status_error() throw();
 
   /// Returns the Tcl interpreter that was passed to the constructor.
-  Tcl::Interp& interp() throw();
+  tcl::interpreter& interp() throw();
 
   /// Trap a live exception, and leave a message in the Tcl_Interp's result.
-  void handleLiveException(const rutz::file_pos& pos) throw();
+  void handle_live_exception(const rutz::file_pos& pos) throw();
 
   /// Returns the package's "namespace name".
   /** Note that the "namespace name" will be the same as the "package
       name" except possibly for capitalization. The "namespace name"
       is the name of the namespace that is used as the default prefix
       all commands contained in the package. */
-  const char* namespName() throw();
+  const char* namesp_name() throw();
 
   /// Return the package's "package name".
   /** Note that the "package name" will be the same as the "namespace
@@ -149,7 +149,7 @@ public:
       the name that is passed to Tcl_PkgProvide() and
       Tcl_PkgProvide(), and has a well-defined capitalization scheme:
       first character uppercase, all remaining letters lowercase. */
-  const char* pkgName() const throw();
+  const char* pkg_name() const throw();
 
   /// Returns the package version string.
   const char* version() const throw();
@@ -160,7 +160,7 @@ public:
       pattern is different from the default value of "*", then only
       commands whose names match pattern according to glob rules will
       be aliased into the other namespace. */
-  void namespaceAlias(const char* namesp, const char* pattern = "*");
+  void namesp_alias(const char* namesp, const char* pattern = "*");
 
   /// Import commands from a different namespace.
   /** Import all of the commands and procedures defined in the
@@ -168,126 +168,126 @@ public:
       is different from the default value of "*", then only commands
       whose names match pattern according to glob rules will be
       imported into our own package namespace. */
-  void inherit(const char* namesp, const char* pattern = "*");
+  void inherit_namesp(const char* namesp, const char* pattern = "*");
 
   /// Import all commands and procedures defined in the named pkg.
   /** If the named pkg has not yet been loaded, this function will
       attempt to load it via loookup(). If a null pointer is passed to
       version (the default), then any version will be acceptable. */
-  void inheritPkg(const char* name, const char* version = 0);
+  void inherit_pkg(const char* name, const char* version = 0);
 
   /// Evaluates \a script using the package's \c Tcl_Interp.
   void eval(const char* script);
 
-  /// Links the \a var with the Tcl variable \a varName.
-  void linkVar(const char* varName, int& var);
+  /// Links the \a var with the Tcl variable \a var_name.
+  void link_var(const char* var_name, int& var);
 
-  /// Links \a var with the Tcl variable \a varName.
-  void linkVar(const char* varName, double& var);
+  /// Links \a var with the Tcl variable \a var_name.
+  void link_var(const char* var_name, double& var);
 
-  /// Links a copy of \a var with the Tcl variable \a varName.
+  /// Links a copy of \a var with the Tcl variable \a var_name.
   /** The Tcl variable will be read-only.*/
-  void linkVarCopy(const char* varName, int var);
+  void link_var_copy(const char* var_name, int var);
 
-  /// Links a copy of \a var with the Tcl variable \a varName.
+  /// Links a copy of \a var with the Tcl variable \a var_name.
   /** The Tcl variable will be read-only.*/
-  void linkVarCopy(const char* varName, double var);
+  void link_var_copy(const char* var_name, double var);
 
-  /// Links \a var with the Tcl variable \a varName.
+  /// Links \a var with the Tcl variable \a var_name.
   /** The Tcl variable will be read_only. */
-  void linkVarConst(const char* varName, int& var);
+  void link_var_const(const char* var_name, int& var);
 
-  ///Links \a var with the Tcl variable \a varName.
+  ///Links \a var with the Tcl variable \a var_name.
   /** The Tcl variable will be read_only. */
-  void linkVarConst(const char* varName, double& var);
+  void link_var_const(const char* var_name, double& var);
 
 
   template <class Func>
   inline void def(const char* cmd_name, const char* usage, Func f,
                   const rutz::file_pos& src_pos, int flags = 0)
   {
-    makeCmd(interp(), f, makePkgCmdName(cmd_name, flags),
-            usage, src_pos);
+    make_command(interp(), f, make_pkg_cmd_name(cmd_name, flags),
+                 usage, src_pos);
   }
 
   template <class Func>
-  inline void defVec(const char* cmd_name, const char* usage, Func f,
-                     unsigned int keyarg /*default is 1*/,
-                     const rutz::file_pos& src_pos, int flags = 0)
+  inline void def_vec(const char* cmd_name, const char* usage, Func f,
+                      unsigned int keyarg /*default is 1*/,
+                      const rutz::file_pos& src_pos, int flags = 0)
   {
-    makeVecCmd(interp(), f, makePkgCmdName(cmd_name, flags),
-               usage, keyarg, src_pos);
+    make_vec_command(interp(), f, make_pkg_cmd_name(cmd_name, flags),
+                     usage, keyarg, src_pos);
   }
 
   template <class Func>
-  inline void defRaw(const char* cmd_name, const ArgSpec& spec,
-                     const char* usage, Func f,
-                     const rutz::file_pos& src_pos, int flags = 0)
+  inline void def_raw(const char* cmd_name, const arg_spec& spec,
+                      const char* usage, Func f,
+                      const rutz::file_pos& src_pos, int flags = 0)
   {
-    makeGenericCmd(interp(), f, makePkgCmdName(cmd_name, flags),
-                   usage, spec, src_pos);
+    make_generic_command(interp(), f, make_pkg_cmd_name(cmd_name, flags),
+                         usage, spec, src_pos);
   }
 
   template <class Func>
-  inline void defVecRaw(const char* cmd_name, const ArgSpec& spec,
-                        const char* usage, Func f,
-                        unsigned int keyarg /*default is 1*/,
-                        const rutz::file_pos& src_pos, int flags = 0)
+  inline void def_vec_raw(const char* cmd_name, const arg_spec& spec,
+                          const char* usage, Func f,
+                          unsigned int keyarg /*default is 1*/,
+                          const rutz::file_pos& src_pos, int flags = 0)
   {
-    makeGenericVecCmd(interp(), f, makePkgCmdName(cmd_name, flags),
-                      usage, spec, keyarg, src_pos);
+    make_generic_vec_command(interp(), f, make_pkg_cmd_name(cmd_name, flags),
+                             usage, spec, keyarg, src_pos);
   }
 
   template <class C>
-  void defAction(const char* cmd_name, void (C::* actionFunc) (),
-                 const rutz::file_pos& src_pos, int flags = 0)
+  void def_action(const char* cmd_name, void (C::* action_func) (),
+                  const rutz::file_pos& src_pos, int flags = 0)
   {
-    defVec( cmd_name, actionUsage, actionFunc, 1, src_pos, flags );
+    def_vec( cmd_name, action_usage, action_func, 1, src_pos, flags );
   }
 
   template <class C>
-  void defAction(const char* cmd_name, void (C::* actionFunc) () const,
-                 const rutz::file_pos& src_pos, int flags = 0)
+  void def_action(const char* cmd_name, void (C::* action_func) () const,
+                  const rutz::file_pos& src_pos, int flags = 0)
   {
-    defVec( cmd_name, actionUsage, actionFunc, 1, src_pos, flags );
+    def_vec( cmd_name, action_usage, action_func, 1, src_pos, flags );
   }
 
   template <class C, class T>
-  void defGetter(const char* cmd_name, T (C::* getterFunc) () const,
-                 const rutz::file_pos& src_pos, int flags = 0)
+  void def_getter(const char* cmd_name, T (C::* getter_func) () const,
+                  const rutz::file_pos& src_pos, int flags = 0)
   {
-    defVec( cmd_name, getterUsage, getterFunc, 1, src_pos, flags );
+    def_vec( cmd_name, getter_usage, getter_func, 1, src_pos, flags );
   }
 
   template <class C, class T>
-  void defSetter(const char* cmd_name, void (C::* setterFunc) (T),
-                 const rutz::file_pos& src_pos, int flags = 0)
+  void def_setter(const char* cmd_name, void (C::* setter_func) (T),
+                  const rutz::file_pos& src_pos, int flags = 0)
   {
-    defVec( cmd_name, setterUsage, setterFunc, 1, src_pos, flags );
+    def_vec( cmd_name, setter_usage, setter_func, 1, src_pos, flags );
   }
 
   template <class C, class T>
-  void defAttrib(const char* cmd_name,
-                 T (C::* getterFunc) () const,
-                 void (C::* setterFunc) (T),
-                 const rutz::file_pos& src_pos, int flags = 0)
+  void def_get_set(const char* cmd_name,
+                   T (C::* getter_func) () const,
+                   void (C::* setter_func) (T),
+                   const rutz::file_pos& src_pos, int flags = 0)
   {
-    defGetter( cmd_name, getterFunc, src_pos, flags );
-    defSetter( cmd_name, setterFunc, src_pos, flags );
+    def_getter( cmd_name, getter_func, src_pos, flags );
+    def_setter( cmd_name, setter_func, src_pos, flags );
   }
 
   /// Control whether packages should be verbose as they start up.
-  static void verboseInit(bool verbose) throw();
+  static void verbose_init(bool verbose) throw();
 
   /// Called just prior to returning from the *_Init function.
   /** If the package's status is OK, then this does the relevant
       Tcl_PkgProvide and returns TCL_OK. Otherwise, it returns
       TCL_ERROR. */
-  int finishInit() throw();
+  int finish_init() throw();
 
 private:
-  Pkg(const Pkg&); // not implemented
-  Pkg& operator=(const Pkg&); // not implemented
+  pkg(const pkg&); // not implemented
+  pkg& operator=(const pkg&); // not implemented
 
   /** Returns a namespace'd command name in the form of
       pkg_name::cmd_name. The result of this function is valid only
@@ -295,15 +295,15 @@ private:
       of the result. This function also has the side effect of setting
       up a Tcl namespace export pattern for the named command, if
       flags doesn't include NO_EXPORT. */
-  const char* makePkgCmdName(const char* cmd_name, int flags);
+  const char* make_pkg_cmd_name(const char* cmd_name, int flags);
 
-  static const char* const actionUsage;
-  static const char* const getterUsage;
-  static const char* const setterUsage;
+  static const char* const action_usage;
+  static const char* const getter_usage;
+  static const char* const setter_usage;
 
-  struct Impl;
-  friend struct Impl;
-  Impl* rep;
+  struct impl;
+  friend struct impl;
+  impl* rep;
 };
 
 #include "rutz/debug.h"
@@ -316,7 +316,7 @@ GVX_DBG_REGISTER
  */
 
 /// This macro should go at the top of each *_Init() function.
-/** Constructs a \c Tcl::Pkg with a Tcl interpreter, package name, and
+/** Constructs a \c tcl::pkg with a Tcl interpreter, package name, and
     package version. The version string should be in the form MM.mm
     where MM is major version, and mm is minor version. This
     constructor can also correctly parse a version string such as
@@ -326,12 +326,14 @@ GVX_DBG_REGISTER
     such as "4.$Revision$". */
 #define GVX_PKG_CREATE(pkg, interp, pkgname, pkgversion)              \
                                                                       \
-int GVX_PKG_STATUS = Tcl::Pkg::STATUS_ERR;                            \
+int GVX_PKG_STATUS = tcl::pkg::STATUS_ERR;                            \
 {                                                                     \
-  Tcl::Pkg* pkg = 0;                                                  \
+  tcl::pkg* pkg = 0;                                                  \
                                                                       \
-  try { pkg = Tcl::Pkg::createInMacro(interp, pkgname, pkgversion); } \
-  catch (...) { return 1; }                                           \
+  try                                                                 \
+    { pkg = tcl::pkg::create_in_macro(interp, pkgname, pkgversion); } \
+  catch (...)                                                         \
+    { return 1; }                                                     \
                                                                       \
   static bool recursive_initialization = false;                       \
   GVX_ASSERT(!recursive_initialization);                              \
@@ -346,10 +348,10 @@ int GVX_PKG_STATUS = Tcl::Pkg::STATUS_ERR;                            \
   }                                             \
   catch(...)                                    \
   {                                             \
-    pkg->handleLiveException(SRC_POS);          \
+    pkg->handle_live_exception(SRC_POS);        \
   }                                             \
   recursive_initialization = false;             \
-  GVX_PKG_STATUS = pkg->finishInit();           \
+  GVX_PKG_STATUS = pkg->finish_init();          \
 }                                               \
 return GVX_PKG_STATUS;
 
@@ -358,10 +360,10 @@ return GVX_PKG_STATUS;
   }                                             \
   catch(...)                                    \
   {                                             \
-    pkg->handleLiveException(SRC_POS);          \
+    pkg->handle_live_exception(SRC_POS);        \
   }                                             \
   recursive_initialization = false;             \
-  GVX_PKG_STATUS = pkg->finishInit();           \
+  GVX_PKG_STATUS = pkg->finish_init();          \
 }
 
 

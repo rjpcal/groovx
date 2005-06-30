@@ -37,41 +37,41 @@
 
 #include <tcl.h>
 
-Tcl::Obj::Obj() : itsObj(Tcl_NewObj()) { incrRef(itsObj); }
+tcl::obj::obj() : m_obj(Tcl_NewObj()) { incr_ref(m_obj); }
 
-void Tcl::Obj::append(const Tcl::Obj& other)
+void tcl::obj::append(const tcl::obj& other)
 {
-  ensureUnique();
-  Tcl_AppendObjToObj(itsObj, other.itsObj);
+  make_unique();
+  Tcl_AppendObjToObj(m_obj, other.m_obj);
 }
 
-bool Tcl::Obj::is_shared() const
+bool tcl::obj::is_shared() const
 {
-  return Tcl_IsShared(itsObj);
+  return Tcl_IsShared(m_obj);
 }
 
-void Tcl::Obj::ensureUnique() const
+void tcl::obj::make_unique() const
 {
   if (is_shared())
     {
-      Tcl_Obj* new_obj = Tcl_DuplicateObj(itsObj);
+      Tcl_Obj* new_obj = Tcl_DuplicateObj(m_obj);
       assign(new_obj);
     }
 }
 
-const char* Tcl::Obj::typeName() const
+const char* tcl::obj::tcltype_name() const
 {
-  Tcl_ObjType* type = itsObj->typePtr;
+  Tcl_ObjType* type = m_obj->typePtr;
 
   return type ? type->name : "(none)";
 }
 
-void Tcl::Obj::incrRef(Tcl_Obj* obj)
+void tcl::obj::incr_ref(Tcl_Obj* obj)
 {
   Tcl_IncrRefCount(obj);
 }
 
-void Tcl::Obj::decrRef(Tcl_Obj* obj)
+void tcl::obj::decr_ref(Tcl_Obj* obj)
 {
   Tcl_DecrRefCount(obj);
 }

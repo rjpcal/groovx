@@ -42,10 +42,10 @@ namespace rutz
   struct file_pos;
 }
 
-namespace Tcl
+namespace tcl
 {
-  class ObjCaster;
-  class Pkg;
+  class obj_caster;
+  class pkg;
 }
 
 namespace nub
@@ -54,63 +54,63 @@ namespace nub
 }
 
 // ########################################################
-/// ObjCaster class encapsulates casts to see if objects match a given type.
+/// obj_caster class encapsulates casts to see if objects match a given type.
 
-class Tcl::ObjCaster
+class tcl::obj_caster
 {
 protected:
-  ObjCaster();
+  obj_caster();
 
 public:
-  virtual ~ObjCaster();
+  virtual ~obj_caster();
 
-  virtual bool isMyType(const nub::object* obj) const = 0;
+  virtual bool is_my_type(const nub::object* obj) const = 0;
 
-  virtual unsigned int getSizeof() const = 0;
+  virtual unsigned int get_sizeof() const = 0;
 
-  bool isNotMyType(const nub::object* obj) const { return !isMyType(obj); }
+  bool is_not_my_type(const nub::object* obj) const { return !is_my_type(obj); }
 
-  bool isIdMyType(nub::uid uid) const;
+  bool is_id_my_type(nub::uid uid) const;
 
-  bool isIdNotMyType(nub::uid uid) const { return !isIdMyType(uid); }
+  bool is_id_not_my_type(nub::uid uid) const { return !is_id_my_type(uid); }
 };
 
-namespace Tcl
+namespace tcl
 {
-  /// CObjCaster implements ObjCaster with dynamic_cast.
+  /// cobj_caster implements obj_caster with dynamic_cast.
   template <class C>
-  class CObjCaster : public ObjCaster
+  class cobj_caster : public obj_caster
   {
   public:
-    virtual unsigned int getSizeof() const
+    virtual unsigned int get_sizeof() const
     {
       return sizeof(C);
     }
 
-    virtual bool isMyType(const nub::object* obj) const
+    virtual bool is_my_type(const nub::object* obj) const
     {
       return (obj != 0 && dynamic_cast<const C*>(obj) != 0);
     }
   };
 
-  void defGenericObjCmds(Pkg* pkg, rutz::shared_ptr<ObjCaster> caster,
-                         const rutz::file_pos& src_pos);
+  void def_basic_type_cmds(pkg* pkg, rutz::shared_ptr<obj_caster> caster,
+                           const rutz::file_pos& src_pos);
 
   template <class C>
-  void defGenericObjCmds(Pkg* pkg, const rutz::file_pos& src_pos)
+  void def_basic_type_cmds(pkg* pkg, const rutz::file_pos& src_pos)
   {
-    rutz::shared_ptr<ObjCaster> caster(new CObjCaster<C>);
-    defGenericObjCmds(pkg, caster, src_pos);
+    rutz::shared_ptr<obj_caster> caster(new cobj_caster<C>);
+    def_basic_type_cmds(pkg, caster, src_pos);
   }
 
   template <class C>
-  void defCreator(Pkg*, const char* aliasName = 0)
+  void def_creator(pkg*, const char* alias_name = 0)
   {
     const char* origName =
       nub::obj_factory::instance().register_creator(&C::make);
 
-    if (aliasName != 0)
-      nub::obj_factory::instance().register_alias(origName, aliasName);
+    if (alias_name != 0)
+      nub::obj_factory::instance().register_alias(origName, alias_name);
   }
 }
 

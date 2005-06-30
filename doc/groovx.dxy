@@ -31,9 +31,9 @@ Here are a few starting points into the framework:
 <li>nub::ref and nub::soft_ref
 <li>nub::objectdb
 
-<li>Tcl::Command
-<li>Tcl::Context
-<li>Tcl::Pkg
+<li>tcl::command
+<li>tcl::call_context
+<li>tcl::pkg
 
 <li>Field
 <li>rutz::value

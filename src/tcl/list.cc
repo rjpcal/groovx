@@ -43,47 +43,47 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-Tcl::List::List() :
-  itsList(Tcl_NewListObj(0,0)),
-  itsElements(0),
-  itsLength(0)
+tcl::list::list() :
+  m_list_obj(Tcl_NewListObj(0,0)),
+  m_elements(0),
+  m_length(0)
 {
-GVX_TRACE("Tcl::List::List");
+GVX_TRACE("tcl::list::list");
   split();
 }
 
-Tcl::List::List(const Tcl::Obj& listObj) :
-  itsList(listObj),
-  itsElements(0),
-  itsLength(0)
+tcl::list::list(const tcl::obj& x) :
+  m_list_obj(x),
+  m_elements(0),
+  m_length(0)
 {
-GVX_TRACE("Tcl::List::List");
+GVX_TRACE("tcl::list::list");
   split();
 }
 
-void Tcl::List::split() const
+void tcl::list::split() const
 {
-GVX_TRACE("Tcl::List::split");
+GVX_TRACE("tcl::list::split");
 
   int count;
-  if ( Tcl_ListObjGetElements(0, itsList.obj(), &count, &itsElements)
+  if ( Tcl_ListObjGetElements(0, m_list_obj.get(), &count, &m_elements)
        != TCL_OK)
     {
       throw rutz::error("couldn't split Tcl list", SRC_POS);
     }
 
   GVX_ASSERT(count >= 0);
-  itsLength = static_cast<unsigned int>(count);
+  m_length = static_cast<unsigned int>(count);
 }
 
-void Tcl::List::doAppend(const Tcl::Obj& obj, unsigned int times)
+void tcl::list::do_append(const tcl::obj& obj, unsigned int times)
 {
-GVX_TRACE("Tcl::List::doAppend");
+GVX_TRACE("tcl::list::do_append");
 
-  itsList.ensureUnique();
+  m_list_obj.make_unique();
 
   while (times--)
-    if ( Tcl_ListObjAppendElement(0, itsList.obj(), obj.obj())
+    if ( Tcl_ListObjAppendElement(0, m_list_obj.get(), obj.get())
          != TCL_OK )
       {
         throw rutz::error("couldn't append to Tcl list", SRC_POS);
@@ -92,24 +92,24 @@ GVX_TRACE("Tcl::List::doAppend");
   invalidate();
 }
 
-Tcl_Obj* Tcl::List::at(unsigned int index) const
+Tcl_Obj* tcl::list::at(unsigned int index) const
 {
-GVX_TRACE("Tcl::List::at");
+GVX_TRACE("tcl::list::at");
 
   update();
 
-  if (index >= itsLength)
+  if (index >= m_length)
     throw rutz::error("index was out of range in Tcl list access",
                       SRC_POS);
 
-  dbg_eval(3, index); dbg_eval_nl(3, itsElements[index]);
+  dbg_eval(3, index); dbg_eval_nl(3, m_elements[index]);
 
-  return itsElements[index];
+  return m_elements[index];
 }
 
-unsigned int Tcl::List::getLength(Tcl_Obj* obj)
+unsigned int tcl::list::get_obj_list_length(Tcl_Obj* obj)
 {
-GVX_TRACE("Tcl::List::getLength");
+GVX_TRACE("tcl::list::get_obj_list_length");
 
   int len;
   if ( Tcl_ListObjLength(0, obj, &len) != TCL_OK)

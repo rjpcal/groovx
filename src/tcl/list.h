@@ -37,42 +37,42 @@
 
 #include "rutz/sharedptr.h"
 
-namespace Tcl
+namespace tcl
 {
-  class List;
+  class list;
 }
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Tcl::List class definition
+ * tcl::list class definition
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::List
+class tcl::list
 {
 public:
   /// Default constructor makes an empty list
-  List();
+  list();
 
-  List(const Tcl::Obj& listObj);
+  list(const tcl::obj& x);
 
-  List(const List& other) :
-    itsList(other.itsList),
-    itsElements(other.itsElements),
-    itsLength(other.itsLength)
+  list(const list& other) :
+    m_list_obj(other.m_list_obj),
+    m_elements(other.m_elements),
+    m_length(other.m_length)
   {}
 
-  List& operator=(const List& other)
+  list& operator=(const list& other)
   {
-    itsList = other.itsList;
-    itsElements = other.itsElements;
-    itsLength = other.itsLength;
+    m_list_obj = other.m_list_obj;
+    m_elements = other.m_elements;
+    m_length = other.m_length;
     return *this;
   }
 
-  Tcl::Obj asObj() const { return itsList; }
+  tcl::obj as_obj() const { return m_list_obj; }
 
   /// Checked access to element at \a index.
   Tcl_Obj* at(unsigned int index) const;
@@ -80,31 +80,31 @@ public:
   /// Unchecked access to element at \a index.
   Tcl_Obj* operator[](unsigned int index) const
     {
-      update(); return itsElements[index];
+      update(); return m_elements[index];
     }
 
   Tcl_Obj* const* elements() const
     {
-      update(); return itsElements;
+      update(); return m_elements;
     }
 
   template <class T>
   inline T get(unsigned int index, T* /*dummy*/=0) const;
 
-  unsigned int size() const { update(); return itsLength; }
-  unsigned int length() const { update(); return itsLength; }
+  unsigned int size() const { update(); return m_length; }
+  unsigned int length() const { update(); return m_length; }
 
   template <class T>
-  void append(T t) { doAppend(Tcl::toTcl(t), 1); }
+  void append(T t) { do_append(tcl::convert_from(t), 1); }
 
   template <class T>
   void append(T t, unsigned int times)
     {
-      doAppend(Tcl::toTcl(t), times);
+      do_append(tcl::convert_from(t), times);
     }
 
   template <class Itr>
-  void appendRange(Itr itr, Itr end)
+  void append_range(Itr itr, Itr end)
     {
       while (itr != end)
         {
@@ -113,122 +113,122 @@ public:
         }
     }
 
-  class IteratorBase;
-  template <class T> class Iterator;
+  class iterator_base;
+  template <class T> class iterator;
 
   template <class T>
-  Iterator<T> begin(T* /*dummy*/=0);
+  iterator<T> begin(T* /*dummy*/=0);
 
   template <class T>
-  Iterator<T> end(T* /*dummy*/=0);
+  iterator<T> end(T* /*dummy*/=0);
 
-  /// A back-insert iterator for Tcl::List.
-  class Appender
+  /// A back-insert iterator for tcl::list.
+  class appender
   {
-    Tcl::List& itsList;
+    tcl::list& m_list_obj;
   public:
-    Appender(Tcl::List& aList) : itsList(aList) {}
+    appender(tcl::list& x) : m_list_obj(x) {}
 
     template <class T>
-    Appender& operator=(const T& val)
-    { itsList.append(val); return *this; }
+    appender& operator=(const T& val)
+    { m_list_obj.append(val); return *this; }
 
-    Appender& operator*() { return *this; }
-    Appender& operator++() { return *this; }
-    Appender operator++(int) { return *this; }
+    appender& operator*() { return *this; }
+    appender& operator++() { return *this; }
+    appender operator++(int) { return *this; }
   };
 
-  Appender appender() { return Appender(*this); }
+  appender back_appender() { return appender(*this); }
 
   /// Utility function to return the list length of a Tcl object
-  static unsigned int getLength(Tcl_Obj* obj);
+  static unsigned int get_obj_list_length(Tcl_Obj* obj);
 
 private:
-  void doAppend(const Tcl::Obj& obj, unsigned int times);
+  void do_append(const tcl::obj& obj, unsigned int times);
 
   void update() const
     {
-      if (itsElements==0)
+      if (m_elements==0)
         split();
     }
 
   void split() const;
 
-  void invalidate() { itsElements = 0; itsLength = 0; }
+  void invalidate() { m_elements = 0; m_length = 0; }
 
-  mutable Tcl::Obj itsList;
-  mutable Tcl_Obj** itsElements;
-  mutable unsigned int itsLength;
+  mutable tcl::obj      m_list_obj;
+  mutable Tcl_Obj**     m_elements;
+  mutable unsigned int  m_length;
 };
 
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Tcl::List::IteratorBase class definition
+ * tcl::list::iterator_base class definition
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::List::IteratorBase
+class tcl::list::iterator_base
 {
 protected:
-  // Make protected to prevent people from instantiating IteratorBase directly.
-  ~IteratorBase() {}
+  // Make protected to prevent people from instantiating iterator_base directly.
+  ~iterator_base() {}
 
 public:
   typedef int difference_type;
 
-  enum Pos { BEGIN, END };
+  enum position { BEGIN, END };
 
-  IteratorBase(const List& owner, Pos pos = BEGIN) :
-    itsList(owner),
-    itsIndex(pos == BEGIN ? 0 : owner.length())
+  iterator_base(const list& owner, position start_pos = BEGIN) :
+    m_list_obj(owner),
+    m_index(start_pos == BEGIN ? 0 : owner.length())
   {}
 
-  IteratorBase(Tcl_Obj* listObj, Pos pos = BEGIN) :
-    itsList(listObj),
-    itsIndex(pos == BEGIN ? 0 : itsList.length())
+  iterator_base(Tcl_Obj* x, position start_pos = BEGIN) :
+    m_list_obj(x),
+    m_index(start_pos == BEGIN ? 0 : m_list_obj.length())
   {}
 
   // default copy-constructor, assignment operator OK
 
-  IteratorBase& operator++()
-    { ++itsIndex; return *this; }
+  iterator_base& operator++()
+    { ++m_index; return *this; }
 
-  IteratorBase operator++(int)
-    { IteratorBase temp(*this); ++itsIndex; return temp; }
+  iterator_base operator++(int)
+    { iterator_base temp(*this); ++m_index; return temp; }
 
-  difference_type operator-(const IteratorBase& other) const
+  difference_type operator-(const iterator_base& other) const
     {
-      if (this->itsIndex > other.itsIndex)
-        return int(this->itsIndex - other.itsIndex);
+      if (this->m_index > other.m_index)
+        return int(this->m_index - other.m_index);
       else
-        return -(int(other.itsIndex - this->itsIndex));
+        return -(int(other.m_index - this->m_index));
     }
 
-  bool operator==(const IteratorBase& other) const
-    { return itsIndex == other.itsIndex; }
+  bool operator==(const iterator_base& other) const
+    { return m_index == other.m_index; }
 
-  bool operator!=(const IteratorBase& other) const
+  bool operator!=(const iterator_base& other) const
     { return !operator==(other); }
 
   bool is_valid() const
-    { return itsIndex < itsList.length(); }
+    { return m_index < m_list_obj.length(); }
 
-  bool hasMore() const
-    { return itsIndex < (itsList.length()-1); }
+  bool has_more() const
+    { return m_index < (m_list_obj.length()-1); }
 
   bool nelems() const
-    { return itsList.length(); }
+    { return m_list_obj.length(); }
 
 protected:
   Tcl_Obj* current() const
-    { return itsList.at(itsIndex); }
+    { return m_list_obj.at(m_index); }
 
 private:
-  List itsList;
-  unsigned int itsIndex;
+  list m_list_obj;
+  unsigned int m_index;
 
 };
 
@@ -236,33 +236,33 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Tcl::List::Iterator is an adapter that provides an STL-style
- * iterator interface to Tcl list objects. \c Tcl::List::Iterator is a
+ * \c tcl::list::iterator is an adapter that provides an STL-style
+ * iterator interface to Tcl list objects. \c tcl::list::iterator is a
  * model of \c input \c iterator.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class Tcl::List::Iterator : public Tcl::List::IteratorBase
+class tcl::list::iterator : public tcl::list::iterator_base
 {
   // Keep a copy of the current value here so that operator*() can
   // return a reference rather than by value.
-  mutable rutz::shared_ptr<const T> itsCurrent;
+  mutable rutz::shared_ptr<const T> m_current;
 
 public:
-  Iterator(const List& owner, Pos pos = BEGIN) :
-    IteratorBase(owner, pos), itsCurrent() {}
+  iterator(const list& owner, position start_pos = BEGIN) :
+    iterator_base(owner, start_pos), m_current() {}
 
-  Iterator(Tcl_Obj* listObj, Pos pos = BEGIN) :
-    IteratorBase(listObj, pos), itsCurrent() {}
+  iterator(Tcl_Obj* x, position start_pos = BEGIN) :
+    iterator_base(x, start_pos), m_current() {}
 
   typedef T value_type;
 
   const T& operator*() const
   {
-    itsCurrent.reset(new T(Tcl::fromTcl<T>(current())));
-    return *itsCurrent;
+    m_current.reset(new T(tcl::convert_to<T>(current())));
+    return *m_current;
   }
 };
 
@@ -276,21 +276,21 @@ public:
 #include "tcl/conversions.h"
 
 template <class T>
-inline T Tcl::List::get(unsigned int index, T* /*dummy*/) const
+inline T tcl::list::get(unsigned int index, T* /*dummy*/) const
 {
-  return Tcl::fromTcl<T>(at(index));
+  return tcl::convert_to<T>(at(index));
 }
 
 template <class T>
-inline Tcl::List::Iterator<T> Tcl::List::begin(T* /*dummy*/)
+inline tcl::list::iterator<T> tcl::list::begin(T* /*dummy*/)
 {
-  return Iterator<T>(*this, IteratorBase::BEGIN);
+  return iterator<T>(*this, iterator_base::BEGIN);
 }
 
 template <class T>
-inline Tcl::List::Iterator<T> Tcl::List::end(T* /*dummy*/)
+inline tcl::list::iterator<T> tcl::list::end(T* /*dummy*/)
 {
-  return Iterator<T>(*this, IteratorBase::END);
+  return iterator<T>(*this, iterator_base::END);
 }
 
 static const char vcid_groovx_tcl_list_h_utc20050628162420[] = "$Id$ $HeadURL$";

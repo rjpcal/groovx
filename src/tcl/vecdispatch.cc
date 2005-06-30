@@ -47,124 +47,123 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-namespace Tcl
+namespace tcl
 {
-  class VecContext;
+  class vec_context;
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::VecContext implements the Context interface in such a way as
-// to treat each of the arguments as lists, and provide access to
-// slices across those lists, thus allowing "vectorized" command
-// invocations.
+// tcl::vec_context implements the tcl::call_context interface in such
+// a way as to treat each of the arguments as lists, and provide
+// access to slices across those lists, thus allowing "vectorized"
+// command invocations.
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::VecContext : public Tcl::Context
+class tcl::vec_context : public tcl::call_context
 {
 public:
-  VecContext(Tcl::Interp& interp, unsigned int objc,
-             Tcl_Obj* const objv[],
-             unsigned int num_calls) :
-    Context(interp, objc, objv),
-    itsArg0(objv[0]),
-    itsArgs(),
-    itsNumCalls(num_calls),
-    itsResult()
+  vec_context(tcl::interpreter& interp, unsigned int objc,
+              Tcl_Obj* const objv[]) :
+    call_context(interp, objc, objv),
+    m_arg0(objv[0]),
+    m_args(),
+    m_result()
   {
     for (unsigned int i = 1; i < objc; ++i)
       {
-        Tcl::List arg(objv[i]);
+        tcl::list arg(objv[i]);
         if (arg.length() == 0)
           {
             throw rutz::error("argument was empty", SRC_POS);
           }
-        itsArgs.push_back( arg.begin<Tcl_Obj*>() );
+        m_args.push_back( arg.begin<Tcl_Obj*>() );
       }
   }
 
-  virtual ~VecContext() throw() {}
+  virtual ~vec_context() throw() {}
 
-  void flushResult()
+  void flush_result()
   {
-    Tcl::Context::setObjResult(itsResult.asObj());
+    tcl::call_context::set_obj_result(m_result.as_obj());
   }
 
   void next()
   {
-    for (unsigned int i = 0; i < itsArgs.size(); ++i)
+    for (unsigned int i = 0; i < m_args.size(); ++i)
       {
-        if (itsArgs[i].hasMore())
-          ++(itsArgs[i]);
+        if (m_args[i].has_more())
+          ++(m_args[i]);
       }
   }
 
 protected:
-  virtual Tcl_Obj* getObjv(unsigned int argn) throw()
+  virtual Tcl_Obj* get_objv(unsigned int argn) throw()
   {
-    if (argn == 0) return itsArg0;
+    if (argn == 0) return m_arg0;
 
-    return *(itsArgs.at(argn-1));
+    return *(m_args.at(argn-1));
   }
 
-  virtual void setObjResult(const Tcl::Obj& obj)
+  virtual void set_obj_result(const tcl::obj& obj)
   {
-    itsResult.append(obj);
+    m_result.append(obj);
   }
 
 private:
-  typedef Tcl::List::Iterator<Tcl_Obj*> Iter;
+  typedef tcl::list::iterator<Tcl_Obj*> Iter;
 
-  Tcl_Obj* itsArg0;
-  std::vector<Iter> itsArgs;
-  unsigned int const itsNumCalls;
-  Tcl::List itsResult;
+  Tcl_Obj* m_arg0;
+  std::vector<Iter> m_args;
+  tcl::list m_result;
 };
 
-namespace Tcl
+namespace tcl
 {
-  class VecDispatcher;
+  class vec_dispatcher;
 }
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Tcl::VecDispatcher reimplements dispatch() to use a specialized
- * \c Context class that treats each of the arguments as lists, and
- * provide access to slices across those lists, thus allowing
- * "vectorized" command invocations.
+ * \c tcl::vec_dispatcher reimplements dispatch() to use a specialized
+ * \c tcl::call_context class that treats each of the arguments as
+ * lists, and provide access to slices across those lists, thus
+ * allowing "vectorized" command invocations.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::VecDispatcher : public Tcl::Dispatcher
+class tcl::vec_dispatcher : public tcl::arg_dispatcher
 {
 public:
-  VecDispatcher(unsigned int key_argn) : itsKeyArgn(key_argn) {}
+  vec_dispatcher(unsigned int key_argn) : m_key_argn(key_argn) {}
 
-  virtual ~VecDispatcher() throw() {}
+  virtual ~vec_dispatcher() throw() {}
 
-  virtual void dispatch(Tcl::Interp& interp,
+  virtual void dispatch(tcl::interpreter& interp,
                         unsigned int objc, Tcl_Obj* const objv[],
-                        Tcl::Callback& callback);
+                        tcl::function& callback);
 
 private:
-  unsigned int itsKeyArgn;
+  unsigned int m_key_argn;
 };
 
 
-void Tcl::VecDispatcher::dispatch(Tcl::Interp& interp,
-                                  unsigned int objc, Tcl_Obj* const objv[],
-                                  Tcl::Callback& callback)
+void tcl::vec_dispatcher::dispatch(tcl::interpreter& interp,
+                                   unsigned int objc,
+                                   Tcl_Obj* const objv[],
+                                   tcl::function& callback)
 {
-GVX_TRACE("Tcl::VecDispatcher::dispatch");
+GVX_TRACE("tcl::vec_dispatcher::dispatch");
 
-  unsigned int ncalls = Tcl::List::getLength(objv[itsKeyArgn]);
+  const unsigned int ncalls
+    = tcl::list::get_obj_list_length(objv[m_key_argn]);
 
   if (ncalls > 1)
     {
-      VecContext cx(interp, objc, objv, ncalls);
+      vec_context cx(interp, objc, objv);
 
       for (unsigned int c = 0; c < ncalls; ++c)
         {
@@ -172,11 +171,11 @@ GVX_TRACE("Tcl::VecDispatcher::dispatch");
           cx.next();
         }
 
-      cx.flushResult();
+      cx.flush_result();
     }
   else if (ncalls == 1)
     {
-      Context cx(interp, objc, objv);
+      tcl::call_context cx(interp, objc, objv);
       callback.invoke(cx);
     }
   else // (ncalls == 0)
@@ -186,9 +185,9 @@ GVX_TRACE("Tcl::VecDispatcher::dispatch");
 }
 
 
-void Tcl::useVecDispatch(Tcl::Command& cmd, unsigned int key_argn)
+void tcl::use_vec_dispatch(tcl::command& cmd, unsigned int key_argn)
 {
-  cmd.setDispatcher(rutz::make_shared(new VecDispatcher(key_argn)));
+  cmd.set_dispatcher(rutz::make_shared(new vec_dispatcher(key_argn)));
 }
 
 static const char vcid_groovx_tcl_vecdispatch_cc_utc20050628162420[] = "$Id$ $HeadURL$";

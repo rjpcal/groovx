@@ -37,25 +37,25 @@
 
 #include "tcl/list.h"
 
-namespace Tcl
+namespace tcl
 {
   template <class T>
-  inline rutz::fwd_iter<T> fromTclImpl(Tcl_Obj* obj, rutz::fwd_iter<T>*)
+  inline rutz::fwd_iter<T> aux_convert_to(Tcl_Obj* obj, rutz::fwd_iter<T>*)
   {
-    Tcl::List l(obj);
+    tcl::list l(obj);
     return rutz::fwd_iter<T>(l.template begin<T>(), l.template end<T>());
   }
 
   template <class T>
-  inline Tcl::Obj toTclImpl( rutz::fwd_iter<T> iter )
+  inline tcl::obj aux_convert_from( rutz::fwd_iter<T> iter )
   {
-    Tcl::List result;
+    tcl::list result;
     while ( !iter.at_end() )
       {
         result.append(*iter);
         iter.next();
       }
-    return result.asObj();
+    return result.as_obj();
   }
 }
 

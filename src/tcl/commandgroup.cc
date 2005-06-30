@@ -55,104 +55,105 @@ using rutz::fstring;
 
 namespace
 {
-  fstring getFullCommandName(Tcl::Interp& interp, Tcl_Command token)
+  fstring get_full_command_name(tcl::interpreter& interp,
+                                Tcl_Command token)
   {
-    Tcl::Obj result;
+    tcl::obj result;
     // Note, this Tcl API call requires Tcl 8.4.6 or greater (or 8.5
     // or greater)
-    Tcl_GetCommandFullName(interp.intp(), token, result.obj());
+    Tcl_GetCommandFullName(interp.intp(), token, result.get());
     return fstring(result.as<const char*>());
   }
 
-  void appendUsage(fstring& dest, const fstring& usage)
+  void append_usage(fstring& dest, const fstring& usage)
   {
     if (!usage.is_empty())
       dest.append(" ", usage);
   }
 }
 
-class Tcl::CommandGroup::Impl
+class tcl::command_group::impl
 {
 public:
-  Impl(Tcl::Interp& intp, const fstring& cmd_name,
+  impl(tcl::interpreter& intp, const fstring& cmd_name,
        const rutz::file_pos& src_pos)
     :
     interp(intp),
-    cmdToken(Tcl_CreateObjCommand(interp.intp(),
-                                  cmd_name.c_str(),
-                                  // see comment in CommandGroup's
-                                  // constructor for why we pass zeros
-                                  // here
-                                  static_cast<Tcl_ObjCmdProc*>(0),
-                                  static_cast<ClientData>(0),
-                                  static_cast<Tcl_CmdDeleteProc*>(0))),
-    initialCmdName(getFullCommandName(intp, cmdToken)),
-    cmdList(),
-    profName("tcl/", cmd_name),
-    prof(profName.c_str(), src_pos.m_file_name, src_pos.m_line_no)
+    cmd_token(Tcl_CreateObjCommand(interp.intp(),
+                                   cmd_name.c_str(),
+                                   // see comment in command_group's
+                                   // constructor for why we pass
+                                   // zeros here
+                                   static_cast<Tcl_ObjCmdProc*>(0),
+                                   static_cast<ClientData>(0),
+                                   static_cast<Tcl_CmdDeleteProc*>(0))),
+    initial_cmd_name(get_full_command_name(intp, cmd_token)),
+    cmd_list(),
+    prof_name("tcl/", cmd_name),
+    prof(prof_name.c_str(), src_pos.m_file_name, src_pos.m_line_no)
   {}
 
-  ~Impl() throw() {}
+  ~impl() throw() {}
 
-  typedef std::list<rutz::shared_ptr<Tcl::Command> > List;
+  typedef std::list<rutz::shared_ptr<tcl::command> > cmd_list_type;
 
-  Tcl::Interp       interp;
-  const Tcl_Command cmdToken;
-  const fstring     initialCmdName;
-  List              cmdList;
-  const fstring     profName;
-  rutz::prof        prof;
+  tcl::interpreter       interp;
+  Tcl_Command      const cmd_token;
+  fstring          const initial_cmd_name;
+  cmd_list_type          cmd_list;
+  fstring          const prof_name;
+  rutz::prof             prof;
 
-  fstring usageWarning(const fstring& argv0) const;
+  fstring usage_warning(const fstring& argv0) const;
 
-  static int cInvokeCallback(ClientData clientData,
-                             Tcl_Interp* interp,
-                             int s_objc,
-                             Tcl_Obj *const objv[]) throw();
+  static int c_invoke_callback(void* clientdata,
+                               Tcl_Interp* interp,
+                               int s_objc,
+                               Tcl_Obj *const objv[]) throw();
 
-  static void cDeleteCallback(ClientData clientData) throw();
+  static void c_delete_callback(void* clientdata) throw();
 
-  static void cExitCallback(ClientData clientData) throw();
+  static void c_exit_callback(void* clientdata) throw();
 
-  static Tcl::CommandGroup* lookupHelper(Tcl::Interp& interp,
-                                         const char* name) throw();
+  static tcl::command_group* lookup_helper(tcl::interpreter& interp,
+                                           const char* name) throw();
 
 private:
-  Impl(const Impl&);
-  Impl& operator=(const Impl&);
+  impl(const impl&);
+  impl& operator=(const impl&);
 };
 
-fstring Tcl::CommandGroup::Impl::usageWarning(
+fstring tcl::command_group::impl::usage_warning(
                                       const fstring& argv0) const
 {
-GVX_TRACE("Tcl::CommandGroup::usageWarning");
+GVX_TRACE("tcl::command_group::usage_warning");
   fstring warning("wrong # args: should be ");
 
-  if (cmdList.size() == 1)
+  if (cmd_list.size() == 1)
     {
       warning.append("\"", argv0);
-      appendUsage(warning, cmdList.front()->usageString());
+      append_usage(warning, cmd_list.front()->usage_string());
       warning.append("\"");
     }
   else
     {
       warning.append("one of:");
-      for (Impl::List::const_iterator
-             itr = cmdList.begin(),
-             end = cmdList.end();
+      for (impl::cmd_list_type::const_iterator
+             itr = cmd_list.begin(),
+             end = cmd_list.end();
            itr != end;
            ++itr)
         {
           warning.append("\n\t\"", argv0);
-          appendUsage(warning, (*itr)->usageString());
+          append_usage(warning, (*itr)->usage_string());
           warning.append("\"");
         }
     }
 
   warning.append("\n(");
 
-  if (argv0 != initialCmdName)
-    warning.append("resolves to ", initialCmdName, ", ");
+  if (argv0 != initial_cmd_name)
+    warning.append("resolves to ", initial_cmd_name, ", ");
 
   warning.append("defined at ",
                  prof.src_file_name(), ":",
@@ -165,13 +166,13 @@ GVX_TRACE("Tcl::CommandGroup::usageWarning");
 #include <execinfo.h>
 #endif
 
-int Tcl::CommandGroup::Impl::cInvokeCallback(
-    ClientData clientData,
+int tcl::command_group::impl::c_invoke_callback(
+    void* clientdata,
     Tcl_Interp* interp,
     int s_objc,
     Tcl_Obj *const objv[]) throw()
 {
-  CommandGroup* c = static_cast<CommandGroup*>(clientData);
+  command_group* c = static_cast<command_group*>(clientdata);
 
   GVX_ASSERT(c != 0);
   GVX_ASSERT(interp == c->rep->interp.intp());
@@ -193,42 +194,42 @@ int Tcl::CommandGroup::Impl::cInvokeCallback(
   free(names);
 #endif
 
-  return c->rawInvoke(s_objc, objv);
+  return c->invoke_raw(s_objc, objv);
 }
 
-void Tcl::CommandGroup::Impl::cDeleteCallback(
-    ClientData clientData) throw()
+void tcl::command_group::impl::c_delete_callback(
+    void* clientdata) throw()
 {
-GVX_TRACE("Tcl::CommandGroup::Impl::cDeleteCallback");
-  CommandGroup* c = static_cast<CommandGroup*>(clientData);
+GVX_TRACE("tcl::command_group::impl::c_delete_callback");
+  command_group* c = static_cast<command_group*>(clientdata);
   GVX_ASSERT(c != 0);
   delete c;
 }
 
-void Tcl::CommandGroup::Impl::cExitCallback(
-    ClientData clientData) throw()
+void tcl::command_group::impl::c_exit_callback(
+    void* clientdata) throw()
 {
-GVX_TRACE("Tcl::CommandGroup::cExitCallback");
-  CommandGroup* c = static_cast<CommandGroup*>(clientData);
+GVX_TRACE("tcl::command_group::c_exit_callback");
+  command_group* c = static_cast<command_group*>(clientdata);
   GVX_ASSERT(c != 0);
-  Tcl_DeleteCommandFromToken(c->rep->interp.intp(), c->rep->cmdToken);
+  Tcl_DeleteCommandFromToken(c->rep->interp.intp(), c->rep->cmd_token);
 }
 
-Tcl::CommandGroup* Tcl::CommandGroup::Impl::lookupHelper(
-    Tcl::Interp& interp,
+tcl::command_group* tcl::command_group::impl::lookup_helper(
+    tcl::interpreter& interp,
     const char* name) throw()
 {
-GVX_TRACE("Tcl::CommandGroup::Impl::lookupHelper");
+GVX_TRACE("tcl::command_group::impl::lookup_helper");
 
   /*
     typedef struct Tcl_CmdInfo {
     int isNativeObjectProc;
     Tcl_ObjCmdProc *objProc;
-    ClientData objClientData;
+    void* objClientData;
     Tcl_CmdProc *proc;
-    ClientData clientData;
+    void* clientdata;
     Tcl_CmdDeleteProc *deleteProc;
-    ClientData deleteData;
+    void* deleteData;
     Tcl_Namespace *namespacePtr;
     } Tcl_CmdInfo;
   */
@@ -237,50 +238,50 @@ GVX_TRACE("Tcl::CommandGroup::Impl::lookupHelper");
 
   if (result == 1 &&
       info.isNativeObjectProc == 1 &&
-      info.objProc == &Impl::cInvokeCallback &&
-      info.deleteProc == &Impl::cDeleteCallback)
+      info.objProc == &impl::c_invoke_callback &&
+      info.deleteProc == &impl::c_delete_callback)
     {
-      return static_cast<CommandGroup*>(info.objClientData);
+      return static_cast<command_group*>(info.objClientData);
     }
   return 0;
 }
 
-Tcl::CommandGroup::CommandGroup(Tcl::Interp& interp,
+tcl::command_group::command_group(tcl::interpreter& interp,
                                 const fstring& cmd_name,
                                 const rutz::file_pos& src_pos)
   :
-  rep(new Impl(interp, cmd_name, src_pos))
+  rep(new impl(interp, cmd_name, src_pos))
 {
-GVX_TRACE("Tcl::CommandGroup::CommandGroup");
+GVX_TRACE("tcl::command_group::command_group");
 
   // Register the command procedure. We do a two-step
-  // initialization. When we call Tcl_CreateObjCommand in Impl's
-  // constructor, we don't fill in the clientData/objProc/deleteProc
+  // initialization. When we call Tcl_CreateObjCommand in impl's
+  // constructor, we don't fill in the clientdata/objProc/deleteProc
   // values there, but instead wait to fill them in here. The reason
   // is that we don't want to set up any callbacks from Tcl until
   // after we're sure that everything else in the construction
   // sequence has succeeded. We want to ensure that we don't have
   // "dangling callbacks" in case an exception escapes from an earlier
-  // part of Impl's or CommandGroups's constructor.
+  // part of impl's or CommandGroups's constructor.
   Tcl_CmdInfo info;
-  const int result = Tcl_GetCommandInfoFromToken(rep->cmdToken, &info);
+  const int result = Tcl_GetCommandInfoFromToken(rep->cmd_token, &info);
   GVX_ASSERT(result == 1);
   GVX_ASSERT(info.isNativeObjectProc == 1);
-  info.objClientData = static_cast<ClientData>(this);
-  info.objProc = &Impl::cInvokeCallback;
-  info.deleteData = static_cast<ClientData>(this);
-  info.deleteProc = &Impl::cDeleteCallback;
-  Tcl_SetCommandInfoFromToken(rep->cmdToken, &info);
+  info.objClientData = static_cast<void*>(this);
+  info.objProc = &impl::c_invoke_callback;
+  info.deleteData = static_cast<void*>(this);
+  info.deleteProc = &impl::c_delete_callback;
+  Tcl_SetCommandInfoFromToken(rep->cmd_token, &info);
 
-  Tcl_CreateExitHandler(&Impl::cExitCallback,
-                        static_cast<ClientData>(this));
+  Tcl_CreateExitHandler(&impl::c_exit_callback,
+                        static_cast<void*>(this));
 }
 
 // A destruction sequence can get triggered in a number of ways:
 /*
-   (1) application exit might trigger the cExitCallback
+   (1) application exit might trigger the c_exit_callback
 
-   (2) the cDeleteCallback might get triggered either by explicit
+   (2) the c_delete_callback might get triggered either by explicit
        deletion by the user (e.g. [rename]ing the command to the empty
        string "")
 
@@ -288,85 +289,85 @@ GVX_TRACE("Tcl::CommandGroup::CommandGroup");
 
    (1) it is always "safe" to destroy the Tcl_Command, in the sense
        that it can't cause any crashes... in particular, it's OK to
-       destroy the Tcl_Command even if rep->cmdList is not empty; that
-       would just mean that the remaining Tcl::Command objects in
-       rep->cmdList won't have any input sent their way
+       destroy the Tcl_Command even if rep->cmd_list is not empty; that
+       would just mean that the remaining tcl::command objects in
+       rep->cmd_list won't have any input sent their way
  */
-Tcl::CommandGroup::~CommandGroup() throw()
+tcl::command_group::~command_group() throw()
 {
-GVX_TRACE("Tcl::CommandGroup::~CommandGroup");
+GVX_TRACE("tcl::command_group::~command_group");
 
-  Tcl_DeleteExitHandler(&Impl::cExitCallback,
-                        static_cast<ClientData>(this));
+  Tcl_DeleteExitHandler(&impl::c_exit_callback,
+                        static_cast<void*>(this));
 
   delete rep;
 }
 
-Tcl::CommandGroup* Tcl::CommandGroup::lookup(Tcl::Interp& interp,
+tcl::command_group* tcl::command_group::lookup(tcl::interpreter& interp,
                                              const char* name) throw()
 {
-GVX_TRACE("Tcl::CommandGroup::lookup");
+GVX_TRACE("tcl::command_group::lookup");
 
-  return Impl::lookupHelper(interp, name);
+  return impl::lookup_helper(interp, name);
 }
 
-Tcl::CommandGroup* Tcl::CommandGroup::lookupOriginal(
-                                            Tcl::Interp& interp,
+tcl::command_group* tcl::command_group::lookup_original(
+                                            tcl::interpreter& interp,
                                             const char* name) throw()
 {
-GVX_TRACE("Tcl::CommandGroup::lookupOriginal");
+GVX_TRACE("tcl::command_group::lookup_original");
 
   const fstring script("namespace origin ", name);
-  if (interp.eval(script, Tcl::IGNORE_ERROR) == false)
+  if (interp.eval(script, tcl::IGNORE_ERROR) == false)
     {
       return 0;
     }
 
   // else...
-  const fstring original = interp.getResult<fstring>();
-  return Impl::lookupHelper(interp, original.c_str());
+  const fstring original = interp.get_result<fstring>();
+  return impl::lookup_helper(interp, original.c_str());
 }
 
-Tcl::CommandGroup* Tcl::CommandGroup::make(
-                                   Tcl::Interp& interp,
+tcl::command_group* tcl::command_group::make(
+                                   tcl::interpreter& interp,
                                    const fstring& cmd_name,
                                    const rutz::file_pos& src_pos)
 {
-GVX_TRACE("Tcl::CommandGroup::make");
-  CommandGroup* const c =
-    Tcl::CommandGroup::lookup(interp, cmd_name.c_str());
+GVX_TRACE("tcl::command_group::make");
+  command_group* const c =
+    tcl::command_group::lookup(interp, cmd_name.c_str());
 
   if (c != 0)
     return c;
 
   // else...
-  return new CommandGroup(interp, cmd_name, src_pos);
+  return new command_group(interp, cmd_name, src_pos);
 }
 
-void Tcl::CommandGroup::add(rutz::shared_ptr<Tcl::Command> p)
+void tcl::command_group::add(rutz::shared_ptr<tcl::command> p)
 {
-GVX_TRACE("Tcl::CommandGroup::add");
-  rep->cmdList.push_back(p);
+GVX_TRACE("tcl::command_group::add");
+  rep->cmd_list.push_back(p);
 }
 
-fstring Tcl::CommandGroup::cmdName() const
+fstring tcl::command_group::resolved_name() const
 {
-  return getFullCommandName(rep->interp, rep->cmdToken);
+  return get_full_command_name(rep->interp, rep->cmd_token);
 }
 
-fstring Tcl::CommandGroup::usage() const
+fstring tcl::command_group::usage() const
 {
-GVX_TRACE("Tcl::CommandGroup::usage");
+GVX_TRACE("tcl::command_group::usage");
   fstring result;
 
-  Impl::List::const_iterator
-    itr = rep->cmdList.begin(),
-    end = rep->cmdList.end();
+  impl::cmd_list_type::const_iterator
+    itr = rep->cmd_list.begin(),
+    end = rep->cmd_list.end();
 
   while (true)
     {
-      result.append("\t", cmdName());
-      appendUsage(result, (*itr)->usageString());
+      result.append("\t", resolved_name());
+      append_usage(result, (*itr)->usage_string());
       result.append("\n");
       if (++itr == end)
         break;
@@ -379,13 +380,13 @@ GVX_TRACE("Tcl::CommandGroup::usage");
   return result;
 }
 
-int Tcl::CommandGroup::rawInvoke(int s_objc,
-                                 Tcl_Obj *const objv[]) throw()
+int tcl::command_group::invoke_raw(int s_objc,
+                                   Tcl_Obj *const objv[]) throw()
 {
-GVX_TRACE("Tcl::CommandGroup::rawInvoke");
+GVX_TRACE("tcl::command_group::invoke_raw");
 
   // This is to use the separate rutz::prof object that each
-  // CommandGroup has. This way we can trace the timing of individual
+  // command_group has. This way we can trace the timing of individual
   // Tcl commands.
   rutz::trace tracer(rep->prof, GVX_DYNAMIC_TRACE_EXPR);
 
@@ -409,13 +410,13 @@ GVX_TRACE("Tcl::CommandGroup::rawInvoke");
   // catch all possible exceptions since this is a callback from C
   try
     {
-      for (Impl::List::const_iterator
-             itr = rep->cmdList.begin(),
-             end = rep->cmdList.end();
+      for (impl::cmd_list_type::const_iterator
+             itr = rep->cmd_list.begin(),
+             end = rep->cmd_list.end();
            itr != end;
            ++itr)
         {
-          if ((*itr)->rejectsObjc(objc))
+          if ((*itr)->rejects_argc(objc))
             continue;
 
           // Found a matching overload, so try it:
@@ -423,7 +424,7 @@ GVX_TRACE("Tcl::CommandGroup::rawInvoke");
 
           if (GVX_DBG_LEVEL() > 1)
             {
-              const char* result = rep->interp.getResult<const char*>();
+              const char* result = rep->interp.get_result<const char*>();
               dbg_eval_nl(1, result);
             }
           return TCL_OK;
@@ -432,13 +433,13 @@ GVX_TRACE("Tcl::CommandGroup::rawInvoke");
       const fstring argv0(Tcl_GetString(objv[0]));
 
       // Here, we run out of potential overloads, so abort the command.
-      rep->interp.resetResult();
-      rep->interp.appendResult(rep->usageWarning(argv0).c_str());
+      rep->interp.reset_result();
+      rep->interp.append_result(rep->usage_warning(argv0).c_str());
       return TCL_ERROR;
     }
   catch (...)
     {
-      rep->interp.handleLiveException(Tcl_GetString(objv[0]), SRC_POS);
+      rep->interp.handle_live_exception(Tcl_GetString(objv[0]), SRC_POS);
     }
 
   return TCL_ERROR;

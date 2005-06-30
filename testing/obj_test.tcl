@@ -13,32 +13,32 @@ proc testClassCmds { bc sc1 sc2 } {
     -> [Toglet::current] setVisible 0
     objectdb::clear
 
-    # class::removeAll
-    ::test "${bc}::removeAll" "too many args" [format {
-	%s::removeAll junk
+    # class::remove_all
+    ::test "${bc}::remove_all" "too many args" [format {
+	%s::remove_all junk
     } $bc] {wrong \# args: should be}
 
-    ::test "${bc}::removeAll" "check number of objects" [format {
+    ::test "${bc}::remove_all" "check number of objects" [format {
 	set bc %s
-	${bc}::removeAll
-	set before_count [${bc}::countAll]
+	${bc}::remove_all
+	set before_count [${bc}::count_all]
 	Obj::new %s
 	Obj::new %s
-	${bc}::removeAll
-	set after_count [${bc}::countAll]
+	${bc}::remove_all
+	set after_count [${bc}::count_all]
 	return [expr $before_count - $after_count]
     } $bc $sc1 $sc2] {^0$}
 
-    # class::countAll
-    ::test ${bc}::countAll "too many args" [format {
-	%s::countAll junk
+    # class::count_all
+    ::test ${bc}::count_all "too many args" [format {
+	%s::count_all junk
     } $bc] {wrong \# args: should be}
 
-    ::test ${bc}::countAll "normal use" [format {
-	set before_count [%s::countAll]
+    ::test ${bc}::count_all "normal use" [format {
+	set before_count [%s::count_all]
 	Obj::new %s
 	Obj::new %s
-	set after_count [%s::countAll]
+	set after_count [%s::count_all]
 	return [expr $after_count - $before_count]
     } $bc $sc1 $sc2 $bc] {^2$}
 
@@ -57,19 +57,19 @@ proc testClassCmds { bc sc1 sc2 } {
 	Obj::is $id
     } $sc1] {^0$}
 
-    # class::findAll
-    ::test ${bc}::findAll "too many args" [format {
-	%s::findAll junk
+    # class::find_all
+    ::test ${bc}::find_all "too many args" [format {
+	%s::find_all junk
     } $bc] {wrong \# args: should be}
 
-    ::test ${bc}::findAll "normal use on filled list" [format {
+    ::test ${bc}::find_all "normal use on filled list" [format {
 	Obj::new %s
 	set remove_me [Obj::new %s]
 	Obj::new %s
 	Obj::delete $remove_me
-	set count [%s::countAll]
-	set num_ids [llength [%s::findAll]]
-	set removed_id [lsearch -exact [%s::findAll] $remove_me]
+	set count [%s::count_all]
+	set num_ids [llength [%s::find_all]]
+	set removed_id [lsearch -exact [%s::find_all] $remove_me]
 	return "[expr $count - $num_ids] $removed_id"
     } $sc1 $sc1 $sc2 $bc $bc $bc] {^0 -1$}
 

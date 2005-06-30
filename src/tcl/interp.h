@@ -47,13 +47,13 @@ namespace rutz
   class fstring;
 }
 
-namespace Tcl
+namespace tcl
 {
-  class Interp;
-  class List;
+  class interpreter;
+  class list;
 
-  /// Different error-handling strategies for Tcl::Interp::eval().
-  enum ErrorStrategy
+  /// Different error-handling strategies for tcl::interpreter::eval().
+  enum error_strategy
     {
       THROW_ERROR,
       IGNORE_ERROR
@@ -62,126 +62,126 @@ namespace Tcl
 
 
 //  ########################################################
-/// Tcl::Interp provides a wrapper around calls to the Tcl interpreter.
+/// tcl::interpreter provides a wrapper around Tcl_Interp calls.
 /** The advantage over using the raw Tcl C API is that certain error
     conditions are handled in a more C++-ish way, by throwing
     exceptions. */
 
-class Tcl::Interp
+class tcl::interpreter
 {
-  Interp& operator=(const Interp&);
+  interpreter& operator=(const interpreter&);
 
 public:
-  Interp(Tcl_Interp* interp);
-  Interp(const Interp& other) throw();
-  ~Interp() throw();
+  interpreter(Tcl_Interp* interp);
+  interpreter(const interpreter& other) throw();
+  ~interpreter() throw();
 
   // Interpreter
-  bool hasInterp() const throw() { return itsInterp != 0; }
+  bool is_valid() const throw() { return m_interp != 0; }
 
   /// Get the interpreter (if valid), otherwise throw an exception.
   Tcl_Interp* intp() const;
 
-  bool interpDeleted() const throw();
-  void forgetInterp() throw();
+  bool is_deleted() const throw();
+  void forget_interp() throw();
   void destroy() throw();
 
   /// Wrapper around Tcl_PkgProvide().
-  void pkgProvide(const char* name, const char* version);
+  void pkg_provide(const char* name, const char* version);
 
   /// Evaluate the given expression, return its result as a bool.
-  bool evalBooleanExpr(const Tcl::Obj& obj) const;
+  bool eval_boolean_expr(const tcl::obj& obj) const;
 
   /// Evaluates code.
   /** If strategy is THROW_ERROR, then an exception is thrown if the
       evaluation produces an error. If strategy is IGNORE_ERROR, then
       a return value of true indicates a successful evaluation, and a
       return value of false indicates an error during evaluation. */
-  bool eval(const char* code, ErrorStrategy strategy = THROW_ERROR);
+  bool eval(const char* code, error_strategy strategy = THROW_ERROR);
 
   /// Evaluates code.
   /** If strategy is THROW_ERROR, then an exception is thrown if the
       evaluation produces an error. If strategy is IGNORE_ERROR, then
       a return value of true indicates a successful evaluation, and a
       return value of false indicates an error during evaluation. */
-  bool eval(const rutz::fstring& code, ErrorStrategy strategy = THROW_ERROR);
+  bool eval(const rutz::fstring& code, error_strategy strategy = THROW_ERROR);
 
   /// Evaluates code.
   /** If strategy is THROW_ERROR, then an exception is thrown if the
       evaluation produces an error. If strategy is IGNORE_ERROR, then
       a return value of true indicates a successful evaluation, and a
       return value of false indicates an error during evaluation. */
-  bool eval(const Tcl::Obj& code, ErrorStrategy strategy = THROW_ERROR);
+  bool eval(const tcl::obj& code, error_strategy strategy = THROW_ERROR);
 
   /// Evaluates code using Tcl_EvalObjv(), exploiting the fact that the object is already a list.
   /** If strategy is THROW_ERROR, then an exception is thrown if the
       evaluation produces an error. If strategy is IGNORE_ERROR, then
       a return value of true indicates a successful evaluation, and a
       return value of false indicates an error during evaluation. */
-  bool evalObjv(const Tcl::List& objv, ErrorStrategy strategy = THROW_ERROR);
+  bool eval_objv(const tcl::list& objv, error_strategy strategy = THROW_ERROR);
 
   /// Evaluate the tcl code in the named file.
   /** Returns true on success, or false on failure. */
-  bool evalFile(const char* fname);
+  bool eval_file(const char* fname);
 
-  void sourceRCFile();
+  void source_rc_file();
 
   // Result
-  void resetResult() const;
-  void appendResult(const char* msg) const;
-  void appendResult(const rutz::fstring& msg) const;
+  void reset_result() const;
+  void append_result(const char* msg) const;
+  void append_result(const rutz::fstring& msg) const;
 
   template <class T>
-  T getResult() const
+  T get_result() const
   {
-    return Tcl::fromTcl<T>(getObjResult());
+    return tcl::convert_to<T>(get_obj_result());
   }
 
   template <class T>
-  void setResult(const T& x)
+  void set_result(const T& x)
   {
-    setObjResult(Tcl::toTcl(x).obj());
+    set_obj_result(tcl::convert_from(x).get());
   }
 
   // Variables
-  void setGlobalVar(const char* var_name, const Tcl::Obj& var) const;
-  void unsetGlobalVar(const char* var_name) const;
+  void set_global_var(const char* var_name, const tcl::obj& var) const;
+  void unset_global_var(const char* var_name) const;
 
   template <class T>
-  T getGlobalVar(const char* name1, const char* name2=0) const
+  T get_global_var(const char* name1, const char* name2=0) const
   {
-    return Tcl::fromTcl<T>(getObjGlobalVar(name1, name2));
+    return tcl::convert_to<T>(get_obj_global_var(name1, name2));
   }
 
-  void linkInt(const char* varName, int* addr, bool readOnly);
-  void linkDouble(const char* varName, double* addr, bool readOnly);
-  void linkBoolean(const char* varName, int* addr, bool readOnly);
+  void link_int(const char* var_name, int* addr, bool read_only);
+  void link_double(const char* var_name, double* addr, bool read_only);
+  void link_boolean(const char* var_name, int* addr, bool read_only);
 
   // Errors
-  void handleLiveException(const char* where,
-                           const rutz::file_pos& pos) throw();
-  void backgroundError() throw();
+  void handle_live_exception(const char* where,
+                             const rutz::file_pos& pos) throw();
+  void background_error() throw();
 
-  void addErrorInfo(const char* info);
+  void add_error_info(const char* info);
 
   // Events
-  static void clearEventQueue();
+  static void clear_event_queue();
 
   // Commands/procedures
-  bool hasCommand(const char* cmd_name) const;
-  void deleteCommand(const char* cmd_name);
+  bool has_command(const char* cmd_name) const;
+  void delete_command(const char* cmd_name);
 
-  rutz::fstring getProcBody(const char* proc_name);
-  void createProc(const char* namesp, const char* proc_name,
-                  const char* args, const char* body);
-  void deleteProc(const char* namesp, const char* proc_name);
+  rutz::fstring get_proc_body(const char* proc_name);
+  void create_proc(const char* namesp, const char* proc_name,
+                   const char* args, const char* body);
+  void delete_proc(const char* namesp, const char* proc_name);
 
 private:
-  Tcl_Obj* getObjResult() const;
-  Tcl_Obj* getObjGlobalVar(const char* name1, const char* name2) const;
-  void setObjResult(Tcl_Obj* obj);
+  Tcl_Obj* get_obj_result() const;
+  Tcl_Obj* get_obj_global_var(const char* name1, const char* name2) const;
+  void set_obj_result(Tcl_Obj* obj);
 
-  Tcl_Interp* itsInterp;
+  Tcl_Interp* m_interp;
 };
 
 static const char vcid_groovx_tcl_interp_h_utc20050628162420[] = "$Id$ $HeadURL$";

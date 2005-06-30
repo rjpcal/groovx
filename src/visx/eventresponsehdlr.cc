@@ -222,10 +222,10 @@ public:
 
   mutable rutz::scoped_ptr<ActiveState> itsState;
 
-  Tcl::Interp itsInterp;
+  tcl::interpreter itsInterp;
 
   fstring itsCallbackName;
-  rutz::shared_ptr<Tcl::Command> itsCmdCallback;
+  rutz::shared_ptr<tcl::command> itsCmdCallback;
 
   FeedbackMap itsFeedbackMap;
 
@@ -234,7 +234,7 @@ public:
 
   bool itsAbortInvalidResponses;
 
-  nub::ref<Tcl::ProcWrapper> itsResponseProc;
+  nub::ref<tcl::ProcWrapper> itsResponseProc;
 
   unsigned int itsMaxResponses;
 };
@@ -257,16 +257,16 @@ rutz::tracer EventResponseHdlr::tracer;
 EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner) :
   itsOwner(owner),
   itsState(0),
-  itsInterp(Tcl::Main::interp()),
+  itsInterp(tcl::event_loop::interp()),
   itsCallbackName(uniqCmdName("handler")),
-  itsCmdCallback(Tcl::makeCmd(itsInterp, &handleResponseCallback,
+  itsCmdCallback(tcl::make_command(itsInterp, &handleResponseCallback,
                               itsCallbackName.c_str(), "<private>",
                               SRC_POS)),
   itsFeedbackMap(),
   itsEventSequence("<KeyPress>"),
   itsBindingSubstitution("%K"),
   itsAbortInvalidResponses(true),
-  itsResponseProc(new Tcl::ProcWrapper(itsInterp, uniqCmdName("responseProc"))),
+  itsResponseProc(new tcl::ProcWrapper(itsInterp, uniqCmdName("responseProc"))),
   itsMaxResponses(1)
 {
 GVX_TRACE("EventResponseHdlr::Impl::Impl");
@@ -424,7 +424,7 @@ void EventResponseHdlr::rhBeginTrial(nub::soft_ref<Toglet> widget,
 {
   GVX_PRECONDITION( rep->isInactive() );
 
-  rep->itsInterp.clearEventQueue();
+  rep->itsInterp.clear_event_queue();
 
   rep->becomeActive(widget, trial);
 

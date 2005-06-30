@@ -39,28 +39,28 @@
 #include <exception>
 #include <tcl.h>
 
-namespace Tcl
+namespace tcl
 {
-  class ScriptApp;
+  class script_app;
 
-  struct PackageInfo
+  struct package_info
   {
-    const char*            pkgName;
-    Tcl_PackageInitProc*   pkgInitProc;
-    const char*            pkgVersion;
-    bool                   requiresGui;
+    const char*            name;
+    Tcl_PackageInitProc*   init_proc;
+    const char*            version;
+    bool                   requires_gui;
   };
 }
 
-class Tcl::ScriptApp
+class tcl::script_app
 {
 public:
-  ScriptApp(const char* appname_, int argc_, char** argv_) throw();
-  ~ScriptApp() throw();
+  script_app(const char* appname_, int argc_, char** argv_) throw();
+  ~script_app() throw();
 
   /// Don't load any packages that require a windowing system.
   /** In particular, don't load Tk. */
-  void noWindow() { nowindow = true; }
+  void no_gui() { m_nowindow = true; }
 
   /// Set a splash message to be shown at the beginning of run().
   /** The message will shown only if the program is being run
@@ -69,60 +69,60 @@ public:
       be replaced with a line of hashes ("#####...etc."); to get an
       empty line with no hashes, just pass a line with some invisible
       whitespace (e.g. " \n"). */
-  void splash(const char* msg) { splashmsg = msg; }
+  void splash(const char* msg) { m_splashmsg = msg; }
 
   /// Specify a directory that should be searched for pkg libraries.
-  void pkgDir(const char* dir) { pkgdir = dir; }
+  void pkg_dir(const char* dir) { m_pkgdir = dir; }
 
-  void packages(const PackageInfo* pkgs_) { pkgs = pkgs_; }
+  void packages(const package_info* pkgs_) { m_pkgs = pkgs_; }
 
   void run();
 
-  int exitStatus() const { return exitcode; }
+  int exit_status() const { return m_exitcode; }
 
   static void init_in_macro_only();
 
   static void handle_exception_in_macro_only(const std::exception* e);
 
 private:
-  ScriptApp(const ScriptApp&);
-  ScriptApp& operator=(const ScriptApp&);
+  script_app(const script_app&);
+  script_app& operator=(const script_app&);
 
-  rutz::fstring       const appname;
-  int                 const argc;
-  char**              const argv;
-  bool                      minimal;
-  bool                      nowindow;
-  rutz::fstring             splashmsg;
-  rutz::fstring             pkgdir;
-  const PackageInfo*        pkgs;
-  int                       exitcode;
+  rutz::fstring       const m_appname;
+  int                 const m_argc;
+  char**              const m_argv;
+  bool                      m_minimal;
+  bool                      m_nowindow;
+  rutz::fstring             m_splashmsg;
+  rutz::fstring             m_pkgdir;
+  const package_info*       m_pkgs;
+  int                       m_exitcode;
 };
 
 /// Call this macro at the beginning of main().
-/** This will define a local variable of type script Tcl::ScriptApp,
+/** This will define a local variable of type script tcl::script_app,
     whose variable name is given by app. */
 #define GVX_SCRIPT_PROG_BEGIN(app, name, argc, argv)    \
   try                                                   \
   {                                                     \
   GVX_TRACE(name);                                      \
                                                         \
-    Tcl::ScriptApp::init_in_macro_only();               \
+    tcl::script_app::init_in_macro_only();              \
                                                         \
-    Tcl::ScriptApp app(name, argc, argv);
+    tcl::script_app app(name, argc, argv);
 
 
 /// Call this macro at the end of main().
 #define GVX_SCRIPT_PROG_END(app)                                \
-    return app.exitStatus();                                    \
+    return app.exit_status();                                   \
   }                                                             \
   catch (std::exception& err)                                   \
     {                                                           \
-      Tcl::ScriptApp::handle_exception_in_macro_only(&err);     \
+      tcl::script_app::handle_exception_in_macro_only(&err);    \
     }                                                           \
   catch (...)                                                   \
     {                                                           \
-      Tcl::ScriptApp::handle_exception_in_macro_only(0);        \
+      tcl::script_app::handle_exception_in_macro_only(0);       \
     }                                                           \
   return -1;
 

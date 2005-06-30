@@ -67,27 +67,27 @@ namespace
   }
 
   soft_ref<object> objNewArgs(const char* type,
-                             Tcl::List init_args,
-                             Tcl::Interp interp)
+                             tcl::list init_args,
+                             tcl::interpreter interp)
   {
     soft_ref<object> obj(nub::obj_mgr::new_obj(type));
 
     for (unsigned int i = 0; i+1 < init_args.length(); i+=2)
       {
-        Tcl::List cmd_str;
+        tcl::list cmd_str;
         cmd_str.append("::->");
         cmd_str.append(obj.id());
         cmd_str.append(init_args[i]);
         cmd_str.append(init_args[i+1]);
-        interp.eval(cmd_str.asObj());
+        interp.eval(cmd_str.as_obj());
       }
 
     return obj;
   }
 
-  Tcl::List objNewArr(const char* type, unsigned int array_size)
+  tcl::list objNewArr(const char* type, unsigned int array_size)
   {
-    Tcl::List result;
+    tcl::list result;
 
     while (array_size-- > 0)
       {
@@ -98,9 +98,9 @@ namespace
     return result;
   }
 
-  void objDelete(Tcl::List objrefs)
+  void objDelete(tcl::list objrefs)
   {
-    Tcl::List::Iterator<nub::uid>
+    tcl::list::iterator<nub::uid>
       itr = objrefs.begin<nub::uid>(),
       stop = objrefs.end<nub::uid>();
     while (itr != stop)
@@ -110,7 +110,7 @@ namespace
       }
   }
 
-  void arrowDispatch(Tcl::Context& ctx)
+  void arrowDispatch(tcl::call_context& ctx)
   {
     /* old implementation was this:
 
@@ -131,18 +131,18 @@ namespace
     if (ctx.objc() < 3)
       throw rutz::error("bad objc", SRC_POS);
 
-    Tcl_Obj* const* origargs = ctx.getRawArgs();
+    Tcl_Obj* const* origargs = ctx.get_raw_args();
 
-    Tcl::List objrefs(origargs[1]);
+    tcl::list objrefs(origargs[1]);
 
     const rutz::fstring namesp =
       objrefs.get<soft_ref<object> >(0)->obj_typename();
 
-    rutz::fstring origcmdname = ctx.getValFromArg<rutz::fstring>(2);
+    rutz::fstring origcmdname = ctx.get_arg<rutz::fstring>(2);
 
     rutz::fstring newcmdname(namesp, "::", origcmdname);
 
-    Tcl::List newargs;
+    tcl::list newargs;
 
     newargs.append(newcmdname);
     newargs.append(objrefs);
@@ -152,9 +152,9 @@ namespace
         newargs.append(origargs[i]);
       }
 
-    // use evalObjv() instead of eval(), so that we don't break any
+    // use eval_objv() instead of eval(), so that we don't break any
     // objects with fragile internal representations:
-    ctx.interp().evalObjv(newargs);
+    ctx.interp().eval_objv(newargs);
   }
 }
 
@@ -165,7 +165,7 @@ GVX_TRACE("Objectdb_Init");
 
   GVX_PKG_CREATE(pkg, interp, "objectdb", "4.$Revision$");
 
-  pkg->onExit( &dbClearOnExit );
+  pkg->on_exit( &dbClearOnExit );
 
   pkg->def( "clear", 0, &dbClear, SRC_POS );
   pkg->def( "purge", 0, &dbPurge, SRC_POS );
@@ -180,30 +180,30 @@ int Obj_Init(Tcl_Interp* interp)
 GVX_TRACE("Obj_Init");
 
   GVX_PKG_CREATE(pkg, interp, "Obj", "4.$Revision$");
-  Tcl::defGenericObjCmds<object>(pkg, SRC_POS);
+  tcl::def_basic_type_cmds<object>(pkg, SRC_POS);
 
-  pkg->defGetter("refCount", &object::dbg_ref_count, SRC_POS);
-  pkg->defGetter("weakRefCount", &object::dbg_weak_ref_count, SRC_POS);
-  pkg->defAction("incr_ref_count", &object::incr_ref_count, SRC_POS);
-  pkg->defAction("decr_ref_count", &object::decr_ref_count, SRC_POS);
+  pkg->def_getter("refCount", &object::dbg_ref_count, SRC_POS);
+  pkg->def_getter("weakRefCount", &object::dbg_weak_ref_count, SRC_POS);
+  pkg->def_action("incr_ref_count", &object::incr_ref_count, SRC_POS);
+  pkg->def_action("decr_ref_count", &object::decr_ref_count, SRC_POS);
 
-  pkg->defGetter( "type", &object::obj_typename, SRC_POS );
-  pkg->defGetter( "realType", &object::real_typename, SRC_POS );
+  pkg->def_getter( "type", &object::obj_typename, SRC_POS );
+  pkg->def_getter( "realType", &object::real_typename, SRC_POS );
 
   pkg->def( "new", "typename", &objNew, SRC_POS );
   pkg->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",
-            rutz::bind_last(&objNewArgs, Tcl::Interp(interp)),
+            rutz::bind_last(&objNewArgs, tcl::interpreter(interp)),
             SRC_POS );
   pkg->def( "newarr", "typename array_size=1", &objNewArr, SRC_POS );
   pkg->def( "delete", "objref(s)", &objDelete, SRC_POS );
 
-  pkg->defRaw( "::->", Tcl::ArgSpec(3).nolimit(),
-               "objref(s) cmdname ?arg1 arg2 ...?",
-               &arrowDispatch, SRC_POS );
+  pkg->def_raw( "::->", tcl::arg_spec(3).nolimit(),
+                "objref(s) cmdname ?arg1 arg2 ...?",
+                &arrowDispatch, SRC_POS );
 
-  pkg->namespaceAlias("::", "new");
-  pkg->namespaceAlias("::", "newarr");
-  pkg->namespaceAlias("::", "delete");
+  pkg->namesp_alias("::", "new");
+  pkg->namesp_alias("::", "newarr");
+  pkg->namesp_alias("::", "delete");
 
   GVX_PKG_RETURN(pkg);
 }

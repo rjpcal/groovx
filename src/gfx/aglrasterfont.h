@@ -258,7 +258,7 @@ GVX_TRACE("AglRasterFont::pickAppleFont");
       // embedded spaces, such that the spec needs quotes or
       // braces... e.g., {"luxi mono" 34 ib}. In cases like that, we can't
       // just split the spec on whitespace.
-      Tcl::List specitems = Tcl::toTcl(spec);
+      tcl::list specitems = tcl::convert_from(spec);
 
       if (specitems.length() >= 1)
         result.fontID = getFontId(specitems.get<const char*>(0));

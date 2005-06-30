@@ -40,13 +40,13 @@
 
 #include "rutz/error.h"
 
-namespace Tcl
+namespace tcl
 {
   /// Conversion routines for Tcl object to geom::rect.
   template <class T>
-  inline geom::rect<T> fromTclImpl(Tcl_Obj* obj, geom::rect<T>*)
+  inline geom::rect<T> aux_convert_to(Tcl_Obj* obj, geom::rect<T>*)
   {
-    Tcl::List listObj(obj);
+    tcl::list listObj(obj);
     geom::rect<T> result = geom::rect<T>::ltrb(listObj.template get<T>(0),
                                                listObj.template get<T>(1),
                                                listObj.template get<T>(2),
@@ -61,16 +61,16 @@ namespace Tcl
     return result;
   }
 
-  /// Conversion routine for geom::rect to Tcl::Obj.
+  /// Conversion routine for geom::rect to tcl::obj.
   template <class T>
-  inline Tcl::Obj toTclImpl( const geom::rect<T>& rect )
+  inline tcl::obj aux_convert_from( const geom::rect<T>& rect )
   {
-    Tcl::List listObj;
+    tcl::list listObj;
     listObj.append(rect.left());
     listObj.append(rect.top());
     listObj.append(rect.right());
     listObj.append(rect.bottom());
-    return listObj.asObj();
+    return listObj.as_obj();
   }
 }
 

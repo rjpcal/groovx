@@ -38,17 +38,17 @@ test "IO::loadObjects" "file read with virtual constructor" {
             [IO::type [lindex $objids 0]] [IO::type [lindex $objids 10]]"
 } {^20 *Face *CloneFace$}
 test "IO::loadObjects" "empty file read" {
-    set before_count [GxShapeKit::countAll]
+    set before_count [GxShapeKit::count_all]
     set objids [IO::loadObjects $::TEST_DIR/empty_file]
     set num_read [llength $objids]
-    set after_count [GxShapeKit::countAll]
+    set after_count [GxShapeKit::count_all]
     return "$num_read [expr $after_count - $before_count]"
 } {^0 0$}
 test "IO::loadObjects" "empty file read with limit on # to read" {
-    set before_count [GxShapeKit::countAll]
+    set before_count [GxShapeKit::count_all]
     set objids [IO::loadObjects $::TEST_DIR/empty_file 5]
     set num_read [llength $objids]
-    set after_count [GxShapeKit::countAll]
+    set after_count [GxShapeKit::count_all]
     return "$num_read [expr $after_count - $before_count]"
 } {^0 0$}
 # On bad input, the error may be detected by either Face or IoMgr

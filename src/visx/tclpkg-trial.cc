@@ -57,42 +57,42 @@ int Trial_Init(Tcl_Interp* interp)
 GVX_TRACE("Trial_Init");
 
   GVX_PKG_CREATE(pkg, interp, "Trial", "4.$Revision$");
-  pkg->inheritPkg("Element");
-  Tcl::defTracing(pkg, Trial::tracer);
+  pkg->inherit_pkg("Element");
+  tcl::def_tracing(pkg, Trial::tracer);
 
-  Tcl::defFieldContainer<Trial>(pkg, SRC_POS);
-  Tcl::defCreator<Trial>(pkg);
+  tcl::defFieldContainer<Trial>(pkg, SRC_POS);
+  tcl::def_creator<Trial>(pkg);
 
-  pkg->defSetter("addNode", &Trial::addNode, SRC_POS);
-  pkg->defGetter("avgResponse", &Trial::avgResponse, SRC_POS);
-  pkg->defGetter("avgRespTime", &Trial::avgRespTime, SRC_POS);
-  pkg->defAction("clearObjs", &Trial::clearObjs, SRC_POS);
-  pkg->defAction("clearResponses", &Trial::clearResponses, SRC_POS);
-  pkg->defAttrib("correctResponse",
-                 &Trial::getCorrectResponse,
-                 &Trial::setCorrectResponse,
-                 SRC_POS);
-  pkg->defAttrib("currentNode",
-                 &Trial::getCurrentNode,
-                 &Trial::setCurrentNode,
-                 SRC_POS);
-  pkg->defAttrib("info", &Trial::vxInfo, &Trial::setInfo, SRC_POS);
-  pkg->defGetter("lastResponse", &Trial::lastResponse, SRC_POS);
-  pkg->defAction("nextNode", &Trial::trNextNode, SRC_POS);
-  pkg->defGetter("nodes", &Trial::nodes, SRC_POS);
-  pkg->defGetter("numResponses", &Trial::numResponses, SRC_POS);
-  pkg->defGetter("responses", &Trial::responses, SRC_POS);
-  pkg->defAttrib("responseHdlr",
-                 &Trial::getResponseHandler,
-                 &Trial::setResponseHandler,
-                 SRC_POS);
-  pkg->defGetter("stdInfo", &Trial::stdInfo, SRC_POS);
-  pkg->defAttrib("timingHdlr",
-                 &Trial::getTimingHdlr,
-                 &Trial::setTimingHdlr,
-                 SRC_POS);
+  pkg->def_setter("addNode", &Trial::addNode, SRC_POS);
+  pkg->def_getter("avgResponse", &Trial::avgResponse, SRC_POS);
+  pkg->def_getter("avgRespTime", &Trial::avgRespTime, SRC_POS);
+  pkg->def_action("clearObjs", &Trial::clearObjs, SRC_POS);
+  pkg->def_action("clearResponses", &Trial::clearResponses, SRC_POS);
+  pkg->def_get_set("correctResponse",
+                   &Trial::getCorrectResponse,
+                   &Trial::setCorrectResponse,
+                   SRC_POS);
+  pkg->def_get_set("currentNode",
+                   &Trial::getCurrentNode,
+                   &Trial::setCurrentNode,
+                   SRC_POS);
+  pkg->def_get_set("info", &Trial::vxInfo, &Trial::setInfo, SRC_POS);
+  pkg->def_getter("lastResponse", &Trial::lastResponse, SRC_POS);
+  pkg->def_action("nextNode", &Trial::trNextNode, SRC_POS);
+  pkg->def_getter("nodes", &Trial::nodes, SRC_POS);
+  pkg->def_getter("numResponses", &Trial::numResponses, SRC_POS);
+  pkg->def_getter("responses", &Trial::responses, SRC_POS);
+  pkg->def_get_set("responseHdlr",
+                   &Trial::getResponseHandler,
+                   &Trial::setResponseHandler,
+                   SRC_POS);
+  pkg->def_getter("stdInfo", &Trial::stdInfo, SRC_POS);
+  pkg->def_get_set("timingHdlr",
+                   &Trial::getTimingHdlr,
+                   &Trial::setTimingHdlr,
+                   SRC_POS);
   // FIXME this is redundant with Element::trialType
-  pkg->defAttrib("type", &Trial::trialType, &Trial::setType, SRC_POS);
+  pkg->def_get_set("type", &Trial::trialType, &Trial::setType, SRC_POS);
 
   nub::obj_factory::instance().register_creator(&Trial::make);
 

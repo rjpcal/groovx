@@ -504,8 +504,8 @@ showpid:
 	ps -ef | grep make
 
 # Generate TAGS file based on all source files
-TAGS: $(ALL_SRCS)
-	find $(SRC) -name \*.h -or -name \*.cc | etags - -o $@
+TAGS: $(ALL_SRCS) README TODO TUTORIAL doc/groovx.dxy
+	etags $^ -o $@
 
 svn_keywords:
 	@for f in $(ALL_SRCS); do \

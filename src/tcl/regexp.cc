@@ -45,28 +45,28 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  Tcl_RegExp getCheckedRegexp(const Tcl::Obj& patrn)
+  Tcl_RegExp get_checked_regexp(const tcl::obj& patrn)
   {
     const int flags = 0;
     // OK to pass Tcl_Interp*==0
-    Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patrn.obj(), flags);
+    Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patrn.get(), flags);
     if (!regexp)
       {
         throw rutz::error(rutz::fstring("error getting a regexp from '",
-                                        Tcl_GetString(patrn.obj()), "'"),
+                                        Tcl_GetString(patrn.get()), "'"),
                           SRC_POS);
       }
     return regexp;
   }
 }
 
-bool Tcl::RegExp::matchesString(const char* str)
+bool tcl::regexp::matches_string(const char* str)
 {
   static const int REGEX_ERROR        = -1;
   static const int REGEX_NO_MATCH     =  0;
   static const int REGEX_FOUND_MATCH  =  1;
 
-  Tcl_RegExp regexp = getCheckedRegexp(itsPatternObj);
+  Tcl_RegExp regexp = get_checked_regexp(m_pattern);
 
   // OK to pass Tcl_Interp*==0
   int regex_result = Tcl_RegExpExec(0, regexp, str, str);

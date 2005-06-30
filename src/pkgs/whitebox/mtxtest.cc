@@ -79,7 +79,7 @@ extern "C" int Mtxtest_SafeInit(Tcl_Interp*) { return 1; }
 extern "C" int Mtxtest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
 GVX_TRACE("Mtxtest_Unload");
-  return Tcl::Pkg::unloadDestroy(interp, "Mtxtest");
+  return tcl::pkg::destroy_on_unload(interp, "Mtxtest");
 }
 
 extern "C" int Mtxtest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }

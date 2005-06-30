@@ -573,7 +573,7 @@ Table of contents:
      @Mon Oct 04 19:27:46 PDT 2004 Experiment saved.
      @Mon Oct 04 19:28:11 PDT 2004 Experiment complete.
      </string>
-             <ownedobj type="Tcl::ProcWrapper" id="2" name="doWhenComplete" version="0">
+             <ownedobj type="tcl::ProcWrapper" id="2" name="doWhenComplete" version="0">
                      <string name="args"/>
                      <string name="body">exit</string>
              </ownedobj>
@@ -798,14 +798,14 @@ Table of contents:
      groovx>>> bt
      [ 0] nub::obj_mgr::new_obj(const fstring&) (src/util/objmgr.cc:47)
      [ 1] tcl/Obj::new                        (src/io/objtcl.cc:206)
-     [ 2] Tcl::CommandGroup::rawInvoke        (src/tcl/tclcommandgroup.cc:285)
-     [ 3] Tcl::MainImpl::execCommand          (src/tcl/tclmain.cc:397)
-     [ 4] Tcl::MainImpl::handleLine           (src/tcl/tclmain.cc:345)
-     [ 5] Tcl::MainImpl::readlineLineComplete (src/tcl/tclmain.cc:298)
-     [ 6] Tcl::MainImpl::grabInput            (src/tcl/tclmain.cc:318)
-     [ 7] Tcl::MainImpl::stdinProc            (src/tcl/tclmain.cc:521)
-     [ 8] Tcl::MainImpl::run                  (src/tcl/tclmain.cc:534)
-     [ 9] Tcl::Main::run                      (src/tcl/tclmain.cc:619)
+     [ 2] tcl::command_group::rawInvoke        (src/tcl/tclcommandgroup.cc:285)
+     [ 3] tcl::MainImpl::execCommand          (src/tcl/tclmain.cc:397)
+     [ 4] tcl::MainImpl::handleLine           (src/tcl/tclmain.cc:345)
+     [ 5] tcl::MainImpl::readlineLineComplete (src/tcl/tclmain.cc:298)
+     [ 6] tcl::MainImpl::grabInput            (src/tcl/tclmain.cc:318)
+     [ 7] tcl::MainImpl::stdinProc            (src/tcl/tclmain.cc:521)
+     [ 8] tcl::MainImpl::run                  (src/tcl/tclmain.cc:534)
+     [ 9] tcl::event_loop::run                      (src/tcl/tclmain.cc:619)
      [10] main                                (src/grsh/grshAppInit.cc:234)
 
    \endcode
@@ -858,12 +858,12 @@ Table of contents:
 
        \code
 
-         [ 3] Tcl::MainImpl::execCommand          (src/tcl/tclmain.cc:397)
-         [ 4] Tcl::MainImpl::handleLine           (src/tcl/tclmain.cc:345)
-         [ 5] Tcl::MainImpl::readlineLineComplete (src/tcl/tclmain.cc:298)
-         [ 6] Tcl::MainImpl::grabInput            (src/tcl/tclmain.cc:318)
-         [ 7] Tcl::MainImpl::stdinProc            (src/tcl/tclmain.cc:521)
-         [ 8] Tcl::MainImpl::run                  (src/tcl/tclmain.cc:534)
+         [ 3] tcl::MainImpl::execCommand          (src/tcl/tclmain.cc:397)
+         [ 4] tcl::MainImpl::handleLine           (src/tcl/tclmain.cc:345)
+         [ 5] tcl::MainImpl::readlineLineComplete (src/tcl/tclmain.cc:298)
+         [ 6] tcl::MainImpl::grabInput            (src/tcl/tclmain.cc:318)
+         [ 7] tcl::MainImpl::stdinProc            (src/tcl/tclmain.cc:521)
+         [ 8] tcl::MainImpl::run                  (src/tcl/tclmain.cc:534)
 
        \endcode
 
@@ -883,18 +883,18 @@ Table of contents:
      groovx>>> Face::eyeHeight blah
      Face::eyeHeight: expected long value but got "blah" (rutz::error)
      groovx 5>>> bt
-     [ 0] Tcl::fromTcl(long*)                 (src/tcl/tclconvert.cc:143)
-     [ 1] Tcl::fromTcl(unsigned long*)        (src/tcl/tclconvert.cc:159)
-     [ 2] Tcl::VecDispatcher::dispatch        (src/tcl/tclveccmd.cc:157)
+     [ 0] tcl::convert_to(long*)                 (src/tcl/tclconvert.cc:143)
+     [ 1] tcl::convert_to(unsigned long*)        (src/tcl/tclconvert.cc:159)
+     [ 2] tcl::VecDispatcher::dispatch        (src/tcl/tclveccmd.cc:157)
      [ 3] tcl/Face::eyeHeight                 (src/visx/facetcl.cc:65)
-     [ 4] Tcl::CommandGroup::rawInvoke        (src/tcl/tclcommandgroup.cc:285)
-     [ 5] Tcl::MainImpl::execCommand          (src/tcl/tclmain.cc:397)
-     [ 6] Tcl::MainImpl::handleLine           (src/tcl/tclmain.cc:345)
-     [ 7] Tcl::MainImpl::readlineLineComplete (src/tcl/tclmain.cc:298)
-     [ 8] Tcl::MainImpl::grabInput            (src/tcl/tclmain.cc:318)
-     [ 9] Tcl::MainImpl::stdinProc            (src/tcl/tclmain.cc:521)
-     [10] Tcl::MainImpl::run                  (src/tcl/tclmain.cc:534)
-     [11] Tcl::Main::run                      (src/tcl/tclmain.cc:619)
+     [ 4] tcl::command_group::rawInvoke        (src/tcl/tclcommandgroup.cc:285)
+     [ 5] tcl::MainImpl::execCommand          (src/tcl/tclmain.cc:397)
+     [ 6] tcl::MainImpl::handleLine           (src/tcl/tclmain.cc:345)
+     [ 7] tcl::MainImpl::readlineLineComplete (src/tcl/tclmain.cc:298)
+     [ 8] tcl::MainImpl::grabInput            (src/tcl/tclmain.cc:318)
+     [ 9] tcl::MainImpl::stdinProc            (src/tcl/tclmain.cc:521)
+     [10] tcl::MainImpl::run                  (src/tcl/tclmain.cc:534)
+     [11] tcl::event_loop::run                      (src/tcl/tclmain.cc:619)
      [12] main                                (src/grsh/grshAppInit.cc:234)
 
    \endcode
@@ -945,7 +945,7 @@ Table of contents:
 
    \code
 
-     Tcl::defFieldContainer<Face>(pkg, SRC_POS);
+     tcl::defFieldContainer<Face>(pkg, SRC_POS);
 
    \endcode
 
@@ -964,9 +964,9 @@ Table of contents:
 
    namespace Dlist
    {
-     Tcl::List choose(Tcl::List source_list, Tcl::List index_list)
+     tcl::list choose(tcl::list source_list, tcl::list index_list)
      {
-       Tcl::List result;
+       tcl::list result;
 
        for (unsigned int i = 0; i < index_list.length(); ++i)
          {
@@ -983,7 +983,7 @@ Table of contents:
 
    \endcode
 
-   Here we see how the C++ class Tcl::List wraps the functionality of
+   Here we see how the C++ class tcl::list wraps the functionality of
    Tcl list objects, making them easily manipulable within C++. Next,
    we expose this choose() function as a Tcl command, [dlist::choose]:
 
@@ -1003,7 +1003,7 @@ Table of contents:
 
    <ol>
 
-   <li> We have created a Tcl::Pkg with the PKG_CREATE() macro. By
+   <li> We have created a tcl::pkg with the PKG_CREATE() macro. By
         default packages are associated with a namespace, which we've
         specified here as "dlist".
 
@@ -1022,46 +1022,46 @@ Table of contents:
         function that we're trying to wrap, in this case
         &Dlist::choose. This parameter can be either a pointer to a
         free function, or a pointer to a member function, or a
-        suitable functor object. Here's what Tcl::Pkg::def() does, in
+        suitable functor object. Here's what tcl::pkg::def() does, in
         more detail.
 
         <ul>
 
-        <li> Tcl::Pkg::def() (defined in src/tcl/tclpkg.h) calls
-             Tcl::makeCmd().
+        <li> tcl::pkg::def() (defined in src/tcl/tclpkg.h) calls
+             tcl::make_command().
 
-        <li> Tcl::makeCmd() (defined in src/tcl/tclfunctor.h) calls
-             Tcl::makeGenericCmd (also defined in
+        <li> tcl::make_command() (defined in src/tcl/tclfunctor.h) calls
+             tcl::makeGenericCmd (also defined in
              src/tcl/tclfunctor.h)
 
-        <li> Tcl::makeGenericCmd builds a Tcl::Command using a
-             suitable Tcl::GenericCallback. The Tcl::GenericCallback
+        <li> tcl::makeGenericCmd builds a tcl::Command using a
+             suitable tcl::GenericCallback. The tcl::GenericCallback
              object is responsible for converting all of the commands
              arguments from Tcl to appropriate C++ types, and for
              converting the C++ result back to an appropriate Tcl
              object.
 
         <li> The C++/Tcl conversion routines are defined in
-             src/tcl/tclconvert.h as a set of Tcl::fromTcl() and
-             Tcl::toTcl() overloads. That file contains overloads for
+             src/tcl/tclconvert.h as a set of tcl::convert_to() and
+             tcl::convert_from() overloads. That file contains overloads for
              the basic built-in types as well as for fundamental value
              types (like strings). This mechanism is extensible; users
-             can simply provide additional Tcl::toTcl() and
-             Tcl::fromTcl() overloads for their own types, as long as
+             can simply provide additional tcl::convert_from() and
+             tcl::convert_to() overloads for their own types, as long as
              these overloads are defined before they are needed by any
-             Tcl::Pkg::def() call.
+             tcl::pkg::def() call.
 
-        <li> The Tcl::Command object (defined in src/tcl/tclcmd.h)
-             built by Tcl::makeGenericCmd sets up the raw C callback
+        <li> The tcl::Command object (defined in src/tcl/tclcmd.h)
+             built by tcl::makeGenericCmd sets up the raw C callback
              with the Tcl interpreter. It does this through one final
-             indirection, namely Tcl::CommandGroup (defined in
+             indirection, namely tcl::command_group (defined in
              src/tcl/tclcommandgroup.h).
 
-        <li> Tcl::CommandGroup is responsible for managing an overload
-             set of commands. Each Tcl::CommandGroup represents a
+        <li> tcl::command_group is responsible for managing an overload
+             set of commands. Each tcl::command_group represents a
              single Tcl_CreateObjCommand() call. But, when the
-             Tcl::CommandGroup gets called back by the Tcl
-             interpreter, that CommandGroup will look into its set of
+             tcl::command_group gets called back by the Tcl
+             interpreter, that command_group will look into its set of
              overloads to try to find whose number of arguments
              matches the number of arguments in the current command
              invocation. If one is found, then it is invoked; if no

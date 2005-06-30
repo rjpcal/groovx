@@ -104,9 +104,9 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List choose(Tcl::List source_list, Tcl::List index_list)
+  tcl::list choose(tcl::list source_list, tcl::list index_list)
   {
-    Tcl::List result;
+    tcl::list result;
 
     for (unsigned int i = 0; i < index_list.length(); ++i)
       {
@@ -128,14 +128,14 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List cycle_left(Tcl::List source_list, unsigned int n)
+  tcl::list cycle_left(tcl::list source_list, unsigned int n)
   {
     n = n % source_list.length();
 
     if (n == 0)
       return source_list;
 
-    Tcl::List result;
+    tcl::list result;
 
     for (unsigned int i = n; i < source_list.length(); ++i)
       {
@@ -156,7 +156,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List cycle_right(Tcl::List source_list, unsigned int n)
+  tcl::list cycle_right(tcl::list source_list, unsigned int n)
   {
     n = n % source_list.length();
 
@@ -173,7 +173,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::Obj index(Tcl::List source_list, unsigned int n)
+  tcl::obj index(tcl::list source_list, unsigned int n)
   {
     return source_list.at(n);
   }
@@ -186,11 +186,11 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List not_(Tcl::List source_list)
+  tcl::list not_(tcl::list source_list)
   {
-    Tcl::Obj one = Tcl::toTcl<int>(1);
-    Tcl::Obj zero = Tcl::toTcl<int>(0);
-    Tcl::List result;
+    tcl::obj one = tcl::convert_from<int>(1);
+    tcl::obj zero = tcl::convert_from<int>(0);
+    tcl::list result;
 
     for (unsigned int i = 0; i < source_list.length(); ++i)
       {
@@ -212,9 +212,9 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List ones(unsigned int num_ones)
+  tcl::list ones(unsigned int num_ones)
   {
-    Tcl::List result;
+    tcl::list result;
     result.append(1, num_ones);
 
     return result;
@@ -227,7 +227,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::Obj pickone(Tcl::List source_list)
+  tcl::obj pickone(tcl::list source_list)
   {
     if (source_list.length() == 0)
       {
@@ -244,9 +244,9 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List range(int begin, int end, int step)
+  tcl::list range(int begin, int end, int step)
   {
-    Tcl::List result;
+    tcl::list result;
 
     if (step == 0)
       {
@@ -277,9 +277,9 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List linspace(double begin, double end, unsigned int npts)
+  tcl::list linspace(double begin, double end, unsigned int npts)
   {
-    Tcl::List result;
+    tcl::list result;
 
     if (npts < 2)
       {
@@ -304,13 +304,13 @@ namespace Dlist
     return result;
   }
 
-  double perm_distance(Tcl::List src)
+  double perm_distance(tcl::list src)
   {
     return perm_distance_aux(src.begin<unsigned int>(),
                              src.end<unsigned int>());
   }
 
-  double perm_distance2(Tcl::List src, double power)
+  double perm_distance2(tcl::list src, double power)
   {
     return perm_distance2_aux(src.begin<unsigned int>(),
                               src.end<unsigned int>(),
@@ -331,7 +331,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List permute_maximal(unsigned int N)
+  tcl::list permute_maximal(unsigned int N)
   {
     if (N < 2)
       throw rutz::error("N must be at least 2 to make a permutation",
@@ -393,7 +393,7 @@ namespace Dlist
 
             dbg_eval_nl(3, c);
 
-            Tcl::List result;
+            tcl::list result;
 
             for (unsigned int i = 0; i < slots.size(); ++i)
               {
@@ -406,7 +406,7 @@ namespace Dlist
 
     throw rutz::error("permutation algorithm failed to converge",
                       SRC_POS);
-    return Tcl::List(); // can't happen, but placate compiler
+    return tcl::list(); // can't happen, but placate compiler
   }
 
   //---------------------------------------------------------
@@ -416,7 +416,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List permute_moveall(unsigned int N)
+  tcl::list permute_moveall(unsigned int N)
   {
     if (N < 2)
       throw rutz::error("N must be at least 2 to make a permutation", SRC_POS);
@@ -461,7 +461,7 @@ namespace Dlist
         slots[N-1] = lastslot;
       }
 
-    Tcl::List result;
+    tcl::list result;
 
     for (unsigned int i = 0; i < slots.size(); ++i)
       {
@@ -478,9 +478,9 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List rand(double min, double max, unsigned int N)
+  tcl::list rand(double min, double max, unsigned int N)
   {
-    Tcl::List result;
+    tcl::list result;
 
     static rutz::urand generator;
 
@@ -506,12 +506,12 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List repeat(Tcl::List source_list, Tcl::List times_list)
+  tcl::list repeat(tcl::list source_list, tcl::list times_list)
   {
     // find the minimum of the two lists' lengths
     unsigned int min_len = rutz::min(source_list.length(), times_list.length());
 
-    Tcl::List result;
+    tcl::list result;
 
     for (unsigned int t = 0; t < min_len; ++t)
       {
@@ -529,12 +529,12 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List reverse(Tcl::List src)
+  tcl::list reverse(tcl::list src)
   {
     if (src.length() < 2)
       return src;
 
-    Tcl::List result;
+    tcl::list result;
     for (unsigned int i = 0; i < src.length(); ++i)
       result.append(src.at(src.length()-i-1));
     return result;
@@ -548,7 +548,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List select(Tcl::List source_list, Tcl::List flags_list)
+  tcl::list select(tcl::list source_list, tcl::list flags_list)
   {
     unsigned int src_len = source_list.length();
     unsigned int flg_len = flags_list.length();
@@ -559,7 +559,7 @@ namespace Dlist
                           SRC_POS);
       }
 
-    Tcl::List result;
+    tcl::list result;
 
     for (unsigned int i = 0; i < src_len; ++i)
       {
@@ -580,16 +580,16 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List shuffle(Tcl::List src, int seed)
+  tcl::list shuffle(tcl::list src, int seed)
   {
-    rutz::fixed_block<Tcl::Obj> objs(src.begin<Tcl::Obj>(),
-                                        src.end<Tcl::Obj>());
+    rutz::fixed_block<tcl::obj> objs(src.begin<tcl::obj>(),
+                                        src.end<tcl::obj>());
 
     rutz::urand generator(seed);
 
     std::random_shuffle(objs.begin(), objs.end(), generator);
 
-    Tcl::List result;
+    tcl::list result;
 
     for (unsigned int i = 0; i < objs.size(); ++i)
       {
@@ -606,9 +606,9 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List shuffle_moveall(Tcl::List src)
+  tcl::list shuffle_moveall(tcl::list src)
   {
-    Tcl::List permutation = permute_moveall(src.length());
+    tcl::list permutation = permute_moveall(src.length());
     return Dlist::choose(src, permutation);
   }
 
@@ -618,9 +618,9 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List shuffle_maximal(Tcl::List src)
+  tcl::list shuffle_maximal(tcl::list src)
   {
-    Tcl::List permutation = permute_maximal(src.length());
+    tcl::list permutation = permute_maximal(src.length());
     return Dlist::choose(src, permutation);
   }
 
@@ -630,13 +630,13 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List slice(Tcl::List src, unsigned int slice)
+  tcl::list slice(tcl::list src, unsigned int slice)
   {
-    Tcl::List result;
+    tcl::list result;
 
     for (unsigned int i = 0, end = src.length(); i < end; ++i)
       {
-        Tcl::List sub(src.at(i));
+        tcl::list sub(src.at(i));
         result.append(sub.at(slice));
       }
 
@@ -653,7 +653,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::Obj sum(Tcl::List source_list)
+  tcl::obj sum(tcl::list source_list)
   {
     int isum=0;
     double dsum=0.0;
@@ -683,9 +683,9 @@ namespace Dlist
       }
 
     if ( !seen_double )
-      return Tcl::toTcl<int>(isum);
+      return tcl::convert_from<int>(isum);
     else
-      return Tcl::toTcl<double>(dsum);
+      return tcl::convert_from<double>(dsum);
   }
 
   //---------------------------------------------------------
@@ -695,9 +695,9 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  Tcl::List zeros(unsigned int num_zeros)
+  tcl::list zeros(unsigned int num_zeros)
   {
-    Tcl::List result;
+    tcl::list result;
     result.append(0, num_zeros);
 
     return result;

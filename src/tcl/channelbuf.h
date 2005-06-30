@@ -42,30 +42,30 @@ namespace rutz
   template <class T> class shared_ptr;
 }
 
-namespace Tcl
+namespace tcl
 {
   /// A std::streambuf implementation that handles gzip-encoded data.
-  class ChannelBuf : public std::streambuf
+  class channel_buf : public std::streambuf
   {
   private:
     bool opened;
     bool owned;
     int mode;
-    Tcl_Interp* itsInterp;
+    Tcl_Interp* m_interp;
     Tcl_Channel chan;
 
-    ChannelBuf(const ChannelBuf&);
-    ChannelBuf& operator=(const ChannelBuf&);
+    channel_buf(const channel_buf&);
+    channel_buf& operator=(const channel_buf&);
 
-    static const int bufSize = 4092;
-    static const int pbackSize = 4;
-    char buffer[bufSize];
+    static const int s_buf_size = 4092;
+    static const int s_pback_size = 4;
+    char m_buffer[s_buf_size];
 
     int flushoutput();
 
   public:
-    ChannelBuf(Tcl_Interp* interp, const char* channame, int om);
-    ~ChannelBuf() { close(); }
+    channel_buf(Tcl_Interp* interp, const char* channame, int om);
+    ~channel_buf() { close(); }
 
     bool is_open() { return opened; }
 
@@ -81,7 +81,7 @@ namespace Tcl
   };
 }
 
-namespace Tcl
+namespace tcl
 {
   rutz::shared_ptr<std::ostream>
   ochanopen(Tcl_Interp* interp,

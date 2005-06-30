@@ -38,11 +38,11 @@ namespace rutz
   class tracer;
 }
 
-namespace Tcl
+namespace tcl
 {
-  class Pkg;
+  class pkg;
 
-  void defTracing(Tcl::Pkg* pkg, rutz::tracer& tracer);
+  void def_tracing(tcl::pkg* pkg, rutz::tracer& tracer);
 }
 
 static const char vcid_groovx_tcl_tracertcl_h_utc20050626084018[] = "$Id$ $HeadURL$";

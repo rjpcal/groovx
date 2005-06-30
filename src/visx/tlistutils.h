@@ -40,9 +40,9 @@ namespace geom
   template <class T> class rect;
 }
 
-namespace Tcl
+namespace tcl
 {
-  class List;
+  class list;
 }
 
 namespace nub
@@ -64,21 +64,21 @@ namespace TlistUtils
       the average response given to that Trial. */
   void writeMatlab(const char* filename);
 
-  nub::uid createPreview(Tcl::List objid_list,
+  nub::uid createPreview(tcl::list objid_list,
                          const geom::rect<double>& world_viewport,
                          int num_cols_hint,
                          bool use_text_labels);
 
-  Tcl::List dealSingles(Tcl::List objids, nub::uid posid);
+  tcl::list dealSingles(tcl::list objids, nub::uid posid);
 
-  Tcl::List dealPairs(Tcl::List objids1, Tcl::List objids2,
+  tcl::list dealPairs(tcl::list objids1, tcl::list objids2,
                       nub::uid posid1, nub::uid posid2);
 
-  Tcl::List dealTriads(Tcl::List objids, nub::uid posid1,
+  tcl::list dealTriads(tcl::list objids, nub::uid posid1,
                        nub::uid posid2, nub::uid posid3);
 
-  Tcl::List loadObjidFile(const char* objid_file, Tcl::List objids,
-                          Tcl::List posids, int num_lines);
+  tcl::list loadObjidFile(const char* objid_file, tcl::list objids,
+                          tcl::list posids, int num_lines);
 }
 
 static const char vcid_groovx_visx_tlistutils_h_utc20050626084017[] = "$Id$ $HeadURL$";

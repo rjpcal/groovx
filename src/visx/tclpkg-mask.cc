@@ -47,9 +47,9 @@ int Maskhatch_Init(Tcl_Interp* interp)
 GVX_TRACE("Maskhatch_Init");
 
   GVX_PKG_CREATE(pkg, interp, "MaskHatch", "4.$Revision$");
-  pkg->inheritPkg("GxShapeKit");
-  Tcl::defFieldContainer<MaskHatch>(pkg, SRC_POS);
-  Tcl::defCreator<MaskHatch>(pkg);
+  pkg->inherit_pkg("GxShapeKit");
+  tcl::defFieldContainer<MaskHatch>(pkg, SRC_POS);
+  tcl::def_creator<MaskHatch>(pkg);
 
   GVX_PKG_RETURN(pkg);
 }

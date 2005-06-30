@@ -50,11 +50,11 @@ namespace nub
   template <class T> class soft_ref;
 }
 
-namespace Tcl
+namespace tcl
 {
-  class Dict;
-  class List;
-  class Obj;
+  class dict;
+  class list;
+  class obj;
 
   /// Trait class for extracting an appropriate return-type from T.
   template <class T>
@@ -69,7 +69,7 @@ namespace Tcl
     Type;
   };
 
-  /// Specialization of Tcl::Return for const T.
+  /// Specialization of tcl::Return for const T.
   template <class T>
   struct Return<const T>
   {
@@ -79,7 +79,7 @@ namespace Tcl
     Type;
   };
 
-  /// Specialization of Tcl::Return for const T&.
+  /// Specialization of tcl::Return for const T&.
   template <class T>
   struct Return<const T&>
   {
@@ -93,50 +93,50 @@ namespace Tcl
   // Functions for converting from Tcl objects to C++ types.
   //
 
-  Tcl_Obj*      fromTclImpl(Tcl_Obj* obj, Tcl_Obj**);
-  Tcl::Obj      fromTclImpl(Tcl_Obj* obj, Tcl::Obj*);
-  int           fromTclImpl(Tcl_Obj* obj, int*);
-  unsigned int  fromTclImpl(Tcl_Obj* obj, unsigned int*);
-  long          fromTclImpl(Tcl_Obj* obj, long*);
-  unsigned long fromTclImpl(Tcl_Obj* obj, unsigned long*);
-  bool          fromTclImpl(Tcl_Obj* obj, bool*);
-  double        fromTclImpl(Tcl_Obj* obj, double*);
-  float         fromTclImpl(Tcl_Obj* obj, float*);
-  const char*   fromTclImpl(Tcl_Obj* obj, const char**);
-  rutz::fstring fromTclImpl(Tcl_Obj* obj, rutz::fstring*);
-  Tcl::Dict     fromTclImpl(Tcl_Obj* obj, Tcl::Dict*);
-  Tcl::List     fromTclImpl(Tcl_Obj* obj, Tcl::List*);
+  Tcl_Obj*      aux_convert_to(Tcl_Obj* obj, Tcl_Obj**);
+  tcl::obj      aux_convert_to(Tcl_Obj* obj, tcl::obj*);
+  int           aux_convert_to(Tcl_Obj* obj, int*);
+  unsigned int  aux_convert_to(Tcl_Obj* obj, unsigned int*);
+  long          aux_convert_to(Tcl_Obj* obj, long*);
+  unsigned long aux_convert_to(Tcl_Obj* obj, unsigned long*);
+  bool          aux_convert_to(Tcl_Obj* obj, bool*);
+  double        aux_convert_to(Tcl_Obj* obj, double*);
+  float         aux_convert_to(Tcl_Obj* obj, float*);
+  const char*   aux_convert_to(Tcl_Obj* obj, const char**);
+  rutz::fstring aux_convert_to(Tcl_Obj* obj, rutz::fstring*);
+  tcl::dict     aux_convert_to(Tcl_Obj* obj, tcl::dict*);
+  tcl::list     aux_convert_to(Tcl_Obj* obj, tcl::list*);
 
   template <class T>
-  inline typename Return<T>::Type fromTcl( Tcl_Obj* obj )
+  inline typename Return<T>::Type convert_to( Tcl_Obj* obj )
   {
-    return fromTclImpl(obj, static_cast<typename Return<T>::Type*>(0));
+    return aux_convert_to(obj, static_cast<typename Return<T>::Type*>(0));
   }
 
   //
   // Functions for converting from C++ types to Tcl objects.
   //
 
-  Tcl::Obj toTclImpl(Tcl_Obj* val);
-  Tcl::Obj toTclImpl(long val);
-  Tcl::Obj toTclImpl(unsigned long val);
-  Tcl::Obj toTclImpl(int val);
-  Tcl::Obj toTclImpl(unsigned int val);
-  Tcl::Obj toTclImpl(unsigned char val);
-  Tcl::Obj toTclImpl(bool val);
-  Tcl::Obj toTclImpl(double val);
-  Tcl::Obj toTclImpl(float val);
-  Tcl::Obj toTclImpl(const char* val);
-  Tcl::Obj toTclImpl(const rutz::fstring& val);
-  Tcl::Obj toTclImpl(const rutz::value& v);
-  Tcl::Obj toTclImpl(Tcl::Dict dictObj);
-  Tcl::Obj toTclImpl(Tcl::List listObj);
-  Tcl::Obj toTclImpl(Tcl::Obj val);
+  tcl::obj aux_convert_from(Tcl_Obj* val);
+  tcl::obj aux_convert_from(long val);
+  tcl::obj aux_convert_from(unsigned long val);
+  tcl::obj aux_convert_from(int val);
+  tcl::obj aux_convert_from(unsigned int val);
+  tcl::obj aux_convert_from(unsigned char val);
+  tcl::obj aux_convert_from(bool val);
+  tcl::obj aux_convert_from(double val);
+  tcl::obj aux_convert_from(float val);
+  tcl::obj aux_convert_from(const char* val);
+  tcl::obj aux_convert_from(const rutz::fstring& val);
+  tcl::obj aux_convert_from(const rutz::value& v);
+  tcl::obj aux_convert_from(tcl::dict dict_value);
+  tcl::obj aux_convert_from(tcl::list list_value);
+  tcl::obj aux_convert_from(tcl::obj val);
 
   template <class T>
-  inline Tcl::Obj toTcl(const T& val)
+  inline tcl::obj convert_from(const T& val)
   {
-    return toTclImpl(val);
+    return aux_convert_from(val);
   }
 }
 

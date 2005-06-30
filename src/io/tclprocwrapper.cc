@@ -49,34 +49,35 @@ namespace
   }
 }
 
-Tcl::ProcWrapper::ProcWrapper(const Tcl::Interp& interp) :
+tcl::ProcWrapper::ProcWrapper(const tcl::interpreter& interp) :
   itsInterp(interp),
   itsName(uniqName()),
   itsArgs(),
   itsBody()
 {}
 
-Tcl::ProcWrapper::ProcWrapper(const Tcl::Interp& interp, const fstring& name) :
+tcl::ProcWrapper::ProcWrapper(const tcl::interpreter& interp,
+                              const fstring& name) :
   itsInterp(interp),
   itsName(name),
   itsArgs(),
   itsBody()
 {}
 
-Tcl::ProcWrapper::~ProcWrapper() throw()
+tcl::ProcWrapper::~ProcWrapper() throw()
 {
-  // We must check hasInterp() in case we are here because the application
+  // We must check is_valid() in case we are here because the application
   // is being exited, causing the interpreter to be deleted, in which case
   // we can't use the intrepeter (and don't need to, since it will destroy
   // the proc on its own)
-  if (itsInterp.hasInterp())
+  if (itsInterp.is_valid())
     {
-      if (itsInterp.hasCommand(itsName.c_str()))
-        itsInterp.deleteProc("", itsName.c_str());
+      if (itsInterp.has_command(itsName.c_str()))
+        itsInterp.delete_proc("", itsName.c_str());
     }
 }
 
-void Tcl::ProcWrapper::readFrom(IO::Reader& reader)
+void tcl::ProcWrapper::readFrom(IO::Reader& reader)
 {
   fstring args, body;
   reader.readValue("args", args);
@@ -84,26 +85,26 @@ void Tcl::ProcWrapper::readFrom(IO::Reader& reader)
   define(args, body);
 }
 
-void Tcl::ProcWrapper::writeTo(IO::Writer& writer) const
+void tcl::ProcWrapper::writeTo(IO::Writer& writer) const
 {
   writer.writeValue("args", itsArgs);
   writer.writeValue("body", itsBody);
 }
 
-void Tcl::ProcWrapper::define(const fstring& args, const fstring& body)
+void tcl::ProcWrapper::define(const fstring& args, const fstring& body)
 {
   itsArgs = args;
   itsBody = body;
-  itsInterp.createProc("", itsName.c_str(),
+  itsInterp.create_proc("", itsName.c_str(),
                        itsArgs.c_str(), itsBody.c_str());
 }
 
-bool Tcl::ProcWrapper::isNoop() const
+bool tcl::ProcWrapper::isNoop() const
 {
   return (itsArgs.is_empty() && itsBody.is_empty());
 }
 
-void Tcl::ProcWrapper::invoke(const fstring& args)
+void tcl::ProcWrapper::invoke(const fstring& args)
 {
   if (isNoop()) return;
 
@@ -112,7 +113,7 @@ void Tcl::ProcWrapper::invoke(const fstring& args)
   itsInterp.eval(cmd);
 }
 
-fstring Tcl::ProcWrapper::fullSpec() const
+fstring tcl::ProcWrapper::fullSpec() const
 {
   fstring result;
   result.append('{', itsArgs, "} ");

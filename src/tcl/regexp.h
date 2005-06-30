@@ -35,24 +35,24 @@
 
 #include "tcl/obj.h"
 
-namespace Tcl
+namespace tcl
 {
-  class RegExp;
+  class regexp;
 }
 
 /// Regular-expression class implemented with Tcl's regexp facilities.
-class Tcl::RegExp
+class tcl::regexp
 {
 public:
-  RegExp() : itsPatternObj() {}
+  regexp() : m_pattern() {}
 
   template <class T>
-  RegExp(T val) : itsPatternObj(val) {}
+  regexp(T val) : m_pattern(val) {}
 
-  bool matchesString(const char* str);
+  bool matches_string(const char* str);
 
 private:
-  Tcl::Obj itsPatternObj;
+  tcl::obj m_pattern;
 };
 
 static const char vcid_groovx_tcl_regexp_h_utc20050628162421[] = "$Id$ $HeadURL$";

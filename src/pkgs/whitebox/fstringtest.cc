@@ -302,7 +302,7 @@ extern "C" int Fstringtest_SafeInit(Tcl_Interp*) { return 1; }
 extern "C" int Fstringtest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
 GVX_TRACE("Fstringtest_Unload");
-  return Tcl::Pkg::unloadDestroy(interp, "Fstringtest");
+  return tcl::pkg::destroy_on_unload(interp, "Fstringtest");
 }
 
 extern "C" int Fstringtest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }

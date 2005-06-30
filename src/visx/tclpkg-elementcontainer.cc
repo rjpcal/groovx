@@ -49,9 +49,9 @@
 namespace
 {
   void addElementIds(nub::ref<ElementContainer> container,
-                     Tcl::List trial_ids, int repeat)
+                     tcl::list trial_ids, int repeat)
   {
-    for (Tcl::List::Iterator<nub::uid>
+    for (tcl::list::iterator<nub::uid>
            itr = trial_ids.begin<nub::uid>(),
            end = trial_ids.end<nub::uid>();
          itr != end;
@@ -68,8 +68,8 @@ int Elementcontainer_Init(Tcl_Interp* interp)
 GVX_TRACE("Elementcontainer_Init");
 
   GVX_PKG_CREATE(pkg, interp, "ElementContainer", "4.$Revision$");
-  pkg->inheritPkg("Element");
-  Tcl::defGenericObjCmds<Element>(pkg, SRC_POS);
+  pkg->inherit_pkg("Element");
+  tcl::def_basic_type_cmds<Element>(pkg, SRC_POS);
 
   pkg->def("addElement", "objref element_id",
            rutz::bind_last(rutz::mem_func
@@ -82,13 +82,13 @@ GVX_TRACE("Elementcontainer_Init");
   pkg->def("addElements", "objref element_id(s) repeat=1",
            &addElementIds, SRC_POS);
 
-  pkg->defGetter("currentElement", &ElementContainer::currentElement, SRC_POS);
-  pkg->defGetter("isComplete", &ElementContainer::isComplete, SRC_POS);
-  pkg->defGetter("numCompleted", &ElementContainer::numCompleted, SRC_POS);
-  pkg->defGetter("numElements", &ElementContainer::numElements, SRC_POS);
-  pkg->defAction("clearElements", &ElementContainer::clearElements, SRC_POS);
-  pkg->defVec("shuffle", "objref(s) rand_seed", &ElementContainer::shuffle, 1, SRC_POS);
-  pkg->defGetter("elements", &ElementContainer::getElements, SRC_POS);
+  pkg->def_getter("currentElement", &ElementContainer::currentElement, SRC_POS);
+  pkg->def_getter("isComplete", &ElementContainer::isComplete, SRC_POS);
+  pkg->def_getter("numCompleted", &ElementContainer::numCompleted, SRC_POS);
+  pkg->def_getter("numElements", &ElementContainer::numElements, SRC_POS);
+  pkg->def_action("clearElements", &ElementContainer::clearElements, SRC_POS);
+  pkg->def_vec("shuffle", "objref(s) rand_seed", &ElementContainer::shuffle, 1, SRC_POS);
+  pkg->def_getter("elements", &ElementContainer::getElements, SRC_POS);
 
   GVX_PKG_RETURN(pkg);
 }

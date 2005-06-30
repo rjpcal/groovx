@@ -58,7 +58,7 @@ namespace
 {
   const int ALL = -1; // indicates to read all objects until eof
 
-  Tcl::List loadObjects(const char* file, int num_to_read)
+  tcl::list loadObjects(const char* file, int num_to_read)
   {
     std::ifstream ifs(file);
     if (ifs.fail())
@@ -70,7 +70,7 @@ namespace
 
     ifs >> std::ws;
 
-    Tcl::List result;
+    tcl::list result;
 
     while ( (num_to_read == ALL || num_read < num_to_read)
             && (ifs.peek() != EOF) )
@@ -97,7 +97,7 @@ namespace
     return result;
   }
 
-  void saveObjects(Tcl::List objids, const char* filename,
+  void saveObjects(tcl::list objids, const char* filename,
                    bool use_bases)
   {
     std::ofstream ofs(filename);
@@ -110,7 +110,7 @@ namespace
     IO::LegacyWriter writer(ofs, use_bases);
     writer.usePrettyPrint(false);
 
-    for (Tcl::List::Iterator<ref<IO::IoObject> >
+    for (tcl::list::iterator<ref<IO::IoObject> >
            itr = objids.begin<ref<IO::IoObject> >(),
            end = objids.end<ref<IO::IoObject> >();
          itr != end;
@@ -127,8 +127,8 @@ int Io_Init(Tcl_Interp* interp)
 GVX_TRACE("Io_Init");
 
   GVX_PKG_CREATE(pkg, interp, "IO", "4.$Revision$");
-  pkg->inheritPkg("Obj");
-  Tcl::defGenericObjCmds<IO::IoObject>(pkg, SRC_POS);
+  pkg->inherit_pkg("Obj");
+  tcl::def_basic_type_cmds<IO::IoObject>(pkg, SRC_POS);
 
   pkg->def( "loadObjects", "filename num_to_read=-1", &loadObjects, SRC_POS );
   pkg->def( "loadObjects", "filename", rutz::bind_last(&loadObjects, ALL), SRC_POS );
@@ -138,16 +138,16 @@ GVX_TRACE("Io_Init");
 
   const unsigned int keyarg = 1;
 
-  pkg->defVec( "writeLGX", "objref(s)", IO::writeLGX, keyarg, SRC_POS );
-  pkg->defVec( "readLGX", "objref(s) string(s)", IO::readLGX, keyarg, SRC_POS );
+  pkg->def_vec( "writeLGX", "objref(s)", IO::writeLGX, keyarg, SRC_POS );
+  pkg->def_vec( "readLGX", "objref(s) string(s)", IO::readLGX, keyarg, SRC_POS );
 
-  pkg->defVec( "writeASW", "objref(s)", IO::writeASW, keyarg, SRC_POS );
-  pkg->defVec( "readASW", "objref(s) string(s)", IO::readASW, keyarg, SRC_POS );
+  pkg->def_vec( "writeASW", "objref(s)", IO::writeASW, keyarg, SRC_POS );
+  pkg->def_vec( "readASW", "objref(s) string(s)", IO::readASW, keyarg, SRC_POS );
   pkg->def( "saveASW", "objref filename", IO::saveASW, SRC_POS );
   pkg->def( "loadASW", "objref filename", IO::loadASW, SRC_POS );
   pkg->def( "retrieveASW", "filename", IO::retrieveASW, SRC_POS );
 
-  pkg->defVec( "writeGVX", "objref(s)", IO::writeGVX, keyarg, SRC_POS );
+  pkg->def_vec( "writeGVX", "objref(s)", IO::writeGVX, keyarg, SRC_POS );
   pkg->def( "saveGVX", "objref filename", IO::saveGVX, SRC_POS );
   pkg->def( "loadGVX", "filename", IO::loadGVX, SRC_POS );
 
@@ -162,14 +162,14 @@ int Outputfile_Init(Tcl_Interp* interp)
 GVX_TRACE("Outputfile_Init");
 
   GVX_PKG_CREATE(pkg, interp, "OutputFile", "4.$Revision$");
-  pkg->inheritPkg("IO");
-  Tcl::defCreator<OutputFile>(pkg);
-  Tcl::defGenericObjCmds<IO::IoObject>(pkg, SRC_POS);
+  pkg->inherit_pkg("IO");
+  tcl::def_creator<OutputFile>(pkg);
+  tcl::def_basic_type_cmds<IO::IoObject>(pkg, SRC_POS);
 
-  pkg->defAttrib("filename",
-                 &OutputFile::getFilename,
-                 &OutputFile::setFilename,
-                 SRC_POS);
+  pkg->def_get_set("filename",
+                   &OutputFile::getFilename,
+                   &OutputFile::setFilename,
+                   SRC_POS);
 
   GVX_PKG_RETURN(pkg);
 }

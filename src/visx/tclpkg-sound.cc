@@ -56,17 +56,17 @@ int Sound_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Sound_Init");
 
-  Tcl::Interp intp(interp);
+  tcl::interpreter intp(interp);
   GVX_PKG_CREATE(pkg, interp, "Sound", "4.$Revision$");
 
-  pkg->inheritPkg("IO");
-  Tcl::defGenericObjCmds<Sound>(pkg, SRC_POS);
+  pkg->inherit_pkg("IO");
+  tcl::def_basic_type_cmds<Sound>(pkg, SRC_POS);
 
   nub::obj_factory::instance().register_creator(&Sound::make);
 
-  pkg->defAction("play", &Sound::play, SRC_POS);
-  pkg->defAction("forceLoad", &Sound::forceLoad, SRC_POS);
-  pkg->defAttrib("file", &Sound::getFile, &Sound::setFile, SRC_POS);
+  pkg->def_action("play", &Sound::play, SRC_POS);
+  pkg->def_action("forceLoad", &Sound::forceLoad, SRC_POS);
+  pkg->def_get_set("file", &Sound::getFile, &Sound::setFile, SRC_POS);
 
   const rutz::fstring ok_file(GROOVX_AUDIO_DIR "/saw50_500Hz_300ms.au");
   const rutz::fstring err_file(GROOVX_AUDIO_DIR "/saw50_350Hz_2x120ms.au");
@@ -77,12 +77,12 @@ GVX_TRACE("Sound_Init");
   nub::ref<Sound> ok_sound(Sound::makeFrom(ok_file.c_str()));
   Sound::setOkSound(ok_sound);
   OK = ok_sound.id();
-  pkg->linkVarConst("Sound::ok", OK);
+  pkg->link_var_const("Sound::ok", OK);
 
   nub::ref<Sound> err_sound(Sound::makeFrom(err_file.c_str()));
   Sound::setErrSound(err_sound);
   ERR = err_sound.id();
-  pkg->linkVarConst("Sound::err", ERR);
+  pkg->link_var_const("Sound::err", ERR);
 
   GVX_PKG_RETURN(pkg);
 }

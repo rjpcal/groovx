@@ -128,7 +128,7 @@ extern "C" int Algotest_SafeInit(Tcl_Interp*)
 extern "C" int Algotest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
 GVX_TRACE("Algotest_Unload");
-  return Tcl::Pkg::unloadDestroy(interp, "Algotest");
+  return tcl::pkg::destroy_on_unload(interp, "Algotest");
 }
 
 extern "C" int Algotest_SafeUnload(Tcl_Interp*, int /*flags*/)

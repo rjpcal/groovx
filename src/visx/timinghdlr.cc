@@ -82,7 +82,7 @@ private:
 
 public:
   Impl() :
-    scheduler(rutz::make_shared(new Tcl::TimerScheduler)),
+    scheduler(rutz::make_shared(new tcl::timer_scheduler)),
     immediateEvents(),
     startEvents(),
     responseEvents(),

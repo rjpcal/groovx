@@ -41,9 +41,9 @@
 
 #include "rutz/trace.h"
 
-Tcl::ChannelBuf::ChannelBuf(Tcl_Interp* interp,
+tcl::channel_buf::channel_buf(Tcl_Interp* interp,
                             const char* channame, int /*om*/) :
-  opened(false), owned(false), mode(0), itsInterp(interp), chan(0)
+  opened(false), owned(false), mode(0), m_interp(interp), chan(0)
 {
   int origmode = 0;
   chan = Tcl_GetChannel(interp, channame, &origmode);
@@ -55,48 +55,50 @@ Tcl::ChannelBuf::ChannelBuf(Tcl_Interp* interp,
   opened = true;
 }
 
-void Tcl::ChannelBuf::close()
+void tcl::channel_buf::close()
 {
   if (opened && owned)
     {
       opened = false;
-      Tcl_Close(itsInterp, chan);
+      Tcl_Close(m_interp, chan);
     }
 }
 
-int Tcl::ChannelBuf::underflow() // with help from Josuttis, p. 678
+int tcl::channel_buf::underflow() // with help from Josuttis, p. 678
 {
-GVX_TRACE("Tcl::ChannelBuf::underflow");
+GVX_TRACE("tcl::channel_buf::underflow");
   // is read position before end of buffer?
   if (gptr() < egptr())
     return *gptr();
 
-  int numPutback = 0;
-  if (pbackSize > 0)
+  int num_putback = 0;
+  if (s_pback_size > 0)
     {
       // process size of putback area
       // -use number of characters read
       // -but at most four
-      numPutback = gptr() - eback();
-      if (numPutback > 4)
-        numPutback = 4;
+      num_putback = gptr() - eback();
+      if (num_putback > 4)
+        num_putback = 4;
 
       // copy up to four characters previously read into the putback
       // buffer (area of first four characters)
-      std::memcpy (buffer+(4-numPutback), gptr()-numPutback,
-                   numPutback);
+      std::memcpy (m_buffer+(4-num_putback), gptr()-num_putback,
+                   num_putback);
     }
 
   // read new characters
-  int num = Tcl_Read(chan, buffer+pbackSize, bufSize-pbackSize);
+  const int num = Tcl_Read(chan,
+                           m_buffer+s_pback_size,
+                           s_buf_size-s_pback_size);
 
   if (num <= 0) // error (0) or end-of-file (-1)
     return EOF;
 
   // reset buffer pointers
-  setg (buffer+(pbackSize-numPutback),
-        buffer+pbackSize,
-        buffer+pbackSize+num);
+  setg (m_buffer+(s_pback_size-num_putback),
+        m_buffer+s_pback_size,
+        m_buffer+s_pback_size+num);
 
   // return next character Hrmph. We have to cast to unsigned char to avoid
   // problems with eof. Problem is, -1 is a valid char value to
@@ -106,9 +108,9 @@ GVX_TRACE("Tcl::ChannelBuf::underflow");
   return static_cast<unsigned char>(*gptr());
 }
 
-int Tcl::ChannelBuf::overflow(int c)
+int tcl::channel_buf::overflow(int c)
 {
-GVX_TRACE("Tcl::ChannelBuf::overflow");
+GVX_TRACE("tcl::channel_buf::overflow");
   if (!(mode & std::ios::out) || !opened) return EOF;
 
   if (c != EOF)
@@ -126,7 +128,7 @@ GVX_TRACE("Tcl::ChannelBuf::overflow");
   return c;
 }
 
-int Tcl::ChannelBuf::sync()
+int tcl::channel_buf::sync()
 {
   if (flushoutput() == EOF)
     {
@@ -135,7 +137,7 @@ int Tcl::ChannelBuf::sync()
   return 0;
 }
 
-int Tcl::ChannelBuf::flushoutput()
+int tcl::channel_buf::flushoutput()
 {
   if (!(mode & std::ios::out) || !opened) return EOF;
 
@@ -151,37 +153,38 @@ int Tcl::ChannelBuf::flushoutput()
 
 namespace
 {
-  class TclStream : public std::iostream
+  class tcl_stream : public std::iostream
   {
   private:
-    Tcl::ChannelBuf itsBuf;
+    tcl::channel_buf m_buf;
   public:
-    TclStream(Tcl_Interp* interp,
-              const char* channame, std::ios::openmode mode) :
+    tcl_stream(Tcl_Interp* interp,
+               const char* channame, std::ios::openmode mode)
+      :
       std::iostream(0),
-      itsBuf(interp, channame, mode)
+      m_buf(interp, channame, mode)
     {
-      rdbuf(&itsBuf);
+      rdbuf(&m_buf);
     }
   };
 }
 
 using rutz::shared_ptr;
 
-shared_ptr<std::ostream> Tcl::ochanopen(Tcl_Interp* interp,
+shared_ptr<std::ostream> tcl::ochanopen(Tcl_Interp* interp,
                                         const char* channame,
                                         std::ios::openmode flags)
 {
   return shared_ptr<std::ostream>
-    (new TclStream(interp, channame, std::ios::out|flags));
+    (new tcl_stream(interp, channame, std::ios::out|flags));
 }
 
-shared_ptr<std::istream> Tcl::ichanopen(Tcl_Interp* interp,
+shared_ptr<std::istream> tcl::ichanopen(Tcl_Interp* interp,
                                         const char* channame,
                                         std::ios::openmode flags)
 {
   return shared_ptr<std::iostream>
-    (new TclStream(interp, channame, std::ios::in|flags));
+    (new tcl_stream(interp, channame, std::ios::in|flags));
 }
 
 

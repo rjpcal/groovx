@@ -143,7 +143,7 @@ extern "C" int Vectwotest_SafeInit(Tcl_Interp*) { return 1; }
 extern "C" int Vectwotest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
 GVX_TRACE("Vectwotest_Unload");
-  return Tcl::Pkg::unloadDestroy(interp, "Vectwotest");
+  return tcl::pkg::destroy_on_unload(interp, "Vectwotest");
 }
 
 extern "C" int Vectwotest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }

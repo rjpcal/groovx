@@ -38,25 +38,25 @@ namespace rutz
   class fstring;
 }
 
-namespace Tcl
+namespace tcl
 {
-  class Interp;
-  class Main;
+  class interpreter;
+  class event_loop;
 }
 
 /// Singleton class that operates the main Tcl event loop.
 /** Its responsibilities include gathering text commands from standard
     input, dispatching window-system events, and dispatching
     timer-callbacks and idle-callbacks. */
-class Tcl::Main
+class tcl::event_loop
 {
 public:
-  Main(int argc, char** argv, bool nowindow);
-  ~Main();
+  event_loop(int argc, char** argv, bool nowindow);
+  ~event_loop();
 
-  static bool isInteractive();
+  static bool is_interactive();
 
-  static Tcl::Interp& interp();
+  static tcl::interpreter& interp();
 
   static void run();
 
@@ -67,11 +67,11 @@ public:
   static const char* const* argv();
 
   /// Get the whole command-line as a single string.
-  static rutz::fstring commandLine();
+  static rutz::fstring command_line();
 
 private:
-  Main(const Main&);
-  Main& operator=(const Main&);
+  event_loop(const event_loop&);
+  event_loop& operator=(const event_loop&);
 };
 
 static const char vcid_groovx_tcl_eventloop_h_utc20050628162420[] = "$Id$ $HeadURL$";

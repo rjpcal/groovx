@@ -35,7 +35,6 @@
 
 typedef struct Tcl_Obj Tcl_Obj;
 struct Tcl_Interp;
-typedef void* ClientData;
 
 namespace rutz
 {
@@ -44,58 +43,58 @@ namespace rutz
   template <class T> class shared_ptr;
 }
 
-namespace Tcl
+namespace tcl
 {
-  class Command;
-  class CommandGroup;
-  class Interp;
+  class command;
+  class command_group;
+  class interpreter;
 }
 
-/// Represents a set of overloaded Tcl::Command objects.
-class Tcl::CommandGroup
+/// Represents a set of overloaded tcl::command objects.
+class tcl::command_group
 {
 public:
   /// Find the named command, if it exists.
   /** Returns null if no such command. */
-  static CommandGroup* lookup(Tcl::Interp& interp,
+  static command_group* lookup(tcl::interpreter& interp,
                               const char* name) throw();
 
   /// Find the named command, after following any namespace aliases.
   /** Returns null if no such command. */
-  static CommandGroup* lookupOriginal(Tcl::Interp& interp,
-                                      const char* name) throw();
+  static command_group* lookup_original(tcl::interpreter& interp,
+                                        const char* name) throw();
 
   /// Find the named command, making a new one if necessary.
-  static CommandGroup* make(Tcl::Interp& interp,
+  static command_group* make(tcl::interpreter& interp,
                             const rutz::fstring& cmd_name,
                             const rutz::file_pos& src_pos);
 
-  /// Add the given Tcl::Command to this group's overload list.
-  void add(rutz::shared_ptr<Tcl::Command> p);
+  /// Add the given tcl::command to this group's overload list.
+  void add(rutz::shared_ptr<tcl::command> p);
 
   /// Get this group's fully namespace-qualified command name.
-  rutz::fstring cmdName() const;
+  rutz::fstring resolved_name() const;
 
   /// Returns a string giving the command's proper usage, including overloads.
   rutz::fstring usage() const;
 
-  int rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw();
+  int invoke_raw(int s_objc, Tcl_Obj *const objv[]) throw();
 
 private:
-  class Impl;
-  friend class Impl;
-  Impl* const rep;
+  class impl;
+  friend class impl;
+  impl* const rep;
 
-  /// Private constructor since clients should use CommandGroup::make().
-  CommandGroup(Tcl::Interp& interp,
+  /// Private constructor since clients should use command_group::make().
+  command_group(tcl::interpreter& interp,
                const rutz::fstring& cmd_name,
                const rutz::file_pos& src_pos);
 
   /// Private destructor since destruction is automated by Tcl.
-  ~CommandGroup() throw();
+  ~command_group() throw();
 
-  CommandGroup(const CommandGroup&); // not implemented
-  CommandGroup& operator=(const CommandGroup&); // not implemented
+  command_group(const command_group&); // not implemented
+  command_group& operator=(const command_group&); // not implemented
 };
 
 static const char vcid_groovx_tcl_commandgroup_h_utc20050628162421[] = "$Id$ $HeadURL$";

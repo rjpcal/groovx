@@ -327,9 +327,9 @@ namespace
       }
   }
 
-  Tcl::Obj dictGet(Tcl::Dict dict, const char* key)
+  tcl::obj dictGet(tcl::dict dict, const char* key)
   {
-    return dict.get<Tcl::Obj>(key);
+    return dict.get<tcl::obj>(key);
   }
 }
 

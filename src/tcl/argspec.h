@@ -35,66 +35,73 @@
 
 #include <limits>
 
-namespace Tcl
+namespace tcl
 {
   /// Specify how many args a command can take.
-  /** By convention, nargMin and nargMax INCLUDE the zero'th argument
-      (i.e. the command name) in the arg count. Thus a command that
-      takes no parameters would have an arg count of 1. If isExact is
-      true, then the argc of a command invocation is required to be
-      exactly equal either nargMin or nargMax; if it is false, then
-      argc must be between nargMin and nargMax, inclusive. */
-  struct ArgSpec
+  /** By convention, argc_min() and argc_max() INCLUDE the zero'th
+      argument (i.e. the command name) in the arg count. Thus a
+      command that takes no parameters would have an arg count of
+      1. If is_exact() is true, then the argc of a command invocation
+      is required to be exactly equal either argc_min() or argc_max();
+      if it is false, then argc must be between argc_min() and
+      argc_max(), inclusive. */
+  class arg_spec
   {
-    ArgSpec()
+  public:
+    arg_spec()
       :
-      nargMin(0),
-      nargMax(0),
-      isExact(false)
+      m_argc_min(0),
+      m_argc_max(0),
+      m_is_exact(false)
     {}
 
-    /// Construct with initial values for nargMin/nargMax/isExact.
-    /** If the value given for nmax is negative, then nargMax will be
-        set to the same value as nmin. */
-    explicit ArgSpec(int nmin, int nmax = -1, bool ex = false)
+    /// Construct with initial values for m_argc_min/m_argc_max/m_is_exact.
+    /** If the value given for nmax is negative, then m_argc_max will
+        be set to the same value as nmin. */
+    explicit arg_spec(int nmin, int nmax = -1, bool ex = false)
       :
-      nargMin(nmin < 0
-              ? 0
-              : static_cast<unsigned int>(nmin)),
-      nargMax(nmax == -1
-              ? nargMin
-              : static_cast<unsigned int>(nmax)),
-      isExact(ex)
+      m_argc_min(nmin < 0
+                 ? 0
+                 : static_cast<unsigned int>(nmin)),
+      m_argc_max(nmax == -1
+                 ? m_argc_min
+                 : static_cast<unsigned int>(nmax)),
+      m_is_exact(ex)
     {}
 
-    ArgSpec& min(int nmin) { nargMin = nmin; return *this; }
-    ArgSpec& max(int nmax) { nargMax = nmax; return *this; }
-    ArgSpec& exact(bool ex) { isExact = ex; return *this; }
+    arg_spec& min(int nmin) { m_argc_min = nmin; return *this; }
+    arg_spec& max(int nmax) { m_argc_max = nmax; return *this; }
+    arg_spec& exact(bool ex) { m_is_exact = ex; return *this; }
 
-    ArgSpec& nolimit()
+    arg_spec& nolimit()
     {
-      nargMax = std::numeric_limits<unsigned int>::max();
-      isExact = false;
+      m_argc_max = std::numeric_limits<unsigned int>::max();
+      m_is_exact = false;
       return *this;
     }
 
-    bool allowsObjc(unsigned int objc) const
+    bool allows_argc(unsigned int objc) const
     {
-      if (this->isExact)
+      if (this->m_is_exact)
         {
-          return (objc == this->nargMin ||
-                  objc == this->nargMax);
+          return (objc == this->m_argc_min ||
+                  objc == this->m_argc_max);
         }
       // else...
-      return (objc >= this->nargMin &&
-              objc <= this->nargMax);
+      return (objc >= this->m_argc_min &&
+              objc <= this->m_argc_max);
     }
 
-    unsigned int nargMin;
-    unsigned int nargMax;
-    bool         isExact;
+    unsigned int argc_min() const { return m_argc_min; }
+    unsigned int argc_max() const { return m_argc_max; }
+    bool         is_exact() const { return m_is_exact; }
+
+  private:
+    unsigned int m_argc_min;
+    unsigned int m_argc_max;
+    bool         m_is_exact;
   };
 }
 
-static const char vcid_groovx_tcl_argspec_h_utc20050628064704[] = "$Id$ $URL$";
+static const char vcid_groovx_tcl_argspec_h_utc20050628064704[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_ARGSPEC_H_UTC20050628064704DEFINED

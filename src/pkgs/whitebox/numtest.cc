@@ -129,7 +129,7 @@ extern "C" int Numtest_SafeInit(Tcl_Interp*) { return 1; }
 extern "C" int Numtest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
 GVX_TRACE("Numtest_Unload");
-  return Tcl::Pkg::unloadDestroy(interp, "Numtest");
+  return tcl::pkg::destroy_on_unload(interp, "Numtest");
 }
 
 extern "C" int Numtest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }

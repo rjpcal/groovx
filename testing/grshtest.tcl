@@ -90,7 +90,7 @@ foreach file $permuted_files {
     }
 
     if { $::VERBOSE > 0 } {
-        puts "Obj::count [Obj::countAll]"
+        puts "Obj::count [Obj::count_all]"
     }
 }
 

@@ -33,11 +33,11 @@
 #ifndef GROOVX_TCL_VECDISPATCH_H_UTC20050628162421_DEFINED
 #define GROOVX_TCL_VECDISPATCH_H_UTC20050628162421_DEFINED
 
-namespace Tcl
+namespace tcl
 {
-  class Command;
+  class command;
 
-  void useVecDispatch(Tcl::Command& cmd, unsigned int key_argn);
+  void use_vec_dispatch(tcl::command& cmd, unsigned int key_argn);
 }
 
 static const char vcid_groovx_tcl_vecdispatch_h_utc20050628162421[] = "$Id$ $HeadURL$";

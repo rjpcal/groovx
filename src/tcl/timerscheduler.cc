@@ -46,51 +46,52 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-namespace Tcl
+namespace tcl
 {
-  class TimerSchedulerToken;
+  class timer_scheduler_token;
 }
 
-class Tcl::TimerSchedulerToken : public nub::timer_token
+class tcl::timer_scheduler_token : public nub::timer_token
 {
 public:
-  TimerSchedulerToken(int msec,
-                      void (*callback)(void*),
-                      void* clientdata);
-  virtual ~TimerSchedulerToken() throw();
+  timer_scheduler_token(int msec,
+                        void (*callback)(void*),
+                        void* clientdata);
+  virtual ~timer_scheduler_token() throw();
 
 private:
-  static void dummyCallback(void* token) throw();
+  static void c_callback(void* token) throw();
 
   typedef void (Callback)(void*);
 
-  Tcl_TimerToken itsToken;
-  Callback* const itsCallback;
-  void* const itsClientData;
+  Tcl_TimerToken       m_token;
+  Callback*      const m_callback;
+  void*          const m_clientdata;
 };
 
-Tcl::TimerSchedulerToken::TimerSchedulerToken(int msec,
-                                              void (*callback)(void*),
-                                              void* clientdata)
+tcl::timer_scheduler_token::
+timer_scheduler_token(int msec,
+                      void (*callback)(void*),
+                      void* clientdata)
   :
-  itsToken(Tcl_CreateTimerHandler(msec,
-                                  dummyCallback,
-                                  static_cast<void*>(this))),
-  itsCallback(callback),
-  itsClientData(clientdata)
+  m_token(Tcl_CreateTimerHandler(msec,
+                                 c_callback,
+                                 static_cast<void*>(this))),
+  m_callback(callback),
+  m_clientdata(clientdata)
 {
-GVX_TRACE("Tcl::TimerSchedulerToken::TimerSchedulerToken");
+GVX_TRACE("tcl::timer_scheduler_token::timer_scheduler_token");
 }
 
-Tcl::TimerSchedulerToken::~TimerSchedulerToken() throw()
+tcl::timer_scheduler_token::~timer_scheduler_token() throw()
 {
-GVX_TRACE("Tcl::TimerSchedulerToken::~TimerSchedulerToken");
-  Tcl_DeleteTimerHandler(itsToken);
+GVX_TRACE("tcl::timer_scheduler_token::~timer_scheduler_token");
+  Tcl_DeleteTimerHandler(m_token);
 }
 
-void Tcl::TimerSchedulerToken::dummyCallback(void* token) throw()
+void tcl::timer_scheduler_token::c_callback(void* token) throw()
 {
-  TimerSchedulerToken* tok = static_cast<TimerSchedulerToken*>(token);
+  timer_scheduler_token* tok = static_cast<timer_scheduler_token*>(token);
 
   GVX_ASSERT(tok != 0);
 
@@ -100,32 +101,32 @@ void Tcl::TimerSchedulerToken::dummyCallback(void* token) throw()
       // the TimerScheduleToken object being destroyed. So, if we need
       // access to any of the token's member variables, we need to
       // make a local copy of them before calling the callback.
-      (*tok->itsCallback)(tok->itsClientData);
+      (*tok->m_callback)(tok->m_clientdata);
     }
   catch(...)
     {
-      Tcl::Main::interp().handleLiveException("timer callback",
-                                              SRC_POS);
-      Tcl::Main::interp().backgroundError();
+      tcl::event_loop::interp().handle_live_exception("timer callback",
+                                                SRC_POS);
+      tcl::event_loop::interp().background_error();
     }
 }
 
-Tcl::TimerScheduler::TimerScheduler()
+tcl::timer_scheduler::timer_scheduler()
 {
-GVX_TRACE("Tcl::TimerScheduler::TimerScheduler");
+GVX_TRACE("tcl::timer_scheduler::timer_scheduler");
 }
 
-Tcl::TimerScheduler::~TimerScheduler() throw()
+tcl::timer_scheduler::~timer_scheduler() throw()
 {
-GVX_TRACE("Tcl::TimerScheduler::~TimerScheduler");
+GVX_TRACE("tcl::timer_scheduler::~timer_scheduler");
 }
 
 rutz::shared_ptr<nub::timer_token>
-Tcl::TimerScheduler::schedule(int msec,
+tcl::timer_scheduler::schedule(int msec,
                               void (*callback)(void*),
                               void* clientdata)
 {
-GVX_TRACE("Tcl::TimerScheduler::schedule");
+GVX_TRACE("tcl::timer_scheduler::schedule");
   // If the requested delay is zero -- i.e., immediate -- then don't
   // bother creating a timer handler. Instead, generate a direct
   // invocation; this saves a trip into the event loop and back.
@@ -139,7 +140,7 @@ GVX_TRACE("Tcl::TimerScheduler::schedule");
     }
 
   return rutz::shared_ptr<nub::timer_token>
-    (new Tcl::TimerSchedulerToken(msec, callback, clientdata));
+    (new tcl::timer_scheduler_token(msec, callback, clientdata));
 }
 
 static const char vcid_groovx_tcl_timerscheduler_cc_utc20050628162421[] = "$Id$ $HeadURL$";

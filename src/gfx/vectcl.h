@@ -39,48 +39,48 @@
 #include "tcl/conversions.h"
 #include "tcl/list.h"
 
-namespace Tcl
+namespace tcl
 {
   /// Conversion routine for Tcl object to geom::vec2.
   template <class T>
-  inline geom::vec2<T> fromTclImpl(Tcl_Obj* obj, geom::vec2<T>*)
+  inline geom::vec2<T> aux_convert_to(Tcl_Obj* obj, geom::vec2<T>*)
   {
-    Tcl::List listObj(obj);
+    tcl::list listObj(obj);
 
     return geom::vec2<T>(listObj.template get<T>(0),
                          listObj.template get<T>(1));
   }
 
-  /// Conversion routine for geom::vec2 to Tcl::Obj.
+  /// Conversion routine for geom::vec2 to tcl::obj.
   template <class T>
-  inline Tcl::Obj toTclImpl( const geom::vec2<T>& v )
+  inline tcl::obj aux_convert_from( const geom::vec2<T>& v )
   {
-    Tcl::List listObj;
+    tcl::list listObj;
     listObj.append(v.x());
     listObj.append(v.y());
-    return listObj.asObj();
+    return listObj.as_obj();
   }
 
   /// Conversion routine for Tcl object to geom::vec3.
   template <class T>
-  inline geom::vec3<T> fromTclImpl(Tcl_Obj* obj, geom::vec3<T>*)
+  inline geom::vec3<T> aux_convert_to(Tcl_Obj* obj, geom::vec3<T>*)
   {
-    Tcl::List listObj(obj);
+    tcl::list listObj(obj);
 
     return geom::vec3<T>(listObj.template get<T>(0),
                          listObj.template get<T>(1),
                          listObj.template get<T>(2));
   }
 
-  /// Conversion routine for geom::vec3 to Tcl::Obj.
+  /// Conversion routine for geom::vec3 to tcl::obj.
   template <class T>
-  inline Tcl::Obj toTclImpl( const geom::vec3<T>& v )
+  inline tcl::obj aux_convert_from( const geom::vec3<T>& v )
   {
-    Tcl::List listObj;
+    tcl::list listObj;
     listObj.append(v.x());
     listObj.append(v.y());
     listObj.append(v.z());
-    return listObj.asObj();
+    return listObj.as_obj();
   }
 }
 

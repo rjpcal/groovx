@@ -104,7 +104,7 @@ extern "C" int Geomtest_SafeInit(Tcl_Interp*) { return 1; }
 extern "C" int Geomtest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
 GVX_TRACE("Geomtest_Unload");
-  return Tcl::Pkg::unloadDestroy(interp, "Geomtest");
+  return tcl::pkg::destroy_on_unload(interp, "Geomtest");
 }
 
 extern "C" int Geomtest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }

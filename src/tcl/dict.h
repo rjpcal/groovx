@@ -35,58 +35,58 @@
 
 #include "tcl/obj.h"
 
-namespace Tcl
+namespace tcl
 {
-  class Dict;
+  class dict;
 }
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Tcl::Dict class definition
+ * tcl::dict class definition
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::Dict
+class tcl::dict
 {
 public:
   /// Default constructor makes an empty dict
-  Dict();
+  dict();
 
-  Dict(const Tcl::Obj& dictObj) :
-    itsDictObj(dictObj)
+  dict(const tcl::obj& d) :
+    m_obj(d)
   {}
 
-  Dict(const Dict& other) :
-    itsDictObj(other.itsDictObj)
+  dict(const dict& other) :
+    m_obj(other.m_obj)
   {}
 
-  Dict& operator=(const Dict& other)
+  dict& operator=(const dict& other)
   {
-    itsDictObj = other.itsDictObj;
+    m_obj = other.m_obj;
     return *this;
   };
 
   template <class T>
   void put(const char* key, const T& val)
   {
-    doPut(key, Tcl::toTcl(val));
+    do_put(key, tcl::convert_from(val));
   }
 
   template <class T>
   T get(const char* key, T* /*dummy*/=0) const
   {
-    return Tcl::fromTcl<T>(doGet(key).obj());
+    return tcl::convert_to<T>(do_get(key).get());
   }
 
-  Tcl::Obj asObj() const { return itsDictObj; }
+  tcl::obj as_obj() const { return m_obj; }
 
 private:
-  void doPut(const char* key, Tcl::Obj val);
-  Tcl::Obj doGet(const char* key) const;
+  void do_put(const char* key, tcl::obj val);
+  tcl::obj do_get(const char* key) const;
 
-  Tcl::Obj itsDictObj;
+  tcl::obj m_obj;
 };
 
 static const char vcid_groovx_tcl_dict_h_utc20050628162420[] = "$Id$ $HeadURL$";

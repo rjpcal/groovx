@@ -307,7 +307,7 @@ GVX_TRACE("TlistUtils::writeMatlab");
 //
 //---------------------------------------------------------------------
 
-nub::uid TlistUtils::createPreview(Tcl::List objid_list,
+nub::uid TlistUtils::createPreview(tcl::list objid_list,
                                    const geom::rect<double>& world_viewport,
                                    int num_cols_hint = -1,
                                    bool text_labels = true)
@@ -329,13 +329,13 @@ nub::uid TlistUtils::createPreview(Tcl::List objid_list,
 //
 //--------------------------------------------------------------------
 
-Tcl::List TlistUtils::dealSingles(Tcl::List objids, nub::uid posid)
+tcl::list TlistUtils::dealSingles(tcl::list objids, nub::uid posid)
 {
-  Tcl::List result;
+  tcl::list result;
 
   ref<GxNode> pos(posid);
 
-  for (Tcl::List::Iterator<nub::uid>
+  for (tcl::list::iterator<nub::uid>
          itr = objids.begin<nub::uid>(),
          end = objids.end<nub::uid>();
        itr != end;
@@ -362,15 +362,15 @@ Tcl::List TlistUtils::dealSingles(Tcl::List objids, nub::uid posid)
 //
 //--------------------------------------------------------------------
 
-Tcl::List TlistUtils::dealPairs(Tcl::List objids1, Tcl::List objids2,
+tcl::list TlistUtils::dealPairs(tcl::list objids1, tcl::list objids2,
                                 nub::uid posid1, nub::uid posid2)
 {
-  Tcl::List result;
+  tcl::list result;
 
   ref<GxNode> pos1(posid1);
   ref<GxNode> pos2(posid2);
 
-  for (Tcl::List::Iterator<nub::uid>
+  for (tcl::list::iterator<nub::uid>
          itr1 = objids1.begin<nub::uid>(),
          end1 = objids1.end<nub::uid>();
        itr1 != end1;
@@ -378,7 +378,7 @@ Tcl::List TlistUtils::dealPairs(Tcl::List objids1, Tcl::List objids2,
     {
       ref<GxSeparator> sep1(makeSepPair(pos1, ref<GxNode>(*itr1)));
 
-      for (Tcl::List::Iterator<nub::uid>
+      for (tcl::list::iterator<nub::uid>
              itr2 = objids2.begin<nub::uid>(),
              end2 = objids2.end<nub::uid>();
            itr2 != end2;
@@ -404,7 +404,7 @@ Tcl::List TlistUtils::dealPairs(Tcl::List objids1, Tcl::List objids2,
 //
 //--------------------------------------------------------------------
 
-Tcl::List TlistUtils::dealTriads(Tcl::List objid_list, nub::uid posid1,
+tcl::list TlistUtils::dealTriads(tcl::list objid_list, nub::uid posid1,
                                  nub::uid posid2, nub::uid posid3)
 {
   const unsigned int NUM_PERMS = 18;
@@ -435,7 +435,7 @@ Tcl::List TlistUtils::dealTriads(Tcl::List objid_list, nub::uid posid1,
 
   nub::uid base_triad[3];
 
-  Tcl::List result;
+  tcl::list result;
 
   for (unsigned int i = 0; i < objids.size(); ++i)
     {
@@ -483,9 +483,9 @@ Tcl::List TlistUtils::dealTriads(Tcl::List objid_list, nub::uid posid1,
 //
 //--------------------------------------------------------------------
 
-Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
-                                    Tcl::List objid_list,
-                                    Tcl::List posid_list, int num_lines)
+tcl::list TlistUtils::loadObjidFile(const char* objid_file,
+                                    tcl::list objid_list,
+                                    tcl::list posid_list, int num_lines)
 {
   // Determine whether we will read to the end of the input stream, or
   // whether we will read only num_lines lines from the stream.
@@ -506,7 +506,7 @@ Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
   const int BUF_SIZE = 200;
   char line[BUF_SIZE];
 
-  Tcl::List result;
+  tcl::list result;
 
   int num_read = 0;
   while ( (read_to_eof || num_read < num_lines)

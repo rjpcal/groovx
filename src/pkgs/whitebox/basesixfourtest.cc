@@ -228,7 +228,7 @@ extern "C" int Basesixfourtest_SafeInit(Tcl_Interp*)
 extern "C" int Basesixfourtest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
 GVX_TRACE("Basesixfourtest_Unload");
-  return Tcl::Pkg::unloadDestroy(interp, "Basesixfourtest");
+  return tcl::pkg::destroy_on_unload(interp, "Basesixfourtest");
 }
 
 extern "C" int Basesixfourtest_SafeUnload(Tcl_Interp*, int /*flags*/)

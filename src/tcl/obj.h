@@ -35,87 +35,86 @@
 
 typedef struct Tcl_Obj Tcl_Obj;
 
-namespace Tcl
+namespace tcl
 {
+  class obj;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
  * This class acts as a reference counted smart pointer to Tcl_Obj. It
- * is similar to TclObjLock in that it manages the reference count of
- * a held Tcl_Obj*, but it also defines a conversion operator back to
- * Tcl_Obj* in order to provide access to Tcl_Obj's interface.
+ * manages the reference count of a held Tcl_Obj*, and also defines a
+ * conversion operator back to Tcl_Obj* in order to provide access to
+ * Tcl_Obj's interface.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Obj
+class tcl::obj
 {
 public:
   /// Default constructor with a shared and empty Tcl_Obj*.
-  Obj();
+  obj();
 
   /// Construct with a Tcl_Obj*.
-  Obj(Tcl_Obj* obj) : itsObj(obj) { incrRef(itsObj); }
+  obj(Tcl_Obj* obj) : m_obj(obj) { incr_ref(m_obj); }
 
   /// Destructor.
-  ~Obj() { decrRef(itsObj); }
+  ~obj() { decr_ref(m_obj); }
 
   /// Copy constructor.
-  Obj(const Obj& x) :
-    itsObj(x.itsObj)
+  obj(const obj& x) :
+    m_obj(x.m_obj)
     {
-      incrRef(itsObj);
+      incr_ref(m_obj);
     }
 
-  /// Assignment operator from Obj.
-  Obj& operator=(const Obj& x)
+  /// Assignment operator from obj.
+  obj& operator=(const obj& x)
     {
-      assign(x.itsObj); return *this;
+      assign(x.m_obj); return *this;
     }
 
   /// Assignment operator from Tcl_Obj*.
-  Obj& operator=(Tcl_Obj* x)
+  obj& operator=(Tcl_Obj* x)
     {
       assign(x); return *this;
     }
 
-  Tcl_Obj* obj() const { return itsObj; }
+  Tcl_Obj* get() const { return m_obj; }
 
   template <class T>
   inline T as() const;
 
-  void append(const Tcl::Obj& other);
+  void append(const tcl::obj& other);
 
   template <class T>
   inline void append(const T& other);
 
   bool is_shared() const;
-  bool isUnique() const { return !is_shared(); }
+  bool is_unique() const { return !is_shared(); }
 
-  void ensureUnique() const;
+  void make_unique() const;
 
-  const char* typeName() const;
+  const char* tcltype_name() const;
 
 private:
-  static void incrRef(Tcl_Obj* obj);
-  static void decrRef(Tcl_Obj* obj);
+  static void incr_ref(Tcl_Obj* obj);
+  static void decr_ref(Tcl_Obj* obj);
 
   void assign(Tcl_Obj* x) const
     {
-      if (itsObj != x)
+      if (m_obj != x)
         {
-          decrRef(itsObj);
-          itsObj = x;
-          incrRef(itsObj);
+          decr_ref(m_obj);
+          m_obj = x;
+          incr_ref(m_obj);
         }
     }
 
-  mutable Tcl_Obj* itsObj;
+  mutable Tcl_Obj* m_obj;
 };
-
-
-} // end namespace Tcl
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -127,15 +126,15 @@ private:
 #include "tcl/conversions.h"
 
 template <class T>
-inline T Tcl::Obj::as() const
+inline T tcl::obj::as() const
 {
-  return Tcl::fromTcl<T>(itsObj);
+  return tcl::convert_to<T>(m_obj);
 }
 
 template <class T>
-inline void Tcl::Obj::append(const T& other)
+inline void tcl::obj::append(const T& other)
 {
-  append(Tcl::toTcl(other));
+  append(tcl::convert_from(other));
 }
 
 static const char vcid_groovx_tcl_obj_h_utc20050628162421[] = "$Id$ $HeadURL$";

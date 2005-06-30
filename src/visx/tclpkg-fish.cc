@@ -62,14 +62,14 @@ int Fish_Init(Tcl_Interp* interp)
 GVX_TRACE("Fish_Init");
 
   GVX_PKG_CREATE(pkg, interp, "Fish", "4.$Revision$");
-  pkg->inheritPkg("GxShapeKit");
+  pkg->inherit_pkg("GxShapeKit");
 
-  Tcl::defTracing(pkg, Fish::tracer);
+  tcl::def_tracing(pkg, Fish::tracer);
 
-  Tcl::defFieldContainer<Fish>(pkg, SRC_POS);
+  tcl::defFieldContainer<Fish>(pkg, SRC_POS);
 
-  pkg->defVec( "make", "spline_file coord_file index", &makeFish, 1,
-               SRC_POS );
+  pkg->def_vec( "make", "spline_file coord_file index", &makeFish, 1,
+                SRC_POS );
 
   nub::obj_factory::instance().register_creator(&Fish::make);
 

@@ -47,16 +47,16 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-namespace Tcl
+namespace tcl
 {
-  Tcl::Obj getField(const Field& field,
+  tcl::obj getField(const Field& field,
                        nub::ref<FieldContainer> item)
   {
     return item->getField(field);
   }
 
   void setField(const Field& field, nub::ref<FieldContainer> item,
-                const Tcl::Obj& newValue)
+                const tcl::obj& newValue)
   {
     return item->setField(field, newValue);
   }
@@ -64,7 +64,7 @@ namespace Tcl
   struct FieldsLister
   {
     const FieldMap& itsFields;
-    Tcl::List itsFieldList;
+    tcl::list itsFieldList;
     bool isItRecursive;
     bool isItInited;
 
@@ -79,14 +79,14 @@ namespace Tcl
 
     typedef void retn_t;
 
-    void operator()(Tcl::Context& ctx);
+    void operator()(tcl::call_context& ctx);
   };
 }
 
 
-void Tcl::FieldsLister::operator()(Tcl::Context& ctx)
+void tcl::FieldsLister::operator()(tcl::call_context& ctx)
 {
-GVX_TRACE("Tcl::FieldsLister::operator()");
+GVX_TRACE("tcl::FieldsLister::operator()");
   if (!isItInited)
     {
       for (const FieldMap* fmap = &itsFields;
@@ -97,14 +97,14 @@ GVX_TRACE("Tcl::FieldsLister::operator()");
             {
               const Field& field = *itr;
 
-              Tcl::List sub_list;
+              tcl::list sub_list;
 
               sub_list.append(field.name());           // property name
               sub_list.append(field.min());            // min value
               sub_list.append(field.max());            // max value
               sub_list.append(field.res());            // resolution value
 
-              Tcl::List flags;
+              tcl::list flags;
               if (field.startsNewGroup()) flags.append("NEW_GROUP");
               if (field.isTransient())    flags.append("TRANSIENT");
               if (field.isString())       flags.append("STRING");
@@ -124,7 +124,7 @@ GVX_TRACE("Tcl::FieldsLister::operator()");
       isItInited = true;
     }
 
-  ctx.setResult(itsFieldList);
+  ctx.set_result(itsFieldList);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -133,23 +133,23 @@ GVX_TRACE("Tcl::FieldsLister::operator()");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Tcl::defField(Tcl::Pkg* pkg, const Field& field,
+void tcl::defField(tcl::pkg* pkg, const Field& field,
                    const rutz::file_pos& src_pos)
 {
-GVX_TRACE("Tcl::defField");
+GVX_TRACE("tcl::defField");
 
   const unsigned int keyarg = 1;
 
-  pkg->defVec( field.name().c_str(), "objref(s)",
-               rutz::bind_first(getField, field), keyarg, src_pos );
-  pkg->defVec( field.name().c_str(), "objref(s) new_val(s)",
-               rutz::bind_first(setField, field), keyarg, src_pos );
+  pkg->def_vec( field.name().c_str(), "objref(s)",
+                rutz::bind_first(getField, field), keyarg, src_pos );
+  pkg->def_vec( field.name().c_str(), "objref(s) new_val(s)",
+                rutz::bind_first(setField, field), keyarg, src_pos );
 }
 
-void Tcl::defAllFields(Tcl::Pkg* pkg, const FieldMap& fieldmap,
+void tcl::defAllFields(tcl::pkg* pkg, const FieldMap& fieldmap,
                        const rutz::file_pos& src_pos)
 {
-GVX_TRACE("Tcl::defAllFields");
+GVX_TRACE("tcl::defAllFields");
 
   for (const FieldMap* fmap = &fieldmap; fmap != 0; fmap = fmap->parent())
     {
@@ -159,11 +159,11 @@ GVX_TRACE("Tcl::defAllFields");
         }
     }
 
-  pkg->defRaw("fields", Tcl::ArgSpec(1), "",
-              FieldsLister(fieldmap, false), src_pos);
+  pkg->def_raw("fields", tcl::arg_spec(1), "",
+               FieldsLister(fieldmap, false), src_pos);
 
-  pkg->defRaw("allFields", Tcl::ArgSpec(1), "",
-              FieldsLister(fieldmap, true), src_pos);
+  pkg->def_raw("allFields", tcl::arg_spec(1), "",
+               FieldsLister(fieldmap, true), src_pos);
 }
 
 static const char vcid_groovx_io_fieldpkg_cc_utc20050626084021[] = "$Id$ $HeadURL$";

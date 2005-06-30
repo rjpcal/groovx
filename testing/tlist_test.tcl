@@ -50,9 +50,9 @@ test "TlistTcl-Tlist::loadObjidFile" "error on junk text file" {
 test "TlistTcl-Tlist::loadObjidFile" "error on junk binary file" {
     set o [newarr Face 11]
     set p [newarr GxTransform 4]
-    set before [Trial::countAll]
+    set before [Trial::count_all]
     catch {Tlist::loadObjidFile $::TEST_DIR/junk_bin_file $o $p -1} trials
-    set result "[llength $trials] [expr [Trial::countAll]-$before]"
+    set result "[llength $trials] [expr [Trial::count_all]-$before]"
     objectdb::clear
     return $result
 } {^0 0$}

@@ -101,13 +101,13 @@ int Canvas_Init(Tcl_Interp* interp)
 GVX_TRACE("Canvas_Init");
 
   GVX_PKG_CREATE(pkg, interp, "Canvas", "4.$Revision$");
-  pkg->inheritPkg("Obj");
-  Tcl::defGenericObjCmds<Gfx::Canvas>(pkg, SRC_POS);
+  pkg->inherit_pkg("Obj");
+  tcl::def_basic_type_cmds<Gfx::Canvas>(pkg, SRC_POS);
 
   using rutz::bind_last;
   using rutz::mem_func;
 
-  pkg->defGetter("viewport", &Gfx::Canvas::getScreenViewport, SRC_POS);
+  pkg->def_getter("viewport", &Gfx::Canvas::getScreenViewport, SRC_POS);
   pkg->def("topLeft", "canvas", &topLeft, SRC_POS);
 
   pkg->def("throwIfError", "",
@@ -123,8 +123,8 @@ int Glcanvas_Init(Tcl_Interp* interp)
 GVX_TRACE("Glcanvas_Init");
 
   GVX_PKG_CREATE(pkg, interp, "GLCanvas", "4.$Revision$");
-  pkg->inheritPkg("Canvas");
-  Tcl::defGenericObjCmds<GLCanvas>(pkg, SRC_POS);
+  pkg->inherit_pkg("Canvas");
+  tcl::def_basic_type_cmds<GLCanvas>(pkg, SRC_POS);
 
   pkg->def( "pixelCheckSum", "glcanvas x y w h", &pixelCheckSum, SRC_POS );
   pkg->def( "pixelCheckSum", "glcanvas", &pixelCheckSumAll, SRC_POS );

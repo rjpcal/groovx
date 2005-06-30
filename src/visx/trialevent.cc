@@ -319,7 +319,7 @@ void FileWriteEvent::setFile(nub::ref<OutputFile> file)
 
 GenericEvent::GenericEvent(unsigned int msec) :
   TrialEvent(msec),
-  itsCallback(new Tcl::ProcWrapper(Tcl::Main::interp()))
+  itsCallback(new tcl::ProcWrapper(tcl::event_loop::interp()))
 {}
 
 GenericEvent::~GenericEvent() throw() {}

@@ -54,7 +54,7 @@ namespace nub
 
 /// Toglet is an OpenGL Tk widget.
 
-class Toglet : public Tcl::TkWidget
+class Toglet : public tcl::TkWidget
 {
 protected:
   Toglet(bool pack=true, bool topLevel=false);
@@ -87,10 +87,10 @@ public:
 
   void makeCurrent() const;
 
-  /// Overridden from Tcl::TkWidget.
+  /// Overridden from tcl::TkWidget.
   virtual void displayCallback();
 
-  /// Overridden from Tcl::TkWidget.
+  /// Overridden from tcl::TkWidget.
   virtual void reshapeCallback(int width, int height);
 
   /// Swap buffers in a double-buffered GL context.

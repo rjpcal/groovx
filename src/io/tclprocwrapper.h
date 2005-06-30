@@ -39,29 +39,29 @@
 
 #include "rutz/fstring.h"
 
-namespace Tcl
+namespace tcl
 {
   class ProcWrapper;
 }
 
 /// A serializable wrapper for Tcl script procedures.
-class Tcl::ProcWrapper : public IO::IoObject
+class tcl::ProcWrapper : public IO::IoObject
 {
 private:
   ProcWrapper(const ProcWrapper&);
   ProcWrapper& operator=(const ProcWrapper&);
 
-  Tcl::Interp itsInterp;
+  tcl::interpreter itsInterp;
   const rutz::fstring itsName;
   rutz::fstring itsArgs;
   rutz::fstring itsBody;
 
 public:
   /// Define with a unique generic name.
-  ProcWrapper(const Tcl::Interp& intp);
+  ProcWrapper(const tcl::interpreter& intp);
 
   /// Define with a given name.
-  ProcWrapper(const Tcl::Interp& intp, const rutz::fstring& name);
+  ProcWrapper(const tcl::interpreter& intp, const rutz::fstring& name);
 
   virtual ~ProcWrapper() throw();
 
@@ -85,7 +85,7 @@ public:
     invoke(args);
 
     // might throw if conversion to T fails:
-    return itsInterp.template getResult<T>();
+    return itsInterp.template get_result<T>();
   }
 
   const rutz::fstring& name() const { return itsName; }

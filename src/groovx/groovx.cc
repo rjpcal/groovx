@@ -70,7 +70,7 @@
 // Info about the packages to be loaded
 //
 
-static Tcl::PackageInfo GROOVX_PKGS[] =
+static tcl::package_info GROOVX_PKGS[] =
   {
     { "Block",               Block_Init,               "4.0", false },
     { "Canvas",              Canvas_Init,              "4.0", false },
@@ -151,7 +151,7 @@ int main(int argc, char** argv)
 {
   GVX_SCRIPT_PROG_BEGIN(app, "GroovX", argc, argv);
 
-  app.pkgDir(VISX_LIB_DIR);
+  app.pkg_dir(VISX_LIB_DIR);
 
   app.splash(PACKAGE_STRING " (" __DATE__ ")\n"
              "\n"

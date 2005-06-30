@@ -49,14 +49,14 @@ namespace
   static Face* makeInnerFace()
   {
     Face* p = Face::make();
-    p->setField("partsMask", Tcl::toTcl(1));
+    p->setField("partsMask", tcl::convert_from(1));
     return p;
   }
 
   static Face* makeFilledFace()
   {
     Face* p = Face::make();
-    p->setField("isFilled", Tcl::toTcl(1));
+    p->setField("isFilled", tcl::convert_from(1));
     return p;
   }
 }
@@ -68,9 +68,9 @@ GVX_TRACE("Face_Init");
 
   GVX_PKG_CREATE(pkg, interp, "Face", "4.$Revision$");
 
-  pkg->inheritPkg("GxShapeKit");
-  Tcl::defFieldContainer<Face>(pkg, SRC_POS);
-  Tcl::defCreator<Face>(pkg);
+  pkg->inherit_pkg("GxShapeKit");
+  tcl::defFieldContainer<Face>(pkg, SRC_POS);
+  tcl::def_creator<Face>(pkg);
 
   nub::obj_factory::instance().register_creator( &makeInnerFace,
                                               "InnerFace" );
@@ -87,9 +87,9 @@ int Cloneface_Init(Tcl_Interp* interp)
 GVX_TRACE("Cloneface_Init");
 
   GVX_PKG_CREATE(pkg, interp, "CloneFace", "4.$Revision$");
-  pkg->inheritPkg("Face");
-  Tcl::defFieldContainer<CloneFace>(pkg, SRC_POS);
-  Tcl::defCreator<CloneFace>(pkg);
+  pkg->inherit_pkg("Face");
+  tcl::defFieldContainer<CloneFace>(pkg, SRC_POS);
+  tcl::def_creator<CloneFace>(pkg);
 
   GVX_PKG_RETURN(pkg);
 }

@@ -48,193 +48,192 @@ namespace rutz
   template <class T> class shared_ptr;
 }
 
-namespace Tcl
+namespace tcl
 {
-  class ArgSpec;
-  class Callback;
-  class Command;
-  class Context;
-  class Dispatcher;
-  class Interp;
+  class arg_spec;
+  class function;
+  class command;
+  class call_context;
+  class arg_dispatcher;
+  class interpreter;
 }
 
-class Tcl::Callback
+class tcl::function
 {
 public:
-  virtual ~Callback() throw();
+  virtual ~function() throw();
 
   /// Abstract function performs this command's specific functionality.
-  /** The \c Context& argument allows Tcl command arguments to be
-      retrieved, and allows the interpreter's result to be set.*/
-  virtual void invoke(Context& ctx) = 0;
+  /** The \c tcl::call_context& argument allows Tcl command arguments
+      to be retrieved, and allows the interpreter's result to be
+      set.*/
+  virtual void invoke(tcl::call_context& ctx) = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Tcl::Command is an abstract class that which provides a way to
- * wrap Tcl object commands in C++ classes. It allows commands that do
- * similar things to be related through inheritance, and for common
- * behavior to be placed in base classes. The \c Tcl::Command class
- * itself takes care of such things as checking the argument count,
- * and issuing an error message if the argument count is incorrect.
+ * \c tcl::command provides a way to wrap Tcl commands in C++
+ * classes. The \c tcl::command class itself takes care of such things
+ * as checking the argument count, and issuing an error message if the
+ * argument count is incorrect.
  *
- * \c Tcl::Command uses class \c Context to represent the set of Tcl
- * command arguments and the interpreter's result.
+ * \c tcl::command uses class \c tcl::call_context to represent the
+ * set of Tcl command arguments and the interpreter's result.
  *
- * If more than one Tcl::Command is created with the same name, an
+ * If more than one tcl::command is created with the same name, an
  * overloading sequence is created. Overloading is done by argument
- * counts. The first Tcl::Command in an overload sequence to match the
+ * counts. The first tcl::command in an overload sequence to match the
  * argument count of the context will be used.
  *
- * Most clients of Tcl::Command will be able to simply use
- * Tcl::makeCmd() or Tcl::makeVecCmd(), which detect the types of C++
- * functions and build generic Tcl::Command's that call the functions
- * appropriately, or use Tcl::Pkg::def() and related functions, which
- * call Tcl::makeCmd() but in addition help to relate the commands to
- * a particular package.
+ * Most clients of tcl::command will be able to simply use
+ * tcl::make_command() or tcl::make_vec_command(), which detect the
+ * types of C++ functions and build generic tcl::command's that call
+ * the functions appropriately, or use tcl::pkg::def() and related
+ * functions, which call tcl::make_command() but in addition help to
+ * relate the commands to a particular package.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::Command
+class tcl::command
 {
 public:
   /// Construct with basic properties for the command.
-  static rutz::shared_ptr<Command>
-  make(Tcl::Interp& interp,
-       rutz::shared_ptr<Tcl::Callback> callback,
+  static rutz::shared_ptr<tcl::command>
+  make(tcl::interpreter& interp,
+       rutz::shared_ptr<tcl::function> callback,
        const char* cmd_name,
        const char* usage,
-       const ArgSpec& spec,
+       const arg_spec& spec,
        const rutz::file_pos& src_pos);
 
   /// Non-virtual destructor since this class is not for use as a base class.
-  ~Command() throw();
+  ~command() throw();
 
   /// Returns a string describing the arguments expected by this command.
-  rutz::fstring usageString() const;
+  rutz::fstring usage_string() const;
 
   /// Check if the given argument count is acceptable.
-  bool allowsObjc(unsigned int objc) const;
+  bool allows_argc(unsigned int objc) const;
 
   /// Check if the given argument count is unacceptable.
-  bool rejectsObjc(unsigned int objc) const;
+  bool rejects_argc(unsigned int objc) const;
 
-  /// Send arguments to its Tcl::Callback via its Tcl::Dispatcher.
-  void call(Tcl::Interp& interp,
+  /// Send arguments to its tcl::function via its tcl::arg_dispatcher.
+  void call(tcl::interpreter& interp,
             unsigned int objc, Tcl_Obj* const objv[]);
 
-  /// Get the current Tcl::Dispatcher for this command.
-  rutz::shared_ptr<Dispatcher> getDispatcher() const;
+  /// Get the current tcl::arg_dispatcher for this command.
+  rutz::shared_ptr<arg_dispatcher> get_dispatcher() const;
 
-  /// Change the Tcl::Dispatcher for this command.
-  void setDispatcher(rutz::shared_ptr<Dispatcher> dpx);
+  /// Change the tcl::arg_dispatcher for this command.
+  void set_dispatcher(rutz::shared_ptr<arg_dispatcher> dpx);
 
 private:
-  Command(rutz::shared_ptr<Tcl::Callback> callback,
-          const char* usage, const ArgSpec& spec);
+  command(rutz::shared_ptr<tcl::function> callback,
+          const char* usage, const arg_spec& spec);
 
-  Command(const Command&); // not implemented
-  Command& operator=(const Command&); // not implemented
+  command(const command&); // not implemented
+  command& operator=(const command&); // not implemented
 
-  class Impl;
-  Impl* const rep;
+  class impl;
+  impl* const rep;
 };
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Tcl::Dispatcher. This may be subclassed in order to provide a
- * different interface to the raw Tcl arguments (such as for
+ * \c tcl::arg_dispatcher. This may be subclassed in order to provide
+ * a different interface to the raw Tcl arguments (such as for
  * vectorizing a function over a set of arguments). The default
- * dispatcher used by Tcl::Command's implementation just sets up a \c
- * Context and calls \a invoke().  Errors should be signaled by
- * throwing appropriate exceptions, which will be caught and
- * translated back to the Tcl interpreter by \a invokeCallback().
+ * dispatcher used by tcl::command's implementation just sets up a \c
+ * tcl::call_context and calls \a invoke().  Errors should be signaled
+ * by throwing appropriate exceptions, which will be caught and
+ * returned back to the Tcl interpreter as normal Tcl error messages.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::Dispatcher
+class tcl::arg_dispatcher
 {
 public:
   /// Virtual destructor.
-  virtual ~Dispatcher() throw();
+  virtual ~arg_dispatcher() throw();
 
   /** Interprets the Tcl_Obj* arguments, sets up an appropriate
-      Tcl::Context, and calls invoke() on the \a cmd with that
+      tcl::call_context, and calls invoke() on the \a cmd with that
       context. */
-  virtual void dispatch(Tcl::Interp& interp,
+  virtual void dispatch(tcl::interpreter& interp,
                         unsigned int objc, Tcl_Obj* const objv[],
-                        Tcl::Callback& callback) = 0;
+                        tcl::function& callback) = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Tcl::Context, which is passed to \a Tcl::Command::invoke(),
- * provides a getValFromArg() for getting values from command
- * arguments, and provides setResult() for returning values to the Tcl
- * interpreter.
+ * \c tcl::call_context, which is passed to \a tcl::command::invoke(),
+ * provides a get_arg() for getting values from command arguments, and
+ * provides set_result() for returning values to the Tcl interpreter.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::Context
+class tcl::call_context
 {
 public:
-  friend class Command;
+  friend class tcl::command;
 
   /// Construct with a Tcl interpreter and an argument list.
-  Context(Tcl::Interp& interp, unsigned int objc, Tcl_Obj* const* objv);
+  call_context(tcl::interpreter& interp,
+               unsigned int objc, Tcl_Obj* const* objv);
 
   /// Virtual destructor.
-  virtual ~Context() throw();
+  virtual ~call_context() throw();
 
   /// Get the Tcl interpreter of the current invocation.
-  Tcl::Interp& interp() const throw() { return itsInterp; }
+  tcl::interpreter& interp() const throw() { return m_interp; }
 
   /// Return the number of arguments in the current invocation.
-  unsigned int objc() const throw() { return itsObjc; }
+  unsigned int objc() const throw() { return m_objc; }
 
 
   /** Attempt to convert argument number \a argn to type \c T, and
-      copy the result into \a val. */
+      return the result of the conversion. */
   template <class T>
-  typename Return<T>::Type getValFromArg(unsigned int argn)
+  typename Return<T>::Type get_arg(unsigned int argn)
     {
-      return Tcl::fromTcl<T>(getObjv(argn));
+      return tcl::convert_to<T>(get_objv(argn));
     }
 
 
   /// Return satisfactorily with the result \a t of type \c T.
   template <class T>
-  void setResult(T t)
+  void set_result(T t)
     {
-      setObjResult(Tcl::toTcl<T>(t));
+      set_obj_result(tcl::convert_from<T>(t));
     }
 
   /// Get the raw objv array.
-  Tcl_Obj* const* getRawArgs() const throw()
+  Tcl_Obj* const* get_raw_args() const throw()
     {
-      return itsObjv;
+      return m_objv;
     }
 
 protected:
   /// Get the n'th argument.
-  virtual Tcl_Obj* getObjv(unsigned int n) throw() { return itsObjv[n]; }
+  virtual Tcl_Obj* get_objv(unsigned int n) throw() { return m_objv[n]; }
 
   /// Return a Tcl_Obj*.
-  virtual void setObjResult(const Tcl::Obj& obj);
+  virtual void set_obj_result(const tcl::obj& obj);
 
 private:
-  Context(const Context&);
-  Context& operator=(const Context&);
+  call_context(const call_context&);
+  call_context& operator=(const call_context&);
 
-  Tcl::Interp& itsInterp;
-  unsigned int const itsObjc;
-  Tcl_Obj* const* const itsObjv;
+  tcl::interpreter&        m_interp;
+  unsigned int       const m_objc;
+  Tcl_Obj* const*    const m_objv;
 };
 
 static const char vcid_groovx_tcl_command_h_utc20050628162421[] = "$Id$ $HeadURL$";

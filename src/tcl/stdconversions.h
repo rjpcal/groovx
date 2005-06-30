@@ -39,16 +39,16 @@
 
 #include <string>
 
-namespace Tcl
+namespace tcl
 {
-  inline Tcl::Obj toTclImpl(std::string s)
+  inline tcl::obj aux_convert_from(std::string s)
   {
-    return toTcl<const char*>(s.c_str());
+    return convert_from<const char*>(s.c_str());
   }
 
-  inline std::string fromTclImpl(Tcl_Obj* obj, std::string*)
+  inline std::string aux_convert_to(Tcl_Obj* obj, std::string*)
   {
-    return std::string(fromTclImpl(obj, (rutz::fstring*)0).c_str());
+    return std::string(aux_convert_to(obj, (rutz::fstring*)0).c_str());
   }
 }
 

@@ -180,7 +180,7 @@ GVX_TRACE("WindowSystem::ungrabKeyboard[agl]");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::TkWidget::TkWidgImpl definition
+// tcl::TkWidget::TkWidgImpl definition
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -205,29 +205,29 @@ class TkWidgImpl : public nub::volatile_object
   TkWidgImpl& operator=(const TkWidgImpl&);
 
 public:
-  TkWidgImpl(Tcl::TkWidget* o, Tcl::Interp& p,
+  TkWidgImpl(tcl::TkWidget* o, tcl::interpreter& p,
              const char* classname,
              const char* pathname,
              bool topLevel);
 
   virtual ~TkWidgImpl() throw();
 
-  Tcl::TkWidget* owner;
-  Tcl::Interp interp;
-  const Tk_Window tkWin;
-  Tk_Cursor cursor;
+  tcl::TkWidget*   owner;
+  tcl::interpreter interp;
+  Tk_Window const  tkWin;
+  Tk_Cursor        cursor;
 
   bool updatePending;
   bool shutdownRequested;
 
-  void dbgButtonPress(const Tcl::ButtonPressEvent& ev)
+  void dbgButtonPress(const tcl::ButtonPressEvent& ev)
   {
     std::cerr << "ButtonPress: "
               << "button " << ev.button
               << " x " << ev.x << " y " << ev.y << std::endl;
   }
 
-  void dbgKeyPress(const Tcl::KeyPressEvent& ev)
+  void dbgKeyPress(const tcl::KeyPressEvent& ev)
   {
     std::cerr << "KeyPress: "
               << "keys '" << ev.keys << "'"
@@ -248,7 +248,7 @@ public:
   static void cTakeFocusCallback(ClientData clientData) throw();
 };
 
-TkWidgImpl::TkWidgImpl(Tcl::TkWidget* o, Tcl::Interp& p,
+TkWidgImpl::TkWidgImpl(tcl::TkWidget* o, tcl::interpreter& p,
                        const char* classname,
                        const char* pathname,
                        bool topLevel) :
@@ -310,7 +310,7 @@ GVX_TRACE("TkWidgImpl::buttonEventProc");
         }
     }
 
-  Tcl::ButtonPressEvent e = {ev->button, ev->x, ev->y};
+  tcl::ButtonPressEvent e = {ev->button, ev->x, ev->y};
   owner->sigButtonPressed.emit(e);
 }
 
@@ -341,7 +341,7 @@ GVX_TRACE("TkWidgImpl::keyEventProc");
   // Restore the state
   ev->state = saveState;
 
-  Tcl::KeyPressEvent e = {&buf[0], ev->x, ev->y, controlPressed};
+  tcl::KeyPressEvent e = {&buf[0], ev->x, ev->y, controlPressed};
   owner->sigKeyPressed.emit(e);
 }
 
@@ -351,7 +351,7 @@ void TkWidgImpl::cEventCallback(ClientData clientData,
 GVX_TRACE("TkWidgImpl::cEventCallback");
 
   TkWidgImpl* const rep = cast_from_void(clientData);
-  Tcl::TkWidget* const widg = rep->owner;
+  tcl::TkWidget* const widg = rep->owner;
 
   try
     {
@@ -409,8 +409,8 @@ GVX_TRACE("TkWidgImpl::cEventCallback");
     }
   catch (...)
     {
-      rep->interp.handleLiveException("cEventCallback", SRC_POS);
-      rep->interp.backgroundError();
+      rep->interp.handle_live_exception("cEventCallback", SRC_POS);
+      rep->interp.background_error();
     }
 }
 
@@ -427,8 +427,8 @@ GVX_TRACE("TkWidgImpl::cRenderCallback");
     }
   catch (...)
     {
-      rep->interp.handleLiveException("cRenderCallback", SRC_POS);
-      rep->interp.backgroundError();
+      rep->interp.handle_live_exception("cRenderCallback", SRC_POS);
+      rep->interp.background_error();
     }
 }
 
@@ -449,54 +449,54 @@ GVX_TRACE("TkWidgImpl::cTakeFocusCallback");
     }
   catch (...)
     {
-      rep->interp.handleLiveException("cEventCallback", SRC_POS);
-      rep->interp.backgroundError();
+      rep->interp.handle_live_exception("cEventCallback", SRC_POS);
+      rep->interp.background_error();
     }
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::TkWidget member definitions
+// tcl::TkWidget member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::TkWidget::TkWidget(Tcl::Interp& interp,
+tcl::TkWidget::TkWidget(tcl::interpreter& interp,
                         const char* classname,
                         const char* pathname,
                         bool topLevel) :
   rep(new TkWidgImpl(this, interp, classname, pathname, topLevel))
 {
-GVX_TRACE("Tcl::TkWidget::TkWidget");
+GVX_TRACE("tcl::TkWidget::TkWidget");
 
   this->mark_as_volatile();
 }
 
-Tcl::TkWidget::~TkWidget() throw()
+tcl::TkWidget::~TkWidget() throw()
 {
-GVX_TRACE("Tcl::TkWidget::~TkWidget");
+GVX_TRACE("tcl::TkWidget::~TkWidget");
   delete rep;
 }
 
-int Tcl::TkWidget::width() const
+int tcl::TkWidget::width() const
 {
-GVX_TRACE("Tcl::TkWidget::width");
+GVX_TRACE("tcl::TkWidget::width");
   return Tk_Width(rep->tkWin);
 }
 
-int Tcl::TkWidget::height() const
+int tcl::TkWidget::height() const
 {
-GVX_TRACE("Tcl::TkWidget::height");
+GVX_TRACE("tcl::TkWidget::height");
   return Tk_Height(rep->tkWin);
 }
 
-geom::vec2<int> Tcl::TkWidget::size() const
+geom::vec2<int> tcl::TkWidget::size() const
 {
   return geom::vec2<int>(width(), height());
 }
 
-void Tcl::TkWidget::setWidth(int w)
+void tcl::TkWidget::setWidth(int w)
 {
-GVX_TRACE("Tcl::TkWidget::setWidth");
+GVX_TRACE("tcl::TkWidget::setWidth");
   // Need to specify Tk_ReqHeight(rep->tkWin) instead of
   // Tk_Height(rep->tkWin), since the latter might not reflect the
   // requested height if the event loop has not been entered since a
@@ -504,9 +504,9 @@ GVX_TRACE("Tcl::TkWidget::setWidth");
   Tk_GeometryRequest(rep->tkWin, w, Tk_ReqHeight(rep->tkWin));
 }
 
-void Tcl::TkWidget::setHeight(int h)
+void tcl::TkWidget::setHeight(int h)
 {
-GVX_TRACE("Tcl::TkWidget::setHeight");
+GVX_TRACE("tcl::TkWidget::setHeight");
   // Need to specify Tk_ReqWidth(rep->tkWin) instead of
   // Tk_Width(rep->tkWin), since the latter might not reflect the
   // requested height if the event loop has not been entered since a
@@ -514,50 +514,50 @@ GVX_TRACE("Tcl::TkWidget::setHeight");
   Tk_GeometryRequest(rep->tkWin, Tk_ReqWidth(rep->tkWin), h);
 }
 
-void Tcl::TkWidget::setSize(geom::vec2<int> sz)
+void tcl::TkWidget::setSize(geom::vec2<int> sz)
 {
-GVX_TRACE("Tcl::TkWidget::setSize");
+GVX_TRACE("tcl::TkWidget::setSize");
   Tk_GeometryRequest(rep->tkWin, sz.x(), sz.y());
 }
 
-void Tcl::TkWidget::destroyWidget()
+void tcl::TkWidget::destroyWidget()
 {
-GVX_TRACE("Tcl::TkWidget::destroyWidget");
+GVX_TRACE("tcl::TkWidget::destroyWidget");
 
   // If we are exiting, don't bother destroying the widget; otherwise...
-  if ( !rep->interp.interpDeleted() )
+  if ( !rep->interp.is_deleted() )
     {
       Tk_DestroyWindow(rep->tkWin);
     }
 }
 
-void Tcl::TkWidget::winInfo() throw()
+void tcl::TkWidget::winInfo() throw()
 {
-GVX_TRACE("Tcl::TkWidget::winInfo");
+GVX_TRACE("tcl::TkWidget::winInfo");
 
   WindowSystem::winInfo(rep->tkWin);
 }
 
-Tcl::Interp& Tcl::TkWidget::interp() const
+tcl::interpreter& tcl::TkWidget::interp() const
 {
   return rep->interp;
 }
 
-Tk_Window Tcl::TkWidget::tkWin() const
+Tk_Window tcl::TkWidget::tkWin() const
 {
   GVX_ASSERT(rep->tkWin != 0);
   return rep->tkWin;
 }
 
-const char* Tcl::TkWidget::pathname() const
+const char* tcl::TkWidget::pathname() const
 {
   GVX_ASSERT(rep->tkWin != 0);
   return Tk_PathName(rep->tkWin);
 }
 
-double Tcl::TkWidget::pixelsPerInch() const
+double tcl::TkWidget::pixelsPerInch() const
 {
-GVX_TRACE("Tcl::TkWidget::pixelsPerInch");
+GVX_TRACE("tcl::TkWidget::pixelsPerInch");
 
   GVX_ASSERT(rep->tkWin != 0);
 
@@ -573,9 +573,9 @@ GVX_TRACE("Tcl::TkWidget::pixelsPerInch");
   return screen_ppi;
 }
 
-void Tcl::TkWidget::setCursor(const char* cursor_spec)
+void tcl::TkWidget::setCursor(const char* cursor_spec)
 {
-GVX_TRACE("Tcl::TkWidget::setCursor");
+GVX_TRACE("tcl::TkWidget::setCursor");
   if (cursor_spec == 0 || cursor_spec == '\0')
     {
       // Empty string means to unset the cursor
@@ -607,17 +607,17 @@ GVX_TRACE("Tcl::TkWidget::setCursor");
     }
 }
 
-const char* Tcl::TkWidget::getCursor() const
+const char* tcl::TkWidget::getCursor() const
 {
-GVX_TRACE("Tcl::TkWidget::getCursor");
+GVX_TRACE("tcl::TkWidget::getCursor");
   return rep->cursor == 0
     ? ""
     : Tk_NameOfCursor(Tk_Display(rep->tkWin), rep->cursor);
 }
 
-void Tcl::TkWidget::warpPointer(int x, int y) const
+void tcl::TkWidget::warpPointer(int x, int y) const
 {
-GVX_TRACE("Tcl::TkWidget::warpPointer");
+GVX_TRACE("tcl::TkWidget::warpPointer");
 
   // NOTE: The XWarpPointer emulation routine provided by Tk for Mac
   // OS X Aqua currently does nothing (as of Tk 8.5a1).
@@ -627,9 +627,9 @@ GVX_TRACE("Tcl::TkWidget::warpPointer");
                x, y);
 }
 
-void Tcl::TkWidget::pack()
+void tcl::TkWidget::pack()
 {
-GVX_TRACE("Tcl::TkWidget::pack");
+GVX_TRACE("tcl::TkWidget::pack");
 
   if (!Tk_IsTopLevel(rep->tkWin))
     {
@@ -640,9 +640,9 @@ GVX_TRACE("Tcl::TkWidget::pack");
     }
 }
 
-void Tcl::TkWidget::repack(const char* options)
+void tcl::TkWidget::repack(const char* options)
 {
-GVX_TRACE("Tcl::TkWidget::repack");
+GVX_TRACE("tcl::TkWidget::repack");
 
   if (!Tk_IsTopLevel(rep->tkWin))
     {
@@ -652,9 +652,9 @@ GVX_TRACE("Tcl::TkWidget::repack");
     }
 }
 
-void Tcl::TkWidget::unpack()
+void tcl::TkWidget::unpack()
 {
-GVX_TRACE("Tcl::TkWidget::unpack");
+GVX_TRACE("tcl::TkWidget::unpack");
 
   if (!Tk_IsTopLevel(rep->tkWin))
     {
@@ -663,16 +663,16 @@ GVX_TRACE("Tcl::TkWidget::unpack");
     }
 }
 
-void Tcl::TkWidget::iconify()
+void tcl::TkWidget::iconify()
 {
-GVX_TRACE("Tcl::TkWidget::iconify");
+GVX_TRACE("tcl::TkWidget::iconify");
 
   WindowSystem::iconify(rep->tkWin);
 }
 
-void Tcl::TkWidget::grabKeyboard()
+void tcl::TkWidget::grabKeyboard()
 {
-GVX_TRACE("Tcl::TkWidget::grabKeyboard");
+GVX_TRACE("tcl::TkWidget::grabKeyboard");
 
   WindowSystem::grabKeyboard(rep->tkWin);
 
@@ -688,16 +688,16 @@ GVX_TRACE("Tcl::TkWidget::grabKeyboard");
                  cast_to_void(rep));
 }
 
-void Tcl::TkWidget::ungrabKeyboard()
+void tcl::TkWidget::ungrabKeyboard()
 {
-GVX_TRACE("Tcl::TkWidget::ungrabKeyboard");
+GVX_TRACE("tcl::TkWidget::ungrabKeyboard");
 
   WindowSystem::ungrabKeyboard(rep->tkWin);
 }
 
-void Tcl::TkWidget::maximize()
+void tcl::TkWidget::maximize()
 {
-GVX_TRACE("Tcl::TkWidget::maximize");
+GVX_TRACE("tcl::TkWidget::maximize");
 
   const int w = WidthOfScreen(Tk_Screen(rep->tkWin));
   const int h = HeightOfScreen(Tk_Screen(rep->tkWin));
@@ -714,19 +714,19 @@ GVX_TRACE("Tcl::TkWidget::maximize");
   grabKeyboard();
 }
 
-void Tcl::TkWidget::minimize()
+void tcl::TkWidget::minimize()
 {
-GVX_TRACE("Tcl::TkWidget::minimize");
+GVX_TRACE("tcl::TkWidget::minimize");
 
   ungrabKeyboard();
 
   setSize(geom::vec2<int>(200, 200));
 }
 
-void Tcl::TkWidget::bind(const fstring& event_sequence,
+void tcl::TkWidget::bind(const fstring& event_sequence,
                          const fstring& script)
 {
-GVX_TRACE("Tcl::TkWidget::bind");
+GVX_TRACE("tcl::TkWidget::bind");
 
   fstring cmd_str("bind ", pathname(), " ");
   cmd_str.append( event_sequence, " ");
@@ -747,18 +747,18 @@ GVX_TRACE("Tcl::TkWidget::bind");
   rep->interp.eval(cmd_str);
 }
 
-void Tcl::TkWidget::takeFocus()
+void tcl::TkWidget::takeFocus()
 {
-GVX_TRACE("Tcl::TkWidget::takeFocus");
+GVX_TRACE("tcl::TkWidget::takeFocus");
 
   const fstring cmd("focus -force ", pathname());
 
   rep->interp.eval(cmd);
 }
 
-void Tcl::TkWidget::loseFocus()
+void tcl::TkWidget::loseFocus()
 {
-GVX_TRACE("Tcl::TkWidget::loseFocus");
+GVX_TRACE("tcl::TkWidget::loseFocus");
   Tk_Window toplev = rep->tkWin;
 
   while (!Tk_IsTopLevel(toplev))
@@ -774,9 +774,9 @@ GVX_TRACE("Tcl::TkWidget::loseFocus");
   rep->interp.eval(cmd);
 }
 
-void Tcl::TkWidget::requestRedisplay()
+void tcl::TkWidget::requestRedisplay()
 {
-GVX_TRACE("Tcl::TkWidget::requestRedisplay");
+GVX_TRACE("tcl::TkWidget::requestRedisplay");
 
   if (!rep->updatePending)
     {
@@ -785,7 +785,7 @@ GVX_TRACE("Tcl::TkWidget::requestRedisplay");
     }
 }
 
-void Tcl::TkWidget::hook()
+void tcl::TkWidget::hook()
 {
   sigButtonPressed.connect(rep, &TkWidgImpl::dbgButtonPress);
   sigKeyPressed.connect(rep, &TkWidgImpl::dbgKeyPress);

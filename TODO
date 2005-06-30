@@ -25,9 +25,9 @@
   enums it can accept. Also, we couldn't return values to Tcl in their
   string form.
 
-  Let's see. We could have one enum-map per Tcl::Pkg. Then, have a
+  Let's see. We could have one enum-map per tcl::pkg. Then, have a
   biguglyglobalvariable that points to the current enum-map. This enum
-  map would be used in the string->int translations. Plus the Tcl::Pkg
+  map would be used in the string->int translations. Plus the tcl::pkg
   could have an auxiliary command to translate int values into string
   form. The advantage here would be that we could assume that each
   integer value is unique in a given enum-map. (Hmmm... will that
@@ -60,12 +60,12 @@
 
 ** obj_db::instance() is OK because that is really a conceptual singleton
 
-** Tcl::Interp  (from Tcl::Main::interp())
-   --> used in Toglet::Toglet (passed to Tcl::TkWidget)
-   --> used in Tcl::TimerSchedulerToken::dummyCallback (passed to handleLiveException)
+** tcl::Interp  (from tcl::event_loop::interp())
+   --> used in Toglet::Toglet (passed to tcl::TkWidget)
+   --> used in tcl::TimerSchedulerToken::dummyCallback (passed to handleLiveException)
    --> used in EventResponseHdlr::Impl::Impl (saved as member variable)
    --> used in ExptDriver::Impl::Impl (saved as member variable)
-   --> used in GenericEvent::GenericEvent (passed to Tcl::ProcWrapper)
+   --> used in GenericEvent::GenericEvent (passed to tcl::ProcWrapper)
 
 ** Toglet::getCurrent()
    Most of this stuff has to do with the fact that we sometimes need a
@@ -102,12 +102,12 @@
 ** obj_factory::instance()
 
    This one is a bit of a problem, because some objects rely in
-   principle on getting the global current Tcl::Interp. We can fix
-   that by binding a particular Tcl::Interp to the construction
+   principle on getting the global current tcl::Interp. We can fix
+   that by binding a particular tcl::Interp to the construction
    routine that is registered with the factory, but then we have a
-   factory that depends on a particular Tcl::Interp. Does that mean
-   that there should instead be one factory per Tcl::Interp? That
-   seems to be elevating the implementation detail of the Tcl::Interp
+   factory that depends on a particular tcl::Interp. Does that mean
+   that there should instead be one factory per tcl::Interp? That
+   seems to be elevating the implementation detail of the tcl::Interp
    to too high of a design status.
 
 ** Strategy:
@@ -237,7 +237,7 @@
 
   Should make some wrappers for other Tk widgets?
 
-* (22-Nov-2002) Make Tcl::Command and Tcl::Pkg into Util::Object subclasses?
+* (22-Nov-2002) Make tcl::Command and tcl::pkg into Util::Object subclasses?
   ... for the ultimate in reflexion!
 
 * (13-Sep-2001) Nested containment of FieldContainer's
@@ -314,7 +314,7 @@
 
 * (24-Aug-2001) How to get animation working?
 
-  I have a Tcl::timer for generic timer callbacks now, but the problem
+  I have a tcl::timer for generic timer callbacks now, but the problem
   is: how to inform the animated thing that it is time to stop drawing
   itself, for example when the Widget switches to displaying something
   else? I guess the appropriate model is for GxNode's the

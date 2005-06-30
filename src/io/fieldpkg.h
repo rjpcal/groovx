@@ -44,21 +44,21 @@ namespace rutz
 class Field;
 class FieldMap;
 
-namespace Tcl
+namespace tcl
 {
-  class Pkg;
+  class pkg;
 
-  void defField(Pkg* pkg, const Field& field,
+  void defField(pkg* pkg, const Field& field,
                 const rutz::file_pos& src_pos);
-  void defAllFields(Pkg* pkg, const FieldMap& fmap,
+  void defAllFields(pkg* pkg, const FieldMap& fmap,
                     const rutz::file_pos& src_pos);
 
   template <class C>
-  void defFieldContainer(Pkg* pkg, const rutz::file_pos& src_pos)
+  void defFieldContainer(pkg* pkg, const rutz::file_pos& src_pos)
   {
-    Tcl::defGenericObjCmds<C>(pkg, src_pos);
+    tcl::def_basic_type_cmds<C>(pkg, src_pos);
 
-    Tcl::defAllFields(pkg, C::classFields(), src_pos);
+    tcl::defAllFields(pkg, C::classFields(), src_pos);
   }
 }
 

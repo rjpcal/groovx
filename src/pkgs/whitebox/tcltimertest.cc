@@ -81,8 +81,8 @@ namespace
     v1 = 0;
     v2 = 0;
 
-    rutz::shared_ptr<Tcl::TimerScheduler> s
-      (rutz::make_shared(new Tcl::TimerScheduler));
+    rutz::shared_ptr<tcl::timer_scheduler> s
+      (rutz::make_shared(new tcl::timer_scheduler));
 
     nub::timer t0(20, false);
     nub::timer t1(5,  true);
@@ -135,8 +135,8 @@ namespace
   {
     v0 = 0;
 
-    rutz::shared_ptr<Tcl::TimerScheduler> s
-      (rutz::make_shared(new Tcl::TimerScheduler));
+    rutz::shared_ptr<tcl::timer_scheduler> s
+      (rutz::make_shared(new tcl::timer_scheduler));
 
     nub::timer t0(10, false);
 
@@ -164,8 +164,8 @@ namespace
   // Make sure that we don't let ourselves get into an infinite loop
   void testTimerNoInfiniteLoop()
   {
-    rutz::shared_ptr<Tcl::TimerScheduler> s
-      (rutz::make_shared(new Tcl::TimerScheduler));
+    rutz::shared_ptr<tcl::timer_scheduler> s
+      (rutz::make_shared(new tcl::timer_scheduler));
 
     nub::timer t(0, true);
 
@@ -183,8 +183,8 @@ namespace
     TEST_REQUIRE(caught == true);
   }
 
-  // Should test the way that the Tcl::Interp responds if an error
-  // occurs during the timer callback.
+  // Should test the way that the tcl::interpreter responds if an
+  // error occurs during the timer callback.
   void testTimerCallbackError()
   {
   }
@@ -212,7 +212,7 @@ extern "C" int Tcltimertest_SafeInit(Tcl_Interp*)
 extern "C" int Tcltimertest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
 GVX_TRACE("Tcltimertest_Unload");
-  return Tcl::Pkg::unloadDestroy(interp, "Tcltimertest");
+  return tcl::pkg::destroy_on_unload(interp, "Tcltimertest");
 }
 
 extern "C" int Tcltimertest_SafeUnload(Tcl_Interp*, int /*flags*/)

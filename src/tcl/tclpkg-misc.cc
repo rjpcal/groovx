@@ -69,16 +69,17 @@ namespace
     return bt.format();
   }
 
-  rutz::fstring cmdUsage(Tcl::Context& ctx)
+  rutz::fstring cmdUsage(tcl::call_context& ctx)
   {
-    const char* name = ctx.getValFromArg<const char*>(1);
-    Tcl::CommandGroup* cmd =
-      Tcl::CommandGroup::lookupOriginal(ctx.interp(), name);
+    const char* name = ctx.get_arg<const char*>(1);
+    tcl::command_group* cmd =
+      tcl::command_group::lookup_original(ctx.interp(), name);
 
     if (cmd == 0)
-      throw rutz::error("no such Tcl::CommandGroup", SRC_POS);
+      throw rutz::error("no such tcl::command_group", SRC_POS);
 
-    rutz::fstring result(name, " resolves to ", cmd->cmdName(), "\n");
+    rutz::fstring result(name, " resolves to ",
+                         cmd->resolved_name(), "\n");
     result.append(cmd->usage());
     return result;
   }
@@ -86,9 +87,9 @@ namespace
   unsigned long get_default_seed() { return rutz::default_rand_seed; }
   void set_default_seed(unsigned long x) { rutz::default_rand_seed = x; }
 
-  rutz::fstring tcl_valuetype(Tcl::Obj obj)
+  rutz::fstring tcl_valuetype(tcl::obj obj)
   {
-    return obj.typeName();
+    return obj.tcltype_name();
   }
 
   double rand_draw(double min, double max)
@@ -96,9 +97,9 @@ namespace
     return generator.fdraw_range(min, max);
   }
 
-  Tcl::List rand_draw_n(double min, double max, int n)
+  tcl::list rand_draw_n(double min, double max, int n)
   {
-    Tcl::List result;
+    tcl::list result;
     for (int i = 0; i < n; ++i)
       result.append(rand_draw(min, max));
     return result;
@@ -151,7 +152,7 @@ GVX_TRACE("Misc_Init");
 
   pkg->def( "::tcl_valuetype", "value", &tcl_valuetype, SRC_POS );
 
-  pkg->defRaw( "::?", Tcl::ArgSpec(2), "cmd_name", &cmdUsage, SRC_POS );
+  pkg->def_raw( "::?", tcl::arg_spec(2), "cmd_name", &cmdUsage, SRC_POS );
 
   GVX_PKG_RETURN(pkg);
 }

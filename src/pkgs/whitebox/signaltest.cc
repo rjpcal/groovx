@@ -209,7 +209,7 @@ extern "C" int Signaltest_SafeInit(Tcl_Interp*)
 extern "C" int Signaltest_Unload(Tcl_Interp* interp, int /*flags*/)
 {
 GVX_TRACE("Signaltest_Unload");
-  return Tcl::Pkg::unloadDestroy(interp, "Signaltest");
+  return tcl::pkg::destroy_on_unload(interp, "Signaltest");
 }
 
 extern "C" int Signaltest_SafeUnload(Tcl_Interp*, int /*flags*/)

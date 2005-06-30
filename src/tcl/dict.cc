@@ -56,51 +56,51 @@ GVX_DBG_REGISTER
 #ifndef HAVE_TCL_DICT
 namespace
 {
-  void noDictError()
+  void error_no_dict_support()
   {
-    throw rutz::error("Tcl::Dict requires Tcl version >= 8.5", SRC_POS);
+    throw rutz::error("tcl::dict requires Tcl version >= 8.5", SRC_POS);
   }
 }
 
-void Tcl::Dict::doPut(const char*, Tcl::Obj)
+void tcl::dict::do_put(const char*, tcl::obj)
 {
-  noDictError();
+  error_no_dict_support();
   GVX_ASSERT(0);
 }
 
-Tcl::Obj Tcl::Dict::doGet(const char*) const
+tcl::obj tcl::dict::do_get(const char*) const
 {
-  noDictError();
+  error_no_dict_support();
   GVX_ASSERT(0);
-  return Tcl::Obj(); // can't happen, but placate compiler
+  return tcl::obj(); // can't happen, but placate compiler
 }
 
 #else
 
-void Tcl::Dict::doPut(const char* key, Tcl::Obj val)
+void tcl::dict::do_put(const char* key, tcl::obj val)
 {
-GVX_TRACE("Tcl::Dict::doPut");
+GVX_TRACE("tcl::dict::do_put");
 
-  Tcl::Obj keyObj = Tcl::toTcl(key);
-  if (Tcl_DictObjPut(0, itsDictObj.obj(), keyObj.obj(), val.obj()) != TCL_OK)
+  tcl::obj key_obj = tcl::convert_from(key);
+  if (Tcl_DictObjPut(0, m_obj.get(), key_obj.get(), val.get()) != TCL_OK)
     {
       throw rutz::error(rutz::fstring("couldn't put object in dict "
                                       "with key: ", key), SRC_POS);
     }
 }
 
-Tcl::Obj Tcl::Dict::doGet(const char* key) const
+tcl::obj tcl::dict::do_get(const char* key) const
 {
-GVX_TRACE("Tcl::Dict::doGet");
+GVX_TRACE("tcl::dict::do_get");
 
   Tcl_Obj* dest = 0;
 
-  Tcl::Obj keyObj = Tcl::toTcl(key);
+  tcl::obj key_obj = tcl::convert_from(key);
 
-  if (Tcl_DictObjGet(0, itsDictObj.obj(), keyObj.obj(), &dest) == TCL_OK)
+  if (Tcl_DictObjGet(0, m_obj.get(), key_obj.get(), &dest) == TCL_OK)
     {
       if (dest != 0)
-        return Tcl::Obj(dest);
+        return tcl::obj(dest);
     }
 
   throw rutz::error(rutz::fstring("couldn't get value from dict "

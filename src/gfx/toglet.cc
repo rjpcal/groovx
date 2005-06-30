@@ -168,7 +168,7 @@ namespace
 ///////////////////////////////////////////////////////////////////////
 
 Toglet::Toglet(bool pack, bool topLevel) :
-  Tcl::TkWidget(Tcl::Main::interp(), "Toglet", widgetName(id()), topLevel),
+  tcl::TkWidget(tcl::event_loop::interp(), "Toglet", widgetName(id()), topLevel),
   rep(new Impl(this))
 {
 GVX_TRACE("Toglet::Toglet");
@@ -207,7 +207,7 @@ GVX_TRACE("Toglet::Toglet");
       rep->canvas->setClearColorIndex(1);
     }
 
-  if (pack) Tcl::TkWidget::pack();
+  if (pack) tcl::TkWidget::pack();
 }
 
 Toglet::~Toglet() throw()

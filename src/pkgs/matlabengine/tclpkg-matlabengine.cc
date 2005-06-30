@@ -156,7 +156,7 @@ int Matlabengine_Init(Tcl_Interp* interp)
 GVX_TRACE("Matlabengine_Init");
 
   GVX_PKG_CREATE(pkg, interp, "MatlabEngine", "4.$Revision$");
-  Tcl::defGenericObjCmds<MatlabEngine>(pkg, SRC_POS);
+  tcl::def_basic_type_cmds<MatlabEngine>(pkg, SRC_POS);
 
   pkg->def( "eval", "engine_id command", &MatlabEngine::evalString, SRC_POS );
   pkg->def( "get", "engine_id mtx_name", &MatlabEngine::getMtx, SRC_POS );

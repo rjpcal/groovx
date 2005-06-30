@@ -95,7 +95,7 @@ private:
 
 public:
   Impl() :
-    interp(Tcl::Main::interp()),
+    interp(tcl::event_loop::interp()),
     widget(),
     hostname(""),
     subject(""),
@@ -105,7 +105,7 @@ public:
     filePrefix("expt"),
     infoLog(),
     autosavePeriod(10),
-    doWhenComplete(new Tcl::ProcWrapper(interp)),
+    doWhenComplete(new tcl::ProcWrapper(interp)),
     numTrialsCompleted(0),
     createTime(rutz::time::wall_clock_now()),
     fileTimestamp(createTime.format("%Y%b%d_%H%M%S"))
@@ -128,7 +128,7 @@ public:
   // data members
   //
 
-  Tcl::Interp interp;
+  tcl::interpreter interp;
 
   nub::soft_ref<Toglet> widget;
 
@@ -143,7 +143,7 @@ public:
 
   int autosavePeriod;
 
-  nub::ref<Tcl::ProcWrapper> doWhenComplete;
+  nub::ref<tcl::ProcWrapper> doWhenComplete;
 
   unsigned int numTrialsCompleted;
 
@@ -162,7 +162,7 @@ ExptDriver::ExptDriver() :
 {
 GVX_TRACE("ExptDriver::ExptDriver");
 
-  rep->addLogInfo(Tcl::Main::commandLine().c_str());
+  rep->addLogInfo(tcl::event_loop::command_line().c_str());
 }
 
 ExptDriver::~ExptDriver() throw()
@@ -376,7 +376,7 @@ GVX_TRACE("ExptDriver::edBeginExpt");
   nub::log(fstring("expt begin: ", rep->beginDate));
   nub::log(fstring("hostname: ", rep->hostname));
   nub::log(fstring("cwd: ", cwd));
-  nub::log(fstring("cmdline: ", Tcl::Main::commandLine()));
+  nub::log(fstring("cmdline: ", tcl::event_loop::command_line()));
 
   currentElement()->vxRun(*this);
 }
@@ -417,7 +417,7 @@ GVX_TRACE("ExptDriver::pause");
 
   rep->interp.eval(pauseMsgCmd);
 
-  Tcl::Interp::clearEventQueue();
+  tcl::interpreter::clear_event_queue();
 
   rep->widget->fullClearscreen();
   rep->widget->fullClearscreen();
@@ -427,7 +427,7 @@ GVX_TRACE("ExptDriver::pause");
   rep->widget->fullClearscreen();
   rep->widget->fullClearscreen();
 
-  Tcl::Interp::clearEventQueue();
+  tcl::interpreter::clear_event_queue();
 
   rep->addLogInfo("Resuming experiment.");
 

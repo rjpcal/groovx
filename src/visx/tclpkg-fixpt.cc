@@ -47,9 +47,9 @@ int Fixpt_Init(Tcl_Interp* interp)
 GVX_TRACE("Fixpt_Init");
 
   GVX_PKG_CREATE(pkg, interp, "FixPt", "4.$Revision$");
-  pkg->inheritPkg("GxShapeKit");
-  Tcl::defFieldContainer<FixPt>(pkg, SRC_POS);
-  Tcl::defCreator<FixPt>(pkg);
+  pkg->inherit_pkg("GxShapeKit");
+  tcl::defFieldContainer<FixPt>(pkg, SRC_POS);
+  tcl::def_creator<FixPt>(pkg);
 
   GVX_PKG_RETURN(pkg);
 }

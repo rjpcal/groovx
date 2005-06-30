@@ -39,7 +39,7 @@
 
 #include "rutz/tracer.h"
 
-void Tcl::defTracing(Tcl::Pkg* pkg, rutz::tracer& t)
+void tcl::def_tracing(tcl::pkg* pkg, rutz::tracer& t)
 {
   using namespace rutz;
 

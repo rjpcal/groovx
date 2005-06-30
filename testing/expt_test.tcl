@@ -68,7 +68,7 @@ test "ExptDriver::loadASW" "fMRI sample" {
     set filename [lindex $files $i]
     puts "filename $filename"
     -> $expt loadASW $::TEST_DIR/$filename
-    set dif [expr [GxShapeKit::countAll] - [lindex $ocounts $i]]
+    set dif [expr [GxShapeKit::count_all] - [lindex $ocounts $i]]
     delete $expt
     return $dif
 } {^0$}
@@ -84,8 +84,8 @@ test "ExptDriver::loadASW" "psyphy samples" {
         set expt [new ExptDriver]
 
         -> $expt loadASW $::TEST_DIR/[lindex $files $i]
-        set odif [expr [GxShapeKit::countAll] - [lindex $ocounts $i]]
-        set tdif [expr [Trial::countAll] - [lindex $tcounts $i]]
+        set odif [expr [GxShapeKit::count_all] - [lindex $ocounts $i]]
+        set tdif [expr [Trial::count_all] - [lindex $tcounts $i]]
         append result "$odif $tdif "
 	delete $expt
     }

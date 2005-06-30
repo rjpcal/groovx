@@ -43,9 +43,9 @@ namespace geom
   template <class T> class vec2;
 }
 
-namespace Tcl
+namespace tcl
 {
-  class Interp;
+  class interpreter;
   class TkWidget;
 
   enum EventStatus { HANDLED, NOT_HANDLED };
@@ -80,11 +80,11 @@ class TkWidgImpl;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TkWidget : public virtual nub::object
+class tcl::TkWidget : public virtual nub::object
 {
 public:
   /// Build a TkWidget; calls Tk_CreateWindowFromPath() internally.
-  TkWidget(Tcl::Interp& interp,
+  TkWidget(tcl::interpreter& interp,
            const char* classname,
            const char* pathname,
            bool topLevel = false);
@@ -102,7 +102,7 @@ public:
   void setHeight(int h);
   void setSize(geom::vec2<int> sz);
 
-  Tcl::Interp& interp() const;
+  tcl::interpreter& interp() const;
   Tk_Window tkWin() const;
   const char* pathname() const;
   double pixelsPerInch() const;
@@ -159,8 +159,8 @@ public:
 
   void hook();
 
-  nub::Signal1<const Tcl::ButtonPressEvent&> sigButtonPressed;
-  nub::Signal1<const Tcl::KeyPressEvent&> sigKeyPressed;
+  nub::Signal1<const tcl::ButtonPressEvent&> sigButtonPressed;
+  nub::Signal1<const tcl::KeyPressEvent&> sigKeyPressed;
 
 private:
   TkWidget(const TkWidget&);

@@ -62,7 +62,7 @@ GxScene::GxScene(nub::soft_ref<Gfx::Canvas> canvas) :
   isItHolding(false),
   isItRefreshing(true),
   isItRefreshed(false),
-  itsScheduler(rutz::make_shared(new Tcl::TimerScheduler)),
+  itsScheduler(rutz::make_shared(new tcl::timer_scheduler)),
   itsTimer(100, true),
   slotNodeChanged(nub::slot0::make(this, &GxScene::onNodeChange))
 {

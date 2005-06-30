@@ -73,13 +73,13 @@
 
 namespace GLTcl
 {
-  void loadMatrix(nub::soft_ref<GLCanvas> canvas, Tcl::List entries);
-  void lookAt(Tcl::List args);
+  void loadMatrix(nub::soft_ref<GLCanvas> canvas, tcl::list entries);
+  void lookAt(tcl::list args);
   void antialias(bool on_off);
   void drawOneLine(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2);
   void drawThickLine(GLdouble x1, GLdouble y1,
                      GLdouble x2, GLdouble y2, GLdouble thickness);
-  Tcl::List lineInfo();
+  tcl::list lineInfo();
 
   // Just converts to char from unsigned char
   const char* getString(GLenum name)
@@ -103,7 +103,7 @@ namespace GLTcl
 
   static std::map<GLenum, const AttribInfo*> theAttribMap;
 
-  void loadGet(Tcl::Pkg* pkg)
+  void loadGet(tcl::pkg* pkg)
   {
     static const AttribInfo theAttribs[] =
     {
@@ -142,8 +142,8 @@ namespace GLTcl
     int num_params = sizeof(theAttribs) / sizeof(AttribInfo);
     for (int i = 0; i < num_params; ++i)
       {
-        pkg->linkVarCopy(theAttribs[i].param_name,
-                         static_cast<int>(theAttribs[i].param_tag));
+        pkg->link_var_copy(theAttribs[i].param_name,
+                           static_cast<int>(theAttribs[i].param_tag));
         theAttribMap[theAttribs[i].param_tag] = &(theAttribs[i]);
       }
   }
@@ -154,7 +154,7 @@ namespace GLTcl
     int val;
   };
 
-  void loadEnums(Tcl::Pkg* pkg)
+  void loadEnums(tcl::pkg* pkg)
   {
     NameVal theEnums [] =
     {
@@ -257,7 +257,7 @@ namespace GLTcl
     int num_enums = sizeof(theEnums) / sizeof(NameVal);
     for (int i = 0; i < num_enums; ++i)
       {
-        pkg->linkVarCopy(theEnums[i].name, theEnums[i].val);
+        pkg->link_var_copy(theEnums[i].name, theEnums[i].val);
       }
   }
 
@@ -273,7 +273,7 @@ namespace GLTcl
   { glGetIntegerv(tag, vals_out); }
 
   template <class T>
-  Tcl::List get(GLenum param_tag
+  tcl::list get(GLenum param_tag
 #ifdef GVX_BROKEN_TEMPLATE_FUNCTIONS
                 , T* /*dummy*/=0
 #endif
@@ -287,19 +287,19 @@ namespace GLTcl
 
     rutz::fixed_block<T> theVals(theInfo->num_values);
     extractValues(theInfo->param_tag, &(theVals[0]));
-    Tcl::List result;
-    result.appendRange(theVals.begin(), theVals.end());
+    tcl::list result;
+    result.append_range(theVals.begin(), theVals.end());
     return result;
   }
 
 #ifdef GVX_BROKEN_TEMPLATE_FUNCTIONS
-  Tcl::List getBoolean(GLenum param_tag)
+  tcl::list getBoolean(GLenum param_tag)
   { return get<GLboolean>(param_tag, (GLboolean*) 0); }
 
-  Tcl::List getDouble(GLenum param_tag)
+  tcl::list getDouble(GLenum param_tag)
   { return get<GLdouble>(param_tag, (GLdouble*) 0); }
 
-  Tcl::List getInt(GLenum param_tag)
+  tcl::list getInt(GLenum param_tag)
   { return get<GLint>(param_tag, (GLint*) 0); }
 #endif
 }
@@ -310,7 +310,7 @@ namespace GLTcl
 //
 //---------------------------------------------------------------------
 
-void GLTcl::loadMatrix(nub::soft_ref<GLCanvas> canvas, Tcl::List entries)
+void GLTcl::loadMatrix(nub::soft_ref<GLCanvas> canvas, tcl::list entries)
 {
   rutz::fixed_block<GLdouble> matrix(entries.begin<GLdouble>(),
                                      entries.end<GLdouble>());
@@ -332,7 +332,7 @@ void GLTcl::loadMatrix(nub::soft_ref<GLCanvas> canvas, Tcl::List entries)
 //
 //---------------------------------------------------------------------
 
-void GLTcl::lookAt(Tcl::List args)
+void GLTcl::lookAt(tcl::list args)
 {
   gluLookAt(args.get<GLdouble>(0),
             args.get<GLdouble>(1),
@@ -433,14 +433,14 @@ void GLTcl::drawThickLine(GLdouble x1, GLdouble y1,
 //
 //--------------------------------------------------------------------
 
-Tcl::List GLTcl::lineInfo()
+tcl::list GLTcl::lineInfo()
 {
   GLdouble range[2] = {-1.0,-1.0};
   GLdouble gran=-1.0;
   glGetDoublev(GL_LINE_WIDTH_RANGE, &range[0]);
   glGetDoublev(GL_LINE_WIDTH_GRANULARITY, &gran);
 
-  Tcl::List result;
+  tcl::list result;
   result.append("range");
   result.append(range[0]);
   result.append(range[1]);
