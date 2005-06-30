@@ -201,7 +201,7 @@ public:
   /** Attempt to convert argument number \a argn to type \c T, and
       return the result of the conversion. */
   template <class T>
-  typename Return<T>::Type get_arg(unsigned int argn)
+  typename returnable<T>::type get_arg(unsigned int argn)
     {
       return tcl::convert_to<T>(get_objv(argn));
     }

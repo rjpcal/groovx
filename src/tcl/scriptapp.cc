@@ -218,47 +218,73 @@ void tcl::script_app::handle_exception_in_macro_only
 }
 
 tcl::script_app::script_app(const char* appname,
-                            int argc_, char**argv_) throw()
+                            int argc_, char** argv_) throw()
   :
   m_appname(appname),
-  m_argc(argc_),
-  m_argv(argv_),
-  m_minimal(havearg(argv_, "-minimal")),
-  m_nowindow(havearg(argv_, "-nw")),
+  m_script_argc(argc_),
+  m_script_argv(new char*[argc_+1]),
+  m_minimal(false),
+  m_nowindow(false),
   m_splashmsg(),
   m_pkgdir(),
   m_pkgs(0),
   m_exitcode(0)
 {
+  // We are going to take a quick pass over the command-line args here
+  // to see if there are any we care about; if there are, then we will
+  // cull those from the arg list that gets exposed to the script.
+  int script_argn = 0;
+
   // Quick check argv to optionally turn on global tracing and/or set
   // the global debug level. This method is particularly useful for
   // helping to diagnose problems that are occurring during
   // application startup, before we have a chance to get to the
   // command-line prompt and do a "::gtrace 1" or a "::dbgLevel 9".
-  for (int i = 0; i < this->m_argc; ++i)
+  for (int i = 0; i < argc_; ++i)
     {
-      if (strcmp(this->m_argv[i], "-dbglevel") == 0)
+      if (strcmp(argv_[i], "-dbglevel") == 0)
         {
-          if (this->m_argv[i+1] != 0)
-            rutz::debug::set_global_level( atoi(this->m_argv[i+1]) );
+          ++i;
+          if (argv_[i] != 0)
+            rutz::debug::set_global_level( atoi(argv_[i]) );
         }
-      else if (strcmp(this->m_argv[i], "-gtrace") == 0)
+      else if (strcmp(argv_[i], "-gtrace") == 0)
         {
           rutz::trace::set_global_trace(true);
         }
-      else if (strcmp(this->m_argv[i], "-showinit") == 0)
+      else if (strcmp(argv_[i], "-showinit") == 0)
         {
           tcl::pkg::verbose_init(true);
         }
+      else if (strcmp(argv_[i], "-minimal") == 0)
+        {
+          this->m_minimal = true;
+        }
+      else if (strcmp(argv_[i], "-nw") == 0)
+        {
+          this->m_nowindow = true;
+        }
+      else
+        {
+          // ok, we didn't recognize this arg, so we'll pass it along
+          // to the script:
+          m_script_argv[script_argn++] = argv_[i];
+        }
     }
+
+  // now null-terminate the argv that will be passed to the script:
+  m_script_argv[script_argn] = 0;
 }
 
 tcl::script_app::~script_app() throw()
-{}
+{
+  delete [] m_script_argv;
+}
 
 void tcl::script_app::run()
 {
-  tcl::event_loop tclmain(this->m_argc, this->m_argv, this->m_nowindow);
+  tcl::event_loop tclmain(this->m_script_argc,
+                          this->m_script_argv, this->m_nowindow);
 
   if (tcl::event_loop::is_interactive())
     {

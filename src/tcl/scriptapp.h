@@ -85,12 +85,12 @@ public:
   static void handle_exception_in_macro_only(const std::exception* e);
 
 private:
-  script_app(const script_app&);
-  script_app& operator=(const script_app&);
+  script_app(const script_app&); // not implemented
+  script_app& operator=(const script_app&); // not implemented
 
   rutz::fstring       const m_appname;
-  int                 const m_argc;
-  char**              const m_argv;
+  int                       m_script_argc;
+  char**                    m_script_argv;
   bool                      m_minimal;
   bool                      m_nowindow;
   rutz::fstring             m_splashmsg;

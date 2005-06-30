@@ -58,7 +58,7 @@ namespace tcl
 
   /// Trait class for extracting an appropriate return-type from T.
   template <class T>
-  struct Return
+  struct returnable
   {
     // This machinery is simple to set up the rule that we want to
     // convert all rutz::value subclasses via strings. All other types
@@ -66,27 +66,27 @@ namespace tcl
     typedef typename rutz::select_if<
       rutz::is_sub_super<T, rutz::value>::result,
       rutz::fstring, T>::result_t
-    Type;
+    type;
   };
 
-  /// Specialization of tcl::Return for const T.
+  /// Specialization of tcl::returnable for const T.
   template <class T>
-  struct Return<const T>
+  struct returnable<const T>
   {
     typedef typename rutz::select_if<
       rutz::is_sub_super<T, rutz::value>::result,
       rutz::fstring, T>::result_t
-    Type;
+    type;
   };
 
-  /// Specialization of tcl::Return for const T&.
+  /// Specialization of tcl::returnable for const T&.
   template <class T>
-  struct Return<const T&>
+  struct returnable<const T&>
   {
     typedef typename rutz::select_if<
       rutz::is_sub_super<T, rutz::value>::result,
       rutz::fstring, T>::result_t
-    Type;
+    type;
   };
 
   //
@@ -108,9 +108,9 @@ namespace tcl
   tcl::list     aux_convert_to(Tcl_Obj* obj, tcl::list*);
 
   template <class T>
-  inline typename Return<T>::Type convert_to( Tcl_Obj* obj )
+  inline typename returnable<T>::type convert_to( Tcl_Obj* obj )
   {
-    return aux_convert_to(obj, static_cast<typename Return<T>::Type*>(0));
+    return aux_convert_to(obj, static_cast<typename returnable<T>::type*>(0));
   }
 
   //
