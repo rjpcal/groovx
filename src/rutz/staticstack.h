@@ -33,8 +33,7 @@
 #ifndef GROOVX_RUTZ_STATICSTACK_H_UTC20050626084019_DEFINED
 #define GROOVX_RUTZ_STATICSTACK_H_UTC20050626084019_DEFINED
 
-#include "rutz/debug.h"
-GVX_DBG_REGISTER
+#include "rutz/abort.h"
 
 namespace rutz
 {
@@ -78,7 +77,8 @@ namespace rutz
     void pop() throw()
     {
       if (sz == 0)
-        GVX_PANIC("underflow in static_stack::pop");
+        GVX_ABORT("underflow in static_stack::pop");
+
       --sz;
     }
 

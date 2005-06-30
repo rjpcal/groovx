@@ -52,6 +52,7 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/iter.h"
+#include "rutz/timeformat.h"
 #include "rutz/unixcall.h"
 
 #include "visx/tlistutils.h"
@@ -108,14 +109,15 @@ public:
     doWhenComplete(new tcl::ProcWrapper(interp)),
     numTrialsCompleted(0),
     createTime(rutz::time::wall_clock_now()),
-    fileTimestamp(createTime.format("%Y%b%d_%H%M%S"))
+    fileTimestamp(rutz::format_time(createTime, "%Y%b%d_%H%M%S"))
   {}
 
   ~Impl() {}
 
   void addLogInfo(const char* message)
   {
-    const fstring date_string = rutz::time::wall_clock_now().format();
+    const fstring date_string =
+      rutz::format_time(rutz::time::wall_clock_now());
 
     infoLog.append("@");
     infoLog.append(date_string);
@@ -363,7 +365,7 @@ GVX_TRACE("ExptDriver::edBeginExpt");
 
   const fstring cwd = rutz::unixcall::getcwd();
 
-  rep->beginDate = rutz::time::wall_clock_now().format();
+  rep->beginDate = rutz::format_time(rutz::time::wall_clock_now());
   rep->hostname = getenv("HOSTNAME");
   rep->subject = cwd;
   rep->numTrialsCompleted = 0;
@@ -473,7 +475,7 @@ GVX_TRACE("ExptDriver::storeData");
 
   const rutz::time timestamp = rutz::time::wall_clock_now();
 
-  rep->endDate = timestamp.format();
+  rep->endDate = rutz::format_time(timestamp);
 
   // Write the main experiment file
   fstring expt_filename = rep->filePrefix;

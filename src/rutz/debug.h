@@ -33,11 +33,6 @@
 #ifndef GROOVX_RUTZ_DEBUG_H_UTC20050626084020_DEFINED
 #define GROOVX_RUTZ_DEBUG_H_UTC20050626084020_DEFINED
 
-namespace rutz
-{
-  class fstring;
-}
-
 namespace rutz {namespace debug
 {
   void eval (const char* what, int level, const char* where, int line_no, bool nl, bool expr) throw();
@@ -53,7 +48,6 @@ namespace rutz {namespace debug
   void eval (const char* what, int level, const char* where, int line_no, bool nl, double expr) throw();
   void eval (const char* what, int level, const char* where, int line_no, bool nl, const char* expr) throw();
   void eval (const char* what, int level, const char* where, int line_no, bool nl, void* expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, rutz::fstring expr) throw();
 
   void dump (const char* what, int level, const char* where, int line_no) throw();
 
@@ -79,21 +73,27 @@ namespace rutz {namespace debug
   void set_global_level(int lev);
 }}
 
+/// Print a message, followed by a rutz::backtrace (if available), then abort().
 #define GVX_PANIC(message) rutz::debug::panic_aux(message, __FILE__, __LINE__)
 
-// Like GVX_ASSERT(), but can't ever be turned off.
+/// Abort if the given expression evaluates to true.
+/** This is like GVX_ASSERT(), except (1) it has the opposite sense
+    (GVX_ASSERT() says some expression must be TRUE, GVX_ABORT_IF()
+    says some expression must be false), and (2) it can't ever be
+    turned off (whereas GVX_ASSERT() is under the control of the
+    GVX_NO_DEBUG macro). */
 #define GVX_ABORT_IF(expr) \
       do { if ( expr ) { rutz::debug::panic_aux(#expr, __FILE__, __LINE__); } } while (0)
 
 #define GVX_CONCAT(x, y) x ## y
 
-#define GVX_DO_DBG_REGISTER(ext)                                    \
-static const int GVX_CONCAT(DEBUG_KEY, ext) =                       \
+#define GVX_DO_DBG_REGISTER(ext)                                \
+static const int GVX_CONCAT(DEBUG_KEY, ext) =                   \
   rutz::debug::create_key(__FILE__);                            \
                                                                 \
-static inline int GVX_CONCAT(dbg_level_, ext) ()                    \
+static inline int GVX_CONCAT(dbg_level_, ext) ()                \
 {                                                               \
-  return rutz::debug::key_levels[GVX_CONCAT(DEBUG_KEY, ext)];       \
+  return rutz::debug::key_levels[GVX_CONCAT(DEBUG_KEY, ext)];   \
 }
 
 #define GVX_DBG_REGISTER GVX_DO_DBG_REGISTER(1)

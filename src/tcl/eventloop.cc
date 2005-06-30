@@ -38,6 +38,7 @@
 #include "tcl/interp.h"
 
 #include "rutz/backtrace.h"
+#include "rutz/backtraceformat.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 
@@ -562,7 +563,8 @@ GVX_TRACE("tcl::event_loop_impl::run");
           // ensure errorInfo is set properly:
           m_interp.add_error_info("");
 
-          const rutz::fstring bt = rutz::error::last_backtrace().format();
+          const rutz::fstring bt =
+            rutz::format(rutz::error::last_backtrace());
 
           std::cerr << m_interp.get_global_var<const char*>("errorInfo")
                     << "\n" << bt << "\nError in startup script\n";

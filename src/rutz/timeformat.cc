@@ -1,18 +1,18 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// time.cc
+// timeformat.cc
 //
-// Copyright (c) 2002-2005
-// Rob Peters <rjpeters at usc dot edu>
+// Copyright (c) 2005-2005
+// Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Thu Nov  7 16:58:26 2002
+// created: Thu Jun 30 15:18:13 2005
 // commit: $Id$
 // $HeadURL$
 //
 // --------------------------------------------------------------------
 //
 // This file is part of GroovX.
-//   [http://ilab.usc.edu/rjpeters/groovx/]
+//   [http://www.klab.caltech.edu/rjpeters/groovx/]
 //
 // GroovX is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -30,34 +30,26 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_TIME_CC_UTC20050626084019_DEFINED
-#define GROOVX_RUTZ_TIME_CC_UTC20050626084019_DEFINED
+#ifndef GROOVX_RUTZ_TIMEFORMAT_CC_UTC20050630221813_DEFINED
+#define GROOVX_RUTZ_TIMEFORMAT_CC_UTC20050630221813_DEFINED
 
-#include "rutz/time.h"
+#include "rutz/timeformat.h"
 
-#include <sys/resource.h>
-#include <time.h>
+#include "rutz/fstring.h"
 
-rutz::time rutz::time::wall_clock_now() throw()
+rutz::fstring rutz::format_time(const timeval& tval,
+                                const char* formatcode)
 {
-  rutz::time t;
-  gettimeofday(&t.m_timeval, /* timezone */ 0);
-  return t;
+  const time_t t = time_t(tval.tv_sec);
+
+  struct tm* tt = localtime(&t);
+
+  char buf[512];
+
+  std::size_t count = strftime(buf, 512, formatcode, tt);
+
+  return rutz::fstring(rutz::char_range(&buf[0], count));
 }
 
-rutz::time rutz::time::user_rusage() throw()
-{
-  rusage ru;
-  getrusage(RUSAGE_SELF, &ru);
-  return rutz::time(ru.ru_utime);
-}
-
-rutz::time rutz::time::sys_rusage() throw()
-{
-  rusage ru;
-  getrusage(RUSAGE_SELF, &ru);
-  return rutz::time(ru.ru_stime);
-}
-
-static const char vcid_groovx_rutz_time_cc_utc20050626084019[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_RUTZ_TIME_CC_UTC20050626084019_DEFINED
+static const char vcid_groovx_rutz_timeformat_cc_utc20050630221813[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_TIMEFORMAT_CC_UTC20050630221813DEFINED

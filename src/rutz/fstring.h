@@ -460,6 +460,21 @@ namespace rutz
     str.readline(is, eol); return is;
   }
 
+  ///////////////////////////////////////////////////////////
+  //
+  // Overload of rutz::debug::eval() (used in dbg_eval macros)
+  //
+  ///////////////////////////////////////////////////////////
+
+  namespace debug
+  {
+    inline void eval (const char* what, int level, const char* where,
+                      int line_no, bool nl, rutz::fstring expr) throw()
+    {
+      eval(what, level, where, line_no, nl, expr.c_str());
+    }
+  }
+
 } // end namespace rutz
 
 static const char vcid_groovx_rutz_fstring_h_utc20050626084021[] = "$Id$ $HeadURL$";

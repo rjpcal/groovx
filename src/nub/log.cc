@@ -40,6 +40,8 @@
 #include "rutz/fstring.h"
 #include "rutz/sharedptr.h"
 #include "rutz/stopwatch.h"
+#include "rutz/time.h"
+#include "rutz/timeformat.h"
 
 #include <algorithm>
 #include <fstream>
@@ -96,7 +98,8 @@ void nub::logging::reset()
 GVX_TRACE("nub::logging::reset");
   scopes.clear();
 
-  log(fstring("log reset ", rutz::time::wall_clock_now().format()));
+  log(fstring("log reset ",
+              rutz::format_time(rutz::time::wall_clock_now())));
 }
 
 void nub::logging::add_scope(const fstring& name)

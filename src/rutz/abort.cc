@@ -1,18 +1,18 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// time.cc
+// abort.cc
 //
-// Copyright (c) 2002-2005
-// Rob Peters <rjpeters at usc dot edu>
+// Copyright (c) 2005-2005
+// Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Thu Nov  7 16:58:26 2002
+// created: Thu Jun 30 15:26:51 2005
 // commit: $Id$
 // $HeadURL$
 //
 // --------------------------------------------------------------------
 //
 // This file is part of GroovX.
-//   [http://ilab.usc.edu/rjpeters/groovx/]
+//   [http://www.klab.caltech.edu/rjpeters/groovx/]
 //
 // GroovX is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -30,34 +30,21 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_TIME_CC_UTC20050626084019_DEFINED
-#define GROOVX_RUTZ_TIME_CC_UTC20050626084019_DEFINED
+#ifndef GROOVX_RUTZ_ABORT_CC_UTC20050630222651_DEFINED
+#define GROOVX_RUTZ_ABORT_CC_UTC20050630222651_DEFINED
 
-#include "rutz/time.h"
+#include "rutz/abort.h"
 
-#include <sys/resource.h>
-#include <time.h>
+#include <cstdlib>
+#include <cstdio>
 
-rutz::time rutz::time::wall_clock_now() throw()
+void rutz::debug::abort_aux (const char* what, const char* where,
+                             int line_no) throw()
 {
-  rutz::time t;
-  gettimeofday(&t.m_timeval, /* timezone */ 0);
-  return t;
+  fprintf(stderr, "Abort (%s:%d):\n\tgot '%s'\n\n",
+          where, line_no, what);
+  abort();
 }
 
-rutz::time rutz::time::user_rusage() throw()
-{
-  rusage ru;
-  getrusage(RUSAGE_SELF, &ru);
-  return rutz::time(ru.ru_utime);
-}
-
-rutz::time rutz::time::sys_rusage() throw()
-{
-  rusage ru;
-  getrusage(RUSAGE_SELF, &ru);
-  return rutz::time(ru.ru_stime);
-}
-
-static const char vcid_groovx_rutz_time_cc_utc20050626084019[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_RUTZ_TIME_CC_UTC20050626084019_DEFINED
+static const char vcid_groovx_rutz_abort_cc_utc20050630222651[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_ABORT_CC_UTC20050630222651DEFINED

@@ -44,6 +44,7 @@
 #include "tcl/pkg.h"
 
 #include "rutz/backtrace.h"
+#include "rutz/backtraceformat.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/rand.h"
@@ -66,7 +67,7 @@ namespace
   {
     const rutz::backtrace& bt = rutz::error::last_backtrace();
 
-    return bt.format();
+    return rutz::format(bt);
   }
 
   rutz::fstring cmdUsage(tcl::call_context& ctx)

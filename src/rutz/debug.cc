@@ -37,14 +37,10 @@
 GVX_DBG_REGISTER
 
 #include "rutz/backtrace.h"
-#include "rutz/fstring.h"
 
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
-
-#define GVX_LOCAL_PROF
-#include "rutz/trace.h"
 
 namespace
 {
@@ -103,7 +99,6 @@ EVAL_IMPL(float);
 EVAL_IMPL(double);
 EVAL_IMPL(const char*);
 EVAL_IMPL(void*);
-EVAL_IMPL(rutz::fstring);
 
 void rutz::debug::dump(const char* what, int level, const char* where, int line_no) throw()
 {
@@ -123,37 +118,47 @@ void rutz::debug::start_newline() throw()
     }
 }
 
-void rutz::debug::panic_aux(const char* what, const char* where, int line_no) throw()
+void rutz::debug::panic_aux(const char* what, const char* where,
+                            int line_no) throw()
 {
-  fprintf(stderr, "Panic (%s:%d):\n\tgot '%s'\n\n", where, line_no, what);
+  fprintf(stderr, "Panic (%s:%d):\n\t%s\n\n",
+          where, line_no, what);
   rutz::backtrace::current().print();
   abort();
 }
 
-void rutz::debug::assert_aux(const char* what, const char* where, int line_no) throw()
+void rutz::debug::assert_aux(const char* what, const char* where,
+                             int line_no) throw()
 {
-  fprintf(stderr, "Assertion failed (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
+  fprintf(stderr, "Assertion failed (%s:%d):\n\texpected '%s'\n\n",
+          where, line_no, what);
   rutz::backtrace::current().print();
   abort();
 }
 
-void rutz::debug::precondition_aux(const char* what, const char* where, int line_no) throw()
+void rutz::debug::precondition_aux(const char* what, const char* where,
+                                   int line_no) throw()
 {
-  fprintf(stderr, "Precondition failed (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
+  fprintf(stderr, "Precondition failed (%s:%d):\n\texpected '%s'\n\n",
+          where, line_no, what);
   rutz::backtrace::current().print();
   abort();
 }
 
-void rutz::debug::postcondition_aux(const char* what, const char* where, int line_no) throw()
+void rutz::debug::postcondition_aux(const char* what, const char* where,
+                                    int line_no) throw()
 {
-  fprintf(stderr, "Postcondition failed (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
+  fprintf(stderr, "Postcondition failed (%s:%d):\n\texpected '%s'\n\n",
+          where, line_no, what);
   rutz::backtrace::current().print();
   abort();
 }
 
-void rutz::debug::invariant_aux(const char* what, const char* where, int line_no) throw()
+void rutz::debug::invariant_aux(const char* what, const char* where,
+                                int line_no) throw()
 {
-  fprintf(stderr, "Invariant failed (%s:%d):\n\texpected '%s'\n\n", where, line_no, what);
+  fprintf(stderr, "Invariant failed (%s:%d):\n\texpected '%s'\n\n",
+          where, line_no, what);
   rutz::backtrace::current().print();
   abort();
 }

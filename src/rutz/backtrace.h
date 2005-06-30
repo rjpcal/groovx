@@ -33,12 +33,13 @@
 #ifndef GROOVX_RUTZ_BACKTRACE_H_UTC20050626084020_DEFINED
 #define GROOVX_RUTZ_BACKTRACE_H_UTC20050626084020_DEFINED
 
+#include "rutz/staticstack.h"
+
 #include <iosfwd>
 
 namespace rutz
 {
   class backtrace;
-  class fstring;
   class prof;
 }
 
@@ -85,12 +86,8 @@ public:
   /// Print the call stack to the given stream.
   void print(std::ostream& os) const throw();
 
-  /// Generate a human-readable string representation of the backtrace.
-  rutz::fstring format() const;
-
 private:
-  struct impl;
-  impl* const rep;
+  rutz::static_stack<rutz::prof*, 256> m_vec;
 };
 
 static const char vcid_groovx_rutz_backtrace_h_utc20050626084020[] = "$Id$ $HeadURL$";

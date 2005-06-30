@@ -33,19 +33,13 @@
 #ifndef GROOVX_RUTZ_BACKTRACE_CC_UTC20050626084019_DEFINED
 #define GROOVX_RUTZ_BACKTRACE_CC_UTC20050626084019_DEFINED
 
-#include "backtrace.h"
+#include "rutz/backtrace.h"
 
-#include "rutz/fstring.h"
-#include "rutz/staticstack.h"
+#include "rutz/abort.h"
+#include "rutz/prof.h"
 
-#include <cmath> // for log10()
-#include <cstdio> // for snprintf(), fprintf()
-#include <new> // for std::nothrow
+#include <cstdio>  // for fprintf()
 #include <ostream>
-
-#include "rutz/trace.h"
-#include "rutz/debug.h"
-GVX_DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -53,72 +47,71 @@ GVX_DBG_REGISTER
 //
 ///////////////////////////////////////////////////////////////////////
 
-struct rutz::backtrace::impl
-{
-  rutz::static_stack<rutz::prof*, 256> vec;
-};
-
 rutz::backtrace::backtrace() throw() :
-  rep(new (std::nothrow) impl)
-{
-  if (rep == 0)
-    GVX_PANIC("memory allocation failed");
-}
+  m_vec()
+{}
 
 rutz::backtrace::backtrace(const backtrace& other) throw() :
-  rep(new (std::nothrow) impl(*other.rep))
-{
-  if (rep == 0)
-    GVX_PANIC("memory allocation failed");
-}
+  m_vec(other.m_vec)
+{}
 
 rutz::backtrace& rutz::backtrace::operator=(const backtrace& other) throw()
 {
-  *rep = *other.rep;
+  m_vec = other.m_vec;
   return *this;
 }
 
 rutz::backtrace::~backtrace() throw()
-{
-  delete rep;
-}
+{}
 
 rutz::backtrace& rutz::backtrace::current() throw()
 {
   static rutz::backtrace* ptr = 0;
+
+  // Q: Why do a dynamic allocation here instead of just having a
+  // static object?
+
+  // A: With a static object, we could potentially run in to trouble
+  // during program exit, if somebody's destructor called
+  // backtrace::current() after the local static object's destructor
+  // (i.e., ~backtrace()) had itself already been run. On the other
+  // hand, with a dynamically-allocated object, we can just let the
+  // memory dangle (it's not really a memory "leak" since the amount
+  // of memory is finite and bounded), so the object will never become
+  // invalid, even during program shutdown.
   if (ptr == 0)
     {
       ptr = new (std::nothrow) rutz::backtrace;
 
       if (ptr == 0)
-        GVX_PANIC("memory allocation failed");
+        GVX_ABORT("memory allocation failed");
     }
   return *ptr;
 }
 
 bool rutz::backtrace::push(rutz::prof* p) throw()
 {
-  return rep->vec.push(p);
+  return m_vec.push(p);
 }
 
 void rutz::backtrace::pop() throw()
 {
-  rep->vec.pop();
+  m_vec.pop();
 }
 
 unsigned int rutz::backtrace::size() const throw()
 {
-  return rep->vec.size();
+  return m_vec.size();
 }
 
 rutz::prof* rutz::backtrace::top() const throw()
 {
-  return rep->vec.top();
+  return m_vec.top();
 }
 
 rutz::prof* rutz::backtrace::at(unsigned int i) const throw()
 {
-  return rep->vec.at(i);
+  return m_vec.at(i);
 }
 
 void rutz::backtrace::print() const throw()
@@ -136,7 +129,7 @@ void rutz::backtrace::print() const throw()
   for (; i < end; ++i, --ri)
     {
       fprintf(stderr, "\t[%d] %s\n", int(i),
-              rep->vec.at(ri)->context_name());
+              m_vec.at(ri)->context_name());
     }
 }
 
@@ -157,39 +150,10 @@ void rutz::backtrace::print(std::ostream& os) const throw()
   for (; i < end; ++i, --ri)
     {
       os << "\t[" << i << "] "
-         << rep->vec.at(ri)->context_name() << '\n';
+         << m_vec.at(ri)->context_name() << '\n';
     }
 
   os << std::flush;
-}
-
-rutz::fstring rutz::backtrace::format() const
-{
-  if (rep->vec.size() == 0) return rutz::fstring();
-
-  rutz::fstring result;
-
-  const int LINELEN = 256;
-  char line[LINELEN];
-
-  unsigned int s = rep->vec.size();
-  int width = 0;
-  while (s != 0)
-    { s /= 10; ++width; }
-
-  for (unsigned int i = rep->vec.size(); i > 0; --i)
-    {
-      snprintf(&line[0], LINELEN, "[%*d] %-35s (%s:%d)\n",
-               width,
-               rep->vec.size() - i,
-               rep->vec[i-1]->context_name(),
-               rep->vec[i-1]->src_file_name(),
-               rep->vec[i-1]->src_line_no());
-
-      result.append(&line[0]);
-    }
-
-  return result;
 }
 
 static const char vcid_groovx_rutz_backtrace_cc_utc20050626084019[] = "$Id$ $HeadURL$";
