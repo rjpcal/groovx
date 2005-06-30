@@ -8,31 +8,11 @@
 
 proc strip_qt_junk { dirname } {
 
-    if { [regexp {^(qt|pkgs)/(.*)} $dirname - dir subdir] } {
+    if { [regexp {^(Qt|pkgs)/(.*)} $dirname - dir subdir] } {
 	return $dir
     }
 
     return $dirname
-
-    # could use this code if we want to show individual qt project
-    # directories, but ignore the .ui and .moc junk
-    if { 0 } {
-	set tail [file tail $dirname]
-
-	switch -exact -- $tail {
-	    .ui {
-		# strip the trailing ".ui"
-		return [file dirname $dirname]
-	    }
-	    .moc {
-		# strip the trailing ".moc"
-		return [file dirname $dirname]
-	    }
-	}
-
-	#default...
-	return $dirname
-    }
 }
 
 proc strip_src_pfx { dirname } {

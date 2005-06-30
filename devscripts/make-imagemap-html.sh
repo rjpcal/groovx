@@ -13,6 +13,9 @@ imgfile=${imgfile##*/}
 
 stem=${imgfile%%.*}
 
+echo "<!-- build date: `date` -->"
+echo "<!-- build host: `hostname` -->"
+echo "<!-- dot -V: `dot -V 2>&1` -->"
 echo "<html>"
 echo "<head>"
 echo "<title>$stem</title>"
