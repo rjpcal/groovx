@@ -94,7 +94,7 @@ GVX_TRACE("Trial_Init");
   // FIXME this is redundant with Element::trialType
   pkg->defAttrib("type", &Trial::trialType, &Trial::setType, SRC_POS);
 
-  Nub::ObjFactory::theOne().register_creator(&Trial::make);
+  nub::obj_factory::instance().register_creator(&Trial::make);
 
   GVX_PKG_RETURN(pkg);
 }

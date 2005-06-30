@@ -26,10 +26,10 @@ Here are a few starting points into the framework:
 <li>\ref TUTORIAL
 <li>\ref README
 
-<li>Nub::RefCounted and Nub::RefCounts
-<li>Nub::Object
-<li>Nub::Ref and Nub::SoftRef
-<li>Nub::ObjDb
+<li>nub::ref_counted and nub::ref_counts
+<li>nub::object
+<li>nub::ref and nub::soft_ref
+<li>nub::objectdb
 
 <li>Tcl::Command
 <li>Tcl::Context

@@ -70,7 +70,7 @@ public:
 
 
   /// Construct with a given child object.
-  GxCache(Nub::SoftRef<GxNode> child);
+  GxCache(nub::soft_ref<GxNode> child);
 
   /// Virtual destructor.
   virtual ~GxCache() throw();
@@ -98,7 +98,7 @@ private:
   Mode itsMode;
 
   mutable int itsDisplayList;
-  mutable Nub::SoftRef<GLCanvas> itsCanvas;
+  mutable nub::soft_ref<GLCanvas> itsCanvas;
 };
 
 static const char vcid_groovx_gfx_gxcache_h_utc20050626084023[] = "$Id$ $HeadURL$";

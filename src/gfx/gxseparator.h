@@ -35,9 +35,9 @@
 
 #include "gfx/gxnode.h"
 
-namespace Nub
+namespace nub
 {
-  template <class T> class Ref;
+  template <class T> class ref;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -72,25 +72,25 @@ public:
   typedef unsigned int ChildId;
 
   /// Add the given child node, and return its index.
-  ChildId addChild(Nub::Ref<GxNode> item);
+  ChildId addChild(nub::ref<GxNode> item);
   /// Insert the given child at the given index.
-  void insertChild(Nub::Ref<GxNode> item, ChildId at_index);
+  void insertChild(nub::ref<GxNode> item, ChildId at_index);
   /// Remove the child at the given index.
   void removeChildAt(ChildId index);
   /// Remove the child matching the given node.
-  void removeChild(Nub::Ref<GxNode> item);
+  void removeChild(nub::ref<GxNode> item);
 
   /// Get the number of child nodes.
   unsigned int numChildren() const;
   /// Get the child node at the given index.
-  Nub::Ref<GxNode> getChild(ChildId index) const;
+  nub::ref<GxNode> getChild(ChildId index) const;
 
   /// Get an iterator of all the child nodes.
-  rutz::fwd_iter<Nub::Ref<GxNode> > children() const;
+  rutz::fwd_iter<nub::ref<GxNode> > children() const;
 
   /** Returns an iterator to all the children recursively contained in
       this object. */
-  virtual rutz::fwd_iter<const Nub::Ref<GxNode> > deepChildren();
+  virtual rutz::fwd_iter<const nub::ref<GxNode> > deepChildren();
 
   virtual bool contains(GxNode* other) const;
 

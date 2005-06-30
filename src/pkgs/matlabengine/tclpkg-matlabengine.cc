@@ -53,7 +53,7 @@
 
 #include <engine.h>
 
-class MatlabEngine : public Nub::Object
+class MatlabEngine : public nub::object
 {
 private:
   MatlabEngine(const MatlabEngine&);
@@ -89,7 +89,7 @@ public:
     return (result == 0) ? (itsBuf+2) : "";
   }
 
-  Nub::Ref<MtxObj> getMtx(const char* name)
+  nub::ref<MtxObj> getMtx(const char* name)
   {
     mxArray* arr = engGetVariable(itsEngine, name);
     if (arr == 0)
@@ -98,7 +98,7 @@ public:
                                         name, "'"), SRC_POS);
       }
 
-    Nub::Ref<MtxObj> m(new MtxObj(make_mtx(arr, mtx::COPY)));
+    nub::ref<MtxObj> m(new MtxObj(make_mtx(arr, mtx::COPY)));
 
     mxDestroyArray(arr);
 
@@ -123,7 +123,7 @@ private:
 
 #else // defined(GVX_NO_MATLAB)
 
-class MatlabEngine : public Nub::Object
+class MatlabEngine : public nub::object
 {
 public:
   virtual ~MatlabEngine() throw() {}
@@ -141,10 +141,10 @@ public:
     return "can't happen";
   }
 
-  Nub::Ref<MtxObj> getMtx(const char*)
+  nub::ref<MtxObj> getMtx(const char*)
   {
     noSupport();
-    return Nub::Ref<MtxObj>(new MtxObj(mtx::empty_mtx()));
+    return nub::ref<MtxObj>(new MtxObj(mtx::empty_mtx()));
   }
 };
 
@@ -164,7 +164,7 @@ GVX_TRACE("Matlabengine_Init");
   pkg->eval("proc meval {args} { return [eval MatlabEngine::eval $args] }");
   pkg->eval("proc getMtx {args} { return [eval MatlabEngine::get $args] }");
 
-  Nub::ObjFactory::theOne().register_creator(&MatlabEngine::make);
+  nub::obj_factory::instance().register_creator(&MatlabEngine::make);
 
   GVX_PKG_RETURN(pkg);
 }

@@ -58,8 +58,8 @@ GVX_DBG_REGISTER
 using rutz::fstring;
 using rutz::shared_ptr;
 
-using Nub::Ref;
-using Nub::SoftRef;
+using nub::ref;
+using nub::soft_ref;
 
 namespace
 {
@@ -127,13 +127,13 @@ public:
   { defaultWriteRawData(name, data, length); }
 
   virtual void writeObject(const char* name,
-                           Nub::SoftRef<const IO::IoObject> obj);
+                           nub::soft_ref<const IO::IoObject> obj);
 
   virtual void writeOwnedObject(const char* name,
-                                Nub::Ref<const IO::IoObject> obj);
+                                nub::ref<const IO::IoObject> obj);
 
   virtual void writeBaseClass(const char* baseClassName,
-                              Nub::Ref<const IO::IoObject> basePart);
+                              nub::ref<const IO::IoObject> basePart);
 
   virtual void writeRoot(const IO::IoObject* root);
 
@@ -143,11 +143,11 @@ protected:
 private:
   shared_ptr<std::ostream> itsOwnedStream;
   std::ostream& itsBuf;
-  mutable std::vector<SoftRef<const IO::IoObject> > itsToHandleV;
-  std::set<SoftRef<const IO::IoObject> > itsWrittenObjects;
+  mutable std::vector<soft_ref<const IO::IoObject> > itsToHandleV;
+  std::set<soft_ref<const IO::IoObject> > itsWrittenObjects;
   IO::WriteIdMap itsIdMap;
 
-  void addObjectToBeHandled(SoftRef<const IO::IoObject> obj)
+  void addObjectToBeHandled(soft_ref<const IO::IoObject> obj)
   {
     if ( !alreadyWritten(obj) )
       {
@@ -155,18 +155,18 @@ private:
       }
   }
 
-  bool alreadyWritten(SoftRef<const IO::IoObject> obj) const
+  bool alreadyWritten(soft_ref<const IO::IoObject> obj) const
   {
     return ( itsWrittenObjects.find(obj) !=
              itsWrittenObjects.end() );
   }
 
-  void markObjectAsWritten(SoftRef<const IO::IoObject> obj)
+  void markObjectAsWritten(soft_ref<const IO::IoObject> obj)
   {
     itsWrittenObjects.insert(obj);
   }
 
-  void flattenObject(SoftRef<const IO::IoObject> obj);
+  void flattenObject(soft_ref<const IO::IoObject> obj);
 
   template <class T>
   void writeBasicType(const char* name, T val,
@@ -257,18 +257,18 @@ GVX_TRACE("AsciiStreamWriter::writeValueObj");
 }
 
 void AsciiStreamWriter::writeObject(const char* name,
-                                    SoftRef<const IO::IoObject> obj)
+                                    soft_ref<const IO::IoObject> obj)
 {
 GVX_TRACE("AsciiStreamWriter::writeObject");
 
   fstring type = "NULL";
-  Nub::UID id = 0;
+  nub::uid id = 0;
 
-  if (obj.isValid())
+  if (obj.is_valid())
     {
       GVX_ASSERT(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
 
-      type = obj->objTypename();
+      type = obj->obj_typename();
       id = itsIdMap.get(obj->id());
 
       addObjectToBeHandled(obj);
@@ -280,11 +280,11 @@ GVX_TRACE("AsciiStreamWriter::writeObject");
 }
 
 void AsciiStreamWriter::writeOwnedObject(const char* name,
-                                         Ref<const IO::IoObject> obj)
+                                         ref<const IO::IoObject> obj)
 {
 GVX_TRACE("AsciiStreamWriter::writeOwnedObject");
 
-  fstring type = obj->objTypename().c_str();
+  fstring type = obj->obj_typename().c_str();
 
   itsBuf << type.c_str() << ' ' << name << " := ";
 
@@ -294,7 +294,7 @@ GVX_TRACE("AsciiStreamWriter::writeOwnedObject");
 }
 
 void AsciiStreamWriter::writeBaseClass(const char* baseClassName,
-                                       Ref<const IO::IoObject> basePart)
+                                       ref<const IO::IoObject> basePart)
 {
 GVX_TRACE("AsciiStreamWriter::writeBaseClass");
   writeOwnedObject(baseClassName, basePart);
@@ -307,21 +307,21 @@ GVX_TRACE("AsciiStreamWriter::writeRoot");
   itsWrittenObjects.clear();
 
   // need the const_cast here because:
-  // (1) SoftRef constructor will optionally call Detail::insertItem()
-  // (2) insertItem() will put the object in the Nub::ObjDb
-  // (3) objects in the Nub::ObjDb are non-const since they can be
+  // (1) soft_ref constructor will optionally call Detail::insert_item()
+  // (2) insert_item() will put the object in the nub::objectdb
+  // (3) objects in the nub::objectdb are non-const since they can be
   //     retrieved and modified
   itsToHandleV.push_back
-    (SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root)));
+    (soft_ref<IO::IoObject>(const_cast<IO::IoObject*>(root)));
 
   while ( !itsToHandleV.empty() )
     {
-      SoftRef<const IO::IoObject> obj = itsToHandleV.back();
+      soft_ref<const IO::IoObject> obj = itsToHandleV.back();
       itsToHandleV.pop_back();
 
       if ( !alreadyWritten(obj) )
         {
-          itsBuf << obj->objTypename().c_str() << ' '
+          itsBuf << obj->obj_typename().c_str() << ' '
                  << itsIdMap.get(obj->id()) << " := ";
           flattenObject(obj);
         }
@@ -330,7 +330,7 @@ GVX_TRACE("AsciiStreamWriter::writeRoot");
   itsBuf.flush();
 }
 
-void AsciiStreamWriter::flattenObject(SoftRef<const IO::IoObject> obj)
+void AsciiStreamWriter::flattenObject(soft_ref<const IO::IoObject> obj)
 {
 GVX_TRACE("AsciiStreamWriter::flattenObject");
 

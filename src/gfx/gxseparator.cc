@@ -57,7 +57,7 @@
 
 using rutz::shared_ptr;
 
-class GxSeparator::Impl : public Nub::VolatileObject
+class GxSeparator::Impl : public nub::volatile_object
 {
   Impl(const Impl&);
   Impl& operator=(const Impl&);
@@ -99,7 +99,7 @@ public:
 
   GxSeparator* owner;
 
-  typedef std::vector<Nub::Ref<GxNode> > VecType;
+  typedef std::vector<nub::ref<GxNode> > VecType;
   VecType children;
 
   bool debugMode;
@@ -154,7 +154,7 @@ GVX_TRACE("GxSeparator::writeTo");
                                  rep->children.end());
 }
 
-GxSeparator::ChildId GxSeparator::addChild(Nub::Ref<GxNode> item)
+GxSeparator::ChildId GxSeparator::addChild(nub::ref<GxNode> item)
 {
 GVX_TRACE("GxSeparator::addChild");
 
@@ -169,7 +169,7 @@ GVX_TRACE("GxSeparator::addChild");
   return (rep->children.size() - 1);
 }
 
-void GxSeparator::insertChild(Nub::Ref<GxNode> item, ChildId at_index)
+void GxSeparator::insertChild(nub::ref<GxNode> item, ChildId at_index)
 {
 GVX_TRACE("GxSeparator::insertChild");
 
@@ -198,11 +198,11 @@ GVX_TRACE("GxSeparator::removeChildAt");
     }
 }
 
-void GxSeparator::removeChild(Nub::Ref<GxNode> item)
+void GxSeparator::removeChild(nub::ref<GxNode> item)
 {
 GVX_TRACE("GxSeparator::removeChild");
 
-  const Nub::UID target = item.id();
+  const nub::uid target = item.id();
 
   for(Impl::VecType::iterator
         itr = rep->children.begin(),
@@ -226,7 +226,7 @@ GVX_TRACE("GxSeparator::numChildren");
   return rep->children.size();
 }
 
-Nub::Ref<GxNode> GxSeparator::getChild(ChildId index) const
+nub::ref<GxNode> GxSeparator::getChild(ChildId index) const
 {
 GVX_TRACE("GxSeparator::getChild");
   if (index >= rep->children.size())
@@ -238,21 +238,21 @@ GVX_TRACE("GxSeparator::getChild");
   return rep->children[index];
 }
 
-rutz::fwd_iter<Nub::Ref<GxNode> > GxSeparator::children() const
+rutz::fwd_iter<nub::ref<GxNode> > GxSeparator::children() const
 {
 GVX_TRACE("GxSeparator::children");
 
-  return rutz::fwd_iter<Nub::Ref<GxNode> >(rep->children.begin(),
+  return rutz::fwd_iter<nub::ref<GxNode> >(rep->children.begin(),
                                            rep->children.end());
 }
 
-class GxSepIter : public rutz::fwd_iter_ifx<const Nub::Ref<GxNode> >
+class GxSepIter : public rutz::fwd_iter_ifx<const nub::ref<GxNode> >
 {
 public:
   GxSepIter(GxSeparator* root) :
     itsNodes()
   {
-    for (rutz::fwd_iter<Nub::Ref<GxNode> > itr(root->children());
+    for (rutz::fwd_iter<nub::ref<GxNode> > itr(root->children());
          itr.is_valid();
          ++itr)
       {
@@ -260,9 +260,9 @@ public:
       }
   }
 
-  void addDeepChildren(Nub::Ref<GxNode> node)
+  void addDeepChildren(nub::ref<GxNode> node)
   {
-    for (rutz::fwd_iter<const Nub::Ref<GxNode> > itr(node->deepChildren());
+    for (rutz::fwd_iter<const nub::ref<GxNode> > itr(node->deepChildren());
          itr.is_valid();
          ++itr)
       {
@@ -270,7 +270,7 @@ public:
       }
   }
 
-  typedef const Nub::Ref<GxNode> ValType;
+  typedef const nub::ref<GxNode> ValType;
 
   virtual rutz::fwd_iter_ifx<ValType>* clone() const
   {
@@ -285,14 +285,14 @@ private:
   // Want to use a list instead of a vector-type container here since
   // we need both push_back() and pop_front(). Could potentially use a
   // deque instead.
-  mutable std::list<Nub::Ref<GxNode> > itsNodes;
+  mutable std::list<nub::ref<GxNode> > itsNodes;
 };
 
-rutz::fwd_iter<const Nub::Ref<GxNode> > GxSeparator::deepChildren()
+rutz::fwd_iter<const nub::ref<GxNode> > GxSeparator::deepChildren()
 {
 GVX_TRACE("GxSeparator::deepChildren");
 
-  return rutz::fwd_iter<const Nub::Ref<GxNode> >
+  return rutz::fwd_iter<const nub::ref<GxNode> >
     (shared_ptr<GxSepIter>(new GxSepIter(this)));
 }
 

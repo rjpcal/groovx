@@ -38,28 +38,28 @@ namespace rutz
   class fstring;
 }
 
-namespace Nub
+namespace nub
 {
-  class Object;
+  class object;
 
-  namespace Log
+  namespace logging
   {
     void reset();
 
-    void addScope(const rutz::fstring& name);
-    void removeScope(const rutz::fstring& name);
+    void add_scope(const rutz::fstring& name);
+    void remove_scope(const rutz::fstring& name);
 
     /// Add a scope named after the given object's type + id.
-    void addObjScope(const Nub::Object& obj);
+    void add_obj_scope(const nub::object& obj);
 
     /// Remove the scope named after the given object's type + id.
-    void removeObjScope(const Nub::Object& obj);
+    void remove_obj_scope(const nub::object& obj);
 
     /// Specify the name of a file to which log info should be appended.
-    void setLogFilename(const rutz::fstring& filename);
+    void set_log_filename(const rutz::fstring& filename);
 
     /// Specify whether to copy log output to stdout (default = yes).
-    void setCopyToStdout(bool shouldcopy);
+    void copy_to_stdout(bool shouldcopy);
   }
 
   void log(const char* msg);

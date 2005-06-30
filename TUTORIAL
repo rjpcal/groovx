@@ -233,7 +233,7 @@ Table of contents:
              TopToglet
              Trial
              UndrawEvent
-     unknown object type 'foobar' (Util::Error)
+     unknown object type 'foobar' (rutz::error)
 
    \endcode
 
@@ -309,9 +309,9 @@ Table of contents:
      ::GxText::allFields ::GxText::aspectRatio ::GxText::bbVisibility
      ::GxText::boundingBox ::GxText::category ::GxText::centerX
      ::GxText::centerY ::GxText::contains ::GxText::countAll
-     ::GxText::decrRefCount ::GxText::deepChildren ::GxText::delete
+     ::GxText::decr_ref_count ::GxText::deepChildren ::GxText::delete
      ::GxText::fields ::GxText::findAll ::GxText::font
-     ::GxText::height ::GxText::heightFactor ::GxText::incrRefCount
+     ::GxText::height ::GxText::heightFactor ::GxText::incr_ref_count
      ::GxText::is ::GxText::loadASW ::GxText::loadGVX
      ::GxText::maxDimension ::GxText::new ::GxText::newarr
      ::GxText::readASW ::GxText::readLGX ::GxText::realType
@@ -796,7 +796,7 @@ Table of contents:
    \code
 
      groovx>>> bt
-     [ 0] Util::ObjMgr::newObj(const fstring&) (src/util/objmgr.cc:47)
+     [ 0] nub::obj_mgr::new_obj(const fstring&) (src/util/objmgr.cc:47)
      [ 1] tcl/Obj::new                        (src/io/objtcl.cc:206)
      [ 2] Tcl::CommandGroup::rawInvoke        (src/tcl/tclcommandgroup.cc:285)
      [ 3] Tcl::MainImpl::execCommand          (src/tcl/tclmain.cc:397)
@@ -821,12 +821,12 @@ Table of contents:
    Now, looking at the backtrace above, we can see several things:
 
      - The top (innermost) stack location was in the
-       Util::ObjMgr::newObj function, defined at line 47 of the source
-       file src/util/objmgr.cc. That line looks like this:
+       nub::obj_mgr::new_obj function, defined at line 47 of the source
+       file src/nub/objmgr.cc. That line looks like this:
 
        \code
 
-         return Util::SoftRef<Util::Object>(Util::ObjFactory::theOne().newCheckedObject(type));
+         return nub::soft_ref<nub::object>(nub::obj_factory::instance().new_checked_object(type));
 
        \endcode
 
@@ -880,8 +880,8 @@ Table of contents:
 
    \code
 
-     groovx>>> Face::eyeHeight a
-     Face::eyeHeight: expected long value but got "a" (Util::Error)
+     groovx>>> Face::eyeHeight blah
+     Face::eyeHeight: expected long value but got "blah" (rutz::error)
      groovx 5>>> bt
      [ 0] Tcl::fromTcl(long*)                 (src/tcl/tclconvert.cc:143)
      [ 1] Tcl::fromTcl(unsigned long*)        (src/tcl/tclconvert.cc:159)

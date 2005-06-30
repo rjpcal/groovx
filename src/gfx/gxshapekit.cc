@@ -87,7 +87,7 @@ public:
 
 /// Implementation class for GxShapeKit.
 
-class GxShapeKitImpl : public Nub::VolatileObject
+class GxShapeKitImpl : public nub::volatile_object
 {
 private:
   GxShapeKitImpl(const GxShapeKitImpl&);
@@ -101,13 +101,13 @@ public:
 
   int category;
 
-  Nub::Ref<GxShapeKitNode> nativeNode;
-  Nub::Ref<GxBounds> boundsOutline;
-  Nub::Ref<GxCache> cache;
-  Nub::Ref<GxAligner> aligner;
-  Nub::Ref<GxScaler> scaler;
+  nub::ref<GxShapeKitNode> nativeNode;
+  nub::ref<GxBounds> boundsOutline;
+  nub::ref<GxCache> cache;
+  nub::ref<GxAligner> aligner;
+  nub::ref<GxScaler> scaler;
 
-  Nub::Ref<GxNode> topNode;
+  nub::ref<GxNode> topNode;
 
   //
   // Methods
@@ -121,11 +121,11 @@ public:
 
   GxShapeKitImpl(GxShapeKit* obj) :
     category(-1),
-    nativeNode(new GxShapeKitNode(obj), Nub::PRIVATE),
-    boundsOutline(new GxBounds(nativeNode), Nub::PRIVATE),
-    cache(new GxCache(boundsOutline), Nub::PRIVATE),
-    aligner(new GxAligner(cache), Nub::PRIVATE),
-    scaler(new GxScaler(aligner), Nub::PRIVATE),
+    nativeNode(new GxShapeKitNode(obj), nub::PRIVATE),
+    boundsOutline(new GxBounds(nativeNode), nub::PRIVATE),
+    cache(new GxCache(boundsOutline), nub::PRIVATE),
+    aligner(new GxAligner(cache), nub::PRIVATE),
+    scaler(new GxScaler(aligner), nub::PRIVATE),
     topNode(scaler)
   {
     GVX_TRACE("GxShapeKitImpl::GxShapeKitImpl");

@@ -42,505 +42,505 @@
 
 #include <typeinfo>
 
-namespace Nub
+namespace nub
 {
-  enum RefType { WEAK, STRONG };
+  enum ref_type { WEAK, STRONG };
 
-  enum RefVis
+  enum ref_vis
     {
-      DEFAULT,   //! equivalent to result of getDefaultRefVis()
-      PRIVATE,   //! Nub::ObjDb gets no reference to the object
-      PROTECTED, //! Nub::ObjDb gets a weak reference to the object
-      PUBLIC     //! Nub::ObjDb gets a strong reference to the object
+      DEFAULT,   //! equivalent to result of get_default_ref_vis()
+      PRIVATE,   //! nub::objectdb gets no reference to the object
+      PROTECTED, //! nub::objectdb gets a weak reference to the object
+      PUBLIC     //! nub::objectdb gets a strong reference to the object
     };
 
-  //! Get the current default visibility (will control RefVis DEFAULT).
-  RefVis getDefaultRefVis();
+  //! Get the current default visibility (will control ref_vis DEFAULT).
+  ref_vis get_default_ref_vis();
 
-  //! Set the current default visibility (will control RefVis DEFAULT).
-  void setDefaultRefVis(RefVis vis);
+  //! Set the current default visibility (will control ref_vis DEFAULT).
+  void set_default_ref_vis(ref_vis vis);
 
-  template <class T> class Ref;
-  template <class T> class SoftRef;
+  template <class T> class ref;
+  template <class T> class soft_ref;
 
-  template <class T> class FloatingRef;
+  template <class T> class floating_ref;
 
   ///////////////////////////////////////////////////////////
   //
-  // Nub::Detail helper functions
+  // nub::detail helper functions
   //
   ///////////////////////////////////////////////////////////
 
-  namespace Detail
+  namespace detail
   {
-    bool isValidId(Nub::UID id) throw();
-    Nub::Object* getCheckedItem(Nub::UID id);
+    bool is_valid_uid(nub::uid id) throw();
+    nub::object* get_checked_item(nub::uid id);
 
-    void insertItem(Nub::Object* obj, RefVis vis);
+    void insert_item(nub::object* obj, ref_vis vis);
 
-    void throwRefNull(const std::type_info& info, const rutz::file_pos& pos);
-    void throwRefUnshareable(const std::type_info& msg, const rutz::file_pos& pos);
-    void throwSoftRefInvalid(const std::type_info& info, const rutz::file_pos& pos);
+    void throw_ref_null(const std::type_info& info, const rutz::file_pos& pos);
+    void throw_ref_unshareable(const std::type_info& msg, const rutz::file_pos& pos);
+    void throw_soft_ref_invalid(const std::type_info& info, const rutz::file_pos& pos);
 
     template <class T>
-    inline T* getCastedItem(Nub::UID id)
+    inline T* get_casted_item(nub::uid id)
     {
-      Nub::Object* obj = getCheckedItem(id);
+      nub::object* obj = get_checked_item(id);
       T* t = dynamic_cast<T*>(obj);
       if (t == 0)
-        rutz::throw_bad_cast(typeid(T), typeid(Nub::Object), SRC_POS);
+        rutz::throw_bad_cast(typeid(T), typeid(nub::object), SRC_POS);
       return t;
     }
 
     template <>
-    inline Nub::Object* getCastedItem<Nub::Object>(Nub::UID id)
-    { return getCheckedItem(id); }
+    inline nub::object* get_casted_item<nub::object>(nub::uid id)
+    { return get_checked_item(id); }
 
     /// Policy class which unrefs objects by decrementing their ref count.
     template <class T>
-    struct DefaultUnrefPolicy
+    struct default_unref_policy
     {
-      static void unref(T* t) throw() { t->decrRefCount(); }
+      static void unref(T* t) throw() { t->decr_ref_count(); }
     };
 
     /// Policy class which decrements ref count without deletion.
     template <class T>
-    struct NoDeleteUnrefPolicy
+    struct no_delete_unref_policy
     {
-      static void unref(T* t) throw() { t->decrRefCountNoDelete(); }
+      static void unref(T* t) throw() { t->decr_ref_count_no_delete(); }
     };
 
-    /// A shared implementation class for Nub::FloatingRef and Nub::Ref.
+    /// A shared implementation class for nub::floating_ref and nub::ref.
     /** Note that the only operation that can throw is the
         constructor, which throws in case it is passed a null or
         unshareable object pointer .*/
-    template <class T, class UnrefPolicy>
-    class Handle
+    template <class T, class unref_policy>
+    class handle
     {
     public:
-      explicit Handle(T* master) : itsMaster(master)
+      explicit handle(T* master) : m_master(master)
       {
         if (master == 0)
-          throwRefNull(typeid(T), SRC_POS);
+          throw_ref_null(typeid(T), SRC_POS);
 
-        if (master->isNotShareable())
-          throwRefUnshareable(typeid(T), SRC_POS);
+        if (master->is_not_shareable())
+          throw_ref_unshareable(typeid(T), SRC_POS);
 
-        itsMaster->incrRefCount();
+        m_master->incr_ref_count();
       }
 
-      ~Handle() throw()
-      { UnrefPolicy::unref(itsMaster); }
+      ~handle() throw()
+      { unref_policy::unref(m_master); }
 
-      Handle(const Handle& other) throw()
+      handle(const handle& other) throw()
         :
-        itsMaster(other.itsMaster)
+        m_master(other.m_master)
       {
-        itsMaster->incrRefCount();
+        m_master->incr_ref_count();
       }
 
-      Handle& operator=(const Handle& other) throw()
+      handle& operator=(const handle& other) throw()
       {
-        Handle otherCopy(other);
-        this->swap(otherCopy);
+        handle other_copy(other);
+        this->swap(other_copy);
         return *this;
       }
 
       T* get() const throw()
-      { return itsMaster; }
+      { return m_master; }
 
-      bool operator==(const Handle& other) const throw()
-      { return itsMaster == other.itsMaster; }
+      bool operator==(const handle& other) const throw()
+      { return m_master == other.m_master; }
 
     private:
-      void swap(Handle& other) throw()
+      void swap(handle& other) throw()
       {
-        rutz::swap2(itsMaster, other.itsMaster);
+        rutz::swap2(m_master, other.m_master);
       }
 
-      T* itsMaster;
+      T* m_master;
     };
 
-  } // end namespace Nub::Detail
+  } // end namespace nub::detail
 
   ///////////////////////////////////////////////////////////
   /**
    *
-   * Nub::FloatingRef<T> is a ref-counted smart pointer that will NOT
+   * nub::floating_ref<T> is a ref-counted smart pointer that will NOT
    * delete its pointee when exiting scope. This can be of use to
    * clients who need to allow an object to be returned to a clean
    * state (i.e. with ref count == 0), but need to ref the object
-   * temporarily. Since FloatingRef should only be used in restricted
+   * temporarily. Since floating_ref should only be used in restricted
    * scopes, copying and assignment are disallowed.
    *
    **/
   ///////////////////////////////////////////////////////////
 
   template <class T>
-  class FloatingRef
+  class floating_ref
   {
   private:
 
-    typedef Nub::Detail::Handle<T, Nub::Detail::NoDeleteUnrefPolicy<T> >
-    Handle;
+    typedef nub::detail::handle<T, nub::detail::no_delete_unref_policy<T> >
+    handle;
 
-    Handle itsHandle;
+    handle m_handle;
 
-    FloatingRef(const FloatingRef&);
-    FloatingRef& operator=(const FloatingRef&);
+    floating_ref(const floating_ref&);
+    floating_ref& operator=(const floating_ref&);
 
   public:
     // Default dtor is fine
 
-    explicit FloatingRef(T* ptr) : itsHandle(ptr) {}
+    explicit floating_ref(T* ptr) : m_handle(ptr) {}
 
     T* operator->() const throw() { return get(); }
     T& operator*()  const throw() { return *(get()); }
 
-    T* get()        const throw() { return itsHandle.get(); }
+    T* get()        const throw() { return m_handle.get(); }
   };
 
   ///////////////////////////////////////////////////////////
   /**
    *
-   * Nub::Ref<T> is a ref-counted smart pointer for holding RefCounted
-   * objects. A Nub::Ref<T> is guaranteed to always point to a valid
-   * RefCounted object, and uses RefCounted's strong ref counts to
+   * nub::ref<T> is a ref-counted smart pointer for holding ref_counted
+   * objects. A nub::ref<T> is guaranteed to always point to a valid
+   * ref_counted object, and uses ref_counted's strong ref counts to
    * achieve this. In order to provide this guarantee, it is possible
-   * that construction of a Nub::Ref<T> may throw an exception. For
-   * example, a Nub::Ref<T> cannot be constructed for a volatlie
-   * RefCounted object for which only weak references are available.
+   * that construction of a nub::ref<T> may throw an exception. For
+   * example, a nub::ref<T> cannot be constructed for a volatlie
+   * ref_counted object for which only weak references are available.
    *
    **/
   ///////////////////////////////////////////////////////////
 
   template <class T>
-  class Ref
+  class ref
   {
   private:
 
-    typedef Nub::Detail::Handle<T, Nub::Detail::DefaultUnrefPolicy<T> >
-    Handle;
+    typedef nub::detail::handle<T, nub::detail::default_unref_policy<T> >
+    handle;
 
-    Handle itsHandle;
+    handle m_handle;
 
   public:
     // Default destructor, copy constructor, operator=() are fine
 
-    explicit Ref(Nub::UID id)
-      : itsHandle(Detail::getCastedItem<T>(id)) {}
+    explicit ref(nub::uid id)
+      : m_handle(detail::get_casted_item<T>(id)) {}
 
-    explicit Ref(T* ptr, RefVis vis = DEFAULT) :
-      itsHandle(ptr)
+    explicit ref(T* ptr, ref_vis vis = DEFAULT) :
+      m_handle(ptr)
     {
-      Detail::insertItem(ptr, vis);
+      detail::insert_item(ptr, vis);
     }
 
     template <class U>
-    Ref(const Ref<U>& other) : itsHandle(other.get()) {}
+    ref(const ref<U>& other) : m_handle(other.get()) {}
 
-    // Will raise an exception if the SoftRef is invalid
+    // Will raise an exception if the soft_ref is invalid
     template <class U>
-    Ref(const SoftRef<U>& other);
+    ref(const soft_ref<U>& other);
 
     /// Shorthand for assignment.
-    /** Given Ref<T> rr and T* p, then rr.reset(p) is shorthand for
-        rr=Ref<T>(p). But of course, rr.reset(p) is much less typing
+    /** Given ref<T> rr and T* p, then rr.reset(p) is shorthand for
+        rr=ref<T>(p). But of course, rr.reset(p) is much less typing
         if T happens to be spelt SomeLongType<WithTemplateParams>. */
-    void reset(T* p) { *this = Ref(p); }
+    void reset(T* p) { *this = ref(p); }
 
     T* operator->() const throw() { return get(); }
     T& operator*()  const throw() { return *(get()); }
 
-    T* get()        const throw() { return itsHandle.get(); }
+    T* get()        const throw() { return m_handle.get(); }
 
-    bool operator==(const Ref& other) const throw()
-    { return itsHandle == other.itsHandle; }
+    bool operator==(const ref& other) const throw()
+    { return m_handle == other.m_handle; }
 
-    bool operator!=(const Ref& other) const throw()
+    bool operator!=(const ref& other) const throw()
     { return !(operator==(other)); }
 
-    Nub::UID id() const throw()
+    nub::uid id() const throw()
     { return get()->id(); }
 
     /// Comparison operator for sorting.
     /** E.g. to allow insertion into std::map or std::set, etc. */
-    bool operator<(const Ref& other) const throw()
+    bool operator<(const ref& other) const throw()
     { return get() < other.get(); }
   };
 
-} // end namespace Nub
+} // end namespace nub
 
 namespace rutz
 {
-  /// type_traits specialization for Nub::Ref smart pointer
+  /// type_traits specialization for nub::ref smart pointer
   template <class T>
-  struct type_traits<Nub::Ref<T> >
+  struct type_traits<nub::ref<T> >
   {
     typedef T pointee_t;
   };
 }
 
 template <class To, class Fr>
-Nub::Ref<To> dynCast(Nub::Ref<Fr> p)
+nub::ref<To> dyn_cast(nub::ref<Fr> p)
 {
   Fr* f = p.get();
   To* t = dynamic_cast<To*>(f);
   if (t == 0)
     rutz::throw_bad_cast(typeid(To), typeid(Fr), SRC_POS);
-  return Nub::Ref<To>(t);
+  return nub::ref<To>(t);
 }
 
 template <class To, class Fr>
-void dynCastToFrom(Nub::Ref<To>& dest, Nub::Ref<Fr> p)
+void dyn_cast_to_from(nub::ref<To>& dest, nub::ref<Fr> p)
 {
-  dest = dynCast<To>(p);
+  dest = dyn_cast<To>(p);
 }
 
 
 
-namespace Nub
+namespace nub
 {
   ///////////////////////////////////////////////////////////
   /**
    *
-   * Nub::SoftRef<T> is a ref-counted smart pointer (like Nub::Ref<T>)
-   * for holding RefCounted objects. Construction of a Nub::SoftRef<T>
+   * nub::soft_ref<T> is a ref-counted smart pointer (like nub::ref<T>)
+   * for holding ref_counted objects. Construction of a nub::soft_ref<T>
    * is guaranteed not to fail. Because of this, however, a
-   * Nub::SoftRef<T> is not guaranteed to always point to a valid
-   * object (this must be tested with isValid() before
-   * dereferencing). With these characteristics, a Nub::SoftRef<T> can
-   * be used with volatile RefCounted objects for which only weak
+   * nub::soft_ref<T> is not guaranteed to always point to a valid
+   * object (this must be tested with is_valid() before
+   * dereferencing). With these characteristics, a nub::soft_ref<T> can
+   * be used with volatile ref_counted objects for which only weak
    * references are available.
    *
    **/
   ///////////////////////////////////////////////////////////
 
   template <class T>
-  class SoftRef
+  class soft_ref
   {
   private:
 
-    /// Internal helper class for SoftRef.
-    /** WeakHandle manages memory etc., and provides one important
+    /// Internal helper class for soft_ref.
+    /** weak_handle manages memory etc., and provides one important
         guarantee: it will never return an invalid pointer from get()
         (an exception will be raised if this would fail). */
-    class WeakHandle
+    class weak_handle
     {
     private:
-      static Nub::RefCounts* getCounts(T* master, RefType tp) throw()
+      static nub::ref_counts* get_counts(T* master, ref_type tp) throw()
       {
-        return (master && (tp == WEAK || master->isNotShareable())) ?
-          master->refCounts() : 0;
+        return (master && (tp == WEAK || master->is_not_shareable())) ?
+          master->get_counts() : 0;
       }
 
     public:
-      WeakHandle(T* master, RefType tp) throw()
+      weak_handle(T* master, ref_type tp) throw()
         :
-        itsMaster(master),
-        itsCounts(getCounts(master, tp))
+        m_master(master),
+        m_counts(get_counts(master, tp))
       { acquire(); }
 
-      ~WeakHandle() throw()
+      ~weak_handle() throw()
       { release(); }
 
-      WeakHandle(const WeakHandle& other) throw()
+      weak_handle(const weak_handle& other) throw()
         :
-        itsMaster(other.itsMaster),
-        itsCounts(other.itsCounts)
+        m_master(other.m_master),
+        m_counts(other.m_counts)
       { acquire(); }
 
-      WeakHandle& operator=(const WeakHandle& other) throw()
+      weak_handle& operator=(const weak_handle& other) throw()
       {
-        WeakHandle otherCopy(other);
-        this->swap(otherCopy);
+        weak_handle other_copy(other);
+        this->swap(other_copy);
         return *this;
       }
 
-      bool isValid() const throw()
+      bool is_valid() const throw()
       {
-        if (itsCounts == 0) // implies we are using strong ref's
+        if (m_counts == 0) // implies we are using strong ref's
           {
-            return (itsMaster != 0);
+            return (m_master != 0);
           }
 
-        // else... (itsCounts != 0) implies we are using weak ref's
+        // else... (m_counts != 0) implies we are using weak ref's
 
-        return itsCounts->isOwnerAlive();
+        return m_counts->is_owner_alive();
       }
 
-      T* get()     const         { ensureValid(); return itsMaster; }
-      T* getWeak() const throw() { return isValid() ? itsMaster : 0; }
+      T* get()     const          { ensure_valid(); return m_master; }
+      T* get_weak() const throw() { return is_valid() ? m_master : 0; }
 
-      RefType refType() const throw()
+      ref_type get_ref_type() const throw()
       {
-        return (itsMaster && !itsCounts) ? STRONG : WEAK;
+        return (m_master && !m_counts) ? STRONG : WEAK;
       }
 
     private:
       void acquire() const throw()
       {
-        if (itsMaster)
+        if (m_master)
           {
-            if (itsCounts) itsCounts->acquireWeak();
-            else           itsMaster->incrRefCount();
+            if (m_counts) m_counts->acquire_weak();
+            else          m_master->incr_ref_count();
           }
       }
 
       void release() const throw()
       {
-        if (itsMaster)
+        if (m_master)
           {
-            if (itsCounts) itsCounts->releaseWeak();
-            else           itsMaster->decrRefCount();
+            if (m_counts) m_counts->release_weak();
+            else          m_master->decr_ref_count();
           }
 
-        itsCounts = 0; itsMaster = 0;
+        m_counts = 0; m_master = 0;
       }
 
-      void ensureValid() const
+      void ensure_valid() const
       {
-        if (!isValid())
-          Nub::Detail::throwSoftRefInvalid(typeid(T), SRC_POS);
+        if (!is_valid())
+          nub::detail::throw_soft_ref_invalid(typeid(T), SRC_POS);
       }
 
-      void swap(WeakHandle& other) throw()
+      void swap(weak_handle& other) throw()
       {
-        rutz::swap2(itsMaster, other.itsMaster);
-        rutz::swap2(itsCounts, other.itsCounts);
+        rutz::swap2(m_master, other.m_master);
+        rutz::swap2(m_counts, other.m_counts);
       }
 
       // In order to avoid storing a separate bool indicating whether
       // we are using strong or weak ref's, we use the following
-      // convention: if we are strong ref-counting, then itsCounts
-      // stays null, but if we are weak ref-counting, then itsCounts
+      // convention: if we are strong ref-counting, then m_counts
+      // stays null, but if we are weak ref-counting, then m_counts
       // will be non-null.
 
-      mutable T* itsMaster;
-      mutable Nub::RefCounts* itsCounts;
+      mutable T* m_master;
+      mutable nub::ref_counts* m_counts;
 
-    }; // end helper class WeakHandle
+    }; // end helper class weak_handle
 
 
-    mutable WeakHandle itsHandle;
+    mutable weak_handle m_handle;
 
   public:
-    SoftRef() : itsHandle(0, STRONG) {}
+    soft_ref() : m_handle(0, STRONG) {}
 
-    explicit SoftRef(Nub::UID id, RefType tp = STRONG)
+    explicit soft_ref(nub::uid id, ref_type tp = STRONG)
       :
-      itsHandle(Detail::isValidId(id) ?
-                Detail::getCastedItem<T>(id) : 0,
+      m_handle(detail::is_valid_uid(id) ?
+                detail::get_casted_item<T>(id) : 0,
                 tp)
     {}
 
-    explicit SoftRef(T* master,
-                     RefType tp = STRONG, RefVis vis = DEFAULT)
+    explicit soft_ref(T* master,
+                     ref_type tp = STRONG, ref_vis vis = DEFAULT)
       :
-      itsHandle(master,tp)
+      m_handle(master,tp)
     {
-      if (itsHandle.isValid())
+      if (m_handle.is_valid())
         {
-          Detail::insertItem(itsHandle.get(), vis);
+          detail::insert_item(m_handle.get(), vis);
         }
     }
 
     template <class U>
-    SoftRef(const SoftRef<U>& other) :
-      itsHandle(other.isValid() ? other.get() : 0, STRONG) {}
+    soft_ref(const soft_ref<U>& other) :
+      m_handle(other.is_valid() ? other.get() : 0, STRONG) {}
 
     template <class U>
-    SoftRef(const Ref<U>& other) : itsHandle(other.get(), STRONG) {}
+    soft_ref(const ref<U>& other) : m_handle(other.get(), STRONG) {}
 
     // Default destructor, copy constructor, operator=() are fine
 
     /// Shorthand for assignment.
-    /** Given Ref<T> rr and T* p, then rr.reset(p) is shorthand for
-        rr=Ref<T>(p). But of course, rr.reset(p) is much less typing
+    /** Given ref<T> rr and T* p, then rr.reset(p) is shorthand for
+        rr=ref<T>(p). But of course, rr.reset(p) is much less typing
         if T happens to be spelt SomeLongType<WithTemplateParams>. */
-    void reset(T* p = 0) { *this = SoftRef(p); }
+    void reset(T* p = 0) { *this = soft_ref(p); }
 
     /** Returns the pointee, or if throws an exception if there is not a
         valid pointee. */
-    T* get()         const { return itsHandle.get(); }
+    T* get()         const { return m_handle.get(); }
 
-    T* operator->()  const { return itsHandle.get(); }
-    T& operator*()   const { return *(itsHandle.get()); }
+    T* operator->()  const { return m_handle.get(); }
+    T& operator*()   const { return *(m_handle.get()); }
 
     /** Returns the pointee, or returns null if there is not a valid
         pointee. Will not throw an exception. */
-    T* getWeak() const throw() { return itsHandle.getWeak(); }
+    T* get_weak() const throw() { return m_handle.get_weak(); }
 
-    RefType refType() const throw() { return itsHandle.refType(); }
+    ref_type get_ref_type() const throw() { return m_handle.get_ref_type(); }
 
-    bool isValid()   const throw() { return itsHandle.isValid(); }
-    bool isInvalid() const throw() { return !(isValid()); }
+    bool is_valid()   const throw() { return m_handle.is_valid(); }
+    bool is_invalid() const throw() { return !(is_valid()); }
 
-    bool operator==(const SoftRef& other) const throw()
-    { return getWeak() == other.getWeak(); }
+    bool operator==(const soft_ref& other) const throw()
+    { return get_weak() == other.get_weak(); }
 
-    bool operator!=(const SoftRef& other) const throw()
-    { return getWeak() != other.getWeak(); }
+    bool operator!=(const soft_ref& other) const throw()
+    { return get_weak() != other.get_weak(); }
 
     /// Comparison operator for sorting, to insert in std::map or std::set, etc.
-    bool operator<(const SoftRef& other) const throw()
-    { return getWeak() < other.getWeak(); }
+    bool operator<(const soft_ref& other) const throw()
+    { return get_weak() < other.get_weak(); }
 
-    Nub::UID id() const throw()
-    { return itsHandle.isValid() ? itsHandle.get()->id() : 0; }
+    nub::uid id() const throw()
+    { return m_handle.is_valid() ? m_handle.get()->id() : 0; }
   };
 
-} // end namespace Nub
+} // end namespace nub
 
 namespace rutz
 {
-  /// type_traits specialization for SoftRef smart pointer.
+  /// type_traits specialization for soft_ref smart pointer.
   template <class T>
-  struct type_traits<Nub::SoftRef<T> >
+  struct type_traits<nub::soft_ref<T> >
   {
     typedef T pointee_t;
   };
 }
 
 template <class To, class Fr>
-Nub::SoftRef<To> dynCast(Nub::SoftRef<Fr> p)
+nub::soft_ref<To> dyn_cast(nub::soft_ref<Fr> p)
 {
-  if (p.isValid())
+  if (p.is_valid())
     {
       Fr* f = p.get();
       To* t = dynamic_cast<To*>(f);
       if (t == 0)
         rutz::throw_bad_cast(typeid(To), typeid(Fr), SRC_POS);
-      return Nub::SoftRef<To>(t);
+      return nub::soft_ref<To>(t);
     }
-  return Nub::SoftRef<To>(p.id());
+  return nub::soft_ref<To>(p.id());
 }
 
 template <class To, class Fr>
-void dynCastToFrom(Nub::SoftRef<To>& dest, Nub::SoftRef<Fr> p)
+void dyn_cast_to_from(nub::soft_ref<To>& dest, nub::soft_ref<Fr> p)
 {
-  dest = dynCast<To>(p);
+  dest = dyn_cast<To>(p);
 }
 
 
 template <class To, class Fr>
-Nub::SoftRef<To> dynCastWeak(Nub::SoftRef<Fr> p)
+nub::soft_ref<To> dyn_cast_weak(nub::soft_ref<Fr> p)
 {
-  if (p.isValid())
+  if (p.is_valid())
     {
       Fr* f = p.get();
       To* t = dynamic_cast<To*>(f);
       if (t == 0)
-        return Nub::SoftRef<To>(); // return a null SoftRef
-      return Nub::SoftRef<To>(t);
+        return nub::soft_ref<To>(); // return a null soft_ref
+      return nub::soft_ref<To>(t);
     }
-  return Nub::SoftRef<To>(p.id());
+  return nub::soft_ref<To>(p.id());
 }
 
 template <class To, class Fr>
-void dynCastWeakToFrom(Nub::SoftRef<To>& dest, Nub::SoftRef<Fr> p)
+void dyn_cast_weak_to_from(nub::soft_ref<To>& dest, nub::soft_ref<Fr> p)
 {
-  dest = dynCast<To>(p);
+  dest = dyn_cast<To>(p);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -551,8 +551,8 @@ void dynCastWeakToFrom(Nub::SoftRef<To>& dest, Nub::SoftRef<Fr> p)
 
 template <class T>
 template <class U>
-inline Nub::Ref<T>::Ref(const SoftRef<U>& other) :
-  itsHandle(other.get())
+inline nub::ref<T>::ref(const soft_ref<U>& other) :
+  m_handle(other.get())
 {}
 
 static const char vcid_groovx_nub_ref_h_utc20050626084019[] = "$Id$ $HeadURL$";

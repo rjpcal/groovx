@@ -49,11 +49,11 @@ public:
   virtual void writeTo(IO::Writer& writer) const;
 
   // actions
-  virtual void rhBeginTrial(Nub::SoftRef<Toglet> widget, Trial& trial) const;
+  virtual void rhBeginTrial(nub::soft_ref<Toglet> widget, Trial& trial) const;
   virtual void rhAbortTrial() const;
   virtual void rhEndTrial() const;
   virtual void rhHaltExpt() const;
-  virtual void rhAllowResponses(Nub::SoftRef<Toglet> widget,
+  virtual void rhAllowResponses(nub::soft_ref<Toglet> widget,
                                 Trial& trial) const;
   virtual void rhDenyResponses() const;
 };

@@ -68,7 +68,7 @@ GVX_TRACE("NullResponseHdlr::writeTo");
 }
 
 // actions
-void NullResponseHdlr::rhBeginTrial(Nub::SoftRef<Toglet>, Trial&) const
+void NullResponseHdlr::rhBeginTrial(nub::soft_ref<Toglet>, Trial&) const
 {
 GVX_TRACE("NullResponseHdlr::rhBeginTrial");
 }
@@ -88,7 +88,7 @@ void NullResponseHdlr::rhHaltExpt() const
 GVX_TRACE("NullResponseHdlr::rhHaltExpt");
 }
 
-void NullResponseHdlr::rhAllowResponses(Nub::SoftRef<Toglet>, Trial&) const
+void NullResponseHdlr::rhAllowResponses(nub::soft_ref<Toglet>, Trial&) const
 {
 GVX_TRACE("NullResponseHdlr::rhAllowResponses");
 }

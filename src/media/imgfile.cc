@@ -156,7 +156,7 @@ GVX_TRACE("media::load_image");
 #endif
     }
 
-  Nub::log(fstring("loaded image file ", filename));
+  nub::log(fstring("loaded image file ", filename));
 }
 
 void media::save_image(const char* filename,
@@ -170,7 +170,7 @@ void media::save_image(const char* filename,
       throw rutz::error(fstring("unknown file format: ", filename), SRC_POS);
     }
 
-  Nub::log(fstring("saved image file ", filename));
+  nub::log(fstring("saved image file ", filename));
 }
 
 static const char vcid_groovx_media_imgfile_cc_utc20050626084018[] = "$Id$ $HeadURL$";

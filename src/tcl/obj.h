@@ -90,8 +90,8 @@ public:
   template <class T>
   inline void append(const T& other);
 
-  bool isShared() const;
-  bool isUnique() const { return !isShared(); }
+  bool is_shared() const;
+  bool isUnique() const { return !is_shared(); }
 
   void ensureUnique() const;
 

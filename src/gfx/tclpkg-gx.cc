@@ -79,23 +79,23 @@
 
 namespace GxTcl
 {
-  bool contains(Nub::Ref<GxNode> item, Nub::Ref<GxNode> other)
+  bool contains(nub::ref<GxNode> item, nub::ref<GxNode> other)
   {
     return item->contains(other.get());
   }
 
-  void savePS(Nub::Ref<GxNode> item, const char* filename)
+  void savePS(nub::ref<GxNode> item, const char* filename)
   {
     Gfx::PSCanvas canvas(filename);
 
     item->draw(canvas);
   }
 
-  void addChildren(Nub::Ref<GxSeparator> sep, Tcl::List objs)
+  void addChildren(nub::ref<GxSeparator> sep, Tcl::List objs)
   {
-    Tcl::List::Iterator<Nub::Ref<GxNode> >
-      itr = objs.begin<Nub::Ref<GxNode> >(),
-      end = objs.end<Nub::Ref<GxNode> >();
+    Tcl::List::Iterator<nub::ref<GxNode> >
+      itr = objs.begin<nub::ref<GxNode> >(),
+      end = objs.end<nub::ref<GxNode> >();
 
     while (itr != end)
       {
@@ -104,14 +104,14 @@ namespace GxTcl
       }
   }
 
-  void removeAllChildren(Nub::Ref<GxSeparator> sep)
+  void removeAllChildren(nub::ref<GxSeparator> sep)
   {
     while (sep->numChildren() > 0)
       sep->removeChildAt(0);
   }
 
-  geom::rect<double> boundingBox(Nub::Ref<GxNode> obj,
-                                 Nub::SoftRef<Gfx::Canvas> canvas)
+  geom::rect<double> boundingBox(nub::ref<GxNode> obj,
+                                 nub::soft_ref<Gfx::Canvas> canvas)
   {
     return obj->getBoundingBox(*canvas);
   }
@@ -131,7 +131,7 @@ namespace GxTcl
   // pretty easily, just by captuing the screen bounds into a
   // meida::bmap_data object and then saving that.
 #if 0
-  void saveBitmap(Nub::Ref<GxNode> obj, const char* filename)
+  void saveBitmap(nub::ref<GxNode> obj, const char* filename)
   {
     obj->saveBitmapCache(Gfx::Canvas::current(), filename);
   }
@@ -213,7 +213,7 @@ GVX_TRACE("Gxseparator_Init");
   pkg->def("removeAllChildren", "sep_id(s)", &GxTcl::removeAllChildren, SRC_POS);
   pkg->def("removeChildAt", "sep_id(s) child_indices", &GxSeparator::removeChildAt, SRC_POS);
   pkg->def("removeChild","sep_id(s) child_id(s)", &GxSeparator::removeChild, SRC_POS);
-  Nub::ObjFactory::theOne().register_creator(&GxSeparator::make);
+  nub::obj_factory::instance().register_creator(&GxSeparator::make);
 
   GVX_PKG_RETURN(pkg);
 }
@@ -407,13 +407,13 @@ GVX_TRACE("Gxshapekit_Init");
 
 namespace
 {
-  void scramble1(Nub::Ref<GxPixmap> pixmap,
+  void scramble1(nub::ref<GxPixmap> pixmap,
                  int numsubcols, int numsubrows)
   {
     pixmap->scramble(numsubcols, numsubrows, 0);
   }
 
-  void scramble2(Nub::Ref<GxPixmap> pixmap,
+  void scramble2(nub::ref<GxPixmap> pixmap,
                  int numsubcols, int numsubrows, int seed)
   {
     pixmap->scramble(numsubcols, numsubrows, seed);
@@ -422,7 +422,7 @@ namespace
   void loadImageStream(Tcl::Context& ctx)
   {
     using rutz::shared_ptr;
-    Nub::Ref<GxPixmap> pixmap = ctx.getValFromArg<Nub::Ref<GxPixmap> >(1);
+    nub::ref<GxPixmap> pixmap = ctx.getValFromArg<nub::ref<GxPixmap> >(1);
     const char* channame = ctx.getValFromArg<const char*>(2);
     Tcl_Interp* interp = ctx.interp().intp();
     shared_ptr<std::istream> ist(Tcl::ichanopen(interp, channame));

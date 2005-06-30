@@ -52,8 +52,8 @@ GVX_DBG_REGISTER
 
 using rutz::fstring;
 
-using Nub::Ref;
-using Nub::SoftRef;
+using nub::ref;
+using nub::soft_ref;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -171,7 +171,7 @@ public:
       }
   }
 
-  void inflateObject(const fstring& name, Ref<IO::IoObject> obj)
+  void inflateObject(const fstring& name, ref<IO::IoObject> obj)
   {
     GVX_TRACE("IO::LegacyReader::Impl::inflateObject");
 
@@ -295,14 +295,14 @@ GVX_TRACE("IO::LegacyReader::readValueObj");
   rep->throwIfError(name, SRC_POS);
 }
 
-Ref<IO::IoObject>
+ref<IO::IoObject>
 IO::LegacyReader::readObject(const fstring& name)
 {
 GVX_TRACE("IO::LegacyReader::readObject");
-  return Ref<IO::IoObject>(readMaybeObject(name));
+  return ref<IO::IoObject>(readMaybeObject(name));
 }
 
-SoftRef<IO::IoObject>
+soft_ref<IO::IoObject>
 IO::LegacyReader::readMaybeObject(const fstring& name)
 {
 GVX_TRACE("IO::LegacyReader::readMaybeObject");
@@ -312,11 +312,11 @@ GVX_TRACE("IO::LegacyReader::readMaybeObject");
 
   if (type == "NULL")
     {
-      return SoftRef<IO::IoObject>();
+      return soft_ref<IO::IoObject>();
     }
 
-  Ref<IO::IoObject> obj(Nub::ObjMgr::newTypedObj<IO::IoObject>(type));
-  dbg_eval_nl(3, obj->objTypename());
+  ref<IO::IoObject> obj(nub::obj_mgr::new_typed_obj<IO::IoObject>(type));
+  dbg_eval_nl(3, obj->obj_typename());
 
   rep->inflateObject(name, obj);
 
@@ -324,27 +324,27 @@ GVX_TRACE("IO::LegacyReader::readMaybeObject");
 }
 
 void IO::LegacyReader::readOwnedObject(const fstring& name,
-                                       Ref<IO::IoObject> obj)
+                                       ref<IO::IoObject> obj)
 {
 GVX_TRACE("IO::LegacyReader::readOwnedObject");
 
-  rep->readTypename(obj->objTypename());
+  rep->readTypename(obj->obj_typename());
   rep->inflateObject(name, obj);
 }
 
 void IO::LegacyReader::readBaseClass(const fstring& baseClassName,
-                                     Ref<IO::IoObject> basePart)
+                                     ref<IO::IoObject> basePart)
 {
 GVX_TRACE("IO::LegacyReader::readBaseClass");
 
   // For backward-compatibility, we allow the typename to match either the
   // real typename of the base part, or the descriptive name given to the
   // base class.
-  rep->readTypename(basePart->objTypename(), baseClassName);
+  rep->readTypename(basePart->obj_typename(), baseClassName);
   rep->inflateObject(baseClassName, basePart);
 }
 
-Ref<IO::IoObject> IO::LegacyReader::readRoot(IO::IoObject* givenRoot)
+ref<IO::IoObject> IO::LegacyReader::readRoot(IO::IoObject* givenRoot)
 {
 GVX_TRACE("IO::LegacyReader::readRoot");
   if (givenRoot == 0)
@@ -352,9 +352,9 @@ GVX_TRACE("IO::LegacyReader::readRoot");
       return readObject("rootObject");
     }
 
-  dbg_eval_nl(3, givenRoot->objTypename());
+  dbg_eval_nl(3, givenRoot->obj_typename());
 
-  Ref<IO::IoObject> root(givenRoot);
+  ref<IO::IoObject> root(givenRoot);
   readOwnedObject("rootObject", root);
 
   return root;
@@ -476,7 +476,7 @@ public:
   void noWhitespaceNeeded() { itsNeedsWhitespace = false; }
 
   void flattenObject(const char* obj_name,
-                     SoftRef<const IO::IoObject> obj,
+                     soft_ref<const IO::IoObject> obj,
                      bool stub_out = false)
   {
     if (itsIndentLevel > 0)
@@ -484,17 +484,17 @@ public:
     else
       requestNewline();
 
-    if ( !(obj.isValid()) )
+    if ( !(obj.is_valid()) )
       {
         stream() << "NULL" << itsFSep;
         throwIfError(obj_name, SRC_POS);
         return;
       }
 
-    GVX_ASSERT(obj.isValid());
+    GVX_ASSERT(obj.is_valid());
 
-    stream() << obj->objTypename() << itsFSep;
-    throwIfError(obj->objTypename().c_str(), SRC_POS);
+    stream() << obj->obj_typename() << itsFSep;
+    throwIfError(obj->obj_typename().c_str(), SRC_POS);
 
     stream() << '@';
 
@@ -604,7 +604,7 @@ GVX_TRACE("IO::LegacyWriter::writeRawData");
 }
 
 void IO::LegacyWriter::writeObject(const char* name,
-                                   SoftRef<const IO::IoObject> obj)
+                                   soft_ref<const IO::IoObject> obj)
 {
 GVX_TRACE("IO::LegacyWriter::writeObject");
 
@@ -612,7 +612,7 @@ GVX_TRACE("IO::LegacyWriter::writeObject");
 }
 
 void IO::LegacyWriter::writeOwnedObject(const char* name,
-                                        Ref<const IO::IoObject> obj)
+                                        ref<const IO::IoObject> obj)
 {
 GVX_TRACE("IO::LegacyWriter::writeOwnedObject");
 
@@ -620,7 +620,7 @@ GVX_TRACE("IO::LegacyWriter::writeOwnedObject");
 }
 
 void IO::LegacyWriter::writeBaseClass(const char* baseClassName,
-                                      Ref<const IO::IoObject> basePart)
+                                      ref<const IO::IoObject> basePart)
 {
 GVX_TRACE("IO::LegacyWriter::writeBaseClass");
   if (rep->itsWriteBases)
@@ -638,9 +638,9 @@ void IO::LegacyWriter::writeRoot(const IO::IoObject* root)
 GVX_TRACE("IO::LegacyWriter::writeRoot");
 
   rep->flattenObject
-    ("rootObject", SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root),
-                                         Nub::STRONG,
-                                         Nub::PRIVATE));
+    ("rootObject", soft_ref<IO::IoObject>(const_cast<IO::IoObject*>(root),
+                                         nub::STRONG,
+                                         nub::PRIVATE));
 }
 
 static const char vcid_groovx_io_iolegacy_cc_utc20050626084021[] = "$Id$ $HeadURL$";

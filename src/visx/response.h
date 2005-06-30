@@ -60,7 +60,7 @@ public:
 
   bool shouldIgnore() const { return itsVal == IGNORE; }
 
-  bool isValid() const { return (itsVal >= 0); }
+  bool is_valid() const { return (itsVal >= 0); }
 
   bool matchesCorrectValue(int cval) const
   {

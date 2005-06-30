@@ -41,15 +41,15 @@
 
 #include "rutz/trace.h"
 
-Nub::SoftRef<Nub::Object> Nub::ObjMgr::newObj(const char* type)
+nub::soft_ref<nub::object> nub::obj_mgr::new_obj(const char* type)
 {
-  return newObj(rutz::fstring(type));
+  return new_obj(rutz::fstring(type));
 }
 
-Nub::SoftRef<Nub::Object> Nub::ObjMgr::newObj(const rutz::fstring& type)
+nub::soft_ref<nub::object> nub::obj_mgr::new_obj(const rutz::fstring& type)
 {
-GVX_TRACE("Nub::ObjMgr::newObj(const fstring&)");
-  return SoftRef<Object>(ObjFactory::theOne().new_checked_object(type));
+GVX_TRACE("nub::obj_mgr::new_obj(const fstring&)");
+  return soft_ref<object>(obj_factory::instance().new_checked_object(type));
 }
 
 static const char vcid_groovx_nub_objmgr_cc_utc20050626084019[] = "$Id$ $HeadURL$";

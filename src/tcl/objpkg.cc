@@ -57,21 +57,21 @@ Tcl::ObjCaster::ObjCaster() {}
 
 Tcl::ObjCaster::~ObjCaster() {}
 
-bool Tcl::ObjCaster::isIdMyType(Nub::UID uid) const
+bool Tcl::ObjCaster::isIdMyType(nub::uid uid) const
 {
-  Nub::SoftRef<Nub::Object> item(uid);
-  return (item.isValid() && isMyType(item.get()));
+  nub::soft_ref<nub::object> item(uid);
+  return (item.is_valid() && isMyType(item.get()));
 }
 
 namespace
 {
   int countAll(shared_ptr<Tcl::ObjCaster> caster)
   {
-    Nub::ObjDb& theDb = Nub::ObjDb::theDb();
+    nub::objectdb& instance = nub::objectdb::instance();
     int count = 0;
-    for (Nub::ObjDb::Iterator itr(theDb.objects()); itr.is_valid(); ++itr)
+    for (nub::objectdb::iterator itr(instance.objects()); itr.is_valid(); ++itr)
       {
-        if (caster->isMyType((*itr).getWeak()))
+        if (caster->isMyType((*itr).get_weak()))
           ++count;
       }
     return count;
@@ -79,13 +79,13 @@ namespace
 
   Tcl::List findAll(shared_ptr<Tcl::ObjCaster> caster)
   {
-    Nub::ObjDb& theDb = Nub::ObjDb::theDb();
+    nub::objectdb& instance = nub::objectdb::instance();
 
     Tcl::List result;
 
-    for (Nub::ObjDb::Iterator itr(theDb.objects()); itr.is_valid(); ++itr)
+    for (nub::objectdb::iterator itr(instance.objects()); itr.is_valid(); ++itr)
       {
-        if (caster->isMyType((*itr).getWeak()))
+        if (caster->isMyType((*itr).get_weak()))
           result.append((*itr).id());
       }
 
@@ -94,19 +94,19 @@ namespace
 
   void removeAll(shared_ptr<Tcl::ObjCaster> caster)
   {
-    Nub::ObjDb& theDb = Nub::ObjDb::theDb();
-    for (Nub::ObjDb::Iterator itr(theDb.objects());
+    nub::objectdb& instance = nub::objectdb::instance();
+    for (nub::objectdb::iterator itr(instance.objects());
          itr.is_valid();
          /* increment done in loop body */)
       {
         dbg_eval(3, (*itr)->id());
-        dbg_dump(3, *(*itr)->refCounts());
+        dbg_dump(3, *(*itr)->get_counts());
 
-        if (caster->isMyType((*itr).getWeak()) && (*itr)->isUnshared())
+        if (caster->isMyType((*itr).get_weak()) && (*itr)->is_unshared())
           {
-            Nub::UID remove_me = (*itr)->id();
+            nub::uid remove_me = (*itr)->id();
             ++itr;
-            theDb.remove(remove_me);
+            instance.remove(remove_me);
           }
         else
           {
@@ -115,7 +115,7 @@ namespace
       }
   }
 
-  bool isMyType(shared_ptr<Tcl::ObjCaster> caster, Nub::UID id)
+  bool isMyType(shared_ptr<Tcl::ObjCaster> caster, nub::uid id)
   {
     return caster->isIdMyType(id);
   }

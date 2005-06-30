@@ -50,12 +50,12 @@ GVX_DBG_REGISTER
 namespace Tcl
 {
   Tcl::Obj getField(const Field& field,
-                       Nub::Ref<FieldContainer> item)
+                       nub::ref<FieldContainer> item)
   {
     return item->getField(field);
   }
 
-  void setField(const Field& field, Nub::Ref<FieldContainer> item,
+  void setField(const Field& field, nub::ref<FieldContainer> item,
                 const Tcl::Obj& newValue)
   {
     return item->setField(field, newValue);

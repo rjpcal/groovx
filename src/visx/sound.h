@@ -43,9 +43,9 @@ namespace media
   class sound_rep;
 }
 
-namespace Nub
+namespace nub
 {
-  template <class T> class Ref;
+  template <class T> class ref;
 }
 
 /// Sound is a generic interface to playable sound snippets.
@@ -61,10 +61,10 @@ public:
       caller is responsible for destroying the Sound object. */
   static Sound* makeFrom(const char* filename);
 
-  static void setOkSound(Nub::Ref<Sound> ok_sound);
-  static void setErrSound(Nub::Ref<Sound> err_sound);
-  static Nub::Ref<Sound> getOkSound();
-  static Nub::Ref<Sound> getErrSound();
+  static void setOkSound(nub::ref<Sound> ok_sound);
+  static void setErrSound(nub::ref<Sound> err_sound);
+  static nub::ref<Sound> getOkSound();
+  static nub::ref<Sound> getErrSound();
 
   /// Construct with the given sound file.
   Sound(const char* filename = 0);

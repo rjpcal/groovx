@@ -40,10 +40,10 @@ namespace rutz
   template <class T> class fwd_iter;
 }
 
-namespace Nub
+namespace nub
 {
-  template <class T> class Ref;
-  template <class T> class SoftRef;
+  template <class T> class ref;
+  template <class T> class soft_ref;
 }
 
 /// A base class for all composite visual experiment elements.
@@ -98,7 +98,7 @@ public:
   //
 
   /// Add the specified element to the sequence, 'repeat' number of times.
-  void addElement(Nub::Ref<Element> element, unsigned int repeat = 1);
+  void addElement(nub::ref<Element> element, unsigned int repeat = 1);
 
   /// Set the random seed for shuffling child elements.
   void setRandSeed(int s);
@@ -114,7 +114,7 @@ public:
   void clearElements();
 
   /// Get a reference to the current element.
-  Nub::SoftRef<Element> currentElement() const;
+  nub::soft_ref<Element> currentElement() const;
 
   /// Returns the total number of child elements in the container.
   unsigned int numElements() const;
@@ -125,7 +125,7 @@ public:
   unsigned int numCompleted() const;
 
   /// Returns an iterator to all the contained child elements.
-  rutz::fwd_iter<const Nub::Ref<Element> > getElements() const;
+  rutz::fwd_iter<const nub::ref<Element> > getElements() const;
 
   /// Returns true if the all child elements are complete, false otherwise.
   bool isComplete() const;

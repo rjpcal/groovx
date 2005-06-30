@@ -37,20 +37,20 @@
 
 #include "rutz/trace.h"
 
-Nub::VolatileObject::VolatileObject()
+nub::volatile_object::volatile_object()
 {
-GVX_TRACE("Nub::VolatileObject::VolatileObject");
-  this->markAsVolatile();
+GVX_TRACE("nub::volatile_object::volatile_object");
+  this->mark_as_volatile();
 }
 
-Nub::VolatileObject::~VolatileObject() throw()
+nub::volatile_object::~volatile_object() throw()
 {
-GVX_TRACE("Nub::VolatileObject::~VolatileObject");
+GVX_TRACE("nub::volatile_object::~volatile_object");
 }
 
-void Nub::VolatileObject::destroy()
+void nub::volatile_object::destroy()
 {
-GVX_TRACE("Nub::VolatileObject::destroy");
+GVX_TRACE("nub::volatile_object::destroy");
   delete this;
 }
 

@@ -59,8 +59,8 @@ GVX_DBG_REGISTER
 using rutz::fstring;
 using rutz::shared_ptr;
 
-using Nub::Ref;
-using Nub::SoftRef;
+using nub::ref;
+using nub::soft_ref;
 
 using IO::AttribMap;
 
@@ -158,16 +158,16 @@ public:
   virtual void readRawData(const fstring& name, rutz::byte_array& data)
   { defaultReadRawData(name, data); }
 
-  virtual Nub::Ref<IO::IoObject> readObject(const fstring& name);
-  virtual Nub::SoftRef<IO::IoObject>
+  virtual nub::ref<IO::IoObject> readObject(const fstring& name);
+  virtual nub::soft_ref<IO::IoObject>
     readMaybeObject(const fstring& name);
 
   virtual void readOwnedObject(const fstring& name,
-                               Nub::Ref<IO::IoObject> obj);
+                               nub::ref<IO::IoObject> obj);
   virtual void readBaseClass(const fstring& baseClassName,
-                             Nub::Ref<IO::IoObject> basePart);
+                             nub::ref<IO::IoObject> basePart);
 
-  virtual Nub::Ref<IO::IoObject> readRoot(IO::IoObject* root=0);
+  virtual nub::ref<IO::IoObject> readRoot(IO::IoObject* root=0);
 
 protected:
   virtual fstring readStringImpl(const fstring& name);
@@ -187,7 +187,7 @@ private:
   }
 
   void inflateObject(std::istream& buf,
-                     const fstring& obj_tag, Ref<IO::IoObject> obj);
+                     const fstring& obj_tag, ref<IO::IoObject> obj);
 
   template <class T>
   T readBasicType(const fstring& name)
@@ -309,15 +309,15 @@ GVX_TRACE("AsciiStreamReader::readValueObj");
   v.set_string(a.value);
 }
 
-Ref<IO::IoObject>
+ref<IO::IoObject>
 AsciiStreamReader::readObject(const fstring& name)
 {
 GVX_TRACE("AsciiStreamReader::readObject");
   dbg_eval_nl(3, name);
-  return Ref<IO::IoObject>(readMaybeObject(name));
+  return ref<IO::IoObject>(readMaybeObject(name));
 }
 
-SoftRef<IO::IoObject>
+soft_ref<IO::IoObject>
 AsciiStreamReader::readMaybeObject(const fstring& name)
 {
 GVX_TRACE("AsciiStreamReader::readMaybeObject");
@@ -326,20 +326,20 @@ GVX_TRACE("AsciiStreamReader::readMaybeObject");
   AttribMap::Attrib attrib = currentAttribs().get(name);
 
   rutz::icstrstream ist(attrib.value.c_str());
-  Nub::UID id;
+  nub::uid id;
   ist >> id;
 
   if (ist.fail())
     throwAttrError(name, attrib.value, SRC_POS);
 
-  if (id == 0) { return SoftRef<IO::IoObject>(); }
+  if (id == 0) { return soft_ref<IO::IoObject>(); }
 
   // Return the object for this id, creating a new object if necessary:
   return itsObjects.fetchObject(attrib.type, id);
 }
 
 void AsciiStreamReader::readOwnedObject(const fstring& name,
-                                        Ref<IO::IoObject> obj)
+                                        ref<IO::IoObject> obj)
 {
 GVX_TRACE("AsciiStreamReader::readOwnedObject");
   dbg_eval_nl(3, name);
@@ -356,26 +356,26 @@ GVX_TRACE("AsciiStreamReader::readOwnedObject");
 }
 
 void AsciiStreamReader::readBaseClass(const fstring& baseClassName,
-                                      Ref<IO::IoObject> basePart)
+                                      ref<IO::IoObject> basePart)
 {
 GVX_TRACE("AsciiStreamReader::readBaseClass");
   dbg_eval_nl(3, baseClassName);
   readOwnedObject(baseClassName, basePart);
 }
 
-Ref<IO::IoObject> AsciiStreamReader::readRoot(IO::IoObject* given_root)
+ref<IO::IoObject> AsciiStreamReader::readRoot(IO::IoObject* given_root)
 {
 GVX_TRACE("AsciiStreamReader::readRoot");
 
   itsObjects.clear();
 
   bool haveReadRoot = false;
-  Nub::UID rootid = 0;
+  nub::uid rootid = 0;
 
   fstring type;
   fstring equal;
   fstring bracket;
-  Nub::UID id;
+  nub::uid id;
 
   while ( itsBuf.peek() != EOF )
     {
@@ -399,12 +399,12 @@ GVX_TRACE("AsciiStreamReader::readRoot");
 
           if (given_root != 0)
             itsObjects.assignObjectForId(rootid,
-                                         Ref<IO::IoObject>(given_root));
+                                         ref<IO::IoObject>(given_root));
 
           haveReadRoot = true;
         }
 
-      Ref<IO::IoObject> obj = itsObjects.fetchObject(type, id);
+      ref<IO::IoObject> obj = itsObjects.fetchObject(type, id);
 
       inflateObject(itsBuf, type, obj);
 
@@ -423,7 +423,7 @@ GVX_TRACE("AsciiStreamReader::readRoot");
 
 void AsciiStreamReader::inflateObject(std::istream& buf,
                                       const fstring& obj_tag,
-                                      Ref<IO::IoObject> obj)
+                                      ref<IO::IoObject> obj)
 {
 GVX_TRACE("AsciiStreamReader::inflateObject");
 

@@ -49,7 +49,7 @@
   This is duplicated (and serialized twice) in several base classes,
   including Face, MorphyFace, and Fish.
 
-* (20-Oct-2004) make media/imgfile not depend on Nub::log
+* (20-Oct-2004) make media/imgfile not depend on nub::log
 
 * (15-Oct-2004) make a DebugScheduler that can be used in TimingHdlr
 
@@ -58,7 +58,7 @@
 
 * (13-Oct-2004) try to minimize global data masquerading as singletons
 
-** ObjDb::theDb() is OK because that is really a conceptual singleton
+** obj_db::instance() is OK because that is really a conceptual singleton
 
 ** Tcl::Interp  (from Tcl::Main::interp())
    --> used in Toglet::Toglet (passed to Tcl::TkWidget)
@@ -93,13 +93,13 @@
    Better name for "screen" coordinates would be "device" coordinates.
 
    --> used in toglettcl.cc::currentCanvas (used as Tcl command)
-   --> used in toglettcl.cc::clearOnExit (used for setVisibility(false))
+   --> used in toglettcl.cc::clear_on_exit (used for setVisibility(false))
    --> used in GxScaler::setWidth (passed to getBoundingBox())
    --> used in GxScaler::setHeight (passed to getBoundingBox())
    --> used in GxScaler::scaledWidth (passed to getBoundingBox())
    --> used in GxScaler::scaledHeight (passed to getBoundingBox())
 
-** ObjFactory::theOne()
+** obj_factory::instance()
 
    This one is a bit of a problem, because some objects rely in
    principle on getting the global current Tcl::Interp. We can fix
@@ -310,11 +310,11 @@
      and dependencies for us. The only thing that the rest of the
      Makefile will depend on is the $(PROJECT_LIBS) variable.
 
-* (4-Sep-2001) A Connection class to manage Signal/Slot connections
+* (4-Sep-2001) A Connection class to manage Signal/slot connections
 
 * (24-Aug-2001) How to get animation working?
 
-  I have a Tcl::Timer for generic timer callbacks now, but the problem
+  I have a Tcl::timer for generic timer callbacks now, but the problem
   is: how to inform the animated thing that it is time to stop drawing
   itself, for example when the Widget switches to displaying something
   else? I guess the appropriate model is for GxNode's the

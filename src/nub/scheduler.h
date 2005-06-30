@@ -38,31 +38,31 @@ namespace rutz
   template <class T> class shared_ptr;
 }
 
-namespace Nub
+namespace nub
 {
-  class Scheduler;
-  class TimerToken;
+  class scheduler;
+  class timer_token;
 }
 
-class Nub::TimerToken
+class nub::timer_token
 {
 private:
-  TimerToken(const TimerToken&);
-  TimerToken& operator=(const TimerToken&);
+  timer_token(const timer_token&);
+  timer_token& operator=(const timer_token&);
 
 protected:
-  TimerToken();
+  timer_token();
 
 public:
-  virtual ~TimerToken() throw();
+  virtual ~timer_token() throw();
 };
 
-class Nub::Scheduler
+class nub::scheduler
 {
 public:
-  virtual ~Scheduler() throw();
+  virtual ~scheduler() throw();
 
-  virtual rutz::shared_ptr<Nub::TimerToken>
+  virtual rutz::shared_ptr<nub::timer_token>
   schedule(int msec,
            void (*callback)(void*),
            void* clientdata) = 0;

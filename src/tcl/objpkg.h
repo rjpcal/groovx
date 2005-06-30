@@ -48,9 +48,9 @@ namespace Tcl
   class Pkg;
 }
 
-namespace Nub
+namespace nub
 {
-  class Object;
+  class object;
 }
 
 // ########################################################
@@ -64,15 +64,15 @@ protected:
 public:
   virtual ~ObjCaster();
 
-  virtual bool isMyType(const Nub::Object* obj) const = 0;
+  virtual bool isMyType(const nub::object* obj) const = 0;
 
   virtual unsigned int getSizeof() const = 0;
 
-  bool isNotMyType(const Nub::Object* obj) const { return !isMyType(obj); }
+  bool isNotMyType(const nub::object* obj) const { return !isMyType(obj); }
 
-  bool isIdMyType(Nub::UID uid) const;
+  bool isIdMyType(nub::uid uid) const;
 
-  bool isIdNotMyType(Nub::UID uid) const { return !isIdMyType(uid); }
+  bool isIdNotMyType(nub::uid uid) const { return !isIdMyType(uid); }
 };
 
 namespace Tcl
@@ -87,7 +87,7 @@ namespace Tcl
       return sizeof(C);
     }
 
-    virtual bool isMyType(const Nub::Object* obj) const
+    virtual bool isMyType(const nub::object* obj) const
     {
       return (obj != 0 && dynamic_cast<const C*>(obj) != 0);
     }
@@ -107,10 +107,10 @@ namespace Tcl
   void defCreator(Pkg*, const char* aliasName = 0)
   {
     const char* origName =
-      Nub::ObjFactory::theOne().register_creator(&C::make);
+      nub::obj_factory::instance().register_creator(&C::make);
 
     if (aliasName != 0)
-      Nub::ObjFactory::theOne().register_alias(origName, aliasName);
+      nub::obj_factory::instance().register_alias(origName, aliasName);
   }
 }
 

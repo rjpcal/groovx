@@ -39,8 +39,8 @@
 
 #include "rutz/fstring.h"
 
-/// Adapter class for fitting mtx to the Nub::Object interface.
-class MtxObj : public mtx, public Nub::Object
+/// Adapter class for fitting mtx to the nub::object interface.
+class MtxObj : public mtx, public nub::object
 {
 public:
   template <class T1>
@@ -59,7 +59,7 @@ public:
 
   static MtxObj* make() { return new MtxObj(mtx::empty_mtx()); }
 
-  virtual rutz::fstring objTypename() const { return "mtx"; }
+  virtual rutz::fstring obj_typename() const { return "mtx"; }
 };
 
 static const char vcid_groovx_pkgs_mtx_mtxobj_h_utc20050626084022[] = "$Id$ $HeadURL$";

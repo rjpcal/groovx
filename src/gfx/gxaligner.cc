@@ -54,7 +54,7 @@ using geom::rectd;
 using geom::vec2d;
 using geom::vec3d;
 
-GxAligner::GxAligner(Nub::SoftRef<GxNode> child) :
+GxAligner::GxAligner(nub::soft_ref<GxNode> child) :
   GxBin(child),
   itsMode(NATIVE_ALIGNMENT),
   itsCenter(0.0, 0.0)

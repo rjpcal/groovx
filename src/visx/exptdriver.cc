@@ -130,7 +130,7 @@ public:
 
   Tcl::Interp interp;
 
-  Nub::SoftRef<Toglet> widget;
+  nub::soft_ref<Toglet> widget;
 
   fstring hostname;     // Host computer on which Expt was begun
   fstring subject;      // Id of subject on whom Expt was performed
@@ -143,7 +143,7 @@ public:
 
   int autosavePeriod;
 
-  Nub::Ref<Tcl::ProcWrapper> doWhenComplete;
+  nub::ref<Tcl::ProcWrapper> doWhenComplete;
 
   unsigned int numTrialsCompleted;
 
@@ -227,7 +227,7 @@ GVX_TRACE("ExptDriver::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-const Nub::SoftRef<Toglet>& ExptDriver::getWidget() const
+const nub::soft_ref<Toglet>& ExptDriver::getWidget() const
 {
 GVX_TRACE("ExptDriver::getWidget");
   return rep->widget;
@@ -254,14 +254,14 @@ GVX_TRACE("ExptDriver::vxEndTrialHook");
     return;
 
   dbg_eval_nl(3, rep->autosaveFile.c_str());
-  IO::saveGVX(Nub::Ref<IO::IoObject>(this), rep->autosaveFile);
+  IO::saveGVX(nub::ref<IO::IoObject>(this), rep->autosaveFile);
 }
 
 void ExptDriver::vxAllChildrenFinished()
 {
 GVX_TRACE("ExptDriver::vxAllChildrenFinished");
 
-  Nub::log( "ExptDriver::vxAllChildrenFinished" );
+  nub::log( "ExptDriver::vxAllChildrenFinished" );
 
   rep->addLogInfo("Experiment complete.");
 
@@ -269,11 +269,11 @@ GVX_TRACE("ExptDriver::vxAllChildrenFinished");
 
   storeData();
 
-  Nub::Log::addObjScope(*rep->doWhenComplete);
+  nub::logging::add_obj_scope(*rep->doWhenComplete);
   rep->doWhenComplete->invoke(""); // Call the user-defined callback
-  Nub::Log::removeObjScope(*rep->doWhenComplete);
+  nub::logging::remove_obj_scope(*rep->doWhenComplete);
 
-  Nub::Log::removeObjScope(*this);
+  nub::logging::remove_obj_scope(*this);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -309,8 +309,8 @@ GVX_TRACE("ExptDriver::setFilePrefix");
 void ExptDriver::claimLogFile() const
 {
 GVX_TRACE("ExptDriver::claimLogFile");
-  Nub::Log::setLogFilename(fstring(rep->filePrefix, "_",
-                                   rep->fileTimestamp, ".log"));
+  nub::logging::set_log_filename(fstring(rep->filePrefix, "_",
+                                         rep->fileTimestamp, ".log"));
 }
 
 int ExptDriver::getAutosavePeriod() const
@@ -343,7 +343,7 @@ GVX_TRACE("ExptDriver::setDoWhenComplete");
   rep->doWhenComplete->define("", script);
 }
 
-void ExptDriver::setWidget(const Nub::SoftRef<Toglet>& widg)
+void ExptDriver::setWidget(const nub::soft_ref<Toglet>& widg)
 {
 GVX_TRACE("ExptDriver::setWidget");
   rep->widget = widg;
@@ -368,15 +368,15 @@ GVX_TRACE("ExptDriver::edBeginExpt");
   rep->subject = cwd;
   rep->numTrialsCompleted = 0;
 
-  Nub::Log::reset(); // to clear any existing timer scopes
-  Nub::Log::addObjScope(*this);
+  nub::logging::reset(); // to clear any existing timer scopes
+  nub::logging::add_obj_scope(*this);
 
   claimLogFile();
 
-  Nub::log(fstring("expt begin: ", rep->beginDate));
-  Nub::log(fstring("hostname: ", rep->hostname));
-  Nub::log(fstring("cwd: ", cwd));
-  Nub::log(fstring("cmdline: ", Tcl::Main::commandLine()));
+  nub::log(fstring("expt begin: ", rep->beginDate));
+  nub::log(fstring("hostname: ", rep->hostname));
+  nub::log(fstring("cwd: ", cwd));
+  nub::log(fstring("cmdline: ", Tcl::Main::commandLine()));
 
   currentElement()->vxRun(*this);
 }
@@ -480,8 +480,8 @@ GVX_TRACE("ExptDriver::storeData");
   expt_filename.append("_", rep->fileTimestamp);
   expt_filename.append(".gvx");
   renameFileIfExists(expt_filename);
-  IO::saveGVX(Nub::Ref<IO::IoObject>(this), expt_filename.c_str());
-  Nub::log( fstring( "wrote file ", expt_filename.c_str()) );
+  IO::saveGVX(nub::ref<IO::IoObject>(this), expt_filename.c_str());
+  nub::log( fstring( "wrote file ", expt_filename.c_str()) );
 
   // Write the responses file
   fstring resp_filename = rep->filePrefix;
@@ -489,7 +489,7 @@ GVX_TRACE("ExptDriver::storeData");
   resp_filename.append(".resp");
   renameFileIfExists(resp_filename);
   TlistUtils::writeResponses(resp_filename.c_str());
-  Nub::log( fstring( "wrote file ", resp_filename.c_str()) );
+  nub::log( fstring( "wrote file ", resp_filename.c_str()) );
 
   // Change file access modes to allow read-only by all
   const mode_t datafile_mode = S_IRUSR | S_IRGRP | S_IROTH;

@@ -44,10 +44,10 @@ namespace Gfx
   class Canvas;
 }
 
-namespace Nub
+namespace nub
 {
-  template <class T> class Ref;
-  template <class T> class SoftRef;
+  template <class T> class ref;
+  template <class T> class soft_ref;
 }
 
 // ########################################################
@@ -74,16 +74,16 @@ public:
   static Toglet* makeToplevel();
 
   /// Find the Toglet that most recently had makeCurrent() called for it.
-  static Nub::SoftRef<Toglet> getCurrent();
+  static nub::soft_ref<Toglet> getCurrent();
 
   /// Equivalent to calling toglet->makeCurrent().
-  static void setCurrent(Nub::SoftRef<Toglet> toglet);
+  static void setCurrent(nub::soft_ref<Toglet> toglet);
 
   /// Specify which Tk window should be the parent of new Toglet's.
   static void defaultParent(const char* pathname);
 
   /// Return the associated canvas.
-  Nub::SoftRef<Gfx::Canvas> getCanvas() const;
+  nub::soft_ref<Gfx::Canvas> getCanvas() const;
 
   void makeCurrent() const;
 
@@ -108,9 +108,9 @@ public:
   void setVisibility(bool vis);
   void setHold(bool hold_on);
   void allowRefresh(bool allow);
-  const Nub::Ref<GxCamera>& getCamera() const;
-  void setCamera(const Nub::Ref<GxCamera>& cam);
-  void setDrawable(const Nub::Ref<GxNode>& node);
+  const nub::ref<GxCamera>& getCamera() const;
+  void setCamera(const nub::ref<GxCamera>& cam);
+  void setDrawable(const nub::ref<GxNode>& node);
   void animate(unsigned int framesPerSecond);
 
 

@@ -83,7 +83,7 @@ public:
 
 
   /// Construct with a given child object.
-  GxAligner(Nub::SoftRef<GxNode> child);
+  GxAligner(nub::soft_ref<GxNode> child);
 
   /// Virtual nothrow destructor.
   virtual ~GxAligner() throw();

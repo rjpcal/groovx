@@ -35,9 +35,9 @@
 
 #include "io/io.h"
 
-namespace Nub
+namespace nub
 {
-  template <class T> class SoftRef;
+  template <class T> class soft_ref;
 }
 
 class Block;
@@ -71,7 +71,7 @@ public:
   /// Called by a \c Trial at the beginning of a trial.
   /** \c ResponseHandler subclasses implement this function to prepare
       listening for responses, etc. */
-  virtual void rhBeginTrial(Nub::SoftRef<Toglet> widget,
+  virtual void rhBeginTrial(nub::soft_ref<Toglet> widget,
                             Trial& trial) const = 0;
 
   /// Called by a \c Trial if a trial is aborted.
@@ -90,7 +90,7 @@ public:
   virtual void rhHaltExpt() const = 0;
 
   /// Subclasses implement this function to attend to responses.
-  virtual void rhAllowResponses(Nub::SoftRef<Toglet> widget,
+  virtual void rhAllowResponses(nub::soft_ref<Toglet> widget,
                                 Trial& trial) const = 0;
 
   /// Subclasses implement this function to stop attending to responses.

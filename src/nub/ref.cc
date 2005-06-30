@@ -49,69 +49,69 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  Nub::RefVis defaultVis = Nub::GVX_DEFAULT_REFVIS;
+  nub::ref_vis default_vis = nub::GVX_DEFAULT_REFVIS;
 }
 
-Nub::RefVis Nub::getDefaultRefVis()
+nub::ref_vis nub::get_default_ref_vis()
 {
-  return defaultVis;
+  return default_vis;
 }
 
-void Nub::setDefaultRefVis(Nub::RefVis vis)
+void nub::set_default_ref_vis(nub::ref_vis vis)
 {
-  defaultVis = vis;
+  default_vis = vis;
 }
 
-bool Nub::Detail::isValidId(Nub::UID id) throw()
+bool nub::detail::is_valid_uid(nub::uid id) throw()
 {
-  return Nub::ObjDb::theDb().isValidId(id);
+  return nub::objectdb::instance().is_valid_uid(id);
 }
 
-Nub::Object* Nub::Detail::getCheckedItem(Nub::UID id)
+nub::object* nub::detail::get_checked_item(nub::uid id)
 {
-  return Nub::ObjDb::theDb().getCheckedObj(id);
+  return nub::objectdb::instance().get_checked_obj(id);
 }
 
-void Nub::Detail::insertItem(Nub::Object* obj, RefVis vis)
+void nub::detail::insert_item(nub::object* obj, ref_vis vis)
 {
   if (vis == DEFAULT)
     {
-      vis = defaultVis;
+      vis = default_vis;
     }
 
   switch (vis)
     {
-    case PUBLIC:    Nub::ObjDb::theDb().insertObj(obj); break;
-    case PROTECTED: Nub::ObjDb::theDb().insertObjWeak(obj); break;
+    case PUBLIC:    nub::objectdb::instance().insert_obj(obj); break;
+    case PROTECTED: nub::objectdb::instance().insert_obj_weak(obj); break;
     case PRIVATE:   /* nothing */ break;
     default:
-      GVX_PANIC("unknown RefVis enum value");
+      GVX_PANIC("unknown ref_vis enum value");
     }
 }
 
-void Nub::Detail::throwRefNull(const std::type_info& info,
+void nub::detail::throw_ref_null(const std::type_info& info,
                                const rutz::file_pos& pos)
 {
-  throw rutz::error(rutz::fstring("attempted to construct a Ref<",
+  throw rutz::error(rutz::fstring("attempted to construct a ref<",
                                   rutz::demangled_name(info),
                                   "> with a null pointer"),
                     pos);
 }
 
-void Nub::Detail::throwRefUnshareable(const std::type_info& info,
+void nub::detail::throw_ref_unshareable(const std::type_info& info,
                                       const rutz::file_pos& pos)
 {
-  throw rutz::error(rutz::fstring("attempted to construct a Ref<",
+  throw rutz::error(rutz::fstring("attempted to construct a ref<",
                                   rutz::demangled_name(info),
                                   "> with an unshareable object"),
                     pos);
 }
 
-void Nub::Detail::throwSoftRefInvalid(const std::type_info& info,
+void nub::detail::throw_soft_ref_invalid(const std::type_info& info,
                                       const rutz::file_pos& pos)
 {
   throw rutz::error(rutz::fstring("attempted to access invalid object "
-                                  "in SoftRef<", rutz::demangled_name(info), ">"),
+                                  "in soft_ref<", rutz::demangled_name(info), ">"),
                     pos);
 }
 

@@ -49,28 +49,28 @@
 
 #include "rutz/trace.h"
 
-using Nub::SoftRef;
-using Nub::Object;
+using nub::soft_ref;
+using nub::object;
 
 namespace
 {
-  void dbClear() { Nub::ObjDb::theDb().clear(); }
-  void dbPurge() { Nub::ObjDb::theDb().purge(); }
-  void dbRelease(Nub::UID id) { Nub::ObjDb::theDb().release(id); }
-  void dbClearOnExit() { Nub::ObjDb::theDb().clearOnExit(); }
+  void dbClear() { nub::objectdb::instance().clear(); }
+  void dbPurge() { nub::objectdb::instance().purge(); }
+  void dbRelease(nub::uid id) { nub::objectdb::instance().release(id); }
+  void dbClearOnExit() { nub::objectdb::instance().clear_on_exit(); }
 
   // This is just here to select between the const char* +
-  // rutz::fstring versions of newObj().
-  SoftRef<Object> objNew(const char* type)
+  // rutz::fstring versions of new_obj().
+  soft_ref<object> objNew(const char* type)
   {
-    return Nub::ObjMgr::newObj(type);
+    return nub::obj_mgr::new_obj(type);
   }
 
-  SoftRef<Object> objNewArgs(const char* type,
+  soft_ref<object> objNewArgs(const char* type,
                              Tcl::List init_args,
                              Tcl::Interp interp)
   {
-    SoftRef<Object> obj(Nub::ObjMgr::newObj(type));
+    soft_ref<object> obj(nub::obj_mgr::new_obj(type));
 
     for (unsigned int i = 0; i+1 < init_args.length(); i+=2)
       {
@@ -91,7 +91,7 @@ namespace
 
     while (array_size-- > 0)
       {
-        SoftRef<Object> item(Nub::ObjMgr::newObj(type));
+        soft_ref<object> item(nub::obj_mgr::new_obj(type));
         result.append(item.id());
       }
 
@@ -100,12 +100,12 @@ namespace
 
   void objDelete(Tcl::List objrefs)
   {
-    Tcl::List::Iterator<Nub::UID>
-      itr = objrefs.begin<Nub::UID>(),
-      stop = objrefs.end<Nub::UID>();
+    Tcl::List::Iterator<nub::uid>
+      itr = objrefs.begin<nub::uid>(),
+      stop = objrefs.end<nub::uid>();
     while (itr != stop)
       {
-        Nub::ObjDb::theDb().remove(*itr);
+        nub::objectdb::instance().remove(*itr);
         ++itr;
       }
   }
@@ -136,7 +136,7 @@ namespace
     Tcl::List objrefs(origargs[1]);
 
     const rutz::fstring namesp =
-      objrefs.get<SoftRef<Object> >(0)->objTypename();
+      objrefs.get<soft_ref<object> >(0)->obj_typename();
 
     rutz::fstring origcmdname = ctx.getValFromArg<rutz::fstring>(2);
 
@@ -159,11 +159,11 @@ namespace
 }
 
 extern "C"
-int Objdb_Init(Tcl_Interp* interp)
+int Objectdb_Init(Tcl_Interp* interp)
 {
-GVX_TRACE("Objdb_Init");
+GVX_TRACE("Objectdb_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "ObjDb", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "objectdb", "4.$Revision$");
 
   pkg->onExit( &dbClearOnExit );
 
@@ -180,15 +180,15 @@ int Obj_Init(Tcl_Interp* interp)
 GVX_TRACE("Obj_Init");
 
   GVX_PKG_CREATE(pkg, interp, "Obj", "4.$Revision$");
-  Tcl::defGenericObjCmds<Object>(pkg, SRC_POS);
+  Tcl::defGenericObjCmds<object>(pkg, SRC_POS);
 
-  pkg->defGetter("refCount", &Object::dbg_RefCount, SRC_POS);
-  pkg->defGetter("weakRefCount", &Object::dbg_WeakRefCount, SRC_POS);
-  pkg->defAction("incrRefCount", &Object::incrRefCount, SRC_POS);
-  pkg->defAction("decrRefCount", &Object::decrRefCount, SRC_POS);
+  pkg->defGetter("refCount", &object::dbg_ref_count, SRC_POS);
+  pkg->defGetter("weakRefCount", &object::dbg_weak_ref_count, SRC_POS);
+  pkg->defAction("incr_ref_count", &object::incr_ref_count, SRC_POS);
+  pkg->defAction("decr_ref_count", &object::decr_ref_count, SRC_POS);
 
-  pkg->defGetter( "type", &Object::objTypename, SRC_POS );
-  pkg->defGetter( "realType", &Object::realTypename, SRC_POS );
+  pkg->defGetter( "type", &object::obj_typename, SRC_POS );
+  pkg->defGetter( "realType", &object::real_typename, SRC_POS );
 
   pkg->def( "new", "typename", &objNew, SRC_POS );
   pkg->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",

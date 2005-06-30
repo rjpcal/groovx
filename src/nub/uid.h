@@ -33,10 +33,10 @@
 #ifndef GROOVX_NUB_UID_H_UTC20050626084019_DEFINED
 #define GROOVX_NUB_UID_H_UTC20050626084019_DEFINED
 
-namespace Nub
+namespace nub
 {
-  /// This type is used for IoObject unique identifiers
-  typedef unsigned long UID;
+  /// This type is used for nub::object unique identifiers
+  typedef unsigned long uid;
 }
 
 static const char vcid_groovx_nub_uid_h_utc20050626084019[] = "$Id$ $HeadURL$";

@@ -44,10 +44,10 @@ namespace rutz
   template <class T> class fwd_iter;
 }
 
-namespace Nub
+namespace nub
 {
-  template <class T> class Ref;
-  template <class T> class SoftRef;
+  template <class T> class ref;
+  template <class T> class soft_ref;
 }
 
 namespace Tcl

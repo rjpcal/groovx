@@ -44,9 +44,9 @@ namespace rutz
   template <class T> class fwd_iter;
 }
 
-namespace Nub
+namespace nub
 {
-  template <class T> class Ref;
+  template <class T> class ref;
 }
 
 class GxNode;
@@ -87,11 +87,11 @@ public:
   int getCorrectResponse() const;
   void setCorrectResponse(int response);
 
-  Nub::Ref<ResponseHandler> getResponseHandler() const;
-  void setResponseHandler(Nub::Ref<ResponseHandler> rh);
+  nub::ref<ResponseHandler> getResponseHandler() const;
+  void setResponseHandler(nub::ref<ResponseHandler> rh);
 
-  Nub::Ref<TimingHdlr> getTimingHdlr() const;
-  void setTimingHdlr(Nub::Ref<TimingHdlr> th);
+  nub::ref<TimingHdlr> getTimingHdlr() const;
+  void setTimingHdlr(nub::ref<TimingHdlr> th);
 
   void setType(int t);
 
@@ -104,12 +104,12 @@ public:
   double avgResponse() const;
   double avgRespTime() const;
 
-  void addNode(Nub::Ref<GxNode> item);
+  void addNode(nub::ref<GxNode> item);
 
   void trNextNode();
 
   /// Returns an iterator to all the nodes contained in the Trial.
-  rutz::fwd_iter<Nub::Ref<GxNode> > nodes() const;
+  rutz::fwd_iter<nub::ref<GxNode> > nodes() const;
 
   unsigned int getCurrentNode() const;
   void setCurrentNode(unsigned int nodeNumber);
@@ -130,7 +130,7 @@ public:
   // Element interface
   //
 
-  virtual const Nub::SoftRef<Toglet>& getWidget() const;
+  virtual const nub::soft_ref<Toglet>& getWidget() const;
 
   /// returns some user-defined info about relationship between objects in trial
   virtual int trialType() const;

@@ -56,7 +56,7 @@ namespace
 {
   // Make a specified GxNode the widget's current drawable, and draw
   // it in the OpenGL window. The widget's visibility is set to true.
-  Nub::UID see(Nub::SoftRef<Toglet> widg, Nub::Ref<GxNode> item)
+  nub::uid see(nub::soft_ref<Toglet> widg, nub::ref<GxNode> item)
   {
     widg->setDrawable(item);
     widg->setVisibility(true);
@@ -68,15 +68,15 @@ namespace
   // because Tcl tends to prematurely unload dynamically-loaded
   // packages... so we need to make sure we don't have any references
   // to objects whose members are defined in such packages.
-  void clearOnExit()
+  void clear_on_exit()
   {
-    if (Toglet::getCurrent().isValid())
+    if (Toglet::getCurrent().is_valid())
       {
         Toglet::getCurrent()->setVisibility(false);
       }
   }
 
-  Nub::SoftRef<Gfx::Canvas> currentCanvas()
+  nub::soft_ref<Gfx::Canvas> currentCanvas()
   {
     return Toglet::getCurrent()->getCanvas();
   }
@@ -94,13 +94,13 @@ GVX_TRACE("Toglet_Init");
 
   GVX_PKG_CREATE(pkg, interp, "Toglet", "4.$Revision$");
 
-  pkg->onExit( &clearOnExit );
+  pkg->onExit( &clear_on_exit );
 
   pkg->inheritPkg("TkWidget");
   Tcl::defGenericObjCmds<Toglet>(pkg, SRC_POS);
 
-  Nub::ObjFactory::theOne().register_creator( &Toglet::make );
-  Nub::ObjFactory::theOne().register_creator( &Toglet::makeToplevel,
+  nub::obj_factory::instance().register_creator( &Toglet::make );
+  nub::obj_factory::instance().register_creator( &Toglet::makeToplevel,
                                               "TopToglet" );
 
   pkg->def( "::tog", 0, &Toglet::getCurrent, SRC_POS );

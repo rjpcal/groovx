@@ -58,7 +58,7 @@ GVX_DBG_REGISTER
 using rutz::fstring;
 using rutz::shared_ptr;
 
-fstring IO::writeLGX(Nub::Ref<IO::IoObject> obj)
+fstring IO::writeLGX(nub::ref<IO::IoObject> obj)
 {
   std::ostringstream ost;
 
@@ -68,7 +68,7 @@ fstring IO::writeLGX(Nub::Ref<IO::IoObject> obj)
   return fstring(ost.str().c_str());
 }
 
-void IO::readLGX(Nub::Ref<IO::IoObject> obj, const char* buf)
+void IO::readLGX(nub::ref<IO::IoObject> obj, const char* buf)
 {
   rutz::icstrstream ist(buf);
 
@@ -76,7 +76,7 @@ void IO::readLGX(Nub::Ref<IO::IoObject> obj, const char* buf)
   reader.readRoot(obj.get());
 }
 
-fstring IO::writeASW(Nub::Ref<IO::IoObject> obj)
+fstring IO::writeASW(nub::ref<IO::IoObject> obj)
 {
   std::ostringstream ost;
 
@@ -86,7 +86,7 @@ fstring IO::writeASW(Nub::Ref<IO::IoObject> obj)
   return fstring(ost.str().c_str());
 }
 
-void IO::readASW(Nub::Ref<IO::IoObject> obj, const char* buf)
+void IO::readASW(nub::ref<IO::IoObject> obj, const char* buf)
 {
   rutz::icstrstream ist(buf);
 
@@ -94,7 +94,7 @@ void IO::readASW(Nub::Ref<IO::IoObject> obj, const char* buf)
   reader->readRoot(obj.get());
 }
 
-fstring IO::writeGVX(Nub::Ref<IO::IoObject> obj)
+fstring IO::writeGVX(nub::ref<IO::IoObject> obj)
 {
   std::ostringstream ost;
 
@@ -104,25 +104,25 @@ fstring IO::writeGVX(Nub::Ref<IO::IoObject> obj)
   return fstring(ost.str().c_str());
 }
 
-void IO::saveASW(Nub::Ref<IO::IoObject> obj, fstring fname)
+void IO::saveASW(nub::ref<IO::IoObject> obj, fstring fname)
 {
   shared_ptr<IO::Writer> writer = IO::makeAsciiStreamWriter(fname.c_str());
   writer->writeRoot(obj.get());
 }
 
-void IO::loadASW(Nub::Ref<IO::IoObject> obj, fstring fname)
+void IO::loadASW(nub::ref<IO::IoObject> obj, fstring fname)
 {
   shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(fname.c_str());
   reader->readRoot(obj.get());
 }
 
-void IO::saveGVX(Nub::Ref<IO::IoObject> obj, fstring filename)
+void IO::saveGVX(nub::ref<IO::IoObject> obj, fstring filename)
 {
   shared_ptr<IO::Writer> writer = IO::makeXMLWriter(filename.c_str());
   writer->writeRoot(obj.get());
 }
 
-Nub::Ref<IO::IoObject> IO::retrieveASW(fstring fname)
+nub::ref<IO::IoObject> IO::retrieveASW(fstring fname)
 {
   shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(fname.c_str());
   return reader->readRoot();

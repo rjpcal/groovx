@@ -340,7 +340,7 @@ namespace
 {
   void bug()
   {
-    Nub::SoftRef<Toglet> t = Toglet::getCurrent();
+    nub::soft_ref<Toglet> t = Toglet::getCurrent();
 
     glTranslated(-2.56, -2.56, 0.0);
 

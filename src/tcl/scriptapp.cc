@@ -276,8 +276,8 @@ void Tcl::ScriptApp::run()
 
   Tcl::Interp& interp = tclmain.interp();
 
-  Nub::ObjFactory::theOne().set_fallback(&factoryPkgLoader);
-  Nub::setDefaultRefVis(Nub::PUBLIC);
+  nub::obj_factory::instance().set_fallback(&factoryPkgLoader);
+  nub::set_default_ref_vis(nub::PUBLIC);
 
   const rutz::time ru1 = rutz::time::user_rusage();
   const rutz::time rs1 = rutz::time::sys_rusage();

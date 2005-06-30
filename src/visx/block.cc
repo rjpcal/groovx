@@ -120,7 +120,7 @@ GVX_TRACE("Block::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-const Nub::SoftRef<Toglet>& Block::getWidget() const
+const nub::soft_ref<Toglet>& Block::getWidget() const
 {
 GVX_TRACE("Block::getWidget");
   GVX_PRECONDITION( itsParent != 0 );
@@ -135,7 +135,7 @@ GVX_TRACE("Block::vxRun");
 
   GVX_PRECONDITION( &e != 0 );
 
-  Nub::log( vxInfo() );
+  nub::log( vxInfo() );
 
   itsParent = &e;
 

@@ -72,7 +72,7 @@ public:
   GxScaler();
 
   /// Construct with a given child object.
-  GxScaler(Nub::Ref<GxNode> child);
+  GxScaler(nub::ref<GxNode> child);
 
   /// Factory function.
   static GxScaler* make();

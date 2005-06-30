@@ -43,10 +43,10 @@ namespace rutz
   class value;
 }
 
-namespace Nub
+namespace nub
 {
-  template <class T> class Ref;
-  template <class T> class SoftRef;
+  template <class T> class ref;
+  template <class T> class soft_ref;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -138,7 +138,7 @@ public:
 
   /// Store the \c IO object \a val in association with the tag \a name.
   virtual void writeObject(const char* name,
-                           Nub::SoftRef<const IO::IoObject> obj) = 0;
+                           nub::soft_ref<const IO::IoObject> obj) = 0;
 
   /** Store the owned \c IO object \a obj in association with the tag
       \a name. This function should only be used if \a obj is \b owned
@@ -146,7 +146,7 @@ public:
       obj. This allows the \c Writer subclass to implement the storage
       of an owned object as a contained object. */
   virtual void writeOwnedObject(const char* name,
-                                Nub::Ref<const IO::IoObject> obj) = 0;
+                                nub::ref<const IO::IoObject> obj) = 0;
 
   /** Write the named base class using the IO object \a obj, which
       should be arranged to point or refer to the appropriate base
@@ -154,7 +154,7 @@ public:
       functions must NOT call the fully derived versions. This effect
       can be best accomplished with an \c IO::IoProxy. */
   virtual void writeBaseClass(const char* baseClassName,
-                              Nub::Ref<const IO::IoObject> basePart) = 0;
+                              nub::ref<const IO::IoObject> basePart) = 0;
 
   /** Store an entire object hierarchy, starting with the root object
       \a root. All objects and values referenced by \a root will be

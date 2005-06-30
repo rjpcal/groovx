@@ -50,14 +50,14 @@ int Log_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Log_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Log", "4.$Revision$");
-  pkg->def("reset", "", &Nub::Log::reset, SRC_POS);
-  pkg->def("addScope", "scopename", &::Nub::Log::addScope, SRC_POS);
-  pkg->def("removeScope", "scopename", &::Nub::Log::removeScope, SRC_POS);
-  pkg->def("logFilename", "filename", &Nub::Log::setLogFilename, SRC_POS);
-  pkg->def("copyToStdout", "shouldcopy", &Nub::Log::setCopyToStdout, SRC_POS);
+  GVX_PKG_CREATE(pkg, interp, "log", "4.$Revision$");
+  pkg->def("reset", "", &nub::logging::reset, SRC_POS);
+  pkg->def("add_scope", "scopename", &::nub::logging::add_scope, SRC_POS);
+  pkg->def("remove_scope", "scopename", &::nub::logging::remove_scope, SRC_POS);
+  pkg->def("filename", "filename", &nub::logging::set_log_filename, SRC_POS);
+  pkg->def("copy_to_stdout", "shouldcopy", &nub::logging::copy_to_stdout, SRC_POS);
 
-  pkg->def("log", "msg", (void (*)(const char*)) &Nub::log, SRC_POS);
+  pkg->def("log", "msg", (void (*)(const char*)) &nub::log, SRC_POS);
 
   GVX_PKG_RETURN(pkg);
 }

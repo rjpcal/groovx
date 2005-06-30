@@ -11,7 +11,7 @@ package require Toglet
 
 proc testClassCmds { bc sc1 sc2 } {
     -> [Toglet::current] setVisible 0
-    ObjDb::clear
+    objectdb::clear
 
     # class::removeAll
     ::test "${bc}::removeAll" "too many args" [format {

@@ -36,13 +36,13 @@ test "ExptDriver::begin" "too many args" {
 test "ExptDriver::begin" "normal use" {
     set expt [new ExptDriver]
     set block [new Block]
-    Log::copyToStdout 0
+    log::copy_to_stdout 0
     -> $expt widget [Toglet::current]
     -> $expt addElement $block
     -> $expt begin
     -> $expt halt
     delete $expt
-    Log::copyToStdout 1
+    log::copy_to_stdout 1
 } {^$}
 test "ExptDriver::begin" "error" {} $BLANK $no_test
 
@@ -60,7 +60,7 @@ test "ExptDriver::loadASW" "too many args" {
 } {wrong \# args: should be}
 test "ExptDriver::loadASW" "fMRI sample" {
     -> [Toglet::current] setVisible false
-    ObjDb::clear
+    objectdb::clear
     set expt [new ExptDriver]
     set files {expt215302Aug1999.asw.gz expt215012Jan2000.asw.gz expt232423May2000.asw.gz}
     set ocounts {113 166 76}
@@ -80,7 +80,7 @@ test "ExptDriver::loadASW" "psyphy samples" {
     set result ""
 
     for {set i 0} {$i < 3} {incr i} {
-        ObjDb::clear
+        objectdb::clear
         set expt [new ExptDriver]
 
         -> $expt loadASW $::TEST_DIR/[lindex $files $i]
@@ -127,7 +127,7 @@ test "ExptDriver::begin" "general sanity test" {
     set ::DONE 0
     -> $expt doWhenComplete { set ::DONE 1; set ::STOP 1 }
     set id [after 2000 set ::STOP 1]
-    Log::copyToStdout 0
+    log::copy_to_stdout 0
     -> $expt begin
 
     vwait ::STOP
@@ -135,7 +135,7 @@ test "ExptDriver::begin" "general sanity test" {
     after cancel $id
 
     -> $expt reset
-    Log::copyToStdout 1
+    log::copy_to_stdout 1
 
     return $::DONE
 } {^1$}

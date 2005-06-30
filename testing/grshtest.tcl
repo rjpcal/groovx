@@ -84,7 +84,7 @@ set permuted_files [lsort -command rand_cmp $files]
 #set permuted_files $files
 
 foreach file $permuted_files {
-    ObjDb::clear
+    objectdb::clear
     if { [lindex $file 1] == $::RUN_IF_EQUAL } {
         testfile ${TEST_DIR}/[lindex $file 0]
     }

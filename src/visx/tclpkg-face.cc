@@ -72,10 +72,10 @@ GVX_TRACE("Face_Init");
   Tcl::defFieldContainer<Face>(pkg, SRC_POS);
   Tcl::defCreator<Face>(pkg);
 
-  Nub::ObjFactory::theOne().register_creator( &makeInnerFace,
+  nub::obj_factory::instance().register_creator( &makeInnerFace,
                                               "InnerFace" );
 
-  Nub::ObjFactory::theOne().register_creator( &makeFilledFace,
+  nub::obj_factory::instance().register_creator( &makeFilledFace,
                                               "FilledFace" );
 
   GVX_PKG_RETURN(pkg);

@@ -349,7 +349,7 @@ GVX_TRACE("GxPixmap::saveImage");
   media::save_image(filename, rep->itsData);
 }
 
-void GxPixmap::grabScreenRect(Nub::SoftRef<Gfx::Canvas> canvas,
+void GxPixmap::grabScreenRect(nub::soft_ref<Gfx::Canvas> canvas,
                               const recti& rect)
 {
 GVX_TRACE("GxPixmap::grabScreenRect");
@@ -365,7 +365,7 @@ GVX_TRACE("GxPixmap::grabScreenRect");
   this->sigNodeChanged.emit();
 }
 
-void GxPixmap::grabScreen(Nub::SoftRef<Gfx::Canvas> canvas)
+void GxPixmap::grabScreen(nub::soft_ref<Gfx::Canvas> canvas)
 {
 GVX_TRACE("GxPixmap::grabScreen");
 
@@ -374,7 +374,7 @@ GVX_TRACE("GxPixmap::grabScreen");
   grabScreenRect(canvas, bounds);
 }
 
-void GxPixmap::grabWorldRect(Nub::SoftRef<Gfx::Canvas> canvas,
+void GxPixmap::grabWorldRect(nub::soft_ref<Gfx::Canvas> canvas,
                              const rectd& world_rect)
 {
 GVX_TRACE("GxPixmap::grabWorldRect");

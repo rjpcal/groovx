@@ -54,9 +54,9 @@ namespace Gfx
   class Canvas;
 }
 
-namespace Nub
+namespace nub
 {
-  template <class T> class Ref;
+  template <class T> class ref;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ public:
   virtual ~GxNode() throw();
 
   /// Signal that will be triggered whenever the node changes state.
-  Nub::Signal0 sigNodeChanged;
+  nub::signal0 sigNodeChanged;
 
   /** Returns true if \a other is contained within this node in the
       scene graph. The default implementation (for leaf nodes) returns
@@ -94,7 +94,7 @@ public:
 
   /** Returns an iterator to all the children recursively contained in
       this object. */
-  virtual rutz::fwd_iter<const Nub::Ref<GxNode> > deepChildren();
+  virtual rutz::fwd_iter<const nub::ref<GxNode> > deepChildren();
 
   /// Get the 2-D z-projection of the result of getBoundingCube().
   geom::rect<double> getBoundingBox(Gfx::Canvas& canvas) const;

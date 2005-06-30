@@ -65,7 +65,7 @@ namespace
   //
   //--------------------------------------------------------------------
 
-  long int pixelCheckSum(Nub::SoftRef<GLCanvas> canvas,
+  long int pixelCheckSum(nub::soft_ref<GLCanvas> canvas,
                          int x, int y, int w, int h)
   {
     media::bmap_data data;
@@ -77,7 +77,7 @@ namespace
     return data.bytes_sum();
   }
 
-  long int pixelCheckSumAll(Nub::SoftRef<GLCanvas> canvas)
+  long int pixelCheckSumAll(nub::soft_ref<GLCanvas> canvas)
   {
     const geom::rect<int> viewport = canvas->getScreenViewport();
     return pixelCheckSum(canvas,
@@ -87,7 +87,7 @@ namespace
                          viewport.height());
   }
 
-  geom::vec3d topLeft(Nub::SoftRef<GLCanvas> canvas)
+  geom::vec3d topLeft(nub::soft_ref<GLCanvas> canvas)
   {
     const geom::recti vp = canvas->getScreenViewport();
     const geom::vec2i tl = vp.top_left();

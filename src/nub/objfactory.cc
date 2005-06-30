@@ -37,21 +37,21 @@
 
 namespace
 {
-  Nub::ObjFactory* instance = 0;
+  nub::obj_factory* s_instance = 0;
 }
 
-Nub::ObjFactory::ObjFactory() :
-  rutz::factory<SoftRef<Nub::Object> >() {}
+nub::obj_factory::obj_factory() :
+  rutz::factory<soft_ref<nub::object> >() {}
 
-Nub::ObjFactory::~ObjFactory() throw() {}
+nub::obj_factory::~obj_factory() throw() {}
 
-Nub::ObjFactory& Nub::ObjFactory::theOne()
+nub::obj_factory& nub::obj_factory::instance()
 {
-  if (instance == 0)
+  if (s_instance == 0)
     {
-      instance = new ObjFactory;
+      s_instance = new obj_factory;
     }
-  return *instance;
+  return *s_instance;
 }
 
 static const char vcid_groovx_nub_objfactory_cc_utc20050626084019[] = "$Id$ $HeadURL$";

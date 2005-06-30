@@ -63,8 +63,8 @@ protected:
   virtual ~IoProxy() throw() {}
 
 public:
-  static Nub::Ref<IoObject> make(C* ref)
-    { return Nub::Ref<IoObject>( new IoProxy(ref), Nub::PRIVATE ); }
+  static nub::ref<IoObject> make(C* ref)
+    { return nub::ref<IoObject>( new IoProxy(ref), nub::PRIVATE ); }
 
   virtual void readFrom(Reader& reader)
     { itsReferand->C::readFrom(reader); }
@@ -75,18 +75,18 @@ public:
   virtual VersionId serialVersionId() const
     { return itsReferand->C::serialVersionId(); }
 
-  virtual rutz::fstring objTypename() const
+  virtual rutz::fstring obj_typename() const
     { return rutz::demangled_name(typeid(C)); }
 
 private:
   IoProxy(const IoProxy&);
   IoProxy& operator=(const IoProxy&);
 
-  Nub::Ref<C> itsReferand;
+  nub::ref<C> itsReferand;
 };
 
 template <class C>
-inline Nub::Ref<IoObject> makeProxy(C* ref)
+inline nub::ref<IoObject> makeProxy(C* ref)
   { return IoProxy<C>::make(ref); }
 
 
@@ -103,8 +103,8 @@ protected:
   virtual ~ConstIoProxy() throw() {}
 
 public:
-  static Nub::Ref<const IoObject> make(const C* ref)
-    { return Nub::Ref<IoObject>( new ConstIoProxy(ref), Nub::PRIVATE ); }
+  static nub::ref<const IoObject> make(const C* ref)
+    { return nub::ref<IoObject>( new ConstIoProxy(ref), nub::PRIVATE ); }
 
   virtual void readFrom(Reader& reader)
     { itsReferand->C::readFrom(reader); }
@@ -115,18 +115,18 @@ public:
   virtual VersionId serialVersionId() const
     { return itsReferand->C::serialVersionId(); }
 
-  virtual rutz::fstring objTypename() const
+  virtual rutz::fstring obj_typename() const
     { return rutz::demangled_name(typeid(C)); }
 
 private:
   ConstIoProxy(const ConstIoProxy&);
   ConstIoProxy& operator=(const ConstIoProxy&);
 
-  Nub::Ref<C> itsReferand;
+  nub::ref<C> itsReferand;
 };
 
 template <class C>
-inline Nub::Ref<const IoObject> makeConstProxy(const C* ref)
+inline nub::ref<const IoObject> makeConstProxy(const C* ref)
   { return ConstIoProxy<C>::make(ref); }
 
 

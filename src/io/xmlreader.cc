@@ -63,8 +63,8 @@ GVX_DBG_REGISTER
 using rutz::fstring;
 using rutz::shared_ptr;
 
-using Nub::Ref;
-using Nub::SoftRef;
+using nub::ref;
+using nub::soft_ref;
 
 namespace
 {
@@ -269,10 +269,10 @@ namespace
       os << name << "(objref:" << itsType << ") id=" << itsId << "\n";
     }
 
-    SoftRef<IO::IoObject> getObject()
+    soft_ref<IO::IoObject> getObject()
     {
       if (itsId == 0)
-        return SoftRef<IO::IoObject>();
+        return soft_ref<IO::IoObject>();
       // else...
       return itsObjects->getObject(itsId);
     }
@@ -362,15 +362,15 @@ namespace
       defaultReadRawData(name, data);
     }
 
-    virtual Ref<IO::IoObject> readObject(const fstring& name)
+    virtual ref<IO::IoObject> readObject(const fstring& name)
     {
       return readMaybeObject(name);
     }
 
-    virtual SoftRef<IO::IoObject> readMaybeObject(const fstring& name);
+    virtual soft_ref<IO::IoObject> readMaybeObject(const fstring& name);
 
     virtual void readOwnedObject(const fstring& name,
-                                 Ref<IO::IoObject> obj)
+                                 ref<IO::IoObject> obj)
     {
       ElPtr el = itsElems[name];
       GroupElement& glp = elementCast<GroupElement>(el.get(), name, SRC_POS);
@@ -378,16 +378,16 @@ namespace
     }
 
     virtual void readBaseClass(const fstring& name,
-                               Ref<IO::IoObject> basePart)
+                               ref<IO::IoObject> basePart)
     {
       ElPtr el = itsElems[name];
       GroupElement& glp = elementCast<GroupElement>(el.get(), name, SRC_POS);
       glp.inflate(*basePart);
     }
 
-    virtual Ref<IO::IoObject> readRoot(IO::IoObject* /*root*/)
+    virtual ref<IO::IoObject> readRoot(IO::IoObject* /*root*/)
     {
-      GVX_ASSERT(0); return Ref<IO::IoObject>(static_cast<IO::IoObject*>(0));
+      GVX_ASSERT(0); return ref<IO::IoObject>(static_cast<IO::IoObject*>(0));
     }
 
     void inflate(IO::IoObject& obj)
@@ -420,16 +420,16 @@ namespace
       itsObject = objmap->fetchObject(itsType.c_str(), itsId);
     }
 
-    SoftRef<IO::IoObject> itsObject;
+    soft_ref<IO::IoObject> itsObject;
 
     virtual void finish()
     {
-      if (itsObject.isValid())
+      if (itsObject.is_valid())
         inflate(*itsObject);
     }
   };
 
-  SoftRef<IO::IoObject> GroupElement::readMaybeObject(const fstring& name)
+  soft_ref<IO::IoObject> GroupElement::readMaybeObject(const fstring& name)
   {
     ElPtr el = itsElems[name];
     ObjrefElement& olp = elementCast<ObjrefElement>(el.get(), name, SRC_POS);
@@ -577,7 +577,7 @@ namespace
 } // end anonymous namespace
 
 
-Nub::Ref<IO::IoObject> IO::loadGVX(const char* filename)
+nub::ref<IO::IoObject> IO::loadGVX(const char* filename)
 {
 GVX_TRACE("IO::loadGVX");
   shared_ptr<std::istream> ifs(rutz::igzopen(filename));

@@ -51,7 +51,7 @@ GVX_DBG_REGISTER
 //
 ///////////////////////////////////////////////////////////////////////
 
-GxScene::GxScene(Nub::SoftRef<Gfx::Canvas> canvas) :
+GxScene::GxScene(nub::soft_ref<Gfx::Canvas> canvas) :
   itsCanvas(canvas),
   itsDrawNode(GxEmptyNode::make()),
   itsUndrawNode(GxEmptyNode::make()),
@@ -64,10 +64,10 @@ GxScene::GxScene(Nub::SoftRef<Gfx::Canvas> canvas) :
   isItRefreshed(false),
   itsScheduler(rutz::make_shared(new Tcl::TimerScheduler)),
   itsTimer(100, true),
-  slotNodeChanged(Nub::Slot0::make(this, &GxScene::onNodeChange))
+  slotNodeChanged(nub::slot0::make(this, &GxScene::onNodeChange))
 {
 GVX_TRACE("GxScene::GxScene");
-  itsTimer.sigTimeOut.connect(this, &GxScene::fullRender);
+  itsTimer.sig_timeout.connect(this, &GxScene::fullRender);
   itsCamera->sigNodeChanged.connect(slotNodeChanged);
 }
 
@@ -130,8 +130,8 @@ void GxScene::clearscreen()
 {
 GVX_TRACE("GxScene::clearscreen");
   itsCanvas->clearColorBuffer();
-  setDrawable(Nub::Ref<GxNode>(GxEmptyNode::make()));
-  itsUndrawNode = Nub::Ref<GxNode>(GxEmptyNode::make());
+  setDrawable(nub::ref<GxNode>(GxEmptyNode::make()));
+  itsUndrawNode = nub::ref<GxNode>(GxEmptyNode::make());
   isItVisible = false;
 }
 
@@ -152,7 +152,7 @@ GVX_TRACE("GxScene::setVisibility");
     }
 }
 
-void GxScene::setCamera(const Nub::Ref<GxCamera>& cam)
+void GxScene::setCamera(const nub::ref<GxCamera>& cam)
 {
 GVX_TRACE("GxScene::setCamera");
   itsCamera->sigNodeChanged.disconnect(slotNodeChanged);
@@ -166,7 +166,7 @@ GVX_TRACE("GxScene::setCamera");
   fullRender();
 }
 
-void GxScene::setDrawable(const Nub::Ref<GxNode>& node)
+void GxScene::setDrawable(const nub::ref<GxNode>& node)
 {
 GVX_TRACE("GxScene::setDrawable");
   itsDrawNode->sigNodeChanged.disconnect(slotNodeChanged);
@@ -210,7 +210,7 @@ GVX_TRACE("GxScene::animate");
     }
   else
     {
-      itsTimer.setDelayMsec(static_cast<unsigned int>(1000.0/framesPerSecond));
+      itsTimer.set_delay_msec(static_cast<unsigned int>(1000.0/framesPerSecond));
       itsTimer.schedule(itsScheduler);
     }
 }

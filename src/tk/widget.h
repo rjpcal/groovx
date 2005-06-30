@@ -80,7 +80,7 @@ class TkWidgImpl;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TkWidget : public virtual Nub::Object
+class Tcl::TkWidget : public virtual nub::object
 {
 public:
   /// Build a TkWidget; calls Tk_CreateWindowFromPath() internally.
@@ -159,8 +159,8 @@ public:
 
   void hook();
 
-  Nub::Signal1<const Tcl::ButtonPressEvent&> sigButtonPressed;
-  Nub::Signal1<const Tcl::KeyPressEvent&> sigKeyPressed;
+  nub::Signal1<const Tcl::ButtonPressEvent&> sigButtonPressed;
+  nub::Signal1<const Tcl::KeyPressEvent&> sigKeyPressed;
 
 private:
   TkWidget(const TkWidget&);

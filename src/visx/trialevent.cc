@@ -80,7 +80,7 @@ TrialEvent::TrialEvent(unsigned int msec) :
 {
 GVX_TRACE("TrialEvent::TrialEvent");
 
-  itsTimer.sigTimeOut.connect(this, &TrialEvent::invokeTemplate);
+  itsTimer.sig_timeout.connect(this, &TrialEvent::invokeTemplate);
 }
 
 TrialEvent::~TrialEvent() throw()
@@ -111,7 +111,7 @@ GVX_TRACE("TrialEvent::writeTo");
   writer.writeValue("requestedDelay", itsRequestedDelay);
 }
 
-unsigned int TrialEvent::schedule(rutz::shared_ptr<Nub::Scheduler> s,
+unsigned int TrialEvent::schedule(rutz::shared_ptr<nub::scheduler> s,
                                   Trial& trial,
                                   unsigned int minimum_msec)
 {
@@ -132,7 +132,7 @@ GVX_TRACE("TrialEvent::schedule");
       rutz::max(int(itsRequestedDelay) + int(itsEstimatedOffset),
                 int(minimum_msec));
 
-  itsTimer.setDelayMsec(actual_request);
+  itsTimer.set_delay_msec(actual_request);
   itsTimer.schedule(s);
 
   return actual_request;
@@ -148,12 +148,12 @@ void TrialEvent::invokeTemplate()
 {
 GVX_TRACE("TrialEvent::invokeTemplate");
 
-  const double msec = itsTimer.elapsedMsec();
-  const double error = itsTimer.delayMsec() - msec;
+  const double msec = itsTimer.elapsed_msec();
+  const double error = itsTimer.delay_msec() - msec;
 
-  Nub::Log::addObjScope(*this);
+  nub::logging::add_obj_scope(*this);
 
-  Nub::log( fstring("req ", itsRequestedDelay,
+  nub::log( fstring("req ", itsRequestedDelay,
                     " - ", -itsEstimatedOffset) );
 
   itsTotalOffset += error;
@@ -177,7 +177,7 @@ GVX_TRACE("TrialEvent::invokeTemplate");
       invoke(*itsTrial);
     }
 
-  Nub::Log::removeObjScope(*this);
+  nub::logging::remove_obj_scope(*this);
 }
 
 //---------------------------------------------------------------------
@@ -198,7 +198,7 @@ void NullTrialEvent::invoke(Trial&) {}
 //
 //---------------------------------------------------------------------
 
-fstring TrialMemFuncEvent::objTypename() const
+fstring TrialMemFuncEvent::obj_typename() const
 {
   return itsTypename;
 }
@@ -268,14 +268,14 @@ void FileWriteEvent::invoke(Trial& /*trial*/)
     {
       itsFile->stream().put(static_cast<char>(itsByte));
       itsFile->stream().flush();
-      Nub::log( fstring("wrote '", itsByte, "' to '",
+      nub::log( fstring("wrote '", itsByte, "' to '",
                         itsFile->getFilename(), "'") );
     }
 }
 
 void FileWriteEvent::readFrom(IO::Reader& reader)
 {
-  itsFile = dynCast<OutputFile>(reader.readObject("file"));
+  itsFile = dyn_cast<OutputFile>(reader.readObject("file"));
   reader.readValue("byte", itsByte);
 
   reader.readBaseClass("TrialEvent",
@@ -301,12 +301,12 @@ void FileWriteEvent::setByte(int b)
   itsByte = b;
 }
 
-Nub::Ref<OutputFile> FileWriteEvent::getFile() const
+nub::ref<OutputFile> FileWriteEvent::getFile() const
 {
   return itsFile;
 }
 
-void FileWriteEvent::setFile(Nub::Ref<OutputFile> file)
+void FileWriteEvent::setFile(nub::ref<OutputFile> file)
 {
   itsFile = file;
 }
@@ -379,7 +379,7 @@ void MultiEvent::invoke(Trial& trial)
 
 void MultiEvent::readFrom(IO::Reader& reader)
 {
-  std::vector<Nub::Ref<TrialEvent> > newEvents;
+  std::vector<nub::ref<TrialEvent> > newEvents;
 
   IO::ReadUtils::readObjectSeq<TrialEvent>
     (reader, "events", std::back_inserter(newEvents));
@@ -399,16 +399,16 @@ void MultiEvent::writeTo(IO::Writer& writer) const
                         IO::makeConstProxy<TrialEvent>(this));
 }
 
-rutz::fwd_iter<const Nub::Ref<TrialEvent> >
+rutz::fwd_iter<const nub::ref<TrialEvent> >
 MultiEvent::getEvents() const
 {
 GVX_TRACE("MultiEvent::getEvents");
 
-  return rutz::fwd_iter<const Nub::Ref<TrialEvent> >
+  return rutz::fwd_iter<const nub::ref<TrialEvent> >
     (itsEvents.begin(), itsEvents.end());
 }
 
-unsigned int MultiEvent::addEvent(Nub::Ref<TrialEvent> event)
+unsigned int MultiEvent::addEvent(nub::ref<TrialEvent> event)
 {
 GVX_TRACE("MultiEvent::addEvent");
   itsEvents.push_back(event);

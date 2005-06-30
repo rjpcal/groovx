@@ -54,14 +54,14 @@
 GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
-using Nub::Ref;
+using nub::ref;
 
 class ElementContainer::Impl
 {
 public:
   Impl() : elements(), randSeed(0), sequencePos(0) {}
 
-  std::vector<Ref<Element> > elements;
+  std::vector<ref<Element> > elements;
 
   int randSeed;                 // Random seed used to create element sequence
   unsigned int sequencePos;     // Index of the current element
@@ -138,7 +138,7 @@ GVX_TRACE("ElementContainer::lastResponse");
   if (rep->sequencePos == 0 ||
       rep->elements.size() == 0) return -1;
 
-  Ref<Element> prev_element = rep->elements.at(rep->sequencePos-1);
+  ref<Element> prev_element = rep->elements.at(rep->sequencePos-1);
 
   return prev_element->lastResponse();
 }
@@ -149,7 +149,7 @@ GVX_TRACE("ElementContainer::vxInfo");
   if (isComplete()) return rutz::fstring("complete");
 
   rutz::fstring msg("current element ",
-                    currentElement()->uniqueName(),
+                    currentElement()->unique_name(),
                     ", completed ", numCompleted(),
                     " of ", numElements());
 
@@ -193,7 +193,7 @@ GVX_TRACE("ExptDriver::vxReturn");
       {
         // Remember the element that we are about to abort so we can
         // store it at the end of the sequence.
-        Ref<Element> aborted_element = currentElement();
+        ref<Element> aborted_element = currentElement();
 
         // Erase the aborted element from the sequence. Subsequent elements
         // will slide up to fill in the gap.
@@ -223,7 +223,7 @@ GVX_TRACE("ExptDriver::vxReturn");
     }
   else
     {
-      Nub::log( vxInfo() );
+      nub::log( vxInfo() );
 
       currentElement()->vxRun(*this);
     }
@@ -254,11 +254,11 @@ void ElementContainer::vxReset()
 GVX_TRACE("ElementContainer::vxReset");
   vxHalt();
 
-  Nub::log("ElementContainer::vxReset");
+  nub::log("ElementContainer::vxReset");
 
   for (unsigned int i = 0; i < rep->elements.size(); ++i)
     {
-      Nub::log(rutz::fstring("resetting element", i));
+      nub::log(rutz::fstring("resetting element", i));
       rep->elements[i]->vxReset();
     }
 
@@ -272,7 +272,7 @@ GVX_TRACE("ElementContainer::vxReset");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void ElementContainer::addElement(Ref<Element> element, unsigned int repeat)
+void ElementContainer::addElement(ref<Element> element, unsigned int repeat)
 {
 GVX_TRACE("ElementContainer::addElement");
 
@@ -316,11 +316,11 @@ GVX_TRACE("ElementContainer::clearElements");
   rep->sequencePos = 0;
 }
 
-Nub::SoftRef<Element> ElementContainer::currentElement() const
+nub::soft_ref<Element> ElementContainer::currentElement() const
 {
 GVX_TRACE("ElementContainer::currentElement");
   if (rep->sequencePos >= rep->elements.size())
-    return Nub::SoftRef<Element>();
+    return nub::soft_ref<Element>();
 
   return rep->elements.at(rep->sequencePos);
 }
@@ -337,12 +337,12 @@ GVX_TRACE("ElementContainer::numCompleted");
   return rep->sequencePos;
 }
 
-rutz::fwd_iter<const Nub::Ref<Element> >
+rutz::fwd_iter<const nub::ref<Element> >
 ElementContainer::getElements() const
 {
 GVX_TRACE("ElementContainer::getElements");
 
-  return rutz::fwd_iter<const Nub::Ref<Element> >
+  return rutz::fwd_iter<const nub::ref<Element> >
     (rep->elements.begin(), rep->elements.end());
 }
 

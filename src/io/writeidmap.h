@@ -39,10 +39,10 @@
 
 namespace IO
 {
-  /// Translate UIDs into a repeatable id sequence for the XML file.
-  /** This way, we can guarantee that, a given object hierarchy will always
-      produce the same XML file, regardless of what the UIDs happen to
-      be. */
+  /// Translate nub::uid values into a repeatable id sequence for the XML file.
+  /** This way, we can guarantee that a given object hierarchy will
+      always produce the same XML file, regardless of what the
+      nub::uid values happen to be. */
   class WriteIdMap
   {
   public:
@@ -51,7 +51,7 @@ namespace IO
       itsNextId(1)
     {}
 
-    int get(Nub::UID uid) const
+    int get(nub::uid uid) const
     {
       if (uid == 0) return 0;
 
@@ -69,7 +69,7 @@ namespace IO
     }
 
   private:
-    typedef std::map<Nub::UID, int> MapType;
+    typedef std::map<nub::uid, int> MapType;
     mutable MapType itsMap;
     mutable int itsNextId;
   };

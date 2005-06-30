@@ -49,7 +49,7 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-GxBounds::GxBounds(Nub::SoftRef<GxNode> child) :
+GxBounds::GxBounds(nub::soft_ref<GxNode> child) :
   GxBin(child),
   isItVisible(false),
   isItAnimated(true),

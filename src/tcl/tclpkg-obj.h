@@ -35,7 +35,7 @@
 
 struct Tcl_Interp;
 
-extern "C" int Objdb_Init(Tcl_Interp* interp);
+extern "C" int Objectdb_Init(Tcl_Interp* interp);
 extern "C" int Obj_Init(Tcl_Interp* interp);
 
 static const char vcid_groovx_tcl_tclpkg_obj_h_utc20050628161246[] = "$Id$ $HeadURL$";

@@ -47,95 +47,95 @@ GVX_DBG_REGISTER
 
 using rutz::shared_ptr;
 
-Nub::InvalidIdError::InvalidIdError(Nub::UID id,
+nub::invalid_uid_error::invalid_uid_error(nub::uid id,
                                     const rutz::file_pos& pos)
   :
   rutz::error(rutz::fstring("attempted to access "
                             "invalid object '", id, "'"), pos)
 {}
 
-Nub::InvalidIdError::~InvalidIdError() throw() {}
+nub::invalid_uid_error::~invalid_uid_error() throw() {}
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Nub::ObjDb::Impl definition
+// nub::objectdb::impl definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Nub::ObjDb::Impl
+class nub::objectdb::impl
 {
 private:
-  Impl(const Impl&);
-  Impl& operator=(const Impl&);
+  impl(const impl&);
+  impl& operator=(const impl&);
 
 public:
 
-  typedef Nub::SoftRef<Nub::Object> ObjRef;
+  typedef nub::soft_ref<nub::object> obj_ref;
 
-  typedef std::map<Nub::UID, ObjRef> MapType;
-  mutable MapType itsPtrMap;
+  typedef std::map<nub::uid, obj_ref> map_type;
+  mutable map_type m_obj_map;
 
-  Impl() : itsPtrMap() {}
+  impl() : m_obj_map() {}
 
   // Check whether the iterator points to a valid spot in the map, AND
   // that it points to a still-living object. If the object has died,
   // then we erase the iterator.
-  bool isValidItr(MapType::iterator itr) const throw()
+  bool is_valid_itr(map_type::iterator itr) const throw()
   {
-    if (itr == itsPtrMap.end()) return false;
+    if (itr == m_obj_map.end()) return false;
 
-    if ((*itr).second.isInvalid())
+    if ((*itr).second.is_invalid())
       {
-        itsPtrMap.erase(itr);
+        m_obj_map.erase(itr);
         return false;
       }
 
     return true;
   }
 
-  bool isValidId(Nub::UID id) const throw()
+  bool is_valid_uid(nub::uid id) const throw()
     {
-      MapType::iterator itr = itsPtrMap.find(id);
-      return isValidItr(itr);
+      map_type::iterator itr = m_obj_map.find(id);
+      return is_valid_itr(itr);
     }
 
   int count() const throw()
-    { return itsPtrMap.size(); }
+    { return m_obj_map.size(); }
 
-  void release(Nub::UID id)
+  void release(nub::uid id)
     {
-      MapType::iterator itr = itsPtrMap.find(id);
+      map_type::iterator itr = m_obj_map.find(id);
 
-      itsPtrMap.erase(itr);
+      m_obj_map.erase(itr);
     }
 
-  void remove(Nub::UID id)
+  void remove(nub::uid id)
     {
-      MapType::iterator itr = itsPtrMap.find(id);
-      if (!isValidItr(itr)) return;
+      map_type::iterator itr = m_obj_map.find(id);
+      if (!is_valid_itr(itr)) return;
 
-      if ( (*itr).second.get()->isShared() )
+      if ( (*itr).second.get()->is_shared() )
         throw rutz::error("attempted to remove a shared object", SRC_POS);
 
-      itsPtrMap.erase(itr);
+      m_obj_map.erase(itr);
     }
 
   // Return the number of items removed
   int purge()
     {
-      MapType new_map;
+      map_type new_map;
 
       int num_removed = 0;
 
-      for (MapType::iterator
-             itr = itsPtrMap.begin(),
-             end = itsPtrMap.end();
+      for (map_type::iterator
+             itr = m_obj_map.begin(),
+             end = m_obj_map.end();
            itr != end;
            ++itr)
         {
           // If the object is shared, we'll be saving the object, so
           // copy it into the new_map,
-          if ( isValidItr(itr) && (*itr).second.get()->isShared() )
+          if ( is_valid_itr(itr) && (*itr).second.get()->is_shared() )
             {
               new_map.insert(*itr);
             }
@@ -146,18 +146,18 @@ public:
         }
 
       // Now swap maps so that the old map gets cleared and everything erased
-      itsPtrMap.swap(new_map);
+      m_obj_map.swap(new_map);
       return num_removed;
     }
 
-  void clearAll()
+  void clear_all()
     {
-      itsPtrMap.clear();
+      m_obj_map.clear();
 
 #if 0 // an alternate implementation for verbose debugging:
-      while (!itsPtrMap.empty())
+      while (!m_obj_map.empty())
         {
-          MapType::iterator it = itsPtrMap.begin();
+          map_type::iterator it = m_obj_map.begin();
 
           if ((*it).second.is_valid())
             {
@@ -165,29 +165,29 @@ public:
               dbg_eval_nl(3, (*it).second->id());
             }
 
-          itsPtrMap.erase(it);
+          m_obj_map.erase(it);
         }
 #endif
     }
 
-  Nub::Object* getCheckedObj(Nub::UID id) throw (Nub::InvalidIdError)
+  nub::object* get_checked_obj(nub::uid id) throw (nub::invalid_uid_error)
     {
-      MapType::iterator itr = itsPtrMap.find(id);
-      if (!isValidItr(itr))
+      map_type::iterator itr = m_obj_map.find(id);
+      if (!is_valid_itr(itr))
         {
-          throw Nub::InvalidIdError(id, SRC_POS);
+          throw nub::invalid_uid_error(id, SRC_POS);
         }
 
       return (*itr).second.get();
     }
 
-  void insertObj(Nub::Object* ptr, bool strong)
+  void insert_obj(nub::object* ptr, bool strong)
     {
       GVX_PRECONDITION(ptr != 0);
 
       // Check if the object is already in the map
-      MapType::iterator existing_site = itsPtrMap.find(ptr->id());
-      if (existing_site != itsPtrMap.end())
+      map_type::iterator existing_site = m_obj_map.find(ptr->id());
+      if (existing_site != m_obj_map.end())
         {
           // Make sure the existing object is the same as the object
           // that we're trying to insert
@@ -196,171 +196,171 @@ public:
 
       const int new_id = ptr->id();
 
-      // Must create the ObjRef with "PRIVATE" to avoid endless recursion
-      itsPtrMap.insert(MapType::value_type
-                       (new_id, ObjRef(ptr,
-                                       strong ? Nub::STRONG : Nub::WEAK,
-                                       Nub::PRIVATE)));
+      // Must create the obj_ref with "PRIVATE" to avoid endless recursion
+      m_obj_map.insert(map_type::value_type
+                       (new_id, obj_ref(ptr,
+                                        strong ? nub::STRONG : nub::WEAK,
+                                        nub::PRIVATE)));
     }
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Nub::ObjDb::Iterator definitions
+// nub::objectdb::iterator definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
 namespace
 {
-  class ObjDbIter :
-    public rutz::fwd_iter_ifx<const Nub::SoftRef<Nub::Object> >
+  class iter_impl :
+    public rutz::fwd_iter_ifx<const nub::soft_ref<nub::object> >
   {
   public:
-    typedef Nub::ObjDb::Impl::MapType MapType;
+    typedef nub::objectdb::impl::map_type map_type;
 
-    void advanceToValid()
+    void advance_to_valid()
     {
       while (true)
         {
-          if (itsIter == itsEnd) break;
+          if (m_iter == m_end) break;
 
-          if ((*itsIter).second.isValid()) break;
+          if ((*m_iter).second.is_valid()) break;
 
-          MapType::iterator bad = itsIter;
-          ++itsIter;
+          map_type::iterator bad = m_iter;
+          ++m_iter;
 
-          itsMap.erase(bad);
+          m_map.erase(bad);
         }
     }
 
-    ObjDbIter(MapType& m, MapType::iterator itr) :
-      itsMap(m), itsIter(itr), itsEnd(m.end())
+    iter_impl(map_type& m, map_type::iterator itr) :
+      m_map(m), m_iter(itr), m_end(m.end())
     {
-      advanceToValid();
+      advance_to_valid();
     }
 
-    MapType& itsMap;
-    MapType::iterator itsIter;
-    const MapType::iterator itsEnd;
+    map_type& m_map;
+    map_type::iterator m_iter;
+    const map_type::iterator m_end;
 
     virtual ifx_t* clone() const
     {
-      return new ObjDbIter(itsMap, itsIter);
+      return new iter_impl(m_map, m_iter);
     }
 
     virtual void next()
     {
       if (!at_end())
         {
-          ++itsIter;
-          advanceToValid();
+          ++m_iter;
+          advance_to_valid();
         }
     }
 
-    virtual value_t& get()  const { return (*itsIter).second; }
+    virtual value_t& get()  const { return (*m_iter).second; }
 
-    virtual bool  at_end() const { return (itsIter == itsEnd); }
+    virtual bool  at_end() const { return (m_iter == m_end); }
   };
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Nub::ObjDb member definitions
+// nub::objectdb member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Nub::ObjDb& Nub::ObjDb::theDb()
+nub::objectdb& nub::objectdb::instance()
 {
-  static Nub::ObjDb* instance = 0;
+  static nub::objectdb* instance = 0;
   if (instance == 0)
     {
-      instance = new Nub::ObjDb;
+      instance = new nub::objectdb;
     }
   return *instance;
 }
 
-Nub::ObjDb::Iterator Nub::ObjDb::objects() const
+nub::objectdb::iterator nub::objectdb::objects() const
 {
-GVX_TRACE("Nub::ObjDb::children");
+GVX_TRACE("nub::objectdb::children");
 
- return shared_ptr<Nub::ObjDb::Iterator::ifx_t>
-   (new ObjDbIter(rep->itsPtrMap, rep->itsPtrMap.begin()));
+ return shared_ptr<nub::objectdb::iterator::ifx_t>
+   (new iter_impl(rep->m_obj_map, rep->m_obj_map.begin()));
 }
 
-Nub::ObjDb::ObjDb() :
-  rep(new Impl)
+nub::objectdb::objectdb() :
+  rep(new impl)
 {
-GVX_TRACE("Nub::ObjDb::ObjDb");
+GVX_TRACE("nub::objectdb::objectdb");
 }
 
-Nub::ObjDb::~ObjDb()
+nub::objectdb::~objectdb()
 {
-GVX_TRACE("Nub::ObjDb::~ObjDb");
+GVX_TRACE("nub::objectdb::~objectdb");
   delete rep;
 }
 
-int Nub::ObjDb::count() const throw()
+int nub::objectdb::count() const throw()
 {
-GVX_TRACE("Nub::ObjDb::count");
+GVX_TRACE("nub::objectdb::count");
 
   return rep->count();
 }
 
-bool Nub::ObjDb::isValidId(Nub::UID id) const throw()
+bool nub::objectdb::is_valid_uid(nub::uid id) const throw()
 {
-GVX_TRACE("Nub::ObjDb::isValidId");
-  return rep->isValidId(id);
+GVX_TRACE("nub::objectdb::is_valid_uid");
+  return rep->is_valid_uid(id);
 }
 
-void Nub::ObjDb::remove(Nub::UID id)
+void nub::objectdb::remove(nub::uid id)
 {
-GVX_TRACE("Nub::ObjDb::remove");
+GVX_TRACE("nub::objectdb::remove");
   rep->remove(id);
 }
 
-void Nub::ObjDb::release(Nub::UID id)
+void nub::objectdb::release(nub::uid id)
 {
-GVX_TRACE("Nub::ObjDb::release");
+GVX_TRACE("nub::objectdb::release");
   rep->release(id);
 }
 
-void Nub::ObjDb::purge()
+void nub::objectdb::purge()
 {
-GVX_TRACE("Nub::ObjDb::clear");
+GVX_TRACE("nub::objectdb::clear");
   dbg_eval_nl(3, typeid(*this).name());
   rep->purge();
 }
 
-void Nub::ObjDb::clear()
+void nub::objectdb::clear()
 {
-GVX_TRACE("Nub::ObjDb::clear");
+GVX_TRACE("nub::objectdb::clear");
   // Call purge until no more items can be removed
   while ( rep->purge() != 0 )
     { ; }
 }
 
-void Nub::ObjDb::clearOnExit()
+void nub::objectdb::clear_on_exit()
 {
-GVX_TRACE("Nub::ObjDb::clearOnExit");
-  rep->clearAll();
+GVX_TRACE("nub::objectdb::clear_on_exit");
+  rep->clear_all();
 }
 
-Nub::Object* Nub::ObjDb::getCheckedObj(Nub::UID id) throw (Nub::InvalidIdError)
+nub::object* nub::objectdb::get_checked_obj(nub::uid id) throw (nub::invalid_uid_error)
 {
-GVX_TRACE("Nub::ObjDb::getCheckedObj");
-  return rep->getCheckedObj(id);
+GVX_TRACE("nub::objectdb::get_checked_obj");
+  return rep->get_checked_obj(id);
 }
 
-void Nub::ObjDb::insertObj(Nub::Object* obj)
+void nub::objectdb::insert_obj(nub::object* obj)
 {
-GVX_TRACE("Nub::ObjDb::insertObj");
-  rep->insertObj(obj, true);
+GVX_TRACE("nub::objectdb::insert_obj");
+  rep->insert_obj(obj, true);
 }
 
-void Nub::ObjDb::insertObjWeak(Nub::Object* obj)
+void nub::objectdb::insert_obj_weak(nub::object* obj)
 {
-GVX_TRACE("Nub::ObjDb::insertObjWeak");
-  rep->insertObj(obj, false);
+GVX_TRACE("nub::objectdb::insert_obj_weak");
+  rep->insert_obj(obj, false);
 }
 
 static const char vcid_groovx_nub_objdb_cc_utc20050626084019[] = "$Id$ $HeadURL$";

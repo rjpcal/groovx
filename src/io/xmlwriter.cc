@@ -55,8 +55,8 @@ GVX_DBG_REGISTER
 
 using rutz::shared_ptr;
 
-using Nub::Ref;
-using Nub::SoftRef;
+using nub::ref;
+using nub::soft_ref;
 
 class XMLWriter : public IO::Writer
 {
@@ -78,13 +78,13 @@ public:
                             unsigned int length);
 
   virtual void writeObject(const char* name,
-                           Nub::SoftRef<const IO::IoObject> obj);
+                           nub::soft_ref<const IO::IoObject> obj);
 
   virtual void writeOwnedObject(const char* name,
-                                Nub::Ref<const IO::IoObject> obj);
+                                nub::ref<const IO::IoObject> obj);
 
   virtual void writeBaseClass(const char* baseClassName,
-                              Nub::Ref<const IO::IoObject> basePart);
+                              nub::ref<const IO::IoObject> basePart);
 
   virtual void writeRoot(const IO::IoObject* root);
 
@@ -102,15 +102,15 @@ private:
            << " value=\"" << val << "\"/>\n";
   }
 
-  void flattenObject(SoftRef<const IO::IoObject> obj, const char* name,
+  void flattenObject(soft_ref<const IO::IoObject> obj, const char* name,
                      const char* xmltype);
 
-  bool alreadyWritten(SoftRef<const IO::IoObject> obj) const
+  bool alreadyWritten(soft_ref<const IO::IoObject> obj) const
   {
     return ( itsWrittenObjects.find(obj.id()) != itsWrittenObjects.end() );
   }
 
-  void markObjectAsWritten(SoftRef<const IO::IoObject> obj)
+  void markObjectAsWritten(soft_ref<const IO::IoObject> obj)
   {
     itsWrittenObjects.insert(obj.id());
   }
@@ -125,7 +125,7 @@ private:
 
   shared_ptr<std::ostream> itsOwnedStream;
   std::ostream& itsBuf;
-  std::set<Nub::UID> itsWrittenObjects;
+  std::set<nub::uid> itsWrittenObjects;
   int itsNestLevel;
   IO::WriteIdMap itsIdMap;
 };
@@ -204,18 +204,18 @@ GVX_TRACE("XMLWriter::writeRawData");
 }
 
 void XMLWriter::writeObject(const char* name,
-                            SoftRef<const IO::IoObject> obj)
+                            soft_ref<const IO::IoObject> obj)
 {
 GVX_TRACE("XMLWriter::writeObject");
 
-  if (obj.isValid())
+  if (obj.is_valid())
     {
       GVX_ASSERT(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
 
       if (alreadyWritten(obj))
         {
           indent();
-          itsBuf << "<objref type=\"" << obj->objTypename() << "\""
+          itsBuf << "<objref type=\"" << obj->obj_typename() << "\""
                  << " id=\"" << itsIdMap.get(obj->id()) << "\""
                  << " name=\"" << name << "\"/>\n";
         }
@@ -232,7 +232,7 @@ GVX_TRACE("XMLWriter::writeObject");
 }
 
 void XMLWriter::writeOwnedObject(const char* name,
-                                 Ref<const IO::IoObject> obj)
+                                 ref<const IO::IoObject> obj)
 {
 GVX_TRACE("XMLWriter::writeOwnedObject");
 
@@ -240,7 +240,7 @@ GVX_TRACE("XMLWriter::writeOwnedObject");
 }
 
 void XMLWriter::writeBaseClass(const char* baseClassName,
-                               Ref<const IO::IoObject> basePart)
+                               ref<const IO::IoObject> basePart)
 {
 GVX_TRACE("XMLWriter::writeBaseClass");
 
@@ -254,7 +254,7 @@ GVX_TRACE("XMLWriter::writeRoot");
   itsBuf << "<?xml version=\"1.0\"?>\n"
          << "<!-- GroovX XML 1 -->\n";
 
-  flattenObject(SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root)),
+  flattenObject(soft_ref<IO::IoObject>(const_cast<IO::IoObject*>(root)),
                 "root", "object");
 
   itsBuf.flush();
@@ -278,13 +278,13 @@ GVX_TRACE("XMLWriter::writeCstring");
     }
 }
 
-void XMLWriter::flattenObject(SoftRef<const IO::IoObject> obj,
+void XMLWriter::flattenObject(soft_ref<const IO::IoObject> obj,
                               const char* name, const char* xmltype)
 {
 GVX_TRACE("XMLWriter::flattenObject");
 
   indent();
-  itsBuf << "<" << xmltype << " type=\"" << obj->objTypename() << "\""
+  itsBuf << "<" << xmltype << " type=\"" << obj->obj_typename() << "\""
          << " id=\"" << itsIdMap.get(obj->id()) << "\""
          << " name=\"" << name << "\""
          << " version=\"" << obj->serialVersionId() << "\">\n";

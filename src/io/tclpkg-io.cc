@@ -52,7 +52,7 @@
 
 #include "rutz/trace.h"
 
-using Nub::Ref;
+using nub::ref;
 
 namespace
 {
@@ -85,7 +85,7 @@ namespace
 
         IO::LegacyReader reader(ifs);
 
-        Ref<IO::IoObject> obj(reader.readRoot(0));
+        ref<IO::IoObject> obj(reader.readRoot(0));
 
         result.append(obj.id());
 
@@ -110,9 +110,9 @@ namespace
     IO::LegacyWriter writer(ofs, use_bases);
     writer.usePrettyPrint(false);
 
-    for (Tcl::List::Iterator<Ref<IO::IoObject> >
-           itr = objids.begin<Ref<IO::IoObject> >(),
-           end = objids.end<Ref<IO::IoObject> >();
+    for (Tcl::List::Iterator<ref<IO::IoObject> >
+           itr = objids.begin<ref<IO::IoObject> >(),
+           end = objids.end<ref<IO::IoObject> >();
          itr != end;
          ++itr)
       {

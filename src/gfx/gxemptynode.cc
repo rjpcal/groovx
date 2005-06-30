@@ -53,7 +53,7 @@ GxEmptyNode* GxEmptyNode::make()
   if (p == 0)
     {
       p = new GxEmptyNode;
-      p->incrRefCount();
+      p->incr_ref_count();
     }
 
   return p;

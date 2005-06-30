@@ -63,8 +63,8 @@ GVX_TRACE("Mtx_Init");
   pkg->defGetter<MtxObj, int>("ncols", &mtx::ncols, SRC_POS);
   pkg->defGetter<MtxObj, int>("nelems", &mtx::nelems, SRC_POS);
 
-  Nub::ObjFactory::theOne().register_creator(&MtxObj::make);
-  Nub::ObjFactory::theOne().register_alias("MtxObj", "mtx");
+  nub::obj_factory::instance().register_creator(&MtxObj::make);
+  nub::obj_factory::instance().register_alias("MtxObj", "mtx");
 
   GVX_PKG_RETURN(pkg);
 }

@@ -43,7 +43,7 @@
 #include "tcl/tclpkg-gtrace.h"                   // for Gtrace_Init(), Prof_Init(),
 #include "tcl/tclpkg-log.h"                      // for Log_Init(),
 #include "tcl/tclpkg-misc.h"                     // for Misc_Init(),
-#include "tcl/tclpkg-obj.h"                      // for Objdb_Init(), Obj_Init(), Objdb_Init(), Obj_Init(),
+#include "tcl/tclpkg-obj.h"                      // for Objectdb_Init(), Obj_Init()
 #include "tk/tclpkg-widget.h"                    // for Tkwidget_Init(),
 #include "visx/tclpkg-block.h"                   // for Block_Init(),
 #include "visx/tclpkg-elementcontainer.h"        // for Elementcontainer_Init(),
@@ -124,7 +124,7 @@ static Tcl::PackageInfo GROOVX_PKGS[] =
     { "Nullresponsehdlr",    Nullresponsehdlr_Init,    "4.0", false },
     { "Nulltrialevent",      Nulltrialevent_Init,      "4.0", false },
     { "Obj",                 Obj_Init,                 "4.0", false },
-    { "Objdb",               Objdb_Init,               "4.0", false },
+    { "Objectdb",            Objectdb_Init,            "4.0", false },
     { "Outputfile",          Outputfile_Init,          "4.0", false },
     { "Prof",                Prof_Init,                "4.0", false },
     { "Responsehandler",     Responsehandler_Init,     "4.0", false },

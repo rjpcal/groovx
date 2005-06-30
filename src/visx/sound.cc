@@ -70,28 +70,28 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  Nub::SoftRef<Sound> theOkSound;
-  Nub::SoftRef<Sound> theErrSound;
+  nub::soft_ref<Sound> theOkSound;
+  nub::soft_ref<Sound> theErrSound;
 }
 
-void Sound::setOkSound(Nub::Ref<Sound> ok_sound)
+void Sound::setOkSound(nub::ref<Sound> ok_sound)
 {
   theOkSound = ok_sound;
 }
 
-void Sound::setErrSound(Nub::Ref<Sound> err_sound)
+void Sound::setErrSound(nub::ref<Sound> err_sound)
 {
   theErrSound = err_sound;
 }
 
-Nub::Ref<Sound> Sound::getOkSound()
+nub::ref<Sound> Sound::getOkSound()
 {
-  return Nub::Ref<Sound>(theOkSound.get());
+  return nub::ref<Sound>(theOkSound.get());
 }
 
-Nub::Ref<Sound> Sound::getErrSound()
+nub::ref<Sound> Sound::getErrSound()
 {
-  return Nub::Ref<Sound>(theErrSound.get());
+  return nub::ref<Sound>(theErrSound.get());
 }
 
 Sound* Sound::make()

@@ -23,28 +23,28 @@ test "TlistTcl-Tlist::loadObjidFile" "normal read" {
     set objids [newarr Face 11]
     set posids [newarr GxTransform 4]
     set trials [Tlist::loadObjidFile $::TEST_DIR/objid_file $objids $posids -1]
-    ObjDb::clear
+    objectdb::clear
     llength $trials
 } {^3$}
 test "TlistTcl-Tlist::loadObjidFile" "read with fixed # lines" {
     set objids [newarr Face 11]
     set posids [newarr GxTransform 4]
     set trials [Tlist::loadObjidFile $::TEST_DIR/objid_file $objids $posids 2]
-    ObjDb::clear
+    objectdb::clear
     llength $trials
 } {^2$}
 test "TlistTcl-Tlist::loadObjidFile" "read empty file" {
     set objids [newarr Face 11]
     set posids [newarr GxTransform 4]
     set trials [Tlist::loadObjidFile $::TEST_DIR/empty_file $objids $posids -1]
-    ObjDb::clear
+    objectdb::clear
     llength $trials
 } {^0$}
 test "TlistTcl-Tlist::loadObjidFile" "error on junk text file" {
     set o [newarr Face 11]
     set p [newarr GxTransform 4]
     set trials [Tlist::loadObjidFile $::TEST_DIR/junk_text_file $o $p -1]
-    ObjDb::clear
+    objectdb::clear
     llength $trials
 } {Tlist::loadObjidFile:}
 test "TlistTcl-Tlist::loadObjidFile" "error on junk binary file" {
@@ -53,7 +53,7 @@ test "TlistTcl-Tlist::loadObjidFile" "error on junk binary file" {
     set before [Trial::countAll]
     catch {Tlist::loadObjidFile $::TEST_DIR/junk_bin_file $o $p -1} trials
     set result "[llength $trials] [expr [Trial::countAll]-$before]"
-    ObjDb::clear
+    objectdb::clear
     return $result
 } {^0 0$}
 

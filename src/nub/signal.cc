@@ -48,148 +48,148 @@ GVX_DBG_REGISTER
 
 ///////////////////////////////////////////////////////////////////////
 //
-// SlotBase members
+// slot_base members
 //
 ///////////////////////////////////////////////////////////////////////
 
-Nub::SlotBase::SlotBase()
+nub::slot_base::slot_base()
 {
-GVX_TRACE("Nub::SlotBase::SlotBase");
+GVX_TRACE("nub::slot_base::slot_base");
 }
 
-Nub::SlotBase::~SlotBase() throw()
+nub::slot_base::~slot_base() throw()
 {
-GVX_TRACE("Nub::SlotBase::~SlotBase");
+GVX_TRACE("nub::slot_base::~slot_base");
 }
 
-bool Nub::SlotBase::exists() const
+bool nub::slot_base::exists() const
 {
-GVX_TRACE("Nub::SlotBase::exists");
+GVX_TRACE("nub::slot_base::exists");
   return true;
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Slot0 members
+// slot0 members
 //
 ///////////////////////////////////////////////////////////////////////
 
-Nub::Slot0::Slot0()
+nub::slot0::slot0()
 {
-GVX_TRACE("Nub::Slot0::Slot0");
+GVX_TRACE("nub::slot0::slot0");
 }
 
-Nub::Slot0::~Slot0() throw()
+nub::slot0::~slot0() throw()
 {
-GVX_TRACE("Nub::Slot0::~Slot0");
+GVX_TRACE("nub::slot0::~slot0");
 }
 
-Nub::SoftRef<Nub::Slot0> Nub::Slot0::make(void (*freeFunc)())
+nub::soft_ref<nub::slot0> nub::slot0::make(void (*free_func)())
 {
-GVX_TRACE("Nub::Slot0::make");
+GVX_TRACE("nub::slot0::make");
 
-  return Nub::SoftRef<Slot0>(SlotAdapterFreeFunc0::make(freeFunc));
+  return nub::soft_ref<slot0>(slot_adapter_free_func0::make(free_func));
 }
 
-Nub::SlotAdapterFreeFunc0::SlotAdapterFreeFunc0(FreeFunc* f)
-  : itsFreeFunc(f)
+nub::slot_adapter_free_func0::slot_adapter_free_func0(free_func* f)
+  : m_free_func(f)
 {}
 
-Nub::SlotAdapterFreeFunc0::~SlotAdapterFreeFunc0() throw() {}
+nub::slot_adapter_free_func0::~slot_adapter_free_func0() throw() {}
 
-Nub::SlotAdapterFreeFunc0*
-Nub::SlotAdapterFreeFunc0::make(FreeFunc* f)
+nub::slot_adapter_free_func0*
+nub::slot_adapter_free_func0::make(free_func* f)
 {
-  return new SlotAdapterFreeFunc0(f);
+  return new slot_adapter_free_func0(f);
 }
 
-void Nub::SlotAdapterFreeFunc0::call()
+void nub::slot_adapter_free_func0::call()
 {
-  (*itsFreeFunc)();
+  (*m_free_func)();
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// SignalBase::Impl class
+// signal_base::impl class
 //
 ///////////////////////////////////////////////////////////////////////
 
 namespace
 {
-  typedef Nub::Ref<Nub::SlotBase> SlotRef;
+  typedef nub::ref<nub::slot_base> slot_ref;
 }
 
-struct Nub::SignalBase::Impl
+struct nub::signal_base::impl
 {
 public:
-  Impl() :
+  impl() :
     slots(),
-    isItEmitting(false)
+    is_emitting(false)
   {}
 
-  virtual ~Impl() {}
+  virtual ~impl() {}
 
-  typedef std::list<SlotRef> ListType;
+  typedef std::list<slot_ref> list_type;
 
-  ListType slots;
-  bool isItEmitting;
+  list_type slots;
+  bool is_emitting;
 
-  class Lock
+  class locker
   {
-    Lock(const Lock&);
-    Lock& operator=(const Lock&);
+    locker(const locker&);
+    locker& operator=(const locker&);
 
-    Impl* itsTarget;
+    impl* m_target;
 
   public:
-    Lock(Impl* impl) :
-      itsTarget(impl)
+    locker(impl* impl) :
+      m_target(impl)
     {
-      GVX_ASSERT(itsTarget->isItEmitting == false);
-      itsTarget->isItEmitting = true;
+      GVX_ASSERT(m_target->is_emitting == false);
+      m_target->is_emitting = true;
     }
 
-    ~Lock()
+    ~locker()
     {
-      GVX_ASSERT(itsTarget->isItEmitting == true);
-      itsTarget->isItEmitting = false;
+      GVX_ASSERT(m_target->is_emitting == true);
+      m_target->is_emitting = false;
     }
   };
 };
 
-Nub::SignalBase::SignalBase() :
-  Nub::VolatileObject(),
-  rep(new Impl)
+nub::signal_base::signal_base() :
+  nub::volatile_object(),
+  rep(new impl)
 {}
 
-Nub::SignalBase::~SignalBase() throw()
+nub::signal_base::~signal_base() throw()
 {
   delete rep;
 }
 
-void Nub::SignalBase::doEmit(void* params) const
+void nub::signal_base::do_emit(void* params) const
 {
-GVX_TRACE("Nub::SignalBase::doEmit");
-  if (!rep->isItEmitting)
+GVX_TRACE("nub::signal_base::do_emit");
+  if (!rep->is_emitting)
     {
-      Impl::Lock lock(rep);
+      impl::locker lock(rep);
 
-      for (Impl::ListType::iterator
+      for (impl::list_type::iterator
              ii = rep->slots.begin(), end = rep->slots.end();
            ii != end;
            /* incr in loop */)
         {
           dbg_eval(3, typeid(**ii).name());
-          dbg_eval_nl(3, (*ii)->dbg_RefCount());
+          dbg_eval_nl(3, (*ii)->dbg_ref_count());
           dbg_eval_nl(3, (*ii)->exists());
           if ((*ii)->exists())
             {
-              (*ii)->doCall(params);
+              (*ii)->do_call(params);
               ++ii;
             }
           else
             {
-              Impl::ListType::iterator erase_me = ii;
+              impl::list_type::iterator erase_me = ii;
               ++ii;
               rep->slots.erase(erase_me);
             }
@@ -197,42 +197,42 @@ GVX_TRACE("Nub::SignalBase::doEmit");
     }
 }
 
-void Nub::SignalBase::doDisconnect(Nub::SoftRef<Nub::SlotBase> slot)
+void nub::signal_base::do_disconnect(nub::soft_ref<nub::slot_base> slot)
 {
-GVX_TRACE("Nub::SignalBase::doDisconnect");
-  if (!slot.isValid()) return;
+GVX_TRACE("nub::signal_base::do_disconnect");
+  if (!slot.is_valid()) return;
 
-  rep->slots.remove(SlotRef(slot.get(), Nub::PRIVATE));
+  rep->slots.remove(slot_ref(slot.get(), nub::PRIVATE));
 
   dbg_eval_nl(3, rep->slots.size());
 }
 
-void Nub::SignalBase::doConnect(Nub::SoftRef<Nub::SlotBase> slot)
+void nub::signal_base::do_connect(nub::soft_ref<nub::slot_base> slot)
 {
-GVX_TRACE("Nub::SignalBase::doConnect");
-  if (!slot.isValid()) return;
+GVX_TRACE("nub::signal_base::do_connect");
+  if (!slot.is_valid()) return;
 
-  rep->slots.push_back(SlotRef(slot.get(), Nub::PRIVATE));
+  rep->slots.push_back(slot_ref(slot.get(), nub::PRIVATE));
 
   dbg_eval_nl(3, rep->slots.size());
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Signal0 method definitions
+// signal0 method definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Nub::Signal0::Signal0() :
-  SignalBase(),
-  slotEmitSelf(Slot0::make(this, &Nub::Signal0::emit))
+nub::signal0::signal0() :
+  signal_base(),
+  slot_emit_self(slot0::make(this, &nub::signal0::emit))
 {
-GVX_TRACE("Nub::Signal0::Signal0");
+GVX_TRACE("nub::signal0::signal0");
 }
 
-Nub::Signal0::~Signal0() throw()
+nub::signal0::~signal0() throw()
 {
-GVX_TRACE("Nub::Signal0::~Signal0");
+GVX_TRACE("nub::signal0::~signal0");
 }
 
 static const char vcid_groovx_nub_signal_cc_utc20050626084019[] = "$Id$ $HeadURL$";

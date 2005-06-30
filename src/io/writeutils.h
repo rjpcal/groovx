@@ -115,7 +115,7 @@ namespace WriteUtils
           dbg_eval(4, count); dbg_eval_nl(4, (*begin)->id());
 
           writer.writeObject(makeElementNameString(name, count).c_str(),
-                             Nub::SoftRef<const IO::IoObject>(*begin));
+                             nub::soft_ref<const IO::IoObject>(*begin));
           ++begin;
           ++count;
         }

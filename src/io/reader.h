@@ -44,10 +44,10 @@ namespace rutz
   class value;
 }
 
-namespace Nub
+namespace nub
 {
-  template <class T> class Ref;
-  template <class T> class SoftRef;
+  template <class T> class ref;
+  template <class T> class soft_ref;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -140,22 +140,22 @@ public:
 
   //@}
 
-  /** Get a \c Nub::Ref associated with the tag \a name. A new object
+  /** Get a \c nub::ref associated with the tag \a name. A new object
       of the appropriate type will be created and inserted into the \c
-      Nub::ObjDb, if necessary. */
-  virtual Nub::Ref<IO::IoObject> readObject(const rutz::fstring& name) = 0;
+      nub::objectdb, if necessary. */
+  virtual nub::ref<IO::IoObject> readObject(const rutz::fstring& name) = 0;
 
-  /** Get a \c SoftRef associated with the tag \a name. If no such
+  /** Get a \c soft_ref associated with the tag \a name. If no such
       object exists, a null object is returned; otherwise, a new
       object of the appropriate type will be created and inserted into
-      the \c Nub::ObjDb, if necessary. */
-  virtual Nub::SoftRef<IO::IoObject> readMaybeObject(const rutz::fstring& name) = 0;
+      the \c nub::objectdb, if necessary. */
+  virtual nub::soft_ref<IO::IoObject> readMaybeObject(const rutz::fstring& name) = 0;
 
   /** Restore the state of the IO object \a obj, associated with the
       tag \a name. The \c Reader will not create a new object, but
       will use the IO* provided here. */
   virtual void readOwnedObject(const rutz::fstring& name,
-                               Nub::Ref<IO::IoObject> obj) = 0;
+                               nub::ref<IO::IoObject> obj) = 0;
 
   /** Read the named base class into the IO object \a obj, which
       should be arranged to point or refer to the appropriate base
@@ -163,14 +163,14 @@ public:
       functions must NOT call the fully derived versions. This effect
       can be best accomplished with an \c IO::IoProxy. */
   virtual void readBaseClass(const rutz::fstring& baseClassName,
-                             Nub::Ref<IO::IoObject> basePart) = 0;
+                             nub::ref<IO::IoObject> basePart) = 0;
 
   /** Restore an entire object hierarchy, starting with the root
       object. If \a root is non-null, the function will use \a root as
       the root object. Otherwise the function will create a new root
       object. In either case, the function returns the object that was
       actually used as the root object. */
-  virtual Nub::Ref<IO::IoObject> readRoot(IO::IoObject* root=0) = 0;
+  virtual nub::ref<IO::IoObject> readRoot(IO::IoObject* root=0) = 0;
 
 protected:
   /// Read the string attribute associated with the tag \a name.

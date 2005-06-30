@@ -47,9 +47,9 @@ namespace rutz
   template <class T> class shared_ptr;
 }
 
-namespace Nub
+namespace nub
 {
-  class Scheduler;
+  class scheduler;
 }
 
 class OutputFile;
@@ -89,7 +89,7 @@ public:
   void setDelay(unsigned int msec) { itsRequestedDelay = msec; }
 
   /// Queries whether there is a pending callback to \c invoke().
-  bool isPending() const { return itsTimer.isPending(); }
+  bool is_pending() const { return itsTimer.is_pending(); }
 
   /// Schedules the event to occur after the requested delay,
   /** Cancels any previously pending events that had not yet
@@ -106,7 +106,7 @@ public:
       specifies a minimum delay time; this may be used to ensure that
       proper relative ordering of TrialEvent's is maintained, even if
       the event loop is getting slowed down overall.  */
-  unsigned int schedule(rutz::shared_ptr<Nub::Scheduler> s,
+  unsigned int schedule(rutz::shared_ptr<nub::scheduler> s,
                         Trial& trial,
                         unsigned int minimum_msec = 0);
 
@@ -130,7 +130,7 @@ private:
   TrialEvent(const TrialEvent&);
   TrialEvent& operator=(const TrialEvent&);
 
-  Nub::Timer itsTimer;
+  nub::timer itsTimer;
   unsigned int itsRequestedDelay;
   Trial* itsTrial;
 
@@ -175,7 +175,7 @@ public:
   typedef void (Trial::* CallbackType)();
 
   /// Overridden to return the typename that was passed to the constructor.
-  virtual rutz::fstring objTypename() const;
+  virtual rutz::fstring obj_typename() const;
 
   /// Make a new event bound to a given Trial member function.
   static TrialMemFuncEvent* make(CallbackType callback,
@@ -261,13 +261,13 @@ public:
   void setByte(int b);
 
   /// Get the file object that will be written to.
-  Nub::Ref<OutputFile> getFile() const;
+  nub::ref<OutputFile> getFile() const;
 
   /// Set the file object that will be written to.
-  void setFile(Nub::Ref<OutputFile> file);
+  void setFile(nub::ref<OutputFile> file);
 
 private:
-  Nub::Ref<OutputFile> itsFile;
+  nub::ref<OutputFile> itsFile;
   int itsByte;
 };
 
@@ -300,7 +300,7 @@ public:
   void setCallback(const rutz::fstring& script);
 
 private:
-  Nub::Ref<Tcl::ProcWrapper> itsCallback;
+  nub::ref<Tcl::ProcWrapper> itsCallback;
 };
 
 //  #######################################################
@@ -331,10 +331,10 @@ public:
   virtual void writeTo(IO::Writer& writer) const;
 
   /// Returns an iterator to all the events in the sequence.
-  rutz::fwd_iter<const Nub::Ref<TrialEvent> > getEvents() const;
+  rutz::fwd_iter<const nub::ref<TrialEvent> > getEvents() const;
 
   /// Add a new event and return its index in the sequence.
-  unsigned int addEvent(Nub::Ref<TrialEvent> event);
+  unsigned int addEvent(nub::ref<TrialEvent> event);
 
   /// Erase the event at the given index.
   void eraseEventAt(unsigned int index);
@@ -343,7 +343,7 @@ public:
   void clearEvents();
 
 private:
-  std::vector<Nub::Ref<TrialEvent> > itsEvents;
+  std::vector<nub::ref<TrialEvent> > itsEvents;
 };
 
 static const char vcid_groovx_visx_trialevent_h_utc20050626084015[] = "$Id$ $HeadURL$";

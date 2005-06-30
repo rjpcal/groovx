@@ -51,7 +51,7 @@ namespace rutz
          Throws a rutz::error on error if an error occurs. The more
          general errors for chmod are listed below:
 
-         EPERM   The effective UID does not match the owner of  the
+         EPERM   The effective user id does not match the owner of  the
          file, and is not zero.
          EROFS   The named file resides on a read-only file system.
          EFAULT  path points outside your accessible address space.

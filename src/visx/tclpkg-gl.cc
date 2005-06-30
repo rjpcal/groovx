@@ -73,7 +73,7 @@
 
 namespace GLTcl
 {
-  void loadMatrix(Nub::SoftRef<GLCanvas> canvas, Tcl::List entries);
+  void loadMatrix(nub::soft_ref<GLCanvas> canvas, Tcl::List entries);
   void lookAt(Tcl::List args);
   void antialias(bool on_off);
   void drawOneLine(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2);
@@ -310,7 +310,7 @@ namespace GLTcl
 //
 //---------------------------------------------------------------------
 
-void GLTcl::loadMatrix(Nub::SoftRef<GLCanvas> canvas, Tcl::List entries)
+void GLTcl::loadMatrix(nub::soft_ref<GLCanvas> canvas, Tcl::List entries)
 {
   rutz::fixed_block<GLdouble> matrix(entries.begin<GLdouble>(),
                                      entries.end<GLdouble>());

@@ -58,17 +58,17 @@ namespace
                    const char* name) throw()
   {
     GVX_PKG_CREATE(pkg, interp, name, "4.$Revision$");
-    Nub::ObjFactory::theOne().register_creator(func, name);
+    nub::obj_factory::instance().register_creator(func, name);
     pkg->inheritPkg("TrialEvent");
 
     GVX_PKG_RETURN(pkg);
   }
 
-  void addEvents(Nub::Ref<MultiEvent> multi, Tcl::List event_ids)
+  void addEvents(nub::ref<MultiEvent> multi, Tcl::List event_ids)
   {
-    Tcl::List::Iterator<Nub::Ref<TrialEvent> >
-      itr = event_ids.begin<Nub::Ref<TrialEvent> >(),
-      end = event_ids.end<Nub::Ref<TrialEvent> >();
+    Tcl::List::Iterator<nub::ref<TrialEvent> >
+      itr = event_ids.begin<nub::ref<TrialEvent> >(),
+      end = event_ids.end<nub::ref<TrialEvent> >();
 
     while (itr != end)
       {

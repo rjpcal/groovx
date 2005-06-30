@@ -48,10 +48,10 @@
 
 namespace
 {
-  Nub::UID makeFish(const char* spline_file, const char* coord_file,
+  nub::uid makeFish(const char* spline_file, const char* coord_file,
                     int index)
   {
-    Nub::Ref<Fish> obj(Fish::makeFromFiles(spline_file, coord_file, index));
+    nub::ref<Fish> obj(Fish::makeFromFiles(spline_file, coord_file, index));
     return obj.id();
   }
 }
@@ -71,7 +71,7 @@ GVX_TRACE("Fish_Init");
   pkg->defVec( "make", "spline_file coord_file index", &makeFish, 1,
                SRC_POS );
 
-  Nub::ObjFactory::theOne().register_creator(&Fish::make);
+  nub::obj_factory::instance().register_creator(&Fish::make);
 
   GVX_PKG_RETURN(pkg);
 }

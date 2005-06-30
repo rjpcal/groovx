@@ -56,7 +56,7 @@ namespace
   int v0 = 0;
   int v1 = 0;
   int v2 = 0;
-  Nub::Timer* tp1 = 0;
+  nub::timer* tp1 = 0;
 
   void v0_callback()
   {
@@ -84,35 +84,35 @@ namespace
     rutz::shared_ptr<Tcl::TimerScheduler> s
       (rutz::make_shared(new Tcl::TimerScheduler));
 
-    Nub::Timer t0(20, false);
-    Nub::Timer t1(5,  true);
-    Nub::Timer t2(0,  false);
+    nub::timer t0(20, false);
+    nub::timer t1(5,  true);
+    nub::timer t2(0,  false);
 
     tp1 = &t1;
 
-    TEST_REQUIRE(!t0.isPending());
-    TEST_REQUIRE(!t1.isPending());
-    TEST_REQUIRE(!t2.isPending());
+    TEST_REQUIRE(!t0.is_pending());
+    TEST_REQUIRE(!t1.is_pending());
+    TEST_REQUIRE(!t2.is_pending());
 
-    t0.sigTimeOut.connect(&v0_callback);
-    t1.sigTimeOut.connect(&v1_callback);
-    t2.sigTimeOut.connect(&v2_callback);
+    t0.sig_timeout.connect(&v0_callback);
+    t1.sig_timeout.connect(&v1_callback);
+    t2.sig_timeout.connect(&v2_callback);
 
     t0.schedule(s);
     t1.schedule(s);
     t2.schedule(s); // delay==0 ==> callback should happen immediately
 
-    TEST_REQUIRE(t0.isPending());
-    TEST_REQUIRE(t1.isPending());
-    TEST_REQUIRE(!t2.isPending());
+    TEST_REQUIRE(t0.is_pending());
+    TEST_REQUIRE(t1.is_pending());
+    TEST_REQUIRE(!t2.is_pending());
 
     TEST_REQUIRE_EQ(v2, 2);
 
     int loops = 0;
     int events = 0;
 
-    while (t0.elapsedMsec() < 500.0 &&
-           (t0.isPending() || t1.isPending()))
+    while (t0.elapsed_msec() < 500.0 &&
+           (t0.is_pending() || t1.is_pending()))
       {
         if (Tcl_DoOneEvent(TCL_TIMER_EVENTS|TCL_DONT_WAIT) != 0)
           ++events;
@@ -138,18 +138,18 @@ namespace
     rutz::shared_ptr<Tcl::TimerScheduler> s
       (rutz::make_shared(new Tcl::TimerScheduler));
 
-    Nub::Timer t0(10, false);
+    nub::timer t0(10, false);
 
-    t0.sigTimeOut.connect(&v0_callback);
+    t0.sig_timeout.connect(&v0_callback);
 
-    TEST_REQUIRE(!t0.isPending());
+    TEST_REQUIRE(!t0.is_pending());
 
     t0.schedule(s);
 
-    TEST_REQUIRE(t0.isPending());
+    TEST_REQUIRE(t0.is_pending());
     TEST_REQUIRE_EQ(v0, 0);
 
-    while (t0.elapsedMsec() < 15.0)
+    while (t0.elapsed_msec() < 15.0)
       {
         Tcl_DoOneEvent(TCL_TIMER_EVENTS|TCL_DONT_WAIT);
 
@@ -157,7 +157,7 @@ namespace
         usleep(1000);
       }
 
-    TEST_REQUIRE(!t0.isPending());
+    TEST_REQUIRE(!t0.is_pending());
     TEST_REQUIRE_EQ(v0, 0);
   }
 
@@ -167,7 +167,7 @@ namespace
     rutz::shared_ptr<Tcl::TimerScheduler> s
       (rutz::make_shared(new Tcl::TimerScheduler));
 
-    Nub::Timer t(0, true);
+    nub::timer t(0, true);
 
     bool caught = false;
 

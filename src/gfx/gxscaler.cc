@@ -61,7 +61,7 @@ GxScaler::GxScaler() :
   itsAspectRatio(1.0)
 {}
 
-GxScaler::GxScaler(Nub::Ref<GxNode> child) :
+GxScaler::GxScaler(nub::ref<GxNode> child) :
   GxBin(child),
   itsMode(NATIVE_SCALING),
   itsWidthFactor(1.0),

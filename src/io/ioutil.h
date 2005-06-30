@@ -38,9 +38,9 @@ namespace rutz
   class fstring;
 }
 
-namespace Nub
+namespace nub
 {
-  template <class T> class Ref;
+  template <class T> class ref;
 }
 
 namespace IO
@@ -48,22 +48,22 @@ namespace IO
   class IoObject;
 
   // LGX -- "Legacy" compact format
-  rutz::fstring  writeLGX(Nub::Ref<IO::IoObject> obj);
-  void           readLGX(Nub::Ref<IO::IoObject> obj, const char* buf);
+  rutz::fstring  writeLGX(nub::ref<IO::IoObject> obj);
+  void           readLGX(nub::ref<IO::IoObject> obj, const char* buf);
 
   // ASW -- AsciiStreamWriter format
-  rutz::fstring  writeASW(Nub::Ref<IO::IoObject> obj);
-  void           readASW(Nub::Ref<IO::IoObject> obj, const char* buf);
+  rutz::fstring  writeASW(nub::ref<IO::IoObject> obj);
+  void           readASW(nub::ref<IO::IoObject> obj, const char* buf);
 
-  void saveASW(Nub::Ref<IO::IoObject> obj, rutz::fstring filename);
-  void loadASW(Nub::Ref<IO::IoObject> obj, rutz::fstring filename);
+  void saveASW(nub::ref<IO::IoObject> obj, rutz::fstring filename);
+  void loadASW(nub::ref<IO::IoObject> obj, rutz::fstring filename);
 
-  Nub::Ref<IO::IoObject> retrieveASW(rutz::fstring filename);
+  nub::ref<IO::IoObject> retrieveASW(rutz::fstring filename);
 
   // GVX -- GroovX XML format
-  rutz::fstring  writeGVX(Nub::Ref<IO::IoObject> obj);
+  rutz::fstring  writeGVX(nub::ref<IO::IoObject> obj);
 
-  void saveGVX(Nub::Ref<IO::IoObject> obj, rutz::fstring filename);
+  void saveGVX(nub::ref<IO::IoObject> obj, rutz::fstring filename);
 }
 
 static const char vcid_groovx_io_ioutil_h_utc20050626084021[] = "$Id$ $HeadURL$";

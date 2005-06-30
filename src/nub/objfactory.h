@@ -38,26 +38,26 @@
 
 #include "rutz/factory.h"
 
-namespace Nub
+namespace nub
 {
-  class ObjFactory;
+  class obj_factory;
 }
 
 /// Singleton wrapper for Factor<IO>.
-class Nub::ObjFactory
+class nub::obj_factory
   :
-  public rutz::factory<Nub::SoftRef<Nub::Object> >
+  public rutz::factory<nub::soft_ref<nub::object> >
 {
 protected:
   /// Default constructor.
-  ObjFactory();
+  obj_factory();
 
   /// Virtual destructor.
-  virtual ~ObjFactory() throw();
+  virtual ~obj_factory() throw();
 
 public:
   /// Return the singleton instance.
-  static ObjFactory& theOne();
+  static obj_factory& instance();
 };
 
 static const char vcid_groovx_nub_objfactory_h_utc20050626084019[] = "$Id$ $HeadURL$";

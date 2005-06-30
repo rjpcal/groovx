@@ -54,31 +54,31 @@ using rutz::fstring;
 
 namespace
 {
-  struct ScopeInfo
+  struct scope_info
   {
-    ScopeInfo(const fstring& name) : itsName(name), itsTimer() {}
+    scope_info(const fstring& name) : m_name(name), m_timer() {}
 
-    fstring itsName;
-    rutz::stopwatch itsTimer;
+    fstring          m_name;
+    rutz::stopwatch  m_timer;
 
     void print(std::ostream& os, const rutz::time& now) const
     {
-      GVX_TRACE("ScopeInfo::print");
-      os << itsName << " @ ";
+      GVX_TRACE("scope_info::print");
+      os << m_name << " @ ";
 
       os.setf(std::ios::showpoint | std::ios::fixed);
 
       os << std::setprecision(3)
-         << itsTimer.elapsed(now).msec() << " | ";
+         << m_timer.elapsed(now).msec() << " | ";
     }
   };
 
-  std::vector<ScopeInfo> scopes;
-  rutz::shared_ptr<std::ofstream> logFile;
-  bool copyToStdout = true;
+  std::vector<scope_info> scopes;
+  rutz::shared_ptr<std::ofstream> s_log_fstream;
+  bool s_copy_to_stdout = true;
 
-  template <class Str>
-  inline void logImpl(std::ostream& os, Str msg)
+  template <class str>
+  inline void log_impl(std::ostream& os, str msg)
   {
     const rutz::time now = rutz::time::wall_clock_now();
 
@@ -91,27 +91,27 @@ namespace
   }
 }
 
-void Nub::Log::reset()
+void nub::logging::reset()
 {
-GVX_TRACE("Nub::Log::reset");
+GVX_TRACE("nub::logging::reset");
   scopes.clear();
 
   log(fstring("log reset ", rutz::time::wall_clock_now().format()));
 }
 
-void Nub::Log::addScope(const fstring& name)
+void nub::logging::add_scope(const fstring& name)
 {
-GVX_TRACE("Nub::Log::addScope");
-  scopes.push_back(ScopeInfo(name));
+GVX_TRACE("nub::logging::add_scope");
+  scopes.push_back(scope_info(name));
 }
 
-void Nub::Log::removeScope(const fstring& name)
+void nub::logging::remove_scope(const fstring& name)
 {
-GVX_TRACE("Nub::Log::removeScope");
+GVX_TRACE("nub::logging::remove_scope");
   for (int i = int(scopes.size()); i > 0; /* decr in loop body */)
     {
       --i;
-      if (scopes.at(i).itsName == name)
+      if (scopes.at(i).m_name == name)
         {
           scopes.erase(scopes.begin() + i);
 
@@ -122,63 +122,63 @@ GVX_TRACE("Nub::Log::removeScope");
     }
 }
 
-void Nub::Log::addObjScope(const Nub::Object& obj)
+void nub::logging::add_obj_scope(const nub::object& obj)
 {
-GVX_TRACE("Nub::Log::addObjScope");
+GVX_TRACE("nub::logging::add_obj_scope");
 
-  const fstring scopename(obj.uniqueName());
+  const fstring scopename(obj.unique_name());
 
-  addScope(scopename);
+  add_scope(scopename);
 
   log(fstring("entering ", scopename));
 }
 
-void Nub::Log::removeObjScope(const Nub::Object& obj)
+void nub::logging::remove_obj_scope(const nub::object& obj)
 {
-GVX_TRACE("Nub::Log::removeObjScope");
+GVX_TRACE("nub::logging::remove_obj_scope");
 
-  const fstring scopename = obj.uniqueName();
+  const fstring scopename = obj.unique_name();
 
   log(fstring("leaving ", scopename));
 
-  removeScope(scopename);
+  remove_scope(scopename);
 }
 
-void Nub::Log::setLogFilename(const fstring& filename)
+void nub::logging::set_log_filename(const fstring& filename)
 {
-GVX_TRACE("Nub::Log::setLogFilename");
+GVX_TRACE("nub::logging::set_log_filename");
 
   rutz::shared_ptr<std::ofstream> newfile
     (new std::ofstream(filename.c_str(), std::ios::out | std::ios::app));
 
   if (newfile->is_open() && newfile->good())
-    logFile.swap(newfile);
+    s_log_fstream.swap(newfile);
 }
 
-void Nub::Log::setCopyToStdout(bool shouldcopy)
+void nub::logging::copy_to_stdout(bool shouldcopy)
 {
-GVX_TRACE("Nub::Log::setCopyToStdout");
-  copyToStdout = shouldcopy;
+GVX_TRACE("nub::logging::copy_to_stdout");
+  s_copy_to_stdout = shouldcopy;
 }
 
-void Nub::log(const char* msg)
+void nub::log(const char* msg)
 {
-GVX_TRACE("Nub::log");
-  if (copyToStdout)
-    logImpl(std::cout, msg);
+GVX_TRACE("nub::log");
+  if (s_copy_to_stdout)
+    log_impl(std::cout, msg);
 
-  if (logFile.get() != 0)
-    logImpl(*logFile, msg);
+  if (s_log_fstream.get() != 0)
+    log_impl(*s_log_fstream, msg);
 }
 
-void Nub::log(const fstring& msg)
+void nub::log(const fstring& msg)
 {
-GVX_TRACE("Nub::log");
-  if (copyToStdout)
-    logImpl(std::cout, msg);
+GVX_TRACE("nub::log");
+  if (s_copy_to_stdout)
+    log_impl(std::cout, msg);
 
-  if (logFile.get() != 0)
-    logImpl(*logFile, msg);
+  if (s_log_fstream.get() != 0)
+    log_impl(*s_log_fstream, msg);
 }
 
 static const char vcid_groovx_nub_log_cc_utc20050626084019[] = "$Id$ $HeadURL$";

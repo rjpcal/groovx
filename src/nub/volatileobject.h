@@ -35,20 +35,20 @@
 
 #include "nub/object.h"
 
-namespace Nub
+namespace nub
 {
-  class VolatileObject;
+  class volatile_object;
 }
 
-/// Subclass of Nub::Object for inherently un-shareable objects.
-/** This typically applies to objects who must control their own lifetime,
-    or whose lifetime is controlled by some external mechanism (such as a
-    windowing system, for example). */
-class Nub::VolatileObject : public virtual Nub::Object
+/// Subclass of nub::object for inherently un-shareable objects.
+/** This typically applies to objects who must control their own
+    lifetime, or whose lifetime is controlled by some external
+    mechanism (such as a windowing system, for example). */
+class nub::volatile_object : public virtual nub::object
 {
 public:
-  VolatileObject();
-  virtual ~VolatileObject() throw();
+  volatile_object();
+  virtual ~volatile_object() throw();
 
   void destroy();
 };

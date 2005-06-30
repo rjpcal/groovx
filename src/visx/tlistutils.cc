@@ -63,12 +63,12 @@
 
 #include "rutz/trace.h"
 
-using Nub::Ref;
+using nub::ref;
 
 namespace
 {
-  Nub::UID doCreatePreview(const geom::rect<double>& world_viewport,
-                           Nub::UID* objids,
+  nub::uid doCreatePreview(const geom::rect<double>& world_viewport,
+                           nub::uid* objids,
                            unsigned int objids_size,
                            int num_cols_hint = -1,
                            bool text_labels = true)
@@ -90,7 +90,7 @@ namespace
 
     const double parcel_side = world_width/num_cols;
 
-    Ref<GxSeparator> preview_trial(GxSeparator::make());
+    ref<GxSeparator> preview_trial(GxSeparator::make());
 
     int x_step = -1;
     int y_step = 0;
@@ -100,20 +100,20 @@ namespace
         ++x_step;
         if (x_step == num_cols) { x_step = 0; ++y_step; }
 
-        Ref<GxShapeKit> obj(objids[i]);
+        ref<GxShapeKit> obj(objids[i]);
 
         obj->setAlignmentMode(GxAligner::CENTER_ON_CENTER);
         obj->setBBVisibility(true);
         obj->setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
         obj->setMaxDimension(0.8);
 
-        Ref<GxTransform> obj_pos(GxTransform::make());
+        ref<GxTransform> obj_pos(GxTransform::make());
         double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
         double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
         obj_pos->translation.vec().set(obj_x, obj_y, 0.0);
         obj_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
 
-        Ref<GxSeparator> obj_pair(GxSeparator::make());
+        ref<GxSeparator> obj_pair(GxSeparator::make());
         obj_pair->addChild(obj_pos);
         obj_pair->addChild(obj);
 
@@ -121,19 +121,19 @@ namespace
 
         if (text_labels)
           {
-            Ref<GxText> label(GxText::make());
+            ref<GxText> label(GxText::make());
             label->setText(rutz::fstring(objids[i]));
             label->setAlignmentMode(GxAligner::CENTER_ON_CENTER);
             label->setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
             label->setHeight(0.1);
 
-            Ref<GxTransform> label_pos(GxTransform::make());
+            ref<GxTransform> label_pos(GxTransform::make());
             double label_x = obj_x;
             double label_y = obj_y - 0.50*parcel_side;
             label_pos->translation.vec().set(label_x, label_y, 0.0);
             label_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
 
-            Ref<GxSeparator> label_pair(GxSeparator::make());
+            ref<GxSeparator> label_pair(GxSeparator::make());
             label_pair->addChild(label_pos);
             label_pair->addChild(label);
 
@@ -144,9 +144,9 @@ namespace
     return preview_trial.id();
   }
 
-  Ref<GxSeparator> makeSepPair(Ref<GxNode> obj1, Ref<GxNode> obj2)
+  ref<GxSeparator> makeSepPair(ref<GxNode> obj1, ref<GxNode> obj2)
   {
-    Ref<GxSeparator> sep(GxSeparator::make());
+    ref<GxSeparator> sep(GxSeparator::make());
     sep->addChild(obj1);
     sep->addChild(obj2);
     return sep;
@@ -189,7 +189,7 @@ GVX_TRACE("TlistUtils::writeResponses");
   ofs.setf(std::ios::fixed);
   ofs.precision(2);
 
-  for (Nub::ObjDb::CastingIterator<Trial> itr(Nub::ObjDb::theDb().objects());
+  for (nub::objectdb::casting_iterator<Trial> itr(nub::objectdb::instance().objects());
        itr.is_valid();
        ++itr)
     {
@@ -210,7 +210,7 @@ GVX_TRACE("TlistUtils::writeIncidenceMatrix");
 
   std::ofstream ofs(filename);
 
-  for (Nub::ObjDb::CastingIterator<Trial> itr(Nub::ObjDb::theDb().objects());
+  for (nub::objectdb::casting_iterator<Trial> itr(nub::objectdb::instance().objects());
        itr.is_valid();
        ++itr)
     {
@@ -245,10 +245,10 @@ public:
                             unsigned int) {}
 
   virtual void writeObject(const char*,
-                           Nub::SoftRef<const IO::IoObject> obj)
+                           nub::soft_ref<const IO::IoObject> obj)
   {
     GVX_TRACE("MatlabTrialWriter::writeObject");
-    if (!obj.isValid())
+    if (!obj.is_valid())
       return;
     if (dynamic_cast<const GxShapeKit*>(obj.get()) != 0)
       {
@@ -261,14 +261,14 @@ public:
   }
 
   virtual void writeOwnedObject(const char* name,
-                                Nub::Ref<const IO::IoObject> obj)
+                                nub::ref<const IO::IoObject> obj)
   {
     GVX_TRACE("MatlabTrialWriter::writeOwnedObject");
     writeObject(name, obj);
   }
 
   virtual void writeBaseClass(const char*,
-                              Nub::Ref<const IO::IoObject> basePart)
+                              nub::ref<const IO::IoObject> basePart)
   {
     GVX_TRACE("MatlabTrialWriter::writeBaseClass");
     basePart->writeTo(*this);
@@ -292,7 +292,7 @@ GVX_TRACE("TlistUtils::writeMatlab");
 
   MatlabTrialWriter writer(ofs);
 
-  for (Nub::ObjDb::CastingIterator<Trial> itr(Nub::ObjDb::theDb().objects());
+  for (nub::objectdb::casting_iterator<Trial> itr(nub::objectdb::instance().objects());
        itr.is_valid();
        ++itr)
     {
@@ -307,13 +307,13 @@ GVX_TRACE("TlistUtils::writeMatlab");
 //
 //---------------------------------------------------------------------
 
-Nub::UID TlistUtils::createPreview(Tcl::List objid_list,
+nub::uid TlistUtils::createPreview(Tcl::List objid_list,
                                    const geom::rect<double>& world_viewport,
                                    int num_cols_hint = -1,
                                    bool text_labels = true)
 {
-  rutz::fixed_block<Nub::UID> objids(objid_list.begin<Nub::UID>(),
-                                     objid_list.end<Nub::UID>());
+  rutz::fixed_block<nub::uid> objids(objid_list.begin<nub::uid>(),
+                                     objid_list.end<nub::uid>());
 
   return doCreatePreview(world_viewport,
                          &objids[0], objids.size(),
@@ -329,26 +329,26 @@ Nub::UID TlistUtils::createPreview(Tcl::List objid_list,
 //
 //--------------------------------------------------------------------
 
-Tcl::List TlistUtils::dealSingles(Tcl::List objids, Nub::UID posid)
+Tcl::List TlistUtils::dealSingles(Tcl::List objids, nub::uid posid)
 {
   Tcl::List result;
 
-  Ref<GxNode> pos(posid);
+  ref<GxNode> pos(posid);
 
-  for (Tcl::List::Iterator<Nub::UID>
-         itr = objids.begin<Nub::UID>(),
-         end = objids.end<Nub::UID>();
+  for (Tcl::List::Iterator<nub::uid>
+         itr = objids.begin<nub::uid>(),
+         end = objids.end<nub::uid>();
        itr != end;
        ++itr)
     {
-      Ref<GxNode> obj(*itr);
+      ref<GxNode> obj(*itr);
 
-      Ref<Trial> trial(Trial::make());
+      ref<Trial> trial(Trial::make());
 
       trial->addNode(makeSepPair(pos, obj));
 
-      Nub::SoftRef<GxShapeKit> sk(*itr);
-      if (sk.isValid())
+      nub::soft_ref<GxShapeKit> sk(*itr);
+      if (sk.is_valid())
         trial->setType(sk->category());
 
       result.append(trial.id());
@@ -363,30 +363,30 @@ Tcl::List TlistUtils::dealSingles(Tcl::List objids, Nub::UID posid)
 //--------------------------------------------------------------------
 
 Tcl::List TlistUtils::dealPairs(Tcl::List objids1, Tcl::List objids2,
-                                Nub::UID posid1, Nub::UID posid2)
+                                nub::uid posid1, nub::uid posid2)
 {
   Tcl::List result;
 
-  Ref<GxNode> pos1(posid1);
-  Ref<GxNode> pos2(posid2);
+  ref<GxNode> pos1(posid1);
+  ref<GxNode> pos2(posid2);
 
-  for (Tcl::List::Iterator<Nub::UID>
-         itr1 = objids1.begin<Nub::UID>(),
-         end1 = objids1.end<Nub::UID>();
+  for (Tcl::List::Iterator<nub::uid>
+         itr1 = objids1.begin<nub::uid>(),
+         end1 = objids1.end<nub::uid>();
        itr1 != end1;
        ++itr1)
     {
-      Ref<GxSeparator> sep1(makeSepPair(pos1, Ref<GxNode>(*itr1)));
+      ref<GxSeparator> sep1(makeSepPair(pos1, ref<GxNode>(*itr1)));
 
-      for (Tcl::List::Iterator<Nub::UID>
-             itr2 = objids2.begin<Nub::UID>(),
-             end2 = objids2.end<Nub::UID>();
+      for (Tcl::List::Iterator<nub::uid>
+             itr2 = objids2.begin<nub::uid>(),
+             end2 = objids2.end<nub::uid>();
            itr2 != end2;
            ++itr2)
         {
-          Ref<GxSeparator> sep2(makeSepPair(pos2, Ref<GxNode>(*itr2)));
+          ref<GxSeparator> sep2(makeSepPair(pos2, ref<GxNode>(*itr2)));
 
-          Ref<Trial> trial(Trial::make());
+          ref<Trial> trial(Trial::make());
 
           trial->addNode(makeSepPair(sep1, sep2));
           trial->setType(*itr1 == *itr2);
@@ -404,8 +404,8 @@ Tcl::List TlistUtils::dealPairs(Tcl::List objids1, Tcl::List objids2,
 //
 //--------------------------------------------------------------------
 
-Tcl::List TlistUtils::dealTriads(Tcl::List objid_list, Nub::UID posid1,
-                                 Nub::UID posid2, Nub::UID posid3)
+Tcl::List TlistUtils::dealTriads(Tcl::List objid_list, nub::uid posid1,
+                                 nub::uid posid2, nub::uid posid3)
 {
   const unsigned int NUM_PERMS = 18;
   static int permutations[NUM_PERMS][3] =
@@ -430,10 +430,10 @@ Tcl::List TlistUtils::dealTriads(Tcl::List objid_list, Nub::UID posid1,
     {2, 1, 0}
   };
 
-  rutz::fixed_block<Nub::UID> objids(objid_list.begin<Nub::UID>(),
-                                     objid_list.end<Nub::UID>());
+  rutz::fixed_block<nub::uid> objids(objid_list.begin<nub::uid>(),
+                                     objid_list.end<nub::uid>());
 
-  Nub::UID base_triad[3];
+  nub::uid base_triad[3];
 
   Tcl::List result;
 
@@ -452,21 +452,21 @@ Tcl::List TlistUtils::dealTriads(Tcl::List objid_list, Nub::UID posid1,
               // loops over p,e run through all permutations
               for (unsigned int p = 0; p < NUM_PERMS; ++p)
                 {
-                  Ref<GxSeparator> sep(GxSeparator::make());
+                  ref<GxSeparator> sep(GxSeparator::make());
 
                   sep->addChild(makeSepPair(
-                      Ref<GxNode>(base_triad[permutations[p][0]]),
-                      Ref<GxNode>(posid1)));
+                      ref<GxNode>(base_triad[permutations[p][0]]),
+                      ref<GxNode>(posid1)));
 
                   sep->addChild(makeSepPair(
-                      Ref<GxNode>(base_triad[permutations[p][1]]),
-                      Ref<GxNode>(posid2)));
+                      ref<GxNode>(base_triad[permutations[p][1]]),
+                      ref<GxNode>(posid2)));
 
                   sep->addChild(makeSepPair(
-                      Ref<GxNode>(base_triad[permutations[p][2]]),
-                      Ref<GxNode>(posid3)));
+                      ref<GxNode>(base_triad[permutations[p][2]]),
+                      ref<GxNode>(posid3)));
 
-                  Ref<Trial> trial(Trial::make());
+                  ref<Trial> trial(Trial::make());
                   trial->addNode(sep);
                   result.append(trial.id());
                 } // end p
@@ -491,11 +491,11 @@ Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
   // whether we will read only num_lines lines from the stream.
   bool read_to_eof = (num_lines < 0);
 
-  rutz::fixed_block<Nub::UID> objids(objid_list.begin<Nub::UID>(),
-                                     objid_list.end<Nub::UID>());
+  rutz::fixed_block<nub::uid> objids(objid_list.begin<nub::uid>(),
+                                     objid_list.end<nub::uid>());
 
-  rutz::fixed_block<Nub::UID> posids(posid_list.begin<Nub::UID>(),
-                                     posid_list.end<Nub::UID>());
+  rutz::fixed_block<nub::uid> posids(posid_list.begin<nub::uid>(),
+                                     posid_list.end<nub::uid>());
 
   std::ifstream ifs(objid_file);
 
@@ -523,15 +523,15 @@ Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
 
       rutz::icstrstream ist(line);
 
-      Ref<Trial> trial(Trial::make());
-      Ref<GxSeparator> sep(GxSeparator::make());
+      ref<Trial> trial(Trial::make());
+      ref<GxSeparator> sep(GxSeparator::make());
 
       int objn = 0;
       int posn = 0;
       while (ist >> objn)
         {
-          sep->addChild(makeSepPair(Ref<GxNode>(posids[posn]),
-                                    Ref<GxNode>(objids[objn-1])));
+          sep->addChild(makeSepPair(ref<GxNode>(posids[posn]),
+                                    ref<GxNode>(objids[objn-1])));
           ++posn;
         }
 

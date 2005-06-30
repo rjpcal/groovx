@@ -44,40 +44,40 @@
 
 namespace
 {
-  Nub::UID idCounter = 0;
+  nub::uid s_id_counter = 0;
 }
 
-Nub::Object::Object() : itsId(++idCounter)
+nub::object::object() : m_uid(++s_id_counter)
 {
-GVX_TRACE("Nub::Object::Object");
+GVX_TRACE("nub::object::object");
 }
 
-Nub::Object::~Object() GVX_DTOR_NOTHROW
+nub::object::~object() GVX_DTOR_NOTHROW
 {
-GVX_TRACE("Nub::Object::~Object");
+GVX_TRACE("nub::object::~object");
 }
 
-Nub::UID Nub::Object::id() const throw()
+nub::uid nub::object::id() const throw()
 {
-  return itsId;
+  return m_uid;
 }
 
-rutz::fstring Nub::Object::realTypename() const
+rutz::fstring nub::object::real_typename() const
 {
-GVX_TRACE("Nub::Object::realTypename");
+GVX_TRACE("nub::object::real_typename");
   return rutz::demangled_name(typeid(*this));
 }
 
-rutz::fstring Nub::Object::objTypename() const
+rutz::fstring nub::object::obj_typename() const
 {
-GVX_TRACE("Nub::Object::objTypename");
-  return realTypename();
+GVX_TRACE("nub::object::obj_typename");
+  return real_typename();
 }
 
-rutz::fstring Nub::Object::uniqueName() const
+rutz::fstring nub::object::unique_name() const
 {
-GVX_TRACE("Nub::Object::uniqueName");
-  return rutz::fstring(objTypename(), "(", id(), ")");
+GVX_TRACE("nub::object::unique_name");
+  return rutz::fstring(obj_typename(), "(", id(), ")");
 }
 
 static const char vcid_groovx_nub_object_cc_utc20050626084019[] = "$Id$ $HeadURL$";

@@ -199,7 +199,7 @@ namespace
   TkWidgImpl* cast_from_void(void* p) { return static_cast<TkWidgImpl*>(p); }
 }
 
-class TkWidgImpl : public Nub::VolatileObject
+class TkWidgImpl : public nub::volatile_object
 {
   TkWidgImpl(const TkWidgImpl&);
   TkWidgImpl& operator=(const TkWidgImpl&);
@@ -468,7 +468,7 @@ Tcl::TkWidget::TkWidget(Tcl::Interp& interp,
 {
 GVX_TRACE("Tcl::TkWidget::TkWidget");
 
-  this->markAsVolatile();
+  this->mark_as_volatile();
 }
 
 Tcl::TkWidget::~TkWidget() throw()

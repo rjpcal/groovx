@@ -208,7 +208,7 @@ GVX_TRACE("Fish::Fish");
       restoreToDefault();
     }
 
-  Nub::FloatingRef<Fish> ref(this);
+  nub::floating_ref<Fish> ref(this);
 
   this->sigNodeChanged.connect(this, &Fish::updatePtrs);
 

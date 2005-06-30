@@ -39,89 +39,88 @@
 #include "rutz/error.h"
 #include "rutz/iter.h"
 
-namespace Nub
+namespace nub
 {
-  class Object;
-  class ObjDb;
-  class InvalidIdError;
-  template <class T> class SoftRef;
+  class object;
+  class objectdb;
+  class invalid_uid_error;
+  template <class T> class soft_ref;
 }
 
 /**
  *
- * Nub::InvalidIdError is an exception class that will be thrown from
- * ObjDb if an attempt to use an invalid id is made in a checked
+ * nub::invalid_uid_error is an exception class that will be thrown from
+ * objectdb if an attempt to use an invalid id is made in a checked
  * function.
  *
  **/
 
-class Nub::InvalidIdError : public rutz::error
+class nub::invalid_uid_error : public rutz::error
 {
 public:
   /// Constructor.
-  InvalidIdError(Nub::UID id, const rutz::file_pos& pos);
+  invalid_uid_error(nub::uid id, const rutz::file_pos& pos);
 
   /// Virtual destructor.
-  virtual ~InvalidIdError() throw();
+  virtual ~invalid_uid_error() throw();
 };
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * ObjDb is a database for storing Nub::Object's, which can be
- * accessed by the objects' Nub::UID's. Most clients will not need to
- * use the ObjDb directly, but can instead manage Nub::Object's
- * indirectly with the Nub::Ref and Nub::SoftRef smart pointers.
+ * objectdb is a database for storing nub::object's, which can be
+ * accessed by the objects' nub::uid's. Most clients will not need to
+ * use the objectdb directly, but can instead manage nub::object's
+ * indirectly with the nub::ref and nub::soft_ref smart pointers.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Nub::ObjDb
+class nub::objectdb
 {
 protected:
   /// Default constructor makes an empty list.
-  ObjDb();
+  objectdb();
 
 public:
   /// Virtual destructor.
-  virtual ~ObjDb();
+  virtual ~objectdb();
 
-  /// Returns the singleton instance of ObjDb.
-  static ObjDb& theDb();
+  /// Returns the singleton instance of objectdb.
+  static objectdb& instance();
 
-  class Impl;
-  class ItrImpl;
+  class impl;
 
   //
   // Iterators
   //
 
-  typedef rutz::fwd_iter<const Nub::SoftRef<Nub::Object> > Iterator;
+  typedef rutz::fwd_iter<const soft_ref<object> > iterator;
 
-  Iterator objects() const;
+  iterator objects() const;
 
   /// A filtering iterator class; only exposes objects matching a given type.
   template <class T>
-  class CastingIterator
+  class casting_iterator
   {
-    Iterator itsItr;
+    iterator m_itr;
 
-    void advanceToValid()
+    void advance_to_valid()
     {
-      while (!itsItr.at_end() && (dynamic_cast<T*>((*itsItr).getWeak())==0))
-        ++itsItr;
+      while (!m_itr.at_end() && (dynamic_cast<T*>((*m_itr).get_weak())==0))
+        ++m_itr;
     }
 
   public:
-    CastingIterator(const Iterator& begin) : itsItr(begin)
-    { advanceToValid(); }
+    casting_iterator(const iterator& begin) : m_itr(begin)
+    { advance_to_valid(); }
 
-    CastingIterator& operator++() { ++itsItr; advanceToValid(); return *this; }
+    casting_iterator& operator++() { ++m_itr; advance_to_valid(); return *this; }
 
-    bool at_end() const { return itsItr.at_end(); }
-    bool is_valid() const { return itsItr.is_valid(); }
+    bool at_end() const { return m_itr.at_end(); }
+    bool is_valid() const { return m_itr.is_valid(); }
 
-    T* operator*() const { return &(dynamic_cast<T&>(**itsItr)); }
+    T* operator*() const { return &(dynamic_cast<T&>(**m_itr)); }
 
     T* operator->() const { return operator*(); }
   };
@@ -134,15 +133,15 @@ public:
   int count() const throw();
 
   /// Returns true if 'id' is a valid uid.
-  bool isValidId(Nub::UID id) const throw();
+  bool is_valid_uid(nub::uid id) const throw();
 
   /// Releases the object specified by \a id, but only if it is unshared.
   /** This causes the object to be destroyed since it was unshared. If
       the object is shared, this operation throws an exception. */
-  void remove(Nub::UID id);
+  void remove(nub::uid id);
 
   /// Removes reference to the object with uid \a id.
-  void release(Nub::UID id);
+  void release(nub::uid id);
 
   /// Releases all unshared objects held in the database.
   /** Since the objects are unshared, they will be destroyed in the
@@ -155,27 +154,27 @@ public:
   void clear();
 
   /// WARNING: should only be called during program exit.
-  /** Does a full clear of all objects held by the ObjDb. This breaks
-      the usual semantics of ObjDb, since it removes both shared and
+  /** Does a full clear of all objects held by the objectdb. This breaks
+      the usual semantics of objectdb, since it removes both shared and
       unshared objects. */
-  void clearOnExit();
+  void clear_on_exit();
 
-  /// Return the \c Nub::Object* with the uid given by \a id.
+  /// Return the \c nub::object* with the uid given by \a id.
   /** Checks first if \a id is a valid uid, and throws an \c
-      Nub::InvalidIdError if it is not. */
-  Nub::Object* getCheckedObj(Nub::UID id) throw (Nub::InvalidIdError);
+      nub::invalid_uid_error if it is not. */
+  nub::object* get_checked_obj(nub::uid id) throw (nub::invalid_uid_error);
 
   /// Insert a strong reference to obj into the database.
-  void insertObj(Nub::Object* obj);
+  void insert_obj(nub::object* obj);
 
   /// Insert a weak reference to obj into the database.
-  void insertObjWeak(Nub::Object* obj);
+  void insert_obj_weak(nub::object* obj);
 
 private:
-  ObjDb(const ObjDb&);
-  ObjDb& operator=(const ObjDb&);
+  objectdb(const objectdb&);
+  objectdb& operator=(const objectdb&);
 
-  Impl* const rep;
+  impl* const rep;
 };
 
 static const char vcid_groovx_nub_objdb_h_utc20050626084019[] = "$Id$ $HeadURL$";

@@ -57,7 +57,7 @@ GVX_TRACE("Jitter_Init");
                &Jitter::setJitter, 1,
                SRC_POS );
 
-  Nub::ObjFactory::theOne().register_creator(&Jitter::make);
+  nub::obj_factory::instance().register_creator(&Jitter::make);
 
   GVX_PKG_RETURN(pkg);
 }

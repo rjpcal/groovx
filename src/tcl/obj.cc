@@ -45,17 +45,17 @@ void Tcl::Obj::append(const Tcl::Obj& other)
   Tcl_AppendObjToObj(itsObj, other.itsObj);
 }
 
-bool Tcl::Obj::isShared() const
+bool Tcl::Obj::is_shared() const
 {
   return Tcl_IsShared(itsObj);
 }
 
 void Tcl::Obj::ensureUnique() const
 {
-  if (isShared())
+  if (is_shared())
     {
-      Tcl_Obj* newObj = Tcl_DuplicateObj(itsObj);
-      assign(newObj);
+      Tcl_Obj* new_obj = Tcl_DuplicateObj(itsObj);
+      assign(new_obj);
     }
 }
 

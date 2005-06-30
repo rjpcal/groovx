@@ -53,7 +53,7 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  using namespace Nub;
+  using namespace nub;
 
   class DummyCountingWriter : public IO::Writer
   {
@@ -72,13 +72,13 @@ namespace
                               unsigned int)               { ++itsC; }
 
     virtual void writeObject(const char*,
-                             SoftRef<const IO::IoObject>) { ++itsC; }
+                             soft_ref<const IO::IoObject>) { ++itsC; }
 
     virtual void writeOwnedObject(const char*,
-                                  Ref<const IO::IoObject>){ ++itsC; }
+                                  ref<const IO::IoObject>){ ++itsC; }
 
     virtual void writeBaseClass(const char*,
-                                Ref<const IO::IoObject>)  { ++itsC; }
+                                ref<const IO::IoObject>)  { ++itsC; }
 
     virtual void writeRoot(const IO::IoObject*) {}
 

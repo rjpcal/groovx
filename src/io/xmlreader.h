@@ -33,9 +33,9 @@
 #ifndef GROOVX_IO_XMLREADER_H_UTC20050626084021_DEFINED
 #define GROOVX_IO_XMLREADER_H_UTC20050626084021_DEFINED
 
-namespace Nub
+namespace nub
 {
-  template <class T> class Ref;
+  template <class T> class ref;
 }
 
 namespace IO
@@ -43,7 +43,7 @@ namespace IO
   class IoObject;
   class Reader;
 
-  Nub::Ref<IO::IoObject> loadGVX(const char* filename);
+  nub::ref<IO::IoObject> loadGVX(const char* filename);
 
   void xmlDebug(const char* filename);
 }

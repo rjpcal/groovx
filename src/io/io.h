@@ -56,14 +56,14 @@ namespace IO
  * The IO::IoObject class defines the abstract interface for object
  * persistence. Classes which need these facilities should inherit
  * virtually from IO::IoObject. IO::IoObject is reference counted (by
- * subclassing Nub::Object), providing automatic memory management
+ * subclassing nub::object), providing automatic memory management
  * when IO::IoObject's are managed with a smart pointer that manages
- * the reference count, such as PtrHandle or Nub::Ref.
+ * the reference count, such as PtrHandle or nub::ref.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::IoObject : public virtual Nub::Object
+class IO::IoObject : public virtual nub::object
 {
 private:
   IoObject(const IoObject&);

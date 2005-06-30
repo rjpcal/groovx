@@ -105,7 +105,7 @@ public:
   class ActiveState
   {
   private:
-    Nub::SoftRef<Toglet> itsWidget;
+    nub::soft_ref<Toglet> itsWidget;
     Trial& itsTrial;
     fstring itsEventSequence;
     fstring itsBindingScript;
@@ -113,13 +113,13 @@ public:
 
     void attend()
     {
-      if (itsWidget.isValid())
+      if (itsWidget.is_valid())
         itsWidget->bind(itsEventSequence.c_str(), itsBindingScript.c_str());
     }
 
     void ignore()
     {
-      if (itsWidget.isValid())
+      if (itsWidget.is_valid())
         itsWidget->bind(itsEventSequence.c_str(), "");
     }
 
@@ -127,7 +127,7 @@ public:
     ~ActiveState() { ignore(); }
 
     ActiveState(const EventResponseHdlr::Impl* erh,
-                Nub::SoftRef<Toglet> widget, Trial& trial,
+                nub::soft_ref<Toglet> widget, Trial& trial,
                 const fstring& seq, const fstring& script) :
       itsWidget(widget),
       itsTrial(trial),
@@ -135,7 +135,7 @@ public:
       itsBindingScript(script),
       itsResponseCount(0)
     {
-      GVX_PRECONDITION((erh != 0) && (widget.isValid()) && (&trial != 0));
+      GVX_PRECONDITION((erh != 0) && (widget.is_valid()) && (&trial != 0));
       attend();
     }
 
@@ -143,7 +143,7 @@ public:
     {
       ignore();
 
-      Nub::Ref<Sound> p = Sound::getErrSound();
+      nub::ref<Sound> p = Sound::getErrSound();
       p->play();
     }
 
@@ -157,7 +157,7 @@ public:
 
       theResponse.setMsec(int(itsTrial.trElapsedMsec() + 0.5));
 
-      Nub::log( fstring("event_info: ", event_info) );
+      nub::log( fstring("event_info: ", event_info) );
 
       theResponse.setVal(Response::INVALID_VALUE);
 
@@ -168,7 +168,7 @@ public:
           } catch (...) {}
         }
 
-      Nub::log( fstring("response val: ", theResponse.val()) );
+      nub::log( fstring("response val: ", theResponse.val()) );
 
       if (theResponse.shouldIgnore())
         return;
@@ -176,7 +176,7 @@ public:
       if (++itsResponseCount >= rep->itsMaxResponses)
         ignore();
 
-      if ( !theResponse.isValid() )
+      if ( !theResponse.is_valid() )
         {
           if ( rep->itsAbortInvalidResponses )
             itsTrial.trAbortTrial();
@@ -189,9 +189,9 @@ public:
     }
   };
 
-  void becomeActive(Nub::SoftRef<Toglet> widget, Trial& trial) const
+  void becomeActive(nub::soft_ref<Toglet> widget, Trial& trial) const
   {
-    Nub::log( fstring("binding to ", itsCallbackName) );
+    nub::log( fstring("binding to ", itsCallbackName) );
 
     fstring script(itsCallbackName, ' ', itsOwner->id());
     script.append(" [list ", itsBindingSubstitution, ']');
@@ -205,7 +205,7 @@ public:
   bool isActive() const   { return itsState.get() != 0; }
   bool isInactive() const { return itsState.get() == 0; }
 
-  static void handleResponseCallback(Nub::Ref<EventResponseHdlr> erh,
+  static void handleResponseCallback(nub::ref<EventResponseHdlr> erh,
                                      const char* event_info)
   {
     EventResponseHdlr::Impl* rep = erh->rep;
@@ -234,7 +234,7 @@ public:
 
   bool itsAbortInvalidResponses;
 
-  Nub::Ref<Tcl::ProcWrapper> itsResponseProc;
+  nub::ref<Tcl::ProcWrapper> itsResponseProc;
 
   unsigned int itsMaxResponses;
 };
@@ -419,7 +419,7 @@ void EventResponseHdlr::setMaxResponses(unsigned int count)
 unsigned int EventResponseHdlr::getMaxResponses() const
   { return rep->itsMaxResponses; }
 
-void EventResponseHdlr::rhBeginTrial(Nub::SoftRef<Toglet> widget,
+void EventResponseHdlr::rhBeginTrial(nub::soft_ref<Toglet> widget,
                                      Trial& trial) const
 {
   GVX_PRECONDITION( rep->isInactive() );
@@ -459,7 +459,7 @@ void EventResponseHdlr::rhHaltExpt() const
   GVX_POSTCONDITION( rep->isInactive() );
 }
 
-void EventResponseHdlr::rhAllowResponses(Nub::SoftRef<Toglet> widget,
+void EventResponseHdlr::rhAllowResponses(nub::soft_ref<Toglet> widget,
                                          Trial& trial) const
 {
   rep->becomeActive(widget, trial);

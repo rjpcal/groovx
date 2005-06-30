@@ -50,23 +50,23 @@ namespace geom
 class GxBin : public GxNode
 {
 private:
-  Nub::Ref<GxNode> itsChild;
+  nub::ref<GxNode> itsChild;
 
 public:
   /// Default constructor.
   GxBin();
 
   /// Construct with a given child node.
-  GxBin(Nub::Ref<GxNode> child);
+  GxBin(nub::ref<GxNode> child);
 
   /// Virtual destructor.
   virtual ~GxBin() throw();
 
   /// Get the bin's child node.
-  const Nub::Ref<GxNode>& child() const { return itsChild; }
+  const nub::ref<GxNode>& child() const { return itsChild; }
 
   /// Set the bin's child node.
-  void setChild(const Nub::Ref<GxNode>& child);
+  void setChild(const nub::ref<GxNode>& child);
 };
 
 static const char vcid_groovx_gfx_gxbin_h_utc20050626084023[] = "$Id$ $HeadURL$";

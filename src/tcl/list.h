@@ -213,7 +213,7 @@ public:
   bool operator!=(const IteratorBase& other) const
     { return !operator==(other); }
 
-  bool isValid() const
+  bool is_valid() const
     { return itsIndex < itsList.length(); }
 
   bool hasMore() const

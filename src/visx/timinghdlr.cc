@@ -91,9 +91,9 @@ public:
     trial(0)
     {}
 
-  rutz::shared_ptr<Nub::Scheduler> scheduler;
+  rutz::shared_ptr<nub::scheduler> scheduler;
 
-  typedef std::vector<Nub::Ref<TrialEvent> > EventGroup;
+  typedef std::vector<nub::ref<TrialEvent> > EventGroup;
 
   EventGroup immediateEvents;
   EventGroup startEvents;
@@ -120,7 +120,7 @@ public:
   Trial* trial;
 
   static void scheduleAll(EventGroup& events,
-                          rutz::shared_ptr<Nub::Scheduler> s,
+                          rutz::shared_ptr<nub::scheduler> s,
                           Trial* trial);
   static void cancelAll(EventGroup& events);
 };
@@ -214,7 +214,7 @@ GVX_TRACE("TimingHdlr::writeTo");
 // accessors //
 ///////////////
 
-Nub::Ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point,
+nub::ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point,
                                           unsigned int index) const
 {
 GVX_TRACE("TimingHdlr::getEvent");
@@ -231,7 +231,7 @@ GVX_TRACE("TimingHdlr::getElapsedMsec");
 // manipulators //
 //////////////////
 
-unsigned int TimingHdlr::addEvent(Nub::Ref<TrialEvent> event_item,
+unsigned int TimingHdlr::addEvent(nub::ref<TrialEvent> event_item,
                                   TimePoint time_point)
 {
 GVX_TRACE("TimingHdlr::addEvent");
@@ -246,8 +246,8 @@ unsigned int TimingHdlr::addEventByName(const char* event_type,
 {
 GVX_TRACE("TimingHdlr::addEventByName");
 
-  Nub::Ref<TrialEvent> event_item
-    (Nub::ObjMgr::newTypedObj<TrialEvent>(event_type));
+  nub::ref<TrialEvent> event_item
+    (nub::obj_mgr::new_typed_obj<TrialEvent>(event_type));
 
   event_item->setDelay(msec_delay);
   return addEvent(event_item, timepoint);
@@ -261,15 +261,15 @@ GVX_TRACE("TimingHdlr::addEventByName");
 
 namespace
 {
-  bool cmp_delay_less(const Nub::Ref<TrialEvent>& e1,
-                      const Nub::Ref<TrialEvent>& e2)
+  bool cmp_delay_less(const nub::ref<TrialEvent>& e1,
+                      const nub::ref<TrialEvent>& e2)
   {
     return (e1->getDelay() < e2->getDelay());
   }
 }
 
 void TimingHdlr::Impl::scheduleAll(EventGroup& events,
-                                   rutz::shared_ptr<Nub::Scheduler> s,
+                                   rutz::shared_ptr<nub::scheduler> s,
                                    Trial* trial)
 {
 GVX_TRACE("TimingHdlr::Impl::scheduleAll");
@@ -293,8 +293,8 @@ GVX_TRACE("TimingHdlr::Impl::scheduleAll");
       minimum_delay = scheduled_delay+1;
 
       rutz::fstring info("scheduled @ ", scheduled_delay,
-                         ": ", events[i]->uniqueName());
-      Nub::log(info);
+                         ": ", events[i]->unique_name());
+      nub::log(info);
     }
 }
 

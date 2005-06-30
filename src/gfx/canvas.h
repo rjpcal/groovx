@@ -75,7 +75,7 @@ namespace Gfx
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Canvas : public virtual Nub::Object
+class Canvas : public virtual nub::object
 {
 public:
   /// Virtual destructor ensures proper destruction of subclasses.

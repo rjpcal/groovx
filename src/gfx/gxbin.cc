@@ -39,11 +39,11 @@
 
 GxBin::GxBin() : itsChild(GxEmptyNode::make()) {}
 
-GxBin::GxBin(Nub::Ref<GxNode> child) : itsChild(child) {}
+GxBin::GxBin(nub::ref<GxNode> child) : itsChild(child) {}
 
 GxBin::~GxBin() throw() {}
 
-void GxBin::setChild(const Nub::Ref<GxNode>& child)
+void GxBin::setChild(const nub::ref<GxNode>& child)
 {
   itsChild->sigNodeChanged.disconnect(this->sigNodeChanged.slot());
   itsChild = child;

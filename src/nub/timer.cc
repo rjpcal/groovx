@@ -43,28 +43,28 @@ GVX_DBG_REGISTER
 
 using rutz::shared_ptr;
 
-Nub::Timer::Timer(unsigned int msec, bool repeat)
+nub::timer::timer(unsigned int msec, bool repeat)
   :
-  sigTimeOut(),
-  itsScheduler(0),
-  itsToken(0),
-  itsMsecDelay(msec),
-  isItRepeating(repeat),
-  itsStopWatch()
+  sig_timeout(),
+  m_scheduler(0),
+  m_token(0),
+  m_msec_delay(msec),
+  m_is_repeating(repeat),
+  m_stopwatch()
 {}
 
-Nub::Timer::~Timer()
+nub::timer::~timer()
 {
   cancel();
 }
 
-void Nub::Timer::schedule(rutz::shared_ptr<Nub::Scheduler> scheduler)
+void nub::timer::schedule(rutz::shared_ptr<nub::scheduler> scheduler)
 {
-GVX_TRACE("Nub::Timer::schedule");
+GVX_TRACE("nub::timer::schedule");
 
   GVX_PRECONDITION(scheduler.get() != 0);
 
-  if (itsMsecDelay == 0 && isItRepeating == true)
+  if (m_msec_delay == 0 && m_is_repeating == true)
     {
       throw rutz::error("can't schedule a timer callback with "
                         "delay=0 and repeating=true", SRC_POS);
@@ -74,54 +74,54 @@ GVX_TRACE("Nub::Timer::schedule");
   cancel();
 
   // Note the time when the current scheduling request was made.
-  itsStopWatch.restart();
+  m_stopwatch.restart();
 
-  dbg_eval_nl(3, itsMsecDelay);
+  dbg_eval_nl(3, m_msec_delay);
 
-  itsScheduler = scheduler;
+  m_scheduler = scheduler;
 
   // Note that the returned token might be null for one reason or
   // another (e.g. if the scheduler decides to run the callback
   // immediately rather than scheduling a deferred callback).
-  itsToken = itsScheduler->schedule(itsMsecDelay,
-                                    dummyCallback,
+  m_token = m_scheduler->schedule(m_msec_delay,
+                                    dummy_callback,
                                     static_cast<void*>(this));
 }
 
-void Nub::Timer::cancel()
+void nub::timer::cancel()
 {
-GVX_TRACE("Nub::Timer::cancel");
+GVX_TRACE("nub::timer::cancel");
 
-  itsToken.reset(0);
+  m_token.reset(0);
 }
 
-void Nub::Timer::dummyCallback(void* clientData)
+void nub::timer::dummy_callback(void* clientdata)
 {
-GVX_TRACE("Nub::Timer::dummyCallback");
-  Nub::Timer* timer = static_cast<Nub::Timer*>(clientData);
+GVX_TRACE("nub::timer::dummy_callback");
+  nub::timer* timer = static_cast<nub::timer*>(clientdata);
 
   GVX_ASSERT(timer != 0);
 
-  timer->itsToken.reset(0);
+  timer->m_token.reset(0);
 
-  dbg_eval_nl(3, timer->itsStopWatch.elapsed().msec());
+  dbg_eval_nl(3, timer->m_stopwatch.elapsed().msec());
 
   // NOTE: make sure we re-schedule a repeating event BEFORE we
   // emit the signal and trigger the callbacks; this way, it's
   // possible for code inside the callback to cancel() this timer
   // callback and end the repeating.
-  if (timer->isItRepeating)
+  if (timer->m_is_repeating)
     {
       // can't allow a timer callback that is both repeating and
       // immediate (delay == 0), otherwise we fall into an
       // infinite loop
-      GVX_ASSERT(timer->itsMsecDelay != 0);
+      GVX_ASSERT(timer->m_msec_delay != 0);
 
-      if (timer->itsScheduler.get() != 0)
-        timer->schedule(timer->itsScheduler);
+      if (timer->m_scheduler.get() != 0)
+        timer->schedule(timer->m_scheduler);
     }
 
-  timer->sigTimeOut.emit();
+  timer->sig_timeout.emit();
 }
 
 static const char vcid_groovx_nub_timer_cc_utc20050626084019[] = "$Id$ $HeadURL$";

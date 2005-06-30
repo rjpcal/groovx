@@ -59,7 +59,7 @@ using rutz::shared_ptr;
 
 namespace
 {
-  Nub::SoftRef<Toglet> theCurrentToglet;
+  nub::soft_ref<Toglet> theCurrentToglet;
 
   const int DEFAULT_SIZE_X = 400;
   const int DEFAULT_SIZE_Y = 400;
@@ -83,14 +83,14 @@ public:
   Tk_Window                     const tkWin;
   shared_ptr<GlxOpts>           const opts;
   shared_ptr<GlWindowInterface> const glx;
-  Nub::SoftRef<GLCanvas>        const canvas;
+  nub::soft_ref<GLCanvas>        const canvas;
   GxScene*                      const scene;
 
   Impl(Toglet* p);
   ~Impl() throw()
   {
     if (scene != 0)       scene->destroy();
-    if (canvas.isValid()) canvas->destroy();
+    if (canvas.is_valid()) canvas->destroy();
   }
 
   static Window cClassCreateProc(Tk_Window tkwin,
@@ -150,7 +150,7 @@ namespace
   // the main window can be specified with either PARENT = "" or "."
   rutz::fstring PARENT = "";
 
-  const char* widgetName(Nub::UID id)
+  const char* widgetName(nub::uid id)
   {
     static rutz::fstring buf;
     buf = PARENT;
@@ -236,13 +236,13 @@ GVX_TRACE("Toglet::makeToplevel");
   return p;
 }
 
-Nub::SoftRef<Toglet> Toglet::getCurrent()
+nub::soft_ref<Toglet> Toglet::getCurrent()
 {
 GVX_TRACE("Toglet::getCurrent");
   return theCurrentToglet;
 }
 
-void Toglet::setCurrent(Nub::SoftRef<Toglet> toglet)
+void Toglet::setCurrent(nub::soft_ref<Toglet> toglet)
 {
 GVX_TRACE("Toglet::setCurrent");
   dbg_eval(1, toglet.id());
@@ -255,7 +255,7 @@ GVX_TRACE("Toglet::defaultParent");
   PARENT = pathname;
 }
 
-Nub::SoftRef<Gfx::Canvas> Toglet::getCanvas() const
+nub::soft_ref<Gfx::Canvas> Toglet::getCanvas() const
 {
 GVX_TRACE("Toglet::getCanvas");
   makeCurrent();
@@ -274,7 +274,7 @@ void Toglet::makeCurrent() const
           // simulate single buffering.
           rep->canvas->drawBufferFront();
         }
-      theCurrentToglet = Nub::SoftRef<Toglet>(const_cast<Toglet*>(this));
+      theCurrentToglet = nub::soft_ref<Toglet>(const_cast<Toglet*>(this));
     }
 }
 
@@ -357,19 +357,19 @@ void Toglet::allowRefresh(bool allow)
   rep->scene->allowRefresh(allow);
 }
 
-const Nub::Ref<GxCamera>& Toglet::getCamera() const
+const nub::ref<GxCamera>& Toglet::getCamera() const
 {
   makeCurrent();
   return rep->scene->getCamera();
 }
 
-void Toglet::setCamera(const Nub::Ref<GxCamera>& cam)
+void Toglet::setCamera(const nub::ref<GxCamera>& cam)
 {
   makeCurrent();
   rep->scene->setCamera(cam);
 }
 
-void Toglet::setDrawable(const Nub::Ref<GxNode>& node)
+void Toglet::setDrawable(const nub::ref<GxNode>& node)
 {
   makeCurrent();
   rep->scene->setDrawable(node);
