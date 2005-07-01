@@ -225,7 +225,6 @@ public:
   tcl::interpreter itsInterp;
 
   fstring itsCallbackName;
-  rutz::shared_ptr<tcl::command> itsCmdCallback;
 
   FeedbackMap itsFeedbackMap;
 
@@ -259,9 +258,6 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner) :
   itsState(0),
   itsInterp(tcl::event_loop::interp()),
   itsCallbackName(uniqCmdName("handler")),
-  itsCmdCallback(tcl::make_command(itsInterp, &handleResponseCallback,
-                              itsCallbackName.c_str(), "<private>",
-                              SRC_POS)),
   itsFeedbackMap(),
   itsEventSequence("<KeyPress>"),
   itsBindingSubstitution("%K"),
@@ -270,6 +266,9 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner) :
   itsMaxResponses(1)
 {
 GVX_TRACE("EventResponseHdlr::Impl::Impl");
+
+  tcl::make_command(itsInterp, &handleResponseCallback,
+                    itsCallbackName.c_str(), "<private>", SRC_POS);
 }
 
 EventResponseHdlr::Impl::~Impl()

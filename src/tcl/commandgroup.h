@@ -45,8 +45,10 @@ namespace rutz
 
 namespace tcl
 {
+  class arg_spec;
   class command;
   class command_group;
+  class function;
   class interpreter;
 }
 
@@ -55,19 +57,31 @@ class tcl::command_group
 {
 public:
   /// Find the named command, if it exists.
-  /** Returns null if no such command. */
+  /** Returns null if no such command. DO NOT DELETE the pointer
+      returned from this function! Its lifetime is managed internally
+      by tcl. */
   static command_group* lookup(tcl::interpreter& interp,
-                              const char* name) throw();
+                               const char* name) throw();
 
   /// Find the named command, after following any namespace aliases.
-  /** Returns null if no such command. */
+  /** Returns null if no such command. DO NOT DELETE the pointer
+      returned from this function! Its lifetime is managed internally
+      by tcl. */
   static command_group* lookup_original(tcl::interpreter& interp,
                                         const char* name) throw();
 
-  /// Find the named command, making a new one if necessary.
-  static command_group* make(tcl::interpreter& interp,
-                            const rutz::fstring& cmd_name,
-                            const rutz::file_pos& src_pos);
+  /// Build a new tcl::command object that will be hooked into a tcl::command_group.
+  /** If there is already a tcl::command_group for the given name,
+      then the new tcl::command will be hooked into that
+      tcl::command_group as an overload. Otherwise, a brand new
+      tcl::command_group will be created. */
+  static rutz::shared_ptr<tcl::command>
+  make(tcl::interpreter& interp,
+       rutz::shared_ptr<tcl::function> callback,
+       const char* cmd_name,
+       const char* usage,
+       const tcl::arg_spec& spec,
+       const rutz::file_pos& src_pos);
 
   /// Add the given tcl::command to this group's overload list.
   void add(rutz::shared_ptr<tcl::command> p);
@@ -85,7 +99,7 @@ private:
   friend class impl;
   impl* const rep;
 
-  /// Private constructor since clients should use command_group::make().
+  /// Private constructor; clients shouldn't manipulate tcl::command_group objects directly.
   command_group(tcl::interpreter& interp,
                const rutz::fstring& cmd_name,
                const rutz::file_pos& src_pos);

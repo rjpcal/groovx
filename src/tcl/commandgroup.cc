@@ -52,6 +52,7 @@
 GVX_DBG_REGISTER
 
 using rutz::fstring;
+using rutz::shared_ptr;
 
 namespace
 {
@@ -95,7 +96,7 @@ public:
 
   ~impl() throw() {}
 
-  typedef std::list<rutz::shared_ptr<tcl::command> > cmd_list_type;
+  typedef std::list<shared_ptr<tcl::command> > cmd_list_type;
 
   tcl::interpreter       interp;
   Tcl_Command      const cmd_token;
@@ -328,23 +329,49 @@ GVX_TRACE("tcl::command_group::lookup_original");
   return impl::lookup_helper(interp, original.c_str());
 }
 
-tcl::command_group* tcl::command_group::make(
-                                   tcl::interpreter& interp,
-                                   const fstring& cmd_name,
-                                   const rutz::file_pos& src_pos)
+shared_ptr<tcl::command>
+tcl::command_group::make(tcl::interpreter& interp,
+                         shared_ptr<tcl::function> callback,
+                         const char* cmd_name,
+                         const char* usage,
+                         const arg_spec& spec,
+                         const rutz::file_pos& src_pos)
 {
 GVX_TRACE("tcl::command_group::make");
-  command_group* const c =
-    tcl::command_group::lookup(interp, cmd_name.c_str());
 
-  if (c != 0)
-    return c;
+  // Here we want to find the command_group that corresponds to the
+  // given command name, creating it anew if necessary. Then, we
+  // create a new tcl::command object and add it to the group. The
+  // command_group object handles the actual interface with tcl, and
+  // when the command_group gets callback from tcl, it selects among
+  // its various tcl::command overloads by checking which one matches
+  // the number of arguments in the current command invocation (see
+  // invoke_raw()).
 
-  // else...
-  return new command_group(interp, cmd_name, src_pos);
+  command_group* group =
+    tcl::command_group::lookup(interp, cmd_name);
+
+  if (group == 0)
+    group = new command_group(interp, cmd_name, src_pos);
+
+  GVX_ASSERT(group != 0);
+
+  shared_ptr<tcl::command> cmd(new tcl::command(callback, usage, spec));
+
+  // We don't want to have to keep 'group' as a member of tcl::command
+  // since it involves circular references -- tcl::command_group keeps
+  // a list of tcl::command objects, so we'd prefer tcl::command to
+  // not need a backreference to tcl::command_group. If it becomes
+  // necessary to keep a back-reference, then there needs to be a way
+  // for tcl::command_group to notify its tcl::command list that it is
+  // destructing, so that the tcl::command objects can "forget" their
+  // back-reference.
+  group->add(cmd);
+
+  return cmd;
 }
 
-void tcl::command_group::add(rutz::shared_ptr<tcl::command> p)
+void tcl::command_group::add(shared_ptr<tcl::command> p)
 {
 GVX_TRACE("tcl::command_group::add");
   rep->cmd_list.push_back(p);

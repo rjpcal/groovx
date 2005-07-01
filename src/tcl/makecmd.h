@@ -38,6 +38,7 @@
 #include "tcl/argspec.h"
 #include "tcl/conversions.h"
 #include "tcl/command.h"
+#include "tcl/commandgroup.h"
 #include "tcl/vecdispatch.h"
 
 #include "rutz/functors.h"
@@ -415,7 +416,7 @@ namespace tcl
 /// Factory function for tcl::command's from functors.
 
   template <class func_wrapper>
-  inline rutz::shared_ptr<tcl::command>
+  inline void
   make_generic_command(tcl::interpreter& interp,
                        func_wrapper f,
                        const char* cmd_name,
@@ -424,9 +425,9 @@ namespace tcl
                        const rutz::file_pos& src_pos)
   {
     typedef typename rutz::func_traits<func_wrapper>::retn_t retn_t;
-    return tcl::command::make(interp,
-                              generic_function<retn_t, func_wrapper>::make(f),
-                              cmd_name, usage, spec, src_pos);
+    tcl::command_group::make(interp,
+                       generic_function<retn_t, func_wrapper>::make(f),
+                       cmd_name, usage, spec, src_pos);
   }
 
 
@@ -434,7 +435,7 @@ namespace tcl
 /// Factory function for vectorized tcl::command's from functors.
 
   template <class func_wrapper>
-  inline rutz::shared_ptr<tcl::command>
+  inline void
   make_generic_vec_command(tcl::interpreter& interp,
                            func_wrapper f,
                            const char* cmd_name,
@@ -445,11 +446,10 @@ namespace tcl
   {
     typedef typename rutz::func_traits<func_wrapper>::retn_t retn_t;
     rutz::shared_ptr<tcl::command> cmd =
-      tcl::command::make(interp,
+      tcl::command_group::make(interp,
                          generic_function<retn_t, func_wrapper>::make(f),
                          cmd_name, usage, spec, src_pos);
     tcl::use_vec_dispatch(*cmd, keyarg);
-    return cmd;
   }
 
 ///////////////////////////////////////////////////////////////////////
@@ -462,14 +462,14 @@ namespace tcl
 /// Factory function for tcl::command's from function pointers.
 
   template <class Func>
-  inline rutz::shared_ptr<tcl::command>
+  inline void
   make_command(tcl::interpreter& interp,
           Func f,
           const char* cmd_name,
           const char* usage,
           const rutz::file_pos& src_pos)
   {
-    return make_generic_command
+    make_generic_command
       (interp, build_func_wrapper(f), cmd_name, usage,
        arg_spec(rutz::func_traits<Func>::num_args + 1, -1, true),
        src_pos);
@@ -479,7 +479,7 @@ namespace tcl
 /// Factory function for vectorized tcl::command's from function pointers.
 
   template <class Func>
-  inline rutz::shared_ptr<tcl::command>
+  inline void
   make_vec_command(tcl::interpreter& interp,
                    Func f,
                    const char* cmd_name,
@@ -487,7 +487,7 @@ namespace tcl
                    unsigned int keyarg /*default is 1*/,
                    const rutz::file_pos& src_pos)
   {
-    return make_generic_vec_command
+    make_generic_vec_command
       (interp, build_func_wrapper(f), cmd_name, usage,
        arg_spec(rutz::func_traits<Func>::num_args + 1, -1, true),
        keyarg, src_pos);

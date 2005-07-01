@@ -35,9 +35,6 @@
 
 #include "tcl/command.h"
 
-#include "tcl/commandgroup.h"
-#include "tcl/interp.h"
-
 #include "rutz/fstring.h"
 #include "rutz/sharedptr.h"
 
@@ -130,35 +127,6 @@ tcl::command::command(shared_ptr<tcl::function> callback,
   rep(new impl(callback, usage, spec))
 {
 GVX_TRACE("tcl::command::command");
-}
-
-shared_ptr<tcl::command> tcl::command::make(
-          tcl::interpreter& interp,
-          shared_ptr<tcl::function> callback,
-          const char* cmd_name, const char* usage,
-          const tcl::arg_spec& spec,
-          const rutz::file_pos& src_pos)
-{
-GVX_TRACE("tcl::command::make");
-
-  command_group* const group =
-    tcl::command_group::make(interp, cmd_name, src_pos);
-
-  GVX_ASSERT(group != 0);
-
-  shared_ptr<tcl::command> cmd( new tcl::command(callback, usage, spec) );
-
-  // We don't want to have to keep 'group' as a member of tcl::command
-  // since it involves circular references -- tcl::command_group keeps
-  // a list of tcl::command objects, so we'd prefer not to have a
-  // back-reference here. If it becomes necessary to keep a
-  // back-reference, then there needs to be a way for
-  // tcl::command_group to notify its tcl::command list that it is
-  // destructing, so that the tcl::command objects can "forget" their
-  // back-reference.
-  group->add(cmd);
-
-  return cmd;
 }
 
 tcl::command::~command() throw()

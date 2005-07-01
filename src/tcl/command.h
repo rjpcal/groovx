@@ -99,14 +99,16 @@ public:
 class tcl::command
 {
 public:
-  /// Construct with basic properties for the command.
-  static rutz::shared_ptr<tcl::command>
-  make(tcl::interpreter& interp,
-       rutz::shared_ptr<tcl::function> callback,
-       const char* cmd_name,
-       const char* usage,
-       const arg_spec& spec,
-       const rutz::file_pos& src_pos);
+  /// Build a tcl::command object.
+  /** BUT, you almost certainly don't want to use this function
+      directly, but should instead call tcl::command_group::make(). If
+      you just create a tcl::command on its own, it won't do anything
+      (it won't be registered with the tcl interpreter). The
+      tcl::command needs to be hooked into a tcl::command_group, and
+      the way to do that is by creating it through
+      tcl::command_group::make(). */
+  command(rutz::shared_ptr<tcl::function> callback,
+          const char* usage, const arg_spec& spec);
 
   /// Non-virtual destructor since this class is not for use as a base class.
   ~command() throw();
@@ -131,9 +133,6 @@ public:
   void set_dispatcher(rutz::shared_ptr<arg_dispatcher> dpx);
 
 private:
-  command(rutz::shared_ptr<tcl::function> callback,
-          const char* usage, const arg_spec& spec);
-
   command(const command&); // not implemented
   command& operator=(const command&); // not implemented
 
