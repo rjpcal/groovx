@@ -221,7 +221,7 @@ tcl::script_app::script_app(const char* appname,
                             int argc_, char** argv_) throw()
   :
   m_appname(appname),
-  m_script_argc(argc_),
+  m_script_argc(0),
   m_script_argv(new char*[argc_+1]),
   m_minimal(false),
   m_nowindow(false),
@@ -233,7 +233,6 @@ tcl::script_app::script_app(const char* appname,
   // We are going to take a quick pass over the command-line args here
   // to see if there are any we care about; if there are, then we will
   // cull those from the arg list that gets exposed to the script.
-  int script_argn = 0;
 
   // Quick check argv to optionally turn on global tracing and/or set
   // the global debug level. This method is particularly useful for
@@ -268,12 +267,12 @@ tcl::script_app::script_app(const char* appname,
         {
           // ok, we didn't recognize this arg, so we'll pass it along
           // to the script:
-          m_script_argv[script_argn++] = argv_[i];
+          m_script_argv[m_script_argc++] = argv_[i];
         }
     }
 
   // now null-terminate the argv that will be passed to the script:
-  m_script_argv[script_argn] = 0;
+  m_script_argv[m_script_argc] = 0;
 }
 
 tcl::script_app::~script_app() throw()
