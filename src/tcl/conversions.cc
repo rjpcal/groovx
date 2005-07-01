@@ -35,10 +35,6 @@
 
 #include "tcl/conversions.h"
 
-#include "tcl/dict.h"
-#include "tcl/list.h"
-#include "tcl/obj.h"
-
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/value.h"
@@ -96,12 +92,6 @@ namespace
 // (Tcl --> C++) aux_convert_to specializations
 //
 ///////////////////////////////////////////////////////////////////////
-
-Tcl_Obj* tcl::aux_convert_to(Tcl_Obj* obj, Tcl_Obj**)
-{ return obj; }
-
-tcl::obj tcl::aux_convert_to(Tcl_Obj* obj, tcl::obj*)
-{ return obj; }
 
 int tcl::aux_convert_to(Tcl_Obj* obj, int*)
 {
@@ -286,34 +276,12 @@ GVX_TRACE("tcl::aux_convert_to(fstring*)");
   return fstring(rutz::char_range(text, static_cast<unsigned int>(length)));
 }
 
-tcl::dict tcl::aux_convert_to(Tcl_Obj* obj, tcl::dict*)
-{
-GVX_TRACE("tcl::aux_convert_to(tcl::dict*)");
-
-  return tcl::dict(obj);
-}
-
-tcl::list tcl::aux_convert_to(Tcl_Obj* obj, tcl::list*)
-{
-GVX_TRACE("tcl::aux_convert_to(tcl::list*)");
-
-  return tcl::list(obj);
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 //
 // (C++ --> Tcl) aux_convert_from specializations
 //
 ///////////////////////////////////////////////////////////////////////
-
-tcl::obj tcl::aux_convert_from(Tcl_Obj* val)
-{
-GVX_TRACE("tcl::aux_convert_from(Tcl_Obj*)");
-  tcl::obj result;
-  result = val;
-  return result;
-}
 
 tcl::obj tcl::aux_convert_from(long val)
 {
@@ -400,27 +368,6 @@ tcl::obj tcl::aux_convert_from(const rutz::value& val)
 GVX_TRACE("tcl::aux_convert_from(const rutz::value&)");
 
   return Tcl_NewStringObj(val.get_string().c_str(), -1);
-}
-
-tcl::obj tcl::aux_convert_from(tcl::dict dict_value)
-{
-GVX_TRACE("tcl::aux_convert_from(tcl::dict)");
-
-  return dict_value.as_obj();
-}
-
-tcl::obj tcl::aux_convert_from(tcl::list list_value)
-{
-GVX_TRACE("tcl::aux_convert_from(tcl::list)");
-
-  return list_value.as_obj();
-}
-
-tcl::obj tcl::aux_convert_from(tcl::obj val)
-{
-GVX_TRACE("tcl::aux_convert_from(tcl::obj)");
-
-  return val;
 }
 
 static const char vcid_groovx_tcl_conversions_cc_utc20050628162420[] = "$Id$ $HeadURL$";

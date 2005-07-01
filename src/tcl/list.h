@@ -41,6 +41,9 @@
 namespace tcl
 {
   class list;
+
+  tcl::list aux_convert_to(Tcl_Obj* obj, tcl::list*);
+  tcl::obj aux_convert_from(tcl::list list_value);
 }
 
 ///////////////////////////////////////////////////////////////////////

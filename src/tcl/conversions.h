@@ -53,8 +53,6 @@ namespace nub
 
 namespace tcl
 {
-  class dict;
-  class list;
   class obj;
 
   /// Trait class for extracting an appropriate return-type from T.
@@ -99,8 +97,6 @@ namespace tcl
   // aux_convert_to() is called below in the implementation of
   // convert_to().
 
-  Tcl_Obj*      aux_convert_to(Tcl_Obj* obj, Tcl_Obj**);
-  tcl::obj      aux_convert_to(Tcl_Obj* obj, tcl::obj*);
   int           aux_convert_to(Tcl_Obj* obj, int*);
   unsigned int  aux_convert_to(Tcl_Obj* obj, unsigned int*);
   long          aux_convert_to(Tcl_Obj* obj, long*);
@@ -110,8 +106,14 @@ namespace tcl
   float         aux_convert_to(Tcl_Obj* obj, float*);
   const char*   aux_convert_to(Tcl_Obj* obj, const char**);
   rutz::fstring aux_convert_to(Tcl_Obj* obj, rutz::fstring*);
-  tcl::dict     aux_convert_to(Tcl_Obj* obj, tcl::dict*);
-  tcl::list     aux_convert_to(Tcl_Obj* obj, tcl::list*);
+
+  inline
+  Tcl_Obj*      aux_convert_to(Tcl_Obj* obj, Tcl_Obj**)
+  { return obj; }
+
+  inline
+  tcl::obj      aux_convert_to(Tcl_Obj* obj, tcl::obj*)
+  { return tcl::obj(obj); }
 
   template <class T>
   inline typename returnable<T>::type convert_to( Tcl_Obj* obj )
@@ -119,6 +121,8 @@ namespace tcl
     return aux_convert_to(obj, static_cast<typename returnable<T>::type*>(0));
   }
 
+  /// Convert a tcl::obj to a native c++ object.
+  /** Will select a matching aux_convert_to() overload. */
   template <class T>
   inline typename returnable<T>::type convert_to( const tcl::obj& obj )
   {
@@ -129,7 +133,6 @@ namespace tcl
   // Functions for converting from C++ types to Tcl objects.
   //
 
-  tcl::obj aux_convert_from(Tcl_Obj* val);
   tcl::obj aux_convert_from(long val);
   tcl::obj aux_convert_from(unsigned long val);
   tcl::obj aux_convert_from(int val);
@@ -141,10 +144,17 @@ namespace tcl
   tcl::obj aux_convert_from(const char* val);
   tcl::obj aux_convert_from(const rutz::fstring& val);
   tcl::obj aux_convert_from(const rutz::value& v);
-  tcl::obj aux_convert_from(tcl::dict dict_value);
-  tcl::obj aux_convert_from(tcl::list list_value);
-  tcl::obj aux_convert_from(tcl::obj val);
 
+  inline
+  tcl::obj aux_convert_from(Tcl_Obj* val)
+  { return tcl::obj(val); }
+
+  inline
+  tcl::obj aux_convert_from(tcl::obj val)
+  { return val; }
+
+  /// Convert a native c++ object to a tcl::obj.
+  /** Will select a matching aux_convert_from() overload. */
   template <class T>
   inline tcl::obj convert_from(const T& val)
   {

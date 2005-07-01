@@ -43,6 +43,20 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
+tcl::list tcl::aux_convert_to(Tcl_Obj* obj, tcl::list*)
+{
+GVX_TRACE("tcl::aux_convert_to(tcl::list*)");
+
+  return tcl::list(obj);
+}
+
+tcl::obj tcl::aux_convert_from(tcl::list list_value)
+{
+GVX_TRACE("tcl::aux_convert_from(tcl::list)");
+
+  return list_value.as_obj();
+}
+
 tcl::list::list() :
   m_list_obj(Tcl_NewListObj(0,0)),
   m_elements(0),
