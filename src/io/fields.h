@@ -38,6 +38,7 @@
 
 #include "nub/object.h"
 
+#include "tcl/conversions.h"
 #include "tcl/obj.h"
 
 #include "rutz/algo.h"
@@ -194,7 +195,7 @@ public:
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
-    deref_t raw = new_val.template as<deref_t>();
+    deref_t raw = tcl::convert_to<deref_t>(new_val);
 
     dereference(cobj, itsDataMember) = raw;
   }
@@ -267,7 +268,7 @@ public:
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
-    deref_t raw = new_val.template as<deref_t>();
+    deref_t raw = tcl::convert_to<deref_t>(new_val);
 
     dereference(cobj, itsDataMember) = this->limit(raw);
   }
@@ -330,7 +331,7 @@ public:
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
-    rutz::fstring sval = new_val.template as<rutz::fstring>();
+    rutz::fstring sval = tcl::convert_to<rutz::fstring>(new_val);
 
     dereference(cobj, itsValueMember).set_string(sval);
   }
@@ -394,7 +395,7 @@ public:
 
     typedef typename rutz::type_traits<T>::stack_t stack_t;
 
-    (cobj.*itsSetter)(new_val.template as<stack_t>());
+    (cobj.*itsSetter)(tcl::convert_to<stack_t>(new_val));
   }
 
   virtual tcl::obj get(const FieldContainer* obj) const

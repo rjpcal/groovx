@@ -33,6 +33,7 @@
 #ifndef GROOVX_TCL_LIST_H_UTC20050628162420_DEFINED
 #define GROOVX_TCL_LIST_H_UTC20050628162420_DEFINED
 
+#include "tcl/conversions.h"
 #include "tcl/obj.h"
 
 #include "rutz/sharedptr.h"

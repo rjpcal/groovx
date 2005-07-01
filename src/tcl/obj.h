@@ -84,13 +84,7 @@ public:
 
   Tcl_Obj* get() const { return m_obj; }
 
-  template <class T>
-  inline T as() const;
-
   void append(const tcl::obj& other);
-
-  template <class T>
-  inline void append(const T& other);
 
   bool is_shared() const;
   bool is_unique() const { return !is_shared(); }
@@ -115,27 +109,6 @@ private:
 
   mutable Tcl_Obj* m_obj;
 };
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// Inline member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-#include "tcl/conversions.h"
-
-template <class T>
-inline T tcl::obj::as() const
-{
-  return tcl::convert_to<T>(m_obj);
-}
-
-template <class T>
-inline void tcl::obj::append(const T& other)
-{
-  append(tcl::convert_from(other));
-}
 
 static const char vcid_groovx_tcl_obj_h_utc20050628162421[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_OBJ_H_UTC20050628162421_DEFINED

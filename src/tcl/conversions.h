@@ -34,6 +34,7 @@
 #define GROOVX_TCL_CONVERSIONS_H_UTC20050628162420_DEFINED
 
 #include "rutz/traits.h"
+#include "tcl/obj.h"
 
 typedef struct Tcl_Obj Tcl_Obj;
 
@@ -93,6 +94,11 @@ namespace tcl
   // Functions for converting from Tcl objects to C++ types.
   //
 
+  // Note that the trailing pointer params are not actually used, they
+  // are simply present to allow overload selection. See e.g. how
+  // aux_convert_to() is called below in the implementation of
+  // convert_to().
+
   Tcl_Obj*      aux_convert_to(Tcl_Obj* obj, Tcl_Obj**);
   tcl::obj      aux_convert_to(Tcl_Obj* obj, tcl::obj*);
   int           aux_convert_to(Tcl_Obj* obj, int*);
@@ -111,6 +117,12 @@ namespace tcl
   inline typename returnable<T>::type convert_to( Tcl_Obj* obj )
   {
     return aux_convert_to(obj, static_cast<typename returnable<T>::type*>(0));
+  }
+
+  template <class T>
+  inline typename returnable<T>::type convert_to( const tcl::obj& obj )
+  {
+    return aux_convert_to(obj.get(), static_cast<typename returnable<T>::type*>(0));
   }
 
   //

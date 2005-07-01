@@ -62,7 +62,7 @@ namespace
     // Note, this Tcl API call requires Tcl 8.4.6 or greater (or 8.5
     // or greater)
     Tcl_GetCommandFullName(interp.intp(), token, result.get());
-    return fstring(result.as<const char*>());
+    return tcl::convert_to<rutz::fstring>(result);
   }
 
   void append_usage(fstring& dest, const fstring& usage)
