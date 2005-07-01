@@ -260,12 +260,20 @@ void tcl::event_loop_impl::do_prompt(const char* text,
 {
 GVX_TRACE("tcl::event_loop_impl::do_prompt");
 
+  rutz::fstring color_prompt = text;
+
+  if (isatty(1))
+    {
+      color_prompt = rutz::fstring("\033[1;32m", text, "\033[0m");
+    }
+
 #ifdef GVX_WITH_READLINE
-  rl_callback_handler_install(text, readline_line_complete);
+  rl_callback_handler_install(color_prompt.c_str(),
+                              readline_line_complete);
 #else
   if (length > 0)
     {
-      std::cout.write(text, length);
+      std::cout.write(color_prompt.c_str(), color_prompt.length());
       std::cout.flush();
     }
 #endif
