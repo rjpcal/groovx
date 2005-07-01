@@ -38,6 +38,8 @@
 #include "rutz/fstring.h"
 #include "rutz/sharedptr.h"
 
+#include "tcl/interp.h"
+
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
