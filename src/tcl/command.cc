@@ -152,6 +152,12 @@ bool tcl::command::rejects_argc(unsigned int objc) const
 rutz::fstring tcl::command::usage_string() const
 {
 GVX_TRACE("tcl::command::usage_string");
+  if (rep->argspec.argc_min() ==
+      rep->argspec.argc_max())
+    return rutz::fstring(rep->usage,
+                         " (argc=", rep->argspec.argc_min(), ")");
+
+  // else...
   return rutz::fstring(rep->usage,
                        " (argc=[", rep->argspec.argc_min(),
                        "..", rep->argspec.argc_min(), "])");
