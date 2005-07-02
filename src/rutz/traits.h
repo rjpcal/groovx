@@ -79,15 +79,18 @@ namespace rutz
     typedef if_false result_t;
   };
 
+  namespace traits
+  {
+    /** dummy type */ struct yes_type { char x; };
+    /** dummy type */ struct no_type  { yes_type x[2]; };
+  }
+
   /// Helper class for is_sub_super.
   template <class T>
   struct type_match
   {
-    /** dummy type */ struct s1 { char x; };
-    /** dummy type */ struct s2 { s1 x[2]; };
-
-    static s1 foo(T* p);
-    static s2 foo(...);
+    static traits::yes_type foo(T* p);
+    static traits::no_type  foo(...);
   };
 
   /// Determine whether sub derives from super.
@@ -98,11 +101,120 @@ namespace rutz
 
     enum
       {
-        result = ((sz == sizeof(typename type_match<super>::s1))
-                  ? 1
-                  : 0)
+        result = ((sz == sizeof(traits::yes_type)) ? 1 : 0)
       };
   };
+
+  /// Remove const/volative qualifiers
+
+  // From boost/type_traits/is_class.hpp:
+  template <class U> traits::yes_type is_class_tester(void(U::*)(void));
+  template <class U> traits::no_type  is_class_tester(...);
+
+  /// Traits class to tell us whether T is a class type or not.
+  template <typename T>
+  struct is_class
+  {
+    enum
+      {
+        value = (sizeof(is_class_tester<T>(0))
+                 == sizeof(traits::yes_type))
+      };
+  };
+
+  /// Helper struct for telling whether T is a polymorphic type or not.
+  /** The implementation trick here is that, if T is NOT polymorphic,
+      then if we derive a new type from T that has virtual functions,
+      then its sizeof() should increase to make room for the vtable
+      pointer. On the other hand, if T is already polymorphic, then it
+      already has a vtable ptr and so adding a new virtual function
+      won't change sizeof() the derived type. */
+  template <class T>
+  struct is_polymorphic_imp1
+  {
+    typedef T ncvT;
+
+    struct d1 : public ncvT
+    {
+      d1();
+      ~d1()throw();
+      char padding[256];
+    };
+
+    struct d2 : public ncvT
+    {
+      d2();
+      virtual ~d2() throw();
+
+      struct unique{};
+      virtual void unique_name_to_invt200507011541(unique*);
+
+      char padding[256];
+    };
+
+    enum { value = (sizeof(d2) == sizeof(d1)) };
+  };
+
+  template <class T>
+  struct is_polymorphic_imp2
+  {
+    enum { value = false };
+  };
+
+  template <bool is_class>
+  struct is_polymorphic_selector
+  {
+    template <class T>
+    struct rebind
+    {
+      typedef is_polymorphic_imp2<T> type;
+    };
+  };
+
+  template <>
+  struct is_polymorphic_selector<true>
+  {
+    template <class T>
+    struct rebind
+    {
+      typedef is_polymorphic_imp1<T> type;
+    };
+  };
+
+  /// Traits class to tell whether T is a polymorphic type (i.e. has virtual functions).
+  template <class T>
+  struct is_polymorphic
+  {
+    typedef is_polymorphic_selector<is_class<T>::value> selector;
+    typedef typename selector::template rebind<T> binder;
+    typedef typename binder::type imp_type;
+    enum { value = imp_type::value };
+  };
+
+  template <class T, bool polymorphic = is_polymorphic<T>::value >
+  struct full_object_caster;
+
+  template <class T>
+  struct full_object_caster<T, false>
+  {
+    static void* cast(T* p) { return static_cast<void*>(p); }
+  };
+
+  template <class T>
+  struct full_object_caster<T, true>
+  {
+    static void* cast(T* p) { return dynamic_cast<void*>(p); }
+  };
+
+  /// Cast a pointer to the beginning of the full object.
+  /** Here we select between static_cast and dynamic_cast depending on
+      whether T is polymorphic. */
+  template <class T>
+  inline void* full_object_cast(T* p)
+  {
+    return full_object_caster<T>::cast(p);
+  }
+
 }
 
 static const char vcid_groovx_rutz_traits_h_utc20050626084021[] = "$Id$ $HeadURL$";
