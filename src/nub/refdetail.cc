@@ -33,7 +33,7 @@
 #ifndef GROOVX_NUB_REFDETAIL_CC_UTC20050705190649_DEFINED
 #define GROOVX_NUB_REFDETAIL_CC_UTC20050705190649_DEFINED
 
-#include "ref.h"
+#include "nub/refdetail.h"
 
 #include "nub/objdb.h"
 
