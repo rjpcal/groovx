@@ -37,21 +37,37 @@
 
 namespace rutz
 {
-  class mapped_file
+  //! An mmap()/munmap() wrapper class for fast input file reading.
+  /*! In cases where an entire file would eventually be read into
+      memory anyway, it is likely to be significantly faster (2-3x
+      faster at least) to use mmap-ing instead of C-style
+      fopen()/fgetc()/fread()/fclose() or C++-style iostreams. This is
+      because both the C and C++ libraries are likely implemented
+      internally with mmap anyway, and those libraries introduce
+      another layer of memory buffering on top of the raw OS mmap. */
+  class mapped_infile
   {
   public:
-    mapped_file(const char* filename);
-    ~mapped_file();
+    //! Open the named file using mmap().
+    /*! The contents of the file become accessible as if the file were
+        laid out continously in memory. */
+    mapped_infile(const char* filename);
 
+    //! Destructor closes and munmap()'s the file.
+    ~mapped_infile();
+
+    //! Get a pointer to the memory representing the file contents.
     const void* memory() const { return m_mem; }
 
+    //! Get the length of the file, and of its in-memory representation.
     off_t length() const { return m_statbuf.st_size; }
 
+    //! Get the last-modification time of the file.
     time_t mtime() const { return m_statbuf.st_mtime; }
 
   private:
-    mapped_file(const mapped_file&);
-    mapped_file& operator=(const mapped_file&);
+    mapped_infile(const mapped_infile&);
+    mapped_infile& operator=(const mapped_infile&);
 
     struct stat m_statbuf;
     int         m_fileno;

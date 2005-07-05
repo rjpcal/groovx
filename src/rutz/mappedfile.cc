@@ -44,7 +44,7 @@
 #include <sys/mman.h>  // for mmap()
 #include <unistd.h>    // for close()
 
-rutz::mapped_file::mapped_file(const char* filename)
+rutz::mapped_infile::mapped_infile(const char* filename)
   :
   m_statbuf(),
   m_fileno(0),
@@ -78,7 +78,7 @@ rutz::mapped_file::mapped_file(const char* filename)
     }
 }
 
-rutz::mapped_file::~mapped_file()
+rutz::mapped_infile::~mapped_infile()
 {
   munmap(m_mem, m_statbuf.st_size);
   close(m_fileno);

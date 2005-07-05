@@ -175,7 +175,7 @@ void rutz::base64_encode_file(const char* filename,
                               rutz::byte_array& dst,
                               unsigned int line_width)
 {
-  rutz::mapped_file m(filename);
+  rutz::mapped_infile m(filename);
   rutz::base64_encode(static_cast<const unsigned char*>(m.memory()),
                       m.length(),
                       dst,
