@@ -220,7 +220,7 @@ void rutz::string_rep::debug_dump() const throw()
   dbg_eval_nl(0, (void*)m_text);
   dbg_eval_nl(0, m_text);
   for (unsigned int i = 0; i < m_length; ++i)
-    dbg_print(0, (void*)(int)m_text[i]);
+    dbg_print(0, (void*)(size_t)m_text[i]);
   dbg_print_nl(0, "");
 }
 
