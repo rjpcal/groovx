@@ -545,12 +545,14 @@ svn_export:
 	  && tar cvfz $(DISTNAME).tar.gz $(DISTNAME)
 
 www_export: svn_export
-	/bin/cp snapshots/$(DISTNAME).tar.gz $(HOME)/www/code/
-	/bin/chmod 444 $(HOME)/www/code/$(DISTNAME).tar.gz
-	/bin/rm -f $(HOME)/www/code/$(PACKAGE_TARNAME)_current.tar.gz
-	cd $(HOME)/www/code && /bin/ln -s \
+	/bin/cp snapshots/$(DISTNAME).tar.gz $(HOME)/www/code/ \
+	  && /bin/chmod 444 $(HOME)/www/code/$(DISTNAME).tar.gz \
+	  && /bin/rm -f \
+		$(HOME)/www/code/$(PACKAGE_TARNAME)_current.tar.gz \
+	  && cd $(HOME)/www/code \
+	  && /bin/ln -s \
 		$(DISTNAME).tar.gz \
-		$(PACKAGE_TARNAME)_current.tar.gz
+		$(HOME)/www/code/$(PACKAGE_TARNAME)_current.tar.gz
 
 #-------------------------------------------------------------------------
 #
