@@ -36,7 +36,7 @@
 #include "mappedfile.h"
 
 #include "rutz/error.h"
-#include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <cerrno>
 #include <cstring>     // for strerror()
@@ -54,17 +54,17 @@ rutz::mapped_file::mapped_file(const char* filename)
 
   if (stat(filename, &m_statbuf) == -1)
     {
-      rutz::fstring msg("stat() failed for file ", filename, ":\n",
-                        strerror(errno), "\n");
-      throw rutz::error(msg, SRC_POS);
+      throw rutz::error(rutz::sfmt("stat() failed for file '%s':\n"
+                                   "%s\n", filename, strerror(errno)),
+                        SRC_POS);
     }
 
   m_fileno = open(filename, O_RDONLY);
   if (m_fileno == -1)
     {
-      rutz::fstring msg("open() failed for file ", filename, ":\n",
-                        strerror(errno), "\n");
-      throw rutz::error(msg, SRC_POS);
+      throw rutz::error(rutz::sfmt("open() failed for file '%s':\n"
+                                   "%s\n", filename, strerror(errno)),
+                        SRC_POS);
     }
 
   m_mem = mmap(0, m_statbuf.st_size,
@@ -72,9 +72,9 @@ rutz::mapped_file::mapped_file(const char* filename)
 
   if (m_mem == (void*)-1)
     {
-      rutz::fstring msg("mmap() failed for file ", filename, ":\n",
-                        strerror(errno), "\n");
-      throw rutz::error(msg, SRC_POS);
+      throw rutz::error(rutz::sfmt("mmap() failed for file '%s':\n"
+                                   "%s\n", filename, strerror(errno)),
+                        SRC_POS);
     }
 }
 
