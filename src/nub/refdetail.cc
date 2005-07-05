@@ -30,8 +30,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_REF_CC_UTC20050626084019_DEFINED
-#define GROOVX_NUB_REF_CC_UTC20050626084019_DEFINED
+#ifndef GROOVX_NUB_REFDETAIL_CC_UTC20050705190649_DEFINED
+#define GROOVX_NUB_REFDETAIL_CC_UTC20050705190649_DEFINED
 
 #include "ref.h"
 
@@ -115,5 +115,5 @@ void nub::detail::throw_soft_ref_invalid(const std::type_info& info,
                     pos);
 }
 
-static const char vcid_groovx_nub_ref_cc_utc20050626084019[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_NUB_REF_CC_UTC20050626084019_DEFINED
+static const char vcid_groovx_nub_refdetail_cc_utc20050705190649[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_REFDETAIL_CC_UTC20050705190649_DEFINED
