@@ -184,11 +184,11 @@ LOCAL_SRCS := $(shell find $(SRC) -name \*.h -or -name \*.cc -or -name \*.C)
 
 # dependencies of object files on source+header files
 
-$(DEVSCRIPTS)/cppdeps: $(DEVSCRIPTS)/cppdeps.cc
+$(DEVSCRIPTS)/cppdeps: $(DEVSCRIPTS)/cdeps.cc
 	$(CXX) -O2 -Wall $(LDFLAGS) $^ -o $@
 
-$(DEP)/cppdepends: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs \
+$(DEP)/cppdepends: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cdeps --includedir $(SRC)/pkgs \
 		--objdir $(OBJ)/ \
 		--srcdir $(SRC) \
 		| sort > $(@).tmp
@@ -196,34 +196,34 @@ $(DEP)/cppdepends: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
 
 LDEPOPTS := --verbosity 2 --includedir $(SRC)/pkgs --objdir $(OBJ)/ --srcdir $(SRC)
 
-$(DEP)/ldepgroups: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) \
+$(DEP)/ldepgroups: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
 	  --output-ldep-groups \
 	  |sort -n> $@
 
-$(DEP)/ldeplevels: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) \
+$(DEP)/ldeplevels: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
 	  --output-ldep-levels \
 	  |sort -n> $@
 
-$(DEP)/ldeplevelsv: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) \
+$(DEP)/ldeplevelsv: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
 	  --output-ldep-levelsv \
 	  |sort -n | sed -e 's/\[\[\[#.*\]\]\]//' > $@
 
-$(DEP)/ldeps: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps $(LDEPOPTS) \
+$(DEP)/ldeps: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
 	  --output-ldep-raw > $@
 
 ldep-html: $(DEP)/ldeps
 	time $(DEVSCRIPTS)/make-ldep-html.sh $< $(SRC)/ ldepdoc
 
-$(DEP)/altdeps: $(DEVSCRIPTS)/cppdeps.tcl $(DEVSCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps.tcl --include $(SRC)/pkgs --src $(SRC) --objdir $(OBJ)/ > $@
+$(DEP)/altdeps: $(DEVSCRIPTS)/cdeps.tcl $(DEVSCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cdeps.tcl --include $(SRC)/pkgs --src $(SRC) --objdir $(OBJ)/ > $@
 
 
-sysdepends: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs \
+sysdepends: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cdeps --includedir $(SRC)/pkgs \
 		--objdir $(OBJ)/ --srcdir $(SRC) \
 		--checksys \
 		--sysincludedir /usr/lib/gcc/i386-redhat-linux/3.4.2/include \
@@ -232,8 +232,8 @@ sysdepends: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
 		--sysincludedir /usr/include/c++/3.4.2/i386-redhat-linux \
 		|sort> $@
 
-direct_cdeps: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs \
+direct_cdeps: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cdeps --includedir $(SRC)/pkgs \
 		--objdir $(OBJ)/ --srcdir $(SRC) \
 		--checksys \
 		--sysincludedir /usr/lib/gcc/i386-redhat-linux/3.4.2/include \
@@ -249,9 +249,9 @@ depcheck: $(DEP)/cppdepends $(DEP)/altdeps
 	diff $(DEP)/cppdepends $(DEP)/altdeps
 
 .PHONY: deptime
-deptime: $(DEVSCRIPTS)/cppdeps $(DEP)/altdeps
+deptime: $(DEVSCRIPTS)/cdeps $(DEP)/altdeps
 	/usr/bin/time -f "%e %U %S" -o deptime -a \
-	 $(DEVSCRIPTS)/cppdeps --objdir $(OBJ)/ $(SRC) |sort> $(DEP)/cppdepends
+	 $(DEVSCRIPTS)/cdeps --objdir $(OBJ)/ $(SRC) |sort> $(DEP)/cppdepends
 	cat deptime
 	diff $(DEP)/cppdepends $(DEP)/altdeps
 
