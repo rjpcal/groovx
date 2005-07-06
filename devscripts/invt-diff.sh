@@ -24,22 +24,26 @@ tosync="src/rutz \
 for d in $tosync; do
     echo "considering $d ..."
     if test -d "$d"; then
-	files=`ls -1 ${d}/*.{h,cc}`;
+	files=`ls -1 ${d}/*.{h,cc,dxy}`;
     else
 	files="$d";
     fi
     for f in $files; do
-	diff -u $f $saliencydir/$f \
-	    | grep "^\(+\|-\)" \
-	    | grep -v "^+++" \
-	    | grep -v "^---" \
-	    | fgrep -v '$Id' \
-	    | fgrep -v '$HeadURL' \
-	    | fgrep -v '$Revision' \
-	    > tmpdiff
-	if test -s tmpdiff; then
-	    diff -u $f $saliencydir/$f
+	if test ! -f $saliencydir/$f; then
+	    echo "no such file: $saliencydir/$f"
+	else
+	    diff -u $f $saliencydir/$f \
+		| grep "^\(+\|-\)" \
+		| grep -v "^+++" \
+		| grep -v "^---" \
+		| fgrep -v '$Id' \
+		| fgrep -v '$HeadURL' \
+		| fgrep -v '$Revision' \
+		> tmpdiff
+	    if test -s tmpdiff; then
+		diff -u $f $saliencydir/$f
+	    fi
+	    rm tmpdiff
 	fi
-	rm tmpdiff
     done
 done
