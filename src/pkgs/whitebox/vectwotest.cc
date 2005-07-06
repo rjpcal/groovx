@@ -1,6 +1,6 @@
+/** @file pkgs/whitebox/vectwotest.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// vectwotest.cc
 //
 // Copyright (c) 2002-2005
 // Rob Peters <rjpeters at usc dot edu>

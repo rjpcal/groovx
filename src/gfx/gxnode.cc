@@ -1,6 +1,6 @@
+/** @file gfx/gxnode.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// gxnode.cc
 //
 // Copyright (c) 2000-2005
 // Rob Peters <rjpeters at usc dot edu>

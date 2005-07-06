@@ -1,6 +1,6 @@
+/** @file visx/tclpkg-gl.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// gltcl.cc
 //
 // Copyright (c) 1998-2005
 // Rob Peters <rjpeters at usc dot edu>

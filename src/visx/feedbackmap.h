@@ -1,6 +1,6 @@
+/** @file visx/feedbackmap.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// feedbackmap.h
 //
 // Copyright (c) 2001-2005
 // Rob Peters <rjpeters at usc dot edu>

@@ -1,6 +1,6 @@
+/** @file media/bmapdata.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// bmapdata.cc
 //
 // Copyright (c) 2000-2005
 // Rob Peters <rjpeters at usc dot edu>

@@ -1,6 +1,6 @@
+/** @file visx/tclpkg-tlist.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// tlisttcl.h
 //
 // Copyright (c) 2005-2005
 // Rob Peters <rjpeters at usc dot edu>

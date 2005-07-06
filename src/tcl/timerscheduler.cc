@@ -1,6 +1,6 @@
+/** @file tcl/timerscheduler.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// tcltimerscheduler.cc
 //
 // Copyright (c) 2004-2005
 // Rob Peters <rjpeters at usc dot edu>

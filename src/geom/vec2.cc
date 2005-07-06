@@ -1,6 +1,6 @@
+/** @file geom/vec2.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// vec2.cc
 //
 // Copyright (c) 2001-2005
 // Rob Peters <rjpeters at usc dot edu>

@@ -1,6 +1,6 @@
+/** @file media/irixsound.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// irixsound.h
 //
 // Copyright (c) 1999-2005
 // Rob Peters <rjpeters at usc dot edu>

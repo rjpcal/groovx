@@ -1,6 +1,6 @@
+/** @file rutz/assocarray.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// assocarray.cc
 //
 // Copyright (c) 2004-2005
 // Rob Peters <rjpeters at usc dot edu>

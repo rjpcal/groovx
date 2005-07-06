@@ -1,6 +1,6 @@
+/** @file tcl/list.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// tcllistobj.cc
 //
 // Copyright (c) 2001-2005
 // Rob Peters <rjpeters at usc dot edu>

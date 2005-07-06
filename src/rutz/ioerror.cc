@@ -1,6 +1,6 @@
+/** @file rutz/ioerror.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// ioerror.cc
 //
 // Copyright (c) 2001-2005
 // Rob Peters <rjpeters at usc dot edu>

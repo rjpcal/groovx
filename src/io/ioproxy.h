@@ -1,6 +1,6 @@
+/** @file io/ioproxy.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// ioproxy.h
 //
 // Copyright (c) 2000-2005
 // Rob Peters <rjpeters at usc dot edu>

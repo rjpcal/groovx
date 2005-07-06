@@ -1,6 +1,6 @@
+/** @file visx/timinghandler.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// timinghandler.cc
 //
 // Copyright (c) 1999-2005
 // Rob Peters <rjpeters at usc dot edu>

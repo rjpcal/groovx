@@ -1,6 +1,6 @@
+/** @file rutz/timeformat.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// timeformat.cc
 //
 // Copyright (c) 2005-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>

@@ -1,6 +1,6 @@
+/** @file visx/gabor.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// gabor.h
 //
 // Copyright (c) 1999-2005
 // Rob Peters <rjpeters at usc dot edu>

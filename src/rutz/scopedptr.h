@@ -1,6 +1,6 @@
+/** @file rutz/scopedptr.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// scopedptr.h
 //
 // Copyright (c) 2004-2005
 // Rob Peters <rjpeters at usc dot edu>

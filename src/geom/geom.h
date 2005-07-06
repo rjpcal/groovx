@@ -1,6 +1,6 @@
+/** @file geom/geom.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// geom.h
 //
 // Copyright (c) 2002-2005
 // Rob Peters <rjpeters at usc dot edu>

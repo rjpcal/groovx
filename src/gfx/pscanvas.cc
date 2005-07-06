@@ -1,6 +1,6 @@
+/** @file gfx/pscanvas.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// pscanvas.cc
 //
 // Copyright (c) 2001-2005
 // Rob Peters <rjpeters at usc dot edu>

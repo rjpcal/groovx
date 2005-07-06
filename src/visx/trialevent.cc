@@ -1,6 +1,6 @@
+/** @file visx/trialevent.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// trialevent.cc
 //
 // Copyright (c) 1999-2005
 // Rob Peters <rjpeters at usc dot edu>

@@ -1,6 +1,6 @@
+/** @file visx/tclpkg-mask.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// masktcl.h
 //
 // Copyright (c) 2005-2005
 // Rob Peters <rjpeters at usc dot edu>

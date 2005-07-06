@@ -1,6 +1,6 @@
+/** @file nub/signal.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// signal.h
 //
 // Copyright (c) 1999-2005
 // Rob Peters <rjpeters at usc dot edu>

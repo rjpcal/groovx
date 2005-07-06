@@ -1,6 +1,6 @@
+/** @file rutz/time.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// time.cc
 //
 // Copyright (c) 2002-2005
 // Rob Peters <rjpeters at usc dot edu>

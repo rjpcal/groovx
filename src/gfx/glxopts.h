@@ -1,6 +1,6 @@
+/** @file gfx/glxopts.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// glxopts.h
 //
 // Copyright (c) 2002-2005
 // Rob Peters <rjpeters at usc dot edu>

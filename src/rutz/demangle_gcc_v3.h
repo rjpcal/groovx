@@ -1,6 +1,6 @@
+/** @file rutz/demangle_gcc_v3.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// demangle_gcc_v3.h
 //
 // Copyright (c) 2002-2005
 // Rob Peters <rjpeters at usc dot edu>

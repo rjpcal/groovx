@@ -1,6 +1,6 @@
+/** @file io/xmlreader.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// xmlreader.cc
 //
 // Copyright (c) 2003-2005
 // Rob Peters <rjpeters at usc dot edu>

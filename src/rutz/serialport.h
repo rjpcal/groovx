@@ -1,6 +1,6 @@
+/** @file rutz/serialport.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// serialport.h
 //
 // Copyright (c) 2000-2005
 // Rob Peters <rjpeters at usc dot edu>

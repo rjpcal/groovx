@@ -1,6 +1,6 @@
+/** @file nub/ref.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// ref.h
 //
 // Copyright (c) 2000-2005
 // Rob Peters <rjpeters at usc dot edu>

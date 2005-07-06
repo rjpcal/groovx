@@ -1,6 +1,6 @@
+/** @file pkgs/mtx/mtxobj.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// mtxobj.h
 //
 // Copyright (c) 2001-2005
 // Rob Peters <rjpeters at usc dot edu>

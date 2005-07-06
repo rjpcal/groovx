@@ -1,6 +1,6 @@
+/** @file geom/vec3.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// vec3.h
 //
 // Copyright (c) 2000-2005
 // Rob Peters <rjpeters at usc dot edu>

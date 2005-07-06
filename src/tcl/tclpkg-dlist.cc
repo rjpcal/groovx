@@ -1,6 +1,6 @@
+/** @file tcl/tclpkg-dlist.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// dlisttcl.cc
 //
 // Copyright (c) 1998-2005
 // Rob Peters <rjpeters at usc dot edu>

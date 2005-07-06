@@ -1,6 +1,6 @@
+/** @file io/fields.cc */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// fields.cc
 //
 // Copyright (c) 2000-2005
 // Rob Peters <rjpeters at usc dot edu>

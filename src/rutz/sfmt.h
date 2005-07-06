@@ -1,6 +1,6 @@
+/** @file rutz/sfmt.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// rutz/sfmt.h
 //
 // Copyright (c) 2005-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>

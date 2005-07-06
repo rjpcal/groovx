@@ -1,6 +1,6 @@
+/** @file nub/refdetail.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// refdetail.h
 //
 // Copyright (c) 2000-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>

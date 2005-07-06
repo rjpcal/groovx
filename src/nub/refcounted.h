@@ -1,6 +1,6 @@
+/** @file nub/refcounted.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// refcounted.h
 //
 // Copyright (c) 2000-2005
 // Rob Peters <rjpeters at usc dot edu>

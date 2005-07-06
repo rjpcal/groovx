@@ -1,6 +1,6 @@
+/** @file pkgs/whitebox/vectwotest.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// vectwotest.h
 //
 // Copyright (c) 2005-2005
 // Rob Peters <rjpeters at usc dot edu>

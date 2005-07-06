@@ -1,6 +1,6 @@
+/** @file nub/uid.h */
+
 ///////////////////////////////////////////////////////////////////////
-//
-// uid.h
 //
 // Copyright (c) 2001-2005
 // Rob Peters <rjpeters at usc dot edu>
