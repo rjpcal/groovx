@@ -1,5 +1,7 @@
 /** @file io/outputfile.cc wraps a std::ofstream in an IO::IoObject,
     allowing named files to be serialized and restored across multiple
+    program runs */
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2003-2005

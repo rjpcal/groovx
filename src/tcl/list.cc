@@ -1,5 +1,7 @@
 /** @file tcl/list.cc c++ wrapper of tcl list objects; handles ref
     counting and c++/tcl type conversion, offers c++-style list
+    iterators */
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2001-2005

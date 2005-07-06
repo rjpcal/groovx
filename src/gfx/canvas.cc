@@ -1,5 +1,7 @@
 /** @file gfx/canvas.cc abstract interface for drawing graphics to a
     drawable area, loosely based on OpenGL's interface but also
+    implementable with a PostScript backend */
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

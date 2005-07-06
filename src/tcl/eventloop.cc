@@ -1,5 +1,7 @@
 /** @file tcl/eventloop.cc singleton class that operates the tcl main
     event loop, reading commands from a script file or from stdin,
+    with readline-enabled command-line editing */
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005
