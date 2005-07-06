@@ -805,7 +805,8 @@ namespace
       output_mode(0),
       start_time(time((time_t*) 0)),
       nest_level(0),
-      output_comment_character("#")
+      output_comment_character("#"),
+      ldep_raw_mode(false)
     {}
 
     ostream& info()
@@ -845,6 +846,8 @@ namespace
                                  // the future
     int             nest_level;
     const char*     output_comment_character;
+
+    bool            ldep_raw_mode;
   };
 
   dep_config cfg;
@@ -1458,7 +1461,18 @@ namespace
           return file_info::get(result);
       }
 
-    return 0;
+    if (cfg.ldep_raw_mode)
+      // if we're doing --output-ldep-raw, then we want to list .h
+      // files as link dependencies if there is no corresponding
+      // .c/.C/.cc/.cpp source file:
+      return this;
+    else
+      // but in "normal" processing (e.g. building link dependency
+      // rules for a makefile), then we don't want to consider .h
+      // files as link dependencies (though .h files might inject
+      // transitive link dependencies due to the headers #include'd
+      // within the .h file):
+      return 0;
   }
 
   bool file_info::resolve_include(const string& include_name,
@@ -2204,6 +2218,7 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
     {
       cfg.output_mode |= LDEP_RAW;
       cfg.output_comment_character = NULL;
+      cfg.ldep_raw_mode = true;
       return false;
     }
   else if (strcmp(option, "--literal") == 0)

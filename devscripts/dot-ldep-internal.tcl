@@ -1,6 +1,6 @@
 #!/usr/bin/tclsh
 
-# $Id: dot-ldep-internal.tcl 4890 2005-06-23 22:40:40Z rjpeters $
+# $Id: dot-ldep-internal.tcl 5039 2005-07-06 01:30:33Z rjpeters $
 
 # Script use to transform the output of devscripts/cdeps
 # --output-ldep-raw into a format that is usable the graph-drawing
@@ -16,6 +16,82 @@ proc strip_src_pfx { dirname } {
     return $dirname
 }
 
+# eliminate multiple spaces, and escape double-quotes so it's safe for
+# a dot file
+proc cleanup_briefdoc { str } {
+    set str [regsub -all { +} $str { }]
+    set str [string map {\" \\\"} $str]
+    return $str
+}
+
+proc get_dir_briefdoc { dirname } {
+    set result "$dirname directory"
+
+    if { [file exists ${dirname}/README.dxy] } {
+
+	set fd [open ${dirname}/README.dxy "r"]
+	while { [gets $fd line] >= 0 } {
+	    if { [regexp {\\brief (.*)} $line - doc] } {
+		set result $doc
+		break
+	    }
+	}
+	close $fd
+    }
+
+    return [cleanup_briefdoc $result]
+}
+
+proc get_file_briefdoc { fname } {
+    set result $fname
+
+    set fd [open $fname "r"]
+    while { [gets $fd line] >= 0 } {
+	if { [regexp {@file +([^ ]+) +(.*)} $line - filename doc] } {
+	    set result $doc
+
+	    # if the line is an end-of-comment, then we're done
+	    if { [regexp {\*/$} $line] } { break }
+
+	    # continue reading until the end of the comment or until a
+	    # blank line:
+	    while { [gets $fd line] >= 0 } {
+		# if it's an empty line, we're done
+		if { [string length $line] == 0 } { break }
+
+		# otherwise, append the current line to our result
+		append result " $line"
+
+		# if the line is an end-of-comment, then we're done
+		if { [regexp {\*/$} $line] } { break }
+
+		# if the line has a <br> or a <p>, then we're done
+		if { [regexp {<br>} $line] } { break }
+		if { [regexp {<p>} $line] } { break }
+	    }
+	    break
+	}
+    }
+    close $fd
+
+    set result [cleanup_briefdoc $result]
+
+    # strip any trailing junk from our result
+    if { [regexp {(.*)\*/$} $result - stripped] } {
+	set result $stripped
+    }
+
+    if { [regexp {(.*)<br>} $result - stripped] } {
+	set result $stripped
+    }
+
+    if { [regexp {(.*)<p>} $result - stripped] } {
+	set result $stripped
+    }
+
+    return [string trim $result]
+}
+
 if { [llength $argv] != 2 } {
     puts stderr "usage: $argv dirpfx ?filename?"
     puts stderr "\tFilters raw output from 'devscripts/cdeps --output-ldep-raw'"
@@ -29,38 +105,35 @@ set dirpfx [string trimright [lindex $argv 0] "/"]
 set fname [lindex $argv 1]
 set fd [open $fname "r"]
 
-set allowsub 1
-if { [string equal $dirpfx "src"] } {
-
-    # if we're examining dependencies in src itself, then don't
-    # consider subdirectories of src (since we'll be handling those in
-    # a separate run of this script)
-    set allowsub 0
-}
-
 while { [gets $fd line] >= 0 } {
 
     set f1 [lindex $line 0]
     set f2 [lindex $line 1]
 
-    set s1 [strip_src_pfx $f1]
-    set s2 [strip_src_pfx $f2]
-
-    if { !$allowsub } {
-	if { [regexp "/" $s1] } {
-	    continue
-	}
-    }
-
     if { [string match "${dirpfx}*" $f1] } {
-	if { ($allowsub && [string match "${dirpfx}*" $f2]) \
-		 || (![regexp "/" $s2]) } {
+
+	set s1 [strip_src_pfx $f1]
+	set s2 [strip_src_pfx $f2]
+
+	if { ![info exists ::FILEDOC($s1)] } {
+	    set ::FILEDOC($s1) [get_file_briefdoc $f1]
+	}
+
+	if { [string match "${dirpfx}*" $f2] } {
 
 	    set DEPS([list $s1 $s2]) 1
+
+	    if { ![info exists ::FILEDOC($s2)] } {
+		set ::FILEDOC($s2) [get_file_briefdoc $f2]
+	    }
 
 	} else {
 
 	    set extdir [file dirname $s2]
+
+	    if { ![info exists ::DIRDOC($extdir)] } {
+		set ::DIRDOC($extdir) [get_dir_briefdoc src/$extdir]
+	    }
 
 	    set EXTDEPS([list $s1 $extdir]) 1
 
@@ -94,7 +167,7 @@ set RANKDIR(Psycho) RL
 set RANKDIR(TestSuite) RL
 set RANKDIR(Util) RL
 set RANKDIR(VFAT) RL
-set RANKDIR(qt) RL
+set RANKDIR(Qt) RL
 
 if { [info exists RANKDIR($graphname)] } {
     set rankdir $RANKDIR($graphname)
@@ -111,21 +184,46 @@ set int_fillcolor   "sandybrown"
 set int_edgecolor   "saddlebrown"
 
 puts $out "digraph $graphname {"
-puts $out "\tgraph \[rankdir=$rankdir, concentrate=true\];"
-puts $out "\tnode \[shape=box, height=0.25, fontsize=9,x fontname=\"Helvetica-Bold\", peripheries=1, color=$int_bordercolor, fillcolor=$int_fillcolor, fontcolor=black, style=\"bold,filled\"\];"
+puts $out [format {%sgraph [rankdir=%s, concentrate=true];} "\t" $rankdir]
+puts $out [format {%snode [shape=box, \
+			       height=0.25, \
+			       fontsize=9,x \
+			       fontname="Helvetica-Bold", \
+			       peripheries=1, \
+			       color=%s, \
+			       fillcolor=%s, \
+			       fontcolor=black, \
+			       style="bold,filled"];} \
+	       "\t" $int_bordercolor $int_fillcolor]
+
 foreach dep [array names DEPS] {
     set f1 [lindex $dep 0]
     set f2 [lindex $dep 1]
-    puts $out "\t\"$f1\" -> \"$f2\" \[color=$int_bordercolor\];"
+    puts $out [format {%s"%s" -> "%s" [color=%s];} \
+		   "\t" $f1 $f2 $int_bordercolor]
 }
+
 foreach dir [array names EXTDIRS] {
-    puts $out "\t\"$dir\" \[URL=\"${dir}.html\", label=\"\[ext\] $dir\", peripheries=2, color=$ext_bordercolor, fillcolor=$ext_fillcolor, fontcolor=black, shape=box, peripheries=2, style=\"bold,filled\"\];"
+    puts $out [format {%s"%s" [URL="%s.html", \
+				   label="[ext] %s", \
+				   peripheries=2, \
+				   color=%s, \
+				   fillcolor=%s, \
+				   fontcolor=black, \
+				   shape=box, \
+				   peripheries=2, \
+				   style="bold,filled", \
+				   tooltip="%s"];} \
+		   "\t" $dir $dir $dir $ext_bordercolor $ext_fillcolor $::DIRDOC($dir)]
 }
 puts -nonewline $out "\t{ rank = sink; "
 foreach dir [array names EXTDIRS] {
     puts -nonewline "\"$dir\"; "
 }
 puts $out "}"
+foreach fname [array names FILEDOC] {
+    puts $out "\t\"$fname\" \[URL=\"#\", tooltip=\"$::FILEDOC($fname)\"\];"
+}
 foreach dep [array names EXTDEPS] {
     set f1 [lindex $dep 0]
     set d2 [lindex $dep 1]

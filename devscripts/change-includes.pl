@@ -2,20 +2,26 @@
 
 # $Id$
 
+use strict;
+
 use File::Basename;
 use File::Path;
 
-$oldinclude=$ARGV[0]; shift @ARGV;
-$newinclude=$ARGV[0]; shift @ARGV;
+if (scalar(@ARGV) < 2) {
+    die "usage: $0 old-include-name new-include-name ?file1 file2 ... ?\n";
+}
 
-$nchanged=0;
+my $oldinclude=$ARGV[0]; shift @ARGV;
+my $newinclude=$ARGV[0]; shift @ARGV;
 
-foreach $fname (@ARGV) {
+my $nchanged=0;
 
-    $fnewname = "./.devscripts-tmp/${fname}.new";
-    $fbkpname = "./.devscripts-tmp/${fname}.incbkp";
+foreach my $fname (@ARGV) {
 
-    $tdir = dirname($fnewname);
+    my $fnewname = "./.devscripts-tmp/${fname}.new";
+    my $fbkpname = "./.devscripts-tmp/${fname}.incbkp";
+
+    my $tdir = dirname($fnewname);
     if (! -d $tdir) {
 	if (mkpath($tdir) <= 0) {
 	    die "Couldn't mkdir $tdir\n";
@@ -29,20 +35,24 @@ foreach $fname (@ARGV) {
 	}
     }
 
-    open(SRCFILE, $fname) or die "Can't open $fname\n";
-    open(NEWSRCFILE, ">$fnewname") or die "Can't open $fnewname\n";
+    open(SRCFILE, $fname)
+	or die "Can't open $fname for reading\n";
+    open(NEWSRCFILE, ">$fnewname")
+	or die "Can't open $fnewname for writing\n";
 
-    $count = 0;
+    my $count = 0;
 
-    while ($line = <SRCFILE>) {
+    while (my $line = <SRCFILE>) {
 	$count += ($line =~ s/^\#( *)include "$oldinclude"/\#\1include "$newinclude"/);
 	print NEWSRCFILE $line;
     }
 
     if ($count > 0) {
 	print "$count change(s) in $fname ($oldinclude to $newinclude)\n";
-	rename "$fname", "$fbkpname" or die "Couldn't rename $fname\n";
-	rename "$fnewname", "$fname" or die "Couldn't rename $fnewname\n";
+	rename "$fname", "$fbkpname"
+	    or die "Couldn't rename $fname to $fbkpname\n";
+	rename "$fnewname", "$fname"
+	    or die "Couldn't rename $fnewname to $fname\n";
 	++$nchanged;
     }
     else {

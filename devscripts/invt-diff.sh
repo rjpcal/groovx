@@ -12,8 +12,23 @@ fi
 
 saliencydir=$1
 
-for d in src/rutz src/nub src/tcl; do
-    for f in ${d}/*.{h,cc}; do
+tosync="src/rutz \
+    src/nub \
+    src/tcl \
+    devscripts/cdeps.cc \
+    devscripts/change-includes.pl \
+    devscripts/dot-ldep-internal.tcl \
+    devscripts/dot-ldep-modules.tcl \
+    devscripts/set-svn-props.sh"
+
+for d in $tosync; do
+    echo "considering $d ..."
+    if test -d "$d"; then
+	files=`ls -1 ${d}/*.{h,cc}`;
+    else
+	files="$d";
+    fi
+    for f in $files; do
 	diff -u $f $saliencydir/$f \
 	    | grep "^\(+\|-\)" \
 	    | grep -v "^+++" \

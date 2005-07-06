@@ -196,26 +196,21 @@ $(DEP)/cppdepends: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
 
 LDEPOPTS := --verbosity 2 --includedir $(SRC)/pkgs --objdir $(OBJ)/ --srcdir $(SRC)
 
-$(DEP)/ldepgroups: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+ldep-groups: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
 	  --output-ldep-groups \
 	  |sort -n> $@
 
-$(DEP)/ldeplevels: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
-	  --output-ldep-levels \
-	  |sort -n> $@
-
-$(DEP)/ldeplevelsv: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+ldep-levels: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
 	  --output-ldep-levelsv \
 	  |sort -n | sed -e 's/\[\[\[#.*\]\]\]//' > $@
 
-$(DEP)/ldeps: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+ldeps: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
 	  --output-ldep-raw > $@
 
-ldep-html: $(DEP)/ldeps
+ldep-html: ldeps
 	time $(DEVSCRIPTS)/make-ldep-html.sh $< $(SRC)/ ldepdoc
 
 $(DEP)/altdeps: $(DEVSCRIPTS)/cdeps.tcl $(DEVSCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
