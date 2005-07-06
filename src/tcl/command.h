@@ -59,6 +59,7 @@ namespace tcl
   class interpreter;
 }
 
+/// Abstract interface for the core function to be embedded in a tcl::command.
 class tcl::function
 {
 public:
