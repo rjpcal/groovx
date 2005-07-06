@@ -1,4 +1,4 @@
-/** @file rutz/ioerror.cc */
+/** @file rutz/ioerror.cc exception classes for input/output errors */
 
 ///////////////////////////////////////////////////////////////////////
 //

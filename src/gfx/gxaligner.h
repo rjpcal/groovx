@@ -1,4 +1,5 @@
-/** @file gfx/gxaligner.h */
+/** @file gfx/gxaligner.h GxBin subclass that aligns its child
+    relative to the origin */
 
 ///////////////////////////////////////////////////////////////////////
 //

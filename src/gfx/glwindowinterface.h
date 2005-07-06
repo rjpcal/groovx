@@ -1,4 +1,5 @@
-/** @file gfx/glwindowinterface.h */
+/** @file gfx/glwindowinterface.h abstract base class that wraps the
+    interface between OpenGL and a particular windowing system */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -42,6 +43,7 @@ namespace rutz
   template <class T> class shared_ptr;
 }
 
+/// Abstract base class that wraps the interface between OpenGL and a particular windowing system.
 class GlWindowInterface
 {
 public:

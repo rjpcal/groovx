@@ -1,4 +1,5 @@
-/** @file io/asciistreamreader.h */
+/** @file io/asciistreamreader.h read IO::IoObject objects in the ASW
+    format */
 
 ///////////////////////////////////////////////////////////////////////
 //

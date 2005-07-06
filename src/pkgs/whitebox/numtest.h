@@ -1,4 +1,5 @@
-/** @file pkgs/whitebox/numtest.h */
+/** @file pkgs/whitebox/numtest.h tcl interface package for testing
+    math special functions from pkgs/mtx/mathspecial.h */
 
 ///////////////////////////////////////////////////////////////////////
 //

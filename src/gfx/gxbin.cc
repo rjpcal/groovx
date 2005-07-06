@@ -1,4 +1,4 @@
-/** @file gfx/gxbin.cc */
+/** @file gfx/gxbin.cc graphic object class for single-item containers */
 
 ///////////////////////////////////////////////////////////////////////
 //

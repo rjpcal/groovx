@@ -1,4 +1,5 @@
-/** @file rutz/tracer.h */
+/** @file rutz/tracer.h dynamically control the behavior of GVX_TRACE
+    statements */
 
 ///////////////////////////////////////////////////////////////////////
 //

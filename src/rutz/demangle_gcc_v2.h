@@ -1,4 +1,5 @@
-/** @file rutz/demangle_gcc_v2.h */
+/** @file rutz/demangle_gcc_v2.h hand-rolled demangling of
+    std::type_info::name() from the g++ 2.x series */
 
 ///////////////////////////////////////////////////////////////////////
 //

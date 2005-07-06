@@ -1,5 +1,5 @@
-/** @file visx/eventresponsehdlr.cc */
-
+/** @file visx/eventresponsehdlr.cc collects and processes user
+    responses during a psychophysics experiment */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

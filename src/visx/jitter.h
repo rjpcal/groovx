@@ -1,4 +1,4 @@
-/** @file visx/jitter.h */
+/** @file visx/jitter.h GxTransform subclass with spatial randomness */
 
 ///////////////////////////////////////////////////////////////////////
 //

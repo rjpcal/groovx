@@ -1,5 +1,5 @@
-/** @file visx/timinghdlr.cc */
-
+/** @file visx/timinghdlr.cc specify a trial's timing sequence in a
+    psychophysics experiment */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

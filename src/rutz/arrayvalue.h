@@ -1,4 +1,5 @@
-/** @file rutz/arrayvalue.h */
+/** @file rutz/arrayvalue.h rutz::value subclass for variable-sized
+    sets of homegeneous values */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -41,7 +42,7 @@
 
 namespace rutz
 {
-  /// A rutz::value subclass representing a fixed-size set of homogeneous values.
+  /// A rutz::value subclass representing a variable-size set of homogeneous values.
   template <class T>
   class array_value : public rutz::value
   {

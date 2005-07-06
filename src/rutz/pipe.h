@@ -1,4 +1,5 @@
-/** @file rutz/pipe.h */
+/** @file rutz/pipe.h wrap posix inter-process pipes in a c++
+    iostreams interface */
 
 ///////////////////////////////////////////////////////////////////////
 //

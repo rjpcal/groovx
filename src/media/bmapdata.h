@@ -1,4 +1,5 @@
-/** @file media/bmapdata.h */
+/** @file media/bmapdata.h storage class for bitmap images, handling
+    sizing and storage alignment */
 
 ///////////////////////////////////////////////////////////////////////
 //

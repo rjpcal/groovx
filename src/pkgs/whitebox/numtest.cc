@@ -1,5 +1,5 @@
-/** @file pkgs/whitebox/numtest.cc */
-
+/** @file pkgs/whitebox/numtest.cc tcl interface package for testing
+    math special functions from pkgs/mtx/mathspecial.cc */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2005-2005

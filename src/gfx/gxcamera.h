@@ -1,4 +1,5 @@
-/** @file gfx/gxcamera.h */
+/** @file gfx/gxcamera.h view a graphic scene with orthographic or
+    perspective projection */
 
 ///////////////////////////////////////////////////////////////////////
 //

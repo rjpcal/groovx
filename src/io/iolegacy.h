@@ -1,4 +1,5 @@
-/** @file io/iolegacy.h */
+/** @file io/iolegacy.h IO::Reader and IO::Writer subclasses for the
+    "legacy" file format */
 
 ///////////////////////////////////////////////////////////////////////
 //

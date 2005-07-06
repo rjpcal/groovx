@@ -1,5 +1,5 @@
-/** @file io/writeutils.cc */
-
+/** @file io/writeutils.cc helper functions for writing counted
+    sequences of objects to an IO::Writer */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

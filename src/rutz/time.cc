@@ -1,4 +1,4 @@
-/** @file rutz/time.cc */
+/** @file rutz/time.cc user-friendly wrapper around timeval */
 
 ///////////////////////////////////////////////////////////////////////
 //

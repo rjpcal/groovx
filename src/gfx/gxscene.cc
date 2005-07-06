@@ -1,5 +1,5 @@
-/** @file gfx/gxscene.cc */
-
+/** @file gfx/gxscene.cc class for binding a GxNode hierarchy to a
+    GxCamera, and rendering the scene onscreen */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

@@ -1,4 +1,5 @@
-/** @file pkgs/whitebox/signaltest.h */
+/** @file pkgs/whitebox/signaltest.h tcl interface package for testing
+    nub::signal0 and related signal/slot classes */
 
 ///////////////////////////////////////////////////////////////////////
 //

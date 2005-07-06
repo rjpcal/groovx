@@ -1,5 +1,5 @@
-/** @file media/bmapdata.cc */
-
+/** @file media/bmapdata.cc storage class for bitmap images, handling
+    sizing and storage alignment */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005

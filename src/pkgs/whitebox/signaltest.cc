@@ -1,5 +1,5 @@
-/** @file pkgs/whitebox/signaltest.cc */
-
+/** @file pkgs/whitebox/signaltest.cc tcl interface package for testing
+    nub::signal0 and related signal/slot classes */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

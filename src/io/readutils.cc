@@ -1,5 +1,5 @@
-/** @file io/readutils.cc */
-
+/** @file io/readutils.cc helper functions for reading counted
+    sequences of objects from an IO::Reader */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

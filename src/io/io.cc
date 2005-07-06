@@ -1,4 +1,4 @@
-/** @file io/io.cc */
+/** @file io/io.cc abstract base class for serializable objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

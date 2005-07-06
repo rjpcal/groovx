@@ -1,4 +1,4 @@
-/** @file media/pnmparser.h */
+/** @file media/pnmparser.h load/save pnm images (i.e., pbm, pgm, ppm) */
 
 ///////////////////////////////////////////////////////////////////////
 //

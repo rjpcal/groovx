@@ -1,4 +1,5 @@
-/** @file rutz/algo.h */
+/** @file rutz/algo.h some trivial algos from <algorithm>, but much
+    more lightweight */
 
 ///////////////////////////////////////////////////////////////////////
 //

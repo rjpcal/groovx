@@ -1,5 +1,5 @@
-/** @file io/reader.cc */
-
+/** @file io/reader.cc abstract base class for reading serializable
+    IO::IoObject objects */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

@@ -1,5 +1,5 @@
-/** @file visx/tclpkg-tlist.cc */
-
+/** @file visx/tclpkg-tlist.cc tcl interface package for special
+    Trial-related functions */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

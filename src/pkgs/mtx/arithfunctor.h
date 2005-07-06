@@ -1,4 +1,5 @@
-/** @file pkgs/mtx/arithfunctor.h */
+/** @file pkgs/mtx/arithfunctor.h arithmetic functors that can be
+    applied to mtx objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

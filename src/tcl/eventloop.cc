@@ -1,5 +1,5 @@
-/** @file tcl/eventloop.cc */
-
+/** @file tcl/eventloop.cc singleton class that operates the tcl main
+    event loop, reading commands from a script file or from stdin,
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

@@ -1,4 +1,4 @@
-/** @file visx/response.h */
+/** @file visx/response.h user responses in a psychophysics experiment */
 
 ///////////////////////////////////////////////////////////////////////
 //

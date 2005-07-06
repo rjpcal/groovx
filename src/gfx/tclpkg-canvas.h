@@ -1,4 +1,5 @@
-/** @file gfx/tclpkg-canvas.h */
+/** @file gfx/tclpkg-canvas.h tcl interface packages for Gfx::Canvas
+    and derivatives */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,5 +1,5 @@
-/** @file nub/object.cc */
-
+/** @file nub/object.cc base class for objects to be exposed to a
+    scripting language */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2001-2005

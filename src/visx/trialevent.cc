@@ -1,4 +1,4 @@
-/** @file visx/trialevent.cc */
+/** @file visx/trialevent.cc events to be scheduled during a Trial */
 
 ///////////////////////////////////////////////////////////////////////
 //

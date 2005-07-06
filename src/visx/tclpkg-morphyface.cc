@@ -1,5 +1,5 @@
-/** @file visx/tclpkg-morphyface.cc */
-
+/** @file visx/tclpkg-morphyface.cc tcl interface package for class
+    MorphyFace */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

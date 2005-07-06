@@ -1,4 +1,4 @@
-/** @file visx/maskhatch.h */
+/** @file visx/maskhatch.h graphic object for cross-hatched visual masks */
 
 ///////////////////////////////////////////////////////////////////////
 //

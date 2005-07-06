@@ -1,4 +1,4 @@
-/** @file visx/tclpkg-gabor.h */
+/** @file visx/tclpkg-gabor.h tcl interface package for class Gabor */
 
 ///////////////////////////////////////////////////////////////////////
 //

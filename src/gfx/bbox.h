@@ -1,4 +1,5 @@
-/** @file gfx/bbox.h */
+/** @file gfx/bbox.h compute a shrink-wrapped bounding box around a
+    GxNode hierarchy */
 
 ///////////////////////////////////////////////////////////////////////
 //

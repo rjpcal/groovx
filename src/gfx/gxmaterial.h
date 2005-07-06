@@ -1,4 +1,5 @@
-/** @file gfx/gxmaterial.h */
+/** @file gfx/gxmaterial.h GxNode subclass for specifying material
+    properties */
 
 ///////////////////////////////////////////////////////////////////////
 //

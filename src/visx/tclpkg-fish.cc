@@ -1,4 +1,4 @@
-/** @file visx/tclpkg-fish.cc */
+/** @file visx/tclpkg-fish.cc tcl interface package for class Fish */
 
 ///////////////////////////////////////////////////////////////////////
 //

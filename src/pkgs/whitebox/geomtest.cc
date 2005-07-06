@@ -1,5 +1,5 @@
-/** @file pkgs/whitebox/geomtest.cc */
-
+/** @file pkgs/whitebox/geomtest.cc tcl interface package for testing
+    class geom::txform and related classes */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

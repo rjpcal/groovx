@@ -1,4 +1,5 @@
-/** @file gfx/gxdrawstyle.h */
+/** @file gfx/gxdrawstyle.h GxNode subclass for manipulating the
+    line/polygon drawing style */
 
 ///////////////////////////////////////////////////////////////////////
 //

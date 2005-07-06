@@ -1,4 +1,5 @@
-/** @file visx/eventresponsehdlr.h */
+/** @file visx/eventresponsehdlr.h collects and processes user
+    responses during a psychophysics experiment */
 
 ///////////////////////////////////////////////////////////////////////
 //

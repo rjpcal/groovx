@@ -1,4 +1,5 @@
-/** @file visx/timinghandler.h */
+/** @file visx/timinghandler.h specialized TimingHdlr subclass for
+    object categorization experiments */
 
 ///////////////////////////////////////////////////////////////////////
 //

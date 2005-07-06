@@ -1,4 +1,6 @@
-/** @file rutz/factory.h */
+/** @file rutz/factory.h template class for object factories, which
+    create objects belonging to some inheritance hierarchy given just
+    a type name as a string */
 
 ///////////////////////////////////////////////////////////////////////
 //

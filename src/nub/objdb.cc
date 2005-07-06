@@ -1,5 +1,5 @@
-/** @file nub/objdb.cc */
-
+/** @file nub/objdb.cc singleton repository that associates each
+    nub::object with its nub::uid, so that objects can be looked up by
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

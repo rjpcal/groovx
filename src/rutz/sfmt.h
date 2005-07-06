@@ -1,4 +1,5 @@
-/** @file rutz/sfmt.h */
+/** @file rutz/sfmt.h make a rutz::fstring using printf-style
+    formatting */
 
 ///////////////////////////////////////////////////////////////////////
 //

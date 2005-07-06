@@ -1,4 +1,4 @@
-/** @file visx/tclpkg-trial.cc */
+/** @file visx/tclpkg-trial.cc tcl interface package for class Trial */
 
 ///////////////////////////////////////////////////////////////////////
 //

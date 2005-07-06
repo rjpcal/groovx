@@ -1,4 +1,6 @@
-/** @file media/soundrep.h */
+/** @file media/soundrep.h abstract interface for playable sounds;
+    subclasses implement the interface using platform-specific sound
+    APIs */
 
 ///////////////////////////////////////////////////////////////////////
 //

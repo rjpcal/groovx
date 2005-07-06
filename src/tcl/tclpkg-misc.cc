@@ -1,5 +1,5 @@
-/** @file tcl/tclpkg-misc.cc */
-
+/** @file tcl/tclpkg-misc.cc tcl interface package for miscellaneous
+    functions */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1998-2005

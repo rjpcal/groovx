@@ -1,4 +1,5 @@
-/** @file io/fieldpkg.h */
+/** @file io/fieldpkg.h tcl interfaces for manipulating FieldContainer
+    fields */
 
 ///////////////////////////////////////////////////////////////////////
 //

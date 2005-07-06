@@ -1,4 +1,4 @@
-/** @file media/pngparser.cc */
+/** @file media/pngparser.cc load/save png images */
 
 ///////////////////////////////////////////////////////////////////////
 //

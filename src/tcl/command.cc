@@ -1,5 +1,5 @@
-/** @file tcl/command.cc */
-
+/** @file tcl/command.cc binds a wrapped c++ function to a
+    tcl::arg_spec and a tcl::dispatcher */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

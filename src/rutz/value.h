@@ -1,4 +1,4 @@
-/** @file rutz/value.h */
+/** @file rutz/value.h abstract interface for string-convertible types */
 
 ///////////////////////////////////////////////////////////////////////
 //

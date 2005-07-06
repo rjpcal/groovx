@@ -1,4 +1,4 @@
-/** @file tcl/conversions.cc */
+/** @file tcl/conversions.cc tcl conversion functions for basic types */
 
 ///////////////////////////////////////////////////////////////////////
 //

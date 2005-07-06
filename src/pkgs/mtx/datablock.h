@@ -1,4 +1,5 @@
-/** @file pkgs/mtx/datablock.h */
+/** @file pkgs/mtx/datablock.h auxiliary storage-management class for
+    mtx */
 
 ///////////////////////////////////////////////////////////////////////
 //

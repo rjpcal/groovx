@@ -1,4 +1,5 @@
-/** @file pkgs/whitebox/algotest.h */
+/** @file pkgs/whitebox/algotest.h tcl interface package for testing
+    functions from rutz/algo.h */
 
 ///////////////////////////////////////////////////////////////////////
 //

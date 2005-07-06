@@ -1,4 +1,5 @@
-/** @file rutz/demangle.h */
+/** @file rutz/demangle.h get a demangled name from a std::type_info
+    object */
 
 ///////////////////////////////////////////////////////////////////////
 //

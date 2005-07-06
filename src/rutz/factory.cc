@@ -1,5 +1,5 @@
-/** @file rutz/factory.cc */
-
+/** @file rutz/factory.cc template class for object factories, which
+    create objects belonging to some inheritance hierarchy given just
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

@@ -1,4 +1,5 @@
-/** @file visx/elementcontainer.h */
+/** @file visx/elementcontainer.h abstract class for composite
+    elements within a psychophysics experiment */
 
 ///////////////////////////////////////////////////////////////////////
 //

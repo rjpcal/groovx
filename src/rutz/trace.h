@@ -1,4 +1,5 @@
-/** @file rutz/trace.h */
+/** @file rutz/trace.h GVX_TRACE macro for user-controlled tracing and
+    profiling */
 
 ///////////////////////////////////////////////////////////////////////
 //

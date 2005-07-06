@@ -1,5 +1,5 @@
-/** @file nub/refcounted.cc */
-
+/** @file nub/refcounted.cc reference-counted base class, allowing
+    intrusive smart pointers to be used */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005

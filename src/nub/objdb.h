@@ -1,4 +1,7 @@
-/** @file nub/objdb.h */
+/** @file nub/objdb.h singleton repository that associates each
+    nub::object with its nub::uid, so that objects can be looked up by
+    id -- this provides the foundation for using uids as object
+    handles in a scripting language */
 
 ///////////////////////////////////////////////////////////////////////
 //

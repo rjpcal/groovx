@@ -1,4 +1,4 @@
-/** @file gfx/aglrasterfont.h */
+/** @file gfx/aglrasterfont.h Apple-AGL raster fonts */
 
 ///////////////////////////////////////////////////////////////////////
 //

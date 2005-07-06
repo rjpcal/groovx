@@ -1,4 +1,4 @@
-/** @file gfx/gxvectorfont.h */
+/** @file gfx/gxvectorfont.h a basic "blocky" vector-graphics font */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,4 @@
-/** @file tk/widget.h */
+/** @file tk/widget.h C++ wrapper class for Tk widgets */
 
 ///////////////////////////////////////////////////////////////////////
 //

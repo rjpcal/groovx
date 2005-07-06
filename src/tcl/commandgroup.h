@@ -1,4 +1,5 @@
-/** @file tcl/commandgroup.h */
+/** @file tcl/commandgroup.h represents a set of overloaded
+    tcl::command objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

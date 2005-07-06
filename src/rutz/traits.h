@@ -1,4 +1,5 @@
-/** @file rutz/traits.h */
+/** @file rutz/traits.h various traits classes for determining type
+    characteristics at compile time */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,4 @@
-/** @file visx/exptdriver.cc */
+/** @file visx/exptdriver.cc root element in a psychophysics experiment */
 
 ///////////////////////////////////////////////////////////////////////
 //

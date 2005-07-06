@@ -1,4 +1,4 @@
-/** @file tcl/tclpkg-log.h */
+/** @file tcl/tclpkg-log.h tcl interface package for nub::logging */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,5 @@
-/** @file nub/timer.h */
+/** @file nub/timer.h wraps a signal/slot interface around a timer
+    callback mechanism */
 
 ///////////////////////////////////////////////////////////////////////
 //

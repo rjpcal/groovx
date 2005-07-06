@@ -1,4 +1,5 @@
-/** @file tcl/vecdispatch.h */
+/** @file tcl/vecdispatch.h apply vectorized dispatching to a
+    tcl::command */
 
 ///////////////////////////////////////////////////////////////////////
 //

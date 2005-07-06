@@ -1,4 +1,5 @@
-/** @file gfx/gxscene.h */
+/** @file gfx/gxscene.h class for binding a GxNode hierarchy to a
+    GxCamera, and rendering the scene onscreen */
 
 ///////////////////////////////////////////////////////////////////////
 //

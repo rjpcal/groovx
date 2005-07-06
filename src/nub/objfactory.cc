@@ -1,5 +1,5 @@
-/** @file nub/objfactory.cc */
-
+/** @file nub/objfactory.cc generic factory for creating objects given
+    a type name */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

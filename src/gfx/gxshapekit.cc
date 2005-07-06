@@ -1,5 +1,5 @@
-/** @file gfx/gxshapekit.cc */
-
+/** @file gfx/gxshapekit.cc full-featured base class for high-level
+    graphic objects */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1998-2005

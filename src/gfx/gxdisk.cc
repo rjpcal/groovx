@@ -1,4 +1,4 @@
-/** @file gfx/gxdisk.cc */
+/** @file gfx/gxdisk.cc graphic object for circles/rings/disks */
 
 ///////////////////////////////////////////////////////////////////////
 //

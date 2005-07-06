@@ -1,4 +1,4 @@
-/** @file media/jpegparser.h */
+/** @file media/jpegparser.h load jpeg images (no save capability) */
 
 ///////////////////////////////////////////////////////////////////////
 //

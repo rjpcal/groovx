@@ -1,4 +1,5 @@
-/** @file rutz/backtrace.h */
+/** @file rutz/backtrace.h represents the state of the call stack as
+    given by GVX_TRACE statements */
 
 ///////////////////////////////////////////////////////////////////////
 //

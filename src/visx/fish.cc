@@ -1,4 +1,4 @@
-/** @file visx/fish.cc */
+/** @file visx/fish.cc bezier-curve outlines of tropical fish */
 
 //////////////////////////////////////////////////////////////////////
 //

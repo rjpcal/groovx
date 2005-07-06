@@ -1,4 +1,5 @@
-/** @file tcl/channelbuf.h */
+/** @file tcl/channelbuf.h bridge class between tcl channels and c++
+    streams */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -44,7 +45,7 @@ namespace rutz
 
 namespace tcl
 {
-  /// A std::streambuf implementation that handles gzip-encoded data.
+  /// A std::streambuf implementation that wraps a tcl channel.
   class channel_buf : public std::streambuf
   {
   private:

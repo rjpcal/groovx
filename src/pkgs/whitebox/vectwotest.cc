@@ -1,5 +1,5 @@
-/** @file pkgs/whitebox/vectwotest.cc */
-
+/** @file pkgs/whitebox/vectwotest.cc tcl interface package for testing
+    class geom::vec2 */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

@@ -1,4 +1,5 @@
-/** @file gfx/gxshapekit.h */
+/** @file gfx/gxshapekit.h full-featured base class for high-level
+    graphic objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,4 @@
-/** @file visx/kbdresponsehdlr.h */
+/** @file visx/kbdresponsehdlr.h response handler for keypress events */
 
 ///////////////////////////////////////////////////////////////////////
 //

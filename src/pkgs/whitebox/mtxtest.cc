@@ -1,5 +1,5 @@
-/** @file pkgs/whitebox/mtxtest.cc */
-
+/** @file pkgs/whitebox/mtxtest.cc tcl interface package for testing
+    class mtx */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2005-2005

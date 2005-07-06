@@ -1,5 +1,5 @@
-/** @file rutz/backtrace.cc */
-
+/** @file rutz/backtrace.cc represents the state of the call stack as
+    given by GVX_TRACE statements */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

@@ -1,4 +1,5 @@
-/** @file gfx/glxopts.h */
+/** @file gfx/glxopts.h options for controlling the
+    OpenGL-windowsystem interface */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,5 @@
-/** @file nub/refcounted.h */
+/** @file nub/refcounted.h reference-counted base class, allowing
+    intrusive smart pointers to be used */
 
 ///////////////////////////////////////////////////////////////////////
 //

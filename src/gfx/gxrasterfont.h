@@ -1,4 +1,5 @@
-/** @file gfx/gxrasterfont.h */
+/** @file gfx/gxrasterfont.h build an OpenGL raster font from an X11
+    font */
 
 ///////////////////////////////////////////////////////////////////////
 //

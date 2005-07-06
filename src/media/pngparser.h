@@ -1,4 +1,4 @@
-/** @file media/pngparser.h */
+/** @file media/pngparser.h load/save png images */
 
 ///////////////////////////////////////////////////////////////////////
 //

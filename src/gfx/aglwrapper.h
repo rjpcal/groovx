@@ -1,4 +1,5 @@
-/** @file gfx/aglwrapper.h */
+/** @file gfx/aglwrapper.h GlWindowInterface implementation using
+    Apple's AGL API*/
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -39,7 +40,7 @@
 
 class GlxOpts;
 
-/// Wraps the GLXContext mechanism.
+/// Wraps the AGLContext mechanism.
 class AglWrapper : public GlWindowInterface
 {
 private:

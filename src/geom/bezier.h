@@ -1,4 +1,4 @@
-/** @file geom/bezier.h */
+/** @file geom/bezier.h general bezier curve evaluation */
 
 ///////////////////////////////////////////////////////////////////////
 //

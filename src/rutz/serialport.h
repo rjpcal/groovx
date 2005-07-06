@@ -1,4 +1,5 @@
-/** @file rutz/serialport.h */
+/** @file rutz/serialport.h character-at-a-time access to serial port
+    data */
 
 ///////////////////////////////////////////////////////////////////////
 //

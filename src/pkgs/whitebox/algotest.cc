@@ -1,5 +1,5 @@
-/** @file pkgs/whitebox/algotest.cc */
-
+/** @file pkgs/whitebox/algotest.cc tcl interface package for testing
+    functions from rutz/algo.cc */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

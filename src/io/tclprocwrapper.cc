@@ -1,5 +1,5 @@
-/** @file io/tclprocwrapper.cc */
-
+/** @file io/tclprocwrapper.cc serializable wrapper for Tcl script
+    'proc' definitions */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

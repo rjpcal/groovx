@@ -1,4 +1,5 @@
-/** @file pkgs/matlabengine/tclpkg-matlabengine.h */
+/** @file pkgs/matlabengine/tclpkg-matlabengine.h tcl interface
+    package to the matlab engine */
 
 ///////////////////////////////////////////////////////////////////////
 //

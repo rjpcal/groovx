@@ -1,4 +1,5 @@
-/** @file rutz/demangle_gcc_v3.h */
+/** @file rutz/demangle_gcc_v3.h demangle std::type_info::name()
+    using the standardized cxxabi from g++ version >= 3 */
 
 ///////////////////////////////////////////////////////////////////////
 //

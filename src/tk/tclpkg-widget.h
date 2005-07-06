@@ -1,4 +1,4 @@
-/** @file tk/tclpkg-widget.h */
+/** @file tk/tclpkg-widget.h tcl interface package for tcl::tkWidget class */
 
 ///////////////////////////////////////////////////////////////////////
 //

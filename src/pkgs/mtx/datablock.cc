@@ -1,5 +1,5 @@
-/** @file pkgs/mtx/datablock.cc */
-
+/** @file pkgs/mtx/datablock.cc auxiliary storage-management class for
+    mtx */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2001-2005

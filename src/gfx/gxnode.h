@@ -1,4 +1,4 @@
-/** @file gfx/gxnode.h */
+/** @file gfx/gxnode.h base class for graphic objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,5 +1,5 @@
-/** @file gfx/bbox.cc */
-
+/** @file gfx/bbox.cc compute a shrink-wrapped bounding box around a
+    GxNode hierarchy */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

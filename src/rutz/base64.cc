@@ -1,4 +1,4 @@
-/** @file rutz/base64.cc */
+/** @file rutz/base64.cc functions for base64 encoding/decoding */
 
 ///////////////////////////////////////////////////////////////////////
 //

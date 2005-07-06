@@ -1,4 +1,5 @@
-/** @file io/reader.h */
+/** @file io/reader.h abstract base class for reading serializable
+    IO::IoObject objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

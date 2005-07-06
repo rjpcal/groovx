@@ -1,5 +1,5 @@
-/** @file rutz/stderror.cc */
-
+/** @file rutz/stderror.cc throw common exceptions with standardized
+    messages */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2003-2005

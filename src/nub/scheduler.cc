@@ -1,5 +1,5 @@
-/** @file nub/scheduler.cc */
-
+/** @file nub/scheduler.cc abstract base class for scheduling timed
+    callbacks */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

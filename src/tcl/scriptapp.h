@@ -1,4 +1,5 @@
-/** @file tcl/scriptapp.h */
+/** @file tcl/scriptapp.h helper class used in main() to initialize
+    and run a scripting application */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -52,6 +53,7 @@ namespace tcl
   };
 }
 
+/// Use inside main() to initialize and run a scripting application.
 class tcl::script_app
 {
 public:

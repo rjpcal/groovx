@@ -1,5 +1,5 @@
-/** @file io/xmlreader.cc */
-
+/** @file io/xmlreader.cc IO::Reader implementation for reading XML
+    files in the GVX format */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2003-2005

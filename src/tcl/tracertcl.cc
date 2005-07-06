@@ -1,4 +1,4 @@
-/** @file tcl/tracertcl.cc */
+/** @file tcl/tracertcl.cc define tcl commands for a rutz::tracer object */
 
 ///////////////////////////////////////////////////////////////////////
 //

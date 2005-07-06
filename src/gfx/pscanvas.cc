@@ -1,5 +1,5 @@
-/** @file gfx/pscanvas.cc */
-
+/** @file gfx/pscanvas.cc Gfx::Canvas subclass that writes to a
+    PostScript file */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2001-2005

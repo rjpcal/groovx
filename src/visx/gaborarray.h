@@ -1,4 +1,5 @@
-/** @file visx/gaborarray.h */
+/** @file visx/gaborarray.h spatial array of gabor patches, possibly
+    with embedded contours ("snakes") */
 
 ///////////////////////////////////////////////////////////////////////
 //

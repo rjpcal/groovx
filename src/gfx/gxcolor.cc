@@ -1,5 +1,5 @@
-/** @file gfx/gxcolor.cc */
-
+/** @file gfx/gxcolor.cc GxNode class for manipulating the current RGBA
+    color */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2001-2005

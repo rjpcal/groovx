@@ -1,4 +1,4 @@
-/** @file rutz/cstrstream.cc */
+/** @file rutz/cstrstream.cc like std::strstream, but not deprecated */
 
 ///////////////////////////////////////////////////////////////////////
 //

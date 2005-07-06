@@ -1,5 +1,5 @@
-/** @file rutz/error.cc */
-
+/** @file rutz/error.cc exception base class, derives from
+    std::exception */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

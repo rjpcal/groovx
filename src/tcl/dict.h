@@ -1,4 +1,5 @@
-/** @file tcl/dict.h */
+/** @file tcl/dict.h c++ wrapper class for tcl "dict" objects (new in
+    tcl 8.5) */
 
 ///////////////////////////////////////////////////////////////////////
 //

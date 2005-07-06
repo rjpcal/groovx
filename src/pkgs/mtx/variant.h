@@ -1,4 +1,5 @@
-/** @file pkgs/mtx/variant.h */
+/** @file pkgs/mtx/variant.h dash::variant type provides a thin
+    wrapper around matlab 'struct' objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

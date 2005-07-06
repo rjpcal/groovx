@@ -1,4 +1,5 @@
-/** @file io/readobjectmap.h */
+/** @file io/readobjectmap.h helper class used in AsciiStreamReader
+    and XmlReader */
 
 ///////////////////////////////////////////////////////////////////////
 //

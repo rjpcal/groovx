@@ -1,4 +1,4 @@
-/** @file visx/tclpkg-jitter.cc */
+/** @file visx/tclpkg-jitter.cc tcl interface package for class Jitter */
 
 ///////////////////////////////////////////////////////////////////////
 //

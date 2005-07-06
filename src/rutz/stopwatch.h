@@ -1,4 +1,4 @@
-/** @file rutz/stopwatch.h */
+/** @file rutz/stopwatch.h track elapsed wall-clock time */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,5 +1,5 @@
-/** @file tcl/interp.cc */
-
+/** @file tcl/interp.cc c++ wrapper for Tcl_Interp, translates between
+    tcl error codes and c++ exceptions */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005

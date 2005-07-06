@@ -1,4 +1,4 @@
-/** @file rutz/timeformat.h */
+/** @file rutz/timeformat.h c++-friendly wrapper around strftime() */
 
 ///////////////////////////////////////////////////////////////////////
 //

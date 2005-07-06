@@ -1,4 +1,4 @@
-/** @file gfx/gxscaler.h */
+/** @file gfx/gxscaler.h GxBin subclass that rescales its child node */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,5 +1,5 @@
-/** @file gfx/gxbounds.cc */
-
+/** @file gfx/gxbounds.cc GxBin subclass that draws a 2-D boundary
+    around its child object */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

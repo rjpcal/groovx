@@ -1,4 +1,5 @@
-/** @file visx/responsehandler.h */
+/** @file visx/responsehandler.h interface for getting user responses
+    during a psychophysics experiment */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,4 @@
-/** @file gfx/gbcolor.cc */
+/** @file gfx/gbcolor.cc field class for RGBA color values */
 
 ///////////////////////////////////////////////////////////////////////
 //

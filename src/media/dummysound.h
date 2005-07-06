@@ -1,4 +1,4 @@
-/** @file media/dummysound.h */
+/** @file media/dummysound.h null class for when no sound API is available */
 
 ///////////////////////////////////////////////////////////////////////
 //

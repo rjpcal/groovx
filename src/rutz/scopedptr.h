@@ -1,4 +1,6 @@
-/** @file rutz/scopedptr.h */
+/** @file rutz/scopedptr.h smart pointer class for unshared objects
+    (like std::auto_ptr but without transfer-of-ownership
+    semantics) */
 
 ///////////////////////////////////////////////////////////////////////
 //

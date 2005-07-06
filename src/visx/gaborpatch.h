@@ -1,4 +1,4 @@
-/** @file visx/gaborpatch.h */
+/** @file visx/gaborpatch.h represent the physical parameters of a gabor patch */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,4 @@
-/** @file io/xmlparser.cc */
+/** @file io/xmlparser.cc xml parsing class used in xmlreader.cc */
 
 ///////////////////////////////////////////////////////////////////////
 //

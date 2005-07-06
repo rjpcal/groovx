@@ -1,5 +1,5 @@
-/** @file pkgs/mtx/mtx.cc */
-
+/** @file pkgs/mtx/mtx.cc 2-dimensional numeric arrays, with iteration,
+    subarrays, slicing, etc. a la matlab */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2001-2005

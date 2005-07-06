@@ -1,5 +1,5 @@
-/** @file rutz/fstring.cc */
-
+/** @file rutz/fstring.cc ref-counted string type that allows much
+    faster compile times than std::string */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

@@ -1,4 +1,5 @@
-/** @file io/xmlreader.h */
+/** @file io/xmlreader.h IO::Reader implementation for reading XML
+    files in the GVX format */
 
 ///////////////////////////////////////////////////////////////////////
 //

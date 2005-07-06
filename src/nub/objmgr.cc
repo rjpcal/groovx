@@ -1,4 +1,4 @@
-/** @file nub/objmgr.cc */
+/** @file nub/objmgr.cc create objects given a type name */
 
 ///////////////////////////////////////////////////////////////////////
 //

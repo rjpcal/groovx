@@ -1,4 +1,6 @@
-/** @file gfx/canvas.h */
+/** @file gfx/canvas.h abstract interface for drawing graphics to a
+    drawable area, loosely based on OpenGL's interface but also
+    implementable with a PostScript backend */
 
 ///////////////////////////////////////////////////////////////////////
 //

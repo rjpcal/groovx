@@ -1,5 +1,5 @@
-/** @file rutz/pipe.cc */
-
+/** @file rutz/pipe.cc wrap posix inter-process pipes in a c++
+    iostreams interface */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2003-2005

@@ -1,4 +1,5 @@
-/** @file io/xmlwriter.h */
+/** @file io/xmlwriter.h IO::Writer implementation for writing XML
+    files in the GVX format */
 
 ///////////////////////////////////////////////////////////////////////
 //

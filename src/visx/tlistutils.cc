@@ -1,4 +1,4 @@
-/** @file visx/tlistutils.cc */
+/** @file visx/tlistutils.cc auxiliary functions for Trial objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

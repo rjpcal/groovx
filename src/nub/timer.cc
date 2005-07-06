@@ -1,5 +1,5 @@
-/** @file nub/timer.cc */
-
+/** @file nub/timer.cc wraps a signal/slot interface around a timer
+    callback mechanism */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

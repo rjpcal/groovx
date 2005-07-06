@@ -1,4 +1,5 @@
-/** @file rutz/sharedptr.h */
+/** @file rutz/sharedptr.h generic reference-counted smart pointer
+    class, with non-intrusive ref-counting */
 
 ///////////////////////////////////////////////////////////////////////
 //

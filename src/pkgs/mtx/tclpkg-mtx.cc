@@ -1,4 +1,4 @@
-/** @file pkgs/mtx/tclpkg-mtx.cc */
+/** @file pkgs/mtx/tclpkg-mtx.cc tcl interface package for class mtx */
 
 ///////////////////////////////////////////////////////////////////////
 //

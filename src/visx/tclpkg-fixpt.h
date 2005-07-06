@@ -1,4 +1,4 @@
-/** @file visx/tclpkg-fixpt.h */
+/** @file visx/tclpkg-fixpt.h tcl interface package for class FixPt */
 
 ///////////////////////////////////////////////////////////////////////
 //

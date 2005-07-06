@@ -1,4 +1,5 @@
-/** @file visx/tclpkg-hook.h */
+/** @file visx/tclpkg-hook.h tcl interface package for miscellaneous
+    functions */
 
 ///////////////////////////////////////////////////////////////////////
 //

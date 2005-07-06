@@ -1,4 +1,5 @@
-/** @file io/writeutils.h */
+/** @file io/writeutils.h helper functions for writing counted
+    sequences of objects to an IO::Writer */
 
 ///////////////////////////////////////////////////////////////////////
 //

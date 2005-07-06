@@ -1,4 +1,5 @@
-/** @file rutz/debug.h */
+/** @file rutz/debug.h debugging facilities, assertions,
+    preconditions, postconditions, invariants */
 
 ///////////////////////////////////////////////////////////////////////
 //

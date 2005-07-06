@@ -1,4 +1,5 @@
-/** @file visx/feedbackmap.h */
+/** @file visx/feedbackmap.h trigger user-feedback events upon certain
+    conditions in a psychophysics experiment*/
 
 ///////////////////////////////////////////////////////////////////////
 //

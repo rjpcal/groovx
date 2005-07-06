@@ -1,5 +1,5 @@
-/** @file rutz/serialport.cc */
-
+/** @file rutz/serialport.cc character-at-a-time access to serial port
+    data */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005

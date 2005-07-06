@@ -1,4 +1,5 @@
-/** @file tcl/tclpkg-dlist.h */
+/** @file tcl/tclpkg-dlist.h tcl interface package for extended
+    list-manipulation functions */
 
 ///////////////////////////////////////////////////////////////////////
 //

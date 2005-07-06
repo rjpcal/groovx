@@ -1,5 +1,5 @@
-/** @file tcl/obj.cc */
-
+/** @file tcl/obj.cc c++ wrapper class for Tcl_Obj, to handle
+    ref-counting and type conversions */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2001-2005

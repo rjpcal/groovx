@@ -1,5 +1,5 @@
-/** @file visx/tclpkg-th.cc */
-
+/** @file visx/tclpkg-th.cc tcl interface package for class TimingHdlr
+    and derivatives */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

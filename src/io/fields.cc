@@ -1,5 +1,5 @@
-/** @file io/fields.cc */
-
+/** @file io/fields.cc FieldContainer allows serializable objects to
+    have "fields", or named object properties */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005

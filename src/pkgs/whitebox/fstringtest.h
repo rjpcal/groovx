@@ -1,4 +1,5 @@
-/** @file pkgs/whitebox/fstringtest.h */
+/** @file pkgs/whitebox/fstringtest.h tcl interface package for
+    testing rutz::fstring */
 
 ///////////////////////////////////////////////////////////////////////
 //

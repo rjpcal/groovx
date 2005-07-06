@@ -1,4 +1,5 @@
-/** @file visx/element.h */
+/** @file visx/element.h abstract base class for psychophysics
+    experiment components */
 
 ///////////////////////////////////////////////////////////////////////
 //

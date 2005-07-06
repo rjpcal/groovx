@@ -1,4 +1,4 @@
-/** @file visx/response.cc */
+/** @file visx/response.cc user responses in a psychophysics experiment */
 
 ///////////////////////////////////////////////////////////////////////
 //

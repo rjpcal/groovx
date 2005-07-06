@@ -1,4 +1,4 @@
-/** @file visx/gabor.cc */
+/** @file visx/gabor.cc graphic object for rendering gabor patches */
 
 ///////////////////////////////////////////////////////////////////////
 //

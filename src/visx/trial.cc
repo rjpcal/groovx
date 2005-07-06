@@ -1,5 +1,5 @@
-/** @file visx/trial.cc */
-
+/** @file visx/trial.cc run a series of timed events and collect user
+    responses in a psychophysics experiment */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

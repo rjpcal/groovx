@@ -1,4 +1,4 @@
-/** @file visx/trialevent.h */
+/** @file visx/trialevent.h events to be scheduled during a Trial */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,5 +1,5 @@
-/** @file gfx/canvas.cc */
-
+/** @file gfx/canvas.cc abstract interface for drawing graphics to a
+    drawable area, loosely based on OpenGL's interface but also
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

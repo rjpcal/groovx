@@ -1,5 +1,5 @@
-/** @file visx/element.cc */
-
+/** @file visx/element.cc abstract base class for psychophysics
+    experiment components */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

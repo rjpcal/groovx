@@ -1,4 +1,4 @@
-/** @file gfx/gxpointset.h */
+/** @file gfx/gxpointset.h GxNode subclass for drawing sets of points */
 
 ///////////////////////////////////////////////////////////////////////
 //

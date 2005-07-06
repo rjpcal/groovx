@@ -1,5 +1,5 @@
-/** @file pkgs/whitebox/basesixfourtest.cc */
-
+/** @file pkgs/whitebox/basesixfourtest.cc tcl interface package for
+    testing base64 encoding/decoding */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

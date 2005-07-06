@@ -1,4 +1,4 @@
-/** @file media/irixsound.h */
+/** @file media/irixsound.h play sounds using SGI's dmedia API */
 
 ///////////////////////////////////////////////////////////////////////
 //

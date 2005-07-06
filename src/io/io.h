@@ -1,4 +1,4 @@
-/** @file io/io.h */
+/** @file io/io.h abstract base class for serializable objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

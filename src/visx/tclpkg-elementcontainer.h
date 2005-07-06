@@ -1,4 +1,5 @@
-/** @file visx/tclpkg-elementcontainer.h */
+/** @file visx/tclpkg-elementcontainer.h tcl interface package for
+    class ElementContainer */
 
 ///////////////////////////////////////////////////////////////////////
 //

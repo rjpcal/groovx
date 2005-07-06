@@ -1,4 +1,4 @@
-/** @file nub/log.cc */
+/** @file nub/log.cc functions for hierarchical logging */
 
 ///////////////////////////////////////////////////////////////////////
 //

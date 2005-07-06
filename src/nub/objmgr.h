@@ -1,4 +1,4 @@
-/** @file nub/objmgr.h */
+/** @file nub/objmgr.h create objects given a type name */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -42,6 +42,10 @@ namespace rutz
 
 namespace nub
 {
+  /// A thin wrapper around nub::obj_factory.
+  /** This provides some compile-time insulation from nub::obj_factory
+      for clients that only need to create objects, but don't need to
+      register new object-creation functions. */
   namespace obj_mgr
   {
     /// Will not return 0; will throw an exception on failure.

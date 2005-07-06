@@ -1,4 +1,4 @@
-/** @file gfx/gbvec.cc */
+/** @file gfx/gbvec.cc a field class for 2-D vectors/points */
 
 ///////////////////////////////////////////////////////////////////////
 //

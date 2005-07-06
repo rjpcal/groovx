@@ -1,4 +1,5 @@
-/** @file rutz/staticstack.h */
+/** @file rutz/staticstack.h STL-style class for push/pop stacks with
+    a fixed maximum size */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -37,6 +38,9 @@
 
 namespace rutz
 {
+  /// STL-style class for fixed-size stacks whose size is known at compile time.
+  /** Because this class doesn't rely on dynamically-allocated memory,
+      it can be both highly efficient and exception-safe. */
   template <typename T, unsigned int N>
   class static_stack
   {

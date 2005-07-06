@@ -1,4 +1,4 @@
-/** @file visx/fish.h */
+/** @file visx/fish.h bezier-curve outlines of tropical fish */
 
 ///////////////////////////////////////////////////////////////////////
 //

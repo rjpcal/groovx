@@ -1,5 +1,5 @@
-/** @file gfx/gxdrawstyle.cc */
-
+/** @file gfx/gxdrawstyle.cc GxNode subclass for manipulating the
+    line/polygon drawing style */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2001-2005

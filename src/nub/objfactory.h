@@ -1,4 +1,5 @@
-/** @file nub/objfactory.h */
+/** @file nub/objfactory.h generic factory for creating objects given
+    a type name */
 
 ///////////////////////////////////////////////////////////////////////
 //

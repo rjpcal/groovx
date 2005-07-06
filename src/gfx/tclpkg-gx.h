@@ -1,4 +1,5 @@
-/** @file gfx/tclpkg-gx.h */
+/** @file gfx/tclpkg-gx.h tcl interface packages for all of the
+    fundamental graphic object classes */
 
 ///////////////////////////////////////////////////////////////////////
 //

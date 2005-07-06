@@ -1,4 +1,5 @@
-/** @file pkgs/mtx/mtx.h */
+/** @file pkgs/mtx/mtx.h 2-dimensional numeric arrays, with iteration,
+    subarrays, slicing, etc. a la matlab */
 
 ///////////////////////////////////////////////////////////////////////
 //

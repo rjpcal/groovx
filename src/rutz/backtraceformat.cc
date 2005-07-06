@@ -1,5 +1,5 @@
-/** @file rutz/backtraceformat.cc */
-
+/** @file rutz/backtraceformat.cc generate a human-readable string from
+    a rutz::backtrace object */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2005-2005

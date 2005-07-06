@@ -1,4 +1,5 @@
-/** @file gfx/pscanvas.h */
+/** @file gfx/pscanvas.h Gfx::Canvas subclass that writes to a
+    PostScript file */
 
 ///////////////////////////////////////////////////////////////////////
 //

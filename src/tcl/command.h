@@ -1,4 +1,5 @@
-/** @file tcl/command.h */
+/** @file tcl/command.h binds a wrapped c++ function to a
+    tcl::arg_spec and a tcl::dispatcher */
 
 ///////////////////////////////////////////////////////////////////////
 //

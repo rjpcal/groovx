@@ -1,4 +1,5 @@
-/** @file nub/ref.h */
+/** @file nub/ref.h smart pointers (both strong and weak) using
+    intrusive ref-counting with nub::object and derivatives */
 
 ///////////////////////////////////////////////////////////////////////
 //

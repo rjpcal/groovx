@@ -1,4 +1,5 @@
-/** @file groovx/groovx.cc */
+/** @file groovx/groovx.cc main() for groovx script interpreter for
+    psychophysics experiments */
 
 ///////////////////////////////////////////////////////////////////////
 //

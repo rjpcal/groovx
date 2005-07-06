@@ -1,4 +1,4 @@
-/** @file nub/log.h */
+/** @file nub/log.h functions for hierarchical logging */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -42,6 +42,7 @@ namespace nub
 {
   class object;
 
+  /// Functions for hierarchical logging.
   namespace logging
   {
     void reset();

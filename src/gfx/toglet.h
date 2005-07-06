@@ -1,4 +1,4 @@
-/** @file gfx/toglet.h */
+/** @file gfx/toglet.h an OpenGL widget for use with tcl/tk */
 
 ///////////////////////////////////////////////////////////////////////
 //

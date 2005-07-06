@@ -1,4 +1,4 @@
-/** @file media/imgfile.h */
+/** @file media/imgfile.h load/save images in any (supported) format */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,4 @@
-/** @file gfx/gxnode.cc */
+/** @file gfx/gxnode.cc base class for graphic objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

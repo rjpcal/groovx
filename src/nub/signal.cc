@@ -1,5 +1,5 @@
-/** @file nub/signal.cc */
-
+/** @file nub/signal.cc a template-based signal/slot mechanism, similar
+    to that of libsigc++ */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

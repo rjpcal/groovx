@@ -1,5 +1,5 @@
-/** @file tcl/tclpkg-obj.cc */
-
+/** @file tcl/tclpkg-obj.cc tcl interface packages for nub::object and
+    nub::objectdb */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

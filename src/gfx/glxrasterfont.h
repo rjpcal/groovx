@@ -1,4 +1,4 @@
-/** @file gfx/glxrasterfont.h */
+/** @file gfx/glxrasterfont.h X11-GLX raster fonts */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,5 @@
-/** @file geom/projection.h */
+/** @file geom/projection.h transform 3-d points with 4x4 modelview
+    and projection matrices */
 
 ///////////////////////////////////////////////////////////////////////
 //

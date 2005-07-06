@@ -1,5 +1,5 @@
-/** @file nub/refdetail.cc */
-
+/** @file nub/refdetail.cc helper functions for nub::ref and
+    nub::soft_ref */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005

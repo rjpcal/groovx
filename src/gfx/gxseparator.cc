@@ -1,5 +1,5 @@
-/** @file gfx/gxseparator.cc */
-
+/** @file gfx/gxseparator.cc GxNode subclass that holds a variable
+    number of child nodes */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005

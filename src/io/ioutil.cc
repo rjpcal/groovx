@@ -1,5 +1,5 @@
-/** @file io/ioutil.cc */
-
+/** @file io/ioutil.cc wrapper functions around the various available
+    read/write formats */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

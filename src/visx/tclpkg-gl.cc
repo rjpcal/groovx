@@ -1,5 +1,5 @@
-/** @file visx/tclpkg-gl.cc */
-
+/** @file visx/tclpkg-gl.cc tcl interface package for low-level OpenGL
+    routines */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1998-2005

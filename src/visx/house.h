@@ -1,4 +1,5 @@
-/** @file visx/house.h */
+/** @file visx/house.h graphic object for drawing parameterized house
+    outlines */
 
 ///////////////////////////////////////////////////////////////////////
 //

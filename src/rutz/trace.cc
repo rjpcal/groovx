@@ -1,5 +1,5 @@
-/** @file rutz/trace.cc */
-
+/** @file rutz/trace.cc GVX_TRACE macro for user-controlled tracing and
+    profiling */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

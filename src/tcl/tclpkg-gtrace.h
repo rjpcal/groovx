@@ -1,4 +1,5 @@
-/** @file tcl/tclpkg-gtrace.h */
+/** @file tcl/tclpkg-gtrace.h tcl interface package for tracing and
+    profiling facilities */
 
 ///////////////////////////////////////////////////////////////////////
 //

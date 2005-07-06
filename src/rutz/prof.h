@@ -1,4 +1,4 @@
-/** @file rutz/prof.h */
+/** @file rutz/prof.h class for accumulating profiling information */
 
 ///////////////////////////////////////////////////////////////////////
 //

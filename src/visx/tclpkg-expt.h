@@ -1,4 +1,4 @@
-/** @file visx/tclpkg-expt.h */
+/** @file visx/tclpkg-expt.h tcl interface package for class ExptDriver */
 
 ///////////////////////////////////////////////////////////////////////
 //

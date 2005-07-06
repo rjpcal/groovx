@@ -1,4 +1,5 @@
-/** @file rutz/error.h */
+/** @file rutz/error.h exception base class, derives from
+    std::exception */
 
 ///////////////////////////////////////////////////////////////////////
 //

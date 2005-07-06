@@ -1,4 +1,4 @@
-/** @file gfx/gxsphere.cc */
+/** @file gfx/gxsphere.cc GxNode subclass for drawing spheres */
 
 ///////////////////////////////////////////////////////////////////////
 //

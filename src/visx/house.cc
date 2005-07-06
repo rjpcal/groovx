@@ -1,5 +1,5 @@
-/** @file visx/house.cc */
-
+/** @file visx/house.cc graphic object for drawing parameterized house
+    outlines */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

@@ -1,4 +1,4 @@
-/** @file tcl/conversions.h */
+/** @file tcl/conversions.h tcl conversion functions for basic types */
 
 ///////////////////////////////////////////////////////////////////////
 //

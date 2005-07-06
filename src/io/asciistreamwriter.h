@@ -1,4 +1,5 @@
-/** @file io/asciistreamwriter.h */
+/** @file io/asciistreamwriter.h write IO::IoObject objects in the ASW
+    format */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,5 +1,5 @@
-/** @file visx/gaborarray.cc */
-
+/** @file visx/gaborarray.cc spatial array of gabor patches, possibly
+    with embedded contours ("snakes") */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

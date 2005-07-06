@@ -1,5 +1,5 @@
-/** @file gfx/gxlighting.cc */
-
+/** @file gfx/gxlighting.cc GxNode subclass for manipulating scene
+    lighting */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

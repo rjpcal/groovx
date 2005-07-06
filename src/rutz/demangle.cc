@@ -1,5 +1,5 @@
-/** @file rutz/demangle.cc */
-
+/** @file rutz/demangle.cc get a demangled name from a std::type_info
+    object */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

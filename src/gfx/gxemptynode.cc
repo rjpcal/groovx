@@ -1,4 +1,4 @@
-/** @file gfx/gxemptynode.cc */
+/** @file gfx/gxemptynode.cc empty graphic object */
 
 ///////////////////////////////////////////////////////////////////////
 //

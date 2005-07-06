@@ -1,4 +1,4 @@
-/** @file tcl/regexp.h */
+/** @file tcl/regexp.h c++ wrapper class for tcl regexp objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

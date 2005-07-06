@@ -1,4 +1,4 @@
-/** @file geom/bezier4.h */
+/** @file geom/bezier4.h bezier curves with 4 control points */
 
 ///////////////////////////////////////////////////////////////////////
 //

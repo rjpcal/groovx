@@ -1,5 +1,5 @@
-/** @file rutz/debug.cc */
-
+/** @file rutz/debug.cc debugging facilities, assertions,
+    preconditions, postconditions, invariants */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005

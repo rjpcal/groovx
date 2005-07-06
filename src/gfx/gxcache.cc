@@ -1,5 +1,5 @@
-/** @file gfx/gxcache.cc */
-
+/** @file gfx/gxcache.cc GxBin subclass that can cache its child node
+    in an OpenGL display list */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

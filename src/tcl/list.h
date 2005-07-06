@@ -1,4 +1,6 @@
-/** @file tcl/list.h */
+/** @file tcl/list.h c++ wrapper of tcl list objects; handles ref
+    counting and c++/tcl type conversion, offers c++-style list
+    iterators */
 
 ///////////////////////////////////////////////////////////////////////
 //

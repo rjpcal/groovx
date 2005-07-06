@@ -1,4 +1,4 @@
-/** @file rutz/unixcall.cc */
+/** @file rutz/unixcall.cc thin wrappers around unix system calls */
 
 ///////////////////////////////////////////////////////////////////////
 //

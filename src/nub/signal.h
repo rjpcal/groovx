@@ -1,4 +1,5 @@
-/** @file nub/signal.h */
+/** @file nub/signal.h a template-based signal/slot mechanism, similar
+    to that of libsigc++ */
 
 ///////////////////////////////////////////////////////////////////////
 //

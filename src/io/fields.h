@@ -1,4 +1,5 @@
-/** @file io/fields.h */
+/** @file io/fields.h FieldContainer allows serializable objects to
+    have "fields", or named object properties */
 
 ///////////////////////////////////////////////////////////////////////
 //

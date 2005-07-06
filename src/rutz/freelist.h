@@ -1,4 +1,4 @@
-/** @file rutz/freelist.h */
+/** @file rutz/freelist.h memory allocation via a free-list pool */
 
 ///////////////////////////////////////////////////////////////////////
 //

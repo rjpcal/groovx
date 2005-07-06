@@ -1,4 +1,4 @@
-/** @file visx/tclpkg-sound.h */
+/** @file visx/tclpkg-sound.h tcl interface package for class Sound */
 
 ///////////////////////////////////////////////////////////////////////
 //

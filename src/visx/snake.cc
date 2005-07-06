@@ -1,4 +1,4 @@
-/** @file visx/snake.cc */
+/** @file visx/snake.cc "snakes" aligned gabor elements */
 
 ///////////////////////////////////////////////////////////////////////
 //

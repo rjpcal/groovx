@@ -1,4 +1,4 @@
-/** @file gfx/gbcolor.h */
+/** @file gfx/gbcolor.h field class for RGBA color values */
 
 ///////////////////////////////////////////////////////////////////////
 //

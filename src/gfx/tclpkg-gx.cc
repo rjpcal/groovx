@@ -1,5 +1,5 @@
-/** @file gfx/tclpkg-gx.cc */
-
+/** @file gfx/tclpkg-gx.cc tcl interface packages for all of the
+    fundamental graphic object classes */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005

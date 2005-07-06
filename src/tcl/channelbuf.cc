@@ -1,5 +1,5 @@
-/** @file tcl/channelbuf.cc */
-
+/** @file tcl/channelbuf.cc bridge class between tcl channels and c++
+    streams */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

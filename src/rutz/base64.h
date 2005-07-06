@@ -1,4 +1,4 @@
-/** @file rutz/base64.h */
+/** @file rutz/base64.h functions for base64 encoding/decoding */
 
 ///////////////////////////////////////////////////////////////////////
 //

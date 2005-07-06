@@ -1,4 +1,5 @@
-/** @file gfx/gxbounds.h */
+/** @file gfx/gxbounds.h GxBin subclass that draws a 2-D boundary
+    around its child object */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,5 +1,5 @@
-/** @file gfx/glcanvas.cc */
-
+/** @file gfx/glcanvas.cc Gfx::Canvas subclass that renders to an
+    OpenGL context */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

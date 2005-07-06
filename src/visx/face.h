@@ -1,4 +1,4 @@
-/** @file visx/face.h */
+/** @file visx/face.h graphic object for drawing Brunswik faces */
 
 ///////////////////////////////////////////////////////////////////////
 //

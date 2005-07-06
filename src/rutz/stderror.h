@@ -1,4 +1,5 @@
-/** @file rutz/stderror.h */
+/** @file rutz/stderror.h throw common exceptions with standardized
+    messages */
 
 ///////////////////////////////////////////////////////////////////////
 //

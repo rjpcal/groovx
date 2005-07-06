@@ -1,4 +1,4 @@
-/** @file rutz/value.cc */
+/** @file rutz/value.cc abstract interface for string-convertible types */
 
 ///////////////////////////////////////////////////////////////////////
 //

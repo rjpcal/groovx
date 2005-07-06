@@ -1,5 +1,5 @@
-/** @file gfx/gxmaterial.cc */
-
+/** @file gfx/gxmaterial.cc GxNode subclass for specifying material
+    properties */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

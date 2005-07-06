@@ -1,4 +1,5 @@
-/** @file gfx/glcanvas.h */
+/** @file gfx/glcanvas.h Gfx::Canvas subclass that renders to an
+    OpenGL context */
 
 ///////////////////////////////////////////////////////////////////////
 //

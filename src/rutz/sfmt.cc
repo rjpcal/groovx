@@ -1,5 +1,5 @@
-/** @file rutz/sfmt.cc */
-
+/** @file rutz/sfmt.cc make a rutz::fstring using printf-style
+    formatting */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2005-2005

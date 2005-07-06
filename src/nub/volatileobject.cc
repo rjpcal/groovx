@@ -1,5 +1,5 @@
-/** @file nub/volatileobject.cc */
-
+/** @file nub/volatileobject.cc nub::object subclass for inherently
+    unshareable objects */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2001-2005

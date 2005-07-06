@@ -1,4 +1,4 @@
-/** @file visx/block.cc */
+/** @file visx/block.cc sequence of trials in a psychophysics experiment */
 
 ///////////////////////////////////////////////////////////////////////
 //

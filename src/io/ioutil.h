@@ -1,4 +1,5 @@
-/** @file io/ioutil.h */
+/** @file io/ioutil.h wrapper functions around the various available
+    read/write formats */
 
 ///////////////////////////////////////////////////////////////////////
 //

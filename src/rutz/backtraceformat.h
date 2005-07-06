@@ -1,4 +1,5 @@
-/** @file rutz/backtraceformat.h */
+/** @file rutz/backtraceformat.h generate a human-readable string from
+    a rutz::backtrace object */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,4 @@
-/** @file gfx/gxpixmap.cc */
+/** @file gfx/gxpixmap.cc GxShapeKit subclass for bitmap images */
 
 ///////////////////////////////////////////////////////////////////////
 //

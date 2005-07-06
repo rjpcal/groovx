@@ -1,4 +1,5 @@
-/** @file visx/trial.h */
+/** @file visx/trial.h run a series of timed events and collect user
+    responses in a psychophysics experiment */
 
 ///////////////////////////////////////////////////////////////////////
 //

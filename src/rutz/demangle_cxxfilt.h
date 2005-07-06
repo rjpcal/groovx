@@ -1,4 +1,5 @@
-/** @file rutz/demangle_cxxfilt.h */
+/** @file rutz/demangle_cxxfilt.h demangle std::type_info::name() by
+    piping through /usr/bin/c++filt */
 
 ///////////////////////////////////////////////////////////////////////
 //

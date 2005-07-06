@@ -1,4 +1,4 @@
-/** @file visx/morphyface.cc */
+/** @file visx/morphyface.cc highly-parameterized cartoon-style faces */
 
 ///////////////////////////////////////////////////////////////////////
 //

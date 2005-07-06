@@ -1,4 +1,5 @@
-/** @file io/readutils.h */
+/** @file io/readutils.h helper functions for reading counted
+    sequences of objects from an IO::Reader */
 
 ///////////////////////////////////////////////////////////////////////
 //

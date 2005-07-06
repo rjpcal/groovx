@@ -1,5 +1,5 @@
-/** @file io/asciistreamwriter.cc */
-
+/** @file io/asciistreamwriter.cc write IO::IoObject objects in the ASW
+    format */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

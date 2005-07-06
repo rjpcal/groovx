@@ -1,5 +1,5 @@
-/** @file tcl/objpkg.cc */
-
+/** @file tcl/objpkg.cc tcl package helpers for defining basic
+    class-level tcl commands (e.g. find all objects of a given type) */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

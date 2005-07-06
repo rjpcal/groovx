@@ -1,4 +1,4 @@
-/** @file visx/block.h */
+/** @file visx/block.h sequence of trials in a psychophysics experiment */
 
 ///////////////////////////////////////////////////////////////////////
 //

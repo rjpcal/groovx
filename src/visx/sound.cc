@@ -1,4 +1,4 @@
-/** @file visx/sound.cc */
+/** @file visx/sound.cc simple playable sound objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

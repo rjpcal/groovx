@@ -1,4 +1,4 @@
-/** @file nub/uid.h */
+/** @file nub/uid.h typedef for unique object identifiers */
 
 ///////////////////////////////////////////////////////////////////////
 //

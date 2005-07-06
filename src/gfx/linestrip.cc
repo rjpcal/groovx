@@ -1,5 +1,5 @@
-/** @file gfx/linestrip.cc */
-
+/** @file gfx/linestrip.cc helper class for drawing line strips with
+    optional corner joins  */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

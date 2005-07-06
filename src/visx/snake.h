@@ -1,4 +1,4 @@
-/** @file visx/snake.h */
+/** @file visx/snake.h "snakes" aligned gabor elements */
 
 ///////////////////////////////////////////////////////////////////////
 //

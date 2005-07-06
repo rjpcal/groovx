@@ -1,4 +1,4 @@
-/** @file rutz/stdiobuf.cc */
+/** @file rutz/stdiobuf.cc wrap posix file descriptors in c++ iostreams */
 
 ///////////////////////////////////////////////////////////////////////
 //

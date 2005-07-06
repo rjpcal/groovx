@@ -1,5 +1,5 @@
-/** @file media/soundrep.cc */
-
+/** @file media/soundrep.cc abstract interface for playable sounds;
+    subclasses implement the interface using platform-specific sound
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

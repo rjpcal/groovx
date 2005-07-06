@@ -1,5 +1,5 @@
-/** @file rutz/gzstreambuf.cc */
-
+/** @file rutz/gzstreambuf.cc handle gzip-encoding through a c++
+    iostreams interface */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2001-2005

@@ -1,4 +1,5 @@
-/** @file geom/txform.h */
+/** @file geom/txform.h 4x4 matrix for homogenous coordinate
+    transformations */
 
 ///////////////////////////////////////////////////////////////////////
 //

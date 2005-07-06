@@ -1,4 +1,5 @@
-/** @file media/esdsound.h */
+/** @file media/esdsound.h play sounds using the esd API
+    (Enlightenment Sound Daemon) */
 
 ///////////////////////////////////////////////////////////////////////
 //

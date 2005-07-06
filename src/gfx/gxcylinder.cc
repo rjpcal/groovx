@@ -1,4 +1,4 @@
-/** @file gfx/gxcylinder.cc */
+/** @file gfx/gxcylinder.cc GxNode subclass for drawing cylinders+cones */
 
 ///////////////////////////////////////////////////////////////////////
 //

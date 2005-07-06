@@ -1,4 +1,4 @@
-/** @file gfx/recttcl.h */
+/** @file gfx/recttcl.h tcl conversions to/from geom::rect */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,5 +1,5 @@
-/** @file tcl/timerscheduler.cc */
-
+/** @file tcl/timerscheduler.cc implementation of nub::scheduler using
+    the tcl event scheduler */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

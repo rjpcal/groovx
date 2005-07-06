@@ -1,4 +1,4 @@
-/** @file visx/tclpkg-house.h */
+/** @file visx/tclpkg-house.h tcl interface package for class House */
 
 ///////////////////////////////////////////////////////////////////////
 //

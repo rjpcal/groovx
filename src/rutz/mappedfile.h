@@ -1,4 +1,4 @@
-/** @file rutz/mappedfile.h */
+/** @file rutz/mappedfile.h c++ wrapper for mmap() for fast file i/o */
 
 ///////////////////////////////////////////////////////////////////////
 //

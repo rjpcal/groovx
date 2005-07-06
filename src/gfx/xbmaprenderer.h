@@ -1,4 +1,5 @@
-/** @file gfx/xbmaprenderer.h */
+/** @file gfx/xbmaprenderer.h render a media::bmap_data object to an
+    X11 window */
 
 ///////////////////////////////////////////////////////////////////////
 //

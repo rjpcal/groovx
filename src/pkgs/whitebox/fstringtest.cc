@@ -1,5 +1,5 @@
-/** @file pkgs/whitebox/fstringtest.cc */
-
+/** @file pkgs/whitebox/fstringtest.cc tcl interface package for
+    testing rutz::fstring */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

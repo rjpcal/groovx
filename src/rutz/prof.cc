@@ -1,4 +1,4 @@
-/** @file rutz/prof.cc */
+/** @file rutz/prof.cc class for accumulating profiling information */
 
 ///////////////////////////////////////////////////////////////////////
 //

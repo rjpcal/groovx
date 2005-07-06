@@ -1,4 +1,4 @@
-/** @file media/quicktimesound.h */
+/** @file media/quicktimesound.h use QuickTime to play sounds */
 
 ///////////////////////////////////////////////////////////////////////
 //

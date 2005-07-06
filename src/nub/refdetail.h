@@ -1,4 +1,5 @@
-/** @file nub/refdetail.h */
+/** @file nub/refdetail.h helper functions for nub::ref and
+    nub::soft_ref */
 
 ///////////////////////////////////////////////////////////////////////
 //

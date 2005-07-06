@@ -1,5 +1,5 @@
-/** @file io/tclpkg-io.cc */
-
+/** @file io/tclpkg-io.cc tcl interface packages for IO::IoObject and
+    OutputFile */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005

@@ -1,4 +1,5 @@
-/** @file visx/cloneface.h */
+/** @file visx/cloneface.h graphic object for modified Brunswik faces
+    with some additional parameters */
 
 ///////////////////////////////////////////////////////////////////////
 //

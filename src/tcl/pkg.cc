@@ -1,5 +1,5 @@
-/** @file tcl/pkg.cc */
-
+/** @file tcl/pkg.cc tcl package class, holds a set of commands, wraps
+    calls to Tcl_PkgProvide(), etc. */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

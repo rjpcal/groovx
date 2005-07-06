@@ -1,4 +1,4 @@
-/** @file visx/tclpkg-mask.cc */
+/** @file visx/tclpkg-mask.cc tcl interface package for class MaskHatch */
 
 ///////////////////////////////////////////////////////////////////////
 //

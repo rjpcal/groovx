@@ -1,5 +1,5 @@
-/** @file io/fieldpkg.cc */
-
+/** @file io/fieldpkg.cc tcl interfaces for manipulating FieldContainer
+    fields */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005

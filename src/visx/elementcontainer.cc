@@ -1,5 +1,5 @@
-/** @file visx/elementcontainer.cc */
-
+/** @file visx/elementcontainer.cc abstract class for composite
+    elements within a psychophysics experiment */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

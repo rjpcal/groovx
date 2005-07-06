@@ -1,4 +1,5 @@
-/** @file nub/volatileobject.h */
+/** @file nub/volatileobject.h nub::object subclass for inherently
+    unshareable objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

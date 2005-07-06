@@ -1,4 +1,4 @@
-/** @file visx/tclpkg-element.cc */
+/** @file visx/tclpkg-element.cc tcl interface package for class Element */
 
 ///////////////////////////////////////////////////////////////////////
 //

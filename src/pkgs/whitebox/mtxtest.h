@@ -1,4 +1,5 @@
-/** @file pkgs/whitebox/mtxtest.h */
+/** @file pkgs/whitebox/mtxtest.h tcl interface package for testing
+    class mtx */
 
 ///////////////////////////////////////////////////////////////////////
 //

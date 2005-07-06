@@ -1,4 +1,5 @@
-/** @file rutz/functors.h */
+/** @file rutz/functors.h template mechanisms for determine parameter
+    types and return types of functions or general functors */
 
 ///////////////////////////////////////////////////////////////////////
 //

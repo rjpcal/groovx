@@ -1,5 +1,5 @@
-/** @file visx/timinghandler.cc */
-
+/** @file visx/timinghandler.cc specialized TimingHdlr subclass for
+    object categorization experiments */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

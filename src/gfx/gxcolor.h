@@ -1,4 +1,5 @@
-/** @file gfx/gxcolor.h */
+/** @file gfx/gxcolor.h GxNode class for manipulating the current RGBA
+    color */
 
 ///////////////////////////////////////////////////////////////////////
 //

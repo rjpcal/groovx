@@ -1,4 +1,4 @@
-/** @file tcl/itertcl.h */
+/** @file tcl/itertcl.h tcl converters for rutz::fwd_iter */
 
 ///////////////////////////////////////////////////////////////////////
 //

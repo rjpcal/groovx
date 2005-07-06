@@ -1,5 +1,5 @@
-/** @file rutz/multivalue.cc */
-
+/** @file rutz/multivalue.cc rutz::value class for fixed-size sets of
+    homogeneous values */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2001-2005

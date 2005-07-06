@@ -1,4 +1,4 @@
-/** @file media/imgfile.cc */
+/** @file media/imgfile.cc load/save images in any (supported) format */
 
 ///////////////////////////////////////////////////////////////////////
 //

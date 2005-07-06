@@ -1,5 +1,5 @@
-/** @file gfx/gxtransform.cc */
-
+/** @file gfx/gxtransform.cc GxNode subclass for transforming the
+    modelview matrix, to achieve translation, scaling, and/or
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

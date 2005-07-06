@@ -1,4 +1,5 @@
-/** @file gfx/gxcache.h */
+/** @file gfx/gxcache.h GxBin subclass that can cache its child node
+    in an OpenGL display list */
 
 ///////////////////////////////////////////////////////////////////////
 //

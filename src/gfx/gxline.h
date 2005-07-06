@@ -1,4 +1,4 @@
-/** @file gfx/gxline.h */
+/** @file gfx/gxline.h GxNode subclass for drawing lines */
 
 ///////////////////////////////////////////////////////////////////////
 //

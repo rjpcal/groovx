@@ -1,4 +1,5 @@
-/** @file tcl/tclpkg-misc.h */
+/** @file tcl/tclpkg-misc.h tcl interface package for miscellaneous
+    functions */
 
 ///////////////////////////////////////////////////////////////////////
 //

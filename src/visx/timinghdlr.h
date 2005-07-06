@@ -1,4 +1,5 @@
-/** @file visx/timinghdlr.h */
+/** @file visx/timinghdlr.h specify a trial's timing sequence in a
+    psychophysics experiment */
 
 ///////////////////////////////////////////////////////////////////////
 //

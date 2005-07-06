@@ -1,5 +1,5 @@
-/** @file gfx/gxrasterfont.cc */
-
+/** @file gfx/gxrasterfont.cc build an OpenGL raster font from an X11
+    font */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

@@ -1,4 +1,4 @@
-/** @file io/readattribmap.h */
+/** @file io/readattribmap.h helper class used in AsciiStreamReader */
 
 ///////////////////////////////////////////////////////////////////////
 //

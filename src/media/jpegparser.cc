@@ -1,4 +1,4 @@
-/** @file media/jpegparser.cc */
+/** @file media/jpegparser.cc load jpeg images (no save capability) */
 
 ///////////////////////////////////////////////////////////////////////
 //

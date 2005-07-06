@@ -1,4 +1,5 @@
-/** @file io/tclprocwrapper.h */
+/** @file io/tclprocwrapper.h serializable wrapper for Tcl script
+    'proc' definitions */
 
 ///////////////////////////////////////////////////////////////////////
 //

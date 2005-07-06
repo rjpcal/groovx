@@ -1,4 +1,4 @@
-/** @file rutz/time.h */
+/** @file rutz/time.h user-friendly wrapper around timeval */
 
 ///////////////////////////////////////////////////////////////////////
 //

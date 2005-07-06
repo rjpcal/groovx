@@ -1,5 +1,5 @@
-/** @file geom/txform.cc */
-
+/** @file geom/txform.cc 4x4 matrix for homogenous coordinate
+    transformations */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

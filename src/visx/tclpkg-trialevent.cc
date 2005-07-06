@@ -1,5 +1,5 @@
-/** @file visx/tclpkg-trialevent.cc */
-
+/** @file visx/tclpkg-trialevent.cc tcl interface package for class
+    TrialEvent and derivatives */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2003-2005

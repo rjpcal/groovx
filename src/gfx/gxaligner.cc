@@ -1,5 +1,5 @@
-/** @file gfx/gxaligner.cc */
-
+/** @file gfx/gxaligner.cc GxBin subclass that aligns its child
+    relative to the origin */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

@@ -1,5 +1,5 @@
-/** @file visx/nullresponsehdlr.cc */
-
+/** @file visx/nullresponsehdlr.cc response handler that ignores all
+    user responses */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

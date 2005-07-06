@@ -1,4 +1,5 @@
-/** @file rutz/assocarray.h */
+/** @file rutz/assocarray.h generic associative arrays, implemented as
+    a thin wrapper around std::map<rutz::fstring, void*> */
 
 ///////////////////////////////////////////////////////////////////////
 //

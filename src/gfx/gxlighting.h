@@ -1,4 +1,5 @@
-/** @file gfx/gxlighting.h */
+/** @file gfx/gxlighting.h GxNode subclass for manipulating scene
+    lighting */
 
 ///////////////////////////////////////////////////////////////////////
 //

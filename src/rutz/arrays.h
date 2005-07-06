@@ -1,4 +1,5 @@
-/** @file rutz/arrays.h */
+/** @file rutz/arrays.h STL-style array classes similar to std::vector
+    but much more lightweight */
 
 ///////////////////////////////////////////////////////////////////////
 //

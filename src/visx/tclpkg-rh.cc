@@ -1,5 +1,5 @@
-/** @file visx/tclpkg-rh.cc */
-
+/** @file visx/tclpkg-rh.cc tcl interface package for class
+    ResponseHandler and derivatives */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

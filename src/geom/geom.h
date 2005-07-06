@@ -1,4 +1,5 @@
-/** @file geom/geom.h */
+/** @file geom/geom.h geometry helper functions for manipulating
+    angles, converting degrees/radians */
 
 ///////////////////////////////////////////////////////////////////////
 //

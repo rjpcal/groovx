@@ -1,5 +1,5 @@
-/** @file gfx/gxcamera.cc */
-
+/** @file gfx/gxcamera.cc view a graphic scene with orthographic or
+    perspective projection */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

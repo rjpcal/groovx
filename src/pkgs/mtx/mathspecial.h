@@ -1,4 +1,5 @@
-/** @file pkgs/mtx/mathspecial.h */
+/** @file pkgs/mtx/mathspecial.h math special functions (gammaln(),
+    erfc(), etc.) */
 
 ///////////////////////////////////////////////////////////////////////
 //

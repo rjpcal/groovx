@@ -1,4 +1,4 @@
-/** @file gfx/gxdisk.h */
+/** @file gfx/gxdisk.h graphic object for circles/rings/disks */
 
 ///////////////////////////////////////////////////////////////////////
 //

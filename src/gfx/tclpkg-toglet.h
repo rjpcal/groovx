@@ -1,4 +1,4 @@
-/** @file gfx/tclpkg-toglet.h */
+/** @file gfx/tclpkg-toglet.h tcl interface package for Toglet */
 
 ///////////////////////////////////////////////////////////////////////
 //

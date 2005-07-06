@@ -1,4 +1,6 @@
-/** @file gfx/gxtransform.h */
+/** @file gfx/gxtransform.h GxNode subclass for transforming the
+    modelview matrix, to achieve translation, scaling, and/or
+    rotation */
 
 ///////////////////////////////////////////////////////////////////////
 //

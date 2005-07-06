@@ -1,4 +1,5 @@
-/** @file pkgs/whitebox/geomtest.h */
+/** @file pkgs/whitebox/geomtest.h tcl interface package for testing
+    class geom::txform and related classes */
 
 ///////////////////////////////////////////////////////////////////////
 //

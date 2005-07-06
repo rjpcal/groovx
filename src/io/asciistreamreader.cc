@@ -1,5 +1,5 @@
-/** @file io/asciistreamreader.cc */
-
+/** @file io/asciistreamreader.cc read IO::IoObject objects in the ASW
+    format */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

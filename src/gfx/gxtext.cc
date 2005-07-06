@@ -1,4 +1,4 @@
-/** @file gfx/gxtext.cc */
+/** @file gfx/gxtext.cc GxShapeKit subclass for rendering text */
 
 ///////////////////////////////////////////////////////////////////////
 //

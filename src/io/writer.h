@@ -1,4 +1,5 @@
-/** @file io/writer.h */
+/** @file io/writer.h abstract base class for writing IO::IoObject
+    objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

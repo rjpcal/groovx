@@ -1,5 +1,5 @@
-/** @file gfx/glxopts.cc */
-
+/** @file gfx/glxopts.cc options for controlling the
+    OpenGL-windowsystem interface */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2002-2005

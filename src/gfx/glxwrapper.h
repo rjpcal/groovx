@@ -1,4 +1,5 @@
-/** @file gfx/glxwrapper.h */
+/** @file gfx/glxwrapper.h GlWindowInterface implementation using the
+    X11 GLX API. */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,5 @@
-/** @file tcl/pkg.h */
+/** @file tcl/pkg.h tcl package class, holds a set of commands, wraps
+    calls to Tcl_PkgProvide(), etc. */
 
 ///////////////////////////////////////////////////////////////////////
 //

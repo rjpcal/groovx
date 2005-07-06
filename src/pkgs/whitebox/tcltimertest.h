@@ -1,4 +1,5 @@
-/** @file pkgs/whitebox/tcltimertest.h */
+/** @file pkgs/whitebox/tcltimertest.h tcl interface package for
+    testing class tcl::timer_scheduler */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,5 @@
-/** @file pkgs/whitebox/vectwotest.h */
+/** @file pkgs/whitebox/vectwotest.h tcl interface package for testing
+    class geom::vec2 */
 
 ///////////////////////////////////////////////////////////////////////
 //

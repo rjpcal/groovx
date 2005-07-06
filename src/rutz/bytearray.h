@@ -1,4 +1,4 @@
-/** @file rutz/bytearray.h */
+/** @file rutz/bytearray.h thin wrapper around std::vector<byte> */
 
 ///////////////////////////////////////////////////////////////////////
 //

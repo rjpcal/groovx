@@ -1,4 +1,5 @@
-/** @file rutz/multivalue.h */
+/** @file rutz/multivalue.h rutz::value class for fixed-size sets of
+    homogeneous values */
 
 ///////////////////////////////////////////////////////////////////////
 //

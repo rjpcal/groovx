@@ -1,4 +1,6 @@
-/** @file io/outputfile.h */
+/** @file io/outputfile.h wraps a std::ofstream in an IO::IoObject,
+    allowing named files to be serialized and restored across multiple
+    program runs */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,5 @@
-/** @file geom/span.h */
+/** @file geom/span.h one-dimensional geom::span class used for
+    implementing 2-D rectangles and 3-D boxes */
 
 ///////////////////////////////////////////////////////////////////////
 //

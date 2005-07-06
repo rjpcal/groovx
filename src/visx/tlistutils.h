@@ -1,4 +1,4 @@
-/** @file visx/tlistutils.h */
+/** @file visx/tlistutils.h auxiliary functions for Trial objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

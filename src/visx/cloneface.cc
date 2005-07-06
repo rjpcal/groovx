@@ -1,5 +1,5 @@
-/** @file visx/cloneface.cc */
-
+/** @file visx/cloneface.cc graphic object for modified Brunswik faces
+    with some additional parameters */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

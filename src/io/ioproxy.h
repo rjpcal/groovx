@@ -1,4 +1,5 @@
-/** @file io/ioproxy.h */
+/** @file io/ioproxy.h make proxy IoObject's that can be used for
+    reading/writing base class sub-objects */
 
 ///////////////////////////////////////////////////////////////////////
 //

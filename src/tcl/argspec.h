@@ -1,4 +1,5 @@
-/** @file tcl/argspec.h */
+/** @file tcl/argspec.h specify min/max number of arguments that a tcl
+    command can accept */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,5 @@
-/** @file io/tclpkg-io.h */
+/** @file io/tclpkg-io.h tcl interface packages for IO::IoObject and
+    OutputFile */
 
 ///////////////////////////////////////////////////////////////////////
 //

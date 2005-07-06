@@ -1,4 +1,4 @@
-/** @file rutz/unittest.h */
+/** @file rutz/unittest.h helper functions for implementing unit tests */
 
 ///////////////////////////////////////////////////////////////////////
 //

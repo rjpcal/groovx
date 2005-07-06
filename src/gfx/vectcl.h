@@ -1,4 +1,4 @@
-/** @file gfx/vectcl.h */
+/** @file gfx/vectcl.h tcl conversions to/from geom::vec2 */
 
 ///////////////////////////////////////////////////////////////////////
 //

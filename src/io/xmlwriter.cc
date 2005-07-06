@@ -1,5 +1,5 @@
-/** @file io/xmlwriter.cc */
-
+/** @file io/xmlwriter.cc IO::Writer implementation for writing XML
+    files in the GVX format */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2003-2005

@@ -1,4 +1,4 @@
-/** @file media/hpsound.h */
+/** @file media/hpsound.h play sounds using HP's Alib API */
 
 ///////////////////////////////////////////////////////////////////////
 //

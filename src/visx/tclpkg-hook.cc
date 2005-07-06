@@ -1,5 +1,5 @@
-/** @file visx/tclpkg-hook.cc */
-
+/** @file visx/tclpkg-hook.cc tcl interface package for miscellaneous
+    functions */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005

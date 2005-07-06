@@ -1,4 +1,5 @@
-/** @file nub/scheduler.h */
+/** @file nub/scheduler.h abstract base class for scheduling timed
+    callbacks */
 
 ///////////////////////////////////////////////////////////////////////
 //

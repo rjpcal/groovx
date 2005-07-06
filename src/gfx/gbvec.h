@@ -1,4 +1,4 @@
-/** @file gfx/gbvec.h */
+/** @file gfx/gbvec.h a field class for 2-D vectors/points */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -38,7 +38,7 @@
 #include "geom/vec2.h"
 #include "geom/vec3.h"
 
-/// GbVec2 is a field class for holding @-D vectors/points/distances.
+/// GbVec2 is a field class for holding 2-D vectors/points/distances.
 template <class T>
 class GbVec2 : public geom::vec2<T>,
                public rutz::multi_value<T>

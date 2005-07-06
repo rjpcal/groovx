@@ -1,5 +1,5 @@
-/** @file tcl/scriptapp.cc */
-
+/** @file tcl/scriptapp.cc helper class used in main() to initialize
+    and run a scripting application */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2005-2005

@@ -1,4 +1,4 @@
-/** @file visx/tclpkg-block.h */
+/** @file visx/tclpkg-block.h tcl interface package for class Block */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,4 @@
-/** @file rutz/freelist.cc */
+/** @file rutz/freelist.cc memory allocation via a free-list pool */
 
 ///////////////////////////////////////////////////////////////////////
 //

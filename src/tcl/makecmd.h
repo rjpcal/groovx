@@ -1,4 +1,6 @@
-/** @file tcl/makecmd.h */
+/** @file tcl/makecmd.h construct tcl commands from c++ functions via
+    templatized argument deduction and conversion between tcl and
+    c++ */
 
 ///////////////////////////////////////////////////////////////////////
 //

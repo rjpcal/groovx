@@ -1,5 +1,5 @@
-/** @file gfx/tclpkg-canvas.cc */
-
+/** @file gfx/tclpkg-canvas.cc tcl interface packages for Gfx::Canvas
+    and derivatives */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

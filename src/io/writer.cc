@@ -1,5 +1,5 @@
-/** @file io/writer.cc */
-
+/** @file io/writer.cc abstract base class for writing IO::IoObject
+    objects */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

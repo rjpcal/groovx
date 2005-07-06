@@ -1,5 +1,5 @@
-/** @file visx/tclpkg-face.cc */
-
+/** @file visx/tclpkg-face.cc tcl interface package for class Face and
+    class CloneFace */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

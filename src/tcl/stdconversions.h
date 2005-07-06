@@ -1,4 +1,5 @@
-/** @file tcl/stdconversions.h */
+/** @file tcl/stdconversions.h tcl conversions for std::string and
+    other std library classes */
 
 ///////////////////////////////////////////////////////////////////////
 //

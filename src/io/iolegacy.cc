@@ -1,5 +1,5 @@
-/** @file io/iolegacy.cc */
-
+/** @file io/iolegacy.cc IO::Reader and IO::Writer subclasses for the
+    "legacy" file format */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005

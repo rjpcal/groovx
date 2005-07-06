@@ -1,4 +1,5 @@
-/** @file visx/tclpkg-morphyface.h */
+/** @file visx/tclpkg-morphyface.h tcl interface package for class
+    MorphyFace */
 
 ///////////////////////////////////////////////////////////////////////
 //

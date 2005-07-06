@@ -1,4 +1,4 @@
-/** @file pkgs/mtx/mtxops.h */
+/** @file pkgs/mtx/mtxops.h free functions for class mtx */
 
 ///////////////////////////////////////////////////////////////////////
 //

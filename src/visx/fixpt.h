@@ -1,4 +1,4 @@
-/** @file visx/fixpt.h */
+/** @file visx/fixpt.h graphic object for fixation crosses */
 
 ///////////////////////////////////////////////////////////////////////
 //

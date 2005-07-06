@@ -1,5 +1,5 @@
-/** @file tcl/vecdispatch.cc */
-
+/** @file tcl/vecdispatch.cc apply vectorized dispatching to a
+    tcl::command */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2001-2005

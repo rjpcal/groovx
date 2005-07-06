@@ -1,5 +1,5 @@
-/** @file gfx/glwindowinterface.cc */
-
+/** @file gfx/glwindowinterface.cc abstract base class that wraps the
+    interface between OpenGL and a particular windowing system */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

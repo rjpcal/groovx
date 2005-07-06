@@ -1,4 +1,5 @@
-/** @file nub/object.h */
+/** @file nub/object.h base class for objects to be exposed to a
+    scripting language */
 
 ///////////////////////////////////////////////////////////////////////
 //

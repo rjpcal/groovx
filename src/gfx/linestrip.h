@@ -1,4 +1,5 @@
-/** @file gfx/linestrip.h */
+/** @file gfx/linestrip.h helper class for drawing line strips with
+    optional corner joins  */
 
 ///////////////////////////////////////////////////////////////////////
 //

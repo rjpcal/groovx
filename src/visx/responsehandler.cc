@@ -1,5 +1,5 @@
-/** @file visx/responsehandler.cc */
-
+/** @file visx/responsehandler.cc interface for getting user responses
+    during a psychophysics experiment */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005

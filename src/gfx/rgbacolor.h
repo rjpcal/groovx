@@ -1,4 +1,4 @@
-/** @file gfx/rgbacolor.h */
+/** @file gfx/rgbacolor.h RGBA color values (red/green/blue/alpha) */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,4 +1,5 @@
-/** @file io/writeidmap.h */
+/** @file io/writeidmap.h helper class used in AsciiStreamWriter and
+    XmlWriter */
 
 ///////////////////////////////////////////////////////////////////////
 //

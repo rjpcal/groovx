@@ -1,4 +1,4 @@
-/** @file gfx/gxtext.h */
+/** @file gfx/gxtext.h GxShapeKit subclass for rendering text */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -43,8 +43,8 @@ class GxFont;
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c GxText is a \c GxShapeKit subclass that renders text as a series of
- * vector graphics in OpenGL. There is only one font currently available.
+ * \c GxText is a \c GxShapeKit subclass that renders text as a series
+ * of vector graphics in OpenGL.
  *
  **/
 ///////////////////////////////////////////////////////////////////////

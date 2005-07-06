@@ -1,4 +1,5 @@
-/** @file pkgs/mtx/mtxobj.h */
+/** @file pkgs/mtx/mtxobj.h wrap mtx objects in a nub::object
+    interface */
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -1,5 +1,5 @@
-/** @file tcl/commandgroup.cc */
-
+/** @file tcl/commandgroup.cc represents a set of overloaded
+    tcl::command objects */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

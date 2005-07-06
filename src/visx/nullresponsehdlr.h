@@ -1,4 +1,5 @@
-/** @file visx/nullresponsehdlr.h */
+/** @file visx/nullresponsehdlr.h response handler that ignores all
+    user responses */
 
 ///////////////////////////////////////////////////////////////////////
 //

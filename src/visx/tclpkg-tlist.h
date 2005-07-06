@@ -1,4 +1,5 @@
-/** @file visx/tclpkg-tlist.h */
+/** @file visx/tclpkg-tlist.h tcl interface package for special
+    Trial-related functions */
 
 ///////////////////////////////////////////////////////////////////////
 //

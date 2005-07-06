@@ -1,4 +1,6 @@
-/** @file rutz/fileposition.h */
+/** @file rutz/fileposition.h SRC_POS macro wraps __FILE__ and
+    __LINE__, so that it's easy to communicate source-code location
+    information throughout code and ultimately back to the user */
 
 ///////////////////////////////////////////////////////////////////////
 //
