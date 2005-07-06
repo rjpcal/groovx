@@ -38,6 +38,7 @@
 #include "gfx/glcanvas.h"
 #include "gfx/glwindowinterface.h"
 #include "gfx/glxopts.h"
+#include "gfx/gxfactory.h"
 #include "gfx/gxscene.h"
 #include "gfx/rgbacolor.h"
 
@@ -119,7 +120,7 @@ Toglet::Impl::Impl(Toglet* p) :
   owner(p),
   tkWin(owner->tkWin()),
   opts(new GlxOpts),
-  glx(GlWindowInterface::make(Tk_Display(tkWin), *opts)),
+  glx(GxFactory::makeWindowInterface(Tk_Display(tkWin), *opts)),
   canvas(GLCanvas::make(opts, glx)),
   scene(new GxScene(canvas))
 {

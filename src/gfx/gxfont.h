@@ -33,11 +33,6 @@
 #ifndef GROOVX_GFX_GXFONT_H_UTC20050626084023_DEFINED
 #define GROOVX_GFX_GXFONT_H_UTC20050626084023_DEFINED
 
-namespace rutz
-{
-  template <class T> class shared_ptr;
-}
-
 namespace geom
 {
   template <class V> class rect;
@@ -53,9 +48,6 @@ namespace Gfx
 class GxFont
 {
 public:
-  /// Factory function.
-  static rutz::shared_ptr<GxFont> make(const char* name);
-
   /// Virtual destructor.
   virtual ~GxFont() throw();
 

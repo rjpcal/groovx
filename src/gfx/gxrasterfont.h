@@ -1,5 +1,5 @@
-/** @file gfx/gxrasterfont.h build an OpenGL raster font from an X11
-    font */
+/** @file gfx/gxrasterfont.h build an OpenGL raster font from a
+    platform-specific bitmap font */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -36,18 +36,10 @@
 
 #include "gfx/gxfont.h"
 
-namespace rutz
-{
-  template <class T> class shared_ptr;
-}
-
 /// Builds an OpenGL raster font from an X11 font.
 class GxRasterFont : public GxFont
 {
 public:
-  /// Construct a platform-appropriate raster font from the given X11 font specification.
-  static rutz::shared_ptr<GxRasterFont> make(const char* fontname);
-
   virtual ~GxRasterFont() throw() = 0;
 
   virtual const char* fontName() const = 0;

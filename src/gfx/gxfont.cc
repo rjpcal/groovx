@@ -35,42 +35,6 @@
 
 #include "gxfont.h"
 
-#include "gfx/gxrasterfont.h"
-#include "gfx/gxvectorfont.h"
-
-#include "rutz/error.h"
-#include "rutz/fstring.h"
-#include "rutz/sharedptr.h"
-
-#include <map>
-
-namespace
-{
-  typedef std::map<rutz::fstring, rutz::shared_ptr<GxFont> > MapType;
-  MapType theFontMap;
-}
-
-rutz::shared_ptr<GxFont> GxFont::make(const char* name_cstr)
-{
-  rutz::fstring name(name_cstr);
-
-  MapType::iterator itr = theFontMap.find(name);
-
-  if (itr != theFontMap.end())
-    return (*itr).second;
-
-  if (name == "vector")
-    {
-      rutz::shared_ptr<GxFont> font(new GxVectorFont);
-      theFontMap.insert(MapType::value_type(name, font));
-      return font;
-    }
-
-  rutz::shared_ptr<GxFont> font(GxRasterFont::make(name_cstr));
-  theFontMap.insert(MapType::value_type(name, font));
-  return font;
-}
-
 GxFont::~GxFont() throw() {}
 
 static const char vcid_groovx_gfx_gxfont_cc_utc20050626084025[] = "$Id$ $HeadURL$";

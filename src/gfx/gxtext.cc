@@ -38,6 +38,7 @@
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
 #include "gfx/gxcache.h"
+#include "gfx/gxfactory.h"
 #include "gfx/gxfont.h"
 #include "gfx/gxscaler.h"
 
@@ -72,9 +73,9 @@ GVX_TRACE("GxText::make");
 
 GxText::GxText(const char* text) :
   GxShapeKit(),
-  itsFont(GxFont::make("helvetica 34")),
-//   itsFont(GxFont::make("vector")),
-//   itsFont(GxFont::make("-adobe-helvetica-medium-r-normal--34-240-100-100-p-176-iso8859-1")),
+  itsFont(GxFactory::makeFont("helvetica 34")),
+//   itsFont(GxFactory::makeFont("vector")),
+//   itsFont(GxFactory::makeFont("-adobe-helvetica-medium-r-normal--34-240-100-100-p-176-iso8859-1")),
 //   itsFont(new GxRasterFont("-adobe-helvetica-medium-r-normal--34-240-100-100-p-176-iso8859-1")),
   itsText(text ? text : ""),
   itsStrokeWidth(2)
@@ -185,7 +186,7 @@ GVX_TRACE("GxText::grGetBoundingBox");
 void GxText::setFont(fstring name)
 {
 GVX_TRACE("GxText::setFont");
-  itsFont = GxFont::make(name.c_str());
+  itsFont = GxFactory::makeFont(name.c_str());
   this->sigNodeChanged.emit();
 }
 

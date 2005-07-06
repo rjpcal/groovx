@@ -71,10 +71,6 @@ public:
   /// Instantiate an actual window-system window for the given Tk_Window.
   virtual Window makeTkRealWindow(Tk_Window tkwin, Window parent,
                                   int width, int height) throw() = 0;
-
-  /// Make a concrete GlWindowInterface of a platform-dependent type.
-  static rutz::shared_ptr<GlWindowInterface> make(Display* dpy,
-                                                  GlxOpts& opts);
 };
 
 static const char vcid_groovx_gfx_glwindowinterface_h_utc20050626084024[] = "$Id$ $HeadURL$";
