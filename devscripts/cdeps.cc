@@ -927,6 +927,10 @@ namespace
   public:
     static file_info* get(const string& fname);
 
+    // Returns true if we are a header file that has no .c/.cc/.C/.cpp
+    // source-file counterpart.
+    bool is_header_only() const { return this->m_is_header_only; }
+
     // Returns true if m_fname has a c++ source file extension, and
     // assigns the stem (without the extension) to 'stem'.
     bool is_cc_file() const;
@@ -1003,7 +1007,7 @@ namespace
         {
           file_info* finfo = (*itr).second;
 
-          if (!finfo->is_cc_file())
+          if (!finfo->is_cc_file() && !finfo->is_header_only())
             continue;
 
           result.insert(finfo->m_ldep_group);
@@ -1210,7 +1214,6 @@ namespace
                   std::cout << std::setw(35) << std::left
                             << (*itr)->m_members[i]->name()
                             << " "
-                            << std::setw(35) << std::left
                             << deps[j]->name()
                             << "\n";
                 }
@@ -1241,6 +1244,7 @@ namespace
     shared_ptr<ldep_group>  m_ldep_group;
   private:
     int                     m_epoch;
+    bool                    m_is_header_only;
   };
 
   struct file_info_cmp
@@ -1366,7 +1370,8 @@ namespace
     m_direct_ldeps(),
     m_nested_ldeps_done(false),
     m_nested_ldeps(),
-    m_epoch(0)
+    m_epoch(0),
+    m_is_header_only(false)
   {
     assert(this->m_dirname_without_slash.length() > 0); // must be at least '.'
     assert(this->m_dirname_without_slash[this->m_dirname_without_slash.length()-1] != '/');
@@ -1465,7 +1470,7 @@ namespace
       // if we're doing --output-ldep-raw, then we want to list .h
       // files as link dependencies if there is no corresponding
       // .c/.C/.cc/.cpp source file:
-      return this;
+      { this->m_is_header_only = true; return this; }
     else
       // but in "normal" processing (e.g. building link dependency
       // rules for a makefile), then we don't want to consider .h
