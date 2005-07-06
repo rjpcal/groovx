@@ -222,7 +222,9 @@ foreach dir [array names EXTDIRS] {
 }
 puts $out "}"
 foreach fname [array names FILEDOC] {
-    if { [regexp {\.(h|H|hpp)} $fname] } {
+    if { [regexp (/ui/|/moc/) $fname] } {
+	puts $out "\t\"$fname\" \[URL=\"#\", tooltip=\"auto-generated from .ui file\", style=\"dashed, filled\", fillcolor=antiquewhite1, fontcolor=gray40\];"
+    } elseif { [regexp {\.(h|H|hpp)} $fname] } {
 	puts $out "\t\"$fname\" \[URL=\"#\", tooltip=\"$::FILEDOC($fname)\", style=\"filled\", fillcolor=burlywood1\];"
     } else {
 	puts $out "\t\"$fname\" \[URL=\"#\", tooltip=\"$::FILEDOC($fname)\"\];"
