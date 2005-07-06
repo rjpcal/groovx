@@ -16,6 +16,50 @@ proc strip_src_pfx { dirname } {
     return $dirname
 }
 
+proc get_rankdir { dirname } {
+
+    # Hard-coded values for which way to run the graph... most
+    # directories look best running top->bottom, but a few are really
+    # wide (e.g. Channels with lots of sibling channel classes) and so
+    # look better left->right.
+
+    set RANKDIR(src/AppDevices) "RL"
+    set RANKDIR(src/AppMedia) "RL"
+    set RANKDIR(src/AppNeuro) "RL"
+    set RANKDIR(src/BeoSub) "RL"
+    set RANKDIR(src/Beobot) "RL"
+    set RANKDIR(src/Channels) "RL"
+    set RANKDIR(src/Devices) "RL"
+    set RANKDIR(src/Gist) "RL"
+    set RANKDIR(src/INVT) "RL"
+    set RANKDIR(src/IRoom) "RL"
+    set RANKDIR(src/Neuro) "RL"
+    set RANKDIR(src/Parallel) "RL"
+    set RANKDIR(src/Psycho) "RL"
+    set RANKDIR(src/TestSuite) "RL"
+    set RANKDIR(src/Util) "RL"
+    set RANKDIR(src/VFAT) "RL"
+    set RANKDIR(src/Qt) "RL"
+
+    if { [file exists ${dirname}/README.dxy] } {
+	set fd [open ${dirname}/README.dxy]
+	while { [gets $fd line] >= 0 } {
+	    if { [regexp {rankdir: (..)} $line - rankdir] } {
+		puts stderr "got rankdir $rankdir for $dirname"
+		return $rankdir
+	    }
+	}
+	close $fd
+    }
+
+    if { [info exists RANKDIR($dirname)] } {
+	return $RANKDIR($graphname)
+    }
+
+    # else...
+    return "TB"
+}
+
 # eliminate multiple spaces, and escape double-quotes so it's safe for
 # a dot file
 proc cleanup_briefdoc { str } {
@@ -145,35 +189,7 @@ while { [gets $fd line] >= 0 } {
 set out stdout
 
 set graphname [strip_src_pfx $dirpfx]
-
-# Hard-coded values for which way to run the graph... most directories
-# look best running top->bottom, but a few are really wide
-# (e.g. Channels with lots of sibling channel classes) and so look
-# better left->right.
-
-set RANKDIR(AppDevices) RL
-set RANKDIR(AppMedia) RL
-set RANKDIR(AppNeuro) RL
-set RANKDIR(BeoSub) RL
-set RANKDIR(Beobot) RL
-set RANKDIR(Channels) RL
-set RANKDIR(Devices) RL
-set RANKDIR(Gist) RL
-set RANKDIR(INVT) RL
-set RANKDIR(IRoom) RL
-set RANKDIR(Neuro) RL
-set RANKDIR(Parallel) RL
-set RANKDIR(Psycho) RL
-set RANKDIR(TestSuite) RL
-set RANKDIR(Util) RL
-set RANKDIR(VFAT) RL
-set RANKDIR(Qt) RL
-
-if { [info exists RANKDIR($graphname)] } {
-    set rankdir $RANKDIR($graphname)
-} else {
-    set rankdir TB
-}
+set rankdir [get_rankdir $dirpfx]
 
 set ext_bordercolor "royalblue3"
 set ext_fillcolor   "lightskyblue1"
