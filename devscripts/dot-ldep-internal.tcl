@@ -1,6 +1,6 @@
 #!/usr/bin/tclsh
 
-# $Id: dot-ldep-internal.tcl 5039 2005-07-06 01:30:33Z rjpeters $
+# $Id$
 
 # Script use to transform the output of devscripts/cdeps
 # --output-ldep-raw into a format that is usable the graph-drawing
