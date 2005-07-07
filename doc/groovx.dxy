@@ -26,6 +26,9 @@ Here are a few starting points into the framework:
 <li>\ref TUTORIAL
 <li>\ref README
 
+<li><a href="ldep/modules.html">link dependency graphs</a> showing
+physical structure of code
+
 <li>nub::ref_counted and nub::ref_counts
 <li>nub::object
 <li>nub::ref and nub::soft_ref

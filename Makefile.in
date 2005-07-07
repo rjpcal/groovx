@@ -467,12 +467,17 @@ count:
 ncsl:
 	@NCSL --mapped $(LOCAL_SRCS) | sort -n | tee $(LOGS)/ncsl
 
-docs: $(DOC)/DoxyConfig
+docs: $(DOC)/DoxyConfig ldep-html
+	mkdir -p $(with_htmldoc)
+	mkdir -p $(with_htmldoc)/ldep
+	chmod 755 $(with_htmldoc)
+	chmod 755 $(with_htmldoc)/ldep
+	time (cd ldepdoc; tar cf - --mode og=u-w .) \
+	  | (cd $(with_htmldoc)/ldep; tar xf - --overwrite --same-permissions)
 	mkdir -p $(BUILD)/html
 	(time $(DOXYGEN_PROG) $(DOC)/DoxyConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
-	time chmod -R og=u-w $(BUILD)/html
-	mkdir -p $(with_htmldoc)
-	time cp -r --preserve=mode $(BUILD)/html/* $(with_htmldoc)
+	time (cd build/html; tar cf - --mode og=u-w .) \
+	  | (cd $(with_htmldoc); tar xf - --overwrite --same-permissions)
 
 # Generate tags file based only on header files
 H_TAGS: $(ALL_SRCS)
