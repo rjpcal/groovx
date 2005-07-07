@@ -19,6 +19,7 @@ tosync="src/rutz \
     devscripts/change-includes.pl \
     devscripts/dot-ldep-internal.tcl \
     devscripts/dot-ldep-modules.tcl \
+    devscripts/make-ldep-html.sh \
     devscripts/set-svn-props.sh"
 
 for d in $tosync; do

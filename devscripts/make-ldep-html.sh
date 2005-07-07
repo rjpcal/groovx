@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-ldep-html.sh 4971 2005-07-01 14:58:17Z rjpeters $
+# $Id: make-ldep-html.sh 5033 2005-07-05 20:21:18Z rjpeters $
 
 # Quick script to build a set of html pages showing the link
 # dependencies, with clickable directed graphs made by 'dot'. You
@@ -89,6 +89,9 @@ $thisdir/dot-ldep-modules.tcl $ldeps \
 
 generate_html tmp-ldep.dot modules $outdir
 
+rm -f $outdir/index.html
+ln -s modules.html $outdir/index.html
+
 rm tmp-ldep.dot
 
 echo "... done"
@@ -98,12 +101,20 @@ for d in ${srcdir}*; do
 
         echo "directory $d ..." ;
 
-        stem=${d#${srcdir}};
+        stem=${d#${srcdir}}
+
+	tmpldepfile=tmp-ldeps-$$-$stem
+
+	# prefilter the ldeps file so that dot-ldep-internal can run a
+	# lot faster:
+	grep "${d}.*src/" $ldeps > $tmpldepfile
 
         $thisdir/dot-ldep-internal.tcl \
-            $d $ldeps \
+            $d $tmpldepfile \
             | tred \
-            > tmp-ldep-$stem.dot;
+            > tmp-ldep-$stem.dot
+
+	rm $tmpldepfile
 
         generate_html tmp-ldep-$stem.dot $stem $outdir
 
