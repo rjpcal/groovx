@@ -334,7 +334,11 @@ namespace
 }
 
 #include "gfx/toglet.h"
-#include <GL/gl.h>
+#if defined(GVX_GL_PLATFORM_GLX)
+#  include <GL/gl.h>
+#elif defined(GVX_GL_PLATFORM_AGL)
+#  include <AGL/gl.h>
+#endif
 
 namespace
 {

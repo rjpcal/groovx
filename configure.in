@@ -94,6 +94,7 @@ if test "$enable_aqua" = "yes"; then
    windowsystem=aqua
    AC_MSG_RESULT([Mac OS X Aqua])
    AC_DEFINE(GVX_GL_PLATFORM_AGL,1,[use Apple OpenGL windowsystem interface (agl)])
+   AC_DEFINE(MAC_OSX_TK,1,[using the OS X version of Tk])
 else
    windowsystem=x11
    AC_MSG_RESULT([X11])

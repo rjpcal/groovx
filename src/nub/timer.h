@@ -80,7 +80,7 @@ private:
   bool                               m_is_repeating;
 
   // Diagnostics
-  rutz::stopwatch            mutable m_stopwatch;
+  mutable rutz::stopwatch            m_stopwatch;
 };
 
 static const char vcid_groovx_nub_timer_h_utc20050626084019[] = "$Id$ $HeadURL$";
