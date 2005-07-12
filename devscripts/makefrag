@@ -37,17 +37,17 @@
 $(DEVSCRIPTS)/cdeps: $(DEVSCRIPTS)/cdeps.cc
 	$(CXX) -O2 -Wall $(LDFLAGS) $^ -o $@
 
-ldep-groups: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+ldep-groups: $(DEVSCRIPTS)/cdeps $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
 	  --output-ldep-groups \
 	  |sort -n> $@
 
-ldep-levels: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+ldep-levels: $(DEVSCRIPTS)/cdeps $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
 	  --output-ldep-levelsv \
 	  |sort -n | sed -e 's/\[\[\[#.*\]\]\]//' > $@
 
-ldeps: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+ldeps: $(DEVSCRIPTS)/cdeps $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
 	  --output-ldep-raw > $@
 
