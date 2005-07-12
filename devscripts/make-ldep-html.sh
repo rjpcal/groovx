@@ -54,6 +54,8 @@ function generate_html () {
 
     rm -f $outdir/$mapname.html
 
+    usemap=`echo $mapname | tr - _`
+
     echo "<!-- build date: `date` -->"     >> $outdir/$mapname.html
     echo "<!-- build host: `hostname` -->" >> $outdir/$mapname.html
     echo "<!-- dot -V: `dot -V 2>&1` -->"  >> $outdir/$mapname.html
@@ -64,7 +66,7 @@ function generate_html () {
     echo "<body>"  			   >> $outdir/$mapname.html
     echo "<img border=\"0\" "              >> $outdir/$mapname.html
     echo "     src=\"$mapname.gif\""       >> $outdir/$mapname.html
-    echo "     usemap=#$mapname>"          >> $outdir/$mapname.html
+    echo "     usemap=#$usemap>"           >> $outdir/$mapname.html
     cat $outdir/$mapname.map               >> $outdir/$mapname.html
     echo "</body>"                         >> $outdir/$mapname.html
     echo "</html>"                         >> $outdir/$mapname.html

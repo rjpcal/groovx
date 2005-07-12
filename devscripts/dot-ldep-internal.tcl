@@ -16,6 +16,10 @@ proc strip_src_pfx { dirname } {
     return $dirname
 }
 
+proc safe_graphname { str } {
+    return [string map {- _} $str]
+}
+
 proc get_rankdir { dirname } {
 
     if { [file exists ${dirname}/README.dxy] } {
@@ -162,7 +166,7 @@ while { [gets $fd line] >= 0 } {
 
 set out stdout
 
-set graphname [strip_src_pfx $dirpfx]
+set graphname [safe_graphname [strip_src_pfx $dirpfx]]
 set rankdir [get_rankdir $dirpfx]
 
 set ext_bordercolor "royalblue3"
