@@ -184,7 +184,7 @@ LOCAL_SRCS := $(shell find $(SRC) -name \*.h -or -name \*.cc -or -name \*.C)
 
 # dependencies of object files on source+header files
 
-$(DEVSCRIPTS)/cppdeps: $(DEVSCRIPTS)/cdeps.cc
+$(DEVSCRIPTS)/cdeps: $(DEVSCRIPTS)/cdeps.cc
 	$(CXX) -O2 -Wall $(LDFLAGS) $^ -o $@
 
 $(DEP)/cppdepends: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
