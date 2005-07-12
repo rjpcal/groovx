@@ -73,7 +73,7 @@ using rutz::fstring;
 
 namespace
 {
-  const IO::VersionId ERH_SVID = 2;
+  const io::version_id ERH_SVID = 2;
 
   fstring uniqCmdName(const char* stem)
   {
@@ -302,43 +302,43 @@ EventResponseHdlr::EventResponseHdlr() :
 EventResponseHdlr::~EventResponseHdlr() throw()
   { delete rep; }
 
-IO::VersionId EventResponseHdlr::serialVersionId() const
+io::version_id EventResponseHdlr::class_version_id() const
   { return ERH_SVID; }
 
-void EventResponseHdlr::readFrom(IO::Reader& reader)
+void EventResponseHdlr::read_from(io::reader& reader)
 {
-GVX_TRACE("EventResponseHdlr::readFrom");
+GVX_TRACE("EventResponseHdlr::read_from");
 
-  reader.ensureReadVersionId("EventResponseHdlr", 2,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("EventResponseHdlr", 2,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
   rep->becomeInactive();
 
   fstring fmap;
-  reader.readValue("feedbackMap", fmap);
+  reader.read_value("feedbackMap", fmap);
   rep->itsFeedbackMap.set(fmap);
 
-  reader.readValue("useFeedback", rep->itsFeedbackMap.itsUseFeedback);
-  reader.readValue("eventSequence", rep->itsEventSequence);
-  reader.readValue("bindingSubstitution", rep->itsBindingSubstitution);
+  reader.read_value("useFeedback", rep->itsFeedbackMap.itsUseFeedback);
+  reader.read_value("eventSequence", rep->itsEventSequence);
+  reader.read_value("bindingSubstitution", rep->itsBindingSubstitution);
 
-  reader.readOwnedObject("responseProc", rep->itsResponseProc);
+  reader.read_owned_object("responseProc", rep->itsResponseProc);
 }
 
-void EventResponseHdlr::writeTo(IO::Writer& writer) const
+void EventResponseHdlr::write_to(io::writer& writer) const
 {
-GVX_TRACE("EventResponseHdlr::writeTo");
+GVX_TRACE("EventResponseHdlr::write_to");
 
-  writer.ensureWriteVersionId("EventResponseHdlr", ERH_SVID, 2,
+  writer.ensure_output_version_id("EventResponseHdlr", ERH_SVID, 2,
                               "Try groovx0.8a7", SRC_POS);
 
-  writer.writeValue("feedbackMap", rep->itsFeedbackMap.rep());
-  writer.writeValue("useFeedback", rep->itsFeedbackMap.itsUseFeedback);
-  writer.writeValue("eventSequence", rep->itsEventSequence);
-  writer.writeValue("bindingSubstitution", rep->itsBindingSubstitution);
+  writer.write_value("feedbackMap", rep->itsFeedbackMap.rep());
+  writer.write_value("useFeedback", rep->itsFeedbackMap.itsUseFeedback);
+  writer.write_value("eventSequence", rep->itsEventSequence);
+  writer.write_value("bindingSubstitution", rep->itsBindingSubstitution);
 
-  writer.writeOwnedObject("responseProc", rep->itsResponseProc);
+  writer.write_owned_object("responseProc", rep->itsResponseProc);
 }
 
 // FIXME XML still need this?

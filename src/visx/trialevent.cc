@@ -95,20 +95,20 @@ GVX_TRACE("TrialEvent::~TrialEvent");
   dbg_eval_nl(3, averageError);
 }
 
-void TrialEvent::readFrom(IO::Reader& reader)
+void TrialEvent::read_from(io::reader& reader)
 {
-GVX_TRACE("TrialEvent::readFrom");
+GVX_TRACE("TrialEvent::read_from");
 
   cancel(); // cancel since the event is changing state
 
-  reader.readValue("requestedDelay", itsRequestedDelay);
+  reader.read_value("requestedDelay", itsRequestedDelay);
 }
 
-void TrialEvent::writeTo(IO::Writer& writer) const
+void TrialEvent::write_to(io::writer& writer) const
 {
-GVX_TRACE("TrialEvent::writeTo");
+GVX_TRACE("TrialEvent::write_to");
 
-  writer.writeValue("requestedDelay", itsRequestedDelay);
+  writer.write_value("requestedDelay", itsRequestedDelay);
 }
 
 unsigned int TrialEvent::schedule(rutz::shared_ptr<nub::scheduler> s,
@@ -257,38 +257,38 @@ MAKE_EVENT(FinishDrawing);
 
 FileWriteEvent::FileWriteEvent(unsigned int msec) :
   TrialEvent(msec),
-  itsFile(OutputFile::make())
+  itsFile(output_file::make())
 {}
 
 FileWriteEvent::~FileWriteEvent() throw() {}
 
 void FileWriteEvent::invoke(Trial& /*trial*/)
 {
-  if (itsFile->hasStream())
+  if (itsFile->has_stream())
     {
       itsFile->stream().put(static_cast<char>(itsByte));
       itsFile->stream().flush();
       nub::log( fstring("wrote '", itsByte, "' to '",
-                        itsFile->getFilename(), "'") );
+                        itsFile->get_filename(), "'") );
     }
 }
 
-void FileWriteEvent::readFrom(IO::Reader& reader)
+void FileWriteEvent::read_from(io::reader& reader)
 {
-  itsFile = dyn_cast<OutputFile>(reader.readObject("file"));
-  reader.readValue("byte", itsByte);
+  itsFile = dyn_cast<output_file>(reader.read_object("file"));
+  reader.read_value("byte", itsByte);
 
-  reader.readBaseClass("TrialEvent",
-                       IO::makeProxy<TrialEvent>(this));
+  reader.read_base_class("TrialEvent",
+                       io::make_proxy<TrialEvent>(this));
 }
 
-void FileWriteEvent::writeTo(IO::Writer& writer) const
+void FileWriteEvent::write_to(io::writer& writer) const
 {
-  writer.writeObject("file", itsFile);
-  writer.writeValue("byte", itsByte);
+  writer.write_object("file", itsFile);
+  writer.write_value("byte", itsByte);
 
-  writer.writeBaseClass("TrialEvent",
-                        IO::makeConstProxy<TrialEvent>(this));
+  writer.write_base_class("TrialEvent",
+                        io::make_const_proxy<TrialEvent>(this));
 }
 
 int FileWriteEvent::getByte() const
@@ -301,12 +301,12 @@ void FileWriteEvent::setByte(int b)
   itsByte = b;
 }
 
-nub::ref<OutputFile> FileWriteEvent::getFile() const
+nub::ref<output_file> FileWriteEvent::getFile() const
 {
   return itsFile;
 }
 
-void FileWriteEvent::setFile(nub::ref<OutputFile> file)
+void FileWriteEvent::setFile(nub::ref<output_file> file)
 {
   itsFile = file;
 }
@@ -329,20 +329,20 @@ void GenericEvent::invoke(Trial& /*trial*/)
   itsCallback->invoke("");
 }
 
-void GenericEvent::readFrom(IO::Reader& reader)
+void GenericEvent::read_from(io::reader& reader)
 {
-  reader.readOwnedObject("callback", itsCallback);
+  reader.read_owned_object("callback", itsCallback);
 
-  reader.readBaseClass("TrialEvent",
-                       IO::makeProxy<TrialEvent>(this));
+  reader.read_base_class("TrialEvent",
+                       io::make_proxy<TrialEvent>(this));
 }
 
-void GenericEvent::writeTo(IO::Writer& writer) const
+void GenericEvent::write_to(io::writer& writer) const
 {
-  writer.writeOwnedObject("callback", itsCallback);
+  writer.write_owned_object("callback", itsCallback);
 
-  writer.writeBaseClass("TrialEvent",
-                        IO::makeConstProxy<TrialEvent>(this));
+  writer.write_base_class("TrialEvent",
+                        io::make_const_proxy<TrialEvent>(this));
 }
 
 fstring GenericEvent::getCallback() const
@@ -377,26 +377,26 @@ void MultiEvent::invoke(Trial& trial)
     }
 }
 
-void MultiEvent::readFrom(IO::Reader& reader)
+void MultiEvent::read_from(io::reader& reader)
 {
   std::vector<nub::ref<TrialEvent> > newEvents;
 
-  IO::ReadUtils::readObjectSeq<TrialEvent>
+  io::read_utils::read_object_seq<TrialEvent>
     (reader, "events", std::back_inserter(newEvents));
 
   itsEvents.swap(newEvents);
 
-  reader.readBaseClass("TrialEvent", IO::makeProxy<TrialEvent>(this));
+  reader.read_base_class("TrialEvent", io::make_proxy<TrialEvent>(this));
 }
 
-void MultiEvent::writeTo(IO::Writer& writer) const
+void MultiEvent::write_to(io::writer& writer) const
 {
-  IO::WriteUtils::writeObjectSeq(writer, "events",
-                                 itsEvents.begin(),
-                                 itsEvents.end());
+  io::write_utils::write_object_seq(writer, "events",
+                                    itsEvents.begin(),
+                                    itsEvents.end());
 
-  writer.writeBaseClass("TrialEvent",
-                        IO::makeConstProxy<TrialEvent>(this));
+  writer.write_base_class("TrialEvent",
+                        io::make_const_proxy<TrialEvent>(this));
 }
 
 rutz::fwd_iter<const nub::ref<TrialEvent> >

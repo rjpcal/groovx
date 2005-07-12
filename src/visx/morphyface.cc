@@ -65,7 +65,7 @@ using geom::vec3d;
 
 namespace
 {
-  const IO::VersionId MFACE_SVID = 2;
+  const io::version_id MFACE_SVID = 2;
 
   const unsigned int NUM_HAIR_POINTS = 15; // can't change this without
                                            // also changing "hair_widths"
@@ -266,35 +266,35 @@ GVX_TRACE("MorphyFace::~MorphyFace");
   // nothing to do
 }
 
-IO::VersionId MorphyFace::serialVersionId() const
+io::version_id MorphyFace::class_version_id() const
 {
-GVX_TRACE("MorphyFace::serialVersionId");
+GVX_TRACE("MorphyFace::class_version_id");
   return MFACE_SVID;
 }
 
-void MorphyFace::readFrom(IO::Reader& reader)
+void MorphyFace::read_from(io::reader& reader)
 {
-GVX_TRACE("MorphyFace::readFrom");
+GVX_TRACE("MorphyFace::read_from");
 
-  reader.ensureReadVersionId("MorphyFace", 2,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("MorphyFace", 2,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
-  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+  reader.read_base_class("GxShapeKit", io::make_proxy<GxShapeKit>(this));
 }
 
-void MorphyFace::writeTo(IO::Writer& writer) const
+void MorphyFace::write_to(io::writer& writer) const
 {
-GVX_TRACE("MorphyFace::writeTo");
+GVX_TRACE("MorphyFace::write_to");
 
-  writer.ensureWriteVersionId("MorphyFace", MFACE_SVID, 2,
+  writer.ensure_output_version_id("MorphyFace", MFACE_SVID, 2,
                               "Try groovx0.8a4", SRC_POS);
 
   writeFieldsTo(writer, classFields(), MFACE_SVID);
 
-  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
+  writer.write_base_class("GxShapeKit", io::make_const_proxy<GxShapeKit>(this));
 }
 
 

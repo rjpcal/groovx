@@ -84,7 +84,7 @@ int Trialevent_Init(Tcl_Interp* interp)
 GVX_TRACE("Trialevent_Init");
 
   GVX_PKG_CREATE(pkg, interp, "TrialEvent", "4.$Revision$");
-  pkg->inherit_pkg("IO");
+  pkg->inherit_pkg("io");
   tcl::def_basic_type_cmds<TrialEvent>(pkg, SRC_POS);
 
   pkg->def_get_set("delay", &TrialEvent::getDelay, &TrialEvent::setDelay, SRC_POS);

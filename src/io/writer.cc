@@ -1,4 +1,4 @@
-/** @file io/writer.cc abstract base class for writing IO::IoObject
+/** @file io/writer.cc abstract base class for writing io::serializable
     objects */
 ///////////////////////////////////////////////////////////////////////
 //
@@ -44,49 +44,49 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-namespace IO
+namespace io
 {
-  class WriteVersionError : public rutz::error
+  class write_version_error : public rutz::error
   {
   public:
     /// Construct with information relevant to the problem
-    WriteVersionError(const char* classname,
-                      IO::VersionId attempted_id,
-                      IO::VersionId lowest_supported_id,
+    write_version_error(const char* classname,
+                      io::version_id attempted_id,
+                      io::version_id lowest_supported_id,
                       const char* msg,
                       const rutz::file_pos& pos);
 
-    virtual ~WriteVersionError() throw();
+    virtual ~write_version_error() throw();
   };
 }
 
-IO::WriteVersionError::WriteVersionError(const char* classname,
-                                         IO::VersionId attempted_id,
-                                         IO::VersionId lowest_supported_id,
+io::write_version_error::write_version_error(const char* classname,
+                                         io::version_id attempted_id,
+                                         io::version_id lowest_supported_id,
                                          const char* info,
                                          const rutz::file_pos& pos) :
   rutz::error(pos)
 {
   rutz::fstring m;
-  m.append("IO::WriteVersionError: in ", classname,
+  m.append("io::write_version_error: in ", classname,
            ", serial version ", attempted_id, " is not supported. ");
   m.append("The lowest supported version is ", lowest_supported_id,
            ". ", info);
   this->set_msg(m);
 }
 
-IO::WriteVersionError::~WriteVersionError() throw() {}
+io::write_version_error::~write_version_error() throw() {}
 
-IO::Writer::~Writer () throw() {}
+io::writer::~writer () throw() {}
 
-int IO::Writer::ensureWriteVersionId(const char* name,
-                                     IO::VersionId actual_version,
-                                     IO::VersionId lowest_supported_version,
+int io::writer::ensure_output_version_id(const char* name,
+                                     io::version_id actual_version,
+                                     io::version_id lowest_supported_version,
                                      const char* msg,
                                      const rutz::file_pos& pos)
 {
   if (actual_version < lowest_supported_version)
-    throw IO::WriteVersionError(name, actual_version,
+    throw io::write_version_error(name, actual_version,
                                 lowest_supported_version, msg, pos);
 
   GVX_ASSERT(actual_version >= lowest_supported_version);
@@ -94,11 +94,11 @@ int IO::Writer::ensureWriteVersionId(const char* name,
   return actual_version;
 }
 
-void IO::Writer::defaultWriteRawData(const char* name,
-                                     const unsigned char* data,
-                                     unsigned int length)
+void io::writer::default_write_byte_array(const char* name,
+                                          const unsigned char* data,
+                                          unsigned int length)
 {
-GVX_TRACE("IO::Writer::defaultWriteRawData");
+GVX_TRACE("io::writer::default_write_byte_array");
 
   rutz::byte_array encoded;
 
@@ -106,7 +106,7 @@ GVX_TRACE("IO::Writer::defaultWriteRawData");
 
   encoded.vec.push_back('\0');
 
-  writeCstring(name, reinterpret_cast<char*>(&encoded.vec[0]));
+  write_cstring(name, reinterpret_cast<char*>(&encoded.vec[0]));
 }
 
 static const char vcid_groovx_io_writer_cc_utc20050626084021[] = "$Id$ $HeadURL$";

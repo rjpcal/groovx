@@ -48,7 +48,7 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId GXCACHE_SVID = 1;
+  const io::version_id GXCACHE_SVID = 1;
 }
 
 GxCache::GxCache(nub::soft_ref<GxNode> child) :
@@ -66,27 +66,27 @@ GVX_TRACE("GxCache::~GxCache");
   invalidate();
 }
 
-IO::VersionId GxCache::serialVersionId() const
+io::version_id GxCache::class_version_id() const
 {
-GVX_TRACE("GxCache::serialVersionId");
+GVX_TRACE("GxCache::class_version_id");
   return GXCACHE_SVID;
 }
 
-void GxCache::readFrom(IO::Reader& reader)
+void GxCache::read_from(io::reader& reader)
 {
-GVX_TRACE("GxCache::readFrom");
+GVX_TRACE("GxCache::read_from");
 
-  reader.ensureReadVersionId("GxCache", 1,
-                             "Try Revision 1.11", SRC_POS);
+  reader.ensure_version_id("GxCache", 1,
+                           "Try Revision 1.11", SRC_POS);
 
-  reader.readValue("mode", itsMode);
+  reader.read_value("mode", itsMode);
 }
 
-void GxCache::writeTo(IO::Writer& writer) const
+void GxCache::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxCache::writeTo");
+GVX_TRACE("GxCache::write_to");
 
-  writer.writeValue("mode", itsMode);
+  writer.write_value("mode", itsMode);
 }
 
 void GxCache::draw(Gfx::Canvas& canvas) const

@@ -84,21 +84,21 @@ GxPointSet::~GxPointSet() throw()
 GVX_TRACE("GxPointSet::~GxPointSet");
 }
 
-IO::VersionId GxPointSet::serialVersionId() const
+io::version_id GxPointSet::class_version_id() const
 {
-GVX_TRACE("GxPointSet::serialVersionId");
+GVX_TRACE("GxPointSet::class_version_id");
   return GXPOINTSET_SVID;
 }
 
-void GxPointSet::readFrom(IO::Reader& reader)
+void GxPointSet::read_from(io::reader& reader)
 {
-GVX_TRACE("GxPointSet::readFrom");
+GVX_TRACE("GxPointSet::read_from");
   readFieldsFrom(reader, classFields());
 }
 
-void GxPointSet::writeTo(IO::Writer& writer) const
+void GxPointSet::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxPointSet::writeTo");
+GVX_TRACE("GxPointSet::write_to");
   writeFieldsTo(writer, classFields(), GXPOINTSET_SVID);
 }
 

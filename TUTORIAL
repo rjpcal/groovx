@@ -221,7 +221,7 @@ Table of contents:
              NextNodeEvent
              NullResponseHdlr
              NullTrialEvent
-             OutputFile
+             output_file
              RenderBackEvent
              RenderEvent
              RenderFrontEvent
@@ -321,7 +321,7 @@ Table of contents:
      ::GxText::text ::GxText::traceOff ::GxText::traceOn
      ::GxText::traceStatus ::GxText::traceToggle ::GxText::type
      ::GxText::width ::GxText::widthFactor ::GxText::writeASW
-     ::GxText::writeGVX ::GxText::writeLGX ::GxText::xmlDebug
+     ::GxText::writeGVX ::GxText::writeLGX ::GxText::xml_debug
 
    \endcode
 

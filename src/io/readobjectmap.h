@@ -1,5 +1,5 @@
-/** @file io/readobjectmap.h helper class used in AsciiStreamReader
-    and XmlReader */
+/** @file io/readobjectmap.h helper class used in io::reader subclass
+    implementations */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -48,32 +48,33 @@ namespace nub
   template <class T> class ref;
 }
 
-namespace IO
+namespace io
 {
-  class IoObject;
+  class serializable;
 
-  class ObjectMap
+  class object_map
   {
   private:
-    typedef std::map<nub::uid, nub::ref<IO::IoObject> > MapType;
-    MapType itsMap;
+    typedef std::map<nub::uid, nub::ref<io::serializable> > map_type;
+    map_type m_objects;
 
   public:
     inline
-    ObjectMap();
+    object_map();
 
     // This returns the object for the given id; the object must
-    // already have been created, otherwise an exception will be thrown.
+    // already have been created, otherwise an exception will be
+    // thrown.
     inline
-    nub::ref<IO::IoObject> getObject(nub::uid id);
+    nub::ref<io::serializable> get_existing_object(nub::uid id);
 
     // This will create an object for the id if one has not yet been
     // created, then return the object for that id.
     inline
-    nub::ref<IO::IoObject> fetchObject(const rutz::fstring& type, nub::uid id);
+    nub::ref<io::serializable> fetch_object(const rutz::fstring& type, nub::uid id);
 
     inline
-    void assignObjectForId(nub::uid id, nub::ref<IO::IoObject> object);
+    void add_object_for_id(nub::uid id, nub::ref<io::serializable> object);
 
     inline
     void clear();
@@ -89,14 +90,14 @@ namespace IO
 #include "rutz/fstring.h"
 
 inline
-IO::ObjectMap::ObjectMap() : itsMap() {}
+io::object_map::object_map() : m_objects() {}
 
 inline
-nub::ref<IO::IoObject>
-IO::ObjectMap::getObject(nub::uid id)
+nub::ref<io::serializable>
+io::object_map::get_existing_object(nub::uid id)
 {
-  MapType::const_iterator itr = itsMap.find(id);
-  if ( itr == itsMap.end() )
+  map_type::const_iterator itr = m_objects.find(id);
+  if ( itr == m_objects.end() )
     {
       throw rutz::error(rutz::fstring("no object was found "
                                       "for the given id:", id),
@@ -107,17 +108,17 @@ IO::ObjectMap::getObject(nub::uid id)
 }
 
 inline
-nub::ref<IO::IoObject>
-IO::ObjectMap::fetchObject(const rutz::fstring& type, nub::uid id)
+nub::ref<io::serializable>
+io::object_map::fetch_object(const rutz::fstring& type, nub::uid id)
 {
-  MapType::const_iterator itr = itsMap.find(id);
+  map_type::const_iterator itr = m_objects.find(id);
 
-  if ( itr == itsMap.end() )
+  if ( itr == m_objects.end() )
     {
-      nub::ref<IO::IoObject> obj
-        (nub::obj_mgr::new_typed_obj<IO::IoObject>(type));
+      nub::ref<io::serializable> obj
+        (nub::obj_mgr::new_typed_obj<io::serializable>(type));
 
-      itsMap.insert(MapType::value_type(id, obj));
+      m_objects.insert(map_type::value_type(id, obj));
 
       return obj;
     }
@@ -126,13 +127,13 @@ IO::ObjectMap::fetchObject(const rutz::fstring& type, nub::uid id)
 }
 
 inline
-void IO::ObjectMap::assignObjectForId(nub::uid id,
-                                      nub::ref<IO::IoObject> object)
+void io::object_map::add_object_for_id(nub::uid id,
+                                       nub::ref<io::serializable> object)
 {
-  MapType::const_iterator itr = itsMap.find(id);
+  map_type::const_iterator itr = m_objects.find(id);
 
   // See if an object has already been created for this id
-  if ( itr != itsMap.end() )
+  if ( itr != m_objects.end() )
     {
       rutz::fstring msg;
       msg.append("object has already been created\n");
@@ -141,13 +142,13 @@ void IO::ObjectMap::assignObjectForId(nub::uid id,
       throw rutz::error(msg, SRC_POS);
     }
 
-  itsMap.insert(MapType::value_type(id, object));
+  m_objects.insert(map_type::value_type(id, object));
 }
 
 inline
-void IO::ObjectMap::clear()
+void io::object_map::clear()
 {
-  itsMap.clear();
+  m_objects.clear();
 }
 
 static const char vcid_groovx_io_readobjectmap_h_utc20050626084021[] = "$Id$ $HeadURL$";

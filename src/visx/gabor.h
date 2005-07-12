@@ -67,9 +67,9 @@ public:
   /// Get Gabor's fields.
   static const FieldMap& classFields();
 
-  virtual IO::VersionId serialVersionId() const;
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual io::version_id class_version_id() const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   /** The symbolic constants of type \c ColorMode can be used to
       determine exactly how the Gabor function is translated into

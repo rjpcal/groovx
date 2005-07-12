@@ -66,8 +66,8 @@ public:
   /// Virtual destructor.
   virtual ~GxSeparator() throw();
 
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   /// Index type to refer to child nodes.
   typedef unsigned int ChildId;

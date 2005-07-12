@@ -58,9 +58,9 @@ public:
   /// Virtual destructor.
   virtual ~ElementContainer() throw();
 
-  virtual void readFrom(IO::Reader& reader);
+  virtual void read_from(io::reader& reader);
 
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual void write_to(io::writer& writer) const;
 
   //
   // Element base interface

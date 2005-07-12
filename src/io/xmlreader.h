@@ -1,4 +1,4 @@
-/** @file io/xmlreader.h IO::Reader implementation for reading XML
+/** @file io/xmlreader.h io::reader implementation for reading XML
     files in the GVX format */
 
 ///////////////////////////////////////////////////////////////////////
@@ -39,14 +39,14 @@ namespace nub
   template <class T> class ref;
 }
 
-namespace IO
+namespace io
 {
-  class IoObject;
-  class Reader;
+  class serializable;
+  class reader;
 
-  nub::ref<IO::IoObject> loadGVX(const char* filename);
+  nub::ref<io::serializable> load_gvx(const char* filename);
 
-  void xmlDebug(const char* filename);
+  void xml_debug(const char* filename);
 }
 
 static const char vcid_groovx_io_xmlreader_h_utc20050626084021[] = "$Id$ $HeadURL$";

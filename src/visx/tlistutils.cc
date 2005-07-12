@@ -226,28 +226,28 @@ GVX_TRACE("TlistUtils::writeIncidenceMatrix");
     }
 }
 
-class MatlabTrialWriter : public IO::Writer
+class MatlabTrialWriter : public io::writer
 {
 private:
   std::ostream& itsOs;
 public:
   MatlabTrialWriter(std::ostream& os) : itsOs(os) {}
 
-  virtual void writeChar(const char*, char) {}
-  virtual void writeInt(const char*, int) {}
-  virtual void writeBool(const char*, bool) {}
-  virtual void writeDouble(const char*, double) {}
-  virtual void writeValueObj(const char*, const rutz::value&) {}
-  virtual void writeCstring(const char*, const char*) {}
+  virtual void write_char(const char*, char) {}
+  virtual void write_int(const char*, int) {}
+  virtual void write_bool(const char*, bool) {}
+  virtual void write_double(const char*, double) {}
+  virtual void write_value_obj(const char*, const rutz::value&) {}
+  virtual void write_cstring(const char*, const char*) {}
 
-  virtual void writeRawData(const char*,
+  virtual void write_byte_array(const char*,
                             const unsigned char*,
                             unsigned int) {}
 
-  virtual void writeObject(const char*,
-                           nub::soft_ref<const IO::IoObject> obj)
+  virtual void write_object(const char*,
+                           nub::soft_ref<const io::serializable> obj)
   {
-    GVX_TRACE("MatlabTrialWriter::writeObject");
+    GVX_TRACE("MatlabTrialWriter::write_object");
     if (!obj.is_valid())
       return;
     if (dynamic_cast<const GxShapeKit*>(obj.get()) != 0)
@@ -256,28 +256,28 @@ public:
       }
     else
       {
-        obj->writeTo(*this);
+        obj->write_to(*this);
       }
   }
 
-  virtual void writeOwnedObject(const char* name,
-                                nub::ref<const IO::IoObject> obj)
+  virtual void write_owned_object(const char* name,
+                                nub::ref<const io::serializable> obj)
   {
-    GVX_TRACE("MatlabTrialWriter::writeOwnedObject");
-    writeObject(name, obj);
+    GVX_TRACE("MatlabTrialWriter::write_owned_object");
+    write_object(name, obj);
   }
 
-  virtual void writeBaseClass(const char*,
-                              nub::ref<const IO::IoObject> basePart)
+  virtual void write_base_class(const char*,
+                                nub::ref<const io::serializable> base_part)
   {
-    GVX_TRACE("MatlabTrialWriter::writeBaseClass");
-    basePart->writeTo(*this);
+    GVX_TRACE("MatlabTrialWriter::write_base_class");
+    base_part->write_to(*this);
   }
 
-  virtual void writeRoot(const IO::IoObject* root)
+  virtual void write_root(const io::serializable* root)
   {
-    GVX_TRACE("MatlabTrialWriter::writeRoot");
-    root->writeTo(*this);
+    GVX_TRACE("MatlabTrialWriter::write_root");
+    root->write_to(*this);
   }
 };
 
@@ -296,7 +296,7 @@ GVX_TRACE("TlistUtils::writeMatlab");
        itr.is_valid();
        ++itr)
     {
-      writer.writeRoot(*itr);
+      writer.write_root(*itr);
       ofs << itr->avgResponse() << '\n';
     }
 }

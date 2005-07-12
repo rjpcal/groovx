@@ -57,7 +57,7 @@ class Trial;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class ResponseHandler : public IO::IoObject
+class ResponseHandler : public io::serializable
 {
 public:
   /// Default constructor.
@@ -66,8 +66,8 @@ public:
   /// Virtual destructor.
   virtual ~ResponseHandler() throw();
 
-  virtual void readFrom(IO::Reader& reader) = 0;
-  virtual void writeTo(IO::Writer& writer) const = 0;
+  virtual void read_from(io::reader& reader) = 0;
+  virtual void write_to(io::writer& writer) const = 0;
 
   /// Called by a \c Trial at the beginning of a trial.
   /** \c ResponseHandler subclasses implement this function to prepare

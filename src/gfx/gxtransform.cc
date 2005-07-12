@@ -54,7 +54,7 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId GXTRANSFORM_SVID = 1;
+  const io::version_id GXTRANSFORM_SVID = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -146,28 +146,28 @@ GVX_TRACE("GxTransform::~GxTransform");
   delete rep;
 }
 
-IO::VersionId GxTransform::serialVersionId() const
+io::version_id GxTransform::class_version_id() const
 {
-GVX_TRACE("GxTransform::serialVersionId");
+GVX_TRACE("GxTransform::class_version_id");
   return GXTRANSFORM_SVID;
 }
 
-void GxTransform::readFrom(IO::Reader& reader)
+void GxTransform::read_from(io::reader& reader)
 {
-GVX_TRACE("GxTransform::readFrom");
+GVX_TRACE("GxTransform::read_from");
 
-  reader.ensureReadVersionId("GxTransform", 1,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("GxTransform", 1,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
   readFieldsFrom(reader, classFields());
 }
 
-void GxTransform::writeTo(IO::Writer& writer) const
+void GxTransform::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxTransform::writeTo");
+GVX_TRACE("GxTransform::write_to");
 
-  writer.ensureWriteVersionId("GxTransform",
+  writer.ensure_output_version_id("GxTransform",
                               GXTRANSFORM_SVID, 1,
                                "Try groovx0.8a4", SRC_POS);
 

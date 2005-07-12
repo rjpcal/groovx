@@ -1,5 +1,5 @@
 /** @file io/reader.cc abstract base class for reading serializable
-    IO::IoObject objects */
+    io::serializable objects */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005
@@ -43,66 +43,66 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-namespace IO
+namespace io
 {
-  class ReadVersionError : public rutz::error
+  class read_version_error : public rutz::error
   {
   public:
     /// Construct with information relevant to the problem
-    ReadVersionError(const char* classname,
-                     IO::VersionId attempted_id,
-                     IO::VersionId lowest_supported_id,
-                     const char* msg,
-                     const rutz::file_pos& pos);
+    read_version_error(const char* classname,
+                       io::version_id attempted_id,
+                       io::version_id lowest_supported_id,
+                       const char* msg,
+                       const rutz::file_pos& pos);
 
-    virtual ~ReadVersionError() throw();
+    virtual ~read_version_error() throw();
   };
 }
 
-IO::ReadVersionError::ReadVersionError(const char* classname,
-                                       IO::VersionId attempted_id,
-                                       IO::VersionId lowest_supported_id,
-                                       const char* info,
-                                       const rutz::file_pos& pos) :
+io::read_version_error::read_version_error(const char* classname,
+                                           io::version_id attempted_id,
+                                           io::version_id lowest_supported_id,
+                                           const char* info,
+                                           const rutz::file_pos& pos) :
   rutz::error(pos)
 {
   rutz::fstring m;
-  m.append("IO::ReadVersionError: in ", classname,
+  m.append("io::read_version_error: in ", classname,
            ", serial version ", attempted_id, " is not supported. ");
   m.append("The lowest supported version is ", lowest_supported_id,
            ". ", info);
   this->set_msg(m);
 }
 
-IO::ReadVersionError::~ReadVersionError() throw() {}
+io::read_version_error::~read_version_error() throw() {}
 
-IO::Reader::~Reader() throw() {}
+io::reader::~reader() throw() {}
 
-int IO::Reader::ensureReadVersionId(const char* name,
-                                    IO::VersionId lowest_supported_version,
-                                    const char* msg,
-                                    const rutz::file_pos& pos)
+int io::reader::ensure_version_id(const char* name,
+                                  io::version_id lowest_supported_version,
+                                  const char* msg,
+                                  const rutz::file_pos& pos)
 {
-GVX_TRACE("IO::Reader::ensureReadVersionId");
+GVX_TRACE("io::reader::ensure_version_id");
 
-  IO::VersionId actual_version = this->readSerialVersionId();
+  io::version_id actual_version = this->input_version_id();
 
   if (actual_version < lowest_supported_version)
-    throw IO::ReadVersionError(name, actual_version,
-                               lowest_supported_version, msg,
-                               pos);
+    throw io::read_version_error(name, actual_version,
+                                 lowest_supported_version, msg,
+                                 pos);
 
   GVX_ASSERT(actual_version >= lowest_supported_version);
 
   return actual_version;
 }
 
-void IO::Reader::defaultReadRawData(const rutz::fstring& name,
+void io::reader::default_read_byte_array(const rutz::fstring& name,
                                     rutz::byte_array& data)
 {
-GVX_TRACE("IO::Reader::defaultReadRawData");
+GVX_TRACE("io::reader::default_read_byte_array");
 
-  rutz::fstring encoded = readStringImpl(name);
+  rutz::fstring encoded = read_string_impl(name);
   rutz::base64_decode(encoded.c_str(), encoded.length(),
                       data);
 }

@@ -51,7 +51,7 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId JITTER_SVID = 3;
+  const io::version_id JITTER_SVID = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -81,39 +81,39 @@ GVX_TRACE("Jitter::~Jitter");
   // empty
 }
 
-IO::VersionId Jitter::serialVersionId() const
+io::version_id Jitter::class_version_id() const
 {
-GVX_TRACE("Jitter::serialVersionId");
+GVX_TRACE("Jitter::class_version_id");
   return JITTER_SVID;
 }
 
-void Jitter::readFrom(IO::Reader& reader)
+void Jitter::read_from(io::reader& reader)
 {
-GVX_TRACE("Jitter::readFrom");
+GVX_TRACE("Jitter::read_from");
 
-  reader.ensureReadVersionId("Jitter", 3,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("Jitter", 3,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
-  reader.readValue("jitterX", itsXJitter);
-  reader.readValue("jitterY", itsYJitter);
-  reader.readValue("jitterR", itsRJitter);
+  reader.read_value("jitterX", itsXJitter);
+  reader.read_value("jitterY", itsYJitter);
+  reader.read_value("jitterR", itsRJitter);
 
-  reader.readBaseClass("GxTransform", IO::makeProxy<GxTransform>(this));
+  reader.read_base_class("GxTransform", io::make_proxy<GxTransform>(this));
 }
 
-void Jitter::writeTo(IO::Writer& writer) const
+void Jitter::write_to(io::writer& writer) const
 {
-GVX_TRACE("Jitter::writeTo");
+GVX_TRACE("Jitter::write_to");
 
-  writer.ensureWriteVersionId("Jitter", JITTER_SVID, 3,
+  writer.ensure_output_version_id("Jitter", JITTER_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
 
-  writer.writeValue("jitterX", itsXJitter);
-  writer.writeValue("jitterY", itsYJitter);
-  writer.writeValue("jitterR", itsRJitter);
+  writer.write_value("jitterX", itsXJitter);
+  writer.write_value("jitterY", itsYJitter);
+  writer.write_value("jitterR", itsRJitter);
 
-  writer.writeBaseClass("GxTransform", IO::makeConstProxy<GxTransform>(this));
+  writer.write_base_class("GxTransform", io::make_const_proxy<GxTransform>(this));
 }
 
 /////////////

@@ -58,74 +58,74 @@ GVX_DBG_REGISTER
 using rutz::fstring;
 using rutz::shared_ptr;
 
-fstring IO::writeLGX(nub::ref<IO::IoObject> obj)
+fstring io::write_lgx(nub::ref<io::serializable> obj)
 {
   std::ostringstream ost;
 
-  IO::LegacyWriter writer(ost);
-  writer.writeRoot(obj.get());
+  io::legacy_writer writer(ost);
+  writer.write_root(obj.get());
 
   return fstring(ost.str().c_str());
 }
 
-void IO::readLGX(nub::ref<IO::IoObject> obj, const char* buf)
+void io::read_lgx(nub::ref<io::serializable> obj, const char* buf)
 {
   rutz::icstrstream ist(buf);
 
-  IO::LegacyReader reader(ist);
-  reader.readRoot(obj.get());
+  io::legacy_reader reader(ist);
+  reader.read_root(obj.get());
 }
 
-fstring IO::writeASW(nub::ref<IO::IoObject> obj)
+fstring io::write_asw(nub::ref<io::serializable> obj)
 {
   std::ostringstream ost;
 
-  shared_ptr<IO::Writer> writer = IO::makeAsciiStreamWriter(ost);
-  writer->writeRoot(obj.get());
+  shared_ptr<io::writer> writer = io::make_asw_writer(ost);
+  writer->write_root(obj.get());
 
   return fstring(ost.str().c_str());
 }
 
-void IO::readASW(nub::ref<IO::IoObject> obj, const char* buf)
+void io::read_asw(nub::ref<io::serializable> obj, const char* buf)
 {
   rutz::icstrstream ist(buf);
 
-  shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(ist);
-  reader->readRoot(obj.get());
+  shared_ptr<io::reader> reader = io::make_asw_reader(ist);
+  reader->read_root(obj.get());
 }
 
-fstring IO::writeGVX(nub::ref<IO::IoObject> obj)
+fstring io::write_gvx(nub::ref<io::serializable> obj)
 {
   std::ostringstream ost;
 
-  shared_ptr<IO::Writer> writer = IO::makeXMLWriter(ost);
-  writer->writeRoot(obj.get());
+  shared_ptr<io::writer> writer = io::make_xml_writer(ost);
+  writer->write_root(obj.get());
 
   return fstring(ost.str().c_str());
 }
 
-void IO::saveASW(nub::ref<IO::IoObject> obj, fstring fname)
+void io::save_asw(nub::ref<io::serializable> obj, fstring fname)
 {
-  shared_ptr<IO::Writer> writer = IO::makeAsciiStreamWriter(fname.c_str());
-  writer->writeRoot(obj.get());
+  shared_ptr<io::writer> writer = io::make_asw_writer(fname.c_str());
+  writer->write_root(obj.get());
 }
 
-void IO::loadASW(nub::ref<IO::IoObject> obj, fstring fname)
+void io::load_asw(nub::ref<io::serializable> obj, fstring fname)
 {
-  shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(fname.c_str());
-  reader->readRoot(obj.get());
+  shared_ptr<io::reader> reader = io::make_asw_reader(fname.c_str());
+  reader->read_root(obj.get());
 }
 
-void IO::saveGVX(nub::ref<IO::IoObject> obj, fstring filename)
+void io::save_gvx(nub::ref<io::serializable> obj, fstring filename)
 {
-  shared_ptr<IO::Writer> writer = IO::makeXMLWriter(filename.c_str());
-  writer->writeRoot(obj.get());
+  shared_ptr<io::writer> writer = io::make_xml_writer(filename.c_str());
+  writer->write_root(obj.get());
 }
 
-nub::ref<IO::IoObject> IO::retrieveASW(fstring fname)
+nub::ref<io::serializable> io::retrieve_asw(fstring fname)
 {
-  shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(fname.c_str());
-  return reader->readRoot();
+  shared_ptr<io::reader> reader = io::make_asw_reader(fname.c_str());
+  return reader->read_root();
 }
 
 static const char vcid_groovx_io_ioutil_cc_utc20050626084021[] = "$Id$ $HeadURL$";

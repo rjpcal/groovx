@@ -1,5 +1,5 @@
 /** @file io/writeutils.cc helper functions for writing counted
-    sequences of objects to an IO::Writer */
+    sequences of objects to an io::writer */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005
@@ -39,15 +39,15 @@
 
 using rutz::fstring;
 
-fstring IO::WriteUtils::makeElementNameString(const fstring& seq_name,
-                                              int element_num)
+fstring io::write_utils::make_element_name(const fstring& seq_name,
+                                           int element_num)
 {
-  return ReadUtils::makeElementNameString(seq_name, element_num);
+  return read_utils::make_element_name(seq_name, element_num);
 }
 
-fstring IO::WriteUtils::makeSeqCountString(const fstring& seq_name)
+fstring io::write_utils::make_seq_length_name(const fstring& seq_name)
 {
-  return ReadUtils::makeSeqCountString(seq_name);
+  return read_utils::make_seq_length_name(seq_name);
 }
 
 static const char vcid_groovx_io_writeutils_cc_utc20050626084021[] = "$Id$ $HeadURL$";

@@ -44,7 +44,7 @@ namespace nub
   class obj_factory;
 }
 
-/// Singleton wrapper for Factor<IO>.
+/// Singleton wrapper for Factor<io>.
 class nub::obj_factory
   :
   public rutz::factory<nub::soft_ref<nub::object> >

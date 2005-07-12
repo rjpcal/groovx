@@ -1,4 +1,4 @@
-/** @file io/ioproxy.h make proxy IoObject's that can be used for
+/** @file io/ioproxy.h make proxy serializable's that can be used for
     reading/writing base class sub-objects */
 
 ///////////////////////////////////////////////////////////////////////
@@ -43,95 +43,96 @@
 
 #include <typeinfo>
 
-namespace IO
+namespace io
 {
 
 //  #######################################################
 //  =======================================================
 
-/// IoProxy makes a proxy IoObject that behaves as if it were another type.
+/// proxy makes a proxy serializable that behaves as if it were another type.
 /** This is typically used to get an object to behave as if it were
-    actually an object of its base class: i.e., all virtual function calls
-    get dispatched to the base class rather than to the most derived
-    class. This is what is needed when trying to do readFrom() or writeTo()
-    for the base class portion of an object. */
+    actually an object of its base class: i.e., all virtual function
+    calls get dispatched to the base class rather than to the most
+    derived class. This is what is needed when trying to do
+    read_from() or write_to() for the base class portion of an
+    object. */
 
 template <class C>
-class IoProxy : public IoObject
+class proxy : public serializable
 {
 protected:
-  IoProxy(C* ref) : IoObject(), itsReferand(ref) {}
-  virtual ~IoProxy() throw() {}
+  proxy(C* ref) : serializable(), m_referand(ref) {}
+  virtual ~proxy() throw() {}
 
 public:
-  static nub::ref<IoObject> make(C* ref)
-    { return nub::ref<IoObject>( new IoProxy(ref), nub::PRIVATE ); }
+  static nub::ref<serializable> make(C* ref)
+    { return nub::ref<serializable>( new proxy(ref), nub::PRIVATE ); }
 
-  virtual void readFrom(Reader& reader)
-    { itsReferand->C::readFrom(reader); }
+  virtual void read_from(io::reader& reader)
+    { m_referand->C::read_from(reader); }
 
-  virtual void writeTo(Writer& writer) const
-    { itsReferand->C::writeTo(writer); }
+  virtual void write_to(io::writer& writer) const
+    { m_referand->C::write_to(writer); }
 
-  virtual VersionId serialVersionId() const
-    { return itsReferand->C::serialVersionId(); }
+  virtual io::version_id class_version_id() const
+    { return m_referand->C::class_version_id(); }
 
   virtual rutz::fstring obj_typename() const
     { return rutz::demangled_name(typeid(C)); }
 
 private:
-  IoProxy(const IoProxy&);
-  IoProxy& operator=(const IoProxy&);
+  proxy(const proxy&);
+  proxy& operator=(const proxy&);
 
-  nub::ref<C> itsReferand;
+  nub::ref<C> m_referand;
 };
 
 template <class C>
-inline nub::ref<IoObject> makeProxy(C* ref)
-  { return IoProxy<C>::make(ref); }
+inline nub::ref<serializable> make_proxy(C* ref)
+  { return proxy<C>::make(ref); }
 
 
 //  #######################################################
 //  =======================================================
 
-/// ConstIoProxy is just like IoProxy except for const objects.
+/// const_proxy is just like proxy except for const objects.
 
 template <class C>
-class ConstIoProxy : public IoObject
+class const_proxy : public serializable
 {
 protected:
-  ConstIoProxy(const C* ref) : IoObject(), itsReferand(const_cast<C*>(ref)) {}
-  virtual ~ConstIoProxy() throw() {}
+  const_proxy(const C* ref) : serializable(), m_referand(const_cast<C*>(ref)) {}
+  virtual ~const_proxy() throw() {}
 
 public:
-  static nub::ref<const IoObject> make(const C* ref)
-    { return nub::ref<IoObject>( new ConstIoProxy(ref), nub::PRIVATE ); }
+  static nub::ref<const serializable> make(const C* ref)
+    { return nub::ref<serializable>( new const_proxy(ref), nub::PRIVATE ); }
 
-  virtual void readFrom(Reader& reader)
-    { itsReferand->C::readFrom(reader); }
+  virtual void read_from(io::reader& reader)
+    { m_referand->C::read_from(reader); }
 
-  virtual void writeTo(Writer& writer) const
-    { itsReferand->C::writeTo(writer); }
+  virtual void write_to(io::writer& writer) const
+    { m_referand->C::write_to(writer); }
 
-  virtual VersionId serialVersionId() const
-    { return itsReferand->C::serialVersionId(); }
+  virtual io::version_id class_version_id() const
+    { return m_referand->C::class_version_id(); }
 
   virtual rutz::fstring obj_typename() const
     { return rutz::demangled_name(typeid(C)); }
 
 private:
-  ConstIoProxy(const ConstIoProxy&);
-  ConstIoProxy& operator=(const ConstIoProxy&);
+  const_proxy(const const_proxy&);
+  const_proxy& operator=(const const_proxy&);
 
-  nub::ref<C> itsReferand;
+  nub::ref<C> m_referand;
 };
 
 template <class C>
-inline nub::ref<const IoObject> makeConstProxy(const C* ref)
-  { return ConstIoProxy<C>::make(ref); }
+inline nub::ref<const serializable> make_const_proxy(const C* ref)
+  { return const_proxy<C>::make(ref); }
 
 
-} // end namespace IO
+} // end namespace io
 
 static const char vcid_groovx_io_ioproxy_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_IOPROXY_H_UTC20050626084021_DEFINED

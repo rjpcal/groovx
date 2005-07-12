@@ -46,8 +46,8 @@ public:
 
   virtual ~NullResponseHdlr() throw();
 
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   // actions
   virtual void rhBeginTrial(nub::soft_ref<Toglet> widget, Trial& trial) const;

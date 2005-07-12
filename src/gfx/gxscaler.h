@@ -113,8 +113,8 @@ public:
   /// Get the height scaling factor.
   double heightFactor() const { return itsHeightFactor; }
 
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   virtual void draw(Gfx::Canvas& canvas) const;
 

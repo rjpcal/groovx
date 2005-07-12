@@ -1,5 +1,5 @@
 /** @file io/readutils.cc helper functions for reading counted
-    sequences of objects from an IO::Reader */
+    sequences of objects from an io::reader */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005
@@ -39,15 +39,15 @@
 
 using rutz::fstring;
 
-fstring IO::ReadUtils::makeElementNameString(const fstring& seq_name,
-                                             int element_num)
+fstring io::read_utils::make_element_name(const fstring& seq_name,
+                                          int element_num)
 {
   fstring result(seq_name);
   result.append( element_num );
   return result;
 }
 
-fstring IO::ReadUtils::makeSeqCountString(const fstring& seq_name)
+fstring io::read_utils::make_seq_length_name(const fstring& seq_name)
 {
   fstring result(seq_name);
   result.append( "Count" );

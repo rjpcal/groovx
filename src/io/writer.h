@@ -1,4 +1,4 @@
-/** @file io/writer.h abstract base class for writing IO::IoObject
+/** @file io/writer.h abstract base class for writing io::serializable
     objects */
 
 ///////////////////////////////////////////////////////////////////////
@@ -53,11 +53,11 @@ namespace nub
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c IO::Writer provides the interface that \c IO objects use to save
- * their state in a \c writeTo() implementation. It provides the
- * inverse operations to those in \c IO::Reader. To save an object tree, a
- * client should call \c writeRoot() on the root object in that
- * tree. Subclasses of \c IO::Writer will implement this interface using
+ * \c io::writer provides the interface that \c io objects use to save
+ * their state in a \c write_to() implementation. It provides the
+ * inverse operations to those in \c io::reader. To save an object tree, a
+ * client should call \c write_root() on the root object in that
+ * tree. Subclasses of \c io::writer will implement this interface using
  * different back ends for the actual storage medium, for example, an
  * ASCII text file, an on-screen dialog box, a relational database,
  * etc.
@@ -65,40 +65,40 @@ namespace nub
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::Writer
+class io::writer
 {
 public:
 
   /// Virtual destructor allows correct destruction of subclasses.
-  virtual ~Writer() throw();
+  virtual ~writer() throw();
 
   /** A convenience function to ensure that the current serial version
       is no less than the \a lowest_supported_version. Returns the \a
-      actual_version. If this test fails, a WriteVersionError will be
-      thrown.*/
-  int ensureWriteVersionId(const char* name,
-                           IO::VersionId actual_version,
-                           IO::VersionId lowest_supported_version,
-                           const char* msg,
-                           const rutz::file_pos& pos);
+      actual_version. If this test fails, a write_version_error will
+      be thrown.*/
+  int ensure_output_version_id(const char* name,
+                               io::version_id actual_version,
+                               io::version_id lowest_supported_version,
+                               const char* msg,
+                               const rutz::file_pos& pos);
 
   /// Store the \c char attribute \a val in association with the tag \a name.
-  virtual void writeChar(const char* name, char val) = 0;
+  virtual void write_char(const char* name, char val) = 0;
 
   /// Store the \c int attribute \a val in association with the tag \a name.
-  virtual void writeInt(const char* name, int val) = 0;
+  virtual void write_int(const char* name, int val) = 0;
 
   /// Store the \c bool attribute \a val in association with the tag \a name.
-  virtual void writeBool(const char* name, bool val) = 0;
+  virtual void write_bool(const char* name, bool val) = 0;
 
   /// Store the \c double attribute \a val in association with the tag \a name.
-  virtual void writeDouble(const char* name, double val) = 0;
+  virtual void write_double(const char* name, double val) = 0;
 
   /// Store the \c rutz::value attribute \a val in association with the tag \a name.
-  virtual void writeValueObj(const char* name, const rutz::value& v) = 0;
+  virtual void write_value_obj(const char* name, const rutz::value& v) = 0;
 
   /// Store the raw data array in association with the tag \a name.
-  virtual void writeRawData(const char* name,
+  virtual void write_byte_array(const char* name,
                             const unsigned char* data,
                             unsigned int length) = 0;
 
@@ -111,67 +111,67 @@ public:
   */
   //@{
 
-  void writeValue(const char* name, char val)
-  { writeChar(name, val); }
+  void write_value(const char* name, char val)
+  { write_char(name, val); }
 
-  void writeValue(const char* name, int val)
-  { writeInt(name, val); }
+  void write_value(const char* name, int val)
+  { write_int(name, val); }
 
-  void writeValue(const char* name, unsigned int val)
-  { writeInt(name, val); }
+  void write_value(const char* name, unsigned int val)
+  { write_int(name, val); }
 
-  void writeValue(const char* name, unsigned long val)
-  { writeInt(name, val); }
+  void write_value(const char* name, unsigned long val)
+  { write_int(name, val); }
 
-  void writeValue(const char* name, bool val)
-  { writeBool(name, val); }
+  void write_value(const char* name, bool val)
+  { write_bool(name, val); }
 
-  void writeValue(const char* name, double val)
-  { writeDouble(name, val); }
+  void write_value(const char* name, double val)
+  { write_double(name, val); }
 
-  void writeValue(const char* name, const rutz::fstring& val)
-  { writeCstring(name, val.c_str()); }
+  void write_value(const char* name, const rutz::fstring& val)
+  { write_cstring(name, val.c_str()); }
 
-  void writeValue(const char* name, const rutz::value& v)
-  { writeValueObj(name, v); }
+  void write_value(const char* name, const rutz::value& v)
+  { write_value_obj(name, v); }
 
   //@}
 
-  /// Store the \c IO object \a val in association with the tag \a name.
-  virtual void writeObject(const char* name,
-                           nub::soft_ref<const IO::IoObject> obj) = 0;
+  /// Store the \c io object \a val in association with the tag \a name.
+  virtual void write_object(const char* name,
+                            nub::soft_ref<const io::serializable> obj) = 0;
 
-  /** Store the owned \c IO object \a obj in association with the tag
+  /** Store the owned \c io object \a obj in association with the tag
       \a name. This function should only be used if \a obj is \b owned
       by the storing object; no other objects should reference \a
-      obj. This allows the \c Writer subclass to implement the storage
+      obj. This allows the \c writer subclass to implement the storage
       of an owned object as a contained object. */
-  virtual void writeOwnedObject(const char* name,
-                                nub::ref<const IO::IoObject> obj) = 0;
+  virtual void write_owned_object(const char* name,
+                                  nub::ref<const io::serializable> obj) = 0;
 
-  /** Write the named base class using the IO object \a obj, which
+  /** Write the named base class using the io object \a obj, which
       should be arranged to point or refer to the appropriate base
       class part of the object. In particular, \a obj's virtual
       functions must NOT call the fully derived versions. This effect
-      can be best accomplished with an \c IO::IoProxy. */
-  virtual void writeBaseClass(const char* baseClassName,
-                              nub::ref<const IO::IoObject> basePart) = 0;
+      can be best accomplished with an \c io::proxy. */
+  virtual void write_base_class(const char* base_class_name,
+                                nub::ref<const io::serializable> base_part) = 0;
 
   /** Store an entire object hierarchy, starting with the root object
       \a root. All objects and values referenced by \a root will be
       stored recursively, until there are no more remaining
       references. */
-  virtual void writeRoot(const IO::IoObject* root) = 0;
+  virtual void write_root(const io::serializable* root) = 0;
 
 protected:
   /// Store the C-style string (\c char*) attribute \a val in association with the tag \a name.
-  virtual void writeCstring(const char* name, const char* val) = 0;
+  virtual void write_cstring(const char* name, const char* val) = 0;
 
 
-  /// Base64 implementation of writeRawData() for use by subclasses.
-  void defaultWriteRawData(const char* name,
-                           const unsigned char* data,
-                           unsigned int length);
+  /// Base64 implementation of write_byte_array() for use by subclasses.
+  void default_write_byte_array(const char* name,
+                                const unsigned char* data,
+                                unsigned int length);
 };
 
 static const char vcid_groovx_io_writer_h_utc20050626084021[] = "$Id$ $HeadURL$";

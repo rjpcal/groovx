@@ -40,74 +40,75 @@ namespace rutz
   class fstring;
 }
 
-namespace IO
+namespace io
 {
-  class IoObject;
-  class Reader;
-  class Writer;
+  class serializable;
+  class reader;
+  class writer;
 
   /// This type is used for verion ids during the read+write process.
-  typedef signed long VersionId;
+  typedef signed long version_id;
 }
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * The IO::IoObject class defines the abstract interface for object
- * persistence. Classes which need these facilities should inherit
- * virtually from IO::IoObject. IO::IoObject is reference counted (by
- * subclassing nub::object), providing automatic memory management
- * when IO::IoObject's are managed with a smart pointer that manages
- * the reference count, such as PtrHandle or nub::ref.
+ * The io::serializable class defines the abstract interface for
+ * object persistence. Classes which need these facilities should
+ * inherit virtually from io::serializable. io::serializable is
+ * reference counted (by subclassing nub::object), providing automatic
+ * memory management when io::serializable's are managed with a smart
+ * pointer that manages the reference count, such as nub::ref or
+ * nub::soft_ref.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::IoObject : public virtual nub::object
+class io::serializable : public virtual nub::object
 {
 private:
-  IoObject(const IoObject&);
-  IoObject& operator=(const IoObject&);
+  serializable(const serializable&);
+  serializable& operator=(const serializable&);
 
 protected:
   /// Default constructor.
-  IoObject() throw();
+  serializable() throw();
 
   /// Virtual destructor to ensure correct destruction of subclasses
-  virtual ~IoObject() throw();
+  virtual ~serializable() throw();
 
 public:
   /** Subclasses implement this method to save the object's state via
-      the generic interface provided by \c IO::Reader. Parsing the
-      format of the input is handled by the \c IO::Reader, so
-      implementors of \c readFrom() of don't need to deal with
+      the generic interface provided by \c io::reader. Parsing the
+      format of the input is handled by the \c io::reader, so
+      implementors of \c read_from() of don't need to deal with
       formatting. */
-  virtual void readFrom(IO::Reader& reader) = 0;
+  virtual void read_from(io::reader& reader) = 0;
 
   /** Subclasses implement this method to restore the object's state
-      via the generic interface provided by \c IO::Writer. Formatting
-      the output is handled by the \c IO::Writer, so implementors of
-      \c writeTo() of don't need to deal with formatting. */
-  virtual void writeTo(IO::Writer& writer) const = 0;
+      via the generic interface provided by \c io::writer. Formatting
+      the output is handled by the \c io::writer, so implementors of
+      \c write_to() of don't need to deal with formatting. */
+  virtual void write_to(io::writer& writer) const = 0;
 
   /** Returns the number of attributes that are written in the
-      object's \c writeTo() function. The default implementation
-      simply calls writeTo() with a dummy Writer and counts how many
+      object's \c write_to() function. The default implementation
+      simply calls write_to() with a dummy writer and counts how many
       attributes are written. However, this is somewhat inefficient
       since it defers the counting to runtime when the number may in
       fact be known at compile time. Thus subclasses may wish to
       override this function to return a compile-time constant. */
-  virtual unsigned int ioAttribCount() const;
+  virtual unsigned int attrib_count() const;
 
   /** Returns a serialization version id for the class. The default
       implementation returns zero. Classes should override this when
       they make a change that requires a change to their serialization
       protocol. Overriding versions of this function should follow the
       convention that a higher id refers to a later version of the
-      class. Implementations of \c IO::Reader and \c IO::Writer will
+      class. Implementations of \c io::reader and \c io::writer will
       provide a way for a class to store and retrieve the
       serialization version of an object. */
-  virtual IO::VersionId serialVersionId() const;
+  virtual io::version_id class_version_id() const;
 };
 
 

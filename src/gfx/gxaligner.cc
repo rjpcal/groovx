@@ -94,18 +94,18 @@ GVX_TRACE("GxAligner::doAlignment");
   canvas.translate(vec);
 }
 
-void GxAligner::readFrom(IO::Reader& reader)
+void GxAligner::read_from(io::reader& reader)
 {
-GVX_TRACE("GxAligner::readFrom");
-  reader.readValue("mode", itsMode);
-  reader.readValueObj("center", itsCenter);
+GVX_TRACE("GxAligner::read_from");
+  reader.read_value("mode", itsMode);
+  reader.read_value_obj("center", itsCenter);
 }
 
-void GxAligner::writeTo(IO::Writer& writer) const
+void GxAligner::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxAligner::writeTo");
-  writer.writeValue("mode", itsMode);
-  writer.writeValueObj("center", itsCenter);
+GVX_TRACE("GxAligner::write_to");
+  writer.write_value("mode", itsMode);
+  writer.write_value_obj("center", itsCenter);
 }
 
 void GxAligner::draw(Gfx::Canvas& canvas) const

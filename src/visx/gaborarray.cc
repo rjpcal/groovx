@@ -171,28 +171,28 @@ const FieldMap& GaborArray::classFields()
   return GABORARRAY_FIELDS;
 }
 
-IO::VersionId GaborArray::serialVersionId() const
+io::version_id GaborArray::class_version_id() const
 {
-GVX_TRACE("GaborArray::serialVersionId");
+GVX_TRACE("GaborArray::class_version_id");
   return GABORARRAY_SVID;
 }
 
-void GaborArray::readFrom(IO::Reader& reader)
+void GaborArray::read_from(io::reader& reader)
 {
-GVX_TRACE("GaborArray::readFrom");
+GVX_TRACE("GaborArray::read_from");
 
   readFieldsFrom(reader, classFields());
 
-  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+  reader.read_base_class("GxShapeKit", io::make_proxy<GxShapeKit>(this));
 }
 
-void GaborArray::writeTo(IO::Writer& writer) const
+void GaborArray::write_to(io::writer& writer) const
 {
-GVX_TRACE("GaborArray::writeTo");
+GVX_TRACE("GaborArray::write_to");
 
   writeFieldsTo(writer, classFields(), GABORARRAY_SVID);
 
-  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
+  writer.write_base_class("GxShapeKit", io::make_const_proxy<GxShapeKit>(this));
 }
 
 void GaborArray::saveImage(const char* filename) const

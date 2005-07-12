@@ -1,4 +1,4 @@
-/** @file io/xmlwriter.h IO::Writer implementation for writing XML
+/** @file io/xmlwriter.h io::writer implementation for writing XML
     files in the GVX format */
 
 ///////////////////////////////////////////////////////////////////////
@@ -38,15 +38,15 @@
 
 #include <iosfwd>
 
-namespace IO
+namespace io
 {
-  class Writer;
+  class writer;
 
   /// Make an XML writer that writes to \c std::ostream.
-  rutz::shared_ptr<IO::Writer> makeXMLWriter(std::ostream& os);
+  rutz::shared_ptr<io::writer> make_xml_writer(std::ostream& os);
 
   /// Make an XML writer that writes to the file named \a filename.
-  rutz::shared_ptr<IO::Writer> makeXMLWriter(const char* filename);
+  rutz::shared_ptr<io::writer> make_xml_writer(const char* filename);
 }
 
 static const char vcid_groovx_io_xmlwriter_h_utc20050626084021[] = "$Id$ $HeadURL$";

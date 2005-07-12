@@ -56,7 +56,7 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId FIXPT_SVID = 3;
+  const io::version_id FIXPT_SVID = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -92,35 +92,35 @@ FixPt::FixPt(double len, int wid) :
 
 FixPt::~FixPt() throw() {}
 
-IO::VersionId FixPt::serialVersionId() const
+io::version_id FixPt::class_version_id() const
 {
-GVX_TRACE("FixPt::serialVersionId");
+GVX_TRACE("FixPt::class_version_id");
   return FIXPT_SVID;
 }
 
-void FixPt::readFrom(IO::Reader& reader)
+void FixPt::read_from(io::reader& reader)
 {
-GVX_TRACE("FixPt::readFrom");
+GVX_TRACE("FixPt::read_from");
 
-  reader.ensureReadVersionId("FixPt", 3,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("FixPt", 3,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
-  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+  reader.read_base_class("GxShapeKit", io::make_proxy<GxShapeKit>(this));
 }
 
-void FixPt::writeTo(IO::Writer& writer) const
+void FixPt::write_to(io::writer& writer) const
 {
-GVX_TRACE("FixPt::writeTo");
+GVX_TRACE("FixPt::write_to");
 
-  writer.ensureWriteVersionId("FixPt", FIXPT_SVID, 3,
+  writer.ensure_output_version_id("FixPt", FIXPT_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
 
   writeFieldsTo(writer, classFields(), FIXPT_SVID);
 
-  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
+  writer.write_base_class("GxShapeKit", io::make_const_proxy<GxShapeKit>(this));
 }
 
 void FixPt::grGetBoundingBox(Gfx::Bbox& bbox) const

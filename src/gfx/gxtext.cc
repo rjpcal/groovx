@@ -54,7 +54,7 @@ using rutz::fstring;
 
 namespace
 {
-  const IO::VersionId GTEXT_SVID = 3;
+  const io::version_id GTEXT_SVID = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -93,37 +93,37 @@ GxText::~GxText() throw()
 GVX_TRACE("GxText::~GxText");
 }
 
-IO::VersionId GxText::serialVersionId() const
+io::version_id GxText::class_version_id() const
 {
-GVX_TRACE("GxText::serialVersionId");
+GVX_TRACE("GxText::class_version_id");
   return GTEXT_SVID;
 }
 
-void GxText::readFrom(IO::Reader& reader)
+void GxText::read_from(io::reader& reader)
 {
-GVX_TRACE("GxText::readFrom");
+GVX_TRACE("GxText::read_from");
 
-  reader.ensureReadVersionId("GxText", 3,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("GxText", 3,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
-  reader.readValue("text", itsText);
-  reader.readValue("strokeWidth", itsStrokeWidth);
+  reader.read_value("text", itsText);
+  reader.read_value("strokeWidth", itsStrokeWidth);
 
-  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+  reader.read_base_class("GxShapeKit", io::make_proxy<GxShapeKit>(this));
 }
 
-void GxText::writeTo(IO::Writer& writer) const
+void GxText::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxText::writeTo");
+GVX_TRACE("GxText::write_to");
 
-  writer.ensureWriteVersionId("GxText", GTEXT_SVID, 3,
+  writer.ensure_output_version_id("GxText", GTEXT_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
 
-  writer.writeValue("text", itsText);
-  writer.writeValue("strokeWidth", itsStrokeWidth);
+  writer.write_value("text", itsText);
+  writer.write_value("strokeWidth", itsStrokeWidth);
 
-  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
+  writer.write_base_class("GxShapeKit", io::make_const_proxy<GxShapeKit>(this));
 }
 
 const FieldMap& GxText::classFields()

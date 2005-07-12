@@ -76,13 +76,14 @@ namespace
   // lowercase.
   string make_clean_pkg_name(const string& name)
   {
-    string clean = name;
+    string clean;
 
-    clean[0] = char(toupper(clean[0]));
+    clean += char(toupper(name[0]));
 
-    for (size_t i = 1; i < clean.length(); ++i)
+    for (size_t i = 1; i < name.length(); ++i)
       {
-        clean[i] = char(tolower(clean[i]));
+        if (name[i] != '-' && name[i] != '_')
+          clean += char(tolower(name[i]));
       }
 
     return clean;

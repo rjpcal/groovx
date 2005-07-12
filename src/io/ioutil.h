@@ -44,27 +44,27 @@ namespace nub
   template <class T> class ref;
 }
 
-namespace IO
+namespace io
 {
-  class IoObject;
+  class serializable;
 
-  // LGX -- "Legacy" compact format
-  rutz::fstring  writeLGX(nub::ref<IO::IoObject> obj);
-  void           readLGX(nub::ref<IO::IoObject> obj, const char* buf);
+  // LGX -- "legacy" compact format
+  rutz::fstring  write_lgx(nub::ref<io::serializable> obj);
+  void           read_lgx(nub::ref<io::serializable> obj, const char* buf);
 
-  // ASW -- AsciiStreamWriter format
-  rutz::fstring  writeASW(nub::ref<IO::IoObject> obj);
-  void           readASW(nub::ref<IO::IoObject> obj, const char* buf);
+  // ASW -- "ascii stream writer" format
+  rutz::fstring  write_asw(nub::ref<io::serializable> obj);
+  void           read_asw(nub::ref<io::serializable> obj, const char* buf);
 
-  void saveASW(nub::ref<IO::IoObject> obj, rutz::fstring filename);
-  void loadASW(nub::ref<IO::IoObject> obj, rutz::fstring filename);
+  void save_asw(nub::ref<io::serializable> obj, rutz::fstring filename);
+  void load_asw(nub::ref<io::serializable> obj, rutz::fstring filename);
 
-  nub::ref<IO::IoObject> retrieveASW(rutz::fstring filename);
+  nub::ref<io::serializable> retrieve_asw(rutz::fstring filename);
 
   // GVX -- GroovX XML format
-  rutz::fstring  writeGVX(nub::ref<IO::IoObject> obj);
+  rutz::fstring  write_gvx(nub::ref<io::serializable> obj);
 
-  void saveGVX(nub::ref<IO::IoObject> obj, rutz::fstring filename);
+  void save_gvx(nub::ref<io::serializable> obj, rutz::fstring filename);
 }
 
 static const char vcid_groovx_io_ioutil_h_utc20050626084021[] = "$Id$ $HeadURL$";

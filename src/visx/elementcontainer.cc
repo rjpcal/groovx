@@ -86,31 +86,31 @@ GVX_TRACE("ElementContainer::~ElementContainer");
   delete rep;
 }
 
-void ElementContainer::readFrom(IO::Reader& reader)
+void ElementContainer::read_from(io::reader& reader)
 {
-GVX_TRACE("ElementContainer::readFrom");
+GVX_TRACE("ElementContainer::read_from");
   clearElements();
 
-  IO::ReadUtils::readObjectSeq<Element>
+  io::read_utils::read_object_seq<Element>
     (reader, "trialSeq", std::back_inserter(rep->elements));
 
-  reader.readValue("randSeed", rep->randSeed);
-  reader.readValue("curTrialSeqdx", rep->sequencePos);
+  reader.read_value("randSeed", rep->randSeed);
+  reader.read_value("curTrialSeqdx", rep->sequencePos);
   if (rep->sequencePos > rep->elements.size())
     {
       throw rutz::error("ElementContainer", SRC_POS);
     }
 }
 
-void ElementContainer::writeTo(IO::Writer& writer) const
+void ElementContainer::write_to(io::writer& writer) const
 {
-GVX_TRACE("ElementContainer::writeTo");
-  IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
-                                 rep->elements.begin(),
-                                 rep->elements.end());
+GVX_TRACE("ElementContainer::write_to");
+  io::write_utils::write_object_seq(writer, "trialSeq",
+                                    rep->elements.begin(),
+                                    rep->elements.end());
 
-  writer.writeValue("randSeed", rep->randSeed);
-  writer.writeValue("curTrialSeqdx", rep->sequencePos);
+  writer.write_value("randSeed", rep->randSeed);
+  writer.write_value("curTrialSeqdx", rep->sequencePos);
 }
 
 ///////////////////////////////////////////////////////////////////////

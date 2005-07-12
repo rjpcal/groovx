@@ -49,7 +49,7 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId TIMINGHANDLER_SVID = 2;
+  const io::version_id TIMINGHANDLER_SVID = 2;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -84,29 +84,29 @@ TimingHandler::~TimingHandler() throw()
 GVX_TRACE("TimingHandler::~TimingHandler");
 }
 
-IO::VersionId TimingHandler::serialVersionId() const
+io::version_id TimingHandler::class_version_id() const
 {
-GVX_TRACE("TimingHandler::serialVersionId");
+GVX_TRACE("TimingHandler::class_version_id");
  return TIMINGHANDLER_SVID;
 }
 
-void TimingHandler::readFrom(IO::Reader& reader)
+void TimingHandler::read_from(io::reader& reader)
 {
-GVX_TRACE("TimingHandler::readFrom");
+GVX_TRACE("TimingHandler::read_from");
 
-  reader.ensureReadVersionId("TimingHandler", 2, "Try groovx0.8a4", SRC_POS);
+  reader.ensure_version_id("TimingHandler", 2, "Try groovx0.8a4", SRC_POS);
 
-  reader.readBaseClass("TimingHdlr", IO::makeProxy<TimingHdlr>(this));
+  reader.read_base_class("TimingHdlr", io::make_proxy<TimingHdlr>(this));
 }
 
-void TimingHandler::writeTo(IO::Writer& writer) const
+void TimingHandler::write_to(io::writer& writer) const
 {
-GVX_TRACE("TimingHandler::writeTo");
+GVX_TRACE("TimingHandler::write_to");
 
-  writer.ensureWriteVersionId("TimingHandler",
+  writer.ensure_output_version_id("TimingHandler",
             TIMINGHANDLER_SVID, 2, "Try groovx0.8a4", SRC_POS);
 
-  writer.writeBaseClass("TimingHdlr", IO::makeConstProxy<TimingHdlr>(this));
+  writer.write_base_class("TimingHdlr", io::make_const_proxy<TimingHdlr>(this));
 }
 
 int TimingHandler::getAbortWait() const

@@ -52,7 +52,7 @@ namespace nub
   class scheduler;
 }
 
-class OutputFile;
+class output_file;
 class Trial;
 
 //  #######################################################
@@ -69,7 +69,7 @@ class Trial;
     \c invoke() is called will depend on the accuracy of the
     underlying system-provided event loop. */
 
-class TrialEvent : public IO::IoObject
+class TrialEvent : public io::serializable
 {
 protected:
   /// Construct with a requested delay of \a msec.
@@ -79,8 +79,8 @@ public:
   /// Destructor cancels any pending callback to \c invoke().
   virtual ~TrialEvent() throw();
 
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   /// Return the current requested delay time, in milliseconds.
   unsigned int getDelay() const { return itsRequestedDelay; }
@@ -251,8 +251,8 @@ public:
   /// Default creator.
   static FileWriteEvent* make() { return new FileWriteEvent; }
 
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   /// Get the byte that will be written to the file.
   int getByte() const;
@@ -261,13 +261,13 @@ public:
   void setByte(int b);
 
   /// Get the file object that will be written to.
-  nub::ref<OutputFile> getFile() const;
+  nub::ref<output_file> getFile() const;
 
   /// Set the file object that will be written to.
-  void setFile(nub::ref<OutputFile> file);
+  void setFile(nub::ref<output_file> file);
 
 private:
-  nub::ref<OutputFile> itsFile;
+  nub::ref<output_file> itsFile;
   int itsByte;
 };
 
@@ -290,8 +290,8 @@ public:
   /// Default creator.
   static GenericEvent* make() { return new GenericEvent; }
 
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   /// Get a string containing the Tcl callback script.
   rutz::fstring getCallback() const;
@@ -327,8 +327,8 @@ public:
   /// Default creator.
   static MultiEvent* make() { return new MultiEvent; }
 
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   /// Returns an iterator to all the events in the sequence.
   rutz::fwd_iter<const nub::ref<TrialEvent> > getEvents() const;

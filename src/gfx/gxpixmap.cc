@@ -67,7 +67,7 @@ namespace
 {
   const geom::vec2<double> defaultZoom(1.0, 1.0);
 
-  const IO::VersionId BITMAP_SVID = 5;
+  const io::version_id BITMAP_SVID = 5;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -218,28 +218,28 @@ GVX_TRACE("GxPixmap::~GxPixmap");
   delete rep;
 }
 
-IO::VersionId GxPixmap::serialVersionId() const
+io::version_id GxPixmap::class_version_id() const
 {
-GVX_TRACE("GxPixmap::serialVersionId");
+GVX_TRACE("GxPixmap::class_version_id");
   return BITMAP_SVID;
 }
 
-void GxPixmap::readFrom(IO::Reader& reader)
+void GxPixmap::read_from(io::reader& reader)
 {
-GVX_TRACE("GxPixmap::readFrom");
+GVX_TRACE("GxPixmap::read_from");
 
-  int svid = reader.ensureReadVersionId("GxPixmap", 4,
-                                        "Try cvs tag xml_conversion_20040526",
-                                        SRC_POS);
+  int svid = reader.ensure_version_id("GxPixmap", 4,
+                                      "Try cvs tag xml_conversion_20040526",
+                                      SRC_POS);
 
-  reader.readValue("filename", rep->itsFilename);
-  reader.readValue("zoomX", rep->itsZoom.x());
-  reader.readValue("zoomY", rep->itsZoom.y());
-  reader.readValue("usingZoom", rep->itsUsingZoom);
-  reader.readValue("contrastFlip", rep->itsContrastFlip);
-  reader.readValue("verticalFlip", rep->itsVerticalFlip);
-  reader.readValue("purgeable", rep->itsPurgeable);
-  reader.readValue("asBitmap", rep->itsAsBitmap);
+  reader.read_value("filename", rep->itsFilename);
+  reader.read_value("zoomX", rep->itsZoom.x());
+  reader.read_value("zoomY", rep->itsZoom.y());
+  reader.read_value("usingZoom", rep->itsUsingZoom);
+  reader.read_value("contrastFlip", rep->itsContrastFlip);
+  reader.read_value("verticalFlip", rep->itsVerticalFlip);
+  reader.read_value("purgeable", rep->itsPurgeable);
+  reader.read_value("asBitmap", rep->itsAsBitmap);
 
   if ( rep->itsFilename.is_empty() )
     {
@@ -254,7 +254,7 @@ GVX_TRACE("GxPixmap::readFrom");
     {
 #if 0
       rutz::byte_array imgdata;
-      reader.readRawData("image", imgdata);
+      reader.read_byte_array("image", imgdata);
       if (imgdata.vec.size() > 0)
         {
           rutz::imemstream s(reinterpret_cast<const char*>(&imgdata.vec[0]),
@@ -264,40 +264,40 @@ GVX_TRACE("GxPixmap::readFrom");
 #endif
     }
 
-  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+  reader.read_base_class("GxShapeKit", io::make_proxy<GxShapeKit>(this));
 }
 
-void GxPixmap::writeTo(IO::Writer& writer) const
+void GxPixmap::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxPixmap::writeTo");
+GVX_TRACE("GxPixmap::write_to");
 
-  writer.ensureWriteVersionId("GxPixmap", BITMAP_SVID, 5,
+  writer.ensure_output_version_id("GxPixmap", BITMAP_SVID, 5,
                               "Try groovx0.8a7", SRC_POS);
 
-  writer.writeValue("filename", rep->itsFilename);
-  writer.writeValue("zoomX", rep->itsZoom.x());
-  writer.writeValue("zoomY", rep->itsZoom.y());
-  writer.writeValue("usingZoom", rep->itsUsingZoom);
-  writer.writeValue("contrastFlip", rep->itsContrastFlip);
-  writer.writeValue("verticalFlip", rep->itsVerticalFlip);
-  writer.writeValue("purgeable", rep->itsPurgeable);
-  writer.writeValue("asBitmap", rep->itsAsBitmap);
+  writer.write_value("filename", rep->itsFilename);
+  writer.write_value("zoomX", rep->itsZoom.x());
+  writer.write_value("zoomY", rep->itsZoom.y());
+  writer.write_value("usingZoom", rep->itsUsingZoom);
+  writer.write_value("contrastFlip", rep->itsContrastFlip);
+  writer.write_value("verticalFlip", rep->itsVerticalFlip);
+  writer.write_value("purgeable", rep->itsPurgeable);
+  writer.write_value("asBitmap", rep->itsAsBitmap);
 
 #if 0
   if ( !rep->itsFilename.is_empty() )
     {
       rutz::mapped_file m(rep->itsFilename.c_str());
-      writer.writeRawData("image",
+      writer.write_byte_array("image",
                           static_cast<const unsigned char*>(m.memory()),
                           m.length());
     }
   else
     {
-      writer.writeRawData("image", 0, 0);
+      writer.write_byte_array("image", 0, 0);
     }
 #endif
 
-  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
+  writer.write_base_class("GxShapeKit", io::make_const_proxy<GxShapeKit>(this));
 }
 
 /////////////

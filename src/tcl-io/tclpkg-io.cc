@@ -1,5 +1,6 @@
-/** @file io/tclpkg-io.cc tcl interface packages for IO::IoObject and
-    OutputFile */
+/** @file io/tclpkg-io.cc tcl interface packages for io::serializable
+    and output_file */
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000-2005
@@ -83,9 +84,9 @@ namespace
             continue;
           }
 
-        IO::LegacyReader reader(ifs);
+        io::legacy_reader reader(ifs);
 
-        ref<IO::IoObject> obj(reader.readRoot(0));
+        ref<io::serializable> obj(reader.read_root(0));
 
         result.append(obj.id());
 
@@ -107,16 +108,16 @@ namespace
                                         filename), SRC_POS);
       }
 
-    IO::LegacyWriter writer(ofs, use_bases);
-    writer.usePrettyPrint(false);
+    io::legacy_writer writer(ofs, use_bases);
+    writer.use_pretty_print(false);
 
-    for (tcl::list::iterator<ref<IO::IoObject> >
-           itr = objids.begin<ref<IO::IoObject> >(),
-           end = objids.end<ref<IO::IoObject> >();
+    for (tcl::list::iterator<ref<io::serializable> >
+           itr = objids.begin<ref<io::serializable> >(),
+           end = objids.end<ref<io::serializable> >();
          itr != end;
          ++itr)
       {
-        writer.writeRoot((*itr).get());
+        writer.write_root((*itr).get());
       }
   }
 }
@@ -126,9 +127,9 @@ int Io_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Io_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "IO", "4.$Revision$");
+  GVX_PKG_CREATE(pkg, interp, "io", "4.$Revision$");
   pkg->inherit_pkg("Obj");
-  tcl::def_basic_type_cmds<IO::IoObject>(pkg, SRC_POS);
+  tcl::def_basic_type_cmds<io::serializable>(pkg, SRC_POS);
 
   pkg->def( "loadObjects", "filename num_to_read=-1", &loadObjects, SRC_POS );
   pkg->def( "loadObjects", "filename", rutz::bind_last(&loadObjects, ALL), SRC_POS );
@@ -138,20 +139,20 @@ GVX_TRACE("Io_Init");
 
   const unsigned int keyarg = 1;
 
-  pkg->def_vec( "writeLGX", "objref(s)", IO::writeLGX, keyarg, SRC_POS );
-  pkg->def_vec( "readLGX", "objref(s) string(s)", IO::readLGX, keyarg, SRC_POS );
+  pkg->def_vec( "write_lgx", "objref(s)", io::write_lgx, keyarg, SRC_POS );
+  pkg->def_vec( "read_lgx", "objref(s) string(s)", io::read_lgx, keyarg, SRC_POS );
 
-  pkg->def_vec( "writeASW", "objref(s)", IO::writeASW, keyarg, SRC_POS );
-  pkg->def_vec( "readASW", "objref(s) string(s)", IO::readASW, keyarg, SRC_POS );
-  pkg->def( "saveASW", "objref filename", IO::saveASW, SRC_POS );
-  pkg->def( "loadASW", "objref filename", IO::loadASW, SRC_POS );
-  pkg->def( "retrieveASW", "filename", IO::retrieveASW, SRC_POS );
+  pkg->def_vec( "write_asw", "objref(s)", io::write_asw, keyarg, SRC_POS );
+  pkg->def_vec( "read_asw", "objref(s) string(s)", io::read_asw, keyarg, SRC_POS );
+  pkg->def( "save_asw", "objref filename", io::save_asw, SRC_POS );
+  pkg->def( "load_asw", "objref filename", io::load_asw, SRC_POS );
+  pkg->def( "retrieve_asw", "filename", io::retrieve_asw, SRC_POS );
 
-  pkg->def_vec( "writeGVX", "objref(s)", IO::writeGVX, keyarg, SRC_POS );
-  pkg->def( "saveGVX", "objref filename", IO::saveGVX, SRC_POS );
-  pkg->def( "loadGVX", "filename", IO::loadGVX, SRC_POS );
+  pkg->def_vec( "write_gvx", "objref(s)", io::write_gvx, keyarg, SRC_POS );
+  pkg->def( "save_gvx", "objref filename", io::save_gvx, SRC_POS );
+  pkg->def( "load_gvx", "filename", io::load_gvx, SRC_POS );
 
-  pkg->def( "xmlDebug", "filename", IO::xmlDebug, SRC_POS );
+  pkg->def( "xml_debug", "filename", io::xml_debug, SRC_POS );
 
   GVX_PKG_RETURN(pkg);
 }
@@ -161,14 +162,14 @@ int Outputfile_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Outputfile_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "OutputFile", "4.$Revision$");
-  pkg->inherit_pkg("IO");
-  tcl::def_creator<OutputFile>(pkg);
-  tcl::def_basic_type_cmds<IO::IoObject>(pkg, SRC_POS);
+  GVX_PKG_CREATE(pkg, interp, "output_file", "4.$Revision$");
+  pkg->inherit_pkg("io");
+  tcl::def_creator<output_file>(pkg);
+  tcl::def_basic_type_cmds<io::serializable>(pkg, SRC_POS);
 
   pkg->def_get_set("filename",
-                   &OutputFile::getFilename,
-                   &OutputFile::setFilename,
+                   &output_file::get_filename,
+                   &output_file::set_filename,
                    SRC_POS);
 
   GVX_PKG_RETURN(pkg);

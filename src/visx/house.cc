@@ -63,7 +63,7 @@ using geom::vec3d;
 
 namespace
 {
-  const IO::VersionId HOUSE_SVID = 3;
+  const io::version_id HOUSE_SVID = 3;
 
   void drawWindow(Gfx::Canvas& canvas, int num_vert_bars, int num_horiz_bars)
   {
@@ -265,35 +265,35 @@ House::~House() throw()
 GVX_TRACE("House::~House");
 }
 
-IO::VersionId House::serialVersionId() const
+io::version_id House::class_version_id() const
 {
-GVX_TRACE("House::serialVersionId");
+GVX_TRACE("House::class_version_id");
   return HOUSE_SVID;
 }
 
-void House::readFrom(IO::Reader& reader)
+void House::read_from(io::reader& reader)
 {
-GVX_TRACE("House::readFrom");
+GVX_TRACE("House::read_from");
 
-  reader.ensureReadVersionId("House", 3,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("House", 3,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
-  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+  reader.read_base_class("GxShapeKit", io::make_proxy<GxShapeKit>(this));
 }
 
-void House::writeTo(IO::Writer& writer) const
+void House::write_to(io::writer& writer) const
 {
-GVX_TRACE("House::writeTo");
+GVX_TRACE("House::write_to");
 
-  writer.ensureWriteVersionId("House", HOUSE_SVID, 3,
+  writer.ensure_output_version_id("House", HOUSE_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
 
   writeFieldsTo(writer, classFields(), HOUSE_SVID);
 
-  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
+  writer.write_base_class("GxShapeKit", io::make_const_proxy<GxShapeKit>(this));
 }
 
 ///////////////////////////////////////////////////////////////////////

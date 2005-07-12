@@ -199,22 +199,22 @@ GVX_TRACE("GxScaler::scaledMaxDim");
   return rutz::max(scaledWidth(), scaledHeight());
 }
 
-void GxScaler::readFrom(IO::Reader& reader)
+void GxScaler::read_from(io::reader& reader)
 {
-GVX_TRACE("GxScaler::readFrom");
-  reader.readValue("mode", itsMode);
-  reader.readValue("widthFactor", itsWidthFactor);
-  reader.readValue("heightFactor", itsHeightFactor);
-  reader.readValue("aspectRatio", itsAspectRatio);
+GVX_TRACE("GxScaler::read_from");
+  reader.read_value("mode", itsMode);
+  reader.read_value("widthFactor", itsWidthFactor);
+  reader.read_value("heightFactor", itsHeightFactor);
+  reader.read_value("aspectRatio", itsAspectRatio);
 }
 
-void GxScaler::writeTo(IO::Writer& writer) const
+void GxScaler::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxScaler::writeTo");
-  writer.writeValue("mode", itsMode);
-  writer.writeValue("widthFactor", itsWidthFactor);
-  writer.writeValue("heightFactor", itsHeightFactor);
-  writer.writeValue("aspectRatio", itsAspectRatio);
+GVX_TRACE("GxScaler::write_to");
+  writer.write_value("mode", itsMode);
+  writer.write_value("widthFactor", itsWidthFactor);
+  writer.write_value("heightFactor", itsHeightFactor);
+  writer.write_value("aspectRatio", itsAspectRatio);
 }
 
 void GxScaler::draw(Gfx::Canvas& canvas) const

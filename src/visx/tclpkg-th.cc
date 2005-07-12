@@ -62,7 +62,7 @@ GVX_TRACE("Timinghdlr_Init");
 
   GVX_PKG_CREATE(pkg, interp, "TimingHdlr", "4.$Revision$");
   tcl::def_creator<TimingHdlr>(pkg);
-  pkg->inherit_pkg("IO");
+  pkg->inherit_pkg("io");
   tcl::def_basic_type_cmds<TimingHdlr>(pkg, SRC_POS);
 
   pkg->def( "addImmediateEvent", "th_id event_type msec_delay",
@@ -107,7 +107,7 @@ GVX_TRACE("Timinghandler_Init");
 
   GVX_PKG_CREATE(pkg, interp, "TimingHandler", "4.$Revision$");
   tcl::def_creator<TimingHandler>(pkg);
-  pkg->inherit_pkg("IO");
+  pkg->inherit_pkg("io");
   tcl::def_basic_type_cmds<TimingHandler>(pkg, SRC_POS);
 
   pkg->def_get_set("abortWait",

@@ -64,7 +64,7 @@ using geom::vec3d;
 
 namespace
 {
-  const IO::VersionId GABOR_SVID = 2;
+  const io::version_id GABOR_SVID = 2;
 }
 
 const Gabor::ColorMode Gabor::GRAYSCALE;
@@ -135,35 +135,35 @@ Gabor::~Gabor () throw()
 GVX_TRACE("Gabor::~Gabor");
 }
 
-IO::VersionId Gabor::serialVersionId() const
+io::version_id Gabor::class_version_id() const
 {
-GVX_TRACE("Gabor::serialVersionId");
+GVX_TRACE("Gabor::class_version_id");
   return GABOR_SVID;
 }
 
-void Gabor::readFrom(IO::Reader& reader)
+void Gabor::read_from(io::reader& reader)
 {
-GVX_TRACE("Gabor::readFrom");
+GVX_TRACE("Gabor::read_from");
 
-  reader.ensureReadVersionId("Gabor", 2,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("Gabor", 2,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
-  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+  reader.read_base_class("GxShapeKit", io::make_proxy<GxShapeKit>(this));
 }
 
-void Gabor::writeTo(IO::Writer& writer) const
+void Gabor::write_to(io::writer& writer) const
 {
-GVX_TRACE("Gabor::writeTo");
+GVX_TRACE("Gabor::write_to");
 
-  writer.ensureWriteVersionId("Gabor", GABOR_SVID, 2,
+  writer.ensure_output_version_id("Gabor", GABOR_SVID, 2,
                               "Try groovx0.8a4", SRC_POS);
 
   writeFieldsTo(writer, classFields(), GABOR_SVID);
 
-  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
+  writer.write_base_class("GxShapeKit", io::make_const_proxy<GxShapeKit>(this));
 }
 
 void Gabor::setLogContrast(double logContrast)

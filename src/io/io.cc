@@ -55,71 +55,73 @@ namespace
 {
   using namespace nub;
 
-  class DummyCountingWriter : public IO::Writer
+  class counting_writer : public io::writer
   {
   public:
-    DummyCountingWriter() : itsC(0) {}
+    counting_writer() : m_count(0) {}
 
-    virtual void writeChar(const char*, char)             { ++itsC; }
-    virtual void writeInt(const char*, int)               { ++itsC; }
-    virtual void writeBool(const char*, bool)             { ++itsC; }
-    virtual void writeDouble(const char*, double)         { ++itsC; }
-    virtual void writeCstring(const char*, const char*)   { ++itsC; }
-    virtual void writeValueObj(const char*, const rutz::value&) { ++itsC; }
+    virtual void write_char(const char*, char)             { ++m_count; }
+    virtual void write_int(const char*, int)               { ++m_count; }
+    virtual void write_bool(const char*, bool)             { ++m_count; }
+    virtual void write_double(const char*, double)         { ++m_count; }
+    virtual void write_cstring(const char*, const char*)   { ++m_count; }
+    virtual void write_value_obj(const char*, const rutz::value&) { ++m_count; }
 
-    virtual void writeRawData(const char*,
-                              const unsigned char*,
-                              unsigned int)               { ++itsC; }
+    virtual void write_byte_array(const char*,
+                                  const unsigned char*,
+                                  unsigned int)
+    { ++m_count; }
 
-    virtual void writeObject(const char*,
-                             soft_ref<const IO::IoObject>) { ++itsC; }
+    virtual void write_object(const char*,
+                              soft_ref<const io::serializable>)
+    { ++m_count; }
 
-    virtual void writeOwnedObject(const char*,
-                                  ref<const IO::IoObject>){ ++itsC; }
+    virtual void write_owned_object(const char*,
+                                    ref<const io::serializable>)
+    { ++m_count; }
 
-    virtual void writeBaseClass(const char*,
-                                ref<const IO::IoObject>)  { ++itsC; }
+    virtual void write_base_class(const char*,
+                                  ref<const io::serializable>)
+    { ++m_count; }
 
-    virtual void writeRoot(const IO::IoObject*) {}
+    virtual void write_root(const io::serializable*) {}
 
-    void reset() { itsC = 0; }
-    unsigned int attribCount() const { return itsC; }
+    unsigned int get_count() const { return m_count; }
 
   private:
-    unsigned int itsC;
+    unsigned int m_count;
   };
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IO member definitions
+// io member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-IO::IoObject::IoObject() throw()
+io::serializable::serializable() throw()
 {
-GVX_TRACE("IO::IoObject::IoObject");
+GVX_TRACE("io::serializable::serializable");
   dbg_eval_nl(3, this);
 }
 
-// Must be defined out of line to avoid duplication of IO's vtable
-IO::IoObject::~IoObject() throw()
+// Must be defined out of line to avoid duplication of io's vtable
+io::serializable::~serializable() throw()
 {
-GVX_TRACE("IO::IoObject::~IoObject");
+GVX_TRACE("io::serializable::~serializable");
 }
 
-unsigned int IO::IoObject::ioAttribCount() const
+unsigned int io::serializable::attrib_count() const
 {
-GVX_TRACE("IO::IoObject::ioAttribCount");
-  static DummyCountingWriter counter;
-  counter.reset();
-  this->writeTo(counter);
-  return counter.attribCount();
+GVX_TRACE("io::serializable::attrib_count");
+  counting_writer counter;
+  this->write_to(counter);
+  return counter.get_count();
 }
 
-IO::VersionId IO::IoObject::serialVersionId() const
+io::version_id io::serializable::class_version_id() const
 {
-GVX_TRACE("IO::IoObject::serialVersionId");
+GVX_TRACE("io::serializable::class_version_id");
   return 0;
 }
 

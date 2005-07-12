@@ -92,21 +92,21 @@ GxDisk::~GxDisk() throw()
 GVX_TRACE("GxDisk::~GxDisk");
 }
 
-IO::VersionId GxDisk::serialVersionId() const
+io::version_id GxDisk::class_version_id() const
 {
-GVX_TRACE("GxDisk::serialVersionId");
+GVX_TRACE("GxDisk::class_version_id");
   return GXDISK_SVID;
 }
 
-void GxDisk::readFrom(IO::Reader& reader)
+void GxDisk::read_from(io::reader& reader)
 {
-GVX_TRACE("GxDisk::readFrom");
+GVX_TRACE("GxDisk::read_from");
   readFieldsFrom(reader, classFields());
 }
 
-void GxDisk::writeTo(IO::Writer& writer) const
+void GxDisk::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxDisk::writeTo");
+GVX_TRACE("GxDisk::write_to");
   writeFieldsTo(writer, classFields(), GXDISK_SVID);
 }
 

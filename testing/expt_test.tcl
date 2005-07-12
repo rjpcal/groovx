@@ -51,14 +51,14 @@ test "ExptDriver::pause" "too many args" {
     ExptDriver::pause a b
 } {^wrong \# args: should be}
 
-### ExptDriver::loadASW ###
-test "ExptDriver::loadASW" "too few args" {
-    ExptDriver::loadASW
+### ExptDriver::load_asw ###
+test "ExptDriver::load_asw" "too few args" {
+    ExptDriver::load_asw
 } {wrong \# args: should be}
-test "ExptDriver::loadASW" "too many args" {
-    ExptDriver::loadASW a b c
+test "ExptDriver::load_asw" "too many args" {
+    ExptDriver::load_asw a b c
 } {wrong \# args: should be}
-test "ExptDriver::loadASW" "fMRI sample" {
+test "ExptDriver::load_asw" "fMRI sample" {
     -> [Toglet::current] setVisible false
     objectdb::clear
     set expt [new ExptDriver]
@@ -67,12 +67,12 @@ test "ExptDriver::loadASW" "fMRI sample" {
     set i [expr int(rand()*3)]
     set filename [lindex $files $i]
     puts "filename $filename"
-    -> $expt loadASW $::TEST_DIR/$filename
+    -> $expt load_asw $::TEST_DIR/$filename
     set dif [expr [GxShapeKit::count_all] - [lindex $ocounts $i]]
     delete $expt
     return $dif
 } {^0$}
-test "ExptDriver::loadASW" "psyphy samples" {
+test "ExptDriver::load_asw" "psyphy samples" {
     set files {expt080905Oct2000.asw.gz train_2_fishes_or.asw.gz pairs_mfaces_s50.asw.gz}
     set ocounts {20 10 20}
     set tcounts {20 10 400}
@@ -83,7 +83,7 @@ test "ExptDriver::loadASW" "psyphy samples" {
         objectdb::clear
         set expt [new ExptDriver]
 
-        -> $expt loadASW $::TEST_DIR/[lindex $files $i]
+        -> $expt load_asw $::TEST_DIR/[lindex $files $i]
         set odif [expr [GxShapeKit::count_all] - [lindex $ocounts $i]]
         set tdif [expr [Trial::count_all] - [lindex $tcounts $i]]
         append result "$odif $tdif "
@@ -92,12 +92,12 @@ test "ExptDriver::loadASW" "psyphy samples" {
     return $result
 } {^0 0 0 0 0 0 $}
 
-### ExptDriver::saveASW ###
-test "ExptDriver::saveASW" "too few args" {
-    ExptDriver::saveASW
+### ExptDriver::save_asw ###
+test "ExptDriver::save_asw" "too few args" {
+    ExptDriver::save_asw
 } {wrong \# args: should be}
-test "ExptDriver::saveASW" "too many args" {
-    ExptDriver::saveASW a b c
+test "ExptDriver::save_asw" "too many args" {
+    ExptDriver::save_asw a b c
 } {wrong \# args: should be}
 
 ### ExptDriver::halt ###

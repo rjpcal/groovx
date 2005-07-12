@@ -1,5 +1,5 @@
-/** @file io/writeidmap.h helper class used in AsciiStreamWriter and
-    XmlWriter */
+/** @file io/writeidmap.h helper class used in io::writer subclass
+    implementations */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -38,29 +38,29 @@
 
 #include "rutz/debug.h"
 
-namespace IO
+namespace io
 {
   /// Translate nub::uid values into a repeatable id sequence for the XML file.
   /** This way, we can guarantee that a given object hierarchy will
       always produce the same XML file, regardless of what the
       nub::uid values happen to be. */
-  class WriteIdMap
+  class write_id_map
   {
   public:
-    WriteIdMap() :
-      itsMap(),
-      itsNextId(1)
+    write_id_map() :
+      m_map(),
+      m_next_id(1)
     {}
 
     int get(nub::uid uid) const
     {
       if (uid == 0) return 0;
 
-      MapType::iterator itr = itsMap.find(uid);
-      if (itr == itsMap.end())
+      map_type::iterator itr = m_map.find(uid);
+      if (itr == m_map.end())
         {
-          int val = itsNextId++;
-          itsMap.insert(MapType::value_type(uid, val));
+          int val = m_next_id++;
+          m_map.insert(map_type::value_type(uid, val));
           return val;
         }
 
@@ -70,9 +70,10 @@ namespace IO
     }
 
   private:
-    typedef std::map<nub::uid, int> MapType;
-    mutable MapType itsMap;
-    mutable int itsNextId;
+    typedef std::map<nub::uid, int> map_type;
+
+    mutable map_type   m_map;
+    mutable int        m_next_id;
   };
 }
 

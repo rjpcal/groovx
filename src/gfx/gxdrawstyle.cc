@@ -42,7 +42,7 @@
 
 namespace
 {
-  const IO::VersionId GXDRAWSTYLE_SVID = 1;
+  const io::version_id GXDRAWSTYLE_SVID = 1;
 }
 
 GxDrawStyle::GxDrawStyle() :
@@ -57,22 +57,22 @@ GxDrawStyle::GxDrawStyle() :
 
 GxDrawStyle::~GxDrawStyle() throw() {}
 
-IO::VersionId GxDrawStyle::serialVersionId() const
+io::version_id GxDrawStyle::class_version_id() const
 {
   return GXDRAWSTYLE_SVID;
 }
 
-void GxDrawStyle::readFrom(IO::Reader& reader)
+void GxDrawStyle::read_from(io::reader& reader)
 {
-  reader.ensureReadVersionId("GxDrawStyle", 1,
-                             "Try groovx0.8a7", SRC_POS);
+  reader.ensure_version_id("GxDrawStyle", 1,
+                           "Try groovx0.8a7", SRC_POS);
 
   readFieldsFrom(reader, classFields());
 }
 
-void GxDrawStyle::writeTo(IO::Writer& writer) const
+void GxDrawStyle::write_to(io::writer& writer) const
 {
-  writer.ensureWriteVersionId("GxDrawStyle", GXDRAWSTYLE_SVID, 1,
+  writer.ensure_output_version_id("GxDrawStyle", GXDRAWSTYLE_SVID, 1,
                               "Try groovx0.8a7", SRC_POS);
 
   writeFieldsTo(writer, classFields(), GXDRAWSTYLE_SVID);

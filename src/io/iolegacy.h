@@ -1,4 +1,4 @@
-/** @file io/iolegacy.h IO::Reader and IO::Writer subclasses for the
+/** @file io/iolegacy.h io::reader and io::writer subclasses for the
     "legacy" file format */
 
 ///////////////////////////////////////////////////////////////////////
@@ -40,102 +40,102 @@
 
 #include <iosfwd>
 
-namespace IO
+namespace io
 {
-  class LegacyReader;
-  class LegacyWriter;
+  class legacy_reader;
+  class legacy_writer;
 }
 
 // ########################################################
 
-/// Implements the IO::Reader interface using the "legacy" data format.
+/// Implements the io::reader interface using the "legacy" data format.
 
-class IO::LegacyReader : public IO::Reader
+class io::legacy_reader : public io::reader
 {
 public:
-  LegacyReader(std::istream& is);
-  virtual ~LegacyReader() throw();
+  legacy_reader(std::istream& is);
+  virtual ~legacy_reader() throw();
 
-  virtual IO::VersionId readSerialVersionId();
+  virtual io::version_id input_version_id();
 
-  virtual char readChar(const rutz::fstring& name);
-  virtual int readInt(const rutz::fstring& name);
-  virtual bool readBool(const rutz::fstring& name);
-  virtual double readDouble(const rutz::fstring& name);
-  virtual void readValueObj(const rutz::fstring& name, rutz::value& v);
+  virtual char read_char(const rutz::fstring& name);
+  virtual int read_int(const rutz::fstring& name);
+  virtual bool read_bool(const rutz::fstring& name);
+  virtual double read_double(const rutz::fstring& name);
+  virtual void read_value_obj(const rutz::fstring& name, rutz::value& v);
 
-  virtual void readRawData(const rutz::fstring& name, rutz::byte_array& data)
-  { defaultReadRawData(name, data); }
+  virtual void read_byte_array(const rutz::fstring& name, rutz::byte_array& data)
+  { default_read_byte_array(name, data); }
 
-  virtual nub::ref    <IO::IoObject>      readObject(const rutz::fstring& name);
-  virtual nub::soft_ref<IO::IoObject> readMaybeObject(const rutz::fstring& name);
+  virtual nub::ref    <io::serializable>      read_object(const rutz::fstring& name);
+  virtual nub::soft_ref<io::serializable> read_weak_object(const rutz::fstring& name);
 
-  virtual void readOwnedObject(const rutz::fstring& name,
-                               nub::ref<IO::IoObject> obj);
+  virtual void read_owned_object(const rutz::fstring& name,
+                               nub::ref<io::serializable> obj);
 
-  virtual void readBaseClass(const rutz::fstring& baseClassName,
-                             nub::ref<IO::IoObject> basePart);
+  virtual void read_base_class(const rutz::fstring& base_class_name,
+                               nub::ref<io::serializable> base_part);
 
-  virtual nub::ref<IO::IoObject> readRoot(IO::IoObject* root=0);
+  virtual nub::ref<io::serializable> read_root(io::serializable* root=0);
 
 protected:
-  virtual rutz::fstring readStringImpl(const rutz::fstring& name);
+  virtual rutz::fstring read_string_impl(const rutz::fstring& name);
 
 private:
-  LegacyReader(const LegacyReader&);
-  LegacyReader& operator=(const LegacyReader&);
+  legacy_reader(const legacy_reader&);
+  legacy_reader& operator=(const legacy_reader&);
 
-  class Impl;
-  friend class Impl;
+  class impl;
+  friend class impl;
 
-  Impl* const rep;
+  impl* const rep;
 };
 
 
 // ########################################################
 
-/// Implements the IO::Writer interface using the "legacy" data format.
+/// Implements the io::writer interface using the "legacy" data format.
 
-class IO::LegacyWriter : public IO::Writer
+class io::legacy_writer : public io::writer
 {
 public:
-  LegacyWriter(std::ostream& os, bool write_bases=true);
-  virtual ~LegacyWriter() throw();
+  legacy_writer(std::ostream& os, bool write_bases=true);
+  virtual ~legacy_writer() throw();
 
-  void usePrettyPrint(bool yes=true);
+  void use_pretty_print(bool yes=true);
 
-  virtual void writeChar(const char* name, char val);
-  virtual void writeInt(const char* name, int val);
-  virtual void writeBool(const char* name, bool val);
-  virtual void writeDouble(const char* name, double val);
-  virtual void writeValueObj(const char* name, const rutz::value& v);
+  virtual void write_char(const char* name, char val);
+  virtual void write_int(const char* name, int val);
+  virtual void write_bool(const char* name, bool val);
+  virtual void write_double(const char* name, double val);
+  virtual void write_value_obj(const char* name, const rutz::value& v);
 
-  virtual void writeRawData(const char* name,
+  virtual void write_byte_array(const char* name,
                             const unsigned char* data,
                             unsigned int length);
 
-  virtual void writeObject(const char* name,
-                           nub::soft_ref<const IO::IoObject> obj);
+  virtual void write_object(const char* name,
+                           nub::soft_ref<const io::serializable> obj);
 
-  virtual void writeOwnedObject(const char* name,
-                                nub::ref<const IO::IoObject> obj);
+  virtual void write_owned_object(const char* name,
+                                nub::ref<const io::serializable> obj);
 
-  virtual void writeBaseClass(const char* baseClassName,
-                              nub::ref<const IO::IoObject> basePart);
+  virtual void write_base_class(const char* base_class_name,
+                                nub::ref<const io::serializable> base_part);
 
-  virtual void writeRoot(const IO::IoObject* root);
+  virtual void write_root(const io::serializable* root);
 
 protected:
-  virtual void writeCstring(const char* name, const char* val);
+  virtual void write_cstring(const char* name, const char* val);
 
 private:
-  LegacyWriter(const LegacyWriter&);
-  LegacyWriter& operator=(const LegacyWriter&);
+  legacy_writer(const legacy_writer&);
+  legacy_writer& operator=(const legacy_writer&);
 
-  class Impl;
-  friend class Impl;
+  class impl;
+  friend class impl;
 
-  Impl* const rep;
+  impl* const rep;
 };
 
 static const char vcid_groovx_io_iolegacy_h_utc20050626084021[] = "$Id$ $HeadURL$";

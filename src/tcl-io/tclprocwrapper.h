@@ -46,7 +46,7 @@ namespace tcl
 }
 
 /// A serializable wrapper for Tcl script procedures.
-class tcl::ProcWrapper : public IO::IoObject
+class tcl::ProcWrapper : public io::serializable
 {
 private:
   ProcWrapper(const ProcWrapper&);
@@ -66,8 +66,8 @@ public:
 
   virtual ~ProcWrapper() throw();
 
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   /** Redefine the code chunk with a new args and body, but keeping the same
       name as always. */

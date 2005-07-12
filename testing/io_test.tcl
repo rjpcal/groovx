@@ -14,35 +14,35 @@ set ::IO_TEST_DEFINED 1
 
 proc testReadWrite { pkg objref } {
 
-    ::test "${pkg}::writeLGX" "normal use" [format {
-        set code [catch {IO::writeLGX %s} result]
+    ::test "${pkg}::write_lgx" "normal use" [format {
+        set code [catch {io::write_lgx %s} result]
         return "$code $result"
     } $objref] {^0.*$}
 
-    ::test "${pkg}::readLGX" "normal use" [format {
-        set str [IO::writeLGX %s]
-        set code [catch {IO::readLGX %s $str} result]
+    ::test "${pkg}::read_lgx" "normal use" [format {
+        set str [io::write_lgx %s]
+        set code [catch {io::read_lgx %s $str} result]
         return "$code $result"
     } $objref $objref] {^0.*$}
 
-    ::test "${pkg}::readLGX" "error on junk" [format {
-        set code [catch {IO::readLGX %s junk} result]
+    ::test "${pkg}::read_lgx" "error on junk" [format {
+        set code [catch {io::read_lgx %s junk} result]
         return "$code $result"
     } $objref] {^1.*$}
 
-    ::test "${pkg}::writeASW" "normal use" [format {
-        set code [catch {IO::writeASW %s} result]
+    ::test "${pkg}::write_asw" "normal use" [format {
+        set code [catch {io::write_asw %s} result]
         return "$code $result"
     } $objref] {^0.*$}
 
-    ::test "${pkg}::readASW" "normal use" [format {
-        set str [IO::writeASW %s]
-        set code [catch {IO::readASW %s $str} msg]
+    ::test "${pkg}::read_asw" "normal use" [format {
+        set str [io::write_asw %s]
+        set code [catch {io::read_asw %s $str} msg]
         set result "$code$msg"
     } $objref $objref] {^0$}
 
-    ::test "${pkg}::readASW" "error on junk" [format {
-        set code [catch {IO::readASW %s junk} result]
+    ::test "${pkg}::read_asw" "error on junk" [format {
+        set code [catch {io::read_asw %s junk} result]
         return "$code $result"
     } $objref] {^1.*$}
 }

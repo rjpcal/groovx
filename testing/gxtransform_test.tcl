@@ -79,21 +79,21 @@ test "GxTransform-GxTransform::translation" "error on non-numeric input" {
     GxTransform::translation $::pos {1.0 2.0 junk}
 } {GxTransform::translation: }
 
-### GxTransform::writeLGX ###
-test "GxTransform-GxTransform::writeLGX" "too few args" {
-    IO::writeLGX
+### GxTransform::write_lgx ###
+test "GxTransform-GxTransform::write_lgx" "too few args" {
+    io::write_lgx
 } {wrong \# args: should be}
-test "GxTransform-IO::writeLGX" "too many args" {
-    IO::writeLGX posid junk
+test "GxTransform-io::write_lgx" "too many args" {
+    io::write_lgx posid junk
 } {wrong \# args: should be}
-test "GxTransform-IO::writeLGX" "normal use" {
+test "GxTransform-io::write_lgx" "normal use" {
 	 GxTransform::scaling $::pos {1.0 2.5 4.0}
 	 GxTransform::translation $::pos {5.3 10.6 15.9}
-	 IO::writeLGX $::pos
+	 io::write_lgx $::pos
 } "GxTransform @$::INT"
-test "GxTransform-IO::writeLGX" "error on non-integral posid" {
-    IO::writeLGX 1.5
-} {IO::writeLGX: }
+test "GxTransform-io::write_lgx" "error on non-integral posid" {
+    io::write_lgx 1.5
+} {io::write_lgx: }
 
 ### GxTransform::typeCmd ###
 test "GxTransform-Obj::type" "args" {

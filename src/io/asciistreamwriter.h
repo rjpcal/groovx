@@ -1,4 +1,4 @@
-/** @file io/asciistreamwriter.h write IO::IoObject objects in the ASW
+/** @file io/asciistreamwriter.h write io::serializable objects in the ASW
     format */
 
 ///////////////////////////////////////////////////////////////////////
@@ -38,20 +38,19 @@
 
 #include <iosfwd>
 
-namespace IO
+namespace io
 {
-  class Writer;
+  class writer;
 
-  /// Make an AsciiStream writer that writes to \c std::ostream.
-  /** \c AsciiStreamWriter implements the \c IO::Writer interface, using
-      nice human-readable ascii formatting. \c AsciiStreamWriter writes
-      objects to an output stream in a ascii format that is readable by \c
-      AsciiStreamReader. With this data format, objects may read and write
-      their attributes in any order. */
-  rutz::shared_ptr<IO::Writer> makeAsciiStreamWriter(std::ostream& os);
+  /// Make an ASW writer that writes to the given std::ostream.
+  /** The returned io::writer serializes objects to an output stream
+      in the human-readable ASW plaintext format. With this data
+      format, objects may read and write their attributes in any
+      order. */
+  rutz::shared_ptr<io::writer> make_asw_writer(std::ostream& os);
 
-  /// Make an AsciiStream writer that writes to the file named \a filename.
-  rutz::shared_ptr<IO::Writer> makeAsciiStreamWriter(const char* filename);
+  /// Make an ASW writer that writes to the named file.
+  rutz::shared_ptr<io::writer> make_asw_writer(const char* filename);
 }
 
 static const char vcid_groovx_io_asciistreamwriter_h_utc20050626084021[] = "$Id$ $HeadURL$";

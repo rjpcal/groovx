@@ -71,7 +71,7 @@ namespace
 {
   int dummy_int=0; // We need a dummy int to attach various CPtrField's
 
-  const IO::VersionId FISH_SVID = 4;
+  const io::version_id FISH_SVID = 4;
 
   using geom::vec2d;
   using geom::vec3f;
@@ -306,35 +306,35 @@ GVX_TRACE("Fish::restoreToDefault");
   itsParts[MA_3].itsPt1.set(-0.7022, -0.1054, 0.7022);
 }
 
-IO::VersionId Fish::serialVersionId() const
+io::version_id Fish::class_version_id() const
 {
-GVX_TRACE("Fish::serialVersionId");
+GVX_TRACE("Fish::class_version_id");
   return FISH_SVID;
 }
 
-void Fish::readFrom(IO::Reader& reader)
+void Fish::read_from(io::reader& reader)
 {
-GVX_TRACE("Fish::readFrom");
+GVX_TRACE("Fish::read_from");
 
-  reader.ensureReadVersionId("Fish", 4,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("Fish", 4,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
-  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+  reader.read_base_class("GxShapeKit", io::make_proxy<GxShapeKit>(this));
 }
 
-void Fish::writeTo(IO::Writer& writer) const
+void Fish::write_to(io::writer& writer) const
 {
-GVX_TRACE("Fish::writeTo");
+GVX_TRACE("Fish::write_to");
 
-  writer.ensureWriteVersionId("Fish", FISH_SVID, 4,
+  writer.ensure_output_version_id("Fish", FISH_SVID, 4,
                               "Try groovx0.8a7", SRC_POS);
 
   writeFieldsTo(writer, classFields(), FISH_SVID);
 
-  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
+  writer.write_base_class("GxShapeKit", io::make_const_proxy<GxShapeKit>(this));
 }
 
 void Fish::updatePtrs()

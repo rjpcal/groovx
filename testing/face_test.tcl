@@ -119,22 +119,22 @@ test "Face::mouthHeight" "error from bad objid" {
 unset faceid
 unset EPS
 
-### readLGX ###
-test "Face::readLGX" "error from wrong type" {
+### read_lgx ###
+test "Face::read_lgx" "error from wrong type" {
     set fx [Obj::new Face]
-    -> $fx readLGX junk
-} {readLGX: }
-test "Face::readLGX" "writeLGX/readLGX check" {
+    -> $fx read_lgx junk
+} {read_lgx: }
+test "Face::read_lgx" "write_lgx/read_lgx check" {
     set f [Obj::new Face]
     -> $f noseLength -1.2
     -> $f mouthHeight -0.6
     -> $f eyeHeight 0.4
     -> $f eyeDistance 0.6
-    set str1 [-> $f writeLGX]
+    set str1 [-> $f write_lgx]
 
     set f2 [Obj::new Face]
-    -> $f2 readLGX $str1
-    set str2 [-> $f2 writeLGX]
+    -> $f2 read_lgx $str1
+    set str2 [-> $f2 write_lgx]
 
     expr [string compare $str1 $str2] == 0
 } {^1$}

@@ -107,21 +107,21 @@ GVX_TRACE("GxPerspectiveCamera::classFields");
   return FIELD_MAP;
 }
 
-IO::VersionId GxPerspectiveCamera::serialVersionId() const
+io::version_id GxPerspectiveCamera::class_version_id() const
 {
-GVX_TRACE("GxPerspectiveCamera::serialVersionId");
+GVX_TRACE("GxPerspectiveCamera::class_version_id");
   return GXPC_SVID;
 }
 
-void GxPerspectiveCamera::readFrom(IO::Reader& reader)
+void GxPerspectiveCamera::read_from(io::reader& reader)
 {
-GVX_TRACE("GxPerspectiveCamera::readFrom");
+GVX_TRACE("GxPerspectiveCamera::read_from");
   readFieldsFrom(reader, classFields());
 }
 
-void GxPerspectiveCamera::writeTo(IO::Writer& writer) const
+void GxPerspectiveCamera::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxPerspectiveCamera::writeTo");
+GVX_TRACE("GxPerspectiveCamera::write_to");
   writeFieldsTo(writer, classFields(), GXPC_SVID);
 }
 
@@ -226,21 +226,21 @@ GVX_TRACE("GxFixedScaleCamera::classFields");
   return FIELD_MAP;
 }
 
-IO::VersionId GxFixedScaleCamera::serialVersionId() const
+io::version_id GxFixedScaleCamera::class_version_id() const
 {
-GVX_TRACE("GxFixedScaleCamera::serialVersionId");
+GVX_TRACE("GxFixedScaleCamera::class_version_id");
   return GXFSC_SVID;
 }
 
-void GxFixedScaleCamera::readFrom(IO::Reader& reader)
+void GxFixedScaleCamera::read_from(io::reader& reader)
 {
-GVX_TRACE("GxFixedScaleCamera::readFrom");
+GVX_TRACE("GxFixedScaleCamera::read_from");
   readFieldsFrom(reader, classFields());
 }
 
-void GxFixedScaleCamera::writeTo(IO::Writer& writer) const
+void GxFixedScaleCamera::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxFixedScaleCamera::writeTo");
+GVX_TRACE("GxFixedScaleCamera::write_to");
   writeFieldsTo(writer, classFields(), GXFSC_SVID);
 }
 
@@ -302,21 +302,21 @@ GVX_TRACE("GxPsyphyCamera::classFields");
   return FIELD_MAP;
 }
 
-IO::VersionId GxPsyphyCamera::serialVersionId() const
+io::version_id GxPsyphyCamera::class_version_id() const
 {
-GVX_TRACE("GxPsyphyCamera::serialVersionId");
+GVX_TRACE("GxPsyphyCamera::class_version_id");
   return GXPPC_SVID;
 }
 
-void GxPsyphyCamera::readFrom(IO::Reader& reader)
+void GxPsyphyCamera::read_from(io::reader& reader)
 {
-GVX_TRACE("GxPsyphyCamera::readFrom");
+GVX_TRACE("GxPsyphyCamera::read_from");
   readFieldsFrom(reader, classFields());
 }
 
-void GxPsyphyCamera::writeTo(IO::Writer& writer) const
+void GxPsyphyCamera::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxPsyphyCamera::writeTo");
+GVX_TRACE("GxPsyphyCamera::write_to");
   writeFieldsTo(writer, classFields(), GXPPC_SVID);
 }
 

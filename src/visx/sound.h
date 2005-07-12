@@ -49,7 +49,7 @@ namespace nub
 }
 
 /// Sound is a generic interface to playable sound snippets.
-class Sound : public IO::IoObject
+class Sound : public io::serializable
 {
 public:
   /// Returns a pointer to a new platform-appropriate Sound object.
@@ -71,8 +71,8 @@ public:
 
   virtual ~Sound() throw();
 
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   /// Play the sound.
   /** This will load the sound file from disk if it has not yet been

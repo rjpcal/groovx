@@ -1,4 +1,4 @@
-/** @file io/iolegacy.cc IO::Reader and IO::Writer subclasses for the
+/** @file io/iolegacy.cc io::reader and io::writer subclasses for the
     "legacy" file format */
 ///////////////////////////////////////////////////////////////////////
 //
@@ -57,46 +57,47 @@ using nub::soft_ref;
 
 ///////////////////////////////////////////////////////////////////////
 //
-// LegacyReader::Impl definition
+// legacy_reader::impl definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class IO::LegacyReader::Impl
+class io::legacy_reader::impl
 {
-  Impl(const Impl&);
-  Impl& operator=(const Impl&);
+  impl(const impl&);
+  impl& operator=(const impl&);
 
 public:
-  Impl(IO::LegacyReader* owner, std::istream& is) :
-    itsOwner(owner),
-    itsInStream(is),
-    itsLegacyVersionId(0)
+
+  io::legacy_reader*  m_owner;
+  std::istream&       m_stream;
+  int                 m_legacy_version_id;
+
+  impl(io::legacy_reader* owner, std::istream& is) :
+    m_owner(owner),
+    m_stream(is),
+    m_legacy_version_id(0)
   {}
 
-  void throwIfError(const char* type, const rutz::file_pos& pos)
+  void throw_if_error(const char* type, const rutz::file_pos& pos)
   {
-    if (itsInStream.fail())
+    if (m_stream.fail())
       {
-        dbg_print(3, "throwIfError for"); dbg_eval_nl(3, type);
+        dbg_print(3, "throw_if_error for"); dbg_eval_nl(3, type);
         throw rutz::error(type, pos);
       }
   }
 
-  void throwIfError(const fstring& type, const rutz::file_pos& pos)
+  void throw_if_error(const fstring& type, const rutz::file_pos& pos)
   {
-    throwIfError(type.c_str(), pos);
+    throw_if_error(type.c_str(), pos);
   }
 
-  IO::LegacyReader* itsOwner;
-  std::istream& itsInStream;
-  int itsLegacyVersionId;
-
-  void readTypename(const fstring& correct_name)
+  void read_typename(const fstring& correct_name)
   {
-    GVX_TRACE("IO::LegacyReader::Impl::readTypename(fstring)");
+    GVX_TRACE("io::legacy_reader::impl::read_typename(fstring)");
 
     fstring name;
-    itsInStream >> name;
+    m_stream >> name;
 
     if (! name.equals(correct_name))
       {
@@ -108,12 +109,12 @@ public:
   }
 
   // An override for when we have two alternative names
-  void readTypename(const fstring& correct_name, const fstring& alt_name)
+  void read_typename(const fstring& correct_name, const fstring& alt_name)
   {
-    GVX_TRACE("IO::LegacyReader::Impl::readTypename(fstring, fstring)");
+    GVX_TRACE("io::legacy_reader::impl::read_typename(fstring, fstring)");
 
     fstring name;
-    itsInStream >> name;
+    m_stream >> name;
 
     if ( !name.equals(correct_name) && !name.equals(alt_name) )
       {
@@ -124,377 +125,377 @@ public:
       }
   }
 
-  int getLegacyVersionId()
+  int get_legacy_version_id()
   {
-    GVX_TRACE("IO::LegacyReader::Impl::getLegacyVersionId");
-    while ( isspace(itsInStream.peek()) )
-      { itsInStream.get(); }
+    GVX_TRACE("io::legacy_reader::impl::get_legacy_version_id");
+    while ( isspace(m_stream.peek()) )
+      { m_stream.get(); }
 
     int version = -1;
 
-    if (itsInStream.peek() == '@')
+    if (m_stream.peek() == '@')
       {
-        int c = itsInStream.get();
+        int c = m_stream.get();
         GVX_ASSERT(c == '@');
 
-        itsInStream >> version;
+        m_stream >> version;
         dbg_eval_nl(3, version);
-        throwIfError("versionId", SRC_POS);
+        throw_if_error("version id", SRC_POS);
       }
     else
       {
-        throw rutz::error("missing legacy versionId", SRC_POS);
+        throw rutz::error("missing legacy version id", SRC_POS);
       }
 
     return version;
   }
 
-  void grabLeftBrace()
+  void grab_left_brace()
   {
     char brace;
-    itsInStream >> brace;
+    m_stream >> brace;
     if (brace != '{')
       {
-        dbg_print_nl(3, "grabLeftBrace failed");
+        dbg_print_nl(3, "grab_left_brace failed");
         throw rutz::error("missing left-brace", SRC_POS);
       }
   }
 
-  void grabRightBrace()
+  void grab_right_brace()
   {
     char brace;
-    itsInStream >> brace;
+    m_stream >> brace;
     if (brace != '}')
       {
-        dbg_print_nl(3, "grabRightBrace failed");
+        dbg_print_nl(3, "grab_right_brace failed");
         throw rutz::error("missing right-brace", SRC_POS);
       }
   }
 
-  void inflateObject(const fstring& name, ref<IO::IoObject> obj)
+  void inflate_object(const fstring& name, ref<io::serializable> obj)
   {
-    GVX_TRACE("IO::LegacyReader::Impl::inflateObject");
+    GVX_TRACE("io::legacy_reader::impl::inflate_object");
 
     dbg_eval_nl(3, name);
 
-    itsLegacyVersionId = getLegacyVersionId();
-    if (itsLegacyVersionId != -1)
+    m_legacy_version_id = get_legacy_version_id();
+    if (m_legacy_version_id != -1)
       {
-        grabLeftBrace();
-        obj->readFrom(*itsOwner);
-        grabRightBrace();
+        grab_left_brace();
+        obj->read_from(*m_owner);
+        grab_right_brace();
       }
 
-    throwIfError(name, SRC_POS);
+    throw_if_error(name, SRC_POS);
   }
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// LegacyReader member definitions
+// legacy_reader member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-IO::LegacyReader::LegacyReader(std::istream& is) :
-  rep(new Impl(this, is))
+io::legacy_reader::legacy_reader(std::istream& is) :
+  rep(new impl(this, is))
 {
-GVX_TRACE("IO::LegacyReader::LegacyReader");
+GVX_TRACE("io::legacy_reader::legacy_reader");
 }
 
-IO::LegacyReader::~LegacyReader() throw()
+io::legacy_reader::~legacy_reader() throw()
 {
-GVX_TRACE("IO::LegacyReader::~LegacyReader");
+GVX_TRACE("io::legacy_reader::~legacy_reader");
   delete rep;
 }
 
-IO::VersionId IO::LegacyReader::readSerialVersionId()
+io::version_id io::legacy_reader::input_version_id()
 {
-GVX_TRACE("IO::LegacyReader::readSerialVersionId");
-  dbg_eval_nl(3, rep->itsLegacyVersionId);
-  return rep->itsLegacyVersionId;
+GVX_TRACE("io::legacy_reader::input_version_id");
+  dbg_eval_nl(3, rep->m_legacy_version_id);
+  return rep->m_legacy_version_id;
 }
 
-char IO::LegacyReader::readChar(const fstring& name)
+char io::legacy_reader::read_char(const fstring& name)
 {
-GVX_TRACE("IO::LegacyReader::readChar");
+GVX_TRACE("io::legacy_reader::read_char");
   dbg_eval(3, name);
   char val;
-  rep->itsInStream >> val;   dbg_eval_nl(3, val);
-  rep->throwIfError(name, SRC_POS);
+  rep->m_stream >> val;   dbg_eval_nl(3, val);
+  rep->throw_if_error(name, SRC_POS);
   return val;
 }
 
-int IO::LegacyReader::readInt(const fstring& name)
+int io::legacy_reader::read_int(const fstring& name)
 {
-GVX_TRACE("IO::LegacyReader::readInt");
+GVX_TRACE("io::legacy_reader::read_int");
   dbg_eval(3, name);
   int val;
-  rep->itsInStream >> val;   dbg_eval_nl(3, val);
-  rep->throwIfError(name, SRC_POS);
+  rep->m_stream >> val;   dbg_eval_nl(3, val);
+  rep->throw_if_error(name, SRC_POS);
   return val;
 }
 
-bool IO::LegacyReader::readBool(const fstring& name)
+bool io::legacy_reader::read_bool(const fstring& name)
 {
-GVX_TRACE("IO::LegacyReader::readBool");
+GVX_TRACE("io::legacy_reader::read_bool");
   dbg_eval(3, name);
   int val;
-  rep->itsInStream >> val;   dbg_eval_nl(3, val);
-  rep->throwIfError(name, SRC_POS);
+  rep->m_stream >> val;   dbg_eval_nl(3, val);
+  rep->throw_if_error(name, SRC_POS);
   return bool(val);
 }
 
-double IO::LegacyReader::readDouble(const fstring& name)
+double io::legacy_reader::read_double(const fstring& name)
 {
-GVX_TRACE("IO::LegacyReader::readDouble");
+GVX_TRACE("io::legacy_reader::read_double");
   dbg_eval(3, name);
   double val;
-  rep->itsInStream >> val;   dbg_eval_nl(3, val);
-  rep->throwIfError(name, SRC_POS);
+  rep->m_stream >> val;   dbg_eval_nl(3, val);
+  rep->throw_if_error(name, SRC_POS);
   return val;
 }
 
-fstring IO::LegacyReader::readStringImpl(const fstring& name)
+fstring io::legacy_reader::read_string_impl(const fstring& name)
 {
-GVX_TRACE("IO::LegacyReader::readStringImpl");
+GVX_TRACE("io::legacy_reader::read_string_impl");
   dbg_eval_nl(3, name);
 
   int numchars = 0;
-  rep->itsInStream >> numchars;
+  rep->m_stream >> numchars;
 
-  rep->throwIfError(name, SRC_POS);
+  rep->throw_if_error(name, SRC_POS);
 
   if (numchars < 0)
     {
-      throw rutz::error("LegacyReader::readStringImpl "
+      throw rutz::error("legacy_reader::read_string_impl "
                         "saw negative character count", SRC_POS);
     }
 
-  int c = rep->itsInStream.get();
+  int c = rep->m_stream.get();
   if (c != ' ')
     {
-      throw rutz::error("LegacyReader::readStringImpl "
+      throw rutz::error("legacy_reader::read_string_impl "
                         "did not have whitespace after character count", SRC_POS);
     }
 
   fstring new_string;
-  new_string.readsome(rep->itsInStream, static_cast<unsigned int>(numchars));
+  new_string.readsome(rep->m_stream, static_cast<unsigned int>(numchars));
 
-  rep->throwIfError(name, SRC_POS);
+  rep->throw_if_error(name, SRC_POS);
 
   dbg_eval_nl(3, new_string);
 
   return new_string;
 }
 
-void IO::LegacyReader::readValueObj(const fstring& name, rutz::value& v)
+void io::legacy_reader::read_value_obj(const fstring& name, rutz::value& v)
 {
-GVX_TRACE("IO::LegacyReader::readValueObj");
+GVX_TRACE("io::legacy_reader::read_value_obj");
   dbg_eval_nl(3, name);
-  v.scan_from(rep->itsInStream);
-  rep->throwIfError(name, SRC_POS);
+  v.scan_from(rep->m_stream);
+  rep->throw_if_error(name, SRC_POS);
 }
 
-ref<IO::IoObject>
-IO::LegacyReader::readObject(const fstring& name)
+ref<io::serializable>
+io::legacy_reader::read_object(const fstring& name)
 {
-GVX_TRACE("IO::LegacyReader::readObject");
-  return ref<IO::IoObject>(readMaybeObject(name));
+GVX_TRACE("io::legacy_reader::read_object");
+  return ref<io::serializable>(read_weak_object(name));
 }
 
-soft_ref<IO::IoObject>
-IO::LegacyReader::readMaybeObject(const fstring& name)
+soft_ref<io::serializable>
+io::legacy_reader::read_weak_object(const fstring& name)
 {
-GVX_TRACE("IO::LegacyReader::readMaybeObject");
+GVX_TRACE("io::legacy_reader::read_weak_object");
   dbg_eval(3, name);
   fstring type;
-  rep->itsInStream >> type; dbg_eval(3, type);
+  rep->m_stream >> type; dbg_eval(3, type);
 
   if (type == "NULL")
     {
-      return soft_ref<IO::IoObject>();
+      return soft_ref<io::serializable>();
     }
 
-  ref<IO::IoObject> obj(nub::obj_mgr::new_typed_obj<IO::IoObject>(type));
+  ref<io::serializable> obj(nub::obj_mgr::new_typed_obj<io::serializable>(type));
   dbg_eval_nl(3, obj->obj_typename());
 
-  rep->inflateObject(name, obj);
+  rep->inflate_object(name, obj);
 
   return obj;
 }
 
-void IO::LegacyReader::readOwnedObject(const fstring& name,
-                                       ref<IO::IoObject> obj)
+void io::legacy_reader::read_owned_object(const fstring& name,
+                                       ref<io::serializable> obj)
 {
-GVX_TRACE("IO::LegacyReader::readOwnedObject");
+GVX_TRACE("io::legacy_reader::read_owned_object");
 
-  rep->readTypename(obj->obj_typename());
-  rep->inflateObject(name, obj);
+  rep->read_typename(obj->obj_typename());
+  rep->inflate_object(name, obj);
 }
 
-void IO::LegacyReader::readBaseClass(const fstring& baseClassName,
-                                     ref<IO::IoObject> basePart)
+void io::legacy_reader::read_base_class(const fstring& base_class_name,
+                                        ref<io::serializable> base_part)
 {
-GVX_TRACE("IO::LegacyReader::readBaseClass");
+GVX_TRACE("io::legacy_reader::read_base_class");
 
-  // For backward-compatibility, we allow the typename to match either the
-  // real typename of the base part, or the descriptive name given to the
-  // base class.
-  rep->readTypename(basePart->obj_typename(), baseClassName);
-  rep->inflateObject(baseClassName, basePart);
+  // For backward-compatibility, we allow the typename to match either
+  // the real typename of the base part, or the descriptive name given
+  // to the base class.
+  rep->read_typename(base_part->obj_typename(), base_class_name);
+  rep->inflate_object(base_class_name, base_part);
 }
 
-ref<IO::IoObject> IO::LegacyReader::readRoot(IO::IoObject* givenRoot)
+ref<io::serializable> io::legacy_reader::read_root(io::serializable* given_root)
 {
-GVX_TRACE("IO::LegacyReader::readRoot");
-  if (givenRoot == 0)
+GVX_TRACE("io::legacy_reader::read_root");
+  if (given_root == 0)
     {
-      return readObject("rootObject");
+      return read_object("root_object");
     }
 
-  dbg_eval_nl(3, givenRoot->obj_typename());
+  dbg_eval_nl(3, given_root->obj_typename());
 
-  ref<IO::IoObject> root(givenRoot);
-  readOwnedObject("rootObject", root);
+  ref<io::serializable> root(given_root);
+  read_owned_object("root_object", root);
 
   return root;
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// LegacyWriter::Impl definition
+// legacy_writer::impl definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class IO::LegacyWriter::Impl
+class io::legacy_writer::impl
 {
 private:
-  Impl(const Impl&);
-  Impl& operator=(const Impl&);
+  impl(const impl&);
+  impl& operator=(const impl&);
 
 public:
-  Impl(IO::LegacyWriter* owner, std::ostream& os, bool write_bases) :
-    itsOwner(owner),
-    itsOutStream(os),
-    itsWriteBases(write_bases),
-    itsFSep(' '),
-    itsIndentLevel(0),
-    itsNeedsNewline(false),
-    itsNeedsWhitespace(false),
-    itsIsBeginning(true),
-    itsUsePrettyPrint(true)
+  impl(io::legacy_writer* owner, std::ostream& os, bool write_bases) :
+    m_owner(owner),
+    m_stream(os),
+    m_write_bases(write_bases),
+    m_field_sep(' '),
+    m_indent_level(0),
+    m_needs_newline(false),
+    m_needs_whitespace(false),
+    m_is_beginning(true),
+    m_do_pretty_print(true)
   {}
 
-  void throwIfError(const char* type, const rutz::file_pos& pos)
+  void throw_if_error(const char* type, const rutz::file_pos& pos)
   {
-    if (itsOutStream.fail())
+    if (m_stream.fail())
       {
-        dbg_print(3, "throwIfError for"); dbg_eval_nl(3, type);
+        dbg_print(3, "throw_if_error for"); dbg_eval_nl(3, type);
         throw rutz::error(type, pos);
       }
   }
 
-  IO::LegacyWriter* itsOwner;
+  io::legacy_writer*  m_owner;
 private:
-  std::ostream& itsOutStream;
+  std::ostream&       m_stream;
 public:
-  const bool itsWriteBases;
-  const char itsFSep;              // field separator
-  int itsIndentLevel;
-  bool itsNeedsNewline;
-  bool itsNeedsWhitespace;
-  bool itsIsBeginning;
-  bool itsUsePrettyPrint;
+  const bool          m_write_bases;
+  const char          m_field_sep;
+  int                 m_indent_level;
+  bool                m_needs_newline;
+  bool                m_needs_whitespace;
+  bool                m_is_beginning;
+  bool                m_do_pretty_print;
 
   std::ostream& stream()
     {
-      flushWhitespace();
-      itsIsBeginning = false;
-      return itsOutStream;
+      flush_whitespace();
+      m_is_beginning = false;
+      return m_stream;
     }
 
-  void flushWhitespace()
+  void flush_whitespace()
     {
-      updateNewline();
-      updateWhitespace();
+      update_newline();
+      update_whitespace();
     }
 
 private:
   class Indenter
   {
   private:
-    Impl* itsOwner;
+    impl* m_owner;
 
     Indenter(const Indenter&);
     Indenter& operator=(const Indenter&);
 
   public:
-    Indenter(Impl* impl) : itsOwner(impl) { ++(itsOwner->itsIndentLevel); }
-    ~Indenter() { --(itsOwner->itsIndentLevel); }
+    Indenter(impl* impl) : m_owner(impl) { ++(m_owner->m_indent_level); }
+    ~Indenter() { --(m_owner->m_indent_level); }
   };
 
-  void doNewlineAndTabs()
+  void do_newline_and_tabs()
     {
-      itsOutStream << '\n';
-      for (int i = 0; i < itsIndentLevel; ++i)
-        itsOutStream << '\t';
+      m_stream << '\n';
+      for (int i = 0; i < m_indent_level; ++i)
+        m_stream << '\t';
     }
 
-  void doWhitespace()
+  void do_whitespace()
     {
-      if (itsUsePrettyPrint)
-        doNewlineAndTabs();
+      if (m_do_pretty_print)
+        do_newline_and_tabs();
       else
-        itsOutStream << ' ';
+        m_stream << ' ';
     }
 
-  void updateNewline()
+  void update_newline()
     {
-      if (itsNeedsNewline)
+      if (m_needs_newline)
         {
-          doNewlineAndTabs();
-          noNewlineNeeded();
-          noWhitespaceNeeded();
+          do_newline_and_tabs();
+          no_newline_needed();
+          no_whitespace_needed();
         }
     }
 
-  void updateWhitespace()
+  void update_whitespace()
     {
-      if (itsNeedsWhitespace)
+      if (m_needs_whitespace)
         {
-          doWhitespace();
-          noWhitespaceNeeded();
+          do_whitespace();
+          no_whitespace_needed();
         }
     }
 
 public:
-  void usePrettyPrint(bool yes) { itsUsePrettyPrint = yes; }
+  void use_pretty_print(bool yes) { m_do_pretty_print = yes; }
 
-  void requestNewline() { if (!itsIsBeginning) itsNeedsNewline = true; }
-  void requestWhitespace() { if (!itsIsBeginning) itsNeedsWhitespace = true; }
-  void noNewlineNeeded() { itsNeedsNewline = false; }
-  void noWhitespaceNeeded() { itsNeedsWhitespace = false; }
+  void request_newline() { if (!m_is_beginning) m_needs_newline = true; }
+  void request_whitespace() { if (!m_is_beginning) m_needs_whitespace = true; }
+  void no_newline_needed() { m_needs_newline = false; }
+  void no_whitespace_needed() { m_needs_whitespace = false; }
 
-  void flattenObject(const char* obj_name,
-                     soft_ref<const IO::IoObject> obj,
-                     bool stub_out = false)
+  void flatten_object(const char* obj_name,
+                      soft_ref<const io::serializable> obj,
+                      bool stub_out = false)
   {
-    if (itsIndentLevel > 0)
-      requestWhitespace();
+    if (m_indent_level > 0)
+      request_whitespace();
     else
-      requestNewline();
+      request_newline();
 
     if ( !(obj.is_valid()) )
       {
-        stream() << "NULL" << itsFSep;
-        throwIfError(obj_name, SRC_POS);
+        stream() << "NULL" << m_field_sep;
+        throw_if_error(obj_name, SRC_POS);
         return;
       }
 
     GVX_ASSERT(obj.is_valid());
 
-    stream() << obj->obj_typename() << itsFSep;
-    throwIfError(obj->obj_typename().c_str(), SRC_POS);
+    stream() << obj->obj_typename() << m_field_sep;
+    throw_if_error(obj->obj_typename().c_str(), SRC_POS);
 
     stream() << '@';
 
@@ -504,143 +505,143 @@ public:
       }
     else
       {
-        stream() << obj->serialVersionId() << " {";
+        stream() << obj->class_version_id() << " {";
         {
           Indenter indent(this);
-          requestWhitespace();
-          obj->writeTo(*itsOwner);
+          request_whitespace();
+          obj->write_to(*m_owner);
         }
-        requestWhitespace();
+        request_whitespace();
         stream() << "}";
       }
 
-    if (itsIndentLevel > 0)
-      requestWhitespace();
+    if (m_indent_level > 0)
+      request_whitespace();
     else
-      requestNewline();
+      request_newline();
 
-    throwIfError(obj_name, SRC_POS);
+    throw_if_error(obj_name, SRC_POS);
   }
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// LegacyWriter member definitions
+// legacy_writer member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
 
-IO::LegacyWriter::LegacyWriter(std::ostream& os, bool write_bases) :
-  rep(new Impl(this, os, write_bases))
+io::legacy_writer::legacy_writer(std::ostream& os, bool write_bases) :
+  rep(new impl(this, os, write_bases))
 {
-GVX_TRACE("IO::LegacyWriter::LegacyWriter");
+GVX_TRACE("io::legacy_writer::legacy_writer");
 }
 
-IO::LegacyWriter::~LegacyWriter() throw()
+io::legacy_writer::~legacy_writer() throw()
 {
-GVX_TRACE("IO::LegacyWriter::~LegacyWriter");
-  rep->flushWhitespace();
+GVX_TRACE("io::legacy_writer::~legacy_writer");
+  rep->flush_whitespace();
   delete rep;
 }
 
-void IO::LegacyWriter::usePrettyPrint(bool yes)
+void io::legacy_writer::use_pretty_print(bool yes)
 {
-GVX_TRACE("IO::LegacyWriter::usePrettyPrint");
-  rep->usePrettyPrint(yes);
+GVX_TRACE("io::legacy_writer::use_pretty_print");
+  rep->use_pretty_print(yes);
 }
 
-void IO::LegacyWriter::writeChar(const char* name, char val)
+void io::legacy_writer::write_char(const char* name, char val)
 {
-GVX_TRACE("IO::LegacyWriter::writeChar");
-  rep->stream() << val << rep->itsFSep;
-  rep->throwIfError(name, SRC_POS);
+GVX_TRACE("io::legacy_writer::write_char");
+  rep->stream() << val << rep->m_field_sep;
+  rep->throw_if_error(name, SRC_POS);
 }
 
-void IO::LegacyWriter::writeInt(const char* name, int val)
+void io::legacy_writer::write_int(const char* name, int val)
 {
-GVX_TRACE("IO::LegacyWriter::writeInt");
-  rep->stream() << val << rep->itsFSep;
-  rep->throwIfError(name, SRC_POS);
+GVX_TRACE("io::legacy_writer::write_int");
+  rep->stream() << val << rep->m_field_sep;
+  rep->throw_if_error(name, SRC_POS);
 }
 
-void IO::LegacyWriter::writeBool(const char* name, bool val)
+void io::legacy_writer::write_bool(const char* name, bool val)
 {
-GVX_TRACE("IO::LegacyWriter::writeBool");
-  rep->stream() << val << rep->itsFSep;
-  rep->throwIfError(name, SRC_POS);
+GVX_TRACE("io::legacy_writer::write_bool");
+  rep->stream() << val << rep->m_field_sep;
+  rep->throw_if_error(name, SRC_POS);
 }
 
-void IO::LegacyWriter::writeDouble(const char* name, double val)
+void io::legacy_writer::write_double(const char* name, double val)
 {
-GVX_TRACE("IO::LegacyWriter::writeDouble");
-  rep->stream() << val << rep->itsFSep;
-  rep->throwIfError(name, SRC_POS);
+GVX_TRACE("io::legacy_writer::write_double");
+  rep->stream() << val << rep->m_field_sep;
+  rep->throw_if_error(name, SRC_POS);
 }
 
-void IO::LegacyWriter::writeCstring(const char* name, const char* val)
+void io::legacy_writer::write_cstring(const char* name, const char* val)
 {
-GVX_TRACE("IO::LegacyWriter::writeCstring");
+GVX_TRACE("io::legacy_writer::write_cstring");
 
-  rep->stream() << strlen(val) << " " << val << rep->itsFSep;
+  rep->stream() << strlen(val) << " " << val << rep->m_field_sep;
 
-  rep->throwIfError(name, SRC_POS);
+  rep->throw_if_error(name, SRC_POS);
 }
 
-void IO::LegacyWriter::writeValueObj(const char* name,
+void io::legacy_writer::write_value_obj(const char* name,
                                      const rutz::value& v)
 {
-GVX_TRACE("IO::LegacyWriter::writeValueObj");
+GVX_TRACE("io::legacy_writer::write_value_obj");
   v.print_to(rep->stream());
-  rep->stream() << rep->itsFSep;
-  rep->throwIfError(name, SRC_POS);
+  rep->stream() << rep->m_field_sep;
+  rep->throw_if_error(name, SRC_POS);
 }
 
-void IO::LegacyWriter::writeRawData(const char* name,
-                                    const unsigned char* data,
-                                    unsigned int length)
+void io::legacy_writer::write_byte_array(const char* name,
+                                         const unsigned char* data,
+                                         unsigned int length)
 {
-GVX_TRACE("IO::LegacyWriter::writeRawData");
-  defaultWriteRawData(name, data, length);
+GVX_TRACE("io::legacy_writer::write_byte_array");
+  default_write_byte_array(name, data, length);
 }
 
-void IO::LegacyWriter::writeObject(const char* name,
-                                   soft_ref<const IO::IoObject> obj)
+void io::legacy_writer::write_object(const char* name,
+                                     soft_ref<const io::serializable> obj)
 {
-GVX_TRACE("IO::LegacyWriter::writeObject");
+GVX_TRACE("io::legacy_writer::write_object");
 
-  rep->flattenObject(name, obj);
+  rep->flatten_object(name, obj);
 }
 
-void IO::LegacyWriter::writeOwnedObject(const char* name,
-                                        ref<const IO::IoObject> obj)
+void io::legacy_writer::write_owned_object(const char* name,
+                                           ref<const io::serializable> obj)
 {
-GVX_TRACE("IO::LegacyWriter::writeOwnedObject");
+GVX_TRACE("io::legacy_writer::write_owned_object");
 
-  rep->flattenObject(name, obj);
+  rep->flatten_object(name, obj);
 }
 
-void IO::LegacyWriter::writeBaseClass(const char* baseClassName,
-                                      ref<const IO::IoObject> basePart)
+void io::legacy_writer::write_base_class(const char* base_class_name,
+                                         ref<const io::serializable> base_part)
 {
-GVX_TRACE("IO::LegacyWriter::writeBaseClass");
-  if (rep->itsWriteBases)
+GVX_TRACE("io::legacy_writer::write_base_class");
+  if (rep->m_write_bases)
     {
-      rep->flattenObject(baseClassName, basePart);
+      rep->flatten_object(base_class_name, base_part);
     }
   else
     {
-      rep->flattenObject(baseClassName, basePart, true);
+      rep->flatten_object(base_class_name, base_part, true);
     }
 }
 
-void IO::LegacyWriter::writeRoot(const IO::IoObject* root)
+void io::legacy_writer::write_root(const io::serializable* root)
 {
-GVX_TRACE("IO::LegacyWriter::writeRoot");
+GVX_TRACE("io::legacy_writer::write_root");
 
-  rep->flattenObject
-    ("rootObject", soft_ref<IO::IoObject>(const_cast<IO::IoObject*>(root),
-                                         nub::STRONG,
-                                         nub::PRIVATE));
+  rep->flatten_object
+    ("root_object", soft_ref<io::serializable>(const_cast<io::serializable*>(root),
+                                               nub::STRONG,
+                                               nub::PRIVATE));
 }
 
 static const char vcid_groovx_io_iolegacy_cc_utc20050626084021[] = "$Id$ $HeadURL$";

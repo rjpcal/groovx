@@ -119,21 +119,21 @@ Sound::~Sound() throw()
 GVX_TRACE("Sound::~Sound");
 }
 
-void Sound::readFrom(IO::Reader& reader)
+void Sound::read_from(io::reader& reader)
 {
-GVX_TRACE("Sound::readFrom");
+GVX_TRACE("Sound::read_from");
 
-  reader.readValue("filename", itsFilename);
+  reader.read_value("filename", itsFilename);
 
   if (!itsFilename.is_empty())
     setFile(itsFilename.c_str());
 }
 
-void Sound::writeTo(IO::Writer& writer) const
+void Sound::write_to(io::writer& writer) const
 {
-GVX_TRACE("Sound::writeTo");
+GVX_TRACE("Sound::write_to");
 
-  writer.writeValue("filename", itsFilename);
+  writer.write_value("filename", itsFilename);
 }
 
 void Sound::play()

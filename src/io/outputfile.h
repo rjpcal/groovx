@@ -1,4 +1,4 @@
-/** @file io/outputfile.h wraps a std::ofstream in an IO::IoObject,
+/** @file io/outputfile.h wraps a std::ofstream in an io::serializable,
     allowing named files to be serialized and restored across multiple
     program runs */
 
@@ -42,38 +42,38 @@
 
 #include <iosfwd>
 
-/// Wraps a std::ofstream in an IoObject.
-/** This allows a named file to be serialized across program runs, as well
-    as shared among objects within a single program run. */
-class OutputFile : public IO::IoObject
+/// Wraps a std::ofstream in an serializable.
+/** This allows a named file to be serialized across program runs, as
+    well as shared among objects within a single program run. */
+class output_file : public io::serializable
 {
 protected:
-  OutputFile();
+  output_file();
 
-  virtual ~OutputFile() throw();
+  virtual ~output_file() throw();
 
 public:
   /// Default creator.
-  static OutputFile* make() { return new OutputFile; }
+  static output_file* make() { return new output_file; }
 
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   /// Get the name of the file that will be written to.
-  rutz::fstring getFilename() const;
+  rutz::fstring get_filename() const;
 
   /// Set the name of the file that will be written to.
-  void setFilename(rutz::fstring fname);
+  void set_filename(rutz::fstring fname);
 
   /// Check whether this object currently has a valid, writable stream.
-  bool hasStream() const;
+  bool has_stream() const;
 
   /// Get the ostream associated with this object.
   std::ostream& stream();
 
 private:
-  rutz::fstring itsFilename;
-  rutz::shared_ptr<std::ostream> itsStream;
+  rutz::fstring m_filename;
+  rutz::shared_ptr<std::ostream> m_stream;
 };
 
 static const char vcid_groovx_io_outputfile_h_utc20050626084021[] = "$Id$ $HeadURL$";

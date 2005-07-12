@@ -59,7 +59,7 @@ GVX_TRACE("Sound_Init");
   tcl::interpreter intp(interp);
   GVX_PKG_CREATE(pkg, interp, "Sound", "4.$Revision$");
 
-  pkg->inherit_pkg("IO");
+  pkg->inherit_pkg("io");
   tcl::def_basic_type_cmds<Sound>(pkg, SRC_POS);
 
   nub::obj_factory::instance().register_creator(&Sound::make);

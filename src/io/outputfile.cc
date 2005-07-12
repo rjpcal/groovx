@@ -1,4 +1,4 @@
-/** @file io/outputfile.cc wraps a std::ofstream in an IO::IoObject,
+/** @file io/outputfile.cc wraps a std::ofstream in an io::serializable,
     allowing named files to be serialized and restored across multiple
     program runs */
 
@@ -48,37 +48,37 @@
 
 using rutz::shared_ptr;
 
-OutputFile::OutputFile() :
-  itsFilename(""),
-  itsStream()
+output_file::output_file() :
+  m_filename(""),
+  m_stream()
 {
 }
 
-OutputFile::~OutputFile() throw() {}
+output_file::~output_file() throw() {}
 
-void OutputFile::readFrom(IO::Reader& reader)
+void output_file::read_from(io::reader& reader)
 {
   rutz::fstring fname;
-  reader.readValue("filename", fname);
+  reader.read_value("filename", fname);
 
-  setFilename(fname);
+  set_filename(fname);
 }
 
-void OutputFile::writeTo(IO::Writer& writer) const
+void output_file::write_to(io::writer& writer) const
 {
-  writer.writeValue("filename", itsFilename);
+  writer.write_value("filename", m_filename);
 }
 
-rutz::fstring OutputFile::getFilename() const
+rutz::fstring output_file::get_filename() const
 {
-  return itsFilename;
+  return m_filename;
 }
 
-void OutputFile::setFilename(rutz::fstring fname)
+void output_file::set_filename(rutz::fstring fname)
 {
   if (fname.is_empty())
     {
-      itsStream.reset();
+      m_stream.reset();
       return;
     }
 
@@ -88,21 +88,21 @@ void OutputFile::setFilename(rutz::fstring fname)
     throw rutz::error(rutz::fstring("couldn't open '", fname,
                                     "' for writing"), SRC_POS);
 
-  itsStream.swap(s);
-  itsFilename = fname;
+  m_stream.swap(s);
+  m_filename = fname;
 }
 
-bool OutputFile::hasStream() const
+bool output_file::has_stream() const
 {
-  return (itsStream.get() != 0 && !itsStream->fail());
+  return (m_stream.get() != 0 && !m_stream->fail());
 }
 
-std::ostream& OutputFile::stream()
+std::ostream& output_file::stream()
 {
-  if (!hasStream())
-    throw rutz::error("OutputFile object's stream is invalid", SRC_POS);
+  if (!has_stream())
+    throw rutz::error("output_file object's stream is invalid", SRC_POS);
 
-  return *itsStream;
+  return *m_stream;
 }
 
 static const char vcid_groovx_io_outputfile_cc_utc20050626084021[] = "$Id$ $HeadURL$";

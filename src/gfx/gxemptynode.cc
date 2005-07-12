@@ -39,8 +39,8 @@ GxEmptyNode::GxEmptyNode() {}
 
 GxEmptyNode::~GxEmptyNode() throw() {}
 
-void GxEmptyNode::readFrom(IO::Reader&) {}
-void GxEmptyNode::writeTo(IO::Writer&) const {}
+void GxEmptyNode::read_from(io::reader&) {}
+void GxEmptyNode::write_to(io::writer&) const {}
 
 void GxEmptyNode::getBoundingCube(Gfx::Bbox&) const {}
 

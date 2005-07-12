@@ -98,21 +98,21 @@ GxLine::~GxLine() throw()
 GVX_TRACE("GxLine::~GxLine");
 }
 
-IO::VersionId GxLine::serialVersionId() const
+io::version_id GxLine::class_version_id() const
 {
-GVX_TRACE("GxLine::serialVersionId");
+GVX_TRACE("GxLine::class_version_id");
   return GXLINE_SVID;
 }
 
-void GxLine::readFrom(IO::Reader& reader)
+void GxLine::read_from(io::reader& reader)
 {
-GVX_TRACE("GxLine::readFrom");
+GVX_TRACE("GxLine::read_from");
   readFieldsFrom(reader, classFields());
 }
 
-void GxLine::writeTo(IO::Writer& writer) const
+void GxLine::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxLine::writeTo");
+GVX_TRACE("GxLine::write_to");
   writeFieldsTo(writer, classFields(), GXLINE_SVID);
 }
 

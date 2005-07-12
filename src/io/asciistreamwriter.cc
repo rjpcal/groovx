@@ -1,4 +1,4 @@
-/** @file io/asciistreamwriter.cc write IO::IoObject objects in the ASW
+/** @file io/asciistreamwriter.cc write io::serializable objects in the ASW
     format */
 ///////////////////////////////////////////////////////////////////////
 //
@@ -61,13 +61,16 @@ using rutz::shared_ptr;
 using nub::ref;
 using nub::soft_ref;
 
+using std::vector;
+using std::set;
+
 namespace
 {
   const char* ATTRIB_ENDER = "^\n";
 
-  void addEscapes(std::string& text)
+  void add_escapes(std::string& text)
   {
-  GVX_TRACE("AsciiStreamWriter::addEscapes");
+  GVX_TRACE("<asciistreamwriter.cc>::add_escapes");
     // Escape any special characters
     for (size_t pos = 0; pos < text.length(); /* ++ done in loop body */ )
       {
@@ -95,280 +98,271 @@ namespace
           }
       }
   }
-}
 
-// This is a hack to help shorten up names for assemblers on systems
-// that need short identifier names. A typedef at the end of this file
-// re-introduces AsciiStreamWriter as a typedef for ASW, so that
-// client code should be able to use the typename AsciiStreamWriter in
-// all cases.
-#if defined(GVX_SHORTEN_SYMBOL_NAMES)
-#define AsciiStreamWriter ASW
-#endif
-
-class AsciiStreamWriter : public IO::Writer
-{
-public:
-  AsciiStreamWriter(std::ostream& os);
-
-  AsciiStreamWriter(const char* filename);
-
-  virtual ~AsciiStreamWriter() throw();
-
-  virtual void writeChar(const char* name, char val);
-  virtual void writeInt(const char* name, int val);
-  virtual void writeBool(const char* name, bool val);
-  virtual void writeDouble(const char* name, double val);
-  virtual void writeValueObj(const char* name, const rutz::value& v);
-
-  virtual void writeRawData(const char* name,
-                            const unsigned char* data,
-                            unsigned int length)
-  { defaultWriteRawData(name, data, length); }
-
-  virtual void writeObject(const char* name,
-                           nub::soft_ref<const IO::IoObject> obj);
-
-  virtual void writeOwnedObject(const char* name,
-                                nub::ref<const IO::IoObject> obj);
-
-  virtual void writeBaseClass(const char* baseClassName,
-                              nub::ref<const IO::IoObject> basePart);
-
-  virtual void writeRoot(const IO::IoObject* root);
-
-protected:
-  virtual void writeCstring(const char* name, const char* val);
-
-private:
-  shared_ptr<std::ostream> itsOwnedStream;
-  std::ostream& itsBuf;
-  mutable std::vector<soft_ref<const IO::IoObject> > itsToHandleV;
-  std::set<soft_ref<const IO::IoObject> > itsWrittenObjects;
-  IO::WriteIdMap itsIdMap;
-
-  void addObjectToBeHandled(soft_ref<const IO::IoObject> obj)
+  class asw_writer : public io::writer
   {
-    if ( !alreadyWritten(obj) )
-      {
-        itsToHandleV.push_back(obj);
-      }
-  }
+  public:
+    asw_writer(std::ostream& os);
 
-  bool alreadyWritten(soft_ref<const IO::IoObject> obj) const
-  {
-    return ( itsWrittenObjects.find(obj) !=
-             itsWrittenObjects.end() );
-  }
+    asw_writer(const char* filename);
 
-  void markObjectAsWritten(soft_ref<const IO::IoObject> obj)
-  {
-    itsWrittenObjects.insert(obj);
-  }
+    virtual ~asw_writer() throw();
 
-  void flattenObject(soft_ref<const IO::IoObject> obj);
+    virtual void write_char(const char* name, char val);
+    virtual void write_int(const char* name, int val);
+    virtual void write_bool(const char* name, bool val);
+    virtual void write_double(const char* name, double val);
+    virtual void write_value_obj(const char* name, const rutz::value& v);
 
-  template <class T>
-  void writeBasicType(const char* name, T val,
-                      const char* string_typename)
-  {
-    itsBuf << string_typename << " "
-           << name << " := "
-           << val << ATTRIB_ENDER;
-  }
+    virtual void write_byte_array(const char* name,
+                                  const unsigned char* data,
+                                  unsigned int length)
+    { default_write_byte_array(name, data, length); }
 
-  void writeStringType(const char* name, const char* val)
-  {
-    std::string escaped_val(val);
-    int val_length = escaped_val.length();
-    addEscapes(escaped_val);
+    virtual void write_object(const char* name,
+                              nub::soft_ref<const io::serializable> obj);
 
-    itsBuf << "cstring "
-           << name << " := "
-           << val_length << " " << escaped_val.c_str() << ATTRIB_ENDER;
-  }
-};
+    virtual void write_owned_object(const char* name,
+                                    nub::ref<const io::serializable> obj);
 
-///////////////////////////////////////////////////////////////////////
-//
-// AsciiStreamWriter member definitions
-//
-///////////////////////////////////////////////////////////////////////
+    virtual void write_base_class(const char* base_class_name,
+                                  nub::ref<const io::serializable> base_part);
 
-AsciiStreamWriter::AsciiStreamWriter(std::ostream& os) :
-  itsOwnedStream(),
-  itsBuf(os),
-  itsToHandleV(),
-  itsWrittenObjects()
-{
-GVX_TRACE("AsciiStreamWriter::AsciiStreamWriter");
-}
+    virtual void write_root(const io::serializable* root);
 
-AsciiStreamWriter::AsciiStreamWriter(const char* filename) :
-  itsOwnedStream(rutz::ogzopen(filename)),
-  itsBuf(*itsOwnedStream),
-  itsToHandleV(),
-  itsWrittenObjects()
-{
-GVX_TRACE("AsciiStreamWriter::AsciiStreamWriter(const char*)");
-}
+  protected:
+    virtual void write_cstring(const char* name, const char* val);
 
-AsciiStreamWriter::~AsciiStreamWriter () throw()
-{
-GVX_TRACE("AsciiStreamWriter::~AsciiStreamWriter");
-}
+  private:
+    shared_ptr<std::ostream>                           m_owned_stream;
+    std::ostream&                                      m_buf;
+    mutable vector<soft_ref<const io::serializable> >  m_pending_objs;
+    set<soft_ref<const io::serializable> >             m_written_objs;
+    io::write_id_map                                   m_id_map;
 
-void AsciiStreamWriter::writeChar(const char* name, char val)
-{
-GVX_TRACE("AsciiStreamWriter::writeChar");
-  writeBasicType(name, val, "char");
-}
-
-void AsciiStreamWriter::writeInt(const char* name, int val)
-{
-GVX_TRACE("AsciiStreamWriter::writeInt");
-  writeBasicType(name, val, "int");
-}
-
-void AsciiStreamWriter::writeBool(const char* name, bool val)
-{
-GVX_TRACE("AsciiStreamWriter::writeBool");
-  writeBasicType(name, val, "bool");
-}
-
-void AsciiStreamWriter::writeDouble(const char* name, double val)
-{
-GVX_TRACE("AsciiStreamWriter::writeDouble");
-  writeBasicType(name, val, "double");
-}
-
-void AsciiStreamWriter::writeCstring(const char* name, const char* val)
-{
-GVX_TRACE("AsciiStreamWriter::writeCstring");
-  writeStringType(name, val);
-}
-
-void AsciiStreamWriter::writeValueObj(const char* name,
-                                      const rutz::value& v)
-{
-GVX_TRACE("AsciiStreamWriter::writeValueObj");
-
-  writeBasicType<const rutz::value&>(name, v, v.value_typename().c_str());
-}
-
-void AsciiStreamWriter::writeObject(const char* name,
-                                    soft_ref<const IO::IoObject> obj)
-{
-GVX_TRACE("AsciiStreamWriter::writeObject");
-
-  fstring type = "NULL";
-  nub::uid id = 0;
-
-  if (obj.is_valid())
+    void add_pending_object(soft_ref<const io::serializable> obj)
     {
-      GVX_ASSERT(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
-
-      type = obj->obj_typename();
-      id = itsIdMap.get(obj->id());
-
-      addObjectToBeHandled(obj);
-    }
-
-  itsBuf << type << " "
-         << name << " := "
-         << id << ATTRIB_ENDER;
-}
-
-void AsciiStreamWriter::writeOwnedObject(const char* name,
-                                         ref<const IO::IoObject> obj)
-{
-GVX_TRACE("AsciiStreamWriter::writeOwnedObject");
-
-  fstring type = obj->obj_typename().c_str();
-
-  itsBuf << type.c_str() << ' ' << name << " := ";
-
-  flattenObject(obj);
-
-  itsBuf << ATTRIB_ENDER;
-}
-
-void AsciiStreamWriter::writeBaseClass(const char* baseClassName,
-                                       ref<const IO::IoObject> basePart)
-{
-GVX_TRACE("AsciiStreamWriter::writeBaseClass");
-  writeOwnedObject(baseClassName, basePart);
-}
-
-void AsciiStreamWriter::writeRoot(const IO::IoObject* root)
-{
-GVX_TRACE("AsciiStreamWriter::writeRoot");
-  itsToHandleV.clear();
-  itsWrittenObjects.clear();
-
-  // need the const_cast here because:
-  // (1) soft_ref constructor will optionally call Detail::insert_item()
-  // (2) insert_item() will put the object in the nub::objectdb
-  // (3) objects in the nub::objectdb are non-const since they can be
-  //     retrieved and modified
-  itsToHandleV.push_back
-    (soft_ref<IO::IoObject>(const_cast<IO::IoObject*>(root)));
-
-  while ( !itsToHandleV.empty() )
-    {
-      soft_ref<const IO::IoObject> obj = itsToHandleV.back();
-      itsToHandleV.pop_back();
-
-      if ( !alreadyWritten(obj) )
+      if ( !already_written(obj) )
         {
-          itsBuf << obj->obj_typename().c_str() << ' '
-                 << itsIdMap.get(obj->id()) << " := ";
-          flattenObject(obj);
+          m_pending_objs.push_back(obj);
         }
     }
 
-  itsBuf.flush();
-}
+    bool already_written(soft_ref<const io::serializable> obj) const
+    {
+      return ( m_written_objs.find(obj) !=
+               m_written_objs.end() );
+    }
 
-void AsciiStreamWriter::flattenObject(soft_ref<const IO::IoObject> obj)
-{
-GVX_TRACE("AsciiStreamWriter::flattenObject");
+    void mark_as_written(soft_ref<const io::serializable> obj)
+    {
+      m_written_objs.insert(obj);
+    }
 
-  // Objects are written in the following format:
+    void flatten_object(soft_ref<const io::serializable> obj);
+
+    template <class T>
+    void write_basic_type(const char* name, T val,
+                          const char* string_typename)
+    {
+      m_buf << string_typename << " "
+            << name << " := "
+            << val << ATTRIB_ENDER;
+    }
+
+    void write_string_type(const char* name, const char* val)
+    {
+      std::string escaped_val(val);
+      int val_length = escaped_val.length();
+      add_escapes(escaped_val);
+
+      m_buf << "cstring "
+            << name << " := "
+            << val_length << " " << escaped_val.c_str() << ATTRIB_ENDER;
+    }
+  };
+
+  ///////////////////////////////////////////////////////////////////////
   //
-  // { ?<version id>? <attribute count>
-  // ...attributes...
-  // }
+  // asw_writer member definitions
   //
+  ///////////////////////////////////////////////////////////////////////
 
-  // Open the object's braces...
-  itsBuf << "{ ";
+  asw_writer::asw_writer(std::ostream& os) :
+    m_owned_stream(),
+    m_buf(os),
+    m_pending_objs(),
+    m_written_objs()
+  {
+  GVX_TRACE("asw_writer::asw_writer");
+  }
 
-  //   ...write <version id> if it is nonzero...
-  IO::VersionId serial_ver_id = obj->serialVersionId();;
-  if ( serial_ver_id > 0 )
-    itsBuf << 'v' << serial_ver_id << ' ';
+  asw_writer::asw_writer(const char* filename) :
+    m_owned_stream(rutz::ogzopen(filename)),
+    m_buf(*m_owned_stream),
+    m_pending_objs(),
+    m_written_objs()
+  {
+  GVX_TRACE("asw_writer::asw_writer(const char*)");
+  }
 
-  //   ...write the <attribute count>...
-  itsBuf << obj->ioAttribCount() << '\n';
+  asw_writer::~asw_writer () throw()
+  {
+  GVX_TRACE("asw_writer::~asw_writer");
+  }
 
-  //   ...write the object's <attributes>...
-  obj->writeTo(*this);
+  void asw_writer::write_char(const char* name, char val)
+  {
+  GVX_TRACE("asw_writer::write_char");
+    write_basic_type(name, val, "char");
+  }
 
-  markObjectAsWritten(obj);
+  void asw_writer::write_int(const char* name, int val)
+  {
+  GVX_TRACE("asw_writer::write_int");
+    write_basic_type(name, val, "int");
+  }
 
-  //   ...and finally, close the object's braces.
-  itsBuf << '}' << '\n';
+  void asw_writer::write_bool(const char* name, bool val)
+  {
+  GVX_TRACE("asw_writer::write_bool");
+    write_basic_type(name, val, "bool");
+  }
+
+  void asw_writer::write_double(const char* name, double val)
+  {
+  GVX_TRACE("asw_writer::write_double");
+    write_basic_type(name, val, "double");
+  }
+
+  void asw_writer::write_cstring(const char* name, const char* val)
+  {
+  GVX_TRACE("asw_writer::write_cstring");
+    write_string_type(name, val);
+  }
+
+  void asw_writer::write_value_obj(const char* name,
+                                   const rutz::value& v)
+  {
+  GVX_TRACE("asw_writer::write_value_obj");
+
+    write_basic_type<const rutz::value&>(name, v, v.value_typename().c_str());
+  }
+
+  void asw_writer::write_object(const char* name,
+                                soft_ref<const io::serializable> obj)
+  {
+  GVX_TRACE("asw_writer::write_object");
+
+    fstring type = "NULL";
+    nub::uid id = 0;
+
+    if (obj.is_valid())
+      {
+        GVX_ASSERT(dynamic_cast<const io::serializable*>(obj.get()) != 0);
+
+        type = obj->obj_typename();
+        id = m_id_map.get(obj->id());
+
+        add_pending_object(obj);
+      }
+
+    m_buf << type << " "
+          << name << " := "
+          << id << ATTRIB_ENDER;
+  }
+
+  void asw_writer::write_owned_object(const char* name,
+                                      ref<const io::serializable> obj)
+  {
+  GVX_TRACE("asw_writer::write_owned_object");
+
+    fstring type = obj->obj_typename().c_str();
+
+    m_buf << type.c_str() << ' ' << name << " := ";
+
+    flatten_object(obj);
+
+    m_buf << ATTRIB_ENDER;
+  }
+
+  void asw_writer::write_base_class(const char* base_class_name,
+                                    ref<const io::serializable> base_part)
+  {
+  GVX_TRACE("asw_writer::write_base_class");
+    write_owned_object(base_class_name, base_part);
+  }
+
+  void asw_writer::write_root(const io::serializable* root)
+  {
+  GVX_TRACE("asw_writer::write_root");
+    m_pending_objs.clear();
+    m_written_objs.clear();
+
+    // need the const_cast here because:
+    // (1) soft_ref constructor will optionally call Detail::insert_item()
+    // (2) insert_item() will put the object in the nub::objectdb
+    // (3) objects in the nub::objectdb are non-const since they can be
+    //     retrieved and modified
+    m_pending_objs.push_back
+      (soft_ref<io::serializable>(const_cast<io::serializable*>(root)));
+
+    while ( !m_pending_objs.empty() )
+      {
+        soft_ref<const io::serializable> obj = m_pending_objs.back();
+        m_pending_objs.pop_back();
+
+        if ( !already_written(obj) )
+          {
+            m_buf << obj->obj_typename().c_str() << ' '
+                  << m_id_map.get(obj->id()) << " := ";
+            flatten_object(obj);
+          }
+      }
+
+    m_buf.flush();
+  }
+
+  void asw_writer::flatten_object(soft_ref<const io::serializable> obj)
+  {
+  GVX_TRACE("asw_writer::flatten_object");
+
+    // Objects are written in the following format:
+    //
+    // { ?<version id>? <attribute count>
+    // ...attributes...
+    // }
+    //
+
+    // Open the object's braces...
+    m_buf << "{ ";
+
+    //   ...write <version id> if it is nonzero...
+    io::version_id serial_ver_id = obj->class_version_id();;
+    if ( serial_ver_id > 0 )
+      m_buf << 'v' << serial_ver_id << ' ';
+
+    //   ...write the <attribute count>...
+    m_buf << obj->attrib_count() << '\n';
+
+    //   ...write the object's <attributes>...
+    obj->write_to(*this);
+
+    mark_as_written(obj);
+
+    //   ...and finally, close the object's braces.
+    m_buf << '}' << '\n';
+  }
 }
 
-shared_ptr<IO::Writer> IO::makeAsciiStreamWriter(std::ostream& os)
+shared_ptr<io::writer> io::make_asw_writer(std::ostream& os)
 {
-  return rutz::make_shared(new AsciiStreamWriter(os));
+  return rutz::make_shared(new asw_writer(os));
 }
 
-shared_ptr<IO::Writer> IO::makeAsciiStreamWriter(const char* filename)
+shared_ptr<io::writer> io::make_asw_writer(const char* filename)
 {
-  return rutz::make_shared(new AsciiStreamWriter(filename));
+  return rutz::make_shared(new asw_writer(filename));
 }
 
 static const char vcid_groovx_io_asciistreamwriter_cc_utc20050626084021[] = "$Id$ $HeadURL$";

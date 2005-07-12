@@ -61,7 +61,7 @@ rutz::tracer Block::tracer;
 
 namespace
 {
-  IO::VersionId BLOCK_SVID = 3;
+  io::version_id BLOCK_SVID = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -85,33 +85,33 @@ GVX_TRACE("Block::Block");
 Block::~Block() throw()
 {}
 
-IO::VersionId Block::serialVersionId() const
+io::version_id Block::class_version_id() const
 {
-GVX_TRACE("Block::serialVersionId");
+GVX_TRACE("Block::class_version_id");
   return BLOCK_SVID;
 }
 
-void Block::readFrom(IO::Reader& reader)
+void Block::read_from(io::reader& reader)
 {
-GVX_TRACE("Block::readFrom");
+GVX_TRACE("Block::read_from");
 
-  reader.ensureReadVersionId("Block", 3,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("Block", 3,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
-  reader.readBaseClass("ElementContainer",
-                       IO::makeProxy<ElementContainer>(this));
+  reader.read_base_class("ElementContainer",
+                       io::make_proxy<ElementContainer>(this));
 }
 
-void Block::writeTo(IO::Writer& writer) const
+void Block::write_to(io::writer& writer) const
 {
-GVX_TRACE("Block::writeTo");
+GVX_TRACE("Block::write_to");
 
-  writer.ensureWriteVersionId("Block", BLOCK_SVID, 3,
+  writer.ensure_output_version_id("Block", BLOCK_SVID, 3,
                               "Try groovx0.8a7", SRC_POS);
 
-  writer.writeBaseClass("ElementContainer",
-                        IO::makeConstProxy<ElementContainer>(this));
+  writer.write_base_class("ElementContainer",
+                        io::make_const_proxy<ElementContainer>(this));
 }
 
 ///////////////////////////////////////////////////////////////////////

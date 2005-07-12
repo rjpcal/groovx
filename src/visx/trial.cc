@@ -75,7 +75,7 @@ rutz::tracer Trial::tracer;
 
 namespace
 {
-  const IO::VersionId TRIAL_SVID = 5;
+  const io::version_id TRIAL_SVID = 5;
 
   struct ActiveState
   {
@@ -220,60 +220,60 @@ GVX_TRACE("Trial::~Trial");
   delete rep;
 }
 
-IO::VersionId Trial::serialVersionId() const
+io::version_id Trial::class_version_id() const
   { return TRIAL_SVID; }
 
-void Trial::readFrom(IO::Reader& reader)
+void Trial::read_from(io::reader& reader)
 {
-GVX_TRACE("Trial::readFrom");
+GVX_TRACE("Trial::read_from");
 
   rep->becomeInactive();
 
-  reader.ensureReadVersionId("Trial", 5,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("Trial", 5,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
   rep->gxNodes.clear();
-  IO::ReadUtils::readObjectSeq<GxNode>
+  io::read_utils::read_object_seq<GxNode>
     (reader, "gxObjects", std::back_inserter(rep->gxNodes));
 
   rep->responses.clear();
-  IO::ReadUtils::readValueObjSeq<Response>
+  io::read_utils::read_value_obj_seq<Response>
     (reader, "responses", std::back_inserter(rep->responses));
 
-  reader.readValue("correctResponse", rep->correctResponse);
+  reader.read_value("correctResponse", rep->correctResponse);
 
-  reader.readValue("type", rep->trialType);
+  reader.read_value("type", rep->trialType);
 
-  rep->rh = dyn_cast<ResponseHandler>(reader.readMaybeObject("rh"));
-  rep->th = dyn_cast<TimingHdlr>(reader.readMaybeObject("th"));
+  rep->rh = dyn_cast<ResponseHandler>(reader.read_weak_object("rh"));
+  rep->th = dyn_cast<TimingHdlr>(reader.read_weak_object("th"));
 
-  reader.readValue("info", rep->info);
+  reader.read_value("info", rep->info);
 }
 
-void Trial::writeTo(IO::Writer& writer) const
+void Trial::write_to(io::writer& writer) const
 {
-GVX_TRACE("Trial::writeTo");
+GVX_TRACE("Trial::write_to");
 
-  writer.ensureWriteVersionId("Trial", TRIAL_SVID, 5,
+  writer.ensure_output_version_id("Trial", TRIAL_SVID, 5,
                               "Try groovx0.8a3", SRC_POS);
 
-  IO::WriteUtils::writeObjectSeq(writer, "gxObjects",
-                                 rep->gxNodes.begin(),
-                                 rep->gxNodes.end());
+  io::write_utils::write_object_seq(writer, "gxObjects",
+                                    rep->gxNodes.begin(),
+                                    rep->gxNodes.end());
 
-  IO::WriteUtils::writeValueObjSeq(writer, "responses",
-                                   rep->responses.begin(),
-                                   rep->responses.end());
+  io::write_utils::write_value_obj_seq(writer, "responses",
+                                       rep->responses.begin(),
+                                       rep->responses.end());
 
-  writer.writeValue("correctResponse", rep->correctResponse);
+  writer.write_value("correctResponse", rep->correctResponse);
 
-  writer.writeValue("type", rep->trialType);
+  writer.write_value("type", rep->trialType);
 
-  writer.writeObject("rh", rep->rh);
-  writer.writeObject("th", rep->th);
+  writer.write_object("rh", rep->rh);
+  writer.write_object("th", rep->th);
 
-  writer.writeValue("info", rep->info);
+  writer.write_value("info", rep->info);
 }
 
 const soft_ref<Toglet>& Trial::getWidget() const

@@ -55,7 +55,7 @@ class Toglet;
 /** This conceptually includes individual trials, blocks, experiment
     sessions, series of multiple experiments, etc. */
 
-class Element : public IO::IoObject
+class Element : public io::serializable
 {
 public:
   /// Virtual destructor.

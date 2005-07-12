@@ -192,12 +192,12 @@ void FieldContainer::setField(const Field& field, const tcl::obj& new_val)
     itsSignal->emit();
 }
 
-void FieldContainer::readFieldsFrom(IO::Reader& reader,
+void FieldContainer::readFieldsFrom(io::reader& reader,
                                     const FieldMap& fields)
 {
 GVX_TRACE("FieldContainer::readFieldsFrom");
 
-  const IO::VersionId svid = reader.readSerialVersionId();
+  const io::version_id svid = reader.input_version_id();
 
   for (FieldMap::Iterator itr(fields.ioFields()); itr.is_valid(); ++itr)
     {
@@ -209,9 +209,9 @@ GVX_TRACE("FieldContainer::readFieldsFrom");
     itsSignal->emit();
 }
 
-void FieldContainer::writeFieldsTo(IO::Writer& writer,
+void FieldContainer::writeFieldsTo(io::writer& writer,
                                    const FieldMap& fields,
-                                   IO::VersionId svid) const
+                                   io::version_id svid) const
 {
 GVX_TRACE("FieldContainer::writeFieldsTo");
 

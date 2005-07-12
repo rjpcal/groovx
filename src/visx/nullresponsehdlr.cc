@@ -57,14 +57,14 @@ NullResponseHdlr::~NullResponseHdlr() throw()
 GVX_TRACE("NullResponseHdlr::~NullResponseHdlr");
 }
 
-void NullResponseHdlr::readFrom(IO::Reader&)
+void NullResponseHdlr::read_from(io::reader&)
 {
-GVX_TRACE("NullResponseHdlr::readFrom");
+GVX_TRACE("NullResponseHdlr::read_from");
 }
 
-void NullResponseHdlr::writeTo(IO::Writer&) const
+void NullResponseHdlr::write_to(io::writer&) const
 {
-GVX_TRACE("NullResponseHdlr::writeTo");
+GVX_TRACE("NullResponseHdlr::write_to");
 }
 
 // actions

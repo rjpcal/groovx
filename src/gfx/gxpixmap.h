@@ -72,9 +72,9 @@ public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~GxPixmap() throw();
 
-  virtual IO::VersionId serialVersionId() const;
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual io::version_id class_version_id() const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   /////////////
   // actions //
@@ -120,14 +120,14 @@ public:
   /// Flips the luminance contrast of the bitmap data.
   /** The actual math depends on the format of the bitmap data. The
       polarity of the contrast relative to its original value is
-      computed and stored, so that it can be maintained throughout IO
+      computed and stored, so that it can be maintained throughout io
       operations. */
   void flipContrast();
 
   /// Vertically inverts the image.
   /** The total number of vertical flips in the object's history is
       computed and stored, so that the proper orientation polarity can
-      be maintained across IO operations. */
+      be maintained across io operations. */
   void flipVertical();
 
   ///////////////

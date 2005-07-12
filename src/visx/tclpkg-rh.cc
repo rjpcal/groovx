@@ -159,7 +159,7 @@ int Responsehandler_Init(Tcl_Interp* interp)
 GVX_TRACE("Responsehandler_Init");
 
   GVX_PKG_CREATE(pkg, interp, "ResponseHandler", "4.$Revision$");
-  pkg->inherit_pkg("IO");
+  pkg->inherit_pkg("io");
   tcl::def_basic_type_cmds<ResponseHandler>(pkg, SRC_POS);
   pkg->namesp_alias("Rh");
 

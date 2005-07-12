@@ -188,19 +188,20 @@
    the default, and if so, the element is not written to the output.
 
    At what API level does default-value handling appear? Can it be
-   hidden entirely within a given pair of concrete Reader+Writer
-   classes? Or does there have to be an API entry at the level of the
-   abstract Reader+Writer interfaces? Probably yes to the latter,
-   since somewhere the top-level client code has to specify what the
-   actual default values are.
+   hidden entirely within a given pair of concrete io::reader
+   io::writer classes? Or does there have to be an API entry at the
+   level of the abstract io::reader + io::writer interfaces? Probably
+   yes to the latter, since somewhere the top-level client code has to
+   specify what the actual default values are.
 
 ** Enumerations
 
 ** Native array/sequence handling
 
-   Or, at least let concrete Reader+Writer subclasses determine if
-   they can handle arrays specially or if they will just rely on the
-   standard implementation provided by ReadUtils+WriteUtils.
+   Or, at least let concrete io::reader io::writer subclasses
+   determine if they can handle arrays specially or if they will just
+   rely on the standard implementation provided by
+   read_utils+write_utils.
 
 ** Binary data handling
 
@@ -348,9 +349,9 @@
   new TrialEvent type that puts a GxNode into the Widget... this would
   give a way to implement visual feedback in an experiment.
 
-* (21-Sep-2000) Writer subclass for matlab export
+* (21-Sep-2000) writer subclass for matlab export
 
-  A new subclass of Writer could handle exporting data in a format
+  A new subclass of writer could handle exporting data in a format
   suitable for Matlab use, perhaps. Aha! A generic FormatWriter could
   take arguments describing which fields are to go into the file. In
   fact, we could just give it a format string like this:

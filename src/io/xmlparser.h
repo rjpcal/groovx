@@ -36,33 +36,38 @@
 #include <expat.h>
 #include <iosfwd>
 
-class XmlParser
+namespace io
+{
+  class xml_parser;
+}
+
+class io::xml_parser
 {
 public:
-  XmlParser(std::istream& is, int bufsize = 8192);
+  xml_parser(std::istream& is, int bufsize = 8192);
 
-  virtual ~XmlParser();
+  virtual ~xml_parser();
 
   void parse();
 
 protected:
-  virtual void elementStart(const char* el, const char** attr) = 0;
-  virtual void elementEnd(const char* el) = 0;
+  virtual void element_start(const char* el, const char** attr) = 0;
+  virtual void element_end(const char* el) = 0;
 
   /// Default is no-op; override if needed.
-  virtual void characterData(const char* text, int length);
+  virtual void character_data(const char* text, int length);
 
 private:
-  XmlParser(const XmlParser&);
-  XmlParser& operator=(const XmlParser&);
+  xml_parser(const xml_parser&);
+  xml_parser& operator=(const xml_parser&);
 
-  static void elementStartC(void* data, const char* el, const char** attr);
-  static void elementEndC(void* data, const char* el);
-  static void characterDataC(void* data, const char* text, int length);
+  static void c_element_start(void* data, const char* el, const char** attr);
+  static void c_element_end(void* data, const char* el);
+  static void c_character_data(void* data, const char* text, int length);
 
-  XML_Parser const itsParser;
-  std::istream& itsStream;
-  const int itsBufSize;
+  XML_Parser     const m_parser;
+  std::istream&        m_stream;
+  int            const m_buf_size;
 };
 
 static const char vcid_groovx_io_xmlparser_h_utc20050626084021[] = "$Id$ $HeadURL$";

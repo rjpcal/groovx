@@ -1,4 +1,4 @@
-/** @file io/asciistreamreader.cc read IO::IoObject objects in the ASW
+/** @file io/asciistreamreader.cc read io::serializable objects in the ASW
     format */
 ///////////////////////////////////////////////////////////////////////
 //
@@ -62,22 +62,22 @@ using rutz::shared_ptr;
 using nub::ref;
 using nub::soft_ref;
 
-using IO::AttribMap;
+using io::attrib_map;
 
 namespace
 {
-  void throwAttrError(const fstring& attrib_name,
-                      const fstring& attrib_value,
-                      const rutz::file_pos& pos)
+  void throw_attr_error(const fstring& attrib_name,
+                        const fstring& attrib_value,
+                        const rutz::file_pos& pos)
   {
     throw rutz::error(fstring("error reading attribute '", attrib_name,
                               "' with value '", attrib_value, "'"),
                       pos);
   }
 
-  fstring readAndUnEscape(std::istream& is)
+  fstring read_and_unescape(std::istream& is)
   {
-  GVX_TRACE("<asciistreamreader.cc>::readAndUnEscape");
+  GVX_TRACE("<asciistreamreader.cc>::read_and_unescape");
 
     static const char STRING_ENDER = '^';
 
@@ -92,10 +92,10 @@ namespace
     while ( (ch = is.get()) != EOF &&
             !(brace_level == 0 && ch == STRING_ENDER) )
       {
-        // We only substitute in the escape sequence if we are reading at the
-        // zero-th brace level; otherwise, we leave the escape sequence in
-        // since it will eventually be parsed when the brace-nested object
-        // itself is parsed.
+        // We only substitute in the escape sequence if we are reading
+        // at the zero-th brace level; otherwise, we leave the escape
+        // sequence in since it will eventually be parsed when the
+        // brace-nested object itself is parsed.
         if (ch != '\\' || brace_level > 0)
           {
             if (ch == '{') ++brace_level;
@@ -131,381 +131,376 @@ namespace
 
     return fstring(rutz::char_range(&buffer[0], buffer.size()));
   }
-}
 
-// This is a hack to help shorten up names for assemblers on systems
-// that need short identifier names.
-#if defined(GVX_SHORTEN_SYMBOL_NAMES)
-#define AsciiStreamReader ASR
-#endif
-
-class AsciiStreamReader : public IO::Reader
-{
-public:
-  AsciiStreamReader(std::istream& is);
-  AsciiStreamReader(const char* filename);
-
-  virtual ~AsciiStreamReader() throw();
-
-  virtual IO::VersionId readSerialVersionId();
-
-  virtual char readChar(const fstring& name);
-  virtual int readInt(const fstring& name);
-  virtual bool readBool(const fstring& name);
-  virtual double readDouble(const fstring& name);
-  virtual void readValueObj(const fstring& name, rutz::value& v);
-
-  virtual void readRawData(const fstring& name, rutz::byte_array& data)
-  { defaultReadRawData(name, data); }
-
-  virtual nub::ref<IO::IoObject> readObject(const fstring& name);
-  virtual nub::soft_ref<IO::IoObject>
-    readMaybeObject(const fstring& name);
-
-  virtual void readOwnedObject(const fstring& name,
-                               nub::ref<IO::IoObject> obj);
-  virtual void readBaseClass(const fstring& baseClassName,
-                             nub::ref<IO::IoObject> basePart);
-
-  virtual nub::ref<IO::IoObject> readRoot(IO::IoObject* root=0);
-
-protected:
-  virtual fstring readStringImpl(const fstring& name);
-
-private:
-  shared_ptr<std::istream> itsOwnedStream;
-  std::istream& itsBuf;
-  IO::ObjectMap itsObjects;
-  std::vector<shared_ptr<AttribMap> > itsAttribs;
-
-  AttribMap& currentAttribs()
+  class asw_reader : public io::reader
   {
-    if ( itsAttribs.empty() )
-      throw rutz::error("attempted to read attribute "
-                        "when no attribute map was active", SRC_POS);
-    return *(itsAttribs.back());
+  public:
+    asw_reader(std::istream& is);
+    asw_reader(const char* filename);
+
+    virtual ~asw_reader() throw();
+
+    virtual io::version_id input_version_id();
+
+    virtual char read_char(const fstring& name);
+    virtual int read_int(const fstring& name);
+    virtual bool read_bool(const fstring& name);
+    virtual double read_double(const fstring& name);
+    virtual void read_value_obj(const fstring& name, rutz::value& v);
+
+    virtual void read_byte_array(const fstring& name, rutz::byte_array& data)
+    { default_read_byte_array(name, data); }
+
+    virtual nub::ref<io::serializable> read_object(const fstring& name);
+    virtual nub::soft_ref<io::serializable>
+    read_weak_object(const fstring& name);
+
+    virtual void read_owned_object(const fstring& name,
+                                   nub::ref<io::serializable> obj);
+    virtual void read_base_class(const fstring& base_class_name,
+                                 nub::ref<io::serializable> base_part);
+
+    virtual nub::ref<io::serializable> read_root(io::serializable* root=0);
+
+  protected:
+    virtual fstring read_string_impl(const fstring& name);
+
+  private:
+    shared_ptr<std::istream>              m_owned_stream;
+    std::istream&                         m_buf;
+    io::object_map                        m_objects;
+    std::vector<shared_ptr<attrib_map> >  m_attribs;
+
+    attrib_map& current_attribs()
+    {
+      if ( m_attribs.empty() )
+        throw rutz::error("attempted to read attribute "
+                          "when no attribute map was active", SRC_POS);
+      return *(m_attribs.back());
+    }
+
+    void inflate_object(std::istream& buf,
+                        const fstring& obj_tag,
+                        ref<io::serializable> obj);
+
+    template <class T>
+    T read_basic_type(const fstring& name)
+    {
+      dbg_eval_nl(3, name);
+
+      attrib_map::attrib a = current_attribs().get(name);
+      rutz::icstrstream ist(a.value.c_str());
+
+      T return_val;
+      ist >> return_val;
+      dbg_eval(3, a.value); dbg_eval_nl(3, return_val);
+
+      if (ist.fail())
+        throw_attr_error(name, a.value, SRC_POS);
+
+      return return_val;
+    }
+  };
+
+  ///////////////////////////////////////////////////////////////////////
+  //
+  // asw_reader member definitions
+  //
+  ///////////////////////////////////////////////////////////////////////
+
+  asw_reader::asw_reader(std::istream& is) :
+    m_owned_stream(),
+    m_buf(is),
+    m_objects(),
+    m_attribs()
+  {
+  GVX_TRACE("asw_reader::asw_reader");
   }
 
-  void inflateObject(std::istream& buf,
-                     const fstring& obj_tag, ref<IO::IoObject> obj);
-
-  template <class T>
-  T readBasicType(const fstring& name)
+  asw_reader::asw_reader(const char* filename) :
+    m_owned_stream(rutz::igzopen(filename)),
+    m_buf(*m_owned_stream),
+    m_objects(),
+    m_attribs()
   {
+  GVX_TRACE("asw_reader::asw_reader");
+  }
+
+  asw_reader::~asw_reader () throw()
+  {
+  GVX_TRACE("asw_reader::~asw_reader");
+  }
+
+  io::version_id asw_reader::input_version_id()
+  {
+  GVX_TRACE("asw_reader::input_version_id");
+    return current_attribs().get_version_id();
+  }
+
+  char asw_reader::read_char(const fstring& name)
+  {
+  GVX_TRACE("asw_reader::read_char");
+    return read_basic_type<char>(name);
+  }
+
+  int asw_reader::read_int(const fstring& name)
+  {
+  GVX_TRACE("asw_reader::read_int");
+    return read_basic_type<int>(name);
+  }
+
+  bool asw_reader::read_bool(const fstring& name)
+  {
+  GVX_TRACE("asw_reader::read_bool");
+    return bool(read_basic_type<int>(name));
+  }
+
+  double asw_reader::read_double(const fstring& name)
+  {
+  GVX_TRACE("asw_reader::read_double");
+    return read_basic_type<double>(name);
+  }
+
+  fstring asw_reader::read_string_impl(const fstring& name)
+  {
+  GVX_TRACE("asw_reader::read_string_impl");
     dbg_eval_nl(3, name);
 
-    AttribMap::Attrib a = currentAttribs().get(name);
+    attrib_map::attrib a = current_attribs().get(name);
     rutz::icstrstream ist(a.value.c_str());
 
-    T return_val;
-    ist >> return_val;
-    dbg_eval(3, a.value); dbg_eval_nl(3, return_val);
+    int len;
+    ist >> len;                     dbg_eval_nl(3, len);
+    ist.get(); // ignore one char of whitespace after the length
+
+    if (len < 0)
+      {
+        throw rutz::error(fstring("found a negative length "
+                                  "for a string attribute: ", len),
+                          SRC_POS);
+      }
+
+    fstring new_string;
+    new_string.readsome(ist, static_cast<unsigned int>(len));
 
     if (ist.fail())
-      throwAttrError(name, a.value, SRC_POS);
+      {
+        throw_attr_error(name, a.value, SRC_POS);
+      }
 
-    return return_val;
+    dbg_eval(3, a.value); dbg_eval_nl(3, new_string);
+    return new_string;
   }
-};
 
-///////////////////////////////////////////////////////////////////////
-//
-// AsciiStreamReader member definitions
-//
-///////////////////////////////////////////////////////////////////////
+  void asw_reader::read_value_obj(const fstring& name,
+                                  rutz::value& v)
+  {
+  GVX_TRACE("asw_reader::read_value_obj");
+    dbg_eval_nl(3, name);
 
-AsciiStreamReader::AsciiStreamReader(std::istream& is) :
-  itsOwnedStream(),
-  itsBuf(is),
-  itsObjects(),
-  itsAttribs()
-{
-GVX_TRACE("AsciiStreamReader::AsciiStreamReader");
+    attrib_map::attrib a = current_attribs().get(name);
+
+    v.set_string(a.value);
+  }
+
+  ref<io::serializable>
+  asw_reader::read_object(const fstring& name)
+  {
+  GVX_TRACE("asw_reader::read_object");
+    dbg_eval_nl(3, name);
+    return ref<io::serializable>(read_weak_object(name));
+  }
+
+  soft_ref<io::serializable>
+  asw_reader::read_weak_object(const fstring& name)
+  {
+  GVX_TRACE("asw_reader::read_weak_object");
+    dbg_eval_nl(3, name);
+
+    attrib_map::attrib attrib = current_attribs().get(name);
+
+    rutz::icstrstream ist(attrib.value.c_str());
+    nub::uid id;
+    ist >> id;
+
+    if (ist.fail())
+      throw_attr_error(name, attrib.value, SRC_POS);
+
+    if (id == 0) { return soft_ref<io::serializable>(); }
+
+    // Return the object for this id, creating a new object if necessary:
+    return m_objects.fetch_object(attrib.type, id);
+  }
+
+  void asw_reader::read_owned_object(const fstring& name,
+                                     ref<io::serializable> obj)
+  {
+  GVX_TRACE("asw_reader::read_owned_object");
+    dbg_eval_nl(3, name);
+
+    attrib_map::attrib a = current_attribs().get(name);
+    rutz::icstrstream ist(a.value.c_str());
+    char bracket[16];
+
+    ist >> bracket;
+
+    inflate_object(ist, name, obj);
+
+    ist >> bracket >> std::ws;
+  }
+
+  void asw_reader::read_base_class(const fstring& base_class_name,
+                                   ref<io::serializable> base_part)
+  {
+  GVX_TRACE("asw_reader::read_base_class");
+    dbg_eval_nl(3, base_class_name);
+    read_owned_object(base_class_name, base_part);
+  }
+
+  ref<io::serializable> asw_reader::read_root(io::serializable* given_root)
+  {
+  GVX_TRACE("asw_reader::read_root");
+
+    m_objects.clear();
+
+    bool got_root = false;
+    nub::uid rootid = 0;
+
+    fstring type;
+    fstring equal;
+    fstring bracket;
+    nub::uid id;
+
+    while ( m_buf.peek() != EOF )
+      {
+        m_buf >> type >> id >> equal >> bracket;
+        dbg_eval(3, type); dbg_eval_nl(3, id);
+
+        if ( m_buf.fail() )
+          {
+            fstring msg;
+            msg.append("input failed while reading typename and object id\n");
+            msg.append("\ttype: ", type, "\n");
+            msg.append("id: ", id, "\n");
+            msg.append("\tequal: ", equal, "\n");
+            msg.append("\tbracket: ", bracket);
+            throw rutz::error(msg, SRC_POS);
+          }
+
+        if ( !got_root )
+          {
+            rootid = id;
+
+            if (given_root != 0)
+              m_objects.add_object_for_id
+                (rootid, ref<io::serializable>(given_root));
+
+            got_root = true;
+          }
+
+        ref<io::serializable> obj = m_objects.fetch_object(type, id);
+
+        inflate_object(m_buf, type, obj);
+
+        m_buf >> bracket >> std::ws;
+
+        if ( m_buf.fail() )
+          {
+            throw rutz::error(fstring("input failed "
+                                      "while parsing ending bracket\n",
+                                      "\tbracket: ", bracket), SRC_POS);
+          }
+      }
+
+    return m_objects.get_existing_object(rootid);
+  }
+
+  void asw_reader::inflate_object(std::istream& buf,
+                                  const fstring& obj_tag,
+                                  ref<io::serializable> obj)
+  {
+  GVX_TRACE("asw_reader::inflate_object");
+
+    //
+    // (1) read the object's attributes from the stream...
+    //
+    shared_ptr<attrib_map> attribs( new attrib_map(obj_tag) );
+
+    // Skip all whitespace
+    buf >> std::ws;
+
+    io::version_id svid = 0;
+
+    // Check if there is a version id in the stream
+    if (buf.peek() == 'v')
+      {
+        int ch = buf.get();  GVX_ASSERT(ch == 'v');
+        buf >> svid;
+        if ( buf.fail() )
+          throw rutz::error("input failed while reading "
+                            "serialization version id", SRC_POS);
+      }
+
+    attribs->set_version_id(svid);
+
+    // Get the attribute count
+    int attrib_count;
+    buf >> attrib_count;    dbg_eval_nl(3, attrib_count);
+
+    if (attrib_count < 0)
+      {
+        throw rutz::error(fstring("found a negative attribute count: ",
+                                  attrib_count), SRC_POS);
+      }
+
+    if ( buf.fail() )
+      {
+        throw rutz::error(fstring("input failed while reading "
+                                  "attribute count: ", attrib_count),
+                          SRC_POS);
+      }
+
+    // Loop and load all the attributes
+    fstring type;
+    fstring name;
+    fstring equal;
+
+    for (int i = 0; i < attrib_count; ++i)
+      {
+        buf >> type >> name >> equal;   dbg_eval(3, type); dbg_eval_nl(3, name);
+
+        if ( buf.fail() )
+          {
+            fstring msg;
+            msg.append("input failed while reading attribute type and name\n");
+            msg.append("\ttype: ", type, "\n");
+            msg.append("\tname: ", name, "\n");
+            msg.append("\tequal: ", equal);
+            throw rutz::error(msg, SRC_POS);
+          }
+
+        attribs->add_attrib(name, type, read_and_unescape(buf));
+      }
+
+    m_attribs.push_back(attribs);
+
+    //
+    // (2) now the object can query us for its attributes...
+    //
+    obj->read_from(*this);
+
+    m_attribs.pop_back();
+  }
 }
 
-AsciiStreamReader::AsciiStreamReader(const char* filename) :
-  itsOwnedStream(rutz::igzopen(filename)),
-  itsBuf(*itsOwnedStream),
-  itsObjects(),
-  itsAttribs()
+shared_ptr<io::reader> io::make_asw_reader(std::istream& os)
 {
-GVX_TRACE("AsciiStreamReader::AsciiStreamReader");
+  return rutz::make_shared( new asw_reader(os) );
 }
 
-AsciiStreamReader::~AsciiStreamReader () throw()
+shared_ptr<io::reader> io::make_asw_reader(const char* filename)
 {
-GVX_TRACE("AsciiStreamReader::~AsciiStreamReader");
-}
-
-IO::VersionId AsciiStreamReader::readSerialVersionId()
-{
-GVX_TRACE("AsciiStreamReader::readSerialVersionId");
-  return currentAttribs().getSerialVersionId();
-}
-
-char AsciiStreamReader::readChar(const fstring& name)
-{
-GVX_TRACE("AsciiStreamReader::readChar");
-  return readBasicType<char>(name);
-}
-
-int AsciiStreamReader::readInt(const fstring& name)
-{
-GVX_TRACE("AsciiStreamReader::readInt");
-  return readBasicType<int>(name);
-}
-
-bool AsciiStreamReader::readBool(const fstring& name)
-{
-GVX_TRACE("AsciiStreamReader::readBool");
-  return bool(readBasicType<int>(name));
-}
-
-double AsciiStreamReader::readDouble(const fstring& name)
-{
-GVX_TRACE("AsciiStreamReader::readDouble");
-  return readBasicType<double>(name);
-}
-
-fstring AsciiStreamReader::readStringImpl(const fstring& name)
-{
-GVX_TRACE("AsciiStreamReader::readStringImpl");
-  dbg_eval_nl(3, name);
-
-  AttribMap::Attrib a = currentAttribs().get(name);
-  rutz::icstrstream ist(a.value.c_str());
-
-  int len;
-  ist >> len;                     dbg_eval_nl(3, len);
-  ist.get(); // ignore one char of whitespace after the length
-
-  if (len < 0)
-    {
-      throw rutz::error(fstring("found a negative length "
-                                "for a string attribute: ", len),
-                        SRC_POS);
-    }
-
-  fstring new_string;
-  new_string.readsome(ist, static_cast<unsigned int>(len));
-
-  if (ist.fail())
-    {
-      throwAttrError(name, a.value, SRC_POS);
-    }
-
-  dbg_eval(3, a.value); dbg_eval_nl(3, new_string);
-  return new_string;
-}
-
-void AsciiStreamReader::readValueObj(const fstring& name,
-                                     rutz::value& v)
-{
-GVX_TRACE("AsciiStreamReader::readValueObj");
-  dbg_eval_nl(3, name);
-
-  AttribMap::Attrib a = currentAttribs().get(name);
-
-  v.set_string(a.value);
-}
-
-ref<IO::IoObject>
-AsciiStreamReader::readObject(const fstring& name)
-{
-GVX_TRACE("AsciiStreamReader::readObject");
-  dbg_eval_nl(3, name);
-  return ref<IO::IoObject>(readMaybeObject(name));
-}
-
-soft_ref<IO::IoObject>
-AsciiStreamReader::readMaybeObject(const fstring& name)
-{
-GVX_TRACE("AsciiStreamReader::readMaybeObject");
-  dbg_eval_nl(3, name);
-
-  AttribMap::Attrib attrib = currentAttribs().get(name);
-
-  rutz::icstrstream ist(attrib.value.c_str());
-  nub::uid id;
-  ist >> id;
-
-  if (ist.fail())
-    throwAttrError(name, attrib.value, SRC_POS);
-
-  if (id == 0) { return soft_ref<IO::IoObject>(); }
-
-  // Return the object for this id, creating a new object if necessary:
-  return itsObjects.fetchObject(attrib.type, id);
-}
-
-void AsciiStreamReader::readOwnedObject(const fstring& name,
-                                        ref<IO::IoObject> obj)
-{
-GVX_TRACE("AsciiStreamReader::readOwnedObject");
-  dbg_eval_nl(3, name);
-
-  AttribMap::Attrib a = currentAttribs().get(name);
-  rutz::icstrstream ist(a.value.c_str());
-  char bracket[16];
-
-  ist >> bracket;
-
-  inflateObject(ist, name, obj);
-
-  ist >> bracket >> std::ws;
-}
-
-void AsciiStreamReader::readBaseClass(const fstring& baseClassName,
-                                      ref<IO::IoObject> basePart)
-{
-GVX_TRACE("AsciiStreamReader::readBaseClass");
-  dbg_eval_nl(3, baseClassName);
-  readOwnedObject(baseClassName, basePart);
-}
-
-ref<IO::IoObject> AsciiStreamReader::readRoot(IO::IoObject* given_root)
-{
-GVX_TRACE("AsciiStreamReader::readRoot");
-
-  itsObjects.clear();
-
-  bool haveReadRoot = false;
-  nub::uid rootid = 0;
-
-  fstring type;
-  fstring equal;
-  fstring bracket;
-  nub::uid id;
-
-  while ( itsBuf.peek() != EOF )
-    {
-      itsBuf >> type >> id >> equal >> bracket;
-      dbg_eval(3, type); dbg_eval_nl(3, id);
-
-      if ( itsBuf.fail() )
-        {
-          fstring msg;
-          msg.append("input failed while reading typename and object id\n");
-          msg.append("\ttype: ", type, "\n");
-          msg.append("id: ", id, "\n");
-          msg.append("\tequal: ", equal, "\n");
-          msg.append("\tbracket: ", bracket);
-          throw rutz::error(msg, SRC_POS);
-        }
-
-      if ( !haveReadRoot )
-        {
-          rootid = id;
-
-          if (given_root != 0)
-            itsObjects.assignObjectForId(rootid,
-                                         ref<IO::IoObject>(given_root));
-
-          haveReadRoot = true;
-        }
-
-      ref<IO::IoObject> obj = itsObjects.fetchObject(type, id);
-
-      inflateObject(itsBuf, type, obj);
-
-      itsBuf >> bracket >> std::ws;
-
-      if ( itsBuf.fail() )
-        {
-          throw rutz::error(fstring("input failed "
-                                    "while parsing ending bracket\n",
-                                    "\tbracket: ", bracket), SRC_POS);
-        }
-    }
-
-  return itsObjects.getObject(rootid);
-}
-
-void AsciiStreamReader::inflateObject(std::istream& buf,
-                                      const fstring& obj_tag,
-                                      ref<IO::IoObject> obj)
-{
-GVX_TRACE("AsciiStreamReader::inflateObject");
-
-  //
-  // (1) read the object's attributes from the stream...
-  //
-  shared_ptr<AttribMap> attribMap( new AttribMap(obj_tag) );
-
-  // Skip all whitespace
-  buf >> std::ws;
-
-  IO::VersionId svid = 0;
-
-  // Check if there is a version id in the stream
-  if (buf.peek() == 'v')
-    {
-      int ch = buf.get();  GVX_ASSERT(ch == 'v');
-      buf >> svid;
-      if ( buf.fail() )
-        throw rutz::error("input failed while reading "
-                          "serialization version id", SRC_POS);
-    }
-
-  attribMap->setSerialVersionId(svid);
-
-  // Get the attribute count
-  int attrib_count;
-  buf >> attrib_count;    dbg_eval_nl(3, attrib_count);
-
-  if (attrib_count < 0)
-    {
-      throw rutz::error(fstring("found a negative attribute count: ",
-                                attrib_count), SRC_POS);
-    }
-
-  if ( buf.fail() )
-    {
-      throw rutz::error(fstring("input failed while reading "
-                                "attribute count: ", attrib_count),
-                        SRC_POS);
-    }
-
-  // Loop and load all the attributes
-  fstring type;
-  fstring name;
-  fstring equal;
-
-  for (int i = 0; i < attrib_count; ++i)
-    {
-      buf >> type >> name >> equal;   dbg_eval(3, type); dbg_eval_nl(3, name);
-
-      if ( buf.fail() )
-        {
-          fstring msg;
-          msg.append("input failed while reading attribute type and name\n");
-          msg.append("\ttype: ", type, "\n");
-          msg.append("\tname: ", name, "\n");
-          msg.append("\tequal: ", equal);
-          throw rutz::error(msg, SRC_POS);
-        }
-
-      attribMap->addNewAttrib(name, type, readAndUnEscape(buf));
-    }
-
-  itsAttribs.push_back(attribMap);
-
-  //
-  // (2) now the object can query us for its attributes...
-  //
-  obj->readFrom(*this);
-
-  itsAttribs.pop_back();
-}
-
-shared_ptr<IO::Reader> IO::makeAsciiStreamReader(std::istream& os)
-{
-  return rutz::make_shared( new AsciiStreamReader(os) );
-}
-
-shared_ptr<IO::Reader> IO::makeAsciiStreamReader(const char* filename)
-{
-  return rutz::make_shared( new AsciiStreamReader(filename) );
+  return rutz::make_shared( new asw_reader(filename) );
 }
 
 static const char vcid_groovx_io_asciistreamreader_cc_utc20050626084021[] = "$Id$ $HeadURL$";

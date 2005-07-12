@@ -94,21 +94,21 @@ GxCylinder::~GxCylinder() throw()
 GVX_TRACE("GxCylinder::~GxCylinder");
 }
 
-IO::VersionId GxCylinder::serialVersionId() const
+io::version_id GxCylinder::class_version_id() const
 {
-GVX_TRACE("GxCylinder::serialVersionId");
+GVX_TRACE("GxCylinder::class_version_id");
   return GXCYLINDER_SVID;
 }
 
-void GxCylinder::readFrom(IO::Reader& reader)
+void GxCylinder::read_from(io::reader& reader)
 {
-GVX_TRACE("GxCylinder::readFrom");
+GVX_TRACE("GxCylinder::read_from");
   readFieldsFrom(reader, classFields());
 }
 
-void GxCylinder::writeTo(IO::Writer& writer) const
+void GxCylinder::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxCylinder::writeTo");
+GVX_TRACE("GxCylinder::write_to");
   writeFieldsTo(writer, classFields(), GXCYLINDER_SVID);
 }
 

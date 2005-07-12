@@ -42,7 +42,7 @@
 
 namespace
 {
-  const IO::VersionId GXCOLOR_SVID = 1;
+  const io::version_id GXCOLOR_SVID = 1;
 }
 
 GxColor::GxColor() :
@@ -54,22 +54,22 @@ GxColor::GxColor() :
 
 GxColor::~GxColor() throw() {}
 
-IO::VersionId GxColor::serialVersionId() const
+io::version_id GxColor::class_version_id() const
 {
   return GXCOLOR_SVID;
 }
 
-void GxColor::readFrom(IO::Reader& reader)
+void GxColor::read_from(io::reader& reader)
 {
-  reader.ensureReadVersionId("GxColor", 1,
-                             "Try groovx0.8a7", SRC_POS);
+  reader.ensure_version_id("GxColor", 1,
+                           "Try groovx0.8a7", SRC_POS);
 
   readFieldsFrom(reader, classFields());
 }
 
-void GxColor::writeTo(IO::Writer& writer) const
+void GxColor::write_to(io::writer& writer) const
 {
-  writer.ensureWriteVersionId("GxColor", GXCOLOR_SVID, 1,
+  writer.ensure_output_version_id("GxColor", GXCOLOR_SVID, 1,
                               "Try groovx0.8a7", SRC_POS);
 
   writeFieldsTo(writer, classFields(), GXCOLOR_SVID);

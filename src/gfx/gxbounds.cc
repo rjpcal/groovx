@@ -60,20 +60,20 @@ GxBounds::GxBounds(nub::soft_ref<GxNode> child) :
 
 GxBounds::~GxBounds() throw() {}
 
-void GxBounds::readFrom(IO::Reader& reader)
+void GxBounds::read_from(io::reader& reader)
 {
-GVX_TRACE("GxBounds::readFrom");
-  reader.readValue("isVisible", isItVisible);
-  reader.readValue("isAnimated", isItAnimated);
-  reader.readValue("percentBorder", itsPercentBorder);
+GVX_TRACE("GxBounds::read_from");
+  reader.read_value("isVisible", isItVisible);
+  reader.read_value("isAnimated", isItAnimated);
+  reader.read_value("percentBorder", itsPercentBorder);
 }
 
-void GxBounds::writeTo(IO::Writer& writer) const
+void GxBounds::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxBounds::writeTo");
-  writer.writeValue("isVisible", isItVisible);
-  writer.writeValue("isAnimated", isItAnimated);
-  writer.writeValue("percentBorder", itsPercentBorder);
+GVX_TRACE("GxBounds::write_to");
+  writer.write_value("isVisible", isItVisible);
+  writer.write_value("isAnimated", isItAnimated);
+  writer.write_value("percentBorder", itsPercentBorder);
 }
 
 void GxBounds::draw(Gfx::Canvas& canvas) const

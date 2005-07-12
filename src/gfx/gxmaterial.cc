@@ -93,21 +93,21 @@ GxMaterial::~GxMaterial() throw()
 GVX_TRACE("GxMaterial::~GxMaterial");
 }
 
-IO::VersionId GxMaterial::serialVersionId() const
+io::version_id GxMaterial::class_version_id() const
 {
-GVX_TRACE("GxMaterial::serialVersionId");
+GVX_TRACE("GxMaterial::class_version_id");
   return GXMATERIAL_SVID;
 }
 
-void GxMaterial::readFrom(IO::Reader& reader)
+void GxMaterial::read_from(io::reader& reader)
 {
-GVX_TRACE("GxMaterial::readFrom");
+GVX_TRACE("GxMaterial::read_from");
   readFieldsFrom(reader, classFields());
 }
 
-void GxMaterial::writeTo(IO::Writer& writer) const
+void GxMaterial::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxMaterial::writeTo");
+GVX_TRACE("GxMaterial::write_to");
   writeFieldsTo(writer, classFields(), GXMATERIAL_SVID);
 }
 

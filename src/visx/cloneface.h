@@ -62,9 +62,9 @@ public:
   /// Virtual destructor.
   virtual ~CloneFace() throw();
 
-  virtual IO::VersionId serialVersionId() const;
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual io::version_id class_version_id() const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   /// Returns an array of Bezier control points for face outline.
   virtual const double* getCtrlPnts() const;

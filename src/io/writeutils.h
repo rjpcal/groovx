@@ -1,5 +1,5 @@
 /** @file io/writeutils.h helper functions for writing counted
-    sequences of objects to an IO::Writer */
+    sequences of objects to an io::writer */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -41,34 +41,34 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-namespace IO
+namespace io
 {
-/// Utilities for writing sequences to a \c IO::Writer.
-namespace WriteUtils
+/// Utilities for writing sequences to a \c io::writer.
+namespace write_utils
 {
 
-  rutz::fstring makeElementNameString(const rutz::fstring& seq_name,
-                                      int element_num);
+  rutz::fstring make_element_name(const rutz::fstring& seq_name,
+                                  int element_num);
 
-  rutz::fstring makeSeqCountString(const rutz::fstring& seq_name);
+  rutz::fstring make_seq_length_name(const rutz::fstring& seq_name);
 
   /** A generic interface for handling containers, sequences, etc. of
       value types. */
   template <class Itr>
-  void writeValueSeq(IO::Writer& writer, const rutz::fstring& name,
-                     Itr begin, Itr end, bool skip_count=false)
+  void write_value_seq(io::writer& writer, const rutz::fstring& name,
+                       Itr begin, Itr end, bool skip_count=false)
     {
       if (!skip_count)
         {
-          writer.writeValue(makeSeqCountString(name).c_str(),
-                            computeCount(begin, end));
+          writer.write_value(make_seq_length_name(name).c_str(),
+                             compute_seq_length(begin, end));
         }
 
       int count = 0;
 
       while (begin != end)
         {
-          writer.writeValue(makeElementNameString(name, count).c_str(),
+          writer.write_value(make_element_name(name, count).c_str(),
                             *begin);
           ++begin;
           ++count;
@@ -78,20 +78,20 @@ namespace WriteUtils
   /** A generic interface for handling containers, sequences, etc. of
       objects of rutz::value subtypes */
   template <class Itr>
-  void writeValueObjSeq(IO::Writer& writer, const rutz::fstring& name,
-                        Itr begin, Itr end, bool skip_count=false)
+  void write_value_obj_seq(io::writer& writer, const rutz::fstring& name,
+                           Itr begin, Itr end, bool skip_count=false)
     {
       if (!skip_count)
         {
-          writer.writeValue(makeSeqCountString(name).c_str(),
-                            computeCount(begin, end));
+          writer.write_value(make_seq_length_name(name).c_str(),
+                             compute_seq_length(begin, end));
         }
 
       int count = 0;
 
       while (begin != end)
         {
-          writer.writeValueObj(makeElementNameString(name, count).c_str(),
+          writer.write_value_obj(make_element_name(name, count).c_str(),
                                *begin);
           ++begin;
           ++count;
@@ -100,13 +100,13 @@ namespace WriteUtils
 
   /// A generic interface for handling containers, sequences, etc. of objects
   template <class Itr>
-  void writeObjectSeq(IO::Writer& writer, const rutz::fstring& name,
-                      Itr begin, Itr end, bool skip_count=false)
+  void write_object_seq(io::writer& writer, const rutz::fstring& name,
+                        Itr begin, Itr end, bool skip_count=false)
     {
       if (!skip_count)
         {
-          writer.writeValue(makeSeqCountString(name).c_str(),
-                            computeCount(begin, end));
+          writer.write_value(make_seq_length_name(name).c_str(),
+                             compute_seq_length(begin, end));
         }
 
       int count = 0;
@@ -115,22 +115,22 @@ namespace WriteUtils
         {
           dbg_eval(4, count); dbg_eval_nl(4, (*begin)->id());
 
-          writer.writeObject(makeElementNameString(name, count).c_str(),
-                             nub::soft_ref<const IO::IoObject>(*begin));
+          writer.write_object(make_element_name(name, count).c_str(),
+                              nub::soft_ref<const io::serializable>(*begin));
           ++begin;
           ++count;
         }
     }
 
   template <class Itr>
-  int computeCount(Itr begin, Itr end)
+  int compute_seq_length(Itr begin, Itr end)
     {
       int count = 0;
       while (begin != end) { ++count; ++begin; }
       return count;
     }
 
-}} // end namespace IO::WriteUtils
+}} // end namespace io::write_utils
 
 static const char vcid_groovx_io_writeutils_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_WRITEUTILS_H_UTC20050626084021_DEFINED

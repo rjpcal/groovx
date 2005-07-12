@@ -60,7 +60,7 @@ using geom::vec3d;
 
 namespace
 {
-  const IO::VersionId FACE_SVID = 2;
+  const io::version_id FACE_SVID = 2;
 
   const double theirNose_x = 0.0;
   const double theirMouth_x[2] = {-0.2, 0.2};
@@ -126,35 +126,35 @@ GVX_TRACE("Face::~Face");
   // nothing to do
 }
 
-IO::VersionId Face::serialVersionId() const
+io::version_id Face::class_version_id() const
 {
-GVX_TRACE("Face::serialVersionId");
+GVX_TRACE("Face::class_version_id");
   return FACE_SVID;
 }
 
-void Face::readFrom(IO::Reader& reader)
+void Face::read_from(io::reader& reader)
 {
-GVX_TRACE("Face::readFrom");
+GVX_TRACE("Face::read_from");
 
-  reader.ensureReadVersionId("Face", 2,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("Face", 2,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
-  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+  reader.read_base_class("GxShapeKit", io::make_proxy<GxShapeKit>(this));
 }
 
-void Face::writeTo(IO::Writer& writer) const
+void Face::write_to(io::writer& writer) const
 {
-GVX_TRACE("Face::writeTo");
+GVX_TRACE("Face::write_to");
 
-  writer.ensureWriteVersionId("Face", FACE_SVID, 2,
+  writer.ensure_output_version_id("Face", FACE_SVID, 2,
                               "Try groovx0.8a4", SRC_POS);
 
   writeFieldsTo(writer, classFields(), FACE_SVID);
 
-  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
+  writer.write_base_class("GxShapeKit", io::make_const_proxy<GxShapeKit>(this));
 }
 
 ///////////////////////////////////////////////////////////////////////

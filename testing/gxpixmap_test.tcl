@@ -168,19 +168,19 @@ test "GxPixmap::asBitmap" "normal use" {
 
 } {^1$} $no_test
 
-### GxPixmap::writeLGX ###
-### GxPixmap::readLGX ###
-test "GxPixmap::writeLGX" "writeLGX, readLGX, compare" {
+### GxPixmap::write_lgx ###
+### GxPixmap::read_lgx ###
+test "GxPixmap::write_lgx" "write_lgx, read_lgx, compare" {
     set b1 [Obj::new GxPixmap]
     GxPixmap::zoom $b1 {3.0 4.5}
 
-    set str1 [IO::writeLGX $b1]
+    set str1 [io::write_lgx $b1]
 
     Obj::delete $b1
 
     set b2 [Obj::new GxPixmap]
-    IO::readLGX $b2 $str1
-    set str2 [IO::writeLGX $b2]
+    io::read_lgx $b2 $str1
+    set str2 [io::write_lgx $b2]
 
     return "[string equal $str1 $str2] $str1 $str2"
 } {^1 }

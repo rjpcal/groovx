@@ -90,21 +90,21 @@ GxSphere::~GxSphere() throw()
 GVX_TRACE("GxSphere::~GxSphere");
 }
 
-IO::VersionId GxSphere::serialVersionId() const
+io::version_id GxSphere::class_version_id() const
 {
-GVX_TRACE("GxSphere::serialVersionId");
+GVX_TRACE("GxSphere::class_version_id");
   return GXSPHERE_SVID;
 }
 
-void GxSphere::readFrom(IO::Reader& reader)
+void GxSphere::read_from(io::reader& reader)
 {
-GVX_TRACE("GxSphere::readFrom");
+GVX_TRACE("GxSphere::read_from");
   readFieldsFrom(reader, classFields());
 }
 
-void GxSphere::writeTo(IO::Writer& writer) const
+void GxSphere::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxSphere::writeTo");
+GVX_TRACE("GxSphere::write_to");
   writeFieldsTo(writer, classFields(), GXSPHERE_SVID);
 }
 

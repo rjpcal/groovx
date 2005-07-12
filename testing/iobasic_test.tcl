@@ -7,82 +7,82 @@
 ###
 ##############################################################################
 
-::test IO::writeLGX "too few args" {
-    IO::writeLGX
+::test io::write_lgx "too few args" {
+    io::write_lgx
 } "wrong \# args: should be "
 
-::test IO::writeLGX "too many args" {
-    IO::writeLGX 0 junk
+::test io::write_lgx "too many args" {
+    io::write_lgx 0 junk
 } "wrong \# args: should be "
 
-::test IO::writeLGX "error from negative id" {
-    IO::writeLGX -1
+::test io::write_lgx "error from negative id" {
+    io::write_lgx -1
 } {expected.*but got}
 
-::test IO::writeLGX "error from too large id" {
-    IO::writeLGX 10000000
+::test io::write_lgx "error from too large id" {
+    io::write_lgx 10000000
 } {attempted to access invalid object.*$}
 
-::test IO::writeLGX "error from non-integral id" {
-    IO::writeLGX 1.5
+::test io::write_lgx "error from non-integral id" {
+    io::write_lgx 1.5
 } {expected.*but got}
 
-::test IO::readLGX "too few args" {
-    IO::readLGX 0
+::test io::read_lgx "too few args" {
+    io::read_lgx 0
 } "wrong \# args: should be "
 
-::test IO::readLGX "too many args" {
-    IO::readLGX 0 string junk
+::test io::read_lgx "too many args" {
+    io::read_lgx 0 string junk
 } "wrong \# args: should be "
 
-::test IO::readLGX "error from negative id" {
-    IO::readLGX -1 junk
+::test io::read_lgx "error from negative id" {
+    io::read_lgx -1 junk
 } {expected.*but got}
 
-::test IO::readLGX "error from too large id" {
-    IO::readLGX 10000000 junk
+::test io::read_lgx "error from too large id" {
+    io::read_lgx 10000000 junk
 } {attempted to access invalid object.*$}
 
-::test IO::readLGX "error from non-integral id" {
-    IO::readLGX 1.5 junk
+::test io::read_lgx "error from non-integral id" {
+    io::read_lgx 1.5 junk
 } {expected.*but got}
 
-::test IO::writeASW "too few args" {
-    IO::writeASW
+::test io::write_asw "too few args" {
+    io::write_asw
 } "wrong \# args: should be "
 
-::test IO::writeASW "too many args" {
-    IO::writeASW 0 junk
+::test io::write_asw "too many args" {
+    io::write_asw 0 junk
 } "wrong \# args: should be "
 
-::test IO::writeASW "error from negative id" {
-    IO::writeASW -1
+::test io::write_asw "error from negative id" {
+    io::write_asw -1
 } {expected.*but got}
 
-::test IO::writeASW "error from too large id" {
-    IO::writeASW 10000000
+::test io::write_asw "error from too large id" {
+    io::write_asw 10000000
 } {attempted to access invalid object.*$}
 
-::test IO::writeASW "error from non-integral id" {
-    IO::writeASW 1.5
+::test io::write_asw "error from non-integral id" {
+    io::write_asw 1.5
 } {expected.*but got}
 
-::test IO::readASW "too few args" {
-    IO::readASW 0
+::test io::read_asw "too few args" {
+    io::read_asw 0
 } "wrong \# args: should be "
 
-::test IO::readASW "too many args" {
-    IO::readASW 0 string junk
+::test io::read_asw "too many args" {
+    io::read_asw 0 string junk
 } "wrong \# args: should be "
 
-::test IO::readASW "error from negative id" {
-    IO::readASW -1 junk
+::test io::read_asw "error from negative id" {
+    io::read_asw -1 junk
 } {expected.*but got}
 
-::test IO::readASW "error from too large id" {
-    IO::readASW 10000000 junk
+::test io::read_asw "error from too large id" {
+    io::read_asw 10000000 junk
 } {attempted to access invalid object.*$}
 
-::test IO::readASW "error from non-integral id" {
-    IO::readASW 1.5 junk
+::test io::read_asw "error from non-integral id" {
+    io::read_asw 1.5 junk
 } {expected.*but got}

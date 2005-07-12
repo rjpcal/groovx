@@ -123,9 +123,9 @@ GVX_TRACE("GxSeparator::~GxSeparator");
   rep->destroy();
 }
 
-void GxSeparator::readFrom(IO::Reader& reader)
+void GxSeparator::read_from(io::reader& reader)
 {
-GVX_TRACE("GxSeparator::readFrom");
+GVX_TRACE("GxSeparator::read_from");
 
   for(unsigned int i = 0; i < rep->children.size(); ++i)
     {
@@ -134,7 +134,7 @@ GVX_TRACE("GxSeparator::readFrom");
     }
 
   rep->children.clear();
-  IO::ReadUtils::readObjectSeq<GxNode>(
+  io::read_utils::read_object_seq<GxNode>(
           reader, "children", std::back_inserter(rep->children));
 
   for(unsigned int i = 0; i < rep->children.size(); ++i)
@@ -146,12 +146,12 @@ GVX_TRACE("GxSeparator::readFrom");
   this->sigNodeChanged.emit();
 }
 
-void GxSeparator::writeTo(IO::Writer& writer) const
+void GxSeparator::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxSeparator::writeTo");
-  IO::WriteUtils::writeObjectSeq(writer, "children",
-                                 rep->children.begin(),
-                                 rep->children.end());
+GVX_TRACE("GxSeparator::write_to");
+  io::write_utils::write_object_seq(writer, "children",
+                                    rep->children.begin(),
+                                    rep->children.end());
 }
 
 GxSeparator::ChildId GxSeparator::addChild(nub::ref<GxNode> item)

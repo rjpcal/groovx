@@ -1,5 +1,5 @@
-/** @file io/tclpkg-io.h tcl interface packages for IO::IoObject and
-    OutputFile */
+/** @file io/tclpkg-io.h tcl interface packages for io::serializable
+    and output_file */
 
 ///////////////////////////////////////////////////////////////////////
 //

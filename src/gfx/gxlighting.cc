@@ -105,21 +105,21 @@ GxLighting::~GxLighting() throw()
 GVX_TRACE("GxLighting::~GxLighting");
 }
 
-IO::VersionId GxLighting::serialVersionId() const
+io::version_id GxLighting::class_version_id() const
 {
-GVX_TRACE("GxLighting::serialVersionId");
+GVX_TRACE("GxLighting::class_version_id");
   return GXLIGHTING_SVID;
 }
 
-void GxLighting::readFrom(IO::Reader& reader)
+void GxLighting::read_from(io::reader& reader)
 {
-GVX_TRACE("GxLighting::readFrom");
+GVX_TRACE("GxLighting::read_from");
   readFieldsFrom(reader, classFields());
 }
 
-void GxLighting::writeTo(IO::Writer& writer) const
+void GxLighting::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxLighting::writeTo");
+GVX_TRACE("GxLighting::write_to");
   writeFieldsTo(writer, classFields(), GXLIGHTING_SVID);
 }
 

@@ -65,7 +65,7 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId TIMINGHDLR_SVID = 1;
+  const io::version_id TIMINGHDLR_SVID = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -161,52 +161,52 @@ GVX_TRACE("TimingHdlr::~TimingHdlr");
   delete rep;
 }
 
-IO::VersionId TimingHdlr::serialVersionId() const
+io::version_id TimingHdlr::class_version_id() const
 {
-GVX_TRACE("TimingHdlr::serialVersionId");
+GVX_TRACE("TimingHdlr::class_version_id");
   return TIMINGHDLR_SVID;
 }
 
-void TimingHdlr::readFrom(IO::Reader& reader)
+void TimingHdlr::read_from(io::reader& reader)
 {
-GVX_TRACE("TimingHdlr::readFrom");
+GVX_TRACE("TimingHdlr::read_from");
 
-  reader.ensureReadVersionId("TimingHdlr", 1, "Try groovx0.8a4", SRC_POS);
+  reader.ensure_version_id("TimingHdlr", 1, "Try groovx0.8a4", SRC_POS);
 
   rep->immediateEvents.clear();
-  IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "immediateEvents",
+  io::read_utils::read_object_seq<TrialEvent>(reader, "immediateEvents",
             std::back_inserter(rep->immediateEvents));
 
   rep->startEvents.clear();
-  IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "startEvents",
+  io::read_utils::read_object_seq<TrialEvent>(reader, "startEvents",
             std::back_inserter(rep->startEvents));
 
   rep->responseEvents.clear();
-  IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "responseEvents",
+  io::read_utils::read_object_seq<TrialEvent>(reader, "responseEvents",
             std::back_inserter(rep->responseEvents));
 
   rep->abortEvents.clear();
-  IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "abortEvents",
+  io::read_utils::read_object_seq<TrialEvent>(reader, "abortEvents",
             std::back_inserter(rep->abortEvents));
 }
 
-void TimingHdlr::writeTo(IO::Writer& writer) const
+void TimingHdlr::write_to(io::writer& writer) const
 {
-GVX_TRACE("TimingHdlr::writeTo");
+GVX_TRACE("TimingHdlr::write_to");
 
-  writer.ensureWriteVersionId("TimingHdlr", TIMINGHDLR_SVID, 1,
+  writer.ensure_output_version_id("TimingHdlr", TIMINGHDLR_SVID, 1,
                               "Try groovx0.8a4", SRC_POS);
 
-  IO::WriteUtils::writeObjectSeq(writer, "immediateEvents",
+  io::write_utils::write_object_seq(writer, "immediateEvents",
     rep->immediateEvents.begin(), rep->immediateEvents.end());
 
-  IO::WriteUtils::writeObjectSeq(writer, "startEvents",
+  io::write_utils::write_object_seq(writer, "startEvents",
     rep->startEvents.begin(), rep->startEvents.end());
 
-  IO::WriteUtils::writeObjectSeq(writer, "responseEvents",
+  io::write_utils::write_object_seq(writer, "responseEvents",
     rep->responseEvents.begin(), rep->responseEvents.end());
 
-  IO::WriteUtils::writeObjectSeq(writer, "abortEvents",
+  io::write_utils::write_object_seq(writer, "abortEvents",
     rep->abortEvents.begin(), rep->abortEvents.end());
 }
 

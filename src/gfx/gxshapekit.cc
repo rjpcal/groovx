@@ -69,8 +69,8 @@ public:
 
   virtual ~GxShapeKitNode() throw() {}
 
-  virtual void readFrom(IO::Reader& /*reader*/) {};
-  virtual void writeTo(IO::Writer& /*writer*/) const {};
+  virtual void read_from(io::reader& /*reader*/) {};
+  virtual void write_to(io::writer& /*writer*/) const {};
 
   virtual void draw(Gfx::Canvas& canvas) const
   { itsObj->grRender(canvas); }
@@ -144,7 +144,7 @@ public:
 
 namespace
 {
-  const IO::VersionId GXSHAPEKIT_SVID = 4;
+  const io::version_id GXSHAPEKIT_SVID = 4;
 }
 
 rutz::tracer GxShapeKit::tracer;
@@ -182,45 +182,45 @@ GVX_TRACE("GxShapeKit::~GxShapeKit");
   rep->destroy();
 }
 
-IO::VersionId GxShapeKit::serialVersionId() const
+io::version_id GxShapeKit::class_version_id() const
 {
-GVX_TRACE("GxShapeKit::serialVersionId");
+GVX_TRACE("GxShapeKit::class_version_id");
   return GXSHAPEKIT_SVID;
 }
 
-void GxShapeKit::readFrom(IO::Reader& reader)
+void GxShapeKit::read_from(io::reader& reader)
 {
-GVX_TRACE("GxShapeKit::readFrom");
+GVX_TRACE("GxShapeKit::read_from");
 
   const int svid =
-    reader.ensureReadVersionId("GxShapeKit", 3,
-                               "Try groovx0.8a7", SRC_POS);
+    reader.ensure_version_id("GxShapeKit", 3,
+                             "Try groovx0.8a7", SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
   if (svid >= 4)
     {
-      reader.readOwnedObject("bounds", rep->boundsOutline);
-      reader.readOwnedObject("cache", rep->cache);
-      reader.readOwnedObject("aligner", rep->aligner);
-      reader.readOwnedObject("scaler", rep->scaler);
+      reader.read_owned_object("bounds", rep->boundsOutline);
+      reader.read_owned_object("cache", rep->cache);
+      reader.read_owned_object("aligner", rep->aligner);
+      reader.read_owned_object("scaler", rep->scaler);
     }
 }
 
-void GxShapeKit::writeTo(IO::Writer& writer) const
+void GxShapeKit::write_to(io::writer& writer) const
 {
-GVX_TRACE("GxShapeKit::writeTo");
+GVX_TRACE("GxShapeKit::write_to");
 
-  writer.ensureWriteVersionId("GxShapeKit",
+  writer.ensure_output_version_id("GxShapeKit",
                               GXSHAPEKIT_SVID, 4,
                               "Try groovx0.8a7", SRC_POS);
 
   writeFieldsTo(writer, classFields(), GXSHAPEKIT_SVID);
 
-  writer.writeOwnedObject("bounds", rep->boundsOutline);
-  writer.writeOwnedObject("cache", rep->cache);
-  writer.writeOwnedObject("aligner", rep->aligner);
-  writer.writeOwnedObject("scaler", rep->scaler);
+  writer.write_owned_object("bounds", rep->boundsOutline);
+  writer.write_owned_object("cache", rep->cache);
+  writer.write_owned_object("aligner", rep->aligner);
+  writer.write_owned_object("scaler", rep->scaler);
 }
 
 const FieldMap& GxShapeKit::classFields()

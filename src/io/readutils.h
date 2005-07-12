@@ -1,5 +1,5 @@
 /** @file io/readutils.h helper functions for reading counted
-    sequences of objects from an IO::Reader */
+    sequences of objects from an io::reader */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -40,21 +40,21 @@
 
 #include "rutz/error.h"
 
-namespace IO
+namespace io
 {
-/// Utilities for reading sequences from a \c IO::Reader.
-namespace ReadUtils
+/// Utilities for reading sequences from a \c io::reader.
+namespace read_utils
 {
-  rutz::fstring makeElementNameString(const rutz::fstring& seq_name,
-                                      int element_num);
+  rutz::fstring make_element_name(const rutz::fstring& seq_name,
+                                  int element_num);
 
-  rutz::fstring makeSeqCountString(const rutz::fstring& seq_name);
+  rutz::fstring make_seq_length_name(const rutz::fstring& seq_name);
 
   /// Get the number of elements in the stored sequence \a seq_name.
-  inline int readSequenceCount(IO::Reader& reader,
-                               const rutz::fstring& seq_name)
+  inline int read_sequence_length(io::reader& reader,
+                                  const rutz::fstring& seq_name)
     {
-      int count = reader.readInt(makeSeqCountString(seq_name));
+      int count = reader.read_int(make_seq_length_name(seq_name));
       if (0 > count)
         throw rutz::error("read negative value for sequence count",
                           SRC_POS);
@@ -67,17 +67,17 @@ namespace ReadUtils
       avoid reading the value twice (this may be important if the
       reader does not support random access to the attributes). */
   template <class T, class Inserter>
-  inline void readValueSeq(IO::Reader& reader,
-                           const rutz::fstring& seq_name,
-                           Inserter inserter, int known_count = -1)
+  inline void read_value_seq(io::reader& reader,
+                             const rutz::fstring& seq_name,
+                             Inserter inserter, int known_count = -1)
     {
       int count = (known_count == -1) ?
-        readSequenceCount(reader, seq_name) : known_count;
+        read_sequence_length(reader, seq_name) : known_count;
 
       for (int i = 0; i < count; ++i)
         {
           T temp;
-          reader.readValue(makeElementNameString(seq_name, i), temp);
+          reader.read_value(make_element_name(seq_name, i), temp);
           *inserter = temp;
           ++inserter;
         }
@@ -89,45 +89,45 @@ namespace ReadUtils
       that we avoid reading the value twice (this may be important if
       the reader does not support random access to the attributes). */
   template <class T, class Inserter>
-  inline void readValueObjSeq(IO::Reader& reader,
-                              const rutz::fstring& seq_name,
-                              Inserter inserter, int known_count = -1)
+  inline void read_value_obj_seq(io::reader& reader,
+                                 const rutz::fstring& seq_name,
+                                 Inserter inserter, int known_count = -1)
     {
       int count = (known_count == -1) ?
-        readSequenceCount(reader, seq_name) : known_count;
+        read_sequence_length(reader, seq_name) : known_count;
 
       for (int i = 0; i < count; ++i)
         {
           T temp;
-          reader.readValueObj(makeElementNameString(seq_name, i), temp);
+          reader.read_value_obj(make_element_name(seq_name, i), temp);
           *inserter = temp;
           ++inserter;
         }
     }
 
   /** Provides a generic interface for handling containers, sequences,
-      etc. of IO objects. If the count has already been read from
+      etc. of io objects. If the count has already been read from
       the reader, this value can be passed as \c known_count, so that
       we avoid reading the value twice (this may be important if the
       reader does not support random access to the attributes). */
   template <class C, class Inserter>
-  inline void readObjectSeq(IO::Reader& reader,
-                            const rutz::fstring& seq_name,
-                            Inserter inserter, int known_count = -1)
+  inline void read_object_seq(io::reader& reader,
+                              const rutz::fstring& seq_name,
+                              Inserter inserter, int known_count = -1)
     {
       int count = (known_count == -1) ?
-        readSequenceCount(reader, seq_name) : known_count;
+        read_sequence_length(reader, seq_name) : known_count;
 
       for (int i = 0; i < count; ++i)
         {
           *inserter = dyn_cast<C>(
-                 reader.readObject(makeElementNameString(seq_name, i)));
+                 reader.read_object(make_element_name(seq_name, i)));
 
           ++inserter;
         }
     }
 
-}} // end namespace IO::ReadUtils
+}} // end namespace io::read_utils
 
 static const char vcid_groovx_io_readutils_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_READUTILS_H_UTC20050626084021_DEFINED

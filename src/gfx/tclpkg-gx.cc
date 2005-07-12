@@ -179,7 +179,7 @@ int Gxnode_Init(Tcl_Interp* interp)
 GVX_TRACE("Gxnode_Init");
 
   GVX_PKG_CREATE(pkg, interp, "GxNode", "4.$Revision$");
-  pkg->inherit_pkg("IO");
+  pkg->inherit_pkg("io");
   tcl::def_basic_type_cmds<GxNode>(pkg, SRC_POS);
 
   pkg->def( "contains", "objref other_id", &GxTcl::contains, SRC_POS );

@@ -76,10 +76,10 @@ public:
   /// Virtual destructor.
   virtual ~GxCache() throw();
 
-  IO::VersionId serialVersionId() const;
+  io::version_id class_version_id() const;
 
-  virtual void readFrom(IO::Reader& reader);
-  virtual void writeTo(IO::Writer& writer) const;
+  virtual void read_from(io::reader& reader);
+  virtual void write_to(io::writer& writer) const;
 
   /// Draw using the current draw mode.
   virtual void draw(Gfx::Canvas& canvas) const;

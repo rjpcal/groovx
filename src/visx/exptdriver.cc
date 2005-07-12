@@ -79,7 +79,7 @@ rutz::tracer ExptDriver::tracer;
 
 namespace
 {
-  const IO::VersionId EXPTDRIVER_SVID = 6;
+  const io::version_id EXPTDRIVER_SVID = 6;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -173,53 +173,53 @@ GVX_TRACE("ExptDriver::~ExptDriver");
   delete rep;
 }
 
-IO::VersionId ExptDriver::serialVersionId() const
+io::version_id ExptDriver::class_version_id() const
 {
-GVX_TRACE("ExptDriver::serialVersionId");
+GVX_TRACE("ExptDriver::class_version_id");
   return EXPTDRIVER_SVID;
 }
 
-void ExptDriver::readFrom(IO::Reader& reader)
+void ExptDriver::read_from(io::reader& reader)
 {
-GVX_TRACE("ExptDriver::readFrom");
+GVX_TRACE("ExptDriver::read_from");
 
-  reader.ensureReadVersionId("ExptDriver", 6,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("ExptDriver", 6,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
-  reader.readValue("hostname", rep->hostname);
-  reader.readValue("subject", rep->subject);
-  reader.readValue("beginDate", rep->beginDate);
-  reader.readValue("endDate", rep->endDate);
-  reader.readValue("autosaveFile", rep->autosaveFile);
-  reader.readValue("autosavePeriod", rep->autosavePeriod);
-  reader.readValue("infoLog", rep->infoLog);
-  reader.readOwnedObject("doWhenComplete", rep->doWhenComplete);
-  reader.readValue("filePrefix", rep->filePrefix);
+  reader.read_value("hostname", rep->hostname);
+  reader.read_value("subject", rep->subject);
+  reader.read_value("beginDate", rep->beginDate);
+  reader.read_value("endDate", rep->endDate);
+  reader.read_value("autosaveFile", rep->autosaveFile);
+  reader.read_value("autosavePeriod", rep->autosavePeriod);
+  reader.read_value("infoLog", rep->infoLog);
+  reader.read_owned_object("doWhenComplete", rep->doWhenComplete);
+  reader.read_value("filePrefix", rep->filePrefix);
 
-  reader.readBaseClass("ElementContainer",
-                       IO::makeProxy<ElementContainer>(this));
+  reader.read_base_class("ElementContainer",
+                       io::make_proxy<ElementContainer>(this));
 }
 
-void ExptDriver::writeTo(IO::Writer& writer) const
+void ExptDriver::write_to(io::writer& writer) const
 {
-GVX_TRACE("ExptDriver::writeTo");
+GVX_TRACE("ExptDriver::write_to");
 
-  writer.ensureWriteVersionId("ExptDriver", EXPTDRIVER_SVID, 6,
+  writer.ensure_output_version_id("ExptDriver", EXPTDRIVER_SVID, 6,
                               "Try groovx0.8a7", SRC_POS);
 
-  writer.writeValue("hostname", rep->hostname);
-  writer.writeValue("subject", rep->subject);
-  writer.writeValue("beginDate", rep->beginDate);
-  writer.writeValue("endDate", rep->endDate);
-  writer.writeValue("autosaveFile", rep->autosaveFile);
-  writer.writeValue("autosavePeriod", rep->autosavePeriod);
-  writer.writeValue("infoLog", rep->infoLog);
-  writer.writeOwnedObject("doWhenComplete", rep->doWhenComplete);
-  writer.writeValue("filePrefix", rep->filePrefix);
+  writer.write_value("hostname", rep->hostname);
+  writer.write_value("subject", rep->subject);
+  writer.write_value("beginDate", rep->beginDate);
+  writer.write_value("endDate", rep->endDate);
+  writer.write_value("autosaveFile", rep->autosaveFile);
+  writer.write_value("autosavePeriod", rep->autosavePeriod);
+  writer.write_value("infoLog", rep->infoLog);
+  writer.write_owned_object("doWhenComplete", rep->doWhenComplete);
+  writer.write_value("filePrefix", rep->filePrefix);
 
-  writer.writeBaseClass("ElementContainer",
-                        IO::makeConstProxy<ElementContainer>(this));
+  writer.write_base_class("ElementContainer",
+                        io::make_const_proxy<ElementContainer>(this));
 }
 
 
@@ -256,7 +256,7 @@ GVX_TRACE("ExptDriver::vxEndTrialHook");
     return;
 
   dbg_eval_nl(3, rep->autosaveFile.c_str());
-  IO::saveGVX(nub::ref<IO::IoObject>(this), rep->autosaveFile);
+  io::save_gvx(nub::ref<io::serializable>(this), rep->autosaveFile);
 }
 
 void ExptDriver::vxAllChildrenFinished()
@@ -482,7 +482,7 @@ GVX_TRACE("ExptDriver::storeData");
   expt_filename.append("_", rep->fileTimestamp);
   expt_filename.append(".gvx");
   renameFileIfExists(expt_filename);
-  IO::saveGVX(nub::ref<IO::IoObject>(this), expt_filename.c_str());
+  io::save_gvx(nub::ref<io::serializable>(this), expt_filename.c_str());
   nub::log( fstring( "wrote file ", expt_filename.c_str()) );
 
   // Write the responses file

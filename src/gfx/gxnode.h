@@ -67,7 +67,7 @@ namespace nub
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class GxNode : public IO::IoObject
+class GxNode : public io::serializable
 {
 private:
   GxNode(const GxNode&);

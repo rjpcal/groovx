@@ -77,18 +77,18 @@ tcl::ProcWrapper::~ProcWrapper() throw()
     }
 }
 
-void tcl::ProcWrapper::readFrom(IO::Reader& reader)
+void tcl::ProcWrapper::read_from(io::reader& reader)
 {
   fstring args, body;
-  reader.readValue("args", args);
-  reader.readValue("body", body);
+  reader.read_value("args", args);
+  reader.read_value("body", body);
   define(args, body);
 }
 
-void tcl::ProcWrapper::writeTo(IO::Writer& writer) const
+void tcl::ProcWrapper::write_to(io::writer& writer) const
 {
-  writer.writeValue("args", itsArgs);
-  writer.writeValue("body", itsBody);
+  writer.write_value("args", itsArgs);
+  writer.write_value("body", itsBody);
 }
 
 void tcl::ProcWrapper::define(const fstring& args, const fstring& body)

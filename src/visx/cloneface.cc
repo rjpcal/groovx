@@ -95,34 +95,34 @@ CloneFace::~CloneFace () throw()
 GVX_TRACE("CloneFace::~CloneFace");
 }
 
-IO::VersionId CloneFace::serialVersionId() const
+io::version_id CloneFace::class_version_id() const
 {
-GVX_TRACE("CloneFace::serialVersionId");
+GVX_TRACE("CloneFace::class_version_id");
   return CLONEFACE_SVID;
 }
 
-void CloneFace::readFrom(IO::Reader& reader)
+void CloneFace::read_from(io::reader& reader)
 {
-GVX_TRACE("CloneFace::readFrom");
+GVX_TRACE("CloneFace::read_from");
 
-  IO::ReadUtils::readValueSeq<double>(reader, "ctrlPnts",
-                                               itsCtrlPnts, 24);
+  io::read_utils::read_value_seq<double>(reader, "ctrlPnts",
+                                         itsCtrlPnts, 24);
 
   readFieldsFrom(reader, classFields());
 
-  reader.readBaseClass("Face", IO::makeProxy<Face>(this));
+  reader.read_base_class("Face", io::make_proxy<Face>(this));
 }
 
-void CloneFace::writeTo(IO::Writer& writer) const
+void CloneFace::write_to(io::writer& writer) const
 {
-GVX_TRACE("CloneFace::writeTo");
+GVX_TRACE("CloneFace::write_to");
 
-  IO::WriteUtils::writeValueSeq(writer, "ctrlPnts",
-                                itsCtrlPnts, itsCtrlPnts+24, true);
+  io::write_utils::write_value_seq(writer, "ctrlPnts",
+                                   itsCtrlPnts, itsCtrlPnts+24, true);
 
   writeFieldsTo(writer, classFields(), CLONEFACE_SVID);
 
-  writer.writeBaseClass("Face", IO::makeConstProxy<Face>(this));
+  writer.write_base_class("Face", io::make_const_proxy<Face>(this));
 }
 
 const double* CloneFace::getCtrlPnts() const

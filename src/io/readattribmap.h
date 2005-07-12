@@ -1,4 +1,5 @@
-/** @file io/readattribmap.h helper class used in AsciiStreamReader */
+/** @file io/readattribmap.h helper class used in io::reader subclass
+    implementations */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -40,19 +41,19 @@
 #include <utility>
 #include <vector>
 
-namespace IO
+namespace io
 {
-  class AttribMap
+  class attrib_map
   {
   public:
 
-    struct Attrib
+    struct attrib
     {
     private:
-      Attrib(); // not implemented
+      attrib(); // not implemented
 
     public:
-      Attrib(const rutz::fstring& t, const rutz::fstring& v) :
+      attrib(const rutz::fstring& t, const rutz::fstring& v) :
         type(t), value(v) {}
 
       rutz::fstring type;
@@ -60,76 +61,74 @@ namespace IO
     };
 
   private:
-    rutz::fstring itsObjTag;
+    typedef std::pair<rutz::fstring, attrib>  value_type;
+    typedef std::vector<value_type>           list_type;
 
-    typedef std::pair<rutz::fstring, Attrib> ValueType;
-    typedef std::vector<ValueType> ListType;
-
-    ListType itsMap;
-
-    IO::VersionId itsSerialVersionId;
+    rutz::fstring   m_obj_tag;
+    list_type       m_attribs;
+    io::version_id  m_version_id;
 
   public:
     inline
-    AttribMap(const rutz::fstring& obj_tag);
+    attrib_map(const rutz::fstring& obj_tag);
 
     inline
-    IO::VersionId getSerialVersionId() const;
+    io::version_id get_version_id() const;
 
     inline
-    void setSerialVersionId(IO::VersionId id);
+    void set_version_id(io::version_id id);
 
     inline
-    Attrib get(const rutz::fstring& attrib_name);
+    attrib get(const rutz::fstring& attr_name);
 
     inline
-    void addNewAttrib(const rutz::fstring& attrib_name,
-                      const rutz::fstring& type,
-                      const rutz::fstring& value);
+    void add_attrib(const rutz::fstring& attr_name,
+                    const rutz::fstring& type,
+                    const rutz::fstring& value);
   };
 }
 
 #include "rutz/error.h"
 
 inline
-IO::AttribMap::AttribMap(const rutz::fstring& obj_tag) :
-  itsObjTag(obj_tag),
-  itsMap(),
-  itsSerialVersionId(0)
+io::attrib_map::attrib_map(const rutz::fstring& obj_tag) :
+  m_obj_tag(obj_tag),
+  m_attribs(),
+  m_version_id(0)
 {}
 
 inline
-IO::VersionId IO::AttribMap::getSerialVersionId() const
+io::version_id io::attrib_map::get_version_id() const
 {
-  return itsSerialVersionId;
+  return m_version_id;
 }
 
 inline
-void IO::AttribMap::setSerialVersionId(IO::VersionId id)
+void io::attrib_map::set_version_id(io::version_id id)
 {
-  itsSerialVersionId = id;
+  m_version_id = id;
 }
 
 inline
-IO::AttribMap::Attrib IO::AttribMap::get(const rutz::fstring& attrib_name)
+io::attrib_map::attrib io::attrib_map::get(const rutz::fstring& attr_name)
 {
-  ListType::iterator itr = itsMap.begin(), end = itsMap.end();
+  list_type::iterator itr = m_attribs.begin(), end = m_attribs.end();
   while (itr != end)
     {
-      if ((*itr).first == attrib_name)
+      if ((*itr).first == attr_name)
         {
-          Attrib result = (*itr).second;
-          itsMap.erase(itr);
+          attrib result = (*itr).second;
+          m_attribs.erase(itr);
           return result;
         }
       ++itr;
     }
 
   rutz::fstring msg("no attribute named '",
-                    attrib_name.c_str(), "' for ",
-                    itsObjTag.c_str(), "\nknown attributes are:\n");
+                    attr_name.c_str(), "' for ",
+                    m_obj_tag.c_str(), "\nknown attributes are:\n");
 
-  itr = itsMap.begin();
+  itr = m_attribs.begin();
   while (itr != end)
     {
       msg.append("\t", (*itr).first, "\n");
@@ -140,11 +139,11 @@ IO::AttribMap::Attrib IO::AttribMap::get(const rutz::fstring& attrib_name)
 }
 
 inline
-void IO::AttribMap::addNewAttrib(const rutz::fstring& attrib_name,
-                                 const rutz::fstring& type,
-                                 const rutz::fstring& value)
+void io::attrib_map::add_attrib(const rutz::fstring& attr_name,
+                                const rutz::fstring& type,
+                                const rutz::fstring& value)
 {
-  itsMap.push_back(ValueType(attrib_name, Attrib(type,value)));
+  m_attribs.push_back(value_type(attr_name, attrib(type,value)));
 }
 
 static const char vcid_groovx_io_readattribmap_h_utc20050626084021[] = "$Id$ $HeadURL$";

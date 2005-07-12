@@ -49,105 +49,105 @@ GVX_DBG_REGISTER
 #define XML_STATUS_ERROR 0
 #endif
 
-XmlParser::XmlParser(std::istream& is, int bufsize) :
-  itsParser(XML_ParserCreate(/*encoding*/0)),
-  itsStream(is),
-  itsBufSize(bufsize)
+io::xml_parser::xml_parser(std::istream& is, int bufsize) :
+  m_parser(XML_ParserCreate(/*encoding*/0)),
+  m_stream(is),
+  m_buf_size(bufsize)
 {
-GVX_TRACE("XmlParser::XmlParser");
-  if (itsParser == 0)
+GVX_TRACE("io::xml_parser::xml_parser");
+  if (m_parser == 0)
     {
       throw rutz::error("couldn't allocate memory for XML_Parser",
                         SRC_POS);
     }
 
-  XML_SetUserData(itsParser, this);
+  XML_SetUserData(m_parser, this);
 
-  XML_SetElementHandler(itsParser, &elementStartC, &elementEndC);
+  XML_SetElementHandler(m_parser, &c_element_start, &c_element_end);
 
-  XML_SetCharacterDataHandler(itsParser, &characterDataC);
+  XML_SetCharacterDataHandler(m_parser, &c_character_data);
 }
 
-XmlParser::~XmlParser()
+io::xml_parser::~xml_parser()
 {
-GVX_TRACE("XmlParser::~XmlParser");
-  XML_ParserFree(itsParser);
+GVX_TRACE("io::xml_parser::~xml_parser");
+  XML_ParserFree(m_parser);
 }
 
-void XmlParser::characterData(const char* /*text*/, int /*length*/)
+void io::xml_parser::character_data(const char* /*text*/, int /*length*/)
 {
-GVX_TRACE("XmlParser::characterData");
+GVX_TRACE("io::xml_parser::character_data");
 }
 
-void XmlParser::elementStartC(void* data, const char* el, const char** attr)
+void io::xml_parser::c_element_start(void* data, const char* el, const char** attr)
 {
-GVX_TRACE("XmlParser::elementStartC");
-  XmlParser* p = static_cast<XmlParser*>(data);
+GVX_TRACE("io::xml_parser::c_element_start");
+  io::xml_parser* p = static_cast<io::xml_parser*>(data);
   GVX_ASSERT(p != 0);
-  p->elementStart(el, attr);
+  p->element_start(el, attr);
 }
 
-void XmlParser::elementEndC(void* data, const char* el)
+void io::xml_parser::c_element_end(void* data, const char* el)
 {
-GVX_TRACE("XmlParser::elementEndC");
-  XmlParser* p = static_cast<XmlParser*>(data);
+GVX_TRACE("io::xml_parser::c_element_end");
+  io::xml_parser* p = static_cast<io::xml_parser*>(data);
   GVX_ASSERT(p != 0);
-  p->elementEnd(el);
+  p->element_end(el);
 }
 
-void XmlParser::characterDataC(void* data, const char* text, int length)
+void io::xml_parser::c_character_data(void* data, const char* text, int length)
 {
-GVX_TRACE("XmlParser::characterDataC");
-  XmlParser* p = static_cast<XmlParser*>(data);
+GVX_TRACE("io::xml_parser::c_character_data");
+  io::xml_parser* p = static_cast<io::xml_parser*>(data);
   GVX_ASSERT(p != 0);
-  p->characterData(text, length);
+  p->character_data(text, length);
 }
 
-void XmlParser::parse()
+void io::xml_parser::parse()
 {
-GVX_TRACE("XmlParser::parse");
+GVX_TRACE("io::xml_parser::parse");
   while (1)
     {
-      void* const buf = XML_GetBuffer(itsParser, itsBufSize);
+      void* const buf = XML_GetBuffer(m_parser, m_buf_size);
       if (buf == 0)
         {
-          throw rutz::error("couldn't get buffer in XmlParser::parse()",
+          throw rutz::error("couldn't get buffer in io::xml_parser::parse()",
                             SRC_POS);
         }
 
       // very strangely I wasn't able to get things to work using a
       // readsome() approach here...
-      itsStream.read(static_cast<char*>(buf), itsBufSize);
-      const int len = itsStream.gcount();
-      if (!itsStream.eof() && itsStream.fail())
+      m_stream.read(static_cast<char*>(buf), m_buf_size);
+      const int len = m_stream.gcount();
+      if (!m_stream.eof() && m_stream.fail())
         {
-          throw rutz::error("read error in XmlParser::parse()",
+          throw rutz::error("read error in io::xml_parser::parse()",
                             SRC_POS);
         }
 
-      const int peek = itsStream.peek();
+      const int peek = m_stream.peek();
 
       const int done = (peek == EOF);
 
       if (GVX_DBG_LEVEL() >= 3)
         {
           dbg_eval(3, buf);
-          dbg_eval(3, itsBufSize);
+          dbg_eval(3, m_buf_size);
           dbg_eval(3, len);
           dbg_eval(3, peek);
           dbg_eval_nl(3, done);
         }
 
-      // alternate: use XML_Parse(itsParser, itsBuf, len, done) if we have
+      // alternate: use XML_Parse(m_parser, m_buf, len, done) if we have
       // our own memory buffer
-      if (XML_ParseBuffer(itsParser, len, done)
+      if (XML_ParseBuffer(m_parser, len, done)
           != XML_STATUS_OK)
         {
           throw rutz::error
             (rutz::fstring("xml parse error at input line ",
-                           XML_GetCurrentLineNumber(itsParser),
+                           XML_GetCurrentLineNumber(m_parser),
                            ":\n",
-                           XML_ErrorString(XML_GetErrorCode(itsParser))),
+                           XML_ErrorString(XML_GetErrorCode(m_parser))),
              SRC_POS);
         }
 
@@ -157,27 +157,28 @@ GVX_TRACE("XmlParser::parse");
 }
 
 #if 0
-// here's a simple subclass of XmlParser that prints an outline of an XML
-// file just to show that everything is getting parsed properly
-class Outliner : public XmlParser
+// here's a simple subclass of io::xml_parser that prints an outline
+// of an XML file just to show that everything is getting parsed
+// properly
+class Outliner : public io::xml_parser
 {
 public:
   Outliner(std::istream& is) :
-    XmlParser(is),
-    itsDepth(0) {}
+    io::xml_parser(is),
+    m_depth(0) {}
   virtual ~Outliner() {}
 
 protected:
-  virtual void elementStart(const char* el, const char** attr);
-  virtual void elementEnd(const char* el);
+  virtual void element_start(const char* el, const char** attr);
+  virtual void element_end(const char* el);
 
 private:
-  int itsDepth;
+  int m_depth;
 };
 
-void Outliner::elementStart(const char* el, const char** attr)
+void Outliner::element_start(const char* el, const char** attr)
 {
-  for (int i = 0; i < itsDepth; i++)
+  for (int i = 0; i < m_depth; i++)
     printf("  ");
 
   printf("%s", el);
@@ -188,12 +189,12 @@ void Outliner::elementStart(const char* el, const char** attr)
     }
 
   printf("\n");
-  ++itsDepth;
+  ++m_depth;
 }
 
-void Outliner::elementEnd(const char* el)
+void Outliner::element_end(const char* el)
 {
-  --itsDepth;
+  --m_depth;
 }
 #endif
 

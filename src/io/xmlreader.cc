@@ -1,4 +1,4 @@
-/** @file io/xmlreader.cc IO::Reader implementation for reading XML
+/** @file io/xmlreader.cc io::reader implementation for reading XML
     files in the GVX format */
 ///////////////////////////////////////////////////////////////////////
 //
@@ -49,12 +49,12 @@
 #include "rutz/value.h"
 
 #include <cstring>           // for strcmp()
-#include <iostream>          // for cout in xmlDebug()
-#include <istream>           // for TreeBuilder constructor
-#include <map>               // for GroupElement
-#include <ostream>           // for XmlElement::trace()
-#include <typeinfo>          // for error reporting and XmlElement::trace()
-#include <vector>            // for stack in TreeBuilder
+#include <iostream>          // for cout in xml_debug()
+#include <istream>           // for tree_builder constructor
+#include <map>               // for group_element
+#include <ostream>           // for xml_element::trace()
+#include <typeinfo>          // for error reporting and xml_element::trace()
+#include <vector>            // for stack in tree_builder
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -68,8 +68,8 @@ using nub::soft_ref;
 
 namespace
 {
-  void invalidAttr(const char* attname, const char* eltype,
-                   const char* elname, const rutz::file_pos& pos)
+  void invalid_attr(const char* attname, const char* eltype,
+                    const char* elname, const rutz::file_pos& pos)
   {
     throw rutz::error(fstring("invalid '", attname,
                               "' attribute for <",
@@ -77,9 +77,9 @@ namespace
                       pos);
   }
 
-  const char* findAttr(const char** attr, const char* attname,
-                       const char* eltype, const char* elname,
-                       const rutz::file_pos& pos)
+  const char* find_attr(const char** attr, const char* attname,
+                        const char* eltype, const char* elname,
+                        const rutz::file_pos& pos)
   {
     for (int i = 0; attr[i] != 0; i += 2)
       {
@@ -96,16 +96,16 @@ namespace
     return 0; // can't happen
   }
 
-  class XmlElement;
+  class xml_element;
 
-  typedef shared_ptr<XmlElement> ElPtr;
+  typedef shared_ptr<xml_element> el_ptr;
 
-  class XmlElement
+  class xml_element
   {
   public:
-    virtual ~XmlElement();
+    virtual ~xml_element();
 
-    virtual void addChild(const char* /*name*/, ElPtr /*elp*/)
+    virtual void add_child(const char* /*name*/, el_ptr /*elp*/)
     {
       throw rutz::error(fstring("child elements not allowed "
                                 "within elements of type: ",
@@ -113,7 +113,7 @@ namespace
                         SRC_POS);
     }
 
-    virtual void characterData(const char* /*text*/, int /*len*/) { }
+    virtual void character_data(const char* /*text*/, int /*len*/) { }
 
     virtual void trace(std::ostream& os,
                        int depth, const char* name) const = 0;
@@ -121,10 +121,10 @@ namespace
     virtual void finish() {}
   };
 
-  XmlElement::~XmlElement() {}
+  xml_element::~xml_element() {}
 
   template <class T>
-  T& elementCast(XmlElement* elp, const fstring& name,
+  T& element_cast(xml_element* elp, const fstring& name,
                  const rutz::file_pos& pos)
   {
     if (elp == 0)
@@ -141,180 +141,180 @@ namespace
   }
 
   template <class T>
-  class BasicElement : public XmlElement
+  class basic_element : public xml_element
   {
   public:
-    BasicElement(const char* str, const char* name);
-    virtual ~BasicElement() {}
+    basic_element(const char* str, const char* name);
+    virtual ~basic_element() {}
 
     virtual void trace(std::ostream& os,
                        int depth, const char* name) const
     {
       for (int i = 0; i < depth; ++i) os << "  ";
-      os << name << "(" << typeid(T).name() << ") value=" << itsVal << "\n";
+      os << name << "(" << typeid(T).name() << ") value=" << m_value << "\n";
     }
 
-    T itsVal;
+    T m_value;
   };
 
   template <>
-  BasicElement<double>::BasicElement(const char* str, const char* name) :
-    itsVal(0.0)
+  basic_element<double>::basic_element(const char* str, const char* name) :
+    m_value(0.0)
   {
-    int n = sscanf(str, "%lf", &itsVal);
+    int n = sscanf(str, "%lf", &m_value);
     if (n != 1)
       {
-        invalidAttr("value", "double", name, SRC_POS);
+        invalid_attr("value", "double", name, SRC_POS);
       }
   }
 
   template <>
-  BasicElement<int>::BasicElement(const char* str, const char* name) :
-    itsVal(0)
+  basic_element<int>::basic_element(const char* str, const char* name) :
+    m_value(0)
   {
-    int n = sscanf(str, "%d", &itsVal);
+    int n = sscanf(str, "%d", &m_value);
     if (n != 1)
       {
-        invalidAttr("value", "int", name, SRC_POS);
+        invalid_attr("value", "int", name, SRC_POS);
       }
   }
 
   template <>
-  BasicElement<bool>::BasicElement(const char* str, const char* name) :
-    itsVal(true)
+  basic_element<bool>::basic_element(const char* str, const char* name) :
+    m_value(true)
   {
     int i = 0;
     int n = sscanf(str, "%d", &i);
     if (n != 1)
       {
-        invalidAttr("value", "bool", name, SRC_POS);
+        invalid_attr("value", "bool", name, SRC_POS);
       }
-    itsVal = bool(i);
+    m_value = bool(i);
   }
 
-  class StringElement : public XmlElement
+  class string_element : public xml_element
   {
   public:
-    StringElement() : itsVal() {}
-    virtual ~StringElement() {}
+    string_element() : m_value() {}
+    virtual ~string_element() {}
 
     virtual void trace(std::ostream& os,
                        int depth, const char* name) const
     {
       for (int i = 0; i < depth; ++i) os << "  ";
-      os << name << "(string) value=" << itsVal << "\n";
+      os << name << "(string) value=" << m_value << "\n";
     }
 
-    virtual void characterData(const char* text, int len)
+    virtual void character_data(const char* text, int len)
     {
-      itsVal.append_range(text, len);
+      m_value.append_range(text, len);
     }
 
-    fstring itsVal;
+    fstring m_value;
   };
 
-  typedef BasicElement<double> DoubleElement;
-  typedef BasicElement<int> IntElement;
-  typedef BasicElement<bool> BoolElement;
+  typedef basic_element<double> double_element;
+  typedef basic_element<int> int_element;
+  typedef basic_element<bool> bool_element;
 
-  class ValueElement : public XmlElement
+  class value_element : public xml_element
   {
   public:
-    ValueElement(const char* val, const char* /*name*/) : itsVal(val) {}
-    virtual ~ValueElement() {}
+    value_element(const char* val, const char* /*name*/) : m_value(val) {}
+    virtual ~value_element() {}
 
     virtual void trace(std::ostream& os,
                        int depth, const char* name) const
     {
       for (int i = 0; i < depth; ++i) os << "  ";
-      os << name << "(valobj) value=" << itsVal << "\n";
+      os << name << "(valobj) value=" << m_value << "\n";
     }
 
-    fstring itsVal;
+    fstring m_value;
   };
 
-  class ObjrefElement : public XmlElement
+  class objref_element : public xml_element
   {
   public:
-    ObjrefElement(const char** attr, const char* eltype, const char* name,
-                  shared_ptr<IO::ObjectMap> objmap) :
-      itsType(""),
-      itsId(-1),
-      itsObjects(objmap)
+    objref_element(const char** attr, const char* eltype, const char* name,
+                  shared_ptr<io::object_map> objmap) :
+      m_type(""),
+      m_id(-1),
+      m_objects(objmap)
     {
-      itsId = atoi(findAttr(attr, "id", eltype, name, SRC_POS));
-      itsType = findAttr(attr, "type", eltype, name, SRC_POS);
+      m_id = atoi(find_attr(attr, "id", eltype, name, SRC_POS));
+      m_type = find_attr(attr, "type", eltype, name, SRC_POS);
 
-      if (itsId < 0)
+      if (m_id < 0)
         {
-          invalidAttr("id", eltype, name, SRC_POS);
+          invalid_attr("id", eltype, name, SRC_POS);
         }
 
-      GVX_ASSERT(itsId >= 0);
+      GVX_ASSERT(m_id >= 0);
 
-      if (itsType.empty())
+      if (m_type.empty())
         {
-          invalidAttr("type", eltype, name, SRC_POS);
+          invalid_attr("type", eltype, name, SRC_POS);
         }
 
-      GVX_ASSERT(!itsType.empty());
+      GVX_ASSERT(!m_type.empty());
     }
 
-    virtual ~ObjrefElement() {}
+    virtual ~objref_element() {}
 
     virtual void trace(std::ostream& os,
                        int depth, const char* name) const
     {
       for (int i = 0; i < depth; ++i) os << "  ";
-      os << name << "(objref:" << itsType << ") id=" << itsId << "\n";
+      os << name << "(objref:" << m_type << ") id=" << m_id << "\n";
     }
 
-    soft_ref<IO::IoObject> getObject()
+    soft_ref<io::serializable> get_object()
     {
-      if (itsId == 0)
-        return soft_ref<IO::IoObject>();
+      if (m_id == 0)
+        return soft_ref<io::serializable>();
       // else...
-      return itsObjects->getObject(itsId);
+      return m_objects->get_existing_object(m_id);
     }
 
-    fstring itsType;
-    int itsId;
-    shared_ptr<IO::ObjectMap> itsObjects;
+    fstring m_type;
+    int m_id;
+    shared_ptr<io::object_map> m_objects;
   };
 
-  class GroupElement : public ObjrefElement, public IO::Reader
+  class group_element : public objref_element, public io::reader
   {
   public:
-    GroupElement(const char** attr, const char* eltype, const char* name,
-                 shared_ptr<IO::ObjectMap> objmap) :
-      ObjrefElement(attr, eltype, name, objmap),
-      itsVersion(-1),
-      itsElems()
+    group_element(const char** attr, const char* eltype, const char* name,
+                 shared_ptr<io::object_map> objmap) :
+      objref_element(attr, eltype, name, objmap),
+      m_version(-1),
+      m_elems()
     {
-      itsVersion = atoi(findAttr(attr, "version", eltype, name, SRC_POS));
+      m_version = atoi(find_attr(attr, "version", eltype, name, SRC_POS));
 
-      if (itsVersion < 0)
+      if (m_version < 0)
         {
-          invalidAttr("version", eltype, name, SRC_POS);
+          invalid_attr("version", eltype, name, SRC_POS);
         }
-      GVX_ASSERT(itsVersion >= 0);
+      GVX_ASSERT(m_version >= 0);
     }
 
-    virtual ~GroupElement() throw() {}
+    virtual ~group_element() throw() {}
 
-    virtual void addChild(const char* name, ElPtr elp)
+    virtual void add_child(const char* name, el_ptr elp)
     {
-      itsElems[name] = elp;
+      m_elems[name] = elp;
     }
 
     virtual void trace(std::ostream& os,
                        int depth, const char* name) const
     {
       for (int i = 0; i < depth; ++i) os << "  ";
-      os << name << "(object:" << itsType << "):\n";
-      for (MapType::const_iterator
-             itr = itsElems.begin(),
-             stop = itsElems.end();
+      os << name << "(object:" << m_type << "):\n";
+      for (map_type::const_iterator
+             itr = m_elems.begin(),
+             stop = m_elems.end();
            itr != stop;
            ++itr)
         {
@@ -322,162 +322,164 @@ namespace
         }
     }
 
-    virtual IO::VersionId readSerialVersionId()
+    virtual io::version_id input_version_id()
     {
-      return itsVersion;
+      return m_version;
     }
 
-    virtual char readChar(const fstring& /*name*/) { GVX_ASSERT(0); return '\0'; }
+    virtual char read_char(const fstring& /*name*/) { GVX_ASSERT(0); return '\0'; }
 
-    virtual int readInt(const fstring& name)
+    virtual int read_int(const fstring& name)
     {
-      ElPtr el = itsElems[name];
-      IntElement& ilp = elementCast<IntElement>(el.get(), name, SRC_POS);
-      return ilp.itsVal;
+      el_ptr el = m_elems[name];
+      int_element& ilp = element_cast<int_element>(el.get(), name, SRC_POS);
+      return ilp.m_value;
     }
 
-    virtual bool readBool(const fstring& name)
+    virtual bool read_bool(const fstring& name)
     {
-      ElPtr el = itsElems[name];
-      BoolElement& blp = elementCast<BoolElement>(el.get(), name, SRC_POS);
-      return blp.itsVal;
+      el_ptr el = m_elems[name];
+      bool_element& blp = element_cast<bool_element>(el.get(), name, SRC_POS);
+      return blp.m_value;
     }
 
-    virtual double readDouble(const fstring& name)
+    virtual double read_double(const fstring& name)
     {
-      ElPtr el = itsElems[name];
-      DoubleElement& dlp = elementCast<DoubleElement>(el.get(), name, SRC_POS);
-      return dlp.itsVal;
+      el_ptr el = m_elems[name];
+      double_element& dlp = element_cast<double_element>(el.get(), name, SRC_POS);
+      return dlp.m_value;
     }
 
-    virtual void readValueObj(const fstring& name, rutz::value& v)
+    virtual void read_value_obj(const fstring& name, rutz::value& v)
     {
-      ElPtr el = itsElems[name];
-      ValueElement& vlp = elementCast<ValueElement>(el.get(), name, SRC_POS);
-      v.set_string(vlp.itsVal);
+      el_ptr el = m_elems[name];
+      value_element& vlp = element_cast<value_element>(el.get(), name, SRC_POS);
+      v.set_string(vlp.m_value);
     }
 
-    virtual void readRawData(const fstring& name, rutz::byte_array& data)
+    virtual void read_byte_array(const fstring& name, rutz::byte_array& data)
     {
-      defaultReadRawData(name, data);
+      default_read_byte_array(name, data);
     }
 
-    virtual ref<IO::IoObject> readObject(const fstring& name)
+    virtual ref<io::serializable> read_object(const fstring& name)
     {
-      return readMaybeObject(name);
+      return read_weak_object(name);
     }
 
-    virtual soft_ref<IO::IoObject> readMaybeObject(const fstring& name);
+    virtual soft_ref<io::serializable> read_weak_object(const fstring& name);
 
-    virtual void readOwnedObject(const fstring& name,
-                                 ref<IO::IoObject> obj)
+    virtual void read_owned_object(const fstring& name,
+                                 ref<io::serializable> obj)
     {
-      ElPtr el = itsElems[name];
-      GroupElement& glp = elementCast<GroupElement>(el.get(), name, SRC_POS);
+      el_ptr el = m_elems[name];
+      group_element& glp = element_cast<group_element>(el.get(), name, SRC_POS);
       glp.inflate(*obj);
     }
 
-    virtual void readBaseClass(const fstring& name,
-                               ref<IO::IoObject> basePart)
+    virtual void read_base_class(const fstring& name,
+                                 ref<io::serializable> base_part)
     {
-      ElPtr el = itsElems[name];
-      GroupElement& glp = elementCast<GroupElement>(el.get(), name, SRC_POS);
-      glp.inflate(*basePart);
+      el_ptr el = m_elems[name];
+      group_element& glp = element_cast<group_element>(el.get(), name, SRC_POS);
+      glp.inflate(*base_part);
     }
 
-    virtual ref<IO::IoObject> readRoot(IO::IoObject* /*root*/)
+    virtual ref<io::serializable> read_root(io::serializable* /*root*/)
     {
-      GVX_ASSERT(0); return ref<IO::IoObject>(static_cast<IO::IoObject*>(0));
+      GVX_ASSERT(0); return ref<io::serializable>(static_cast<io::serializable*>(0));
     }
 
-    void inflate(IO::IoObject& obj)
+    void inflate(io::serializable& obj)
     {
-      obj.readFrom(*this);
+      obj.read_from(*this);
     }
 
   protected:
-    virtual fstring readStringImpl(const fstring& name)
+    virtual fstring read_string_impl(const fstring& name)
     {
-      ElPtr el = itsElems[name];
-      StringElement& slp = elementCast<StringElement>(el.get(), name, SRC_POS);
-      return slp.itsVal;
+      el_ptr el = m_elems[name];
+      string_element& slp = element_cast<string_element>(el.get(), name, SRC_POS);
+      return slp.m_value;
     }
 
   public:
-    int itsVersion;
-    typedef std::map<fstring, ElPtr> MapType;
-    MapType itsElems;
+    int m_version;
+    typedef std::map<fstring, el_ptr> map_type;
+    map_type m_elems;
   };
 
-  class ObjectElement : public GroupElement
+  class object_element : public group_element
   {
   public:
-    ObjectElement(const char** attr, const char* name,
-                  shared_ptr<IO::ObjectMap> objmap) :
-      GroupElement(attr, "object", name, objmap)
+    object_element(const char** attr, const char* name,
+                  shared_ptr<io::object_map> objmap) :
+      group_element(attr, "object", name, objmap)
     {
-      // Return the object for this id, creating a new object if necessary:
-      itsObject = objmap->fetchObject(itsType.c_str(), itsId);
+      // Return the object for this id, creating a new object if
+      // necessary:
+      m_object = objmap->fetch_object(m_type.c_str(), m_id);
     }
 
-    soft_ref<IO::IoObject> itsObject;
+    soft_ref<io::serializable> m_object;
 
     virtual void finish()
     {
-      if (itsObject.is_valid())
-        inflate(*itsObject);
+      if (m_object.is_valid())
+        inflate(*m_object);
     }
   };
 
-  soft_ref<IO::IoObject> GroupElement::readMaybeObject(const fstring& name)
+  soft_ref<io::serializable> group_element::read_weak_object(const fstring& name)
   {
-    ElPtr el = itsElems[name];
-    ObjrefElement& olp = elementCast<ObjrefElement>(el.get(), name, SRC_POS);
-    return olp.getObject();
+    el_ptr el = m_elems[name];
+    objref_element& olp = element_cast<objref_element>(el.get(), name, SRC_POS);
+    return olp.get_object();
   }
 
-  ElPtr makeElement(const char* el, const char** attr, const char* name,
-                    shared_ptr<IO::ObjectMap> objmap)
+  el_ptr make_element(const char* el, const char** attr,
+                      const char* name,
+                      shared_ptr<io::object_map> objmap)
   {
     if (strcmp(el, "object") == 0)
       {
-        return ElPtr(new ObjectElement(attr, name, objmap));
+        return el_ptr(new object_element(attr, name, objmap));
       }
     else if (strcmp(el, "ownedobj") == 0)
       {
-        return ElPtr(new GroupElement(attr, "ownedobj", name, objmap));
+        return el_ptr(new group_element(attr, "ownedobj", name, objmap));
       }
     else if (strcmp(el, "baseclass") == 0)
       {
-        return ElPtr(new GroupElement(attr, "baseclass", name, objmap));
+        return el_ptr(new group_element(attr, "baseclass", name, objmap));
       }
     else if (strcmp(el, "objref") == 0)
       {
-        return ElPtr(new ObjrefElement(attr, "objref", name, objmap));
+        return el_ptr(new objref_element(attr, "objref", name, objmap));
       }
     else if (strcmp(el, "string") == 0)
       {
-        return ElPtr(new StringElement);
+        return el_ptr(new string_element);
       }
     else
       {
-        const char* val = findAttr(attr, "value", el, name, SRC_POS);
+        const char* val = find_attr(attr, "value", el, name, SRC_POS);
 
         if (strcmp(el, "double") == 0)
           {
-            return ElPtr(new DoubleElement(val, name));
+            return el_ptr(new double_element(val, name));
           }
         else if (strcmp(el, "int") == 0)
           {
-            return ElPtr(new IntElement(val, name));
+            return el_ptr(new int_element(val, name));
           }
         else if (strcmp(el, "bool") == 0)
           {
-            return ElPtr(new BoolElement(val, name));
+            return el_ptr(new bool_element(val, name));
           }
         else if (strcmp(el, "valobj") == 0)
           {
-            return ElPtr(new ValueElement(val, name));
+            return el_ptr(new value_element(val, name));
           }
         else
           {
@@ -487,115 +489,115 @@ namespace
       }
   }
 
-  class TreeBuilder : public XmlParser
+  class tree_builder : public io::xml_parser
   {
   public:
-    TreeBuilder(std::istream& is) :
-      XmlParser(is),
-      itsRoot(),
-      itsStack(),
-      itsDepth(0),
-      itsStartCount(0),
-      itsEndCount(0),
-      itsObjects(new IO::ObjectMap),
-      itsElCount(0)
+    tree_builder(std::istream& is) :
+      io::xml_parser(is),
+      m_root(),
+      m_stack(),
+      m_depth(0),
+      m_start_count(0),
+      m_end_count(0),
+      m_objects(new io::object_map),
+      m_el_count(0)
     {}
 
-    virtual ~TreeBuilder() {}
+    virtual ~tree_builder() {}
 
-    ObjectElement& getRoot() const
+    object_element& get_root() const
     {
-      if (itsRoot.get() == 0)
+      if (m_root.get() == 0)
         {
           throw rutz::error("no root element found", SRC_POS);
         }
 
-      return elementCast<ObjectElement>(itsRoot.get(), "root", SRC_POS);
+      return element_cast<object_element>(m_root.get(), "root", SRC_POS);
     }
 
   protected:
-    virtual void elementStart(const char* el, const char** attr);
-    virtual void elementEnd(const char* el);
-    virtual void characterData(const char* text, int length);
+    virtual void element_start(const char* el, const char** attr);
+    virtual void element_end(const char* el);
+    virtual void character_data(const char* text, int length);
 
   private:
-    ElPtr itsRoot;
-    std::vector<ElPtr> itsStack;
-    int itsDepth;
-    int itsStartCount;
-    int itsEndCount;
-    shared_ptr<IO::ObjectMap> itsObjects;
-    int itsElCount;
+    el_ptr m_root;
+    std::vector<el_ptr> m_stack;
+    int m_depth;
+    int m_start_count;
+    int m_end_count;
+    shared_ptr<io::object_map> m_objects;
+    int m_el_count;
   };
 
-  void TreeBuilder::elementStart(const char* el, const char** attr)
+  void tree_builder::element_start(const char* el, const char** attr)
   {
-    ++itsElCount;
-    ++itsStartCount;
-    ++itsDepth;
+    ++m_el_count;
+    ++m_start_count;
+    ++m_depth;
 
-    const char* name = findAttr(attr, "name", el, "(noname)", SRC_POS);
+    const char* name = find_attr(attr, "name", el, "(noname)", SRC_POS);
 
     GVX_ASSERT(name != 0);
 
-    ElPtr elp = makeElement(el, attr, name, itsObjects);
+    el_ptr elp = make_element(el, attr, name, m_objects);
 
-    if (itsStack.size() > 0)
-      itsStack.back()->addChild(name, elp);
+    if (m_stack.size() > 0)
+      m_stack.back()->add_child(name, elp);
     else
-      itsRoot = elp;
+      m_root = elp;
 
-    itsStack.push_back(elp);
+    m_stack.push_back(elp);
 
     if (GVX_DBG_LEVEL() >= 3)
       {
-        dbg_eval(3, itsElCount);
+        dbg_eval(3, m_el_count);
         dbg_eval(3, el);
         dbg_eval(3, name);
         dbg_eval(3, elp.get());
-        dbg_eval_nl(3, itsStack.size());
+        dbg_eval_nl(3, m_stack.size());
       }
   }
 
-  void TreeBuilder::elementEnd(const char* /*el*/)
+  void tree_builder::element_end(const char* /*el*/)
   {
-    --itsEndCount;
-    GVX_ASSERT(itsStack.size() > 0);
-    GVX_ASSERT(itsStack.back().get() != 0);
-    itsStack.back()->finish();
-    itsStack.pop_back();
-    --itsDepth;
+    --m_end_count;
+    GVX_ASSERT(m_stack.size() > 0);
+    GVX_ASSERT(m_stack.back().get() != 0);
+    m_stack.back()->finish();
+    m_stack.pop_back();
+    --m_depth;
   }
 
-  void TreeBuilder::characterData(const char* text, int length)
+  void tree_builder::character_data(const char* text, int length)
   {
-    GVX_ASSERT(itsStack.size() > 0);
-    GVX_ASSERT(itsStack.back().get() != 0);
-    itsStack.back()->characterData(text, length);
+    GVX_ASSERT(m_stack.size() > 0);
+    GVX_ASSERT(m_stack.back().get() != 0);
+    m_stack.back()->character_data(text, length);
   }
 
 } // end anonymous namespace
 
 
-nub::ref<IO::IoObject> IO::loadGVX(const char* filename)
+nub::ref<io::serializable> io::load_gvx(const char* filename)
 {
-GVX_TRACE("IO::loadGVX");
+GVX_TRACE("io::load_gvx");
   shared_ptr<std::istream> ifs(rutz::igzopen(filename));
-  TreeBuilder x(*ifs);
+  tree_builder x(*ifs);
   x.parse();
 
-  ObjectElement& root = x.getRoot();
-  return root.itsObject;
+  object_element& root = x.get_root();
+  return root.m_object;
 }
 
-void IO::xmlDebug(const char* filename)
+void io::xml_debug(const char* filename)
 {
-GVX_TRACE("IO::xmlDebug");
+GVX_TRACE("io::xml_debug");
   shared_ptr<std::istream> ifs(rutz::igzopen(filename));
-  TreeBuilder x(*ifs);
+  tree_builder x(*ifs);
   x.parse();
 
-  ObjectElement& root = x.getRoot();
+  object_element& root = x.get_root();
   root.trace(std::cout, 0, "root");
 }
 

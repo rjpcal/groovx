@@ -1,4 +1,4 @@
-/** @file io/xmlwriter.cc IO::Writer implementation for writing XML
+/** @file io/xmlwriter.cc io::writer implementation for writing XML
     files in the GVX format */
 ///////////////////////////////////////////////////////////////////////
 //
@@ -58,275 +58,275 @@ using rutz::shared_ptr;
 using nub::ref;
 using nub::soft_ref;
 
-class XMLWriter : public IO::Writer
+class xml_writer : public io::writer
 {
 public:
-  XMLWriter(std::ostream& os);
+  xml_writer(std::ostream& os);
 
-  XMLWriter(const char* filename);
+  xml_writer(const char* filename);
 
-  virtual ~XMLWriter() throw();
+  virtual ~xml_writer() throw();
 
-  virtual void writeChar(const char* name, char val);
-  virtual void writeInt(const char* name, int val);
-  virtual void writeBool(const char* name, bool val);
-  virtual void writeDouble(const char* name, double val);
-  virtual void writeValueObj(const char* name, const rutz::value& v);
+  virtual void write_char(const char* name, char val);
+  virtual void write_int(const char* name, int val);
+  virtual void write_bool(const char* name, bool val);
+  virtual void write_double(const char* name, double val);
+  virtual void write_value_obj(const char* name, const rutz::value& v);
 
-  virtual void writeRawData(const char* name,
+  virtual void write_byte_array(const char* name,
                             const unsigned char* data,
                             unsigned int length);
 
-  virtual void writeObject(const char* name,
-                           nub::soft_ref<const IO::IoObject> obj);
+  virtual void write_object(const char* name,
+                           nub::soft_ref<const io::serializable> obj);
 
-  virtual void writeOwnedObject(const char* name,
-                                nub::ref<const IO::IoObject> obj);
+  virtual void write_owned_object(const char* name,
+                                nub::ref<const io::serializable> obj);
 
-  virtual void writeBaseClass(const char* baseClassName,
-                              nub::ref<const IO::IoObject> basePart);
+  virtual void write_base_class(const char* base_class_name,
+                                nub::ref<const io::serializable> base_part);
 
-  virtual void writeRoot(const IO::IoObject* root);
+  virtual void write_root(const io::serializable* root);
 
 protected:
-  virtual void writeCstring(const char* name, const char* val);
+  virtual void write_cstring(const char* name, const char* val);
 
 private:
   template <class T>
-  void writeBasicType(const char* name, T val,
-                      const char* typeName)
+  void write_basic_type(const char* name, T val,
+                        const char* type_name)
   {
     indent();
-    itsBuf << "<" << typeName
-           << " name=\"" << name << "\""
-           << " value=\"" << val << "\"/>\n";
+    m_buf << "<" << type_name
+          << " name=\"" << name << "\""
+          << " value=\"" << val << "\"/>\n";
   }
 
-  void flattenObject(soft_ref<const IO::IoObject> obj, const char* name,
-                     const char* xmltype);
+  void flatten_object(soft_ref<const io::serializable> obj, const char* name,
+                      const char* xmltype);
 
-  bool alreadyWritten(soft_ref<const IO::IoObject> obj) const
+  bool already_written(soft_ref<const io::serializable> obj) const
   {
-    return ( itsWrittenObjects.find(obj.id()) != itsWrittenObjects.end() );
+    return ( m_written_objs.find(obj.id()) != m_written_objs.end() );
   }
 
-  void markObjectAsWritten(soft_ref<const IO::IoObject> obj)
+  void mark_as_written(soft_ref<const io::serializable> obj)
   {
-    itsWrittenObjects.insert(obj.id());
+    m_written_objs.insert(obj.id());
   }
 
   void indent()
   {
-    for (int i = 0; i < itsNestLevel; ++i)
-      itsBuf << '\t';
+    for (int i = 0; i < m_nest_level; ++i)
+      m_buf << '\t';
   }
 
-  void writeEscaped(const char* text);
+  void write_escaped(const char* text);
 
-  shared_ptr<std::ostream> itsOwnedStream;
-  std::ostream& itsBuf;
-  std::set<nub::uid> itsWrittenObjects;
-  int itsNestLevel;
-  IO::WriteIdMap itsIdMap;
+  shared_ptr<std::ostream>  m_owned_stream;
+  std::ostream&             m_buf;
+  std::set<nub::uid>        m_written_objs;
+  int                       m_nest_level;
+  io::write_id_map          m_id_map;
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// XMLWriter member definitions
+// xml_writer member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-XMLWriter::XMLWriter(std::ostream& os) :
-  itsOwnedStream(),
-  itsBuf(os),
-  itsWrittenObjects(),
-  itsNestLevel(0)
+xml_writer::xml_writer(std::ostream& os) :
+  m_owned_stream(),
+  m_buf(os),
+  m_written_objs(),
+  m_nest_level(0)
 {
-GVX_TRACE("XMLWriter::XMLWriter");
+GVX_TRACE("xml_writer::xml_writer");
 }
 
-XMLWriter::XMLWriter(const char* filename) :
-  itsOwnedStream(rutz::ogzopen(filename)),
-  itsBuf(*itsOwnedStream),
-  itsWrittenObjects(),
-  itsNestLevel(0)
+xml_writer::xml_writer(const char* filename) :
+  m_owned_stream(rutz::ogzopen(filename)),
+  m_buf(*m_owned_stream),
+  m_written_objs(),
+  m_nest_level(0)
 {
-GVX_TRACE("XMLWriter::XMLWriter(const char*)");
+GVX_TRACE("xml_writer::xml_writer(const char*)");
 }
 
-XMLWriter::~XMLWriter () throw()
+xml_writer::~xml_writer () throw()
 {
-GVX_TRACE("XMLWriter::~XMLWriter");
+GVX_TRACE("xml_writer::~xml_writer");
 }
 
-void XMLWriter::writeChar(const char* name, char val)
+void xml_writer::write_char(const char* name, char val)
 {
-GVX_TRACE("XMLWriter::writeChar");
-  writeBasicType(name, val, "char");
+GVX_TRACE("xml_writer::write_char");
+  write_basic_type(name, val, "char");
 }
 
-void XMLWriter::writeInt(const char* name, int val)
+void xml_writer::write_int(const char* name, int val)
 {
-GVX_TRACE("XMLWriter::writeInt");
-  writeBasicType(name, val, "int");
+GVX_TRACE("xml_writer::write_int");
+  write_basic_type(name, val, "int");
 }
 
-void XMLWriter::writeBool(const char* name, bool val)
+void xml_writer::write_bool(const char* name, bool val)
 {
-GVX_TRACE("XMLWriter::writeBool");
-  writeBasicType(name, val, "bool");
+GVX_TRACE("xml_writer::write_bool");
+  write_basic_type(name, val, "bool");
 }
 
-void XMLWriter::writeDouble(const char* name, double val)
+void xml_writer::write_double(const char* name, double val)
 {
-GVX_TRACE("XMLWriter::writeDouble");
-  writeBasicType(name, val, "double");
+GVX_TRACE("xml_writer::write_double");
+  write_basic_type(name, val, "double");
 }
 
-void XMLWriter::writeValueObj(const char* name, const rutz::value& v)
+void xml_writer::write_value_obj(const char* name, const rutz::value& v)
 {
-GVX_TRACE("XMLWriter::writeValueObj");
+GVX_TRACE("xml_writer::write_value_obj");
   indent();
-  itsBuf << "<valobj"
-         << " type=\"" << v.value_typename() << "\""
-         << " name=\"" << name << "\""
-         << " value=\"";
-  v.print_to(itsBuf);
-  itsBuf << "\"/>\n";
+  m_buf << "<valobj"
+        << " type=\"" << v.value_typename() << "\""
+        << " name=\"" << name << "\""
+        << " value=\"";
+  v.print_to(m_buf);
+  m_buf << "\"/>\n";
 }
 
-void XMLWriter::writeRawData(const char* name,
+void xml_writer::write_byte_array(const char* name,
                              const unsigned char* data,
                              unsigned int length)
 {
-GVX_TRACE("XMLWriter::writeRawData");
-  defaultWriteRawData(name, data, length);
+GVX_TRACE("xml_writer::write_byte_array");
+  default_write_byte_array(name, data, length);
 }
 
-void XMLWriter::writeObject(const char* name,
-                            soft_ref<const IO::IoObject> obj)
+void xml_writer::write_object(const char* name,
+                            soft_ref<const io::serializable> obj)
 {
-GVX_TRACE("XMLWriter::writeObject");
+GVX_TRACE("xml_writer::write_object");
 
   if (obj.is_valid())
     {
-      GVX_ASSERT(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
+      GVX_ASSERT(dynamic_cast<const io::serializable*>(obj.get()) != 0);
 
-      if (alreadyWritten(obj))
+      if (already_written(obj))
         {
           indent();
-          itsBuf << "<objref type=\"" << obj->obj_typename() << "\""
-                 << " id=\"" << itsIdMap.get(obj->id()) << "\""
-                 << " name=\"" << name << "\"/>\n";
+          m_buf << "<objref type=\"" << obj->obj_typename() << "\""
+                << " id=\"" << m_id_map.get(obj->id()) << "\""
+                << " name=\"" << name << "\"/>\n";
         }
       else
         {
-          flattenObject(obj, name, "object");
+          flatten_object(obj, name, "object");
         }
     }
   else
     {
       indent();
-      itsBuf << "<objref type=\"NULL\" id=\"0\" name=\"" << name << "\"/>\n";
+      m_buf << "<objref type=\"NULL\" id=\"0\" name=\"" << name << "\"/>\n";
     }
 }
 
-void XMLWriter::writeOwnedObject(const char* name,
-                                 ref<const IO::IoObject> obj)
+void xml_writer::write_owned_object(const char* name,
+                                 ref<const io::serializable> obj)
 {
-GVX_TRACE("XMLWriter::writeOwnedObject");
+GVX_TRACE("xml_writer::write_owned_object");
 
-  flattenObject(obj, name, "ownedobj");
+  flatten_object(obj, name, "ownedobj");
 }
 
-void XMLWriter::writeBaseClass(const char* baseClassName,
-                               ref<const IO::IoObject> basePart)
+void xml_writer::write_base_class(const char* base_class_name,
+                                 ref<const io::serializable> base_part)
 {
-GVX_TRACE("XMLWriter::writeBaseClass");
+GVX_TRACE("xml_writer::write_base_class");
 
-  flattenObject(basePart, baseClassName, "baseclass");
+  flatten_object(base_part, base_class_name, "baseclass");
 }
 
-void XMLWriter::writeRoot(const IO::IoObject* root)
+void xml_writer::write_root(const io::serializable* root)
 {
-GVX_TRACE("XMLWriter::writeRoot");
+GVX_TRACE("xml_writer::write_root");
 
-  itsBuf << "<?xml version=\"1.0\"?>\n"
-         << "<!-- GroovX XML 1 -->\n";
+  m_buf << "<?xml version=\"1.0\"?>\n"
+        << "<!-- GroovX XML 1 -->\n";
 
-  flattenObject(soft_ref<IO::IoObject>(const_cast<IO::IoObject*>(root)),
+  flatten_object(soft_ref<io::serializable>(const_cast<io::serializable*>(root)),
                 "root", "object");
 
-  itsBuf.flush();
+  m_buf.flush();
 }
 
-void XMLWriter::writeCstring(const char* name, const char* val)
+void xml_writer::write_cstring(const char* name, const char* val)
 {
-GVX_TRACE("XMLWriter::writeCstring");
+GVX_TRACE("xml_writer::write_cstring");
 
   indent();
   // special case for empty string:
   if (*val == '\0')
     {
-      itsBuf << "<string name=\"" << name << "\"/>\n";
+      m_buf << "<string name=\"" << name << "\"/>\n";
     }
   else
     {
-      itsBuf << "<string name=\"" << name << "\">";
-      writeEscaped(val);
-      itsBuf << "</string>\n";
+      m_buf << "<string name=\"" << name << "\">";
+      write_escaped(val);
+      m_buf << "</string>\n";
     }
 }
 
-void XMLWriter::flattenObject(soft_ref<const IO::IoObject> obj,
-                              const char* name, const char* xmltype)
+void xml_writer::flatten_object(soft_ref<const io::serializable> obj,
+                               const char* name, const char* xmltype)
 {
-GVX_TRACE("XMLWriter::flattenObject");
+GVX_TRACE("xml_writer::flatten_object");
 
   indent();
-  itsBuf << "<" << xmltype << " type=\"" << obj->obj_typename() << "\""
-         << " id=\"" << itsIdMap.get(obj->id()) << "\""
-         << " name=\"" << name << "\""
-         << " version=\"" << obj->serialVersionId() << "\">\n";
+  m_buf << "<" << xmltype << " type=\"" << obj->obj_typename() << "\""
+        << " id=\"" << m_id_map.get(obj->id()) << "\""
+        << " name=\"" << name << "\""
+        << " version=\"" << obj->class_version_id() << "\">\n";
 
-  ++itsNestLevel;
-  obj->writeTo(*this);
-  --itsNestLevel;
+  ++m_nest_level;
+  obj->write_to(*this);
+  --m_nest_level;
 
-  markObjectAsWritten(obj);
+  mark_as_written(obj);
 
   indent();
-  itsBuf << "</" << xmltype << ">\n";
+  m_buf << "</" << xmltype << ">\n";
 }
 
-void XMLWriter::writeEscaped(const char* p)
+void xml_writer::write_escaped(const char* p)
 {
-GVX_TRACE("XMLWriter::writeEscaped");
+GVX_TRACE("xml_writer::write_escaped");
 
   // Escape any special characters
   for ( ; *p != '\0'; ++p)
     {
       switch (*p)
         {
-        case '<':  itsBuf.write("&lt;",   4); break;
-        case '>':  itsBuf.write("&gt;",   4); break;
-        case '&':  itsBuf.write("&amp;",  5); break;
-        case '"':  itsBuf.write("&quot;", 6); break;
-        case '\'': itsBuf.write("&apos;", 6); break;
-        default:   itsBuf.put(*p);            break;
+        case '<':  m_buf.write("&lt;",   4); break;
+        case '>':  m_buf.write("&gt;",   4); break;
+        case '&':  m_buf.write("&amp;",  5); break;
+        case '"':  m_buf.write("&quot;", 6); break;
+        case '\'': m_buf.write("&apos;", 6); break;
+        default:   m_buf.put(*p);            break;
         }
     }
 }
 
 
-shared_ptr<IO::Writer> IO::makeXMLWriter(std::ostream& os)
+shared_ptr<io::writer> io::make_xml_writer(std::ostream& os)
 {
-  return rutz::make_shared(new XMLWriter(os));
+  return rutz::make_shared(new xml_writer(os));
 }
 
-shared_ptr<IO::Writer> IO::makeXMLWriter(const char* filename)
+shared_ptr<io::writer> io::make_xml_writer(const char* filename)
 {
-  return rutz::make_shared(new XMLWriter(filename));
+  return rutz::make_shared(new xml_writer(filename));
 }
 
 static const char vcid_groovx_io_xmlwriter_cc_utc20050626084021[] = "$Id$ $HeadURL$";

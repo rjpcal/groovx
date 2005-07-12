@@ -57,10 +57,10 @@ namespace rutz
   template <class T> class fwd_iter;
 }
 
-namespace IO
+namespace io
 {
-  class Reader;
-  class Writer;
+  class reader;
+  class writer;
 }
 
 namespace nub
@@ -103,13 +103,13 @@ public:
   /// Get the value of the given object's referred-to field.
   virtual tcl::obj get(const FieldContainer* obj) const = 0;
 
-  /// Read the value of the given object's referred-to field from the IO::Reader.
+  /// Read the value of the given object's referred-to field from the io::reader.
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader& reader,
+                             io::reader& reader,
                              const rutz::fstring& name) const = 0;
-  /// Write the value of the given object's referred-to field to the IO::Writer.
+  /// Write the value of the given object's referred-to field to the io::writer.
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer& writer,
+                            io::writer& writer,
                             const rutz::fstring& name) const = 0;
 };
 
@@ -211,22 +211,22 @@ public:
 
   /// Read the value of the given object's pointed-to data member.
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader& reader,
+                             io::reader& reader,
                              const rutz::fstring& name) const
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
-    reader.readValue(name, dereference(cobj, itsDataMember));
+    reader.read_value(name, dereference(cobj, itsDataMember));
   }
 
   /// Write the value of the given object's pointed-to data member.
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer& writer,
+                            io::writer& writer,
                             const rutz::fstring& name) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
-    writer.writeValue(name.c_str(), const_dereference(cobj, itsDataMember));
+    writer.write_value(name.c_str(), const_dereference(cobj, itsDataMember));
   }
 
 private:
@@ -284,26 +284,26 @@ public:
 
   /// Read the value of the given object's pointed-to data member.
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader& reader,
+                             io::reader& reader,
                              const rutz::fstring& name) const
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
     deref_t temp;
 
-    reader.readValue(name, temp);
+    reader.read_value(name, temp);
 
     dereference(cobj, itsDataMember) = this->limit(temp);
   }
 
   /// Write the value of the given object's pointed-to data member.
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer& writer,
+                            io::writer& writer,
                             const rutz::fstring& name) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
-    writer.writeValue(name.c_str(), const_dereference(cobj, itsDataMember));
+    writer.write_value(name.c_str(), const_dereference(cobj, itsDataMember));
   }
 
 private:
@@ -347,21 +347,21 @@ public:
   }
 
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader& reader,
+                             io::reader& reader,
                              const rutz::fstring& name) const
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
-    reader.readValueObj(name, dereference(cobj, itsValueMember));
+    reader.read_value_obj(name, dereference(cobj, itsValueMember));
   }
 
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer& writer,
+                            io::writer& writer,
                             const rutz::fstring& name) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
-    writer.writeValueObj(name.c_str(), const_dereference(cobj, itsValueMember));
+    writer.write_value_obj(name.c_str(), const_dereference(cobj, itsValueMember));
   }
 
 private:
@@ -409,7 +409,7 @@ public:
   }
 
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader& reader,
+                             io::reader& reader,
                              const rutz::fstring& name) const
   {
     if (itsSetter == 0) FieldAux::throwNotAllowed("read", SRC_POS);
@@ -419,19 +419,19 @@ public:
     typedef typename rutz::type_traits<T>::stack_t stack_t;
 
     stack_t temp;
-    reader.readValue(name, temp);
+    reader.read_value(name, temp);
     (cobj.*itsSetter)(temp);
   }
 
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer& writer,
+                            io::writer& writer,
                             const rutz::fstring& name) const
   {
     if (itsGetter == 0) FieldAux::throwNotAllowed("write", SRC_POS);
 
     const C& cobj = FieldAux::cast<const C>(*obj);
 
-    writer.writeValue(name.c_str(), (cobj.*itsGetter)());
+    writer.write_value(name.c_str(), (cobj.*itsGetter)());
   }
 };
 
@@ -455,8 +455,8 @@ private:
   const rutz::fstring               itsMax;
   const rutz::fstring               itsRes;
   const unsigned int                itsFlags;
-  IO::VersionId                     itsMinVersion;
-  IO::VersionId                     itsMaxVersion;
+  io::version_id                     itsMinVersion;
+  io::version_id                     itsMaxVersion;
 
 public:
 
@@ -530,7 +530,7 @@ public:
     itsRes(res),
     itsFlags(flags),
     itsMinVersion(0),
-    itsMaxVersion(std::numeric_limits<IO::VersionId>::max())
+    itsMaxVersion(std::numeric_limits<io::version_id>::max())
   {}
 
   /// Construct using a pointer-to-member-data.
@@ -549,7 +549,7 @@ public:
     itsRes(res),
     itsFlags(flags),
     itsMinVersion(0),
-    itsMaxVersion(std::numeric_limits<IO::VersionId>::max())
+    itsMaxVersion(std::numeric_limits<io::version_id>::max())
   {}
 
   /// Construct using a getter/setter pair of pointers-to-member-functions.
@@ -567,12 +567,12 @@ public:
     itsRes(res),
     itsFlags(flags),
     itsMinVersion(0),
-    itsMaxVersion(std::numeric_limits<IO::VersionId>::max())
+    itsMaxVersion(std::numeric_limits<io::version_id>::max())
   {}
 
-  Field& versions(IO::VersionId lo,
-                  IO::VersionId hi
-                  = std::numeric_limits<IO::VersionId>::max())
+  Field& versions(io::version_id lo,
+                  io::version_id hi
+                  = std::numeric_limits<io::version_id>::max())
   {
     itsMinVersion = lo;
     itsMaxVersion = hi;
@@ -592,11 +592,11 @@ public:
   const rutz::fstring& res() const { return itsRes; }
 
   /// Get the minimum serial version id for this field.
-  IO::VersionId minVersion() const { return itsMinVersion; }
+  io::version_id minVersion() const { return itsMinVersion; }
   /// Get the maximum serial version id for this field.
-  IO::VersionId maxVersion() const { return itsMaxVersion; }
+  io::version_id maxVersion() const { return itsMaxVersion; }
 
-  bool shouldSerialize(IO::VersionId svid) const
+  bool shouldSerialize(io::version_id svid) const
   {
     return (svid >= itsMinVersion && svid <= itsMaxVersion);
   }
@@ -615,7 +615,7 @@ public:
 
   /// Read this field for \a obj from \a reader.
   void readValueFrom(FieldContainer* obj,
-                     IO::Reader& reader,
+                     io::reader& reader,
                      const rutz::fstring& name) const
   {
     itsFieldImpl->readValueFrom(obj, reader, name);
@@ -623,7 +623,7 @@ public:
 
   /// Write this field for \a obj to \a writer.
   void writeValueTo(const FieldContainer* obj,
-                    IO::Writer& writer,
+                    io::writer& writer,
                     const rutz::fstring& name) const
   {
     itsFieldImpl->writeValueTo(obj, writer, name);
@@ -738,11 +738,11 @@ public:
   /// Set the value associated with the given field.
   void setField(const Field& field, const tcl::obj& new_val);
 
-  /// Read all fields from the IO::Reader.
-  void readFieldsFrom(IO::Reader& reader, const FieldMap& fields);
-  /// Write all fields to the IO::Writer.
-  void writeFieldsTo(IO::Writer& writer, const FieldMap& fields,
-                     IO::VersionId svid) const;
+  /// Read all fields from the io::reader.
+  void readFieldsFrom(io::reader& reader, const FieldMap& fields);
+  /// Write all fields to the io::writer.
+  void writeFieldsTo(io::writer& writer, const FieldMap& fields,
+                     io::version_id svid) const;
 
   /// Get the FieldMap for this object.
   const FieldMap& fields() const { return *itsFieldMap; }

@@ -51,7 +51,7 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId MASKHATCH_SVID = 3;
+  const io::version_id MASKHATCH_SVID = 3;
 }
 
 const FieldMap& MaskHatch::classFields()
@@ -93,36 +93,36 @@ MaskHatch::~MaskHatch() throw()
 GVX_TRACE("MaskHatch::~MaskHatch");
 }
 
-IO::VersionId MaskHatch::serialVersionId() const
+io::version_id MaskHatch::class_version_id() const
 {
-GVX_TRACE("MaskHatch::serialVersionId");
+GVX_TRACE("MaskHatch::class_version_id");
  return MASKHATCH_SVID;
 }
 
-void MaskHatch::readFrom(IO::Reader& reader)
+void MaskHatch::read_from(io::reader& reader)
 {
-GVX_TRACE("MaskHatch::readFrom");
+GVX_TRACE("MaskHatch::read_from");
 
-  reader.ensureReadVersionId("MaskHatch", 3,
-                             "Try cvs tag xml_conversion_20040526",
-                             SRC_POS);
+  reader.ensure_version_id("MaskHatch", 3,
+                           "Try cvs tag xml_conversion_20040526",
+                           SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
-  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+  reader.read_base_class("GxShapeKit", io::make_proxy<GxShapeKit>(this));
 }
 
-void MaskHatch::writeTo(IO::Writer& writer) const
+void MaskHatch::write_to(io::writer& writer) const
 {
-GVX_TRACE("MaskHatch::writeTo");
+GVX_TRACE("MaskHatch::write_to");
 
-  writer.ensureWriteVersionId("MaskHatch",
+  writer.ensure_output_version_id("MaskHatch",
                               MASKHATCH_SVID, 3,
                               "Try groovx0.8a4", SRC_POS);
 
   writeFieldsTo(writer, classFields(), MASKHATCH_SVID);
 
-  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
+  writer.write_base_class("GxShapeKit", io::make_const_proxy<GxShapeKit>(this));
 }
 
 void MaskHatch::update()
