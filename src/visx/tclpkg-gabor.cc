@@ -35,7 +35,7 @@
 
 #include "visx/tclpkg-gabor.h"
 
-#include "io/fieldpkg.h"
+#include "tcl-io/fieldpkg.h"
 
 #include "visx/gabor.h"
 #include "visx/gaborarray.h"

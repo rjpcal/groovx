@@ -61,7 +61,7 @@
 #include "gfx/recttcl.h"
 #include "gfx/vectcl.h"
 
-#include "io/fieldpkg.h"
+#include "tcl-io/fieldpkg.h"
 
 #include "nub/objfactory.h"
 

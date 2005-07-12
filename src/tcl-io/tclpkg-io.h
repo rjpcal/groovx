@@ -31,13 +31,13 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_TCLPKG_IO_H_UTC20050628165656_DEFINED
-#define GROOVX_IO_TCLPKG_IO_H_UTC20050628165656_DEFINED
+#ifndef GROOVX_TCL_IO_TCLPKG_IO_H_UTC20050712162004_DEFINED
+#define GROOVX_TCL_IO_TCLPKG_IO_H_UTC20050712162004_DEFINED
 
 struct Tcl_Interp;
 
 extern "C" int Io_Init(Tcl_Interp* interp);
 extern "C" int Outputfile_Init(Tcl_Interp* interp);
 
-static const char vcid_groovx_io_tclpkg_io_h_utc20050628165656[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_IO_TCLPKG_IO_H_UTC20050628165656_DEFINED
+static const char vcid_groovx_tcl_io_tclpkg_io_h_utc20050712162004[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_IO_TCLPKG_IO_H_UTC20050712162004_DEFINED

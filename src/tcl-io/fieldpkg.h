@@ -1,11 +1,12 @@
-/** @file visx/tclpkg-house.cc tcl interface package for class House */
+/** @file io/fieldpkg.h tcl interfaces for manipulating FieldContainer
+    fields */
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 1999-2005
+// Copyright (c) 2000-2005
 // Rob Peters <rjpeters at usc dot edu>
 //
-// created: Mon Sep 13 15:14:19 1999
+// created: Sun Nov 12 17:45:52 2000
 // commit: $Id$
 // $HeadURL$
 //
@@ -30,30 +31,37 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_HOUSE_CC_UTC20050628171008_DEFINED
-#define GROOVX_VISX_TCLPKG_HOUSE_CC_UTC20050628171008_DEFINED
+#ifndef GROOVX_TCL_IO_FIELDPKG_H_UTC20050712162004_DEFINED
+#define GROOVX_TCL_IO_FIELDPKG_H_UTC20050712162004_DEFINED
 
-#include "visx/tclpkg-house.h"
+#include "tcl/objpkg.h"
+#include "tcl/pkg.h"
 
-#include "tcl-io/fieldpkg.h"
-
-#include "visx/house.h"
-
-#include "rutz/trace.h"
-
-
-extern "C"
-int House_Init(Tcl_Interp* interp)
+namespace rutz
 {
-GVX_TRACE("House_Init");
-
-  GVX_PKG_CREATE(pkg, interp, "House", "4.$Revision$");
-  pkg->inherit_pkg("GxShapeKit");
-  tcl::defFieldContainer<House>(pkg, SRC_POS);
-  tcl::def_creator<House>(pkg);
-
-  GVX_PKG_RETURN(pkg);
+  class file_pos;
 }
 
-static const char vcid_groovx_visx_tclpkg_house_cc_utc20050628171008[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_VISX_TCLPKG_HOUSE_CC_UTC20050628171008_DEFINED
+class Field;
+class FieldMap;
+
+namespace tcl
+{
+  class pkg;
+
+  void defField(pkg* pkg, const Field& field,
+                const rutz::file_pos& src_pos);
+  void defAllFields(pkg* pkg, const FieldMap& fmap,
+                    const rutz::file_pos& src_pos);
+
+  template <class C>
+  void defFieldContainer(pkg* pkg, const rutz::file_pos& src_pos)
+  {
+    tcl::def_basic_type_cmds<C>(pkg, src_pos);
+
+    tcl::defAllFields(pkg, C::classFields(), src_pos);
+  }
+}
+
+static const char vcid_groovx_tcl_io_fieldpkg_h_utc20050712162004[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_IO_FIELDPKG_H_UTC20050712162004_DEFINED

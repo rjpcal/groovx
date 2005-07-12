@@ -34,7 +34,7 @@
 #ifndef GROOVX_VISX_TRIAL_H_UTC20050626084016_DEFINED
 #define GROOVX_VISX_TRIAL_H_UTC20050626084016_DEFINED
 
-#include "io/fields.h"
+#include "field/fields.h"
 
 #include "rutz/tracer.h"
 

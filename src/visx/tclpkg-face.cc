@@ -37,7 +37,7 @@
 
 #include "visx/tclpkg-face.h"
 
-#include "io/fieldpkg.h"
+#include "tcl-io/fieldpkg.h"
 
 #include "visx/cloneface.h"
 #include "visx/face.h"

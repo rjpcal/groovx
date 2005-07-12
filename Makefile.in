@@ -312,7 +312,7 @@ LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--srcroot $(SRC) \
 		--objroot $(OBJ) \
 		--objext .$(OBJEXT) \
-		--modules "visx,gfx,tcl,tk,io,media,geom,rutz,nub"
+		--modules "visx,gfx,tcl-io,field,tcl,tk,io,media,geom,rutz,nub"
 
 $(DEP)/libdepends: $(DEP)/.timestamp $(ALL_SRCS) \
 		$(SCRIPTS)/build_lib_rules.tcl
@@ -343,7 +343,19 @@ $(exec_prefix)/lib/libgroovx-tk$(LIB_EXT): \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
 
 $(exec_prefix)/lib/libgroovx-io$(LIB_EXT): \
+	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT)
+
+$(exec_prefix)/lib/libgroovx-field$(LIB_EXT): \
 	$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-io$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT)
+
+$(exec_prefix)/lib/libgroovx-tcl-io$(LIB_EXT): \
+	$(exec_prefix)/lib/libgroovx-field$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-io$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT)
 
@@ -358,21 +370,25 @@ $(exec_prefix)/lib/libgroovx-media$(LIB_EXT): \
 $(exec_prefix)/lib/libgroovx-gfx$(LIB_EXT): \
 	$(exec_prefix)/lib/libgroovx-media$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-geom$(LIB_EXT) \
-	$(exec_prefix)/lib/libgroovx-io$(LIB_EXT) \
-	$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-tcl-io$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-field$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-tk$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-io$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
 
 $(exec_prefix)/lib/libgroovx-visx$(LIB_EXT): \
 	$(exec_prefix)/lib/libgroovx-media$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-geom$(LIB_EXT) \
-	$(exec_prefix)/lib/libgroovx-io$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-gfx$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-tcl-io$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-field$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-tk$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-io$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
-	$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT) \
-	$(exec_prefix)/lib/libgroovx-tk$(LIB_EXT) \
 
 #-------------------------------------------------------------------------
 #

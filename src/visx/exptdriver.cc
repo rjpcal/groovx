@@ -40,7 +40,7 @@
 #include "io/ioproxy.h"
 #include "io/ioutil.h"
 #include "io/readutils.h"
-#include "io/tclprocwrapper.h"
+#include "tcl-io/tclprocwrapper.h"
 #include "io/writeutils.h"
 
 #include "nub/log.h"

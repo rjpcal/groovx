@@ -30,10 +30,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_FIELDS_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_FIELDS_CC_UTC20050626084021_DEFINED
+#ifndef GROOVX_FIELD_FIELDS_CC_UTC20050712162000_DEFINED
+#define GROOVX_FIELD_FIELDS_CC_UTC20050712162000_DEFINED
 
-#include "io/fields.h"
+#include "field/fields.h"
 
 #include "io/reader.h"
 #include "io/writer.h"
@@ -228,5 +228,5 @@ GVX_TRACE("FieldContainer::child");
   return 0;
 }
 
-static const char vcid_groovx_io_fields_cc_utc20050626084021[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_IO_FIELDS_CC_UTC20050626084021_DEFINED
+static const char vcid_groovx_field_fields_cc_utc20050712162000[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_FIELD_FIELDS_CC_UTC20050712162000_DEFINED

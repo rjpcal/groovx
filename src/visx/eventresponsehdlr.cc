@@ -38,7 +38,7 @@
 #include "gfx/toglet.h"
 
 #include "io/reader.h"
-#include "io/tclprocwrapper.h"
+#include "tcl-io/tclprocwrapper.h"
 #include "io/writer.h"
 
 #include "nub/log.h"

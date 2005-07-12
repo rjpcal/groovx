@@ -31,8 +31,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_TCLPROCWRAPPER_H_UTC20050626084021_DEFINED
-#define GROOVX_IO_TCLPROCWRAPPER_H_UTC20050626084021_DEFINED
+#ifndef GROOVX_TCL_IO_TCLPROCWRAPPER_H_UTC20050712162004_DEFINED
+#define GROOVX_TCL_IO_TCLPROCWRAPPER_H_UTC20050712162004_DEFINED
 
 #include "io/io.h"
 
@@ -96,5 +96,5 @@ public:
   rutz::fstring fullSpec() const;
 };
 
-static const char vcid_groovx_io_tclprocwrapper_h_utc20050626084021[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_IO_TCLPROCWRAPPER_H_UTC20050626084021_DEFINED
+static const char vcid_groovx_tcl_io_tclprocwrapper_h_utc20050712162004[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_TCL_IO_TCLPROCWRAPPER_H_UTC20050712162004_DEFINED

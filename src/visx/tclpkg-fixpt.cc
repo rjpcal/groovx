@@ -35,7 +35,7 @@
 
 #include "visx/tclpkg-fixpt.h"
 
-#include "io/fieldpkg.h"
+#include "tcl-io/fieldpkg.h"
 
 #include "visx/fixpt.h"
 

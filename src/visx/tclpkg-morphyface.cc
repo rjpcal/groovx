@@ -35,7 +35,7 @@
 
 #include "visx/tclpkg-morphyface.h"
 
-#include "io/fieldpkg.h"
+#include "tcl-io/fieldpkg.h"
 
 #include "visx/morphyface.h"
 
