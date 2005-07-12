@@ -1,0 +1,55 @@
+####################### -*- makefile -*- #############################
+#
+# $Id$
+# $HeadURL$
+#
+# This is a makefile fragment that goes along with the devscripts
+# directory, and includes several common make rules that can be used
+# with the scripts in that directory. Include it into your toplevel
+# makefile, and see below for which variables are used in this
+# makefile fragment, which you must set in your top-level makefile.
+#
+# --------------------------------------------------------------------
+#
+# This file is part of GroovX.
+#
+# GroovX is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# GroovX is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with GroovX; if not, write to the Free Software Foundation,
+# Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+#
+######################################################################
+
+
+# we expect to use the following variables from the top-level makefile
+# that includes this fragment: $(DEVSCRIPTS), $(CXX), $(LDFLAGS),
+# $(ALL_SRCS), $(LDEPOPTS), $(SRC)
+
+$(DEVSCRIPTS)/cdeps: $(DEVSCRIPTS)/cdeps.cc
+	$(CXX) -O2 -Wall $(LDFLAGS) $^ -o $@
+
+ldep-groups: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
+	  --output-ldep-groups \
+	  |sort -n> $@
+
+ldep-levels: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
+	  --output-ldep-levelsv \
+	  |sort -n | sed -e 's/\[\[\[#.*\]\]\]//' > $@
+
+ldeps: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cdeps $(LDEPOPTS) \
+	  --output-ldep-raw > $@
+
+ldep-html: ldeps
+	time $(DEVSCRIPTS)/make-ldep-html.sh $< $(SRC)/ ldepdoc
