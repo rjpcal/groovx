@@ -1,5 +1,6 @@
-/** @file pkgs/mtx/matlabinterface.cc convert mtx objects to/from
+/** @file mtx/matlabinterface.cc convert mtx objects to/from
     matlab mxArray objects */
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2005

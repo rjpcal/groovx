@@ -34,7 +34,7 @@
 #ifndef GROOVX_PKGS_MTX_MTXOBJ_H_UTC20050626084022_DEFINED
 #define GROOVX_PKGS_MTX_MTXOBJ_H_UTC20050626084022_DEFINED
 
-#include "mtx.h"
+#include "mtx/mtx.h"
 
 #include "nub/object.h"
 

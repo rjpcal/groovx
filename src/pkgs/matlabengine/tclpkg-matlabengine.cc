@@ -35,8 +35,9 @@
 
 #include "pkgs/matlabengine/tclpkg-matlabengine.h"
 
-#include "pkgs/mtx/matlabinterface.h"
 #include "pkgs/mtx/mtxobj.h"
+
+#include "mtx/matlabinterface.h"
 
 #include "nub/object.h"
 #include "nub/objfactory.h"

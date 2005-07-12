@@ -1,4 +1,4 @@
-/** @file pkgs/mtx/matlabinterface.h convert mtx objects to/from
+/** @file mtx/matlabinterface.h convert mtx objects to/from
     matlab mxArray objects */
 
 ///////////////////////////////////////////////////////////////////////

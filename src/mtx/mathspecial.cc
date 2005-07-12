@@ -1,5 +1,6 @@
-/** @file pkgs/mtx/mathspecial.cc math special functions (gammaln(),
+/** @file mtx/mathspecial.cc math special functions (gammaln(),
     erfc(), etc.) */
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2001-2005

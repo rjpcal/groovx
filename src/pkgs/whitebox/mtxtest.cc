@@ -35,8 +35,8 @@
 
 #include "pkgs/whitebox/mtxtest.h"
 
-#include "pkgs/mtx/mtx.h"
-#include "pkgs/mtx/mtxops.h"
+#include "mtx/mtx.h"
+#include "mtx/mtxops.h"
 
 #include "tcl/pkg.h"
 

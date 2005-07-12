@@ -256,9 +256,9 @@ $(VISX_LIB_DIR)/basesixfourtest.$(SHLIB_EXT): $(PKG_LIB_DEPS)
 $(VISX_LIB_DIR)/fstringtest.$(SHLIB_EXT):     $(PKG_LIB_DEPS)
 $(VISX_LIB_DIR)/geomtest.$(SHLIB_EXT):        $(PKG_LIB_DEPS) $(exec_prefix)/lib/libgroovx-geom$(LIB_EXT)
 $(VISX_LIB_DIR)/matlabengine.$(SHLIB_EXT):    $(PKG_LIB_DEPS)
-$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT):             $(PKG_LIB_DEPS)
-$(VISX_LIB_DIR)/mtxtest.$(SHLIB_EXT):         $(PKG_LIB_DEPS)
-$(VISX_LIB_DIR)/numtest.$(SHLIB_EXT):         $(PKG_LIB_DEPS)
+$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT):             $(PKG_LIB_DEPS) $(exec_prefix)/lib/libgroovx-mtx$(LIB_EXT)
+$(VISX_LIB_DIR)/mtxtest.$(SHLIB_EXT):         $(PKG_LIB_DEPS) $(exec_prefix)/lib/libgroovx-mtx$(LIB_EXT)
+$(VISX_LIB_DIR)/numtest.$(SHLIB_EXT):         $(PKG_LIB_DEPS) $(exec_prefix)/lib/libgroovx-mtx$(LIB_EXT)
 $(VISX_LIB_DIR)/signaltest.$(SHLIB_EXT):      $(PKG_LIB_DEPS)
 $(VISX_LIB_DIR)/tcltimertest.$(SHLIB_EXT):    $(PKG_LIB_DEPS)
 $(VISX_LIB_DIR)/vectwotest.$(SHLIB_EXT):      $(PKG_LIB_DEPS)
@@ -294,7 +294,7 @@ LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--srcroot $(SRC) \
 		--objroot $(OBJ) \
 		--objext .$(OBJEXT) \
-		--modules "visx,gfx,tcl-io,field,tcl,tk,io,media,geom,rutz,nub"
+		--modules "mtx,visx,gfx,tcl-io,field,tcl,tk,io,media,geom,rutz,nub"
 
 $(DEP)/libdepends: $(DEP)/.timestamp $(ALL_SRCS) \
 		$(SCRIPTS)/build_lib_rules.tcl
@@ -311,6 +311,9 @@ include $(DEP)/cppdepends $(DEP)/pkgdepends $(DEP)/libdepends
 # linking. That requires that there be no undefined symbols when
 # creating a shared library, and that in turn requires that each
 # shared library be linked against all its prerequisites.
+
+$(exec_prefix)/lib/libgroovx-mtx$(LIB_EXT): \
+	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
 
 $(exec_prefix)/lib/libgroovx-nub$(LIB_EXT): \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \

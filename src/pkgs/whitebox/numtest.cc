@@ -1,5 +1,6 @@
 /** @file pkgs/whitebox/numtest.cc tcl interface package for testing
-    math special functions from pkgs/mtx/mathspecial.cc */
+    math special functions from mtx/mathspecial.cc */
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2005-2005
@@ -35,7 +36,7 @@
 
 #include "pkgs/whitebox/numtest.h"
 
-#include "pkgs/mtx/mathspecial.h"
+#include "mtx/mathspecial.h"
 
 #include "tcl/pkg.h"
 
