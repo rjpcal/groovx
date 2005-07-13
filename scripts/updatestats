@@ -1,5 +1,8 @@
 #!/usr/bin/env tclsh
 
+# $HeadURL$
+# $Id$
+
 proc readfile { fname } {
     if { ![file exists $fname] } { return }
 
