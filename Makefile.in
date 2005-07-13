@@ -51,7 +51,6 @@ CXX             := @CXX@
 SHLIB_CMD       := @SHLIB_CMD@
 STATLIB_CMD     := @STATLIB_CMD@
 OBJEXT          := @OBJEXT@
-LIB_SUFFIX      := @LIB_SUFFIX@
 SHLIB_EXT       := @SHLIB_EXT@
 STATLIB_EXT     := @STATLIB_EXT@
 CPPFLAGS        := @CPPFLAGS@ -include config.h
@@ -64,7 +63,7 @@ DOXYGEN_PROG    := @DOXYGEN_PROG@
 BUILD           := @BUILD@
 windowsystem    := @windowsystem@
 
-LIB_EXT         := $(LIB_SUFFIX).$(SHLIB_EXT)
+LIB_EXT         := .$(SHLIB_EXT)
 
 
 #---------------------------------------------------------------------

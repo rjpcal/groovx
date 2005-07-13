@@ -663,11 +663,9 @@ AC_MSG_RESULT($enable_debug)
 if test $enable_debug = yes; then
    AC_DEFINE(GVX_PROF,1,[enable profiling?])
    CXXFLAGS="$CXXFLAGS $cxxflags_debug"
-   AC_SUBST(LIB_SUFFIX, .d.${PACKAGE_VERSION})
 else
    AC_DEFINE(GVX_NO_DEBUG,1,[statically turn off all debug statements?])
    CXXFLAGS="$CXXFLAGS $cxxflags_prod"
-   AC_SUBST(LIB_SUFFIX, ${PACKAGE_VERSION})
 fi
 
 ### --enable-rgba
