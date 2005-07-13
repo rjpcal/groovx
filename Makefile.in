@@ -127,7 +127,7 @@ $(DOC)/DoxyConfig: $(DOC)/DoxyConfig.in config.status
 	@[ -d ${@D} ] || mkdir -p ${@D}
 	@[ -f $@ ] || touch $@
 
-CPPFLAGS += -I$(SRC) -I$(SRC)/pkgs
+CPPFLAGS += -I$(SRC)
 
 ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
 
@@ -182,24 +182,24 @@ $(SRC)/%.cc.E : $(SRC)/%.h
 ALL_SRCS := $(shell find $(SRC) -follow -name \*.h -or -name \*.cc -or -name \*.C)
 LOCAL_SRCS := $(shell find $(SRC) -name \*.h -or -name \*.cc -or -name \*.C)
 
-LDEPOPTS := --verbosity 2 --includedir $(SRC)/pkgs --objdir $(OBJ)/ --srcdir $(SRC)
+LDEPOPTS := --verbosity 2 --objdir $(OBJ)/ --srcdir $(SRC)
 
 include $(DEVSCRIPTS)/makefrag
 
 # dependencies of object files on source+header files
 $(DEP)/cppdepends: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cdeps --includedir $(SRC)/pkgs \
+	time $(DEVSCRIPTS)/cdeps \
 		--objdir $(OBJ)/ \
 		--srcdir $(SRC) \
 		| sort > $(@).tmp
 	mv $(@).tmp $@
 
 $(DEP)/altdeps: $(DEVSCRIPTS)/cdeps.tcl $(DEVSCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cdeps.tcl --include $(SRC)/pkgs --src $(SRC) --objdir $(OBJ)/ > $@
+	time $(DEVSCRIPTS)/cdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $@
 
 
 sysdepends: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cdeps --includedir $(SRC)/pkgs \
+	time $(DEVSCRIPTS)/cdeps \
 		--objdir $(OBJ)/ --srcdir $(SRC) \
 		--checksys \
 		--sysincludedir /usr/lib/gcc/i386-redhat-linux/3.4.2/include \
@@ -209,7 +209,7 @@ sysdepends: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
 		|sort> $@
 
 direct_cdeps: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
-	time $(DEVSCRIPTS)/cdeps --includedir $(SRC)/pkgs \
+	time $(DEVSCRIPTS)/cdeps \
 		--objdir $(OBJ)/ --srcdir $(SRC) \
 		--checksys \
 		--sysincludedir /usr/lib/gcc/i386-redhat-linux/3.4.2/include \
