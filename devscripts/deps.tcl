@@ -57,8 +57,8 @@ namespace eval depconf {
 
 namespace eval cdeps {
 
-    variable sys_regex "#\\s*include\\s*(?:\"|<)(\[^ \]?)(?:\"|>)"
-    variable user_regex "#\\s*include\\s*\"(\[^ \]*?)\""
+    variable sys_regex "^#\\s*include\\s*(?:\"|<)(\[^ \]?)(?:\"|>)"
+    variable user_regex "^#\\s*include\\s*\"(\[^ \]*?)\""
 
     proc grep_all_1st_submatches {str exp} {
 	set res [list]
