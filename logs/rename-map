@@ -1,3 +1,4 @@
+src/pkgs/matlabengine/matlabtcl.cc  src/pkgs/matlabengine/tclpkg-matlabengine.cc
 src/tcl/tcldictobj.cc	       	 src/tcl/dict.cc
 src/tcl/tcltimerscheduler.cc   	 src/tcl/timerscheduler.cc
 src/tcl/tclveccmd.cc		 src/tcl/vecdispatch.cc
@@ -47,3 +48,8 @@ src/gfx/canvastcl.cc		 src/gfx/tclpkg-canvas.cc
 src/tcl/tclpkg.cc		 src/tcl/pkg.cc
 src/io/iotcl.cc			 src/tcl-io/tclpkg-io.cc
 src/tcl/tcllistobj.cc		 src/tcl/list.cc
+src/tcl/tclcmd.cc		 src/tcl/command.cc
+src/tcl/tclchannelbuf.cc	 src/tcl/channelbuf.cc
+src/io/objtcl.cc		 src/tcl/tclpkg-obj.cc
+src/tcl/misctcl.cc		 src/tcl/tclpkg-misc.cc
+
