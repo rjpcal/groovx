@@ -154,7 +154,7 @@ int main(int argc, char** argv)
 {
   GVX_SCRIPT_PROG_BEGIN(app, "GroovX", argc, argv);
 
-  app.pkg_dir(VISX_LIB_DIR);
+  app.pkg_dir(GVX_PKG_LIB_DIR);
 
   app.splash(PACKAGE_STRING " (" __DATE__ ")\n"
              "\n"

@@ -79,10 +79,10 @@ LOGS := ./logs
 DOC := ./doc
 SCRIPTS := ./scripts
 DEVSCRIPTS := ./devscripts
-VISX_LIB_DIR := $(exec_prefix)/lib/visx
+GVX_PKG_LIB_DIR := $(exec_prefix)/lib/pkgs
 
 DEFS += -DGROOVX_AUDIO_DIR=\"$(prefix)/share/audio\"
-DEFS += -DVISX_LIB_DIR=\"$(VISX_LIB_DIR)\"
+DEFS += -DGVX_PKG_LIB_DIR=\"$(GVX_PKG_LIB_DIR)\"
 
 CPPFLAGS += -I$(SRC)
 
@@ -241,10 +241,10 @@ Signaltest \
 Tcltimertest \
 Vectwotest \
 
-$(VISX_LIB_DIR)/pkgIndex.tcl: $(ALL_SRCS)
+$(GVX_PKG_LIB_DIR)/pkgIndex.tcl: $(ALL_SRCS)
 	rm -f pkgIndex.tcl.tmp
 	for p in $(PKG_NAMES); do \
-	  printf "package ifneeded %-20s %d.%d { load $(VISX_LIB_DIR)/%s.$(SHLIB_EXT) }\n" \
+	  printf "package ifneeded %-20s %d.%d { load $(GVX_PKG_LIB_DIR)/%s.$(SHLIB_EXT) }\n" \
 	    $$p 4 0 `echo $$p | tr \[:upper:\] \[:lower\:]` \
 	    >> pkgIndex.tcl.tmp; \
 	done
@@ -263,27 +263,27 @@ $(DEP)/pkgdepends: $(DEVSCRIPTS)/cdeps $(ALL_SRCS)
 	  --linkformat "src/tcl:$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT)" \
 	  --linkformat "src/geom:$(exec_prefix)/lib/libgroovx-geom$(LIB_EXT)" \
 	  --linkformat "src/mtx:$(exec_prefix)/lib/libgroovx-mtx$(LIB_EXT)" \
-	  --exeformat "pkg-libs, src/pkgs/matlabengine/tclpkg-matlabengine.cc :$(VISX_LIB_DIR)/matlabengine.$(SHLIB_EXT)" \
-	  --exeformat "pkg-libs, src/pkgs/mtx/tclpkg-mtx.cc                   :$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT)" \
-	  --exeformat "pkg-libs, src/pkgs/whitebox/algotest.cc                :$(VISX_LIB_DIR)/algotest.$(SHLIB_EXT)" \
-	  --exeformat "pkg-libs, src/pkgs/whitebox/basesixfourtest.cc         :$(VISX_LIB_DIR)/basesixfourtest.$(SHLIB_EXT)" \
-	  --exeformat "pkg-libs, src/pkgs/whitebox/fstringtest.cc             :$(VISX_LIB_DIR)/fstringtest.$(SHLIB_EXT)" \
-	  --exeformat "pkg-libs, src/pkgs/whitebox/geomtest.cc                :$(VISX_LIB_DIR)/geomtest.$(SHLIB_EXT)" \
-	  --exeformat "pkg-libs, src/pkgs/whitebox/mtxtest.cc                 :$(VISX_LIB_DIR)/mtxtest.$(SHLIB_EXT)" \
-	  --exeformat "pkg-libs, src/pkgs/whitebox/numtest.cc                 :$(VISX_LIB_DIR)/numtest.$(SHLIB_EXT)" \
-	  --exeformat "pkg-libs, src/pkgs/whitebox/signaltest.cc              :$(VISX_LIB_DIR)/signaltest.$(SHLIB_EXT)" \
-	  --exeformat "pkg-libs, src/pkgs/whitebox/tcltimertest.cc            :$(VISX_LIB_DIR)/tcltimertest.$(SHLIB_EXT)" \
-	  --exeformat "pkg-libs, src/pkgs/whitebox/vectwotest.cc              :$(VISX_LIB_DIR)/vectwotest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/matlabengine/tclpkg-matlabengine.cc :$(GVX_PKG_LIB_DIR)/matlabengine.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/mtx/tclpkg-mtx.cc                   :$(GVX_PKG_LIB_DIR)/mtx.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/algotest.cc                :$(GVX_PKG_LIB_DIR)/algotest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/basesixfourtest.cc         :$(GVX_PKG_LIB_DIR)/basesixfourtest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/fstringtest.cc             :$(GVX_PKG_LIB_DIR)/fstringtest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/geomtest.cc                :$(GVX_PKG_LIB_DIR)/geomtest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/mtxtest.cc                 :$(GVX_PKG_LIB_DIR)/mtxtest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/numtest.cc                 :$(GVX_PKG_LIB_DIR)/numtest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/signaltest.cc              :$(GVX_PKG_LIB_DIR)/signaltest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/tcltimertest.cc            :$(GVX_PKG_LIB_DIR)/tcltimertest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/vectwotest.cc              :$(GVX_PKG_LIB_DIR)/vectwotest.$(SHLIB_EXT)" \
 	  > $(@).tmp
 	mv $(@).tmp $(@)
 
 # Specialized dependencies for certain package libraries:
 
 ifneq ($(matlab_lib),)
-$(VISX_LIB_DIR)/mtx.so: \
+$(GVX_PKG_LIB_DIR)/mtx.so: \
 	$(matlab_lib)/libmx.so \
 
-$(VISX_LIB_DIR)/matlabengine.so: \
+$(GVX_PKG_LIB_DIR)/matlabengine.so: \
 	$(matlab_lib)/libeng.so \
 	$(matlab_lib)/libmx.so \
 	$(matlab_lib)/libut.so \
@@ -451,7 +451,7 @@ install-scripts					\
 install-audio					\
 install-images					\
 build						\
-$(VISX_LIB_DIR)/pkgIndex.tcl			\
+$(GVX_PKG_LIB_DIR)/pkgIndex.tcl			\
 $(GROOVX_EXEC)
 
 check: install
