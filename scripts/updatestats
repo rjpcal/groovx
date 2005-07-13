@@ -1,8 +1,5 @@
 #!/usr/bin/env tclsh
 
-set rawfilename "logs/CompileStats"
-set tallyfilename "logs/CompileStatsTally"
-
 proc readfile { fname } {
     if { ![file exists $fname] } { return }
 
@@ -10,6 +7,10 @@ proc readfile { fname } {
 
     while { [gets $f line] != -1 } {
         set name [lindex $line 0]
+
+	if { [info exists ::RENAME($name)] } {
+	    set name $::RENAME($name)
+	}
 
         set count 1
         if { [llength $line] > 1 } {
@@ -82,6 +83,20 @@ proc backup { fname } {
         file rename $fname ${fname}.bkp
     }
 }
+
+set rawfilename "logs/CompileStats"
+set tallyfilename "logs/CompileStatsTally"
+
+#
+# Read the file-renaming map
+#
+
+set fd [open "logs/rename-map" r]
+while { [gets $fd line] >= 0 } {
+    foreach {old new} $line {}
+    set ::RENAME($old) $new
+}
+close $fd
 
 #
 # Read data from the raw file
