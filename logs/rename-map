@@ -52,4 +52,4 @@ src/tcl/tclcmd.cc		 src/tcl/command.cc
 src/tcl/tclchannelbuf.cc	 src/tcl/channelbuf.cc
 src/io/objtcl.cc		 src/tcl/tclpkg-obj.cc
 src/tcl/misctcl.cc		 src/tcl/tclpkg-misc.cc
-
+src/pkgs/mtx/num.cc		 src/mtx/mathspecial.cc
