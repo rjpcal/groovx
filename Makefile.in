@@ -233,44 +233,54 @@ deptime: $(DEVSCRIPTS)/cdeps $(DEP)/altdeps
 
 # dependencies of package shlib's on object files
 
-$(DEP)/pkgdepends $(VISX_LIB_DIR)/pkgIndex.tcl: \
-		$(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
-		$(ALL_SRCS) $(SCRIPTS)/buildPkgDeps.tcl
-	$(SCRIPTS)/buildPkgDeps.tcl \
-		--depfile $(DEP)/pkgdepends \
-		--objdir $(OBJ)/pkgs \
-		--objext $(OBJEXT) \
-		--pkgsrc $(SRC)/pkgs \
-		--libdir $(VISX_LIB_DIR) \
-		--pkgdirs matlabengine,mtx,whitebox
+PKG_NAMES := \
+Algotest \
+Basesixfourtest \
+Fstringtest \
+Geomtest \
+Matlabengine \
+Mtx \
+Mtxtest \
+Numtest \
+Signaltest \
+Tcltimertest \
+Vectwotest \
 
-PKG_LIB_DEPS :=					\
-$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT)		\
-$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT)		\
-$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT)
+$(VISX_LIB_DIR)/pkgIndex.tcl: $(ALL_SRCS)
+	rm -f pkgIndex.tcl.tmp
+	for p in $(PKG_NAMES); do \
+	  printf "package ifneeded %-20s %d.%d { load $(VISX_LIB_DIR)/%s.$(SHLIB_EXT) }\n" \
+	    $$p 4 0 `echo $$p | tr \[:upper:\] \[:lower\:]` \
+	    >> pkgIndex.tcl.tmp; \
+	done
+	mv pkgIndex.tcl.tmp $@
 
-# Common dependencies for all package libraries:
-$(VISX_LIB_DIR)/algotest.$(SHLIB_EXT):        $(PKG_LIB_DEPS)
-$(VISX_LIB_DIR)/basesixfourtest.$(SHLIB_EXT): $(PKG_LIB_DEPS)
-$(VISX_LIB_DIR)/fstringtest.$(SHLIB_EXT):     $(PKG_LIB_DEPS)
-$(VISX_LIB_DIR)/geomtest.$(SHLIB_EXT):        $(PKG_LIB_DEPS) $(exec_prefix)/lib/libgroovx-geom$(LIB_EXT)
-$(VISX_LIB_DIR)/matlabengine.$(SHLIB_EXT):    $(PKG_LIB_DEPS)
-$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT):             $(PKG_LIB_DEPS) $(exec_prefix)/lib/libgroovx-mtx$(LIB_EXT)
-$(VISX_LIB_DIR)/mtxtest.$(SHLIB_EXT):         $(PKG_LIB_DEPS) $(exec_prefix)/lib/libgroovx-mtx$(LIB_EXT)
-$(VISX_LIB_DIR)/numtest.$(SHLIB_EXT):         $(PKG_LIB_DEPS) $(exec_prefix)/lib/libgroovx-mtx$(LIB_EXT)
-$(VISX_LIB_DIR)/signaltest.$(SHLIB_EXT):      $(PKG_LIB_DEPS)
-$(VISX_LIB_DIR)/tcltimertest.$(SHLIB_EXT):    $(PKG_LIB_DEPS)
-$(VISX_LIB_DIR)/vectwotest.$(SHLIB_EXT):      $(PKG_LIB_DEPS)
+$(DEP)/pkgdepends: $(DEVSCRIPTS)/cdeps $(ALL_SRCS)
+	$(DEVSCRIPTS)/cdeps \
+	  --objdir $(OBJ)/ \
+	  --srcdir $(SRC) \
+	  --output-link-deps \
+	  --linkformat "src/:build/obj/*.o" \
+	  --linkformat "src/rutz:$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT)" \
+	  --linkformat "src/nub:$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT)" \
+	  --linkformat "src/tcl:$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT)" \
+	  --linkformat "src/geom:$(exec_prefix)/lib/libgroovx-geom$(LIB_EXT)" \
+	  --linkformat "src/mtx:$(exec_prefix)/lib/libgroovx-mtx$(LIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/matlabengine/tclpkg-matlabengine.cc :$(VISX_LIB_DIR)/matlabengine.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/mtx/tclpkg-mtx.cc                   :$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/algotest.cc                :$(VISX_LIB_DIR)/algotest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/basesixfourtest.cc         :$(VISX_LIB_DIR)/basesixfourtest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/fstringtest.cc             :$(VISX_LIB_DIR)/fstringtest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/geomtest.cc                :$(VISX_LIB_DIR)/geomtest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/mtxtest.cc                 :$(VISX_LIB_DIR)/mtxtest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/numtest.cc                 :$(VISX_LIB_DIR)/numtest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/signaltest.cc              :$(VISX_LIB_DIR)/signaltest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/tcltimertest.cc            :$(VISX_LIB_DIR)/tcltimertest.$(SHLIB_EXT)" \
+	  --exeformat "pkg-libs, src/pkgs/whitebox/vectwotest.cc              :$(VISX_LIB_DIR)/vectwotest.$(SHLIB_EXT)" \
+	  > $(@).tmp
+	mv $(@).tmp $(@)
 
 # Specialized dependencies for certain package libraries:
-$(VISX_LIB_DIR)/matlabengine.$(SHLIB_EXT): \
-	$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT)
-
-$(VISX_LIB_DIR)/mtxtest.$(SHLIB_EXT): \
-	$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT)
-
-$(VISX_LIB_DIR)/numtest.$(SHLIB_EXT): \
-	$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT)
 
 ifneq ($(matlab_lib),)
 $(VISX_LIB_DIR)/mtx.so: \
@@ -418,7 +428,7 @@ $(exec_prefix)/bin/groovx: $(EXECUTABLE)
 build:						\
 TAGS						\
 $(ALL_SHLIBS)					\
-$(PKG_LIBS)					\
+pkg-libs					\
 $(EXECUTABLE)
 
 install:					\
