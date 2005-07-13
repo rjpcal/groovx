@@ -66,6 +66,13 @@ windowsystem    := @windowsystem@
 LIB_EXT         := .$(SHLIB_EXT)
 
 
+DEFS += -DGROOVX_AUDIO_DIR=\"$(prefix)/share/audio\"
+DEFS += -DVISX_LIB_DIR=\"$(VISX_LIB_DIR)\"
+
+CPPFLAGS += -I$(SRC)
+
+ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
+
 #---------------------------------------------------------------------
 #
 # Directories for different file types
@@ -80,9 +87,6 @@ DOC := ./doc
 SCRIPTS := ./scripts
 DEVSCRIPTS := ./devscripts
 VISX_LIB_DIR := $(exec_prefix)/lib/visx
-
-DEFS += -DGROOVX_AUDIO_DIR=\"$(prefix)/share/audio\"
-DEFS += -DVISX_LIB_DIR=\"$(VISX_LIB_DIR)\"
 
 #---------------------------------------------------------------------
 #
@@ -119,17 +123,6 @@ $(DOC)/DoxyConfig: $(DOC)/DoxyConfig.in config.status
 # Build rules for object files
 #
 #---------------------------------------------------------------------
-
-# This build rule helps to create subdirectories that don't need to be
-# part of the CVS repository, but do need to exist to hold generated
-# files during the build process in sandboxes..
-%.timestamp:
-	@[ -d ${@D} ] || mkdir -p ${@D}
-	@[ -f $@ ] || touch $@
-
-CPPFLAGS += -I$(SRC)
-
-ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
 
 $(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc config.h
 	@[ -d ${@D} ] || mkdir -p ${@D}
@@ -187,18 +180,20 @@ LDEPOPTS := --verbosity 2 --objdir $(OBJ)/ --srcdir $(SRC)
 include $(DEVSCRIPTS)/makefrag
 
 # dependencies of object files on source+header files
-$(DEP)/cppdepends: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+$(DEP)/cppdepends: $(DEVSCRIPTS)/cdeps $(ALL_SRCS)
+	@mkdir -p $(dir $@)
 	time $(DEVSCRIPTS)/cdeps \
 		--objdir $(OBJ)/ \
 		--srcdir $(SRC) \
 		| sort > $(@).tmp
 	mv $(@).tmp $@
 
-$(DEP)/altdeps: $(DEVSCRIPTS)/cdeps.tcl $(DEVSCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
+$(DEP)/altdeps: $(DEVSCRIPTS)/cdeps.tcl $(DEVSCRIPTS)/deps.tcl $(ALL_SRCS)
+	@mkdir -p $(dir $@)
 	time $(DEVSCRIPTS)/cdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $@
 
 
-sysdepends: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+sysdepends: $(DEVSCRIPTS)/cdeps $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cdeps \
 		--objdir $(OBJ)/ --srcdir $(SRC) \
 		--checksys \
@@ -208,7 +203,7 @@ sysdepends: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
 		--sysincludedir /usr/include/c++/3.4.2/i386-redhat-linux \
 		|sort> $@
 
-direct_cdeps: $(DEVSCRIPTS)/cdeps $(DEP)/.timestamp $(ALL_SRCS)
+direct_cdeps: $(DEVSCRIPTS)/cdeps $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cdeps \
 		--objdir $(OBJ)/ --srcdir $(SRC) \
 		--checksys \
@@ -253,7 +248,9 @@ $(VISX_LIB_DIR)/pkgIndex.tcl: $(ALL_SRCS)
 	    $$p 4 0 `echo $$p | tr \[:upper:\] \[:lower\:]` \
 	    >> pkgIndex.tcl.tmp; \
 	done
-	mv pkgIndex.tcl.tmp $@
+	mkdir -p $(dir $@)
+	install -m 444 pkgIndex.tcl.tmp $@
+	rm -f pkgIndex.tcl.tmp
 
 $(DEP)/pkgdepends: $(DEVSCRIPTS)/cdeps $(ALL_SRCS)
 	$(DEVSCRIPTS)/cdeps \
@@ -296,20 +293,17 @@ endif
 
 # dependencies of main project shlib's on object files
 
-LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
-		--libdir $(exec_prefix)/lib \
-		--libprefix libgroovx- \
-		--libext $(LIB_EXT) \
-		--srcroot $(SRC) \
-		--objroot $(OBJ) \
-		--objext .$(OBJEXT) \
-		--modules "mtx,visx,gfx,tcl-io,field,tcl,tk,io,media,geom,rutz,nub"
+newlibdepends: $(DEVSCRIPTS)/cdeps $(ALL_SRCS)
+	$(DEVSCRIPTS)/cdeps \
+	  --objdir $(OBJ)/ \
+	  --srcdir $(SRC) \
+	  --output-link-deps \
+	  --linkformat "src/:build/obj/*.o" \
+	  --exeformat "core-libs, src/rutz :$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT)" \
+	  | sort -u > $(@).tmp
+	mv $(@).tmp $(@)
 
-$(DEP)/libdepends: $(DEP)/.timestamp $(ALL_SRCS) \
-		$(SCRIPTS)/build_lib_rules.tcl
-	$(LIB_DEP_CMD) > $@
-
-include $(DEP)/cppdepends $(DEP)/pkgdepends $(DEP)/libdepends
+include $(DEP)/cppdepends $(DEP)/pkgdepends
 
 # Need to set up the .LIBPATTERNS variable so that we get the right
 # behavior when we specify something like "-lfoo" as a prerequisite.
@@ -321,47 +315,60 @@ include $(DEP)/cppdepends $(DEP)/pkgdepends $(DEP)/libdepends
 # creating a shared library, and that in turn requires that each
 # shared library be linked against all its prerequisites.
 
+$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT): \
+	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/rutz/*.cc))) \
+
+$(exec_prefix)/lib/libgroovx-geom$(LIB_EXT): \
+	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/geom/*.cc))) \
+	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
+
 $(exec_prefix)/lib/libgroovx-mtx$(LIB_EXT): \
+	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/mtx/*.cc))) \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
 
 $(exec_prefix)/lib/libgroovx-nub$(LIB_EXT): \
+	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/nub/*.cc))) \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
 
+$(exec_prefix)/lib/libgroovx-io$(LIB_EXT): \
+	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/io/*.cc))) \
+	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT)
+
 $(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT): \
+	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/tcl/*.cc))) \
 	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
 
 $(exec_prefix)/lib/libgroovx-tk$(LIB_EXT): \
+	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/tk/*.cc))) \
 	$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
 
-$(exec_prefix)/lib/libgroovx-io$(LIB_EXT): \
-	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
-	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT)
-
 $(exec_prefix)/lib/libgroovx-field$(LIB_EXT): \
+	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/field/*.cc))) \
 	$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-io$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT)
 
 $(exec_prefix)/lib/libgroovx-tcl-io$(LIB_EXT): \
+	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/tcl-io/*.cc))) \
 	$(exec_prefix)/lib/libgroovx-field$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-io$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT)
 
-$(exec_prefix)/lib/libgroovx-geom$(LIB_EXT): \
-	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
-
 $(exec_prefix)/lib/libgroovx-media$(LIB_EXT): \
+	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/media/*.cc))) \
 	$(exec_prefix)/lib/libgroovx-geom$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
 
 $(exec_prefix)/lib/libgroovx-gfx$(LIB_EXT): \
+	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gfx/*.cc))) \
 	$(exec_prefix)/lib/libgroovx-media$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-geom$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-tcl-io$(LIB_EXT) \
@@ -373,6 +380,7 @@ $(exec_prefix)/lib/libgroovx-gfx$(LIB_EXT): \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
 
 $(exec_prefix)/lib/libgroovx-visx$(LIB_EXT): \
+	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/visx/*.cc))) \
 	$(exec_prefix)/lib/libgroovx-media$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-geom$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-gfx$(LIB_EXT) \
@@ -390,32 +398,40 @@ $(exec_prefix)/lib/libgroovx-visx$(LIB_EXT): \
 #
 #---------------------------------------------------------------------
 
-ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
-ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
+GROOVX_LIBS :=					\
+$(exec_prefix)/lib/libgroovx-mtx$(LIB_EXT)	\
+$(exec_prefix)/lib/libgroovx-visx$(LIB_EXT)	\
+$(exec_prefix)/lib/libgroovx-gfx$(LIB_EXT)	\
+$(exec_prefix)/lib/libgroovx-tcl-io$(LIB_EXT)	\
+$(exec_prefix)/lib/libgroovx-field$(LIB_EXT)	\
+$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT)	\
+$(exec_prefix)/lib/libgroovx-tk$(LIB_EXT)	\
+$(exec_prefix)/lib/libgroovx-io$(LIB_EXT)	\
+$(exec_prefix)/lib/libgroovx-media$(LIB_EXT)	\
+$(exec_prefix)/lib/libgroovx-geom$(LIB_EXT)	\
+$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT)	\
+$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT)
 
-STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/groovx/*.cc)))
-
-EXECUTABLE := $(exec_prefix)/bin/groovx$(PACKAGE_VERSION)
+STATIC_OBJS := $(OBJ)/groovx/groovx.$(OBJEXT)
+GROOVX_EXEC := $(exec_prefix)/bin/groovx
 
 ifneq ($(windowsystem),aqua)
-$(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(STATIC_OBJS) $(ALL_STATLIBS)
-	time $(CXX) -o $@ $(STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
+$(GROOVX_EXEC): $(STATIC_OBJS) $(GROOVX_LIBS)
+	@mkdir -p $(dir $@)
+	time $(CXX) -o $@ $(STATIC_OBJS) $(LDFLAGS) $(GROOVX_LIBS) $(LIBS)
 else
 OSXAPP := $(exec_prefix)/Groovx.app/Contents/MacOS/Groovx
-$(OSXAPP): $(STATIC_OBJS) $(ALL_STATLIBS)
-	mkdir -p $(exec_prefix)/Groovx.app/Contents/MacOS
-	time $(CXX) -o $(exec_prefix)/Groovx.app/Contents/MacOS/Groovx $(STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
+$(OSXAPP): $(STATIC_OBJS) $(GROOVX_LIBS)
+	mkdir -p $(dir $@)
+	time $(CXX) -o $(exec_prefix)/Groovx.app/Contents/MacOS/Groovx $(STATIC_OBJS) $(LDFLAGS) $(GROOVX_LIBS) $(LIBS)
 
-$(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(OSXAPP)
-	rm -f $@
+$(GROOVX_EXEC): $(OSXAPP)
+	@mkdir -p $(dir $@)
+	@rm -f $@
 	echo "#!/bin/sh" >> $@
 	echo "\"$(exec_prefix)/Groovx.app/Contents/MacOS/Groovx\" \"\$$@\"" >> $@
 	/bin/chmod +x $@
 endif
-
-$(exec_prefix)/bin/groovx: $(EXECUTABLE)
-	ln -s -f $(^F) $@
 
 .PHONY: build install_scripts install check all
 
@@ -427,9 +443,8 @@ $(exec_prefix)/bin/groovx: $(EXECUTABLE)
 
 build:						\
 TAGS						\
-$(ALL_SHLIBS)					\
 pkg-libs					\
-$(EXECUTABLE)
+$(GROOVX_EXEC)
 
 install:					\
 install-scripts					\
@@ -437,10 +452,10 @@ install-audio					\
 install-images					\
 build						\
 $(VISX_LIB_DIR)/pkgIndex.tcl			\
-$(exec_prefix)/bin/groovx
+$(GROOVX_EXEC)
 
 check: install
-	export __GL_SYNC_TO_VBLANK=0; $(EXECUTABLE) ./testing/grshtest.tcl
+	export __GL_SYNC_TO_VBLANK=0; $(GROOVX_EXEC) ./testing/grshtest.tcl
 
 all: check
 
@@ -453,8 +468,8 @@ all: check
 backup:
 	tclsh $(SCRIPTS)/Backup.tcl
 
-benchmarks: $(EXECUTABLE)
-	$(EXECUTABLE) $(SCRIPTS)/benchmarks.tcl -output $(LOGS)/benchmarks.txt
+benchmarks: $(GROOVX_EXEC)
+	$(GROOVX_EXEC) $(SCRIPTS)/benchmarks.tcl -output $(LOGS)/benchmarks.txt
 
 # Remove all backups, temporaries, and coredumps
 neat:
@@ -573,11 +588,21 @@ www_export: svn_export
 
 
 $(exec_prefix)/bin/%.tcl: ./share/scripts/%.tcl
-	rm -f $@
-	cp ./share/scripts/$(@F) $@
-	chmod 555 $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	install -m 555 $< $@
 
-install-scripts: $(exec_prefix)/bin/.timestamp	\
+$(prefix)/share/audio/%.au: ./share/audio/%.au
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	install -m 444 $< $@
+
+$(prefix)/share/images/%.jpg: ./share/images/%.jpg
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	install -m 444 $< $@
+
+install-scripts:				\
 $(exec_prefix)/bin/editor.tcl			\
 $(exec_prefix)/bin/make_faces.tcl		\
 $(exec_prefix)/bin/play_img_seq.tcl		\
@@ -585,13 +610,7 @@ $(exec_prefix)/bin/sample_expt.tcl		\
 $(exec_prefix)/bin/slideshow.tcl		\
 $(exec_prefix)/bin/visedit.tcl			\
 
-
-$(prefix)/share/audio/%.au: ./share/audio/%.au
-	rm -f $@
-	cp $^ $@
-	chmod 444 $@
-
-install-audio: $(prefix)/share/audio/.timestamp	\
+install-audio:					\
 $(prefix)/share/audio/saw100_200Hz_2x120ms.au	\
 $(prefix)/share/audio/saw100_200Hz_300ms.au	\
 $(prefix)/share/audio/saw100_350Hz_2x120ms.au	\
@@ -647,14 +666,9 @@ $(prefix)/share/audio/sin_E_659Hz_300ms.au	\
 $(prefix)/share/audio/sin_F\#_370Hz_300ms.au	\
 $(prefix)/share/audio/sin_F_349Hz_300ms.au	\
 $(prefix)/share/audio/sin_G\#_415Hz_300ms.au	\
-$(prefix)/share/audio/sin_G_392Hz_300ms.au
+$(prefix)/share/audio/sin_G_392Hz_300ms.au	\
 
-$(prefix)/share/images/%.jpg: ./share/images/%.jpg
-	rm -f $@
-	cp $^ $@
-	chmod 444 $@
-
-install-images: $(prefix)/share/images/.timestamp \
+install-images:					\
 $(prefix)/share/images/nga01.jpg		\
 $(prefix)/share/images/nga02.jpg		\
 $(prefix)/share/images/nga03.jpg		\
