@@ -66,13 +66,6 @@ windowsystem    := @windowsystem@
 LIB_EXT         := .$(SHLIB_EXT)
 
 
-DEFS += -DGROOVX_AUDIO_DIR=\"$(prefix)/share/audio\"
-DEFS += -DVISX_LIB_DIR=\"$(VISX_LIB_DIR)\"
-
-CPPFLAGS += -I$(SRC)
-
-ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
-
 #---------------------------------------------------------------------
 #
 # Directories for different file types
@@ -87,6 +80,13 @@ DOC := ./doc
 SCRIPTS := ./scripts
 DEVSCRIPTS := ./devscripts
 VISX_LIB_DIR := $(exec_prefix)/lib/visx
+
+DEFS += -DGROOVX_AUDIO_DIR=\"$(prefix)/share/audio\"
+DEFS += -DVISX_LIB_DIR=\"$(VISX_LIB_DIR)\"
+
+CPPFLAGS += -I$(SRC)
+
+ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
 
 #---------------------------------------------------------------------
 #
