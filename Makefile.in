@@ -77,7 +77,6 @@ DEP := $(BUILD)/dep
 OBJ := $(BUILD)/obj
 LOGS := ./logs
 DOC := ./doc
-SCRIPTS := ./scripts
 DEVSCRIPTS := ./devscripts
 GVX_PKG_LIB_DIR := $(exec_prefix)/lib/pkgs
 
@@ -464,12 +463,6 @@ all: check
 # Miscellaneous targets
 #
 #---------------------------------------------------------------------
-
-backup:
-	tclsh $(SCRIPTS)/Backup.tcl
-
-benchmarks: $(GROOVX_EXEC)
-	$(GROOVX_EXEC) $(SCRIPTS)/benchmarks.tcl -output $(LOGS)/benchmarks.txt
 
 # Remove all backups, temporaries, and coredumps
 neat:
