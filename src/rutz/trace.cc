@@ -1,5 +1,6 @@
 /** @file rutz/trace.cc GVX_TRACE macro for user-controlled tracing and
     profiling */
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 1999-2005
@@ -45,42 +46,109 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#define TRACE_WALL_CLOCK_TIME
-//#define TRACE_CPU_TIME
-
 namespace
 {
-  inline rutz::time get_now_time() throw()
+  unsigned int             g_max_trace_level     = 20;
+  bool                     g_do_global_trace     = false;
+  rutz::trace::run_mode    g_current_run_mode    = rutz::trace::RUN;
+  rutz::trace::timing_mode g_current_timing_mode = rutz::trace::WALLCLOCK;
+
+  inline rutz::time
+  get_now_time(const rutz::trace::timing_mode mode) throw()
   {
-#if defined(TRACE_WALL_CLOCK_TIME)
-    return rutz::time::wall_clock_now();
-#elif defined(TRACE_CPU_TIME)
-    return rutz::time::user_rusage() + rutz::time::sys_rusage();
-#else
-#  error must define either TRACE_WALL_CLOCK_TIME or TRACE_CPU_TIME
-#endif
+    switch (mode)
+      {
+      case rutz::trace::RUSAGE:
+        return (rutz::time::user_rusage() + rutz::time::sys_rusage());
+
+      case rutz::trace::WALLCLOCK:
+      default:
+        return rutz::time::wall_clock_now();
+      }
   }
-
-  unsigned int MAX_TRACE_LEVEL = 20;
-
-  bool GLOBAL_TRACE = false;
 
   void wait_on_step() throw()
   {
     static char buf[256];
 
-    std::cerr << "?" << std::flush;
+    std::cerr << " [r)un, s)step] ? " << std::flush;
     std::cin.getline(&buf[0], 256);
 
     switch (buf[0])
       {
-      case 'r':
-      case 'R':
-        rutz::trace::set_trace_mode(rutz::trace::RUN);
+      case 'r': case 'R':
+        g_current_run_mode = rutz::trace::RUN;
         break;
+
+      case 's': case 'S':
       default:
         break;
       }
+  }
+
+  void print_in(const char* context_name) throw()
+  {
+    const unsigned int n = rutz::backtrace::current().size();
+
+    if (n < g_max_trace_level)
+      {
+        for (unsigned int i = 0; i < n; ++i)
+          {
+            std::cerr << "|   ";
+          }
+        // Test whether n has 1, 2, or >3 digits
+        if (n < 10)
+          std::cerr << n << "-->> ";
+        else if (n < 100)
+          std::cerr << n << "->> ";
+        else
+          std::cerr << n << ">> ";
+
+        std::cerr << context_name;
+
+        switch (g_current_run_mode)
+          {
+          case rutz::trace::STEP:
+            wait_on_step();
+            break;
+
+          case rutz::trace::RUN:
+          default:
+            std::cerr << '\n';
+            break;
+          }
+      }
+  }
+
+  void print_out(const char* context_name) throw()
+  {
+    const unsigned int n = rutz::backtrace::current().size();
+
+    if (n < g_max_trace_level)
+      {
+        for (unsigned int i = 0; i < n; ++i)
+          {
+            std::cerr << "|   ";
+          }
+        std::cerr << "| <<--";
+
+        std::cerr << context_name;
+
+        switch (g_current_run_mode)
+          {
+          case rutz::trace::STEP:
+            wait_on_step();
+            break;
+
+          case rutz::trace::RUN:
+          default:
+            std::cerr << '\n';
+            break;
+          }
+      }
+
+    if (rutz::backtrace::current().size() == 0)
+      std::cerr << '\n';
   }
 }
 
@@ -90,62 +158,67 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace
+void rutz::trace::set_run_mode(run_mode mode) throw()
 {
-  rutz::trace::mode current_trace_mode = rutz::trace::RUN;
+  g_current_run_mode = mode;
 }
 
-void rutz::trace::set_trace_mode(mode new_mode) throw()
+rutz::trace::run_mode rutz::trace::get_run_mode() throw()
 {
-  current_trace_mode = new_mode;
-}
-
-rutz::trace::mode rutz::trace::get_trace_mode() throw()
-{
-  return current_trace_mode;
+  return g_current_run_mode;
 }
 
 bool rutz::trace::get_global_trace() throw()
 {
-  return GLOBAL_TRACE;
+  return g_do_global_trace;
 }
 
 void rutz::trace::set_global_trace(bool on_off) throw()
 {
-  GLOBAL_TRACE = on_off;
+  g_do_global_trace = on_off;
 }
 
 unsigned int rutz::trace::get_max_level() throw()
 {
-  return MAX_TRACE_LEVEL;
+  return g_max_trace_level;
 }
 
 void rutz::trace::set_max_level(unsigned int lev) throw()
 {
-  MAX_TRACE_LEVEL = lev;
+  g_max_trace_level = lev;
 }
 
-rutz::trace::trace(prof& p, bool useMsg) throw() :
+rutz::trace::trace(prof& p, bool use_msg) throw()
+  :
   m_prof(p),
   m_start(),
-  m_should_print_msg(useMsg),
-  m_should_pop(true)
+  m_should_print_msg(g_do_global_trace || use_msg),
+  m_should_pop(rutz::backtrace::current().push(&p)),
+  m_timing_mode(g_current_timing_mode)
 {
-  if (GLOBAL_TRACE || m_should_print_msg)
-    print_in();
+  if (this->m_should_print_msg)
+    print_in(this->m_prof.context_name());
 
-  m_should_pop = rutz::backtrace::current().push(&p);
-
-  m_start = get_now_time();
+  // We want this to be the last thing in the constructor, so that we
+  // don't include the rest of the constructor runtime in our elapsed
+  // time measurement:
+  this->m_start = get_now_time(this->m_timing_mode);
 }
 
 rutz::trace::~trace() throw()
 {
-  rutz::time finish = get_now_time();
-  rutz::time elapsed = finish - m_start;
-  m_prof.add_time(elapsed);
+  // We want this to be the first thing in the destructor, so that we
+  // don't include the rest of the destructor runtime in our elapsed
+  // time measurement:
+  const rutz::time finish = get_now_time(this->m_timing_mode);
+  const rutz::time elapsed = finish - this->m_start;
 
-  if (m_should_pop)
+  this->m_prof.add_time(elapsed);
+
+  // Do a backtrace::pop() only if the corresponding backtrace::push()
+  // succeeeded in the constructor (it could have failed due to memory
+  // exhaustion, etc.):
+  if (this->m_should_pop)
     {
       rutz::backtrace& c = rutz::backtrace::current();
       c.pop();
@@ -154,67 +227,8 @@ rutz::trace::~trace() throw()
         parent->add_child_time(elapsed);
     }
 
-  if (GLOBAL_TRACE || m_should_print_msg)
-    print_out();
-}
-
-void rutz::trace::print_in() throw()
-{
-  const unsigned int n = rutz::backtrace::current().size();
-
-  if (n < MAX_TRACE_LEVEL)
-    {
-      for (unsigned int i = 0; i < n; ++i)
-        {
-          std::cerr << "|   ";
-        }
-      // Test whether n has 1, 2, or >3 digits
-      if (n < 10)
-        std::cerr << n << "-->> ";
-      else if (n < 100)
-        std::cerr << n << "->> ";
-      else
-        std::cerr << n << ">> ";
-
-      std::cerr << m_prof.context_name();
-
-      if (rutz::trace::get_trace_mode() == STEP)
-        {
-          wait_on_step();
-        }
-      else
-        {
-          std::cerr << '\n';
-        }
-    }
-}
-
-void rutz::trace::print_out() throw()
-{
-  const unsigned int n = rutz::backtrace::current().size();
-
-  if (n < MAX_TRACE_LEVEL)
-    {
-      for (unsigned int i = 0; i < n; ++i)
-        {
-          std::cerr << "|   ";
-        }
-      std::cerr << "| <<--";
-
-      std::cerr << m_prof.context_name();
-
-      if (rutz::trace::get_trace_mode() == STEP)
-        {
-          wait_on_step();
-        }
-      else
-        {
-          std::cerr << '\n';
-        }
-    }
-
-  if (rutz::backtrace::current().size() == 0)
-    std::cerr << '\n';
+  if (this->m_should_print_msg)
+    print_out(this->m_prof.context_name());
 }
 
 static const char vcid_groovx_rutz_trace_cc_utc20050626084020[] = "$Id$ $HeadURL$";

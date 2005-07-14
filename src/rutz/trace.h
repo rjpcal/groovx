@@ -66,31 +66,72 @@ namespace rutz
 }
 
 /// Times and traces execution in and out of a lexical scope.
+/** This class cooperates with rutz::prof. rutz::prof objects are
+    expected to have "long" lifetimes, and accumulate timing
+    information over multiple passes. In each pass, a rutz::trace
+    object should be constructed, which will pass its runtime info
+    onto the rutz::prof, which then accumulates the timing info. */
 class rutz::trace
 {
 public:
-  enum mode { RUN, STEP };
+  /// Control whether to continue or pause on trace in/out messages.
+  /** In STEP mode, each trace message will be followed with a very
+      simple debugger-like prompt, waiting for user input from stdin
+      as to whether to "r)un" (switch back to RUN mode), or "s)tep"
+      (stay in STEP mode). */
+  enum run_mode
+    {
+      RUN,  ///< Continue immediately after each trace in/out message
+      STEP  ///< Wait for user input from stdin after each trace in/out message
+    };
 
-  static void set_trace_mode(mode new_mode) throw();
-  static mode get_trace_mode() throw();
+  /// Different types of timing.
+  enum timing_mode
+    {
+      WALLCLOCK, ///< Track elapsed wall-clock time.
+      RUSAGE     ///< Track elpased user+sys rusage.
+    };
 
+  /// Get the current run_mode (whether to continue or pause on trace in/out messages).
+  static run_mode get_run_mode() throw();
+  /// Change the current run_mode (whether to continue or pause on trace in/out messages).
+  static void     set_run_mode(run_mode mode) throw();
+
+  /// Query whether we are unconditionally printing trace in/out messages.
   static bool get_global_trace() throw();
+  /// Set whether to unconditionally print trace in/out messages.
   static void set_global_trace(bool on_off) throw();
 
+  /// Get the max nesting level for printing trace in/out messages.
   static unsigned int get_max_level() throw();
-  static void set_max_level(unsigned int lev) throw();
+  /// Set the max nesting level for printing trace in/out messages.
+  static void         set_max_level(unsigned int lev) throw();
 
-  trace(prof& p, bool use_msg) throw();
+  /// Get the current timing_mode.
+  static timing_mode get_timing_mode() throw();
+  /// Set the current timing_mode.
+  static void        set_timing_mode(timing_mode mode) throw();
+
+  /// Construct a rutz::trace object.
+  /** Store the current time internally (either the wall clock time or
+      current user+sys rusage, depending on the current
+      timing_mode). If use_msg, then print a trace-begin message to
+      stderr showing the name of the given rutz::prof. */
+  trace(rutz::prof& p, bool use_msg) throw();
+
+  /// Destruct the rutz::trace object, accumulating time information in the stored rutz::prof.
+  /** Get the new time (either wall clock or user+sys rusage, matching
+      whatever we did in the rutz::trace constructor. If we printed a
+      trace-begin message, then also print a matching trace-end
+      message. */
   ~trace() throw();
 
 private:
-  void print_in() throw();
-  void print_out() throw();
-
-  prof&      m_prof;
-  rutz::time m_start;
-  const bool m_should_print_msg;
-  bool       m_should_pop;
+  rutz::prof&  m_prof;
+  rutz::time   m_start;
+  const bool   m_should_print_msg;
+  const bool   m_should_pop;
+  timing_mode  m_timing_mode; ///< Store this in case somebody calls set_timing_mode() before we finish
 };
 
 #if (defined(GVX_TRACE) && !defined(GVX_NO_TRACE))
@@ -115,10 +156,10 @@ private:
 
 #ifdef GVX_LOCAL_PROF
 #  define GVX_TRACE(x) \
-                 static rutz::prof  P_x_  (x,   __FILE__, __LINE__); \
-                 rutz::trace        T_x_  (P_x_, GVX_DYNAMIC_TRACE_EXPR);
+         static rutz::prof  P_x_  (x,   __FILE__, __LINE__); \
+         rutz::trace        T_x_  (P_x_, GVX_DYNAMIC_TRACE_EXPR);
 #else
-#  define GVX_TRACE(x) {}
+#  define GVX_TRACE(x) do {} while(0)
 #endif
 
 static const char vcid_groovx_rutz_trace_h_utc20050626084019[] = "$Id$ $HeadURL$";
