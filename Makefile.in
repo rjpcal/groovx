@@ -252,7 +252,7 @@ $(GVX_PKG_LIB_DIR)/pkgIndex.tcl: $(ALL_SRCS)
 	rm -f pkgIndex.tcl.tmp
 
 $(DEP)/pkgdepends: $(DEVSCRIPTS)/cdeps $(ALL_SRCS)
-	@mkdir -p $(@dir $@)
+	@mkdir -p $(dir $@)
 	$(DEVSCRIPTS)/cdeps \
 	  --objdir $(OBJ)/ \
 	  --srcdir $(SRC) \
