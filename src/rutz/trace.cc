@@ -188,6 +188,16 @@ void rutz::trace::set_max_level(unsigned int lev) throw()
   g_max_trace_level = lev;
 }
 
+rutz::trace::timing_mode rutz::trace::get_timing_mode() throw()
+{
+  return g_current_timing_mode;
+}
+
+void rutz::trace::set_timing_mode(rutz::trace::timing_mode mode) throw()
+{
+  g_current_timing_mode = mode;
+}
+
 rutz::trace::trace(prof& p, bool use_msg) throw()
   :
   m_prof(p),
