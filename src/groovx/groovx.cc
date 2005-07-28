@@ -34,6 +34,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
+#include "rutz/prof.h"
 #include "tcl/scriptapp.h"
 
 // #include's for forward decls of all the *_Init() procedures
@@ -153,6 +154,8 @@ static tcl::package_info GROOVX_PKGS[] =
 int main(int argc, char** argv)
 {
   GVX_SCRIPT_PROG_BEGIN(app, "GroovX", argc, argv);
+
+  rutz::prof::print_at_exit(true);
 
   app.pkg_dir(GVX_PKG_LIB_DIR);
 

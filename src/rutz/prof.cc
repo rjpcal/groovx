@@ -49,7 +49,7 @@ namespace
 {
   const char* PDATA_FILE = "prof.out";
 
-  bool PRINT_AT_EXIT = true;
+  bool PRINT_AT_EXIT = false;
 
   typedef rutz::static_stack<rutz::prof*, 2048> prof_list;
 

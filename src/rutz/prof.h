@@ -43,6 +43,48 @@ namespace rutz
 }
 
 /// Accumulates profiling information for a given execution context.
+/** rutz::prof, along with rutz::trace and associated macros
+    (e.g. GVX_TRACE()) form a basic profiling facility.
+
+    * GVX_TRACE() statements collect timing information at function
+      entry and exit (or, more precisely, at construction and
+      destruction of the local object that is introduced by the
+      GVX_TRACE() macro call). The overhead for this profiling
+      information is non-zero, but is completely neglible in
+      proportion to the amount of execution time taken by any of the
+      functions in FilterOps.
+
+    * To turn on profiling in a given source file, first #define
+      GVX_LOCAL_PROF in that file, then #include "rutz/trace.h", then
+      insert a GVX_TRACE() wherever you like. Without GVX_LOCAL_PROF,
+      the GVX_TRACE() macro calls get expanded into nothing.
+
+    * In order to actually see the profiling information, you can
+      either call rutz::prof::print_all_prof_data() directly, or you
+      can call rutz::prof::print_at_exit(true). If you do the latter,
+      then when the program exits, the profiling information will be
+      dumped to a file named 'prof.out' in the current
+      directory. Currently, the only program that generates a prof.out
+      in this way is bin/invt (the tcl script interpreter).
+
+    * Profiling information in prof.out looks like the following,
+      where the first column is the average total usec per call, the
+      second column is the number of calls, the third column is the
+      total self usec (i.e. excluding time attributed to nested
+      GVX_TRACE statements), the fourth column is the total
+      self+children usec, and the remainder of the line is the
+      function name or whatever string was passed to GVX_TRACE():
+
+         4   4500      18999      18999 xFilterClean
+         5   4500      23998      23998 yFilterClean
+       305  11600      34998    3548467 lowPassX
+         8   4900      42997      42997 lowPass3y
+       297  11600      44994    3454495 lowPassY
+        15   4900      77989      77989 lowPass3x
+       508  14700    7458831    7477830 lowPass9x
+       582  14700    8534732    8558730 lowPass9y
+      8749   4000   25762090   34996666 orientedFilter
+ */
 class rutz::prof
 {
 public:
