@@ -113,7 +113,9 @@ rutz::prof::~prof() throw()
 
           if (file == 0)
             {
-              fprintf(stderr, "couldn't open profile file for writing\n");
+              fprintf(stderr,
+                      "couldn't open profile file '%s' for writing\n",
+                      PDATA_FILE);
             }
         }
 
@@ -164,8 +166,8 @@ int rutz::prof::src_line_no() const throw()
 
 double rutz::prof::total_time() const throw()
 {
-  return (m_call_count > 0) ?
-    m_total_time.usec()
+  return (m_call_count > 0)
+    ? m_total_time.usec()
     : 0.0;
 }
 
@@ -186,9 +188,12 @@ void rutz::prof::print_prof_data(FILE* file) const throw()
   if (file == 0)
     GVX_ABORT("FILE* was null");
 
-  fprintf(file, "%10ld %6u %10ld %10ld %s\n",
-          long(avg_self_time()), count(),
-          long(self_time()), long(total_time()),
+  // Don't try to convert the double values to long or int, because
+  // we're likely to overflow and potentially cause a floating-point
+  // exception.
+  fprintf(file, "%10.0f %6u %10.0f %10.0f %s\n",
+          avg_self_time(), count(),
+          self_time(), total_time(),
           m_context_name);
 }
 
@@ -196,10 +201,13 @@ void rutz::prof::print_prof_data(std::ostream& os) const throw()
 {
   os.exceptions(std::ios::goodbit);
 
-  os << std::setw(10) << long(avg_self_time()) << ' '
+  // Don't try to convert the double values to long or int, because
+  // we're likely to overflow and potentially cause a floating-point
+  // exception.
+  os << std::setw(10) << std::setprecision(0) << avg_self_time() << ' '
      << std::setw(6) << count() << ' '
-     << std::setw(10) << long(self_time()) << ' '
-     << std::setw(10) << long(total_time()) << ' '
+     << std::setw(10) << std::setprecision(0) << self_time() << ' '
+     << std::setw(10) << std::setprecision(0) << total_time() << ' '
      << m_context_name << '\n';
 }
 
@@ -216,6 +224,7 @@ void rutz::prof::reset_all_prof_data() throw()
 
 namespace
 {
+  // comparison function for use with std::stable_sort()
   bool compare_total_time(rutz::prof* p1, rutz::prof* p2) throw()
   {
     return p1->total_time() < p2->total_time();
