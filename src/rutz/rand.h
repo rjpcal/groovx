@@ -41,6 +41,8 @@
 namespace rutz
 {
   class urand;
+  class urand_irange;
+  class urand_frange;
 
   template <class T>
   inline T rand_range(const T& min, const T& max)
@@ -97,8 +99,55 @@ public:
     int r = int(n*fdraw()); return (r==n) ? n-1 : r;
   }
 
+  /// Uniform random distribution in the interval [lo:hi[
+  int idraw_range(int lo, int hi)
+  {
+    return lo + idraw(hi - lo);
+  }
+
   /// Uniform random distribution in the interval [0:n[
   int operator()(int n) { return idraw(n); }
+};
+
+/// uniform distribution over a specified integer range
+class rutz::urand_irange
+{
+private:
+  rutz::urand  m_generator;
+  const int    m_min;
+  const int    m_max;
+
+public:
+  /// Construct with a given min/max range and an initial seed (default 0).
+  urand_irange(int lo, int hi, long s = 0)
+    : m_generator(s), m_min(lo), m_max(hi)
+  {}
+
+  int draw()       { return m_generator.idraw_range(m_min, m_max); }
+  int operator()() { return draw(); }
+};
+
+/// uniform distribution over a specified floating-point range
+class rutz::urand_frange
+{
+private:
+  rutz::urand  m_generator;
+  const double m_min;
+  const double m_max;
+
+public:
+  /// Construct with a given min/max range and an initial seed (default 0).
+  urand_frange(double lo, double hi, long s = 0)
+    : m_generator(s), m_min(lo), m_max(hi)
+  {}
+
+  /// Construct with a range [0.0:1.0[ and an initial seed (default 0).
+  urand_frange(long s = 0)
+    : m_generator(s), m_min(0.0), m_max(1.0)
+  {}
+
+  double draw()       { return m_generator.fdraw_range(m_min, m_max); }
+  double operator()() { return draw(); }
 };
 
 static const char vcid_groovx_rutz_rand_h_utc20050626084020[] = "$Id$ $HeadURL$";
