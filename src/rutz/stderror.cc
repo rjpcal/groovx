@@ -42,10 +42,11 @@ void rutz::throw_bad_cast(const std::type_info& to,
                           const std::type_info& from,
                           const rutz::file_pos& pos)
 {
-  throw rutz::error(rutz::fstring("failed cast to ",
+  throw rutz::error(rutz::fstring("failed cast: expected '",
                                   rutz::demangled_name(to),
-                                  " from ",
-                                  rutz::demangled_name(from)), pos);
+                                  "', got '",
+                                  rutz::demangled_name(from),
+                                  "'"), pos);
 }
 
 static const char vcid_groovx_rutz_stderror_cc_utc20050626084019[] = "$Id$ $HeadURL$";
