@@ -69,15 +69,15 @@ void rutz::string_rep::operator delete(void* space)
   rep_list->deallocate(space);
 }
 
-rutz::string_rep::string_rep(std::size_t length, const char* text,
-                             std::size_t capacity) :
+rutz::string_rep::string_rep(std::size_t len, const char* txt,
+                             std::size_t capac) :
   m_refcount(0),
-  m_capacity(rutz::max(length+1, capacity)),
+  m_capacity(rutz::max(len+1, capac)),
   m_length(0),
   m_text(new char[m_capacity])
 {
-  if (text)
-    uniq_append(length, text);
+  if (txt)
+    uniq_append(len, txt);
   else
     add_terminator();
 }
@@ -164,40 +164,40 @@ void rutz::string_rep::add_terminator() throw()
   m_text[m_length] = '\0';
 }
 
-void rutz::string_rep::uniq_set_length(std::size_t length) throw()
+void rutz::string_rep::uniq_set_length(std::size_t len) throw()
 {
   GVX_PRECONDITION(m_refcount <= 1);
-  GVX_PRECONDITION(length+1 < m_capacity);
-  m_length = length;
+  GVX_PRECONDITION(len+1 < m_capacity);
+  m_length = len;
   add_terminator();
 }
 
-void rutz::string_rep::uniq_append(std::size_t length, const char* text)
+void rutz::string_rep::uniq_append(std::size_t len, const char* txt)
 {
   GVX_PRECONDITION(m_refcount <= 1);
-  GVX_PRECONDITION(text != 0);
+  GVX_PRECONDITION(txt != 0);
 
-  if (m_length + length + 1 <= m_capacity)
+  if (m_length + len + 1 <= m_capacity)
     {
-      memcpy(m_text+m_length, text, length);
-      m_length += length;
+      memcpy(m_text+m_length, txt, len);
+      m_length += len;
       add_terminator();
     }
   else
     {
-      uniq_realloc(m_length + length + 1);
-      uniq_append(length, text);
+      uniq_realloc(m_length + len + 1);
+      uniq_append(len, txt);
     }
 
   GVX_POSTCONDITION(m_length+1 <= m_capacity);
   GVX_POSTCONDITION(m_text[m_length] == '\0');
 }
 
-void rutz::string_rep::uniq_realloc(std::size_t capacity)
+void rutz::string_rep::uniq_realloc(std::size_t capac)
 {
   GVX_PRECONDITION(m_refcount <= 1);
 
-  rutz::string_rep new_rep(rutz::max(m_capacity*2 + 32, capacity), 0);
+  rutz::string_rep new_rep(rutz::max(m_capacity*2 + 32, capac), 0);
 
   new_rep.uniq_append(this->m_length, this->m_text);
 
@@ -206,15 +206,15 @@ void rutz::string_rep::uniq_realloc(std::size_t capacity)
   rutz::swap2(m_text, new_rep.m_text);
 }
 
-void rutz::string_rep::uniq_reserve(std::size_t capacity)
+void rutz::string_rep::uniq_reserve(std::size_t capac)
 {
-  if (m_capacity < capacity)
-    uniq_realloc(capacity);
+  if (m_capacity < capac)
+    uniq_realloc(capac);
 }
 
 void rutz::string_rep::debug_dump() const throw()
 {
-  dbg_eval_nl(0, (void*)this);
+  dbg_eval_nl(0, (const void*)this);
   dbg_eval_nl(0, m_refcount);
   dbg_eval_nl(0, m_length);
   dbg_eval_nl(0, (void*)m_text);
@@ -473,7 +473,7 @@ GVX_TRACE("rutz::fstring::readline");
 
 void rutz::fstring::debug_dump() const throw()
 {
-  dbg_eval_nl(0, (void*)this);
+  dbg_eval_nl(0, (const void*)this);
   m_rep->debug_dump();
 }
 

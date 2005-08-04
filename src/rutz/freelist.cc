@@ -49,9 +49,9 @@ void* rutz::free_list_base::allocate(std::size_t bytes)
   GVX_ASSERT(bytes == m_size_check);
   if (m_node_list == 0)
     return ::operator new(bytes);
-  node* node = m_node_list;
+  node* n = m_node_list;
   m_node_list = m_node_list->next;
-  return static_cast<void*>(node);
+  return static_cast<void*>(n);
 }
 
 void rutz::free_list_base::deallocate(void* space)

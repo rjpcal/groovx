@@ -103,8 +103,8 @@ private:
 public:
   // Default destructor, copy constructor, operator=() are fine
 
-  explicit ref(nub::uid id)
-    : m_handle(detail::get_casted_item<T>(id)) {}
+  explicit ref(nub::uid i)
+    : m_handle(detail::get_casted_item<T>(i)) {}
 
   explicit ref(T* ptr, ref_vis vis = DEFAULT) :
     m_handle(ptr)
@@ -186,10 +186,10 @@ private:
 public:
   soft_ref() : m_handle(0, STRONG) {}
 
-  explicit soft_ref(nub::uid id, ref_type tp = STRONG)
+  explicit soft_ref(nub::uid i, ref_type tp = STRONG)
     :
-    m_handle(detail::is_valid_uid(id) ?
-             detail::get_casted_item<T>(id) : 0,
+    m_handle(detail::is_valid_uid(i) ?
+             detail::get_casted_item<T>(i) : 0,
              tp)
   {}
 
