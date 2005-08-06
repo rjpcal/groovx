@@ -125,6 +125,9 @@ public:
   /// Whether to write a profiling summary file when the program exits.
   static void print_at_exit(bool yes_or_no) throw();
 
+  /// Specify the filename for the profiling summary (default is "prof.out").
+  static void prof_summary_file_name(const char* fname);
+
   /// Reset all call counts and elapsed times to zero.
   static void reset_all_prof_data() throw();
 

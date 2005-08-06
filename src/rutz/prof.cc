@@ -44,10 +44,11 @@
 #include <iomanip>
 #include <iostream>
 #include <new> // for std::nothrow
+#include <string>
 
 namespace
 {
-  const char* PDATA_FILE = "prof.out";
+  std::string PDATA_FILE = "prof.out";
 
   bool PRINT_AT_EXIT = false;
 
@@ -104,7 +105,8 @@ rutz::prof::~prof() throw()
 
       if (!inited)
         {
-          file = fopen(PDATA_FILE, "w");
+          if (PDATA_FILE.length() > 0)
+            file = fopen(PDATA_FILE.c_str(), "w");
 
           // need this extra state flag since it's possible that the
           // fopen() call above fails, so we can't simply check
@@ -115,7 +117,7 @@ rutz::prof::~prof() throw()
             {
               fprintf(stderr,
                       "couldn't open profile file '%s' for writing\n",
-                      PDATA_FILE);
+                      PDATA_FILE.c_str());
             }
         }
 
@@ -214,6 +216,14 @@ void rutz::prof::print_prof_data(std::ostream& os) const throw()
 void rutz::prof::print_at_exit(bool yes_or_no) throw()
 {
   PRINT_AT_EXIT = yes_or_no;
+}
+
+void rutz::prof::prof_summary_file_name(const char* fname)
+{
+  if (fname == 0)
+    fname = "";
+
+  PDATA_FILE = fname;
 }
 
 void rutz::prof::reset_all_prof_data() throw()
