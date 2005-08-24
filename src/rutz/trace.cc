@@ -51,7 +51,7 @@ namespace
   unsigned int             g_max_trace_level     = 20;
   bool                     g_do_global_trace     = false;
   rutz::trace::run_mode    g_current_run_mode    = rutz::trace::RUN;
-  rutz::trace::timing_mode g_current_timing_mode = rutz::trace::WALLCLOCK;
+  rutz::trace::timing_mode g_current_timing_mode = rutz::trace::RUSAGE;
 
   inline rutz::time
   get_now_time(const rutz::trace::timing_mode mode) throw()
