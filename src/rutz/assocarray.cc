@@ -71,26 +71,42 @@ GVX_TRACE("rutz::assoc_array_base::~assoc_array_base");
   clear();
 }
 
-void rutz::assoc_array_base::throw_for_key(const char* key,
-                                           const rutz::file_pos& pos)
+rutz::fstring rutz::assoc_array_base::
+get_known_keys(const char* sep) const
 {
-  rutz::fstring keylist("known keys are:");
+  rutz::fstring result;
+
+  bool first = true;
 
   for (impl::map_t::iterator ii = rep->values.begin();
        ii != rep->values.end();
        ++ii)
     {
       if (ii->second != 0)
-        keylist.append("\n\t", ii->first);
+        {
+          if (!first) result.append(sep);
+
+          result.append(ii->first);
+
+          first = false;
+        }
     }
 
-  throw rutz::error(rutz::fstring(keylist, "\nunknown ",
-                                  rep->key_description,
-                                  " '", key, "'"), pos);
+  return result;
 }
 
-void rutz::assoc_array_base::throw_for_key(const rutz::fstring& key,
-                                           const rutz::file_pos& pos)
+void rutz::assoc_array_base::
+throw_for_key(const char* key, const rutz::file_pos& pos) const
+{
+  rutz::fstring msg("known keys are:\n\t", get_known_keys("\n\t"));
+
+  msg.append("\nunknown ", rep->key_description, " '", key, "'");
+
+  throw rutz::error(msg, pos);
+}
+
+void rutz::assoc_array_base::
+throw_for_key(const rutz::fstring& key, const rutz::file_pos& pos) const
 {
   throw_for_key(key.c_str(), pos);
 }

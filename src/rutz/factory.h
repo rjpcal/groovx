@@ -157,7 +157,8 @@ namespace rutz
     virtual ~factory() throw() {}
 
     /// Find a creator for the given key; otherwise return null.
-    rutz::creator_base<base_t>* find_creator(const rutz::fstring& key)
+    rutz::creator_base<base_t>*
+    find_creator(const rutz::fstring& key) const
     {
       rutz::creator_base<base_t>* creator = m_map.get_ptr_for_key(key);
 
@@ -216,15 +217,21 @@ namespace rutz
     }
 
     /// Query whether a given key is a valid, known key in the factory.
-    bool is_valid_key(const char* key)
+    bool is_valid_key(const char* key) const
     {
       return (this->find_creator(key) != 0);
+    }
+
+    /// Get a list of known keys, separated by sep.
+    rutz::fstring get_known_keys(const char* sep) const
+    {
+      return m_map.get_known_keys(sep);
     }
 
     /// Returns a new object of a given type.
     /** If the given type has not been registered with the factory, a
         null pointer is returned. */
-    base_t new_object(const rutz::fstring& type)
+    base_t new_object(const rutz::fstring& type) const
     {
       rutz::creator_base<base_t>* creator = this->find_creator(type);
 
@@ -236,7 +243,7 @@ namespace rutz
     /// Returns a new object of a given type.
     /** If the given type has not been registered with the factory, an
         exception is thrown. */
-    base_t new_checked_object(const rutz::fstring& type)
+    base_t new_checked_object(const rutz::fstring& type) const
     {
       rutz::creator_base<base_t>* creator = this->find_creator(type);
 

@@ -39,11 +39,10 @@ namespace rutz
   class file_pos;
   class fstring;
 
-  /// \c rutz::assoc_array_base provides a non-typesafe wrapper around \c std::map.
+  /// A non-typesafe wrapper around std::map<string, void*>.
   /** The use must provide a pointer to a function that knows how to
       properly destroy the actual contained objects according to their
       true type. */
-
   class assoc_array_base
   {
   public:
@@ -60,13 +59,16 @@ namespace rutz
     /// Virtual destructor.
     ~assoc_array_base();
 
+    /// Get a list of known keys, separated by sep.
+    rutz::fstring get_known_keys(const char* sep) const;
+
     /// Raise an exception reporting an unknown key.
     void throw_for_key(const char* key,
-                       const rutz::file_pos& pos);
+                       const rutz::file_pos& pos) const;
 
     /// Raise an exception reporting an unknown key.
     void throw_for_key(const rutz::fstring& key,
-                       const rutz::file_pos& pos);
+                       const rutz::file_pos& pos) const;
 
     /// Retrieve the object associated with the tag \a name.
     void* get_value_for_key(const rutz::fstring& name) const;
@@ -102,14 +104,18 @@ namespace rutz
         frobnicator" */
     assoc_array(const char* descr) : base(&delete_ptr, descr) {}
 
+    /// Get a string listing of known keys, separated by the string sep.
+    rutz::fstring get_known_keys(const char* sep) const
+    { return base.get_known_keys(sep); }
+
     /// Raise an exception reporting an unknown key.
     void throw_for_key(const char* key,
-                       const rutz::file_pos& pos)
+                       const rutz::file_pos& pos) const
     { base.throw_for_key(key, pos); }
 
     /// Raise an exception reporting an unknown key.
     void throw_for_key(const rutz::fstring& key,
-                       const rutz::file_pos& pos)
+                       const rutz::file_pos& pos) const
     { base.throw_for_key(key, pos); }
 
     /// Get the object associated with the given key.
