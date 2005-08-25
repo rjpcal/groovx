@@ -151,79 +151,97 @@ namespace rutz
 
   protected:
     /// Default constructor.
-    factory() : m_map("object type") {}
+    factory(const char* keydescr = "object type") : m_map(keydescr) {}
 
     /// Virtual no-throw destructor.
     virtual ~factory() throw() {}
 
-  public:
-    /// Registers a creation function with the factory.
-    /** The default name associated with the creation function will be
-        given by the type's actual C++ name. The function returns the
-        actual name that was paired with the creation function.*/
-    template <class derived_t>
-    const char* register_creator(derived_t (*func) (),
-                                 const char* name = 0)
+    /// Find a creator for the given key; otherwise return null.
+    rutz::creator_base<base_t>* find_creator(const rutz::fstring& key)
     {
-      if (name == 0)
-        name = rutz::demangled_name
-          (typeid(typename rutz::type_traits<derived_t>::pointee_t));
+      rutz::creator_base<base_t>* creator = m_map.get_ptr_for_key(key);
 
-      m_map.set_ptr_for_key
-        (name, new rutz::creator_from_func<base_t, derived_t>(func));
+      if (creator == 0)
+        {
+          factory_base::try_fallback(key);
+
+          creator = m_map.get_ptr_for_key(key);
+        }
+
+      return creator;
+    }
+
+  public:
+    /// Registers a creation object with the factory.
+    /** The function returns the actual key that was paired with the
+        creation function.*/
+    const char* register_creator(rutz::creator_base<base_t>* creator,
+                                 const char* name)
+    {
+      m_map.set_ptr_for_key(name, creator);
 
       return name;
     }
 
-    /** Introduces an alternate type name which can be used to create
-        products of type \a Derived. There must already have been a
-        creation function registered for the default name. */
-    void register_alias(const char* orig_name, const char* alias_name)
+    /// Registers a creation function with the factory.
+    /** The default key associated with the creation function will be
+        given by the type's actual C++ name. The function returns the
+        actual key that was paired with the creation function.*/
+    template <class derived_t>
+    const char* register_creator(derived_t (*func) (),
+                                 const char* key = 0)
+    {
+      if (key == 0)
+        key = rutz::demangled_name
+          (typeid(typename rutz::type_traits<derived_t>::pointee_t));
+
+      m_map.set_ptr_for_key
+        (key, new rutz::creator_from_func<base_t, derived_t>(func));
+
+      return key;
+    }
+
+    /// Introduces an alternate key for an existing key.
+    /** There must already have been a creation function registered
+        for the original key. */
+    void register_alias(const char* orig_key, const char* alias_key)
     {
       rutz::creator_base<base_t>* creator =
-        m_map.get_ptr_for_key(orig_name);
+        m_map.get_ptr_for_key(orig_key);
 
       if (creator != 0)
         {
-          m_map.set_ptr_for_key(alias_name, creator->clone());
+          m_map.set_ptr_for_key(alias_key, creator->clone());
         }
     }
 
-    /** Returns a new object of a given type. If the given type has
-        not been registered with the factory, a null pointer is
-        returned. */
+    /// Query whether a given key is a valid, known key in the factory.
+    bool is_valid_key(const char* key)
+    {
+      return (this->find_creator(key) != 0);
+    }
+
+    /// Returns a new object of a given type.
+    /** If the given type has not been registered with the factory, a
+        null pointer is returned. */
     base_t new_object(const rutz::fstring& type)
     {
-      rutz::creator_base<base_t>* creator =
-        m_map.get_ptr_for_key(type);
-
-      if (creator == 0)
-        {
-          factory_base::try_fallback(type);
-
-          creator = m_map.get_ptr_for_key(type);
-        }
+      rutz::creator_base<base_t>* creator = this->find_creator(type);
 
       if (creator == 0) return base_t();
+
       return creator->create();
     }
 
-    /** Returns a new object of a given type. If the given type has
-        not been registered with the factory, an exception is
-        thrown. */
+    /// Returns a new object of a given type.
+    /** If the given type has not been registered with the factory, an
+        exception is thrown. */
     base_t new_checked_object(const rutz::fstring& type)
     {
-      rutz::creator_base<base_t>* creator =
-        m_map.get_ptr_for_key(type);
-
-      if (creator == 0)
-        {
-          factory_base::try_fallback(type);
-
-          creator = m_map.get_ptr_for_key(type);
-        }
+      rutz::creator_base<base_t>* creator = this->find_creator(type);
 
       if (creator == 0) m_map.throw_for_key(type, SRC_POS);
+
       return creator->create();
     }
   };
