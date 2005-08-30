@@ -5639,16 +5639,16 @@ echo "$as_me:$LINENO: result: $enable_debug" >&5
 echo "${ECHO_T}$enable_debug" >&6
 
 if test $enable_debug = yes; then
-
-cat >>confdefs.h <<\_ACEOF
-#define GVX_PROF 1
-_ACEOF
-
    CXXFLAGS="$CXXFLAGS $cxxflags_debug"
 else
 
 cat >>confdefs.h <<\_ACEOF
 #define GVX_NO_DEBUG 1
+_ACEOF
+
+
+cat >>confdefs.h <<\_ACEOF
+#define GVX_NO_PROF 1
 _ACEOF
 
    CXXFLAGS="$CXXFLAGS $cxxflags_prod"

@@ -49,6 +49,9 @@
 /* without matlab support? */
 #undef GVX_NO_MATLAB
 
+/* disable profiling? */
+#undef GVX_NO_PROF
+
 /* don't do readline support? */
 #undef GVX_NO_READLINE
 
@@ -57,9 +60,6 @@
 
 /* is typeid().name() unmangled? */
 #undef GVX_NO_TYPENAME_MANGLING
-
-/* enable profiling? */
-#undef GVX_PROF
 
 /* shorten symbol names? */
 #undef GVX_SHORTEN_SYMBOL_NAMES

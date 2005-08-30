@@ -34,26 +34,27 @@
 #ifndef GROOVX_RUTZ_TRACE_H_UTC20050626084019_DEFINED
 #define GROOVX_RUTZ_TRACE_H_UTC20050626084019_DEFINED
 
-// This file defines the rutz::trace class and several macros, which
-// along with rutz::prof, can be used to achieve function profiling
-// and tracing. The basic idea is that for each function for which
-// profiling is enabled, a static rutz::prof object is created. This
-// object maintains the call count and total elapsed time for that
+// The basic idea is that for each function for which profiling is
+// enabled, a static rutz::prof object is created. This object
+// maintains the call count and total elapsed time for that
 // function. The job of measuring and recording such information falls
-// to the rutz::trace class. An automatic object of the rutz::trace
-// class is constructed on entry to a function, and it is destructed
-// just prior to function exit. If GVX_LOCAL_TRACE is defined, the
-// rutz::trace object will emit "entering" and "leaving" messages as
-// it is constructed and destructed, respectively. In any case, the
+// to the rutz::trace class. A local object of the rutz::trace class
+// is constructed on entry to a function, and it is destructed just
+// prior to function exit. If a GVX_TRACE_EXPR macro is defined, and
+// that macro evaluates to true at the time the GVX_TRACE statement is
+// reached, then the rutz::trace object will emit "entering" and
+// "leaving" messages as it is constructed and destructed,
+// respectively. (Thus, to simply turn on verbose tracing in a source
+// file, just do "#define GVX_TRACE_EXPR true".) In any case, the
 // rutz::trace object takes care of teling the static rutz::prof
 // object to 1) increment its counter, and 2) record the elapsed time.
 //
 // The behavior of the control macros are as follows:
 //
-// 1) if GVX_LOCAL_PROF is defined, profiling will always occur
-// 2) if GVX_LOCAL_TRACE is defined, profiling AND tracing will always occur
-// 3) if GVX_TRACE is defined, profiling AND tracing will occur, EXCEPT:
-// 4) if GVX_NO_TRACE is defined, GVX_TRACE is ignored
+// 1) if GVX_NO_PROF is defined, no profiling/tracing will occur;
+//    OTHERWISE: profiling always occurs, AND
+// 2) if GVX_TRACE_EXPR is defined, that expression is used to control
+//    verbose tracing, otherwise verbose tracing will be off
 
 #include "rutz/prof.h"
 #include "rutz/time.h"
@@ -85,13 +86,6 @@ public:
       STEP  ///< Wait for user input from stdin after each trace in/out message
     };
 
-  /// Different types of timing.
-  enum timing_mode
-    {
-      WALLCLOCK, ///< Track elapsed wall-clock time.
-      RUSAGE     ///< Track elpased user+sys rusage.
-    };
-
   /// Get the current run_mode (whether to continue or pause on trace in/out messages).
   static run_mode get_run_mode() throw();
   /// Change the current run_mode (whether to continue or pause on trace in/out messages).
@@ -106,11 +100,6 @@ public:
   static unsigned int get_max_level() throw();
   /// Set the max nesting level for printing trace in/out messages.
   static void         set_max_level(unsigned int lev) throw();
-
-  /// Get the current timing_mode.
-  static timing_mode get_timing_mode() throw();
-  /// Set the current timing_mode.
-  static void        set_timing_mode(timing_mode mode) throw();
 
   /// Construct a rutz::trace object.
   /** Store the current time internally (either the wall clock time or
@@ -131,33 +120,17 @@ private:
   rutz::time   m_start;
   const bool   m_should_print_msg;
   const bool   m_should_pop;
-  timing_mode  m_timing_mode; ///< Store this in case somebody calls set_timing_mode() before we finish
+  rutz::prof::timing_mode  m_timing_mode; ///< Store this in case somebody changes the timing mode before we finish
 };
 
-#if (defined(GVX_TRACE) && !defined(GVX_NO_TRACE))
-#  ifndef GVX_LOCAL_TRACE
-#    define GVX_LOCAL_TRACE
-#  endif
+#ifndef GVX_TRACE_EXPR
+#  define GVX_TRACE_EXPR false
 #endif
 
-#if defined(GVX_LOCAL_TRACE) || (defined(GVX_PROF) && !defined(GVX_NO_PROF))
-#  ifndef GVX_LOCAL_PROF
-#    define GVX_LOCAL_PROF
-#  endif
-#endif
-
-#if !defined(GVX_DYNAMIC_TRACE_EXPR)
-#  if defined(GVX_LOCAL_TRACE)
-#    define GVX_DYNAMIC_TRACE_EXPR true
-#  else
-#    define GVX_DYNAMIC_TRACE_EXPR false
-#  endif
-#endif
-
-#ifdef GVX_LOCAL_PROF
+#ifndef GVX_NO_PROF
 #  define GVX_TRACE(x) \
          static rutz::prof  P_x_  (x,   __FILE__, __LINE__); \
-         rutz::trace        T_x_  (P_x_, GVX_DYNAMIC_TRACE_EXPR);
+         rutz::trace        T_x_  (P_x_, GVX_TRACE_EXPR)
 #else
 #  define GVX_TRACE(x) do {} while(0)
 #endif

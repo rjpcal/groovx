@@ -78,6 +78,10 @@ namespace
       }
     return *ptr;
   }
+
+  bool g_first = true;
+
+  rutz::time g_start;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -85,6 +89,8 @@ namespace
 // rutz::prof member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+rutz::prof::timing_mode rutz::prof::s_timing_mode = rutz::prof::RUSAGE;
 
 rutz::prof::prof(const char* s, const char* fname, int lineno)  throw():
   m_context_name(s),
@@ -94,6 +100,12 @@ rutz::prof::prof(const char* s, const char* fname, int lineno)  throw():
   reset();
 
   all_profs().push(this);
+
+  if (g_first)
+    {
+      g_start = rutz::prof::get_now_time(s_timing_mode);
+      g_first = false;
+    }
 }
 
 rutz::prof::~prof() throw()
@@ -190,12 +202,16 @@ void rutz::prof::print_prof_data(FILE* file) const throw()
   if (file == 0)
     GVX_ABORT("FILE* was null");
 
+  const double total_elapsed_usec =
+    (rutz::prof::get_now_time(s_timing_mode) - g_start).usec();
+
   // Don't try to convert the double values to long or int, because
   // we're likely to overflow and potentially cause a floating-point
   // exception.
-  fprintf(file, "%10.0f %6u %10.0f %10.0f %s\n",
+  fprintf(file, "%10.0f %6u %10.0f %4.1f%% %10.0f %4.1f%% %s\n",
           avg_self_time(), count(),
-          self_time(), total_time(),
+          self_time(), (100.0 * self_time()) / total_elapsed_usec,
+          total_time(), (100.0 * total_time()) / total_elapsed_usec,
           m_context_name);
 }
 
@@ -203,13 +219,20 @@ void rutz::prof::print_prof_data(std::ostream& os) const throw()
 {
   os.exceptions(std::ios::goodbit);
 
+  const double total_elapsed_usec =
+    (rutz::prof::get_now_time(s_timing_mode) - g_start).usec();
+
   // Don't try to convert the double values to long or int, because
   // we're likely to overflow and potentially cause a floating-point
   // exception.
   os << std::setw(10) << std::setprecision(0) << avg_self_time() << ' '
      << std::setw(6) << count() << ' '
      << std::setw(10) << std::setprecision(0) << self_time() << ' '
+     << std::setw(4) << std::setprecision(1)
+     << (100.0 * self_time()) / total_elapsed_usec << "% "
      << std::setw(10) << std::setprecision(0) << total_time() << ' '
+     << std::setw(4) << std::setprecision(1)
+     << (100.0 * total_time()) / total_elapsed_usec << "% "
      << m_context_name << '\n';
 }
 

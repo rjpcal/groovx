@@ -415,7 +415,7 @@ GVX_TRACE("tcl::command_group::invoke_raw");
   // This is to use the separate rutz::prof object that each
   // command_group has. This way we can trace the timing of individual
   // Tcl commands.
-  rutz::trace tracer(rep->prof, GVX_DYNAMIC_TRACE_EXPR);
+  rutz::trace tracer(rep->prof, GVX_TRACE_EXPR);
 
   // Should always be at least one since there is always the
   // command-name itself as the first argument.

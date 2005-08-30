@@ -79,6 +79,10 @@ public:
   /// Create a time representing the current process's sys cpu usage.
   static time sys_rusage() throw();
 
+  /// Create a time representing the current process's total user+sys cpu usage.
+  static time rusage_now() throw()
+  { return rutz::time::user_rusage() + rutz::time::sys_rusage(); }
+
   /// Reset to given seconds+microseconds values.
   void reset(unsigned long s = 0, long us = 0) throw()
   {

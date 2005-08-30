@@ -54,10 +54,10 @@ namespace rutz
       proportion to the amount of execution time taken by any of the
       functions in FilterOps.
 
-    * To turn on profiling in a given source file, first #define
-      GVX_LOCAL_PROF in that file, then #include "rutz/trace.h", then
-      insert a GVX_TRACE() wherever you like. Without GVX_LOCAL_PROF,
-      the GVX_TRACE() macro calls get expanded into nothing.
+    * To turn on profiling in a given source file, just #include
+      "rutz/trace.h" and insert a GVX_TRACE() wherever you like. To
+      force profiling to be off, #define GVX_NO_PROF before you
+      #include "rutz/trace.h".
 
     * In order to actually see the profiling information, you can
       either call rutz::prof::print_all_prof_data() directly, or you
@@ -90,6 +90,35 @@ class rutz::prof
 public:
   prof(const char* s, const char* fname, int lineno) throw();
   ~prof() throw();
+
+  /// Different types of timing.
+  enum timing_mode
+    {
+      WALLCLOCK, ///< Track elapsed wall-clock time.
+      RUSAGE     ///< Track elpased user+sys rusage.
+    };
+
+  /// Get the current timing_mode.
+  static timing_mode get_timing_mode() throw()
+  { return s_timing_mode; }
+
+  /// Set the current timing_mode.
+  static void set_timing_mode(timing_mode mode) throw()
+  { s_timing_mode = mode; }
+
+  /// Get the current time according to the given timing_mode.
+  static rutz::time get_now_time(timing_mode mode) throw()
+  {
+    switch (mode)
+      {
+      case rutz::prof::RUSAGE:
+        return (rutz::time::user_rusage() + rutz::time::sys_rusage());
+
+      case rutz::prof::WALLCLOCK:
+      default:
+        return rutz::time::wall_clock_now();
+      }
+  }
 
   /// Reset the call count and elapsed time to zero.
   void reset() throw();
@@ -147,6 +176,8 @@ private:
   unsigned int       m_call_count;
   rutz::time         m_total_time;
   rutz::time         m_children_time;
+
+  static timing_mode s_timing_mode;
 };
 
 static const char vcid_groovx_rutz_prof_h_utc20050630214711[] = "$Id$ $HeadURL$";

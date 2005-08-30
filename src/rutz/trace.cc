@@ -51,21 +51,6 @@ namespace
   unsigned int             g_max_trace_level     = 20;
   bool                     g_do_global_trace     = false;
   rutz::trace::run_mode    g_current_run_mode    = rutz::trace::RUN;
-  rutz::trace::timing_mode g_current_timing_mode = rutz::trace::RUSAGE;
-
-  inline rutz::time
-  get_now_time(const rutz::trace::timing_mode mode) throw()
-  {
-    switch (mode)
-      {
-      case rutz::trace::RUSAGE:
-        return (rutz::time::user_rusage() + rutz::time::sys_rusage());
-
-      case rutz::trace::WALLCLOCK:
-      default:
-        return rutz::time::wall_clock_now();
-      }
-  }
 
   void wait_on_step() throw()
   {
@@ -188,23 +173,13 @@ void rutz::trace::set_max_level(unsigned int lev) throw()
   g_max_trace_level = lev;
 }
 
-rutz::trace::timing_mode rutz::trace::get_timing_mode() throw()
-{
-  return g_current_timing_mode;
-}
-
-void rutz::trace::set_timing_mode(rutz::trace::timing_mode mode) throw()
-{
-  g_current_timing_mode = mode;
-}
-
 rutz::trace::trace(prof& p, bool use_msg) throw()
   :
   m_prof(p),
   m_start(),
   m_should_print_msg(g_do_global_trace || use_msg),
   m_should_pop(rutz::backtrace::current().push(&p)),
-  m_timing_mode(g_current_timing_mode)
+  m_timing_mode(rutz::prof::get_timing_mode())
 {
   if (this->m_should_print_msg)
     print_in(this->m_prof.context_name());
@@ -212,7 +187,7 @@ rutz::trace::trace(prof& p, bool use_msg) throw()
   // We want this to be the last thing in the constructor, so that we
   // don't include the rest of the constructor runtime in our elapsed
   // time measurement:
-  this->m_start = get_now_time(this->m_timing_mode);
+  this->m_start = rutz::prof::get_now_time(this->m_timing_mode);
 }
 
 rutz::trace::~trace() throw()
@@ -220,7 +195,7 @@ rutz::trace::~trace() throw()
   // We want this to be the first thing in the destructor, so that we
   // don't include the rest of the destructor runtime in our elapsed
   // time measurement:
-  const rutz::time finish = get_now_time(this->m_timing_mode);
+  const rutz::time finish = rutz::prof::get_now_time(this->m_timing_mode);
   const rutz::time elapsed = finish - this->m_start;
 
   this->m_prof.add_time(elapsed);

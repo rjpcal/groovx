@@ -661,10 +661,10 @@ AC_ARG_ENABLE(debug,
 AC_MSG_RESULT($enable_debug)
 
 if test $enable_debug = yes; then
-   AC_DEFINE(GVX_PROF,1,[enable profiling?])
    CXXFLAGS="$CXXFLAGS $cxxflags_debug"
 else
    AC_DEFINE(GVX_NO_DEBUG,1,[statically turn off all debug statements?])
+   AC_DEFINE(GVX_NO_PROF,1,[disable profiling?])
    CXXFLAGS="$CXXFLAGS $cxxflags_prod"
 fi
 
