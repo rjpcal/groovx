@@ -70,6 +70,9 @@ public:
 
   /// Return an object to the free list.
   void deallocate(void* space);
+
+  /// Query the chunk size that this freelist is for.
+  std::size_t alloc_size() const { return m_size_check; }
 };
 
 /// Typesafe wrapper of free_list_base for maintaining free-list memory pools.
