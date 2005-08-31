@@ -114,8 +114,8 @@ class rutz::urand_irange
 {
 private:
   rutz::urand  m_generator;
-  const int    m_min;
-  const int    m_max;
+  int          m_min;
+  int          m_max;
 
 public:
   /// Construct with a given min/max range and an initial seed (default 0).
@@ -132,8 +132,8 @@ class rutz::urand_frange
 {
 private:
   rutz::urand  m_generator;
-  const double m_min;
-  const double m_max;
+  double       m_min;
+  double       m_max;
 
 public:
   /// Construct with a given min/max range and an initial seed (default 0).
