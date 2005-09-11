@@ -42,7 +42,10 @@
 #include <cstring>
 #include <iostream>
 
+#ifndef GVX_NO_PROF
 #define GVX_NO_PROF
+#endif
+
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
