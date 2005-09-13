@@ -183,5 +183,13 @@ int rutz::stdiobuf::flushoutput()
   return num;
 }
 
+// This is a hack to work around an apparently broken g++ 3.4.3 
+// on USC's HPCC cluster, in which libstdc++ doesn't include
+// instantiations for the constructor and destructor of std::iostream
+// (aka std::basic_iostream<char>); so, we force an instantiation of
+// those functions here to avoid link errors. This line should be
+// quickly removed as soon as we no longer need to use g++ 3.4.3.
+template class std::basic_iostream<char>;
+
 static const char vcid_groovx_rutz_stdiobuf_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_STDIOBUF_CC_UTC20050626084020_DEFINED
