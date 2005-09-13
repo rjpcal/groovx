@@ -36,6 +36,7 @@
 #include "rutz/prof.h"
 
 #include "rutz/abort.h"
+#include "rutz/mutex.h"
 #include "rutz/staticstack.h"
 
 #include <algorithm> // for std::stable_sort()
@@ -44,20 +45,46 @@
 #include <iomanip>
 #include <iostream>
 #include <new> // for std::nothrow
+#include <pthread.h>
 #include <string>
 
 namespace
 {
-  std::string PDATA_FILE = "prof.out";
+  //
+  // data and thread info for the profile output file
+  //
 
-  bool PRINT_AT_EXIT = false;
+  bool            g_pdata_print_at_exit = false;
+  std::string     g_pdata_fname = "prof.out";
+  FILE*           g_pdata_file = 0;
+  pthread_once_t  g_pdata_file_once = PTHREAD_ONCE_INIT;
+  pthread_mutex_t g_pdata_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+  void open_pdata_file()
+  {
+    if (g_pdata_fname.length() > 0)
+      g_pdata_file = fopen(g_pdata_fname.c_str(), "w");
+
+    if (g_pdata_file == 0)
+      {
+        fprintf(stderr,
+                "couldn't open profile file '%s' for writing\n",
+                g_pdata_fname.c_str());
+      }
+  }
+
+  //
+  // data and thread info for a global list of all rutz::prof objects
+  //
 
   typedef rutz::static_stack<rutz::prof*, 2048> prof_list;
 
-  prof_list& all_profs() throw()
-  {
-    static prof_list* ptr = 0;
+  prof_list*      g_prof_list = 0;
+  pthread_once_t  g_prof_list_once = PTHREAD_ONCE_INIT;
+  pthread_mutex_t g_prof_list_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+  void initialize_prof_list()
+  {
     // Q: Why do a dynamic allocation here instead of just having a
     // static object?
 
@@ -69,19 +96,31 @@ namespace
     // memory dangle (it's not really a memory "leak" since the amount
     // of memory is finite and bounded), so the object will never
     // become invalid, even during program shutdown.
-    if (ptr == 0)
-      {
-        ptr = new (std::nothrow) prof_list;
 
-        if (ptr == 0)
-          GVX_ABORT("memory allocation failed");
-      }
-    return *ptr;
+    g_prof_list = new (std::nothrow) prof_list;
+
+    if (g_prof_list == 0)
+      GVX_ABORT("memory allocation failed");
   }
 
-  bool g_first = true;
+  prof_list& all_profs() throw()
+  {
+    pthread_once(&g_prof_list_once, &initialize_prof_list);
 
-  rutz::time g_start;
+    return *g_prof_list;
+  }
+
+  //
+  // data and thread info for a global start time
+  //
+
+  rutz::time     g_start;
+  pthread_once_t g_start_once = PTHREAD_ONCE_INIT;
+
+  void initialize_start_time()
+  {
+    g_start = rutz::prof::get_now_time(rutz::prof::get_timing_mode());
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -99,43 +138,25 @@ rutz::prof::prof(const char* s, const char* fname, int lineno)  throw():
 {
   reset();
 
-  all_profs().push(this);
+  {
+    GVX_MUTEX_LOCK(&g_prof_list_mutex);
+    all_profs().push(this);
+  }
 
-  if (g_first)
-    {
-      g_start = rutz::prof::get_now_time(s_timing_mode);
-      g_first = false;
-    }
+  pthread_once(&g_start_once, &initialize_start_time);
 }
 
 rutz::prof::~prof() throw()
 {
-  if (PRINT_AT_EXIT)
+  if (g_pdata_print_at_exit)
     {
-      static FILE* file = 0;
-      static bool inited = false;
+      pthread_once(&g_pdata_file_once, &open_pdata_file);
 
-      if (!inited)
+      GVX_MUTEX_LOCK(&g_pdata_mutex);
+
+      if (g_pdata_file != 0)
         {
-          if (PDATA_FILE.length() > 0)
-            file = fopen(PDATA_FILE.c_str(), "w");
-
-          // need this extra state flag since it's possible that the
-          // fopen() call above fails, so we can't simply check
-          // (file!=0) to see if initialization has already been tried
-          inited = true;
-
-          if (file == 0)
-            {
-              fprintf(stderr,
-                      "couldn't open profile file '%s' for writing\n",
-                      PDATA_FILE.c_str());
-            }
-        }
-
-      if (file != 0)
-        {
-          print_prof_data(file);
+          print_prof_data(g_pdata_file);
         }
     }
 }
@@ -238,19 +259,22 @@ void rutz::prof::print_prof_data(std::ostream& os) const throw()
 
 void rutz::prof::print_at_exit(bool yes_or_no) throw()
 {
-  PRINT_AT_EXIT = yes_or_no;
+  g_pdata_print_at_exit = yes_or_no;
 }
 
 void rutz::prof::prof_summary_file_name(const char* fname)
 {
+  GVX_MUTEX_LOCK(&g_pdata_mutex);
+
   if (fname == 0)
     fname = "";
 
-  PDATA_FILE = fname;
+  g_pdata_fname = fname;
 }
 
 void rutz::prof::reset_all_prof_data() throw()
 {
+  GVX_MUTEX_LOCK(&g_prof_list_mutex);
   std::for_each(all_profs().begin(), all_profs().end(),
                 std::mem_fun(&rutz::prof::reset));
 }
@@ -266,6 +290,7 @@ namespace
 
 void rutz::prof::print_all_prof_data(FILE* file) throw()
 {
+  GVX_MUTEX_LOCK(&g_prof_list_mutex);
   std::stable_sort(all_profs().begin(), all_profs().end(),
                    compare_total_time);
 
@@ -278,6 +303,7 @@ void rutz::prof::print_all_prof_data(FILE* file) throw()
 
 void rutz::prof::print_all_prof_data(std::ostream& os) throw()
 {
+  GVX_MUTEX_LOCK(&g_prof_list_mutex);
   std::stable_sort(all_profs().begin(), all_profs().end(),
                    compare_total_time);
 

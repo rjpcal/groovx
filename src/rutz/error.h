@@ -75,8 +75,8 @@ public:
   /// Get the stack back trace associated with this exception.
   const rutz::backtrace& get_backtrace() const throw() { return *m_backtrace; }
 
-  /// Get the back trace most recently used in constructing a rutz::error.
-  static const rutz::backtrace& last_backtrace();
+  /// Copy out the back trace most recently used in constructing a rutz::error.
+  static void get_last_backtrace(rutz::backtrace& dst);
 
 protected:
   /// Reset the error message.

@@ -68,6 +68,9 @@ namespace rutz
 
     ~string_rep() throw();
 
+    // To be called once via pthread_once()
+    static void initialize_empty_rep();
+
     static string_rep* get_empty_rep();
 
   public:

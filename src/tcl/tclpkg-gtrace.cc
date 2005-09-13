@@ -57,12 +57,12 @@ namespace
 
   void setOneLevel(int key, int level)
   {
-    if (key < 0 || key >= rutz::debug::MAX_KEYS)
+    if (!rutz::debug::is_valid_key(key))
       throw rutz::error(rutz::fstring("no such debug key '", key, "'"),
                         SRC_POS);
 
     // else...
-    rutz::debug::key_levels[key] = level;
+    rutz::debug::set_level_for_key(key, level);
   }
 
   void setOneLevelc(const char* fname, int level)
@@ -72,9 +72,9 @@ namespace
       throw rutz::error(rutz::fstring("no debug key for file '", fname, "'"),
                         SRC_POS);
 
-    GVX_ASSERT(key >= 0 && key < rutz::debug::MAX_KEYS);
+    GVX_ASSERT(rutz::debug::is_valid_key(key));
 
-    rutz::debug::key_levels[key] = level;
+    rutz::debug::set_level_for_key(key, level);
   }
 }
 

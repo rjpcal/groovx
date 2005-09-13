@@ -573,8 +573,9 @@ GVX_TRACE("tcl::event_loop_impl::run");
           // ensure errorInfo is set properly:
           m_interp.add_error_info("");
 
-          const rutz::fstring bt =
-            rutz::format(rutz::error::last_backtrace());
+          rutz::backtrace b;
+          rutz::error::get_last_backtrace(b);
+          const rutz::fstring bt = rutz::format(b);
 
           std::cerr << m_interp.get_global_var<const char*>("errorInfo")
                     << "\n" << bt << "\nError in startup script\n";

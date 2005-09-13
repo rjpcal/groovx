@@ -37,9 +37,11 @@
 
 #include "rutz/backtrace.h"
 #include "rutz/fstring.h"
+#include "rutz/mutex.h"
 
 #include <cstdlib>
 #include <new>
+#include <pthread.h>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -47,7 +49,8 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  static rutz::backtrace* last = 0;
+  rutz::backtrace* g_last_backtrace = 0;
+  pthread_mutex_t  g_last_backtrace_mutex = PTHREAD_MUTEX_INITIALIZER;
 }
 
 rutz::error::error(const rutz::file_pos& pos) :
@@ -60,10 +63,14 @@ GVX_TRACE("rutz::error::error()");
 
   dbg_dump(4, m_msg);
 
-  if (last == 0)
-    last = new rutz::backtrace(*m_backtrace);
-  else
-    *last = *m_backtrace;
+  {
+    GVX_MUTEX_LOCK(&g_last_backtrace_mutex);
+
+    if (g_last_backtrace == 0)
+      g_last_backtrace = new rutz::backtrace(*m_backtrace);
+    else
+      *g_last_backtrace = *m_backtrace;
+  }
 
   if (GVX_DBG_LEVEL() >= 4)
     {
@@ -82,10 +89,14 @@ GVX_TRACE("rutz::error::error(fstring)");
 
   dbg_dump(4, m_msg);
 
-  if (last == 0)
-    last = new rutz::backtrace(*m_backtrace);
-  else
-    *last = *m_backtrace;
+  {
+    GVX_MUTEX_LOCK(&g_last_backtrace_mutex);
+
+    if (g_last_backtrace == 0)
+      g_last_backtrace = new rutz::backtrace(*m_backtrace);
+    else
+      *g_last_backtrace = *m_backtrace;
+  }
 
   if (GVX_DBG_LEVEL() >= 4)
     {
@@ -122,12 +133,14 @@ const char* rutz::error::what() const throw()
   return m_what.c_str();
 }
 
-const rutz::backtrace& rutz::error::last_backtrace()
+void rutz::error::get_last_backtrace(rutz::backtrace& dst)
 {
-  if (last == 0)
-    last = new rutz::backtrace();
+  GVX_MUTEX_LOCK(&g_last_backtrace_mutex);
 
-  return *last;
+  if (g_last_backtrace == 0)
+    g_last_backtrace = new rutz::backtrace();
+
+  dst = *g_last_backtrace;
 }
 
 static const char vcid_groovx_rutz_error_cc_utc20050626084020[] = "$Id$ $HeadURL$";

@@ -37,10 +37,12 @@
 
 #include "rutz/algo.h"
 #include "rutz/freelist.h"
+#include "rutz/mutex.h"
 
 #include <cctype>
 #include <cstring>
 #include <iostream>
+#include <pthread.h>
 
 #ifndef GVX_NO_PROF
 #define GVX_NO_PROF
@@ -58,18 +60,24 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  rutz::free_list<rutz::string_rep>* rep_list;
+  rutz::free_list<rutz::string_rep>* g_rep_list;
+  pthread_mutex_t g_rep_list_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+  rutz::string_rep* g_empty_rep = 0;
+  pthread_once_t g_empty_rep_once = PTHREAD_ONCE_INIT;
 }
 
 void* rutz::string_rep::operator new(size_t bytes)
 {
-  if (rep_list == 0) rep_list = new rutz::free_list<rutz::string_rep>;
-  return rep_list->allocate(bytes);
+  GVX_MUTEX_LOCK(&g_rep_list_mutex);
+  if (g_rep_list == 0) g_rep_list = new rutz::free_list<rutz::string_rep>;
+  return g_rep_list->allocate(bytes);
 }
 
 void rutz::string_rep::operator delete(void* space)
 {
-  rep_list->deallocate(space);
+  GVX_MUTEX_LOCK(&g_rep_list_mutex);
+  g_rep_list->deallocate(space);
 }
 
 rutz::string_rep::string_rep(std::size_t len, const char* txt,
@@ -93,16 +101,17 @@ GVX_TRACE("rutz::string_rep::~string_rep");
   m_text = (char*)0xdeadbeef;
 }
 
+void rutz::string_rep::initialize_empty_rep()
+{
+  g_empty_rep = new rutz::string_rep(0, 0);
+  g_empty_rep->incr_ref_count();
+}
+
 rutz::string_rep* rutz::string_rep::get_empty_rep()
 {
-  static rutz::string_rep* empty_rep = 0;
-  if (empty_rep == 0)
-    {
-      empty_rep = new rutz::string_rep(0, 0);
-      empty_rep->incr_ref_count();
-    }
+  pthread_once(&g_empty_rep_once, &initialize_empty_rep);
 
-  return empty_rep;
+  return g_empty_rep;
 }
 
 rutz::string_rep* rutz::string_rep::make(std::size_t length,

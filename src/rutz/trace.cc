@@ -50,26 +50,6 @@ namespace
 {
   unsigned int             g_max_trace_level     = 20;
   bool                     g_do_global_trace     = false;
-  rutz::trace::run_mode    g_current_run_mode    = rutz::trace::RUN;
-
-  void wait_on_step() throw()
-  {
-    static char buf[256];
-
-    std::cerr << " [r)un, s)step] ? " << std::flush;
-    std::cin.getline(&buf[0], 256);
-
-    switch (buf[0])
-      {
-      case 'r': case 'R':
-        g_current_run_mode = rutz::trace::RUN;
-        break;
-
-      case 's': case 'S':
-      default:
-        break;
-      }
-  }
 
   void print_in(const char* context_name) throw()
   {
@@ -89,19 +69,7 @@ namespace
         else
           std::cerr << n << ">> ";
 
-        std::cerr << context_name;
-
-        switch (g_current_run_mode)
-          {
-          case rutz::trace::STEP:
-            wait_on_step();
-            break;
-
-          case rutz::trace::RUN:
-          default:
-            std::cerr << '\n';
-            break;
-          }
+        std::cerr << context_name << '\n';
       }
   }
 
@@ -117,22 +85,10 @@ namespace
           }
         std::cerr << "| <<--";
 
-        std::cerr << context_name;
-
-        switch (g_current_run_mode)
-          {
-          case rutz::trace::STEP:
-            wait_on_step();
-            break;
-
-          case rutz::trace::RUN:
-          default:
-            std::cerr << '\n';
-            break;
-          }
+        std::cerr << context_name << '\n';
       }
 
-    if (rutz::backtrace::current().size() == 0)
+    if (n == 0)
       std::cerr << '\n';
   }
 }
@@ -142,16 +98,6 @@ namespace
 // rutz::trace member definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-void rutz::trace::set_run_mode(run_mode mode) throw()
-{
-  g_current_run_mode = mode;
-}
-
-rutz::trace::run_mode rutz::trace::get_run_mode() throw()
-{
-  return g_current_run_mode;
-}
 
 bool rutz::trace::get_global_trace() throw()
 {

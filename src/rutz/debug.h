@@ -60,16 +60,24 @@ namespace rutz {namespace debug
   void postcondition_aux (const char* what, const char* where, int line_no) throw();
   void invariant_aux     (const char* what, const char* where, int line_no) throw();
 
-  const int MAX_KEYS = 1024;
-
-  extern unsigned char key_levels[MAX_KEYS];
-  extern const char* key_filenames[MAX_KEYS];
-
+  /// Allocate a debug key for the given filename
   int create_key(const char* filename);
+
+  /// Query whether the given value is a valid debug key
+  bool is_valid_key(int key);
 
   /// Get the debug key associated with the given filename.
   /** Returns -1 if the filename is not registered. */
   int lookup_key(const char* filename);
+
+  /// Get the current debug level associated with the given debug key
+  int get_level_for_key(int key);
+
+  /// Set the current debug level for the given debug key
+  void set_level_for_key(int key, int level);
+
+  /// Get the filename associated with the given debug key
+  const char* get_filename_for_key(int key);
 
   void set_global_level(int lev);
 }}
@@ -88,13 +96,13 @@ namespace rutz {namespace debug
 
 #define GVX_CONCAT(x, y) x ## y
 
-#define GVX_DO_DBG_REGISTER(ext)                                \
-static const int GVX_CONCAT(DEBUG_KEY, ext) =                   \
-  rutz::debug::create_key(__FILE__);                            \
-                                                                \
-static inline int GVX_CONCAT(dbg_level_, ext) ()                \
-{                                                               \
-  return rutz::debug::key_levels[GVX_CONCAT(DEBUG_KEY, ext)];   \
+#define GVX_DO_DBG_REGISTER(ext)                                     \
+static const int GVX_CONCAT(DEBUG_KEY, ext) =                        \
+  rutz::debug::create_key(__FILE__);                                 \
+                                                                     \
+static inline int GVX_CONCAT(dbg_level_, ext) ()                     \
+{                                                                    \
+  return rutz::debug::get_level_for_key(GVX_CONCAT(DEBUG_KEY, ext)); \
 }
 
 #define GVX_DBG_REGISTER GVX_DO_DBG_REGISTER(1)

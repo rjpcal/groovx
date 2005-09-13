@@ -37,6 +37,7 @@
 GVX_DBG_REGISTER
 
 #include "rutz/backtrace.h"
+#include "rutz/mutex.h"
 
 #include <cstdlib>
 #include <iomanip>
@@ -44,8 +45,17 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  bool debug_line_complete = true;
-  int debug_next_key = 0;
+  const int MAX_KEYS = 1024;
+
+  // output-related variables and guard mutex
+  bool            g_debug_line_complete = true;
+  pthread_mutex_t g_debug_output_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+  // debug keys and guard mutex
+  int             g_debug_next_key = 0;
+  unsigned char   g_key_levels[MAX_KEYS];
+  const char*     g_key_filenames[MAX_KEYS];
+  pthread_mutex_t g_debug_keys_mutex = PTHREAD_MUTEX_INITIALIZER;
 
   void show_position(int level, const char* where, int line_no) throw()
   {
@@ -55,17 +65,15 @@ namespace
   }
 }
 
-unsigned char rutz::debug::key_levels[rutz::debug::MAX_KEYS];
-const char*   rutz::debug::key_filenames[rutz::debug::MAX_KEYS];
-
 #define EVAL_IMPL(T)                                    \
 void rutz::debug::eval(const char* what, int level,     \
                        const char* where, int line_no,  \
                        bool nl, T expr) throw()         \
 {                                                       \
+  GVX_MUTEX_LOCK(&g_debug_output_mutex);                \
   using std::cerr;                                      \
   cerr.exceptions(std::ios::goodbit);                   \
-  if (debug_line_complete)                              \
+  if (g_debug_line_complete)                            \
     {                                                   \
       show_position(level, where, line_no);             \
     }                                                   \
@@ -77,12 +85,12 @@ void rutz::debug::eval(const char* what, int level,     \
   if (nl)                                               \
     {                                                   \
       cerr << "\n";                                     \
-      debug_line_complete = true;                       \
+      g_debug_line_complete = true;                     \
     }                                                   \
   else                                                  \
     {                                                   \
       cerr << ", ";                                     \
-      debug_line_complete = false;                      \
+      g_debug_line_complete = false;                    \
     }                                                   \
 }
 
@@ -102,19 +110,21 @@ EVAL_IMPL(void*);
 
 void rutz::debug::dump(const char* what, int level, const char* where, int line_no) throw()
 {
+  GVX_MUTEX_LOCK(&g_debug_output_mutex);
   std::cerr.exceptions(std::ios::goodbit);
   show_position(level, where, line_no);
   std::cerr << std::setw(15) << what << " := ";
-  debug_line_complete = false;
+  g_debug_line_complete = false;
 }
 
 void rutz::debug::start_newline() throw()
 {
+  GVX_MUTEX_LOCK(&g_debug_output_mutex);
   std::cerr.exceptions(std::ios::goodbit);
-  if (!debug_line_complete)
+  if (!g_debug_line_complete)
     {
       std::cerr << '\n';
-      debug_line_complete = true;
+      g_debug_line_complete = true;
     }
 }
 
@@ -165,27 +175,56 @@ void rutz::debug::invariant_aux(const char* what, const char* where,
 
 int rutz::debug::create_key(const char* filename)
 {
-  int key = debug_next_key;
-  key_filenames[key] = filename;
-  if (debug_next_key < (MAX_KEYS-1))
-    ++debug_next_key;
+  GVX_MUTEX_LOCK(&g_debug_keys_mutex);
+  const int key = g_debug_next_key;
+  g_key_filenames[key] = filename;
+  if (g_debug_next_key < (MAX_KEYS-1))
+    ++g_debug_next_key;
   return key;
+}
+
+bool rutz::debug::is_valid_key(int key)
+{
+  return key >= 0 && key < MAX_KEYS;
 }
 
 int rutz::debug::lookup_key(const char* filename)
 {
-  for (int i = 0; i < debug_next_key; ++i)
+  GVX_MUTEX_LOCK(&g_debug_keys_mutex);
+  for (int i = 0; i < g_debug_next_key; ++i)
     {
-      if (strcmp(key_filenames[i], filename) == 0)
+      if (strcmp(g_key_filenames[i], filename) == 0)
         return i;
     }
   return -1;
 }
 
+int rutz::debug::get_level_for_key(int key)
+{
+  GVX_MUTEX_LOCK(&g_debug_keys_mutex);
+  if (key < MAX_KEYS)
+    return g_key_levels[key];
+  return 0;
+}
+
+void rutz::debug::set_level_for_key(int key, int level)
+{
+  GVX_MUTEX_LOCK(&g_debug_keys_mutex);
+  if (key <MAX_KEYS)
+    g_key_levels[key] = level;
+}
+
+const char* rutz::debug::get_filename_for_key(int key)
+{
+  GVX_MUTEX_LOCK(&g_debug_keys_mutex);
+  return g_key_filenames[key];
+}
+
 void rutz::debug::set_global_level(int lev)
 {
+  GVX_MUTEX_LOCK(&g_debug_keys_mutex);
   for (int i = 0; i < MAX_KEYS; ++i)
-    key_levels[i] = (unsigned char) lev;
+    g_key_levels[i] = (unsigned char) lev;
 }
 
 static const char vcid_groovx_rutz_debug_cc_utc20050626084020[] = "$Id$ $HeadURL$";

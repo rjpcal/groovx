@@ -75,22 +75,6 @@ namespace rutz
 class rutz::trace
 {
 public:
-  /// Control whether to continue or pause on trace in/out messages.
-  /** In STEP mode, each trace message will be followed with a very
-      simple debugger-like prompt, waiting for user input from stdin
-      as to whether to "r)un" (switch back to RUN mode), or "s)tep"
-      (stay in STEP mode). */
-  enum run_mode
-    {
-      RUN,  ///< Continue immediately after each trace in/out message
-      STEP  ///< Wait for user input from stdin after each trace in/out message
-    };
-
-  /// Get the current run_mode (whether to continue or pause on trace in/out messages).
-  static run_mode get_run_mode() throw();
-  /// Change the current run_mode (whether to continue or pause on trace in/out messages).
-  static void     set_run_mode(run_mode mode) throw();
-
   /// Query whether we are unconditionally printing trace in/out messages.
   static bool get_global_trace() throw();
   /// Set whether to unconditionally print trace in/out messages.

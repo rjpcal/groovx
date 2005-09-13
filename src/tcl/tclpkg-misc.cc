@@ -65,8 +65,8 @@ namespace
 
   rutz::fstring backTrace()
   {
-    const rutz::backtrace& bt = rutz::error::last_backtrace();
-
+    rutz::backtrace bt;
+    rutz::error::get_last_backtrace(bt);
     return rutz::format(bt);
   }
 

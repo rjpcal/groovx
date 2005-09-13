@@ -67,20 +67,21 @@ namespace
 #  endif
 #endif // !defined(GVX_NO_TYPENAME_MANGLING)
 
-#include <map>
-#include <string>
-
-#include "rutz/debug.h"
-GVX_DBG_REGISTER
+#include "rutz/mutex.h"
 #include "rutz/trace.h"
+
+#include <map>
+#include <pthread.h>
+#include <string>
 
 namespace
 {
   // why can't we make this a map<type_info, string>?
   //   (1) gcc libstdc++ doesn't seem to have type_info::operator<()
   //   (2) gcc libstdc++ doesn't allow copying of type_info objects
-  typedef std::map<std::string, std::string> Cache;
-  Cache nameCache;
+  typedef std::map<std::string, std::string> cache_type;
+  cache_type g_name_cache;
+  pthread_mutex_t g_name_cache_mutex = PTHREAD_MUTEX_INITIALIZER;
 }
 
 const char* rutz::demangled_name(const std::type_info& info)
@@ -89,17 +90,19 @@ GVX_TRACE("rutz::demangled_name");
 
   const std::string mangled = info.name();
 
-  Cache::iterator itr = nameCache.find(mangled);
+  GVX_MUTEX_LOCK(&g_name_cache_mutex);
 
-  if (itr != nameCache.end())
+  cache_type::iterator itr = g_name_cache.find(mangled);
+
+  if (itr != g_name_cache.end())
     {
       return (*itr).second.c_str();
     }
 
   const std::string demangled = DEMANGLE_IMPL(info.name());
 
-  std::pair<Cache::iterator, bool> result =
-    nameCache.insert(Cache::value_type(mangled, demangled));
+  std::pair<cache_type::iterator, bool> result =
+    g_name_cache.insert(cache_type::value_type(mangled, demangled));
 
   GVX_ASSERT(result.second == true);
 
