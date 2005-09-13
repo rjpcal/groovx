@@ -40,6 +40,25 @@
 
 #include <cstdio>  // for fprintf()
 #include <ostream>
+#include <pthread.h>
+
+namespace
+{
+  // thread-local storage (see rutz::backtrace::current() below)
+  pthread_key_t current_backtrace_key;
+  pthread_once_t current_backtrace_key_once = PTHREAD_ONCE_INIT;
+
+  void current_backtrace_destroy(void* bt)
+  {
+    delete static_cast<rutz::backtrace*>(bt);
+  }
+
+  void current_backtrace_key_alloc()
+  {
+    pthread_key_create(&current_backtrace_key,
+                       &current_backtrace_destroy);
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -66,27 +85,29 @@ rutz::backtrace::~backtrace() throw()
 
 rutz::backtrace& rutz::backtrace::current() throw()
 {
-  static rutz::backtrace* ptr = 0;
+  // we need one backtrace per thread, so we use pthreads thread-local
+  // storage to set up that association
 
-  // Q: Why do a dynamic allocation here instead of just having a
-  // static object?
+  pthread_once(&current_backtrace_key_once,
+               &current_backtrace_key_alloc);
 
-  // A: With a static object, we could potentially run in to trouble
-  // during program exit, if somebody's destructor called
-  // backtrace::current() after the local static object's destructor
-  // (i.e., ~backtrace()) had itself already been run. On the other
-  // hand, with a dynamically-allocated object, we can just let the
-  // memory dangle (it's not really a memory "leak" since the amount
-  // of memory is finite and bounded), so the object will never become
-  // invalid, even during program shutdown.
-  if (ptr == 0)
+  void* const ptr = pthread_getspecific(current_backtrace_key);
+
+  if (ptr != 0)
     {
-      ptr = new (std::nothrow) rutz::backtrace;
-
-      if (ptr == 0)
-        GVX_ABORT("memory allocation failed");
+      return *(static_cast<rutz::backtrace*>(ptr));
     }
-  return *ptr;
+
+  // else...
+  rutz::backtrace* const bt = new (std::nothrow) rutz::backtrace;
+
+  if (bt == 0)
+    GVX_ABORT("memory allocation failed");
+
+  pthread_setspecific(current_backtrace_key,
+                      static_cast<void*>(bt));
+
+  return *bt;
 }
 
 bool rutz::backtrace::push(rutz::prof* p) throw()
