@@ -209,6 +209,28 @@ GVX_TRACE("tcl::aux_convert_to(unsigned long*)");
   return static_cast<unsigned long>(wideval);
 }
 
+long long tcl::aux_convert_to(Tcl_Obj* obj, long long*)
+{
+GVX_TRACE("tcl::aux_convert_to(long long*)");
+
+  static Tcl_ObjType* const wide_int_type = Tcl_GetObjType("wideInt");
+
+  GVX_ASSERT(wide_int_type != 0);
+
+  safe_unshared_obj safeobj(obj, wide_int_type);
+
+  long long wideval;
+
+  if ( Tcl_GetWideIntFromObj(0, safeobj.get(), &wideval) != TCL_OK )
+    {
+      throw rutz::error(fstring("expected long value "
+                                "but got \"", Tcl_GetString(obj),
+                                "\""), SRC_POS);
+    }
+
+  return wideval;
+}
+
 bool tcl::aux_convert_to(Tcl_Obj* obj, bool*)
 {
 GVX_TRACE("tcl::aux_convert_to(bool*)");
@@ -282,6 +304,13 @@ GVX_TRACE("tcl::aux_convert_to(fstring*)");
 // (C++ --> Tcl) aux_convert_from specializations
 //
 ///////////////////////////////////////////////////////////////////////
+
+tcl::obj tcl::aux_convert_from(long long val)
+{
+GVX_TRACE("tcl::aux_convert_from(long long)");
+
+  return Tcl_NewWideIntObj(val);
+}
 
 tcl::obj tcl::aux_convert_from(long val)
 {

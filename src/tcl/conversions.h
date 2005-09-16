@@ -101,6 +101,7 @@ namespace tcl
   unsigned int  aux_convert_to(Tcl_Obj* obj, unsigned int*);
   long          aux_convert_to(Tcl_Obj* obj, long*);
   unsigned long aux_convert_to(Tcl_Obj* obj, unsigned long*);
+  long long     aux_convert_to(Tcl_Obj* obj, long long*);
   bool          aux_convert_to(Tcl_Obj* obj, bool*);
   double        aux_convert_to(Tcl_Obj* obj, double*);
   float         aux_convert_to(Tcl_Obj* obj, float*);
@@ -133,6 +134,7 @@ namespace tcl
   // Functions for converting from C++ types to Tcl objects.
   //
 
+  tcl::obj aux_convert_from(long long val);
   tcl::obj aux_convert_from(long val);
   tcl::obj aux_convert_from(unsigned long val);
   tcl::obj aux_convert_from(int val);
