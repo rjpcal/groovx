@@ -183,7 +183,7 @@ int rutz::stdiobuf::flushoutput()
   return num;
 }
 
-// This is a hack to work around an apparently broken g++ 3.4.3 
+// This is a hack to work around an apparently broken g++ 3.4.3
 // on USC's HPCC cluster, in which libstdc++ doesn't include
 // instantiations for the constructor and destructor of std::iostream
 // (aka std::basic_iostream<char>); so, we force an instantiation of
