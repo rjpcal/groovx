@@ -158,7 +158,7 @@ nub::ref<To> dyn_cast(nub::ref<Fr> p)
 template <class To, class Fr>
 void dyn_cast_to_from(nub::ref<To>& dest, nub::ref<Fr> p)
 {
-  dest = dyn_cast<To>(p);
+  dest = dyn_cast<To, Fr>(p);
 }
 
 
@@ -275,7 +275,7 @@ template <class To, class Fr>
 inline void dyn_cast_to_from(nub::soft_ref<To>& dest,
                              nub::soft_ref<Fr> p)
 {
-  dest = dyn_cast<To>(p);
+  dest = dyn_cast<To, Fr>(p);
 }
 
 
@@ -297,7 +297,25 @@ template <class To, class Fr>
 inline void dyn_cast_weak_to_from(nub::soft_ref<To>& dest,
                                   nub::soft_ref<Fr> p)
 {
-  dest = dyn_cast<To>(p);
+  dest = dyn_cast<To, Fr>(p);
+}
+
+
+template <class To, class Fr>
+inline nub::soft_ref<To> dyn_cast_weak(nub::ref<Fr> p)
+{
+  Fr* f = p.get();
+  To* t = dynamic_cast<To*>(f);
+  if (t == 0)
+    return nub::soft_ref<To>(); // return a null soft_ref
+  return nub::soft_ref<To>(t);
+}
+
+template <class To, class Fr>
+inline void dyn_cast_weak_to_from(nub::soft_ref<To>& dest,
+                                  nub::ref<Fr> p)
+{
+  dest = dyn_cast<To, Fr>(p);
 }
 
 
@@ -324,6 +342,16 @@ inline void dynCastWeakToFrom(nub::soft_ref<To>& dest,
                               nub::soft_ref<Fr> p)
 { dyn_cast_weak_to_from<To, Fr>(dest, p); }
 
+
+template <class To, class Fr>
+inline nub::soft_ref<To> dynCastWeak(nub::ref<Fr> p)
+{ return dyn_cast_weak<To, Fr>(p); }
+
+
+template <class To, class Fr>
+inline void dynCastWeakToFrom(nub::soft_ref<To>& dest,
+                              nub::ref<Fr> p)
+{ dyn_cast_weak_to_from<To, Fr>(dest, p); }
 
 
 ///////////////////////////////////////////////////////////
