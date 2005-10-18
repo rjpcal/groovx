@@ -246,7 +246,8 @@ void rutz::prof::print_prof_data(std::ostream& os) const throw()
   // Don't try to convert the double values to long or int, because
   // we're likely to overflow and potentially cause a floating-point
   // exception.
-  os << std::setw(10) << std::setprecision(0) << avg_self_time() << ' '
+  os << std::fixed
+     << std::setw(10) << std::setprecision(0) << avg_self_time() << ' '
      << std::setw(6) << count() << ' '
      << std::setw(10) << std::setprecision(0) << self_time() << ' '
      << std::setw(4) << std::setprecision(1)
