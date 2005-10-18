@@ -34,10 +34,12 @@
 #ifndef GROOVX_RUTZ_ASSOCARRAY_H_UTC20050626084020_DEFINED
 #define GROOVX_RUTZ_ASSOCARRAY_H_UTC20050626084020_DEFINED
 
+#include "rutz/fstring.h"
+
 namespace rutz
 {
   class file_pos;
-  class fstring;
+  //  class fstring;
 
   /// A non-typesafe wrapper around std::map<string, void*>.
   /** The use must provide a pointer to a function that knows how to
