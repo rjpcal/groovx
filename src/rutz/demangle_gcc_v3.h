@@ -36,6 +36,8 @@
 
 #include "rutz/error.h"
 
+#include "rutz/demangle_cxxfilt.h"
+
 #include <cstdlib>
 #include <cxxabi.h>
 #include <string>
@@ -60,28 +62,44 @@ namespace
     if (status == 0)
       {
         GVX_ASSERT(demangled != 0);
-        return demangled;
+        return std::string(demangled);
       }
 
-    rutz::fstring msg("while demangling '", mangled.c_str(), "': ");
-
-    switch (status)
+    // ok, cxa_demangle failed, but before we report that error let's
+    // try falling back to c++filt (but if any exception occurs there,
+    // we'll ignore it and just report the original cxa_demangle error
+    // instead):
+    try
       {
-      case -1:
-        throw rutz::error(rutz::fstring(msg, "memory allocation error"),
-                          SRC_POS);
-        break;
-      case -2:
-        throw rutz::error(rutz::fstring(msg, "invalid mangled name"),
-                          SRC_POS);
-        break;
-      case -3:
-        throw rutz::error(rutz::fstring(msg, "invalid arguments (e.g. "
-                                        "buf non-NULL and length NULL'"),
-                          SRC_POS);
-        break;
-      default:
-        throw rutz::error(rutz::fstring(msg, "unknown error code"), SRC_POS);
+        return demangle_cxxfilt(mangled);
+      }
+    catch (std::exception& e)
+      {
+        rutz::fstring msg("during cxa_demangle of '",
+                          mangled.c_str(), "': ");
+
+        switch (status)
+          {
+          case -1:
+            msg.append("memory allocation error");
+            break;
+
+          case -2:
+            msg.append("invalid mangled name");
+            break;
+
+          case -3:
+            msg.append("invalid arguments (e.g. buf non-NULL "
+                       "and length NULL)");
+            break;
+
+          default:
+            msg.append("unknown error code (", status, ")");
+          }
+
+        msg.append("\n(c++filt also failed: ", e.what(), ")");
+
+        throw rutz::error(msg, SRC_POS);
       }
 
     GVX_ASSERT(false);
