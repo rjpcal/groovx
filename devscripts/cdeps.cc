@@ -2009,7 +2009,8 @@ cppdeps::cppdeps(const int argc, char** const argv) :
          "    --srcdir [dir]        specify a directory containing source files; this\n"
          "                          directory will be searched recursively for files\n"
          "                          with C/C++ filename extensions (including .c, .C,\n"
-         "                          .cc, .cpp, .h, .H, .hh, .hpp)\n"
+         "                          .cc, .cpp, .h, .H, .hh, .hpp, and any others given\n"
+         "                          with --source-ext or --header-ext)\n"
          "    --includedir [dir]    specify a directory to be searched when resolving\n"
          "                          #include \"...\" directives\n"
          "    --I[dir]              same as --includedir [dir]\n"
@@ -2026,6 +2027,10 @@ cppdeps::cppdeps(const int argc, char** const argv) :
          "                          such extension, in which case each rule emitted\n"
          "                          will have more than one target; the default is for\n"
          "                          the list of extensions to include just '.o'\n"
+         "    --source-ext [.ext]   treat filenames ending in .ext as c/c++ source files\n"
+         "                          (i.e., just like .c, .cpp, .C, etc.)\n"
+         "    --header-ext [.ext]   treat filenames ending in .ext as c/c++ header files\n"
+         "                          (i.e., just like .h, .hpp, .H, etc.)\n"
          "    --options-file [file] read additional options from the named file; this\n"
          "                          file is expected to have one option (plus possible\n"
          "                          argument) per line\n"
@@ -2176,6 +2181,16 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
   else if (strcmp(option, "--objext") == 0)
     {
       cfg.obj_exts.push_back(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--source-ext") == 0)
+    {
+      cfg.source_exts.push_back(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--header-ext") == 0)
+    {
+      cfg.header_exts.push_back(optarg);
       return true;
     }
   else if (strcmp(option, "--options-file") == 0)
