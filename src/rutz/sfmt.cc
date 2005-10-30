@@ -90,7 +90,7 @@ fstring rutz::vsfmt(const char* fmt, va_list ap)
       else
         {
           // OK, the vsnprintf() succeeded:
-          return fstring(&buf[0], nchars);
+          return fstring(rutz::char_range(&buf[0], nchars));
         }
     }
   // should never get here:
