@@ -38,6 +38,7 @@
 #include "rutz/assocarray.h"
 #include "rutz/demangle.h"
 #include "rutz/fileposition.h"
+#include "rutz/mutex.h"
 #include "rutz/traits.h"
 
 #include <typeinfo>
@@ -46,17 +47,16 @@ namespace rutz
 {
   class fstring;
 
-  /**
-   *
-   * \c rutz::creator_base is a template class that defines a single
-   * abstract function, \c create(), that returns an object of type \c
-   * Base.
-   *
-   **/
-  template <class base_t>
+  /// Abstract interface for creating objects of a particular type.
+  /** rutz::creator_base is a template class that defines a single
+      abstract function, create(), that returns an object of type
+      creator_base::base_t. */
+  template <class T>
   class creator_base
   {
   public:
+    typedef T base_t;
+
     /// Virtual destructor.
     virtual ~creator_base() {}
 
@@ -68,13 +68,10 @@ namespace rutz
   };
 
 
-  /**
-   *
-   * rutz::creator_from_func implements the rutz::creator_base
-   * interface by storing a pointer to function that returns an object
-   * of the appropriate type.
-   *
-   **/
+  /// Implements rutz::creator_base by calling a function pointer.
+  /** rutz::creator_from_func implements the rutz::creator_base
+      interface by storing a pointer to function that returns an
+      object of the appropriate type. */
   template <class base_t, class derived_t>
   class creator_from_func : public rutz::creator_base<base_t>
   {
@@ -98,13 +95,7 @@ namespace rutz
   };
 
 
-  /**
-   *
-   * Base class for factory functionality that doesn't depend on the
-   * type of the product.
-   *
-   **/
-
+  /// Non-template helper class for rutz::factory.
   class factory_base
   {
   public:
@@ -119,7 +110,6 @@ namespace rutz
     /// Change the fallback function.
     void set_fallback(fallback_t* fptr) throw();
 
-  protected:
     /// Try running the fallback function for the given type.
     void try_fallback(const rutz::fstring& type) const;
 
@@ -128,43 +118,46 @@ namespace rutz
   };
 
 
-  ///////////////////////////////////////////////////////////
-  /**
-   *
-   * \c rutz::factory can create objects from an inheritance hierarchy
-   * given only a typename. \c rutz::factory maintains a mapping from
-   * typenames to \c rutz::creator_base's, and so given a typename can
-   * call the \c create() function of the associated \c Creator. All
-   * of the product types of a factory must be derived from \c
-   * Base. The constructor is protected because factories for specific
-   * types should be implemented as singleton classes derived from
-   * rutz::factory.
-   *
-   **/
-  ///////////////////////////////////////////////////////////
+  /// Create objects base on 'key' strings.
+  /** rutz::factory can create objects of different types associated
+      with different 'key' strings. rutz::factory maintains a mapping
+      from key strings to rutz::creator_base's, and so given a key can
+      call the create() function of the associated creator_base. All
+      of the product types of a factory must be derived from
+      factory::base_t. The recommended usage is for factories for
+      specific types to be implemented as singleton classes derived
+      from rutz::factory.
 
-  template <class base_t>
-  class factory : public rutz::factory_base
+      rutz::factory uses an internal mutex so that all of its member
+      functions can safely be called in a multithreaded program
+      without external locking.
+  */
+  template <class T>
+  class factory
   {
+  public:
+    // typedefs
+
+    typedef factory_base::fallback_t fallback_t;
+    typedef T base_t;
+
   private:
-    rutz::assoc_array<rutz::creator_base<base_t> > m_map;
+    rutz::factory_base                               m_base;
+    rutz::assoc_array<rutz::creator_base<base_t> >   m_map;
+    mutable pthread_mutex_t                          m_mutex;
 
   protected:
-    /// Default constructor.
-    factory(const char* keydescr = "object type") : m_map(keydescr) {}
-
-    /// Virtual no-throw destructor.
-    virtual ~factory() throw() {}
-
     /// Find a creator for the given key; otherwise return null.
     rutz::creator_base<base_t>*
     find_creator(const rutz::fstring& key) const
     {
+      GVX_MUTEX_LOCK(&m_mutex);
+
       rutz::creator_base<base_t>* creator = m_map.get_ptr_for_key(key);
 
       if (creator == 0)
         {
-          factory_base::try_fallback(key);
+          m_base.try_fallback(key);
 
           creator = m_map.get_ptr_for_key(key);
         }
@@ -173,12 +166,27 @@ namespace rutz
     }
 
   public:
+    /// Default constructor.
+    factory(const char* keydescr = "object type") :
+      m_base(), m_map(keydescr), m_mutex()
+    {
+      pthread_mutex_init(&m_mutex, (pthread_mutexattr_t*) 0);
+    }
+
+    /// Virtual no-throw destructor.
+    virtual ~factory() throw()
+    {
+      pthread_mutex_destroy(&m_mutex);
+    }
+
     /// Registers a creation object with the factory.
     /** The function returns the actual key that was paired with the
         creation function.*/
     const char* register_creator(rutz::creator_base<base_t>* creator,
                                  const char* name)
     {
+      GVX_MUTEX_LOCK(&m_mutex);
+
       m_map.set_ptr_for_key(name, creator);
 
       return name;
@@ -192,6 +200,8 @@ namespace rutz
     const char* register_creator(derived_t (*func) (),
                                  const char* key = 0)
     {
+      GVX_MUTEX_LOCK(&m_mutex);
+
       if (key == 0)
         key = rutz::demangled_name
           (typeid(typename rutz::type_traits<derived_t>::pointee_t));
@@ -207,6 +217,8 @@ namespace rutz
         for the original key. */
     void register_alias(const char* orig_key, const char* alias_key)
     {
+      GVX_MUTEX_LOCK(&m_mutex);
+
       rutz::creator_base<base_t>* creator =
         m_map.get_ptr_for_key(orig_key);
 
@@ -225,6 +237,8 @@ namespace rutz
     /// Get a list of known keys, separated by sep.
     rutz::fstring get_known_keys(const char* sep) const
     {
+      GVX_MUTEX_LOCK(&m_mutex);
+
       return m_map.get_known_keys(sep);
     }
 
@@ -247,9 +261,22 @@ namespace rutz
     {
       rutz::creator_base<base_t>* creator = this->find_creator(type);
 
-      if (creator == 0) m_map.throw_for_key(type, SRC_POS);
+      if (creator == 0)
+        {
+          GVX_MUTEX_LOCK(&m_mutex);
+
+          m_map.throw_for_key(type, SRC_POS);
+        }
 
       return creator->create();
+    }
+
+    /// Change the fallback function.
+    void set_fallback(fallback_t* fptr) throw()
+    {
+      GVX_MUTEX_LOCK(&m_mutex);
+
+      m_base.set_fallback(fptr);
     }
   };
 
