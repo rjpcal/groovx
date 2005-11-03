@@ -2507,14 +2507,23 @@ void cppdeps::print_link_deps(file_info* finfo)
           cfg.info() << "ldep " << (*itr)->name() << " is phantom or pruned\n";
     }
 
+  // print all of the link dependencies on one line per executable,
+  // rather than each on a separate line -- this reduces the size of
+  // the output file significantly, which in turn helps speed up make
+  // invocations because it takes make less time to parse all of the
+  // dependencies -- if you want the verbose information with one
+  // dependency per line, try --output-ldep-raw instead
+
+  printf("%s:", exe.c_str());
   for (set<string>::iterator
          itr = links.begin(),
          stop = links.end();
        itr != stop;
        ++itr)
     {
-      printf("%s: %s\n", exe.c_str(), (*itr).c_str());
+      printf(" %s", (*itr).c_str());
     }
+  printf("\n");
 
   links.clear();
 
@@ -2532,14 +2541,16 @@ void cppdeps::print_link_deps(file_info* finfo)
         }
     }
 
+  printf("%s:", exe.c_str());
   for (set<string>::iterator
          itr = links.begin(),
          stop = links.end();
        itr != stop;
        ++itr)
     {
-      printf("%s: %s\n", exe.c_str(), (*itr).c_str());
+      printf(" %s", (*itr).c_str());
     }
+  printf("\n");
 }
 
 void cppdeps::traverse_sources()
