@@ -39,9 +39,37 @@
 
 #include "rutz/trace.h"
 
+namespace
+{
+  class function_fallback : public rutz::factory_fallback
+  {
+  public:
+    typedef rutz::factory_base::fallback_t fallback_t;
+
+    function_fallback(fallback_t* f) throw() : m_func(f) {}
+
+    virtual ~function_fallback() throw() {}
+
+    virtual void try_fallback(const rutz::fstring& key) const
+    {
+      if (m_func != 0)
+        (*m_func)(key);
+    }
+
+  private:
+    fallback_t* m_func;
+  };
+}
+
+rutz::factory_fallback::factory_fallback() throw()
+{}
+
+rutz::factory_fallback::~factory_fallback() throw()
+{}
+
 rutz::factory_base::factory_base() throw()
   :
-  m_fallback(0)
+  m_fallback()
 {
 GVX_TRACE("rutz::factory_base::factory_base");
 }
@@ -51,19 +79,25 @@ rutz::factory_base::~factory_base() throw()
 GVX_TRACE("rutz::factory_base::~factory_base");
 }
 
-void rutz::factory_base::set_fallback(fallback_t* fptr) throw()
+void rutz::factory_base::set_fallback(rutz::shared_ptr<factory_fallback> f)
 {
-GVX_TRACE("rutz::factory_base::set_fallback");
-  m_fallback = fptr;
+GVX_TRACE("rutz::factory_base::set_fallback(object)");
+
+  m_fallback = f;
 }
 
-void rutz::factory_base::try_fallback(const rutz::fstring& type) const
+void rutz::factory_base::set_fallback(fallback_t* fptr)
+{
+GVX_TRACE("rutz::factory_base::set_fallback");
+  m_fallback = rutz::make_shared(new function_fallback(fptr));
+}
+
+void rutz::factory_base::try_fallback(const rutz::fstring& key) const
 {
 GVX_TRACE("rutz::factory_base::try_fallback");
-  if (m_fallback != 0)
-    {
-      (*m_fallback)(type);
-    }
+
+  if (m_fallback.get() != 0)
+    m_fallback->try_fallback(key);
 }
 
 static const char vcid_groovx_rutz_factory_cc_utc20050626084020[] = "$Id$ $HeadURL$";

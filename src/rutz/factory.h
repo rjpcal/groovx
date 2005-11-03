@@ -39,6 +39,7 @@
 #include "rutz/demangle.h"
 #include "rutz/fileposition.h"
 #include "rutz/mutex.h"
+#include "rutz/sharedptr.h"
 #include "rutz/traits.h"
 
 #include <typeinfo>
@@ -95,6 +96,20 @@ namespace rutz
   };
 
 
+  /// Abstract class for a fallback strategy when factory lookup fails.
+  class factory_fallback
+  {
+  public:
+    /// Default constructor.
+    factory_fallback() throw();
+
+    /// Virtual no-throw destructor for proper inheritance.
+    virtual ~factory_fallback() throw();
+
+    /// This will be called with the key whose lookup failed in the factory.
+    virtual void try_fallback(const rutz::fstring& key) const = 0;
+  };
+
   /// Non-template helper class for rutz::factory.
   class factory_base
   {
@@ -107,14 +122,17 @@ namespace rutz
     /// Virtual no-throw destructor for proper inheritance.
     virtual ~factory_base() throw();
 
-    /// Change the fallback function.
-    void set_fallback(fallback_t* fptr) throw();
+    /// Change the fallback object.
+    void set_fallback(rutz::shared_ptr<factory_fallback> f);
 
-    /// Try running the fallback function for the given type.
-    void try_fallback(const rutz::fstring& type) const;
+    /// Change the fallback function.
+    void set_fallback(fallback_t* fptr);
+
+    /// Try running the fallback function for the given key.
+    void try_fallback(const rutz::fstring& key) const;
 
   private:
-    fallback_t* m_fallback;
+    rutz::shared_ptr<factory_fallback> m_fallback;
   };
 
 
@@ -151,15 +169,21 @@ namespace rutz
     rutz::creator_base<base_t>*
     find_creator(const rutz::fstring& key) const
     {
-      GVX_MUTEX_LOCK(&m_mutex);
+      rutz::creator_base<base_t>* creator = 0;
 
-      rutz::creator_base<base_t>* creator = m_map.get_ptr_for_key(key);
+      {
+        GVX_MUTEX_LOCK(&m_mutex);
+        creator = m_map.get_ptr_for_key(key);
+      }
 
       if (creator == 0)
         {
           m_base.try_fallback(key);
 
-          creator = m_map.get_ptr_for_key(key);
+          {
+            GVX_MUTEX_LOCK(&m_mutex);
+            creator = m_map.get_ptr_for_key(key);
+          }
         }
 
       return creator;
@@ -271,8 +295,16 @@ namespace rutz
       return creator->create();
     }
 
+    /// Change the fallback object.
+    void set_fallback(rutz::shared_ptr<factory_fallback> f)
+    {
+      GVX_MUTEX_LOCK(&m_mutex);
+
+      m_base.set_fallback(f);
+    }
+
     /// Change the fallback function.
-    void set_fallback(fallback_t* fptr) throw()
+    void set_fallback(fallback_t* fptr)
     {
       GVX_MUTEX_LOCK(&m_mutex);
 
