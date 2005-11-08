@@ -44,23 +44,6 @@
 
 #include "rutz/trace.h"
 
-namespace
-{
-  static Face* makeInnerFace()
-  {
-    Face* p = Face::make();
-    p->setField("partsMask", tcl::convert_from(1));
-    return p;
-  }
-
-  static Face* makeFilledFace()
-  {
-    Face* p = Face::make();
-    p->setField("isFilled", tcl::convert_from(1));
-    return p;
-  }
-}
-
 extern "C"
 int Face_Init(Tcl_Interp* interp)
 {
@@ -71,12 +54,6 @@ GVX_TRACE("Face_Init");
   pkg->inherit_pkg("GxShapeKit");
   tcl::defFieldContainer<Face>(pkg, SRC_POS);
   tcl::def_creator<Face>(pkg);
-
-  nub::obj_factory::instance().register_creator( &makeInnerFace,
-                                              "InnerFace" );
-
-  nub::obj_factory::instance().register_creator( &makeFilledFace,
-                                              "FilledFace" );
 
   GVX_PKG_RETURN(pkg);
 }

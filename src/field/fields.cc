@@ -170,24 +170,13 @@ void FieldContainer::setFieldMap(const FieldMap& fields)
   itsFieldMap = &fields;
 }
 
-tcl::obj FieldContainer::getField(const fstring& name) const
+const Field& FieldContainer::field(const rutz::fstring& name) const
 {
-  return getField(itsFieldMap->field(name));
+  return itsFieldMap->field(name);
 }
 
-tcl::obj FieldContainer::getField(const Field& field) const
+void FieldContainer::touch() const
 {
-  return field.getValue(this);
-}
-
-void FieldContainer::setField(const fstring& name, const tcl::obj& new_val)
-{
-  setField(itsFieldMap->field(name), new_val);
-}
-
-void FieldContainer::setField(const Field& field, const tcl::obj& new_val)
-{
-  field.setValue(this, new_val);
   if (itsSignal)
     itsSignal->emit();
 }
@@ -202,7 +191,7 @@ GVX_TRACE("FieldContainer::readFieldsFrom");
   for (FieldMap::Iterator itr(fields.ioFields()); itr.is_valid(); ++itr)
     {
       if (!itr->isTransient() && itr->shouldSerialize(svid))
-        itr->readValueFrom(this, reader, itr->name());
+        itr->readValueFrom(this, reader);
     }
 
   if (itsSignal)
@@ -218,7 +207,7 @@ GVX_TRACE("FieldContainer::writeFieldsTo");
   for (FieldMap::Iterator itr(fields.ioFields()); itr.is_valid(); ++itr)
     {
       if (!itr->isTransient() && itr->shouldSerialize(svid))
-        itr->writeValueTo(this, writer, itr->name());
+        itr->writeValueTo(this, writer);
     }
 }
 

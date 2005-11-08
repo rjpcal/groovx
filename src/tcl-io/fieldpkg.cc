@@ -39,6 +39,9 @@
 
 #include "nub/ref.h"
 
+#include "tcl-io/objreader.h"
+#include "tcl-io/objwriter.h"
+
 #include "tcl/list.h"
 
 #include "rutz/iter.h"
@@ -50,15 +53,19 @@ GVX_DBG_REGISTER
 namespace tcl
 {
   tcl::obj getField(const Field& field,
-                       nub::ref<FieldContainer> item)
+                    nub::ref<FieldContainer> item)
   {
-    return item->getField(field);
+    tcl::obj_writer w;
+    field.writeValueTo(item.get(), w);
+    return w.get_obj();
   }
 
   void setField(const Field& field, nub::ref<FieldContainer> item,
                 const tcl::obj& newValue)
   {
-    return item->setField(field, newValue);
+    tcl::obj_reader r(newValue);
+    field.readValueFrom(item.get(), r);
+    item->touch(); // emit a signal saying that the object has changed
   }
 
   struct FieldsLister
