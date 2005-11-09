@@ -2,6 +2,9 @@
 
     \brief base class for serializable objects, plus reader+writer classes
 
+    Also includes an extension for fields (a.k.a. "properties"); see
+    Field and FieldContainer
+
     for dependency graphs:
     rankdir: RL
 */

@@ -35,7 +35,7 @@
 
 #include "tcl-io/fieldpkg.h"
 
-#include "field/fields.h"
+#include "io/fields.h"
 
 #include "nub/ref.h"
 

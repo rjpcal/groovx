@@ -37,7 +37,7 @@
 #include "gfx/gbcolor.h"
 #include "gfx/gxnode.h"
 
-#include "field/fields.h"
+#include "io/fields.h"
 
 /// GxColor is a graphics node class for RGBA colors.
 class GxColor : public GxNode, public FieldContainer

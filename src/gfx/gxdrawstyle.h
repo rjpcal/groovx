@@ -36,7 +36,7 @@
 
 #include "gfx/gxnode.h"
 
-#include "field/fields.h"
+#include "io/fields.h"
 
 /// GxDrawStyle is a graphics node class for line/polygon drawing styles.
 class GxDrawStyle : public GxNode, public FieldContainer

@@ -31,8 +31,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_FIELD_FIELDS_H_UTC20050712162000_DEFINED
-#define GROOVX_FIELD_FIELDS_H_UTC20050712162000_DEFINED
+#ifndef GROOVX_IO_FIELDS_H_UTC20051109000918_DEFINED
+#define GROOVX_IO_FIELDS_H_UTC20051109000918_DEFINED
 
 #include "io/reader.h"
 #include "io/writer.h"
@@ -669,5 +669,5 @@ inline C& FieldAux::cast(F& p)
   return *result;
 }
 
-static const char vcid_groovx_field_fields_h_utc20050712162000[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_FIELD_FIELDS_H_UTC20050712162000_DEFINED
+static const char vcid_groovx_io_fields_h_utc20051109000918[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_FIELDS_H_UTC20051109000918DEFINED

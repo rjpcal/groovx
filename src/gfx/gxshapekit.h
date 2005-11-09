@@ -36,7 +36,7 @@
 
 #include "gfx/gxnode.h"
 
-#include "field/fields.h"
+#include "io/fields.h"
 
 #include "rutz/tracer.h"
 
