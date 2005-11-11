@@ -37,10 +37,9 @@
 #include "geom/vec3.h"
 
 #include "gfx/bbox.h"
+#include "gfx/fontspec.h"
 #include "gfx/glcanvas.h"
 #include "gfx/gxrasterfont.h"
-
-#include "tcl/list.h"
 
 #include "rutz/cstrstream.h"
 #include "rutz/error.h"
@@ -48,6 +47,7 @@
 
 #include <cctype>
 #include <cstdio>
+#include <cstdlib> // for atoi()
 #include <cstring>
 #include <AGL/agl.h>
 #include <AGL/gl.h>
@@ -254,39 +254,34 @@ GVX_TRACE("AglRasterFont::pickAppleFont");
     }
   else
     {
-      // Parse the spec as a Tcl list. This is useful for font names with
-      // embedded spaces, such that the spec needs quotes or
-      // braces... e.g., {"luxi mono" 34 ib}. In cases like that, we can't
-      // just split the spec on whitespace.
-      tcl::list specitems = tcl::convert_from(spec);
+      rutz::fstring family, pxlsize, mods;
 
-      if (specitems.length() >= 1)
-        result.fontID = getFontId(specitems.get<const char*>(0));
+      parseFontSpec(spec, &family, &pxlsize, &mods);
 
-      if (specitems.length() >= 2)
-        result.size = specitems.get<GLint>(1);
+      if (!family.is_empty())
+        result.fontID = getFontId(family.c_str());
+
+      if (!pxlsize.is_empty())
+        result.size = atoi(pxlsize.c_str());
 
       result.face = 0;
 
-      if (specitems.length() >= 3)
-        {
-          const char* mod = specitems.get<const char*>(2);
+      const char* mod = mods.c_str();
 
-          while (*mod != '\0')
+      while (*mod != '\0')
+        {
+          switch (*mod)
             {
-              switch (*mod)
-                {
-                case 'b': result.face |= bold; break;
-                case 'i': result.face |= italic; break;
-                case 'o': result.face |= italic; break;
-                case 'u': result.face |= underline; break;
-                case 't': result.face |= outline; break;
-                case 's': result.face |= shadow; break;
-                case 'c': result.face |= condense; break;
-                case 'e': result.face |= extend; break;
-                }
-              ++mod;
+            case 'b': result.face |= bold; break;
+            case 'i': result.face |= italic; break;
+            case 'o': result.face |= italic; break;
+            case 'u': result.face |= underline; break;
+            case 't': result.face |= outline; break;
+            case 's': result.face |= shadow; break;
+            case 'c': result.face |= condense; break;
+            case 'e': result.face |= extend; break;
             }
+          ++mod;
         }
     }
 

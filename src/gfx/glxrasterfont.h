@@ -37,10 +37,9 @@
 #include "geom/vec3.h"
 
 #include "gfx/bbox.h"
+#include "gfx/fontspec.h"
 #include "gfx/glcanvas.h"
 #include "gfx/gxrasterfont.h"
-
-#include "tcl/list.h"
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
@@ -190,20 +189,7 @@ GVX_TRACE("GlxRasterFont::pickXFont");
 
       rutz::fstring mods  = "";
 
-      // Parse the spec as a Tcl list. This is useful for font names
-      // with embedded spaces, such that the spec needs quotes or
-      // braces... e.g., {"luxi mono" 34 ib}. In cases like that, we
-      // can't just split the spec on whitespace.
-      tcl::list specitems = tcl::convert_from(spec);
-
-      if (specitems.length() >= 1)
-        family = specitems.get<const char*>(0);
-
-      if (specitems.length() >= 2)
-        pxlsize = specitems.get<const char*>(1);
-
-      if (specitems.length() >= 3)
-        mods = specitems.get<const char*>(2);
+      parseFontSpec(spec, &family, &pxlsize, &mods);
 
       const char* mod = mods.c_str();
       while (*mod != '\0')

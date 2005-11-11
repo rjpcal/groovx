@@ -73,7 +73,7 @@ GVX_TRACE("GxText::make");
 
 GxText::GxText(const char* text) :
   GxShapeKit(),
-  itsFont(GxFactory::makeFont("helvetica 34")),
+  itsFont(GxFactory::makeFont("helvetica:34")),
 //   itsFont(GxFactory::makeFont("vector")),
 //   itsFont(GxFactory::makeFont("-adobe-helvetica-medium-r-normal--34-240-100-100-p-176-iso8859-1")),
 //   itsFont(new GxRasterFont("-adobe-helvetica-medium-r-normal--34-240-100-100-p-176-iso8859-1")),
