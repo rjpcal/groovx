@@ -33,13 +33,13 @@
 #ifndef GROOVX_GFX_TCLPKG_TOGLET_CC_UTC20050628170310_DEFINED
 #define GROOVX_GFX_TCLPKG_TOGLET_CC_UTC20050628170310_DEFINED
 
-#include "gfx/tclpkg-toglet.h"
+#include "tcl-gfx/tclpkg-toglet.h"
 
 #include "gfx/canvas.h"
 #include "gfx/gxcamera.h"
 #include "gfx/gxnode.h"
 #include "gfx/toglet.h"
-#include "gfx/vectcl.h"
+#include "tcl-gfx/vectcl.h"
 
 #include "nub/objfactory.h"
 #include "nub/ref.h"

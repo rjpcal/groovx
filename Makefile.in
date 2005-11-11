@@ -370,6 +370,18 @@ $(exec_prefix)/lib/libgroovx-gfx$(LIB_EXT): \
 	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
 
+$(exec_prefix)/lib/libgroovx-tcl-gfx$(LIB_EXT): \
+	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/tcl-gfx/*.cc))) \
+	$(exec_prefix)/lib/libgroovx-gfx$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-media$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-geom$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-tcl-io$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-tk$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-io$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-nub$(LIB_EXT) \
+	$(exec_prefix)/lib/libgroovx-rutz$(LIB_EXT) \
+
 $(exec_prefix)/lib/libgroovx-visx$(LIB_EXT): \
 	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/visx/*.cc))) \
 	$(exec_prefix)/lib/libgroovx-media$(LIB_EXT) \
@@ -391,6 +403,7 @@ $(exec_prefix)/lib/libgroovx-visx$(LIB_EXT): \
 GROOVX_LIBS :=					\
 $(exec_prefix)/lib/libgroovx-mtx$(LIB_EXT)	\
 $(exec_prefix)/lib/libgroovx-visx$(LIB_EXT)	\
+$(exec_prefix)/lib/libgroovx-tcl-gfx$(LIB_EXT)	\
 $(exec_prefix)/lib/libgroovx-gfx$(LIB_EXT)	\
 $(exec_prefix)/lib/libgroovx-tcl-io$(LIB_EXT)	\
 $(exec_prefix)/lib/libgroovx-tcl$(LIB_EXT)	\

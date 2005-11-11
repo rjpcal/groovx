@@ -33,14 +33,14 @@
 #ifndef GROOVX_GFX_TCLPKG_CANVAS_CC_UTC20050628170310_DEFINED
 #define GROOVX_GFX_TCLPKG_CANVAS_CC_UTC20050628170310_DEFINED
 
-#include "gfx/tclpkg-canvas.h"
+#include "tcl-gfx/tclpkg-canvas.h"
 
-#include "gfx/tclpkg-canvas.h"
+#include "tcl-gfx/tclpkg-canvas.h"
 
 #include "gfx/canvas.h"
 #include "gfx/glcanvas.h"
-#include "gfx/recttcl.h"
-#include "gfx/vectcl.h"
+#include "tcl-gfx/recttcl.h"
+#include "tcl-gfx/vectcl.h"
 
 #include "media/bmapdata.h"
 
