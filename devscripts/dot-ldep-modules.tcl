@@ -6,9 +6,9 @@
 # --output-ldep-raw into a format that is usable the graph-drawing
 # tool 'dot'. See 'make ldep-modules.png'.
 
-proc strip_qt_junk { dirname } {
+proc strip_subdirs { dirname } {
 
-    if { [regexp {^(Qt|pkgs)/(.*)} $dirname - dir subdir] } {
+    if { [regexp {^([^/]+)/(.+)} $dirname - dir subdir] } {
 	return $dir
     }
 
@@ -72,8 +72,8 @@ while { [gets $fd line] >= 0 } {
     set d1 [strip_src_pfx $d1]
     set d2 [strip_src_pfx $d2]
 
-    set d1 [strip_qt_junk $d1]
-    set d2 [strip_qt_junk $d2]
+    set d1 [strip_subdirs $d1]
+    set d2 [strip_subdirs $d2]
 
     if { ![string equal $d1 $d2] } {
 
