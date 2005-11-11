@@ -268,6 +268,9 @@ namespace rutz
     /// Same as is_empty(); for compatibility with std::string interface.
     bool empty() const throw() { return is_empty(); }
 
+    /// Return the character at position i.
+    char operator[](unsigned int i) const { return m_rep->text()[i]; }
+
     /// Reset to an empty string.
     void clear();
 
