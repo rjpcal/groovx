@@ -106,7 +106,7 @@ GVX_TRACE("io::serializable::serializable");
 }
 
 // Must be defined out of line to avoid duplication of io's vtable
-io::serializable::~serializable() throw()
+io::serializable::~serializable() GVX_DTOR_NOTHROW
 {
 GVX_TRACE("io::serializable::~serializable");
 }

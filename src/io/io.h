@@ -75,7 +75,7 @@ protected:
   serializable() throw();
 
   /// Virtual destructor to ensure correct destruction of subclasses
-  virtual ~serializable() throw();
+  virtual ~serializable() GVX_DTOR_NOTHROW;
 
 public:
   /** Subclasses implement this method to save the object's state via
