@@ -448,9 +448,9 @@ namespace eval pl {
 
 	update idletasks
 
-	ObjDb::clear
+	objectdb::clear
 
-	aux::msg "pixmaps" [GxPixmap::findAll]
+	aux::msg "pixmaps" [GxPixmap::find_all]
 
 	incr pl::m_nshown
 
