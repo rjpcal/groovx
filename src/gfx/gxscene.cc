@@ -37,8 +37,6 @@
 
 #include "nub/scheduler.h"
 
-#include "tcl/timerscheduler.h"
-
 #include "rutz/sharedptr.h"
 
 #include "rutz/trace.h"
@@ -51,7 +49,8 @@ GVX_DBG_REGISTER
 //
 ///////////////////////////////////////////////////////////////////////
 
-GxScene::GxScene(nub::soft_ref<Gfx::Canvas> canvas) :
+GxScene::GxScene(nub::soft_ref<Gfx::Canvas> canvas,
+                 rutz::shared_ptr<nub::scheduler> sched) :
   itsCanvas(canvas),
   itsDrawNode(GxEmptyNode::make()),
   itsUndrawNode(GxEmptyNode::make()),
@@ -62,7 +61,7 @@ GxScene::GxScene(nub::soft_ref<Gfx::Canvas> canvas) :
   isItHolding(false),
   isItRefreshing(true),
   isItRefreshed(false),
-  itsScheduler(rutz::make_shared(new tcl::timer_scheduler)),
+  itsScheduler(sched),
   itsTimer(100, true),
   slotNodeChanged(nub::slot0::make(this, &GxScene::onNodeChange))
 {

@@ -55,7 +55,8 @@ class GxScene : public nub::volatile_object
 {
 public:
   /// Construct with a canvas in which to draw.
-  GxScene(nub::soft_ref<Gfx::Canvas> canvas);
+  GxScene(nub::soft_ref<Gfx::Canvas> canvas,
+          rutz::shared_ptr<nub::scheduler> sched);
 
   /// Virtual no-throw destructor.
   virtual ~GxScene() throw();

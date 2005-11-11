@@ -45,6 +45,7 @@
 #include "nub/ref.h"
 
 #include "tcl/eventloop.h"
+#include "tcl/timerscheduler.h"
 
 #include "rutz/fstring.h"
 
@@ -122,7 +123,7 @@ Toglet::Impl::Impl(Toglet* p) :
   opts(new GlxOpts),
   glx(GxFactory::makeWindowInterface(Tk_Display(tkWin), *opts)),
   canvas(GLCanvas::make(opts, glx)),
-  scene(new GxScene(canvas))
+  scene(new GxScene(canvas, rutz::make_shared(new tcl::timer_scheduler)))
 {
 GVX_TRACE("Toglet::Impl::Impl");
 }
