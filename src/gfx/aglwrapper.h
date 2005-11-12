@@ -72,17 +72,13 @@ public:
   virtual unsigned int bitsPerPixel() const;
 
   /// Bind the rendering context to the given window.
-  virtual void makeCurrent(Window win);
+  virtual void makeCurrent(unsigned long win);
 
   /// Should be called when the corresponding window's geometry is changed.
   virtual void onReshape(int width, int height);
 
   /// Swaps buffers if in double-buffering mode.
   virtual void swapBuffers() const;
-
-  /// Instantiate an actual Aqua window for the given Tk_Window.
-  virtual Window makeTkRealWindow(Tk_Window tkwin, Window parent,
-                                  int width, int height) throw();
 };
 
 //---------------------------------------------------------------------
@@ -332,7 +328,7 @@ GVX_TRACE("AglWrapper::bitsPerPixel");
   return static_cast<unsigned int>(value);
 }
 
-void AglWrapper::makeCurrent(Window win)
+void AglWrapper::makeCurrent(unsigned long win)
 {
 GVX_TRACE("AglWrapper::makeCurrent");
 
@@ -343,7 +339,7 @@ GVX_TRACE("AglWrapper::makeCurrent");
     {
       WindowRef macWindow = GetWindowFromPort(drawable);
       Rect rectPort;
-      GetWindowPortBounds (macWindow, &rectPort);
+      GetWindowPortBounds(macWindow, &rectPort);
       dbg_eval(0, rectPort.right);
       dbg_eval_nl(0, rectPort.left);
       dbg_eval(0, rectPort.bottom);
@@ -380,19 +376,6 @@ void AglWrapper::swapBuffers() const
 {
 GVX_TRACE("AglWrapper::swapBuffers");
   aglSwapBuffers(itsContext);
-}
-
-Window AglWrapper::makeTkRealWindow(Tk_Window tkwin, Window parent,
-                                    int width, int height) throw()
-{
-GVX_TRACE("AglWrapper::makeTkRealWindow");
-
-  GVX_ASSERT(false); // FIXME
-  (void) tkwin;
-  (void) parent;
-  (void) width;
-  (void) height;
-  return (Window) 0;
 }
 
 static const char vcid_groovx_gfx_aglwrapper_h_utc20050626084024[] = "$Id$ $HeadURL$";

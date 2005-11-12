@@ -38,6 +38,7 @@
 #include "gfx/glcanvas.h"
 #include "gfx/glwindowinterface.h"
 #include "gfx/glxopts.h"
+#include "gfx/glxwrapper.h"
 #include "gfx/gxfactory.h"
 #include "gfx/gxscene.h"
 #include "gfx/rgbacolor.h"
@@ -49,9 +50,8 @@
 
 #include "rutz/fstring.h"
 
-#include <tk.h>
-
 #include <limits>
+#include <tk.h>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -85,7 +85,7 @@ public:
   Tk_Window                     const tkWin;
   shared_ptr<GlxOpts>           const opts;
   shared_ptr<GlWindowInterface> const glx;
-  nub::soft_ref<GLCanvas>        const canvas;
+  nub::soft_ref<GLCanvas>       const canvas;
   GxScene*                      const scene;
 
   Impl(Toglet* p);
@@ -94,21 +94,7 @@ public:
     if (scene != 0)       scene->destroy();
     if (canvas.is_valid()) canvas->destroy();
   }
-
-  static Window cClassCreateProc(Tk_Window tkwin,
-                                 Window parent,
-                                 ClientData clientData) throw();
-
-  static Tk_ClassProcs classProcs;
 };
-
-Tk_ClassProcs Toglet::Impl::classProcs =
-  {
-    sizeof(Tk_ClassProcs),
-    static_cast<Tk_ClassWorldChangedProc*>(0),
-    Toglet::Impl::cClassCreateProc,
-    static_cast<Tk_ClassModalProc*>(0),
-  };
 
 
 //---------------------------------------------------------------------
@@ -126,19 +112,6 @@ Toglet::Impl::Impl(Toglet* p) :
   scene(new GxScene(canvas, rutz::make_shared(new tcl::timer_scheduler)))
 {
 GVX_TRACE("Toglet::Impl::Impl");
-}
-
-Window Toglet::Impl::cClassCreateProc(Tk_Window tkwin,
-                                      Window parent,
-                                      ClientData clientData) throw()
-{
-GVX_TRACE("Toglet::Impl::cClassCreateProc");
-  Toglet* const toglet = static_cast<Toglet*>(clientData);
-  GlWindowInterface* const glx = toglet->rep->glx.get();
-
-  GVX_ASSERT(glx != 0);
-
-  return glx->makeTkRealWindow(tkwin, parent, DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -161,6 +134,49 @@ namespace
 
     return buf.c_str();
   }
+
+#ifdef GVX_GL_PLATFORM_GLX
+  void configureGlxWindow(Tk_Window tkWin, const GlxWrapper* glx)
+  {
+    Display* dpy = Tk_Display(tkWin);
+
+    Visual* visual = glx->visInfo()->visual;
+    const int screen = glx->visInfo()->screen;
+
+    Colormap cmap =
+      visual == DefaultVisual(dpy, screen)
+      ? DefaultColormap(dpy, screen)
+      : XCreateColormap(dpy,
+                        RootWindow(dpy, screen),
+                        visual, AllocNone);
+
+    // Make sure Tk knows to switch to the new colormap when the cursor is over
+    // this window when running in color index mode.
+    Tk_SetWindowVisual(tkWin, visual, glx->visInfo()->depth, cmap);
+
+    XSetWindowAttributes atts;
+
+    atts.colormap = cmap;
+    atts.border_pixel = 0;
+    atts.event_mask =
+      KeyPressMask|KeyReleaseMask|
+      ButtonPressMask|ButtonReleaseMask|
+      EnterWindowMask|LeaveWindowMask|
+      PointerMotionMask|ExposureMask|
+      VisibilityChangeMask|FocusChangeMask|
+      PropertyChangeMask|ColormapChangeMask;
+
+    unsigned long valuemask = CWBorderPixel | CWColormap | CWEventMask;
+
+    if (Tk_IsTopLevel(tkWin))
+      {
+        atts.override_redirect = true;
+        valuemask |= CWOverrideRedirect;
+      }
+
+    Tk_ChangeWindowAttributes(tkWin, valuemask, &atts);
+  }
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -177,19 +193,25 @@ GVX_TRACE("Toglet::Toglet");
 
   dbg_eval_nl(3, this);
 
-  // Get the window mapped onscreen. NOTE -- we need to make these calls
-  // here, rather than in Impl's constructor. Why? Because some of these
-  // calls (e.g. Tk_MapWindow()) may trigger window-system callbacks (such
-  // as ConfigureNotify), which will end up calling Toglet's own functions,
-  // e.g. reshapeCallback(). Those functions require that "rep" be
-  // initialized. If we do this window set up in Impl's constructor, then
-  // it won't have returned yet, and so our "rep" variable won't be
-  // pointing anywhere meaningful (will be either NULL or garbage).
+  // Get the window mapped onscreen. NOTE -- we need to make these
+  // calls here, rather than in Impl's constructor. Why? Because some
+  // of these calls (e.g. Tk_MapWindow()) may trigger window-system
+  // callbacks (such as ConfigureNotify), which will end up calling
+  // Toglet's own functions, e.g. reshapeCallback(). Those functions
+  // require that "rep" be initialized. If we do this window set up in
+  // Impl's constructor, then it won't have returned yet, and so our
+  // "rep" variable won't be pointing anywhere meaningful (will be
+  // either NULL or garbage).
 
   Tk_GeometryRequest(rep->tkWin, DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
+
 #ifdef GVX_GL_PLATFORM_GLX
-  Tk_SetClassProcs(rep->tkWin, &Impl::classProcs, static_cast<ClientData>(this));
+  GlxWrapper* glx = dynamic_cast<GlxWrapper*>(rep->glx.get());
+  GVX_ASSERT(glx != 0);
+
+  configureGlxWindow(rep->tkWin, glx);
 #endif
+
   Tk_MakeWindowExist(rep->tkWin);
   Tk_MapWindow(rep->tkWin);
 

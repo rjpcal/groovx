@@ -34,8 +34,6 @@
 #ifndef GROOVX_GFX_GLWINDOWINTERFACE_H_UTC20050626084024_DEFINED
 #define GROOVX_GFX_GLWINDOWINTERFACE_H_UTC20050626084024_DEFINED
 
-#include <tk.h>
-
 class GlxOpts;
 
 namespace rutz
@@ -60,17 +58,13 @@ public:
   virtual unsigned int bitsPerPixel() const = 0;
 
   /// Bind the rendering context to the given window.
-  virtual void makeCurrent(Window win) = 0;
+  virtual void makeCurrent(unsigned long win) = 0;
 
   /// Should be called when the corresponding window's geometry is changed.
   virtual void onReshape(int width, int height) = 0;
 
   /// Swaps buffers if in double-buffering mode.
   virtual void swapBuffers() const = 0;
-
-  /// Instantiate an actual window-system window for the given Tk_Window.
-  virtual Window makeTkRealWindow(Tk_Window tkwin, Window parent,
-                                  int width, int height) throw() = 0;
 };
 
 static const char vcid_groovx_gfx_glwindowinterface_h_utc20050626084024[] = "$Id$ $HeadURL$";
