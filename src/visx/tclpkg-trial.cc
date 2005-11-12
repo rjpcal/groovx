@@ -35,14 +35,14 @@
 
 #include "visx/tclpkg-trial.h"
 
-#include "tcl-io/fieldpkg.h"
-
 #include "gfx/gxnode.h"
 
 #include "nub/objfactory.h"
 
 #include "tcl/itertcl.h"
 #include "tcl/tracertcl.h"
+
+#include "tcl-io/fieldpkg.h"
 
 #include "visx/response.h"
 #include "visx/responsehandler.h"

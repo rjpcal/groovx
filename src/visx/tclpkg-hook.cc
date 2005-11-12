@@ -333,7 +333,7 @@ namespace
   }
 }
 
-#include "gfx/toglet.h"
+#include "tcl-gfx/toglet.h"
 #if defined(GVX_GL_PLATFORM_GLX)
 #  include <GL/gl.h>
 #elif defined(GVX_GL_PLATFORM_AGL)

@@ -58,10 +58,6 @@
 #include "gfx/gxtext.h"
 #include "gfx/gxtransform.h"
 #include "gfx/pscanvas.h"
-#include "tcl-gfx/recttcl.h"
-#include "tcl-gfx/vectcl.h"
-
-#include "tcl-io/fieldpkg.h"
 
 #include "nub/objfactory.h"
 
@@ -72,6 +68,10 @@
 #include "tcl/pkg.h"
 #include "tcl/interp.h"
 #include "tcl/tracertcl.h"
+
+#include "tcl-gfx/recttcl.h"
+#include "tcl-gfx/vectcl.h"
+#include "tcl-io/fieldpkg.h"
 
 #include "rutz/error.h"
 

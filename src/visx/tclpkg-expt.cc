@@ -35,14 +35,14 @@
 
 #include "visx/tclpkg-expt.h"
 
-#include "gfx/toglet.h"
-
 #include "nub/ref.h"
 
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
 #include "tcl/pkg.h"
 #include "tcl/tracertcl.h"
+
+#include "tcl-gfx/toglet.h"
 
 #include "rutz/fstring.h"
 

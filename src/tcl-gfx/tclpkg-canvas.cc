@@ -35,17 +35,16 @@
 
 #include "tcl-gfx/tclpkg-canvas.h"
 
-#include "tcl-gfx/tclpkg-canvas.h"
-
 #include "gfx/canvas.h"
 #include "gfx/glcanvas.h"
-#include "tcl-gfx/recttcl.h"
-#include "tcl-gfx/vectcl.h"
 
 #include "media/bmapdata.h"
 
 #include "tcl/objpkg.h"
 #include "tcl/pkg.h"
+
+#include "tcl-gfx/recttcl.h"
+#include "tcl-gfx/vectcl.h"
 
 #include "rutz/trace.h"
 

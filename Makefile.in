@@ -384,6 +384,7 @@ $(exec_prefix)/lib/libgroovx-tcl-gfx$(LIB_EXT): \
 
 $(exec_prefix)/lib/libgroovx-visx$(LIB_EXT): \
 	$(subst .cc,.$(OBJEXT), $(subst $(SRC),$(OBJ), $(wildcard $(SRC)/visx/*.cc))) \
+	$(exec_prefix)/lib/libgroovx-tcl-gfx$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-media$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-geom$(LIB_EXT) \
 	$(exec_prefix)/lib/libgroovx-gfx$(LIB_EXT) \

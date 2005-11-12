@@ -34,10 +34,11 @@
 #define GROOVX_VISX_TRIALEVENT_H_UTC20050626084015_DEFINED
 
 #include "io/io.h"
-#include "tcl-io/tclprocwrapper.h"
 
 #include "nub/ref.h"
 #include "nub/timer.h"
+
+#include "tcl-io/tclprocwrapper.h"
 
 #include <vector>
 

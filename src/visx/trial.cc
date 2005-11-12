@@ -37,7 +37,6 @@
 
 #include "gfx/canvas.h"
 #include "gfx/gxshapekit.h"
-#include "gfx/toglet.h"
 
 #include "io/readutils.h"
 #include "io/writeutils.h"
@@ -48,6 +47,8 @@
 #include "rutz/fstring.h"
 #include "rutz/iter.h"
 #include "rutz/scopedptr.h"
+
+#include "tcl-gfx/toglet.h"
 
 #include "visx/response.h"
 #include "visx/responsehandler.h"

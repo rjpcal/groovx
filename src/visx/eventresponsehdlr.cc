@@ -35,10 +35,7 @@
 
 #include "visx/eventresponsehdlr.h"
 
-#include "gfx/toglet.h"
-
 #include "io/reader.h"
-#include "tcl-io/tclprocwrapper.h"
 #include "io/writer.h"
 
 #include "nub/log.h"
@@ -47,6 +44,9 @@
 #include "tcl/makecmd.h"
 #include "tcl/eventloop.h"
 #include "tcl/interp.h"
+
+#include "tcl-gfx/toglet.h"
+#include "tcl-io/tclprocwrapper.h"
 
 #include "rutz/fileposition.h"
 #include "rutz/fstring.h"

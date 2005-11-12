@@ -33,11 +33,11 @@
 #ifndef GROOVX_VISX_NULLRESPONSEHDLR_CC_UTC20050626084016_DEFINED
 #define GROOVX_VISX_NULLRESPONSEHDLR_CC_UTC20050626084016_DEFINED
 
-#include "gfx/toglet.h"
+#include "visx/nullresponsehdlr.h"
 
 #include "nub/ref.h"
 
-#include "visx/nullresponsehdlr.h"
+#include "tcl-gfx/toglet.h"
 
 #include "rutz/trace.h"
 

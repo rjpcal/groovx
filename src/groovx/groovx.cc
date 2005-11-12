@@ -39,10 +39,10 @@
 
 // #include's for forward decls of all the *_Init() procedures
 
-#include "tcl-gfx/tclpkg-canvas.h"                   // for Canvas_Init(), Glcanvas_Init(),
-#include "tcl-gfx/tclpkg-gx.h"                       // for Gx_Init(), Gxnode_Init(), Gxseparator_Init(), Gxcolor_Init(), Gxdrawstyle_Init(), Gxline_Init(), Gxcylinder_Init(), Gxsphere_Init(), Gxlighting_Init(), Gxmaterial_Init(), Gxpointset_Init(), Gxscaler_Init(), Gxemptynode_Init(), Gxtransform_Init(), Gxshapekit_Init(), Gxpixmap_Init(), Gxtext_Init(), Gxfixedscalecamera_Init(), Gxpsyphycamera_Init(), Gxperspectivecamera_Init(), Gxdisk_Init(),
-#include "tcl-gfx/tclpkg-toglet.h"                   // for Toglet_Init(),
-#include "tcl-io/tclpkg-io.h"                        // for Io_Init(), Outputfile_Init(),
+#include "tcl-gfx/tclpkg-canvas.h"               // for Canvas_Init(), Glcanvas_Init(),
+#include "tcl-gfx/tclpkg-gx.h"                   // for Gx_Init(), Gxnode_Init(), Gxseparator_Init(), Gxcolor_Init(), Gxdrawstyle_Init(), Gxline_Init(), Gxcylinder_Init(), Gxsphere_Init(), Gxlighting_Init(), Gxmaterial_Init(), Gxpointset_Init(), Gxscaler_Init(), Gxemptynode_Init(), Gxtransform_Init(), Gxshapekit_Init(), Gxpixmap_Init(), Gxtext_Init(), Gxfixedscalecamera_Init(), Gxpsyphycamera_Init(), Gxperspectivecamera_Init(), Gxdisk_Init(),
+#include "tcl-gfx/tclpkg-toglet.h"               // for Toglet_Init(),
+#include "tcl-io/tclpkg-io.h"                    // for Io_Init(), Outputfile_Init(),
 #include "tcl/tclpkg-dlist.h"                    // for Dlist_Init(),
 #include "tcl/tclpkg-gtrace.h"                   // for Gtrace_Init(), Prof_Init(),
 #include "tcl/tclpkg-log.h"                      // for Log_Init(),
@@ -50,8 +50,8 @@
 #include "tcl/tclpkg-obj.h"                      // for Objectdb_Init(), Obj_Init()
 #include "tk/tclpkg-widget.h"                    // for Tkwidget_Init(),
 #include "visx/tclpkg-block.h"                   // for Block_Init(),
-#include "visx/tclpkg-elementcontainer.h"        // for Elementcontainer_Init(),
 #include "visx/tclpkg-element.h"                 // for Element_Init(),
+#include "visx/tclpkg-elementcontainer.h"        // for Elementcontainer_Init(),
 #include "visx/tclpkg-expt.h"                    // for Exptdriver_Init(),
 #include "visx/tclpkg-face.h"                    // for Face_Init(), Cloneface_Init(),
 #include "visx/tclpkg-fish.h"                    // for Fish_Init(),
@@ -67,8 +67,8 @@
 #include "visx/tclpkg-sound.h"                   // for Sound_Init(),
 #include "visx/tclpkg-th.h"                      // for Timinghdlr_Init(), Timinghandler_Init(),
 #include "visx/tclpkg-tlist.h"                   // for Tlist_Init(),
-#include "visx/tclpkg-trialevent.h"              // for Trialevent_Init(), Nulltrialevent_Init(), Filewriteevent_Init(), Genericevent_Init(), Multievent_Init(),
 #include "visx/tclpkg-trial.h"                   // for Trial_Init(),
+#include "visx/tclpkg-trialevent.h"              // for Trialevent_Init(), Nulltrialevent_Init(), Filewriteevent_Init(), Genericevent_Init(), Multievent_Init(),
 
 //
 // Info about the packages to be loaded

@@ -38,8 +38,6 @@
 #include "gfx/glcanvas.h"
 #include "gfx/gxcamera.h"
 #include "gfx/gxnode.h"
-#include "gfx/toglet.h"
-#include "tcl-gfx/vectcl.h"
 
 #include "nub/objfactory.h"
 #include "nub/ref.h"
@@ -47,6 +45,9 @@
 #include "tcl/objpkg.h"
 #include "tcl/list.h"
 #include "tcl/pkg.h"
+
+#include "tcl-gfx/toglet.h"
+#include "tcl-gfx/vectcl.h"
 
 #include "rutz/error.h"
 

@@ -35,12 +35,9 @@
 
 #include "visx/exptdriver.h"
 
-#include "gfx/toglet.h"
-
 #include "io/ioproxy.h"
 #include "io/ioutil.h"
 #include "io/readutils.h"
-#include "tcl-io/tclprocwrapper.h"
 #include "io/writeutils.h"
 
 #include "nub/log.h"
@@ -48,6 +45,9 @@
 
 #include "tcl/eventloop.h"
 #include "tcl/interp.h"
+
+#include "tcl-gfx/toglet.h"
+#include "tcl-io/tclprocwrapper.h"
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"

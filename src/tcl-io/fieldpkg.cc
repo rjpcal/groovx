@@ -39,10 +39,10 @@
 
 #include "nub/ref.h"
 
+#include "tcl/list.h"
+
 #include "tcl-io/objreader.h"
 #include "tcl-io/objwriter.h"
-
-#include "tcl/list.h"
 
 #include "rutz/iter.h"
 

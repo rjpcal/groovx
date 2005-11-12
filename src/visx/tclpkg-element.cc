@@ -35,12 +35,10 @@
 
 #include "visx/tclpkg-element.h"
 
-#include "visx/tclpkg-element.h"
-
-#include "gfx/toglet.h"
-
 #include "tcl/objpkg.h"
 #include "tcl/pkg.h"
+
+#include "tcl-gfx/toglet.h"
 
 #include "rutz/fstring.h"
 

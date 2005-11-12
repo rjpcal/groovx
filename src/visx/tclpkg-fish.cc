@@ -35,12 +35,12 @@
 
 #include "visx/tclpkg-fish.h"
 
-#include "tcl-io/fieldpkg.h"
-
 #include "nub/objfactory.h"
 
 #include "tcl/objpkg.h"
 #include "tcl/tracertcl.h"
+
+#include "tcl-io/fieldpkg.h"
 
 #include "visx/fish.h"
 

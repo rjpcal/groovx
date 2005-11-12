@@ -35,10 +35,10 @@
 
 #include "visx/tclpkg-tlist.h"
 
-#include "tcl-gfx/recttcl.h"
-
 #include "tcl/list.h"
 #include "tcl/pkg.h"
+
+#include "tcl-gfx/recttcl.h"
 
 #include "visx/tlistutils.h"
 
