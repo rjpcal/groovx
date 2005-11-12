@@ -61,6 +61,10 @@ public:
 
   virtual ~GLCanvas() throw();
 
+  void makeCurrent();
+
+  static nub::soft_ref<GLCanvas> getCurrent();
+
   void drawBufferFront() throw();
   void drawBufferBack() throw();
 

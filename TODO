@@ -67,7 +67,7 @@
    --> used in ExptDriver::Impl::Impl (saved as member variable)
    --> used in GenericEvent::GenericEvent (passed to tcl::ProcWrapper)
 
-** Toglet::getCurrent()
+** Toglet::getCurrent() and GLCanvas::getCurrent()
    Most of this stuff has to do with the fact that we sometimes need a
    canvas to compute a bounding-box, in particular when we have a
    graphic object whose native size is in pixels rather than in world

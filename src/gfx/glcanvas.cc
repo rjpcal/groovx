@@ -78,6 +78,8 @@ using rutz::shared_ptr;
 
 namespace
 {
+  nub::soft_ref<GLCanvas> theCurrentCanvas;
+
   GLint attribStackDepth()
   {
     GLint d = -1;
@@ -267,6 +269,26 @@ GLCanvas::~GLCanvas() throw()
 GVX_TRACE("GLCanvas::~GLCanvas");
   delete rep;
   rep = 0;
+}
+
+void GLCanvas::makeCurrent()
+{
+GVX_TRACE("GLCanvas::makeCurrent");
+  rep->glx->makeCurrent();
+  if (!rep->opts->doubleFlag && this->isDoubleBuffered())
+    {
+      // We requested single buffering but had to accept a double
+      // buffered visual. Set the GL draw buffer to be the front
+      // buffer to simulate single buffering.
+      this->drawBufferFront();
+    }
+  theCurrentCanvas = nub::soft_ref<GLCanvas>(this);
+}
+
+nub::soft_ref<GLCanvas> GLCanvas::getCurrent()
+{
+GVX_TRACE("GLCanvas::getCurrent");
+  return theCurrentCanvas;
 }
 
 void GLCanvas::drawBufferFront() throw()

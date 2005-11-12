@@ -35,7 +35,7 @@
 
 #include "tcl-gfx/tclpkg-toglet.h"
 
-#include "gfx/canvas.h"
+#include "gfx/glcanvas.h"
 #include "gfx/gxcamera.h"
 #include "gfx/gxnode.h"
 #include "gfx/toglet.h"
@@ -75,11 +75,6 @@ namespace
         Toglet::getCurrent()->setVisibility(false);
       }
   }
-
-  nub::soft_ref<Gfx::Canvas> currentCanvas()
-  {
-    return Toglet::getCurrent()->getCanvas();
-  }
 }
 
 #include <tcl.h>
@@ -104,7 +99,7 @@ GVX_TRACE("Toglet_Init");
                                               "TopToglet" );
 
   pkg->def( "::tog", 0, &Toglet::getCurrent, SRC_POS );
-  pkg->def( "::cv", 0, &currentCanvas, SRC_POS );
+  pkg->def( "::cv", 0, &GLCanvas::getCurrent, SRC_POS );
 
   pkg->def( "current", "toglet_id", &Toglet::setCurrent, SRC_POS );
   pkg->def( "current", 0, &Toglet::getCurrent, SRC_POS );

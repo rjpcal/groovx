@@ -310,16 +310,10 @@ GVX_TRACE("Toglet::getCanvas");
 
 void Toglet::makeCurrent() const
 {
-  if (theCurrentToglet.id() != this->id())
+  if (theCurrentToglet.id() != this->id() ||
+      GLCanvas::getCurrent().id() != rep->canvas->id())
     {
-      rep->glx->makeCurrent();
-      if (!rep->opts->doubleFlag && rep->canvas->isDoubleBuffered())
-        {
-          // We requested single buffering but had to accept a double buffered
-          // visual.  Set the GL draw buffer to be the front buffer to
-          // simulate single buffering.
-          rep->canvas->drawBufferFront();
-        }
+      rep->canvas->makeCurrent();
       theCurrentToglet = nub::soft_ref<Toglet>(const_cast<Toglet*>(this));
     }
 }

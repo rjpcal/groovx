@@ -41,7 +41,7 @@
 
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
-#include "gfx/toglet.h"
+#include "gfx/glcanvas.h"
 
 #include "io/reader.h"
 #include "io/writer.h"
@@ -88,7 +88,7 @@ GVX_TRACE("GxScaler::setWidth");
   if (itsMode == NATIVE_SCALING) return;
 
   const rectd native_bbox =
-    child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
+    child()->getBoundingBox(*(GLCanvas::getCurrent()));
 
   const double current_width = native_bbox.width() * itsWidthFactor;
 
@@ -114,7 +114,7 @@ GVX_TRACE("GxScaler::setHeight");
   if (itsMode == NATIVE_SCALING) return;
 
   const rectd native_bbox =
-    child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
+    child()->getBoundingBox(*(GLCanvas::getCurrent()));
 
   const double current_height = native_bbox.height() * itsHeightFactor;
 
@@ -181,7 +181,7 @@ double GxScaler::scaledWidth() const
 {
 GVX_TRACE("GxScaler::scaledWidth");
   const rectd native_bbox =
-    child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
+    child()->getBoundingBox(*(GLCanvas::getCurrent()));
   return native_bbox.width() * itsWidthFactor * aspectRatio();
 }
 
@@ -189,7 +189,7 @@ double GxScaler::scaledHeight() const
 {
 GVX_TRACE("GxScaler::scaledHeight");
   const rectd native_bbox =
-    child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
+    child()->getBoundingBox(*(GLCanvas::getCurrent()));
   return native_bbox.height() * itsHeightFactor;
 }
 
