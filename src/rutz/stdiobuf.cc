@@ -189,7 +189,9 @@ int rutz::stdiobuf::flushoutput()
 // (aka std::basic_iostream<char>); so, we force an instantiation of
 // those functions here to avoid link errors. This line should be
 // quickly removed as soon as we no longer need to use g++ 3.4.3.
+#ifdef GVX_MISSING_IOSTREAM_INSTANTIATION
 template class std::basic_iostream<char>;
+#endif
 
 static const char vcid_groovx_rutz_stdiobuf_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_STDIOBUF_CC_UTC20050626084020_DEFINED
