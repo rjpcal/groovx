@@ -36,6 +36,8 @@
 
 #ifdef GVX_GL_PLATFORM_AGL
 
+#include "gfx/aglwrapper.h"
+
 #include "gfx/glxopts.h"
 
 #include "rutz/error.h"
@@ -184,8 +186,7 @@ namespace
   };
 }
 
-AglWrapper::AglWrapper(Display* dpy, GlxOpts& opts) :
-  itsDisplay(dpy),
+AglWrapper::AglWrapper(GlxOpts& opts) :
   itsPixFormat(0),
   itsContext(0),
   itsDrawable(0)
@@ -213,10 +214,10 @@ GVX_TRACE("AglWrapper::AglWrapper");
                       SRC_POS);
 }
 
-AglWrapper* AglWrapper::make(Display* dpy, GlxOpts& opts)
+AglWrapper* AglWrapper::make(GlxOpts& opts)
 {
 GVX_TRACE("AglWrapper::make");
-  return new AglWrapper(dpy, opts);
+  return new AglWrapper(opts);
 }
 
 AglWrapper::~AglWrapper()
@@ -278,7 +279,7 @@ void AglWrapper::makeCurrent()
 {
 GVX_TRACE("AglWrapper::makeCurrent");
 
-  ASSERT(itsDrawable != 0);
+  GVX_ASSERT(itsDrawable != 0);
 
   if (GVX_DBG_LEVEL() >= 3)
     {

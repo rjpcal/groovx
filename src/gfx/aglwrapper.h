@@ -44,7 +44,6 @@ class GlxOpts;
 class AglWrapper : public GlWindowInterface
 {
 private:
-  Display* itsDisplay;
   AGLPixelFormat itsPixFormat;
   AGLContext itsContext;
   CGrafPtr itsDrawable; // AGLDrawable is a typedef for CGrafPtr
@@ -53,11 +52,11 @@ private:
   AglWrapper& operator=(const AglWrapper&);
 
   /// Construct.
-  AglWrapper(Display* dpy, GlxOpts& opts);
+  AglWrapper(GlxOpts& opts);
 
 public:
   /// Factory function.
-  static AglWrapper* make(Display* dpy, GlxOpts& opts);
+  static AglWrapper* make(GlxOpts& opts);
 
   /// Destructor.
   virtual ~AglWrapper();

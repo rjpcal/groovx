@@ -125,7 +125,7 @@ Toglet::Impl::Impl(Toglet* p) :
   glx(GlxWrapper::make(Tk_Display(tkWin), *opts,
                        (GlxWrapper*)0 /*shared context*/)),
 #elif defined(GVX_GL_PLATFORM_AGL)
-  glx(AglWrapper::make(Tk_Display(tkWin), *opts)),
+  glx(AglWrapper::make(*opts)),
 #endif
   canvas(GLCanvas::make(opts, glx)),
   scene(new GxScene(canvas, rutz::make_shared(new tcl::timer_scheduler)))
@@ -233,8 +233,8 @@ GVX_TRACE("Toglet::Toglet");
 
 #if defined(GVX_GL_PLATFORM_GLX)
   rep->glx->bindWindow(Tk_WindowId(rep->tkWin));
-#elif define(GVX_GL_PLATFORM_AGL)
-  rep->glx->bindWindow(TkMacOSXGetDrawablePort(Tk_WindowId(rep->tkWin)));
+#elif defined(GVX_GL_PLATFORM_AGL)
+  rep->glx->bindDrawable(TkMacOSXGetDrawablePort(Tk_WindowId(rep->tkWin)));
 #endif
 
   // Bind the context to the window and make it the current context
