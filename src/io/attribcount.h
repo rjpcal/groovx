@@ -1,18 +1,18 @@
-/** @file io/io.cc abstract base class for serializable objects */
+/** @file io/attribcount.h Count the number of attributes in an io::serializable object */
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 1999-2005
+// Copyright (c) 2005-2005
 // Rob Peters <rjpeters at usc dot edu>
 //
-// created: Tue Mar  9 20:25:02 1999
+// created: Fri Nov 11 17:15:50 2005
 // commit: $Id$
 // $HeadURL$
 //
 // --------------------------------------------------------------------
 //
 // This file is part of GroovX.
-//   [http://ilab.usc.edu/rjpeters/groovx/]
+//   [http://www.klab.caltech.edu/rjpeters/groovx/]
 //
 // GroovX is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -30,29 +30,19 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_IO_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_IO_CC_UTC20050626084021_DEFINED
+#ifndef GROOVX_IO_ATTRIBCOUNT_H_UTC20051112011550_DEFINED
+#define GROOVX_IO_ATTRIBCOUNT_H_UTC20051112011550_DEFINED
 
-#include "io/io.h"
-
-#include "rutz/trace.h"
-
-io::serializable::serializable() throw()
+namespace io
 {
-GVX_TRACE("io::serializable::serializable");
+  class serializable;
+
+  /** Returns the number of attributes that are written in the
+      object's write_to() function. This implementation simply calls
+      write_to() with a dummy writer and counts how many attributes
+      are written. */
+  unsigned int attrib_count(const io::serializable& obj);
 }
 
-// Must be defined out of line to avoid duplication of io's vtable
-io::serializable::~serializable() GVX_DTOR_NOTHROW
-{
-GVX_TRACE("io::serializable::~serializable");
-}
-
-io::version_id io::serializable::class_version_id() const
-{
-GVX_TRACE("io::serializable::class_version_id");
-  return 0;
-}
-
-static const char vcid_groovx_io_io_cc_utc20050626084021[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_IO_IO_CC_UTC20050626084021_DEFINED
+static const char vcid_groovx_io_attribcount_h_utc20051112011550[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_IO_ATTRIBCOUNT_H_UTC20051112011550DEFINED

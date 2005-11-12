@@ -35,6 +35,7 @@
 
 #include "io/asciistreamwriter.h"
 
+#include "io/attribcount.h"
 #include "io/io.h"
 #include "io/writeidmap.h"
 #include "io/writer.h"
@@ -343,7 +344,7 @@ namespace
       m_buf << 'v' << serial_ver_id << ' ';
 
     //   ...write the <attribute count>...
-    m_buf << obj->attrib_count() << '\n';
+    m_buf << io::attrib_count(*obj) << '\n';
 
     //   ...write the object's <attributes>...
     obj->write_to(*this);

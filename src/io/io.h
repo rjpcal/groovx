@@ -91,15 +91,6 @@ public:
       \c write_to() of don't need to deal with formatting. */
   virtual void write_to(io::writer& writer) const = 0;
 
-  /** Returns the number of attributes that are written in the
-      object's \c write_to() function. The default implementation
-      simply calls write_to() with a dummy writer and counts how many
-      attributes are written. However, this is somewhat inefficient
-      since it defers the counting to runtime when the number may in
-      fact be known at compile time. Thus subclasses may wish to
-      override this function to return a compile-time constant. */
-  virtual unsigned int attrib_count() const;
-
   /** Returns a serialization version id for the class. The default
       implementation returns zero. Classes should override this when
       they make a change that requires a change to their serialization
