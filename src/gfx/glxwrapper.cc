@@ -279,15 +279,16 @@ GVX_TRACE("GlxWrapper::make");
   return glx;
 }
 
-void GlxWrapper::makeCurrent(unsigned long win)
+void GlxWrapper::makeCurrent()
 {
 GVX_TRACE("GlxWrapper::makeCurrent");
 
-  if (currentGlxWrapper != this || itsCurrentWin != win)
+  GVX_ASSERT(itsCurrentWin != 0);
+
+  if (currentGlxWrapper != this)
     {
-      glXMakeCurrent(itsDisplay, win, itsContext);
+      glXMakeCurrent(itsDisplay, itsCurrentWin, itsContext);
       currentGlxWrapper = this;
-      itsCurrentWin = win;
     }
 }
 

@@ -57,8 +57,8 @@ public:
   /// Get the bit depth of the draw buffer(s).
   virtual unsigned int bitsPerPixel() const = 0;
 
-  /// Bind the rendering context to the given window.
-  virtual void makeCurrent(unsigned long win) = 0;
+  /// Make our rendering context the current active one.
+  virtual void makeCurrent() = 0;
 
   /// Should be called when the corresponding window's geometry is changed.
   virtual void onReshape(int width, int height) = 0;

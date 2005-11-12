@@ -38,10 +38,15 @@
 #include "gfx/glcanvas.h"
 #include "gfx/glwindowinterface.h"
 #include "gfx/glxopts.h"
-#include "gfx/glxwrapper.h"
 #include "gfx/gxfactory.h"
 #include "gfx/gxscene.h"
 #include "gfx/rgbacolor.h"
+
+#if defined (GVX_GL_PLATFORM_GLX)
+#  include "gfx/glxwrapper.h"
+#elif defined(GVX_GL_PLATFORM_AGL)
+#  include "gfx/aglwrapper.h"
+#endif
 
 #include "nub/ref.h"
 
@@ -52,6 +57,11 @@
 
 #include <limits>
 #include <tk.h>
+
+#ifdef GVX_GL_PLATFORM_AGL
+#  define HAVE_LIMITS_H
+#  include <tkMacOSX.h>
+#endif
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -84,7 +94,11 @@ public:
   Toglet*                       const owner;
   Tk_Window                     const tkWin;
   shared_ptr<GlxOpts>           const opts;
-  shared_ptr<GlWindowInterface> const glx;
+#if defined(GVX_GL_PLATFORM_GLX)
+  shared_ptr<GlxWrapper>        const glx;
+#elif defined(GVX_GL_PLATFORM_AGL)
+  shared_ptr<AglWrapper>        const glx;
+#endif
   nub::soft_ref<GLCanvas>       const canvas;
   GxScene*                      const scene;
 
@@ -107,7 +121,12 @@ Toglet::Impl::Impl(Toglet* p) :
   owner(p),
   tkWin(owner->tkWin()),
   opts(new GlxOpts),
-  glx(GxFactory::makeWindowInterface(Tk_Display(tkWin), *opts)),
+#if defined(GVX_GL_PLATFORM_GLX)
+  glx(GlxWrapper::make(Tk_Display(tkWin), *opts,
+                       (GlxWrapper*)0 /*shared context*/)),
+#elif defined(GVX_GL_PLATFORM_AGL)
+  glx(AglWrapper::make(Tk_Display(tkWin), *opts)),
+#endif
   canvas(GLCanvas::make(opts, glx)),
   scene(new GxScene(canvas, rutz::make_shared(new tcl::timer_scheduler)))
 {
@@ -206,14 +225,17 @@ GVX_TRACE("Toglet::Toglet");
   Tk_GeometryRequest(rep->tkWin, DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 
 #ifdef GVX_GL_PLATFORM_GLX
-  GlxWrapper* glx = dynamic_cast<GlxWrapper*>(rep->glx.get());
-  GVX_ASSERT(glx != 0);
-
-  configureGlxWindow(rep->tkWin, glx);
+  configureGlxWindow(rep->tkWin, rep->glx.get());
 #endif
 
   Tk_MakeWindowExist(rep->tkWin);
   Tk_MapWindow(rep->tkWin);
+
+#if defined(GVX_GL_PLATFORM_GLX)
+  rep->glx->bindWindow(Tk_WindowId(rep->tkWin));
+#elif define(GVX_GL_PLATFORM_AGL)
+  rep->glx->bindWindow(TkMacOSXGetDrawablePort(Tk_WindowId(rep->tkWin)));
+#endif
 
   // Bind the context to the window and make it the current context
   this->makeCurrent();
@@ -290,7 +312,7 @@ void Toglet::makeCurrent() const
 {
   if (theCurrentToglet.id() != this->id())
     {
-      rep->glx->makeCurrent(Tk_WindowId(rep->tkWin));
+      rep->glx->makeCurrent();
       if (!rep->opts->doubleFlag && rep->canvas->isDoubleBuffered())
         {
           // We requested single buffering but had to accept a double buffered

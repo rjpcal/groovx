@@ -75,8 +75,8 @@ public:
   /// Get the bit depth of the draw buffer(s).
   virtual unsigned int bitsPerPixel() const;
 
-  /// Bind the rendering context to the given window.
-  virtual void makeCurrent(unsigned long win);
+  /// Make our rendering context the current active one.
+  virtual void makeCurrent();
 
   /// Should be called when the corresponding window's geometry is changed.
   virtual void onReshape(int width, int height);
@@ -85,6 +85,9 @@ public:
   virtual void swapBuffers() const;
 
   // GLX-specific functions:
+
+  /// Bind to a given X window
+  void bindWindow(Window win) { itsCurrentWin = win; }
 
   /// Get the associated X11 Display.
   Display* display() const { return itsDisplay; }

@@ -41,10 +41,8 @@
 
 #if defined(GVX_GL_PLATFORM_GLX)
 #  include "gfx/glxrasterfont.h"
-#  include "gfx/glxwrapper.h"
 #elif defined(GVX_GL_PLATFORM_AGL)
 #  include "gfx/aglrasterfont.h"
-#  include "gfx/aglwrapper.h"
 #else
 #  error no GVX_GL_PLATFORM macro defined
 #endif
@@ -93,18 +91,6 @@ rutz::shared_ptr<GxFont> GxFactory::makeFont(const char* name_cstr)
   rutz::shared_ptr<GxFont> font(GxFactory::makeRasterFont(name_cstr));
   theFontMap.insert(MapType::value_type(name, font));
   return font;
-}
-
-rutz::shared_ptr<GlWindowInterface>
-GxFactory::makeWindowInterface(Display* dpy, GlxOpts& opts)
-{
-GVX_TRACE("GxFactory::makeWindowInterface");
-#if defined(GVX_GL_PLATFORM_GLX)
-  return rutz::make_shared
-    (GlxWrapper::make(dpy, opts, (GlxWrapper*)0 /*shared context*/));
-#elif defined(GVX_GL_PLATFORM_AGL)
-  return rutz::make_shared(AglWrapper::make(dpy, opts));
-#endif
 }
 
 static const char vcid_groovx_gfx_gxfactory_cc_utc20050706224913[] = "$Id$ $HeadURL$";

@@ -34,10 +34,6 @@
 #ifndef GROOVX_GFX_GXFACTORY_H_UTC20050706224701_DEFINED
 #define GROOVX_GFX_GXFACTORY_H_UTC20050706224701_DEFINED
 
-#include <tk.h>
-
-class GlWindowInterface;
-class GlxOpts;
 class GxFont;
 class GxRasterFont;
 
@@ -56,10 +52,6 @@ public:
 
   /// Create a platform-appropriate raster or vector font.
   static rutz::shared_ptr<GxFont> makeFont(const char* name);
-
-  /// Make a concrete GlWindowInterface of a platform-dependent type.
-  static rutz::shared_ptr<GlWindowInterface>
-  makeWindowInterface(Display* dpy, GlxOpts& opts);
 };
 
 static const char vcid_groovx_gfx_gxfactory_h_utc20050706224701[] = "$Id$ $HeadURL$";
