@@ -36,7 +36,6 @@
 #ifndef GROOVX_NUB_OBJDB_H_UTC20050626084019_DEFINED
 #define GROOVX_NUB_OBJDB_H_UTC20050626084019_DEFINED
 
-#include "nub/ref.h"
 #include "nub/uid.h"
 
 #include "rutz/error.h"
@@ -47,7 +46,6 @@ namespace nub
   class object;
   class objectdb;
   class invalid_uid_error;
-  template <class T> class soft_ref;
 }
 
 /**
@@ -71,10 +69,10 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * objectdb is a database for storing nub::object's, which can be
- * accessed by the objects' nub::uid's. Most clients will not need to
- * use the objectdb directly, but can instead manage nub::object's
- * indirectly with the nub::ref and nub::soft_ref smart pointers.
+ * objectdb is a database for storing nub::object objects, which can
+ * be accessed by their nub::uid values. Most clients will not need to
+ * use the objectdb directly, but can instead use the nub::ref and
+ * nub::soft_ref smart pointers.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -98,7 +96,7 @@ public:
   // Iterators
   //
 
-  typedef rutz::fwd_iter<const soft_ref<object> > iterator;
+  typedef rutz::fwd_iter<object* const> iterator;
 
   iterator objects() const;
 
@@ -110,7 +108,7 @@ public:
 
     void advance_to_valid()
     {
-      while (!m_itr.at_end() && (dynamic_cast<T*>((*m_itr).get_weak())==0))
+      while (!m_itr.at_end() && (dynamic_cast<T*>(*m_itr)==0))
         ++m_itr;
     }
 

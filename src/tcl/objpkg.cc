@@ -71,7 +71,7 @@ namespace
     int count = 0;
     for (nub::objectdb::iterator itr(instance.objects()); itr.is_valid(); ++itr)
       {
-        if (caster->is_my_type((*itr).get_weak()))
+        if (caster->is_my_type(*itr))
           ++count;
       }
     return count;
@@ -85,8 +85,8 @@ namespace
 
     for (nub::objectdb::iterator itr(instance.objects()); itr.is_valid(); ++itr)
       {
-        if (caster->is_my_type((*itr).get_weak()))
-          result.append((*itr).id());
+        if (caster->is_my_type(*itr))
+          result.append((*itr)->id());
       }
 
     return result;
@@ -102,7 +102,7 @@ namespace
         dbg_eval(3, (*itr)->id());
         dbg_dump(3, *(*itr)->get_counts());
 
-        if (caster->is_my_type((*itr).get_weak()) && (*itr)->is_unshared())
+        if (caster->is_my_type(*itr) && (*itr)->is_unshared())
           {
             nub::uid remove_me = (*itr)->id();
             ++itr;

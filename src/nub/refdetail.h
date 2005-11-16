@@ -53,6 +53,12 @@ namespace nub
       PROTECTED, //! nub::objectdb gets a weak reference to the object
       PUBLIC     //! nub::objectdb gets a strong reference to the object
     };
+
+  //! Get the current default visibility (will control ref_vis DEFAULT).
+  ref_vis get_default_ref_vis();
+
+  //! Set the current default visibility (will control ref_vis DEFAULT).
+  void set_default_ref_vis(ref_vis vis);
 }
 
 ///////////////////////////////////////////////////////////

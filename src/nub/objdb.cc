@@ -39,7 +39,7 @@
 #include "objdb.h"
 
 #include "nub/object.h"
-#include "nub/ref.h"
+#include "nub/refdetail.h"
 
 #include <typeinfo>
 #include <map>
@@ -73,7 +73,7 @@ private:
 
 public:
 
-  typedef nub::soft_ref<nub::object> obj_ref;
+  typedef nub::detail::weak_handle<nub::object> obj_ref;
 
   typedef std::map<nub::uid, obj_ref> map_type;
   mutable map_type m_obj_map;
@@ -87,7 +87,7 @@ public:
   {
     if (itr == m_obj_map.end()) return false;
 
-    if ((*itr).second.is_invalid())
+    if (!(*itr).second.is_valid())
       {
         m_obj_map.erase(itr);
         return false;
@@ -199,11 +199,9 @@ public:
 
       const int new_id = ptr->id();
 
-      // Must create the obj_ref with "PRIVATE" to avoid endless recursion
-      m_obj_map.insert(map_type::value_type
-                       (new_id, obj_ref(ptr,
-                                        strong ? nub::STRONG : nub::WEAK,
-                                        nub::PRIVATE)));
+      m_obj_map.insert
+        (map_type::value_type
+         (new_id, obj_ref(ptr, strong ? nub::STRONG : nub::WEAK)));
     }
 };
 
@@ -216,7 +214,7 @@ public:
 namespace
 {
   class iter_impl :
-    public rutz::fwd_iter_ifx<const nub::soft_ref<nub::object> >
+    public rutz::fwd_iter_ifx<nub::object* const>
   {
   public:
     typedef nub::objectdb::impl::map_type map_type;
@@ -225,9 +223,17 @@ namespace
     {
       while (true)
         {
-          if (m_iter == m_end) break;
+          if (m_iter == m_end)
+            {
+              m_obj = 0;
+              return;
+            }
 
-          if ((*m_iter).second.is_valid()) break;
+          if ((*m_iter).second.is_valid())
+            {
+              m_obj = (*m_iter).second.get_weak();
+              return;
+            }
 
           map_type::iterator bad = m_iter;
           ++m_iter;
@@ -237,13 +243,14 @@ namespace
     }
 
     iter_impl(map_type& m, map_type::iterator itr) :
-      m_map(m), m_iter(itr), m_end(m.end())
+      m_map(m), m_iter(itr), m_obj(0), m_end(m.end())
     {
       advance_to_valid();
     }
 
     map_type& m_map;
     map_type::iterator m_iter;
+    nub::object* m_obj;
     const map_type::iterator m_end;
 
     virtual ifx_t* clone() const
@@ -260,9 +267,16 @@ namespace
         }
     }
 
-    virtual value_t& get()  const { return (*m_iter).second; }
+    virtual value_t& get() const
+    {
+      GVX_ASSERT(m_iter == m_end || (*m_iter).second.get_weak() == m_obj);
+      return m_obj;
+    }
 
-    virtual bool  at_end() const { return (m_iter == m_end); }
+    virtual bool at_end() const
+    {
+      return (m_iter == m_end);
+    }
   };
 }
 

@@ -45,12 +45,6 @@
 
 namespace nub
 {
-  //! Get the current default visibility (will control ref_vis DEFAULT).
-  ref_vis get_default_ref_vis();
-
-  //! Set the current default visibility (will control ref_vis DEFAULT).
-  void set_default_ref_vis(ref_vis vis);
-
   template <class T> class ref;
   template <class T> class soft_ref;
   template <class T> class floating_ref;
