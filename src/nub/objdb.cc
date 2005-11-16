@@ -39,7 +39,7 @@
 #include "objdb.h"
 
 #include "nub/object.h"
-#include "nub/refdetail.h"
+#include "nub/weak_handle.h"
 
 #include <typeinfo>
 #include <map>

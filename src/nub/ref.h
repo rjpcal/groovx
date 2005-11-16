@@ -34,8 +34,9 @@
 #ifndef GROOVX_NUB_REF_H_UTC20050626084019_DEFINED
 #define GROOVX_NUB_REF_H_UTC20050626084019_DEFINED
 
+#include "nub/handle.h"
 #include "nub/object.h"
-#include "nub/refdetail.h"
+#include "nub/weak_handle.h"
 
 #include "rutz/fileposition.h" // for SRC_POS macro
 #include "rutz/stderror.h"     // for rutz::throw_bad_cast()
@@ -48,7 +49,51 @@ namespace nub
   template <class T> class ref;
   template <class T> class soft_ref;
   template <class T> class floating_ref;
-}
+
+  //! Get the current default visibility (will control ref_vis DEFAULT).
+  ref_vis get_default_ref_vis();
+
+  //! Set the current default visibility (will control ref_vis DEFAULT).
+  void set_default_ref_vis(ref_vis vis);
+
+  namespace detail
+  {
+    bool is_valid_uid(nub::uid id) throw();
+    nub::object* get_checked_item(nub::uid id);
+
+    void insert_item(nub::object* obj, ref_vis vis);
+
+    template <class T>
+    inline T* get_casted_item(nub::uid id)
+    {
+      nub::object* obj = get_checked_item(id);
+      T* t = dynamic_cast<T*>(obj);
+      if (t == 0)
+        rutz::throw_bad_cast(typeid(T), typeid(nub::object), SRC_POS);
+      return t;
+    }
+
+    template <>
+    inline nub::object* get_casted_item<nub::object>(nub::uid id)
+    { return get_checked_item(id); }
+
+    /// Policy class which unrefs objects by decrementing their ref count.
+    template <class T>
+    struct default_unref_policy
+    {
+      static void unref(T* t) throw() { t->decr_ref_count(); }
+    };
+
+    /// Policy class which decrements ref count without deletion.
+    template <class T>
+    struct no_delete_unref_policy
+    {
+      static void unref(T* t) throw() { t->decr_ref_count_no_delete(); }
+    };
+
+  } // end namespace nub::detail
+
+} // end namespace nub
 
 namespace rutz
 {

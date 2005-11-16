@@ -1,18 +1,19 @@
-/** @file nub/refdetail.cc helper functions for nub::ref and
-    nub::soft_ref */
+/** @file nub/ref.cc smart pointers (both strong and weak) using
+    intrusive ref-counting with nub::object and derivatives */
+
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2000-2005
+// Copyright (c) 2005-2005
 // Rob Peters <rjpeters at usc dot edu>
 //
-// created: Fri Oct 27 17:07:31 2000
+// created: Wed Nov 16 09:06:27 2005
 // commit: $Id$
 // $HeadURL$
 //
 // --------------------------------------------------------------------
 //
 // This file is part of GroovX.
-//   [http://ilab.usc.edu/rjpeters/groovx/]
+//   [http://www.klab.caltech.edu/rjpeters/groovx/]
 //
 // GroovX is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -30,10 +31,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_REFDETAIL_CC_UTC20050705190649_DEFINED
-#define GROOVX_NUB_REFDETAIL_CC_UTC20050705190649_DEFINED
+#ifndef GROOVX_NUB_REF_CC_UTC20051116170627_DEFINED
+#define GROOVX_NUB_REF_CC_UTC20051116170627_DEFINED
 
-#include "nub/refdetail.h"
+#include "nub/ref.h"
 
 #include "nub/objdb.h"
 
@@ -89,31 +90,5 @@ void nub::detail::insert_item(nub::object* obj, ref_vis vis)
     }
 }
 
-void nub::detail::throw_ref_null(const std::type_info& info,
-                               const rutz::file_pos& pos)
-{
-  throw rutz::error(rutz::fstring("attempted to construct a ref<",
-                                  rutz::demangled_name(info),
-                                  "> with a null pointer"),
-                    pos);
-}
-
-void nub::detail::throw_ref_unshareable(const std::type_info& info,
-                                      const rutz::file_pos& pos)
-{
-  throw rutz::error(rutz::fstring("attempted to construct a ref<",
-                                  rutz::demangled_name(info),
-                                  "> with an unshareable object"),
-                    pos);
-}
-
-void nub::detail::throw_soft_ref_invalid(const std::type_info& info,
-                                      const rutz::file_pos& pos)
-{
-  throw rutz::error(rutz::fstring("attempted to access invalid object "
-                                  "in soft_ref<", rutz::demangled_name(info), ">"),
-                    pos);
-}
-
-static const char vcid_groovx_nub_refdetail_cc_utc20050705190649[] = "$Id$ $HeadURL$";
-#endif // !GROOVX_NUB_REFDETAIL_CC_UTC20050705190649_DEFINED
+static const char vcid_groovx_nub_ref_cc_utc20051116170627[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_NUB_REF_CC_UTC20051116170627DEFINED
