@@ -1,0 +1,108 @@
+/** @file rutz/error_context.h */
+
+///////////////////////////////////////////////////////////////////////
+//
+// Copyright (c) 2005-2005
+// Rob Peters <rjpeters at usc dot edu>
+//
+// created: Thu Nov 17 16:14:06 2005
+// commit: $Id$
+// $HeadURL$
+//
+// --------------------------------------------------------------------
+//
+// This file is part of GroovX.
+//   [http://www.klab.caltech.edu/rjpeters/groovx/]
+//
+// GroovX is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// GroovX is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with GroovX; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+//
+///////////////////////////////////////////////////////////////////////
+
+#ifndef GROOVX_RUTZ_ERROR_CONTEXT_H_UTC20051118001406_DEFINED
+#define GROOVX_RUTZ_ERROR_CONTEXT_H_UTC20051118001406_DEFINED
+
+#include "rutz/fstring.h"
+#include "rutz/staticstack.h"
+
+namespace rutz
+{
+  class error_context;
+  class error_context_entry;
+}
+
+/// Don't use this class directly; use the GVX_ERR_CONTEXT() macro instead.
+class rutz::error_context
+{
+public:
+  /// Constructor (but use current() to get the current context)
+  error_context();
+
+  /// Destructor
+  ~error_context();
+
+  /// Get the current thread-local error context object
+  static const rutz::error_context& current();
+
+  /// Add an entry to the context stack
+  bool add_entry(const error_context_entry* e);
+
+  /// Remove an entry from the context stack
+  void remove_entry(const error_context_entry* e);
+
+  /// get the text of all context entries, separated by newlines
+  rutz::fstring get_text() const;
+
+private:
+  error_context(const error_context&); // not implemented
+  error_context& operator=(const error_context&); // not implemented
+
+  rutz::static_stack<const error_context_entry*, 256> m_entries;
+};
+
+/// Don't use this class directly; use the GVX_ERR_CONTEXT() macro instead.
+class rutz::error_context_entry
+{
+public:
+  /// Construct an error context entry, adding it to the current error_context
+  error_context_entry(const rutz::fstring& msg);
+
+  /// Destruct the error context entry, removing it from its error_context
+  ~error_context_entry();
+
+  /// Get the message associated with this entry
+  const rutz::fstring& text() const { return m_text; }
+
+private:
+  error_context_entry(const error_context_entry&);
+  error_context_entry& operator=(const error_context_entry&);
+
+  rutz::fstring m_text;
+
+  // context from which to remove ourselves, or null
+  rutz::error_context* m_context;
+};
+
+/// Give some contextual information that can be used if an error message is needed.
+/** The GVX_ERR_CONTEXT() calls form a last-in/last-out stack that
+    describes the call context at any moment, in particular at the
+    moment that an error might occur. If an error does occur, we can
+    capture the call context and report it to the user, (hopefully)
+    making it easier to understand the error and debug the problem.
+ */
+#define GVX_ERR_CONTEXT(msg) \
+  rutz::error_context_entry e_c_object_(msg)
+
+static const char vcid_groovx_rutz_error_context_h_utc20051118001406[] = "$Id$ $HeadURL$";
+#endif // !GROOVX_RUTZ_ERROR_CONTEXT_H_UTC20051118001406DEFINED

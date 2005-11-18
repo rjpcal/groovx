@@ -89,6 +89,7 @@ private:
   error& operator=(const error& other);
 
   rutz::fstring          m_msg; // holds the user-provided info
+  rutz::fstring          m_context; // holds text from a rutz::error_context
   mutable rutz::fstring  m_what; // holds m_msg plus decoration
   rutz::file_pos         m_file_pos;
   const rutz::backtrace* m_backtrace;

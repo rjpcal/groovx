@@ -36,6 +36,7 @@
 #include "rutz/error.h"
 
 #include "rutz/backtrace.h"
+#include "rutz/error_context.h"
 #include "rutz/fstring.h"
 #include "rutz/mutex.h"
 
@@ -56,6 +57,7 @@ namespace
 rutz::error::error(const rutz::file_pos& pos) :
   std::exception(),
   m_msg(),
+  m_context(rutz::error_context::current().get_text()),
   m_file_pos(pos),
   m_backtrace(new rutz::backtrace(rutz::backtrace::current()))
 {
@@ -82,6 +84,7 @@ rutz::error::error(const rutz::fstring& msg,
                    const rutz::file_pos& pos) :
   std::exception(),
   m_msg(msg),
+  m_context(rutz::error_context::current().get_text()),
   m_file_pos(pos),
   m_backtrace(new rutz::backtrace(rutz::backtrace::current()))
 {
@@ -107,6 +110,7 @@ GVX_TRACE("rutz::error::error(fstring)");
 rutz::error::error(const rutz::error& other) throw() :
   std::exception(other),
   m_msg(other.m_msg),
+  m_context(other.m_context),
   m_file_pos(other.m_file_pos),
   m_backtrace(0)
 {
