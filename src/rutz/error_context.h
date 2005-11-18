@@ -64,6 +64,34 @@ public:
   /// get the text of all context entries, separated by newlines
   rutz::fstring get_text() const;
 
+  /// Prepend our message (if any) to the given string
+  /** This function is a template that is designed to work with either
+      std::string or rutz::fstring (but without naming std::string
+      explicitly here, we can avoid needing to #include the 50K lines of
+      code from <string>).
+
+      Example usage:
+
+      \code
+      std::string mymsg = "something bad happened";
+      rutz::error_context::current().prepend_to(mymsg);
+      \endcode
+  */
+  template <class S>
+  inline void prepend_to(S& str) const
+  {
+    const rutz::fstring ctx = this->get_text();
+
+    if (ctx.length() > 0)
+      {
+        const S orig = str;
+        str = "error context follows (innermost last):\n";
+        str += ctx.c_str();
+        str += "\n";
+        str += orig;
+      }
+  }
+
 private:
   error_context(const error_context&); // not implemented
   error_context& operator=(const error_context&); // not implemented
