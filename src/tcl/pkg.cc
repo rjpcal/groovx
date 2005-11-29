@@ -178,8 +178,8 @@ public:
   string                         const pkg_name;
   string                         const version;
   int                                  init_status;
-  vector<shared_ptr<int> >             owned_ints;
-  vector<shared_ptr<double> >          owned_doubles;
+  std::vector<shared_ptr<int> >        owned_ints;
+  std::vector<shared_ptr<double> >     owned_doubles;
   exit_callback*                       on_exit;
 
   Tcl_Namespace* tcl_namespace() const

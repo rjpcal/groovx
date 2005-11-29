@@ -43,8 +43,8 @@
 #include <cstdio>
 #include <functional>
 #include <iomanip>
-#include <iostream>
 #include <new> // for std::nothrow
+#include <ostream>
 #include <pthread.h>
 #include <string>
 

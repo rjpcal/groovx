@@ -34,7 +34,9 @@
 #ifndef GROOVX_RUTZ_GZSTREAMBUF_H_UTC20050626084020_DEFINED
 #define GROOVX_RUTZ_GZSTREAMBUF_H_UTC20050626084020_DEFINED
 
-#include <iostream>
+#include <istream>
+#include <ostream>
+#include <streambuf>
 #include <zlib.h>
 
 namespace rutz

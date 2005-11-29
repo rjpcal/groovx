@@ -41,7 +41,8 @@
 
 #include <cctype>
 #include <cstring>
-#include <iostream>
+#include <istream>
+#include <ostream>
 #include <pthread.h>
 
 #ifndef GVX_NO_PROF

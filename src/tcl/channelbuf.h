@@ -35,7 +35,8 @@
 #define GROOVX_TCL_CHANNELBUF_H_UTC20050628162420_DEFINED
 
 #include <iostream>
-
+#include <ostream>
+#include <streambuf>
 #include <tcl.h>
 
 namespace rutz
