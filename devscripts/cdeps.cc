@@ -1484,6 +1484,23 @@ namespace
                                   const vector<string>& ipath,
                                   const vector<string>& literal)
   {
+    // First, try to see if we can consider the included file as a
+    // literal file:
+    for (unsigned int i = 0; i < literal.size(); ++i)
+      {
+        const char* extension =
+          include_name.c_str() + include_name.length() - literal[i].length();
+
+        if (strncmp(extension, literal[i].c_str(),
+                    literal[i].length()) == 0)
+          {
+            this->m_direct_cdeps.push_back(file_info::get(include_name));
+            this->m_direct_cdeps.back()->m_literal = true;
+            return true;
+          }
+      }
+
+    // Next, try searching for the file in the given ipath:
     for (unsigned int i = 0; i < ipath.size(); ++i)
       {
         const string fullpath = join_filename(ipath[i], include_name);
@@ -1526,8 +1543,8 @@ namespace
           }
       }
 
-    // Try resolving the include by using the current working directory
-    // from which this program was invoked.
+    // If all else fails, try resolving the include by using the
+    // current working directory from which this program was invoked.
     if (file_exists(include_name.c_str()))
       {
         if (this->m_fname != include_name)
@@ -1535,22 +1552,6 @@ namespace
             this->m_direct_cdeps.push_back(file_info::get(include_name));
           }
         return true;
-      }
-
-    // If all else fails, try to see if we can consider the included file as
-    // a literal file:
-    for (unsigned int i = 0; i < literal.size(); ++i)
-      {
-        const char* extension =
-          include_name.c_str() + include_name.length() - literal[i].length();
-
-        if (strncmp(extension, literal[i].c_str(),
-                    literal[i].length()) == 0)
-          {
-            this->m_direct_cdeps.push_back(file_info::get(include_name));
-            this->m_direct_cdeps.back()->m_literal = true;
-            return true;
-          }
       }
 
     return false;
