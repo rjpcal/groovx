@@ -5,10 +5,36 @@
 # Quick script for checking that src files are in sync between groovx
 # and invt.
 
-if test $# -ne 1; then
-    echo "usage: `basename $0` path/to/saliency"
+if test $# -lt 1; then
+    echo "usage: `basename $0` [-q] path/to/saliency"
     exit 1
 fi
+
+saliencydir=""
+listmode=0
+
+for arg in "$@"; do
+    case "$arg" in
+	-*)
+	    case "$arg" in
+		-l)
+		    listmode=1
+		    ;;
+		*)
+		    echo "unknown option '$arg'"
+		    exit 1
+		    ;;
+	    esac
+	    ;;
+	*)
+	    if test "x$saliencydir" != "x"; then
+		echo "only one saliency directory can be given"
+		exit 1
+	    fi
+	    saliencydir=$arg
+	    ;;
+    esac
+done
 
 saliencydir=$1
 
@@ -23,7 +49,9 @@ tosync="src/rutz \
     devscripts/set-svn-props.sh"
 
 for d in $tosync; do
-    echo "considering $d ..."
+    if test $listmode -ne 1; then
+	echo "considering $d ..."
+    fi
     if test -d "$d"; then
 	files=`ls -1 ${d}/*.{h,cc,dxy}`;
     else
@@ -42,7 +70,11 @@ for d in $tosync; do
 		| fgrep -v '$Revision' \
 		> tmpdiff
 	    if test -s tmpdiff; then
-		diff -u $f $saliencydir/$f
+		if test $listmode -eq 1; then
+		    echo "$f"
+		else
+		    diff -u $f $saliencydir/$f
+		fi
 	    fi
 	    rm tmpdiff
 	fi
