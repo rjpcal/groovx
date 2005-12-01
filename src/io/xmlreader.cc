@@ -71,9 +71,9 @@ namespace
   void invalid_attr(const char* attname, const char* eltype,
                     const char* elname, const rutz::file_pos& pos)
   {
-    throw rutz::error(fstring("invalid '", attname,
-                              "' attribute for <",
-                              eltype, "> element with name: ", elname),
+    throw rutz::error(rutz::cat("invalid '", attname,
+                                "' attribute for <",
+                                eltype, "> element with name: ", elname),
                       pos);
   }
 
@@ -87,9 +87,9 @@ namespace
           return attr[i+1];
       }
 
-    throw rutz::error(fstring("missing '", attname,
-                              "' attribute for <",
-                              eltype, "> element with name: ", elname),
+    throw rutz::error(rutz::cat("missing '", attname,
+                                "' attribute for <",
+                                eltype, "> element with name: ", elname),
                       pos);
 
     GVX_ASSERT(0);
@@ -107,9 +107,9 @@ namespace
 
     virtual void add_child(const char* /*name*/, el_ptr /*elp*/)
     {
-      throw rutz::error(fstring("child elements not allowed "
-                                "within elements of type: ",
-                                rutz::demangled_name(typeid(*this))),
+      throw rutz::error(rutz::cat("child elements not allowed "
+                                  "within elements of type: ",
+                                  rutz::demangled_name(typeid(*this))),
                         SRC_POS);
     }
 
@@ -128,14 +128,14 @@ namespace
                  const rutz::file_pos& pos)
   {
     if (elp == 0)
-      throw rutz::error(fstring("no element with name: ", name),
+      throw rutz::error(rutz::cat("no element with name: ", name),
                         SRC_POS);
     T* t = dynamic_cast<T*>(elp);
     if (t == 0)
-      throw rutz::error(fstring("wrong element type; expected ",
-                                rutz::demangled_name(typeid(T)),
-                                ", got ",
-                                rutz::demangled_name(typeid(*elp))),
+      throw rutz::error(rutz::cat("wrong element type; expected ",
+                                  rutz::demangled_name(typeid(T)),
+                                  ", got ",
+                                  rutz::demangled_name(typeid(*elp))),
                         pos);
     return *t;
   }
@@ -483,7 +483,7 @@ namespace
           }
         else
           {
-            throw rutz::error(fstring("unknown element type: ", el),
+            throw rutz::error(rutz::cat("unknown element type: ", el),
                               SRC_POS);
           }
       }

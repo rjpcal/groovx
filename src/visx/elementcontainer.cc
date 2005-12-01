@@ -146,14 +146,12 @@ GVX_TRACE("ElementContainer::lastResponse");
 rutz::fstring ElementContainer::vxInfo() const
 {
 GVX_TRACE("ElementContainer::vxInfo");
-  if (isComplete()) return rutz::fstring("complete");
+  if (isComplete()) return rutz::cat("complete");
 
-  rutz::fstring msg("current element ",
-                    currentElement()->unique_name(),
-                    ", completed ", numCompleted(),
-                    " of ", numElements());
-
-  return msg;
+  return rutz::cat("current element ",
+                   currentElement()->unique_name(),
+                   ", completed ", numCompleted(),
+                   " of ", numElements());
 }
 
 void ElementContainer::vxHalt() const
@@ -258,7 +256,7 @@ GVX_TRACE("ElementContainer::vxReset");
 
   for (unsigned int i = 0; i < rep->elements.size(); ++i)
     {
-      nub::log(rutz::fstring("resetting element", i));
+      nub::log(rutz::cat("resetting element", i));
       rep->elements[i]->vxReset();
     }
 

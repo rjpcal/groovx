@@ -292,9 +292,8 @@ GVX_TRACE("TimingHdlr::Impl::scheduleAll");
         events[i]->schedule(s, *trial, minimum_delay);
       minimum_delay = scheduled_delay+1;
 
-      rutz::fstring info("scheduled @ ", scheduled_delay,
-                         ": ", events[i]->unique_name());
-      nub::log(info);
+      nub::log(rutz::cat("scheduled @ ", scheduled_delay,
+                         ": ", events[i]->unique_name()));
     }
 }
 

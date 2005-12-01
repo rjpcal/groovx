@@ -134,8 +134,8 @@ GVX_TRACE("media::load_jpeg");
 
   if (aux.infile == 0)
     {
-      throw rutz::error(rutz::fstring("couldn't open '", filename,
-                                      "' for reading"), SRC_POS);
+      throw rutz::error(rutz::cat("couldn't open '", filename,
+                                  "' for reading"), SRC_POS);
     }
 
 

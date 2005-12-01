@@ -90,7 +90,7 @@ public:
                                    static_cast<Tcl_CmdDeleteProc*>(0))),
     initial_cmd_name(get_full_command_name(intp, cmd_token)),
     cmd_list(),
-    prof_name("tcl/", cmd_name),
+    prof_name(rutz::cat("tcl/", cmd_name)),
     prof(prof_name.c_str(), src_pos.m_file_name, src_pos.m_line_no)
   {}
 
@@ -318,7 +318,7 @@ tcl::command_group* tcl::command_group::lookup_original(
 {
 GVX_TRACE("tcl::command_group::lookup_original");
 
-  const fstring script("namespace origin ", name);
+  const fstring script = rutz::cat("namespace origin ", name);
   if (interp.eval(script, tcl::IGNORE_ERROR) == false)
     {
       return 0;

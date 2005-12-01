@@ -49,8 +49,8 @@ tcl::channel_buf::channel_buf(Tcl_Interp* interp,
   chan = Tcl_GetChannel(interp, channame, &origmode);
   if (chan == 0)
     {
-      throw rutz::error(rutz::fstring("no channel named '",
-                                      channame, "'"), SRC_POS);
+      throw rutz::error(rutz::cat("no channel named '",
+                                  channame, "'"), SRC_POS);
     }
   opened = true;
 }

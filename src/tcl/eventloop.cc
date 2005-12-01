@@ -266,7 +266,7 @@ GVX_TRACE("tcl::event_loop_impl::do_prompt");
 
   if (isatty(1))
     {
-      color_prompt = rutz::fstring("\033[1;32m", text, "\033[0m");
+      color_prompt = rutz::cat("\033[1;32m", text, "\033[0m");
     }
 
 #ifdef GVX_WITH_READLINE
@@ -298,9 +298,9 @@ GVX_TRACE("tcl::event_loop_impl::prompt");
   else
     {
 #ifdef GVX_WITH_READLINE
-      rutz::fstring text(m_argv0, " ", history_next(), ">>> ");
+      const rutz::fstring text = rutz::cat(m_argv0, " ", history_next(), ">>> ");
 #else
-      rutz::fstring text(m_argv0, " ", history_next(), "> ");
+      const rutz::fstring text = rutz::cat(m_argv0, " ", history_next(), "> ");
 #endif
 
       do_prompt(text.c_str(), text.length());

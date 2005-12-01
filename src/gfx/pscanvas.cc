@@ -93,8 +93,8 @@ public:
     itsPrimPtr(0)
   {
     if (!itsFstream.is_open())
-      raiseError(rutz::fstring("couldn't open '",
-                               filename, "' for writing"),
+      raiseError(rutz::cat("couldn't open '",
+                           filename, "' for writing"),
                  SRC_POS);
 
     itsStates.push_back(State());
@@ -605,7 +605,7 @@ public:
 
   void raiseError(const rutz::fstring& msg, const rutz::file_pos& pos)
   {
-    throw rutz::error(rutz::fstring("PSCanvas error: ", msg), pos);
+    throw rutz::error(rutz::cat("PSCanvas error: ", msg), pos);
   }
 
   void beginPrimitive(Primitive* ptr, const char* comment)

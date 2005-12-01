@@ -98,8 +98,8 @@ void nub::logging::reset()
 GVX_TRACE("nub::logging::reset");
   scopes.clear();
 
-  log(fstring("log reset ",
-              rutz::format_time(rutz::time::wall_clock_now())));
+  log(rutz::cat("log reset ",
+                rutz::format_time(rutz::time::wall_clock_now())));
 }
 
 void nub::logging::add_scope(const fstring& name)
@@ -133,7 +133,7 @@ GVX_TRACE("nub::logging::add_obj_scope");
 
   add_scope(scopename);
 
-  log(fstring("entering ", scopename));
+  log(rutz::cat("entering ", scopename));
 }
 
 void nub::logging::remove_obj_scope(const nub::object& obj)
@@ -142,7 +142,7 @@ GVX_TRACE("nub::logging::remove_obj_scope");
 
   const fstring scopename = obj.unique_name();
 
-  log(fstring("leaving ", scopename));
+  log(rutz::cat("leaving ", scopename));
 
   remove_scope(scopename);
 }

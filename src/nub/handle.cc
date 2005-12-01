@@ -41,18 +41,18 @@
 void nub::detail::throw_ref_null(const std::type_info& info,
                                  const rutz::file_pos& pos)
 {
-  throw rutz::error(rutz::fstring("attempted to construct a ref<",
-                                  rutz::demangled_name(info),
-                                  "> with a null pointer"),
+  throw rutz::error(rutz::cat("attempted to construct a ref<",
+                              rutz::demangled_name(info),
+                              "> with a null pointer"),
                     pos);
 }
 
 void nub::detail::throw_ref_unshareable(const std::type_info& info,
                                         const rutz::file_pos& pos)
 {
-  throw rutz::error(rutz::fstring("attempted to construct a ref<",
-                                  rutz::demangled_name(info),
-                                  "> with an unshareable object"),
+  throw rutz::error(rutz::cat("attempted to construct a ref<",
+                              rutz::demangled_name(info),
+                              "> with an unshareable object"),
                     pos);
 }
 

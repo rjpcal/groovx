@@ -131,9 +131,9 @@ GVX_TRACE("rutz::error::~error");
 
 const char* rutz::error::what() const throw()
 {
-  m_what = rutz::fstring("at ", m_file_pos.m_file_name,
-                         ":", m_file_pos.m_line_no, ":\n",
-                         m_msg);
+  m_what = rutz::cat("at ", m_file_pos.m_file_name,
+                     ":", m_file_pos.m_line_no, ":\n",
+                     m_msg);
   return m_what.c_str();
 }
 

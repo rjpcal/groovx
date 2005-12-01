@@ -37,6 +37,8 @@
 
 #include "rutz/error.h"
 
+#include <istream>
+#include <ostream>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"

@@ -53,8 +53,8 @@ namespace
 {
   void throwErrno(const char* where, const rutz::file_pos& pos)
   {
-    throw rutz::error(rutz::fstring("in \"", where, "\": ",
-                                    ::strerror(errno)), pos);
+    throw rutz::error(rutz::cat("in \"", where, "\": ",
+                                ::strerror(errno)), pos);
   }
 
   class ErrnoSaver

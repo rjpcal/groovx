@@ -78,14 +78,14 @@ namespace
 
   void testConstruct2()
   {
-    fstring s("foo", " fighters!");
+    fstring s = rutz::cat("foo", " fighters!");
     TEST_REQUIRE(s.length() == 13);
     TEST_REQUIRE(s == "foo fighters!");
   }
 
   void testConstructNum()
   {
-    fstring s("double val: ", 1.234, ", int val: ", 1234);
+    fstring s = rutz::cat("double val: ", 1.234, ", int val: ", 1234);
     TEST_REQUIRE(s == "double val: 1.234, int val: 1234");
   }
 

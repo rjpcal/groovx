@@ -79,7 +79,7 @@ namespace
   {
     static int cmdCounter = 0;
 
-    return fstring("::__ERHPrivate::", stem, ++cmdCounter);
+    return rutz::cat("::__ERHPrivate::", stem, ++cmdCounter);
   }
 }
 
@@ -157,7 +157,7 @@ public:
 
       theResponse.setMsec(int(itsTrial.trElapsedMsec() + 0.5));
 
-      nub::log( fstring("event_info: ", event_info) );
+      nub::log( rutz::cat("event_info: ", event_info) );
 
       theResponse.setVal(Response::INVALID_VALUE);
 
@@ -168,7 +168,7 @@ public:
           } catch (...) {}
         }
 
-      nub::log( fstring("response val: ", theResponse.val()) );
+      nub::log( rutz::cat("response val: ", theResponse.val()) );
 
       if (theResponse.shouldIgnore())
         return;
@@ -191,10 +191,11 @@ public:
 
   void becomeActive(nub::soft_ref<Toglet> widget, Trial& trial) const
   {
-    nub::log( fstring("binding to ", itsCallbackName) );
+    nub::log( rutz::cat("binding to ", itsCallbackName) );
 
-    fstring script(itsCallbackName, ' ', itsOwner->id());
-    script.append(" [list ", itsBindingSubstitution, ']');
+    const fstring script =
+      rutz::cat(itsCallbackName, ' ', itsOwner->id(),
+                " [list ", itsBindingSubstitution, ']');
 
     itsState.reset(new ActiveState(this, widget, trial,
                                    itsEventSequence, script));
@@ -348,7 +349,8 @@ GVX_TRACE("EventResponseHdlr::setInputResponseMap");
 
   fstring args("inp");
 
-  fstring body("set map {", s, "}\n"
+  fstring body =
+    rutz::cat( "set map {", s, "}\n"
                "foreach pair $map {\n"
                "  foreach {rx val} $pair {\n"
                "    if [regexp $rx $inp] { return $val }\n"

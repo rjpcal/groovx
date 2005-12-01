@@ -108,7 +108,7 @@ namespace
       case 'w': return false;
       }
 
-    throw rutz::error(rutz::fstring("invalid read/write mode '", m, "'"),
+    throw rutz::error(rutz::cat("invalid read/write mode '", m, "'"),
                       SRC_POS);
     return false; // "can't happen"
   }

@@ -122,7 +122,7 @@ namespace
         if (text_labels)
           {
             ref<GxText> label(GxText::make());
-            label->setText(rutz::fstring(objids[i]));
+            label->setText(rutz::cat(objids[i]));
             label->setAlignmentMode(GxAligner::CENTER_ON_CENTER);
             label->setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
             label->setHeight(0.1);
@@ -500,8 +500,8 @@ tcl::list TlistUtils::loadObjidFile(const char* objid_file,
   std::ifstream ifs(objid_file);
 
   if (ifs.fail())
-    throw rutz::error(rutz::fstring("couldn't open '", objid_file,
-                                    "' for reading"), SRC_POS);
+    throw rutz::error(rutz::cat("couldn't open '", objid_file,
+                                "' for reading"), SRC_POS);
 
   const int BUF_SIZE = 200;
   char line[BUF_SIZE];

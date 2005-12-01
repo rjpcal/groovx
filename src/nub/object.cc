@@ -77,7 +77,7 @@ GVX_TRACE("nub::object::obj_typename");
 rutz::fstring nub::object::unique_name() const
 {
 GVX_TRACE("nub::object::unique_name");
-  return rutz::fstring(obj_typename(), "(", id(), ")");
+  return rutz::cat(obj_typename(), "(", id(), ")");
 }
 
 static const char vcid_groovx_nub_object_cc_utc20050626084019[] = "$Id$ $HeadURL$";

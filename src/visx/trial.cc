@@ -171,8 +171,8 @@ public:
     if (activeState->widget.is_valid() && currentNode < gxNodes.size())
       {
         activeState->widget->setDrawable(gxNodes[currentNode]);
-        nub::log(fstring("current node is ",
-                         gxNodes[currentNode]->unique_name()));
+        nub::log(rutz::cat("current node is ",
+                           gxNodes[currentNode]->unique_name()));
       }
   }
 };
@@ -410,7 +410,7 @@ void Trial::setCurrentNode(unsigned int nodeNumber)
 GVX_TRACE("Trial::setCurrentNode");
   if (nodeNumber >= rep->gxNodes.size())
     {
-      throw rutz::error(fstring("invalid node number ", nodeNumber),
+      throw rutz::error(rutz::cat("invalid node number ", nodeNumber),
                         SRC_POS);
     }
   rep->currentNode = nodeNumber;

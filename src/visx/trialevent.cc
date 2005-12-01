@@ -153,8 +153,8 @@ GVX_TRACE("TrialEvent::invokeTemplate");
 
   nub::logging::add_obj_scope(*this);
 
-  nub::log( fstring("req ", itsRequestedDelay,
-                    " - ", -itsEstimatedOffset) );
+  nub::log( rutz::cat("req ", itsRequestedDelay,
+                      " - ", -itsEstimatedOffset) );
 
   itsTotalOffset += error;
   itsTotalError += (itsRequestedDelay - msec);
@@ -268,8 +268,8 @@ void FileWriteEvent::invoke(Trial& /*trial*/)
     {
       itsFile->stream().put(static_cast<char>(itsByte));
       itsFile->stream().flush();
-      nub::log( fstring("wrote '", itsByte, "' to '",
-                        itsFile->get_filename(), "'") );
+      nub::log( rutz::cat("wrote '", itsByte, "' to '",
+                          itsFile->get_filename(), "'") );
     }
 }
 

@@ -98,11 +98,12 @@ get_known_keys(const char* sep) const
 void rutz::assoc_array_base::
 throw_for_key(const char* key, const rutz::file_pos& pos) const
 {
-  rutz::fstring msg("known keys are:\n\t", get_known_keys("\n\t"));
-
-  msg.append("\nunknown ", rep->key_description, " '", key, "'");
-
-  throw rutz::error(msg, pos);
+  throw rutz::error(rutz::cat("known keys are:\n\t",
+                              get_known_keys("\n\t"),
+                              "\nunknown ",
+                              rep->key_description,
+                              " '", key, "'"),
+                    pos);
 }
 
 void rutz::assoc_array_base::

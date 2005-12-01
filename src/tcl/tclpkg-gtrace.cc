@@ -58,7 +58,7 @@ namespace
   void setOneLevel(int key, int level)
   {
     if (!rutz::debug::is_valid_key(key))
-      throw rutz::error(rutz::fstring("no such debug key '", key, "'"),
+      throw rutz::error(rutz::cat("no such debug key '", key, "'"),
                         SRC_POS);
 
     // else...
@@ -69,7 +69,7 @@ namespace
   {
     const int key = rutz::debug::lookup_key(fname);
     if (key == -1)
-      throw rutz::error(rutz::fstring("no debug key for file '", fname, "'"),
+      throw rutz::error(rutz::cat("no debug key for file '", fname, "'"),
                         SRC_POS);
 
     GVX_ASSERT(rutz::debug::is_valid_key(key));

@@ -103,8 +103,8 @@ public:
       {
         // If we got here, then none of the substrings matched so we must
         // raise an exception.
-        throw rutz::error(fstring("couldn't read typename for ",
-                                  correct_name.c_str()), SRC_POS);
+        throw rutz::error(rutz::cat("couldn't read typename for ",
+                                    correct_name.c_str()), SRC_POS);
       }
   }
 
@@ -120,8 +120,8 @@ public:
       {
         // If we got here, then none of the substrings matched so we must
         // raise an exception.
-        throw rutz::error(fstring("couldn't read typename for ",
-                                  correct_name.c_str()), SRC_POS);
+        throw rutz::error(rutz::cat("couldn't read typename for ",
+                                    correct_name.c_str()), SRC_POS);
       }
   }
 

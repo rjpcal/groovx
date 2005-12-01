@@ -65,8 +65,9 @@ fstring rutz::vsfmt(const char* fmt, va_list ap)
           // a negative return code from vsnprintf() means there was
           // an actual formatting error (i.e., not just a too-short
           // buffer)
-          const fstring msg("vsnprintf failed with format string '",
-                            fmt, "' and bufsize ", bufsize);
+          const fstring msg =
+            rutz::cat("vsnprintf failed with format string '",
+                      fmt, "' and bufsize ", bufsize);
           throw rutz::error(msg, SRC_POS);
         }
       else if (static_cast<size_t>(nchars) >= bufsize)
@@ -78,9 +79,9 @@ fstring rutz::vsfmt(const char* fmt, va_list ap)
           // size_t:
           if (new_bufsize < bufsize)
             {
-              const fstring msg("buffer size overflow "
-                                "with format string '",
-                                fmt, "' and bufsize ", bufsize);
+              const fstring msg =
+                rutz::cat("buffer size overflow with format string '",
+                          fmt, "' and bufsize ", bufsize);
               throw rutz::error(msg, SRC_POS);
             }
 

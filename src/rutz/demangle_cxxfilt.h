@@ -50,15 +50,14 @@ namespace
   {
     GVX_TRACE("demangle_cxxfilt");
 
-    rutz::fstring command("c++filt ", mangled.c_str());
-
-    rutz::shell_pipe pipe(command.c_str(), "r");
+    rutz::shell_pipe pipe(rutz::cat("c++filt ",
+                                    mangled.c_str()).c_str(), "r");
 
     if (pipe.is_closed())
       {
-        throw rutz::error(rutz::fstring("while demangling '",
-                                        mangled.c_str(),
-                                        "': couldn't open pipe to c++filt"),
+        throw rutz::error(rutz::cat("while demangling '",
+                                    mangled.c_str(),
+                                    "': couldn't open pipe to c++filt"),
                           SRC_POS);
       }
 

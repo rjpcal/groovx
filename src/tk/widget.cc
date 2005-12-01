@@ -593,8 +593,8 @@ GVX_TRACE("tcl::TkWidget::setCursor");
 
       if (new_cursor == 0)
         {
-          throw rutz::error(fstring("couldn't set cursor to '",
-                                    cursor_spec, "'"), SRC_POS);
+          throw rutz::error(rutz::cat("couldn't set cursor to '",
+                                      cursor_spec, "'"), SRC_POS);
         }
 
       // OK, creating the new cursor succeeded, now free the old one
@@ -646,9 +646,8 @@ GVX_TRACE("tcl::TkWidget::repack");
 
   if (!Tk_IsTopLevel(rep->tkWin))
     {
-      const fstring pack_cmd("pack ", pathname(), " ",
-                             options, "; update");
-      rep->interp.eval(pack_cmd);
+      rep->interp.eval(rutz::cat("pack ", pathname(), " ",
+                                 options, "; update"));
     }
 }
 
@@ -658,8 +657,7 @@ GVX_TRACE("tcl::TkWidget::unpack");
 
   if (!Tk_IsTopLevel(rep->tkWin))
     {
-      const fstring unpack_cmd("pack forget ", pathname());
-      rep->interp.eval(unpack_cmd);
+      rep->interp.eval(rutz::cat("pack forget ", pathname()));
     }
 }
 
@@ -728,8 +726,8 @@ void tcl::TkWidget::bind(const fstring& event_sequence,
 {
 GVX_TRACE("tcl::TkWidget::bind");
 
-  fstring cmd_str("bind ", pathname(), " ");
-  cmd_str.append( event_sequence, " ");
+  fstring cmd_str =
+    rutz::cat("bind ", pathname(), " ", event_sequence, " ");
 
   if (script.length() == 0)
     {
@@ -751,9 +749,7 @@ void tcl::TkWidget::takeFocus()
 {
 GVX_TRACE("tcl::TkWidget::takeFocus");
 
-  const fstring cmd("focus -force ", pathname());
-
-  rep->interp.eval(cmd);
+  rep->interp.eval(rutz::cat("focus -force ", pathname()));
 }
 
 void tcl::TkWidget::loseFocus()
@@ -768,10 +764,9 @@ GVX_TRACE("tcl::TkWidget::loseFocus");
     }
 
   const char* pathname = Tk_PathName(toplev);
-  const fstring cmd("wm iconify ", pathname,
-                    "; wm deiconify ", pathname);
 
-  rep->interp.eval(cmd);
+  rep->interp.eval(rutz::cat("wm iconify ", pathname,
+                             "; wm deiconify ", pathname));
 }
 
 void tcl::TkWidget::requestRedisplay()

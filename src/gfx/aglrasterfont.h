@@ -181,8 +181,8 @@ GVX_TRACE("AglRasterFont::getFontId");
   GetFNum(pstring, &fnum);
 
   if (fnum == 0)
-    throw rutz::error(rutz::fstring("couldn't get Apple Font ID "
-                                    "for font '", name, "'"),
+    throw rutz::error(rutz::cat("couldn't get Apple Font ID "
+                                "for font '", name, "'"),
                       SRC_POS);
 
   return GLint(fnum);
@@ -205,8 +205,8 @@ GVX_TRACE("AglRasterFont::pickAppleFont");
       int n = sscanf(spec, "%dx%d", &w, &h);
 
       if (n != 2)
-        throw rutz::error(rutz::fstring("couldn't parse fontspec '",
-                                        spec, "' as '[width]x[height]"),
+        throw rutz::error(rutz::cat("couldn't parse fontspec '",
+                                    spec, "' as '[width]x[height]"),
                           SRC_POS);
 
       result.fontID = getFontId("Courier");
@@ -224,8 +224,8 @@ GVX_TRACE("AglRasterFont::pickAppleFont");
                      family, weight, slant, pxlsize);
 
       if (n != 4)
-        throw rutz::error(rutz::fstring("couldn't parse fontspec '", spec,
-                                        "' (expected 4 conversions, got ", n, ")"),
+        throw rutz::error(rutz::cat("couldn't parse fontspec '", spec,
+                                    "' (expected 4 conversions, got ", n, ")"),
                           SRC_POS);
 
       result.fontID = getFontId(family);
@@ -245,8 +245,8 @@ GVX_TRACE("AglRasterFont::pickAppleFont");
           int n2 = sscanf(pxlsize, "%d", &ipxlsize);
 
           if (n2 != 1)
-            throw rutz::error(rutz::fstring("couldn't parse pixel size "
-                                            "from '", pxlsize, "'"),
+            throw rutz::error(rutz::cat("couldn't parse pixel size "
+                                        "from '", pxlsize, "'"),
                               SRC_POS);
         }
 

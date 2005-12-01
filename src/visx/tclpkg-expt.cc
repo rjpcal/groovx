@@ -65,27 +65,27 @@ namespace
 
     // Create the begin key binding
     w->bind("<Control-KeyPress-b>",
-            fstring("-> ", w.id(), " takeFocus; -> ", xp.id(), " begin"));
+            rutz::cat("-> ", w.id(), " takeFocus; -> ", xp.id(), " begin"));
 
     // Create the quit key binding
     w->bind("<Control-KeyPress-q>",
-            fstring("-> ", xp.id(), " halt; -> ", xp.id(), " storeData; exit"));
+            rutz::cat("-> ", xp.id(), " halt; -> ", xp.id(), " storeData; exit"));
 
     // Create the quit-without-save key binding
     w->bind("<Control-Alt-KeyPress-x>", "exit");
 
     // Create the save key binding
-    w->bind("<Control-KeyPress-s>", fstring("-> ", xp.id(), " storeData"));
+    w->bind("<Control-KeyPress-s>", rutz::cat("-> ", xp.id(), " storeData"));
 
     // Create the stop key binding
-    w->bind("<Control-KeyPress-c>", fstring("-> ", xp.id(), " stop"));
+    w->bind("<Control-KeyPress-c>", rutz::cat("-> ", xp.id(), " stop"));
 
     // Create the reset key binding
-    w->bind("<Control-KeyPress-r>", fstring("-> ", xp.id(), " reset"));
+    w->bind("<Control-KeyPress-r>", rutz::cat("-> ", xp.id(), " reset"));
 
 #if 0
     // Create the pause key binding
-    w->bind("<KeyPress-p>", fstring("-> ", xp.id(), " pause"));
+    w->bind("<KeyPress-p>", rutz::cat("-> ", xp.id(), " pause"));
 #endif
 
     // Force the focus to the widget
@@ -104,8 +104,9 @@ namespace
     // don't accidentally "start" the experiment twice due to a double
     // keypress)
     // (2) actually start the experimeent
-    const fstring script("-> ", w.id(), " bind ", event, " {}; "
-                         "-> ", xp.id(), " begin");
+    const fstring script =
+      rutz::cat("-> ", w.id(), " bind ", event, " {}; "
+                "-> ", xp.id(), " begin");
 
     w->bind(event, script);
     w->takeFocus();

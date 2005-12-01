@@ -231,8 +231,8 @@ nub::ref<GxNode> GxSeparator::getChild(ChildId index) const
 GVX_TRACE("GxSeparator::getChild");
   if (index >= rep->children.size())
     {
-      throw rutz::error(rutz::fstring("GxSeparator has no child with "
-                                      "index '", index, "'"), SRC_POS);
+      throw rutz::error(rutz::cat("GxSeparator has no child with "
+                                  "index '", index, "'"), SRC_POS);
     }
 
   return rep->children[index];

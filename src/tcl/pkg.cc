@@ -122,8 +122,9 @@ namespace
                    const char* pattern)
   {
   GVX_TRACE("export_into");
-    rutz::fstring cmd("namespace eval ", to, " { namespace import ::");
-    cmd.append(from, "::", pattern, " }");
+    const rutz::fstring cmd =
+      rutz::cat("namespace eval ", to, " { namespace import ::",
+                from, "::", pattern, " }");
 
     interp.eval(cmd);
   }
@@ -131,7 +132,7 @@ namespace
   tcl::list get_command_list(tcl::interpreter& interp, const char* namesp)
   {
     tcl::obj saveresult = interp.get_result<tcl::obj>();
-    rutz::fstring cmd("info commands ::", namesp, "::*");
+    rutz::fstring cmd = rutz::cat("info commands ::", namesp, "::*");
     interp.eval(cmd);
     tcl::list cmdlist = interp.get_result<tcl::list>();
     interp.set_result(saveresult);
@@ -372,7 +373,7 @@ GVX_TRACE("tcl::pkg::inherit_namesp");
     Tcl_FindNamespace(interp, namesp, 0, TCL_GLOBAL_ONLY);
 
   if (othernsptr == 0)
-    throw rutz::error(rutz::fstring("no Tcl namespace '", namesp, "'"),
+    throw rutz::error(rutz::cat("no Tcl namespace '", namesp, "'"),
                       SRC_POS);
 
   tcl::obj obj;
@@ -396,7 +397,7 @@ GVX_TRACE("tcl::pkg::inherit_pkg");
   tcl::pkg* other = lookup(rep->interp, name, version);
 
   if (other == 0)
-    throw rutz::error(rutz::fstring("no tcl::pkg named '", name, "'"),
+    throw rutz::error(rutz::cat("no tcl::pkg named '", name, "'"),
                       SRC_POS);
 
   inherit_namesp(other->namesp_name());

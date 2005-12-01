@@ -544,8 +544,8 @@ bool GaborArray::tryPush(const GaborArrayElement& e) const
 
   if (itsTotalNumber >= MAX_GABOR_NUMBER)
     {
-      throw rutz::error(rutz::fstring(" More than ", MAX_GABOR_NUMBER,
-                                      " elements!\n"), SRC_POS);
+      throw rutz::error(rutz::cat(" More than ", MAX_GABOR_NUMBER,
+                                  " elements!\n"), SRC_POS);
     }
 
   itsArray[itsTotalNumber++] = e;

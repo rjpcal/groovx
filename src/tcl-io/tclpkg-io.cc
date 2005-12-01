@@ -104,8 +104,8 @@ namespace
     std::ofstream ofs(filename);
     if (ofs.fail())
       {
-        throw rutz::error(rutz::fstring("error opening file: ",
-                                        filename), SRC_POS);
+        throw rutz::error(rutz::cat("error opening file: ",
+                                    filename), SRC_POS);
       }
 
     io::legacy_writer writer(ofs, use_bases);

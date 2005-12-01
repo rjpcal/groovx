@@ -110,8 +110,8 @@ GVX_TRACE("GlxRasterFont::GlxRasterFont");
 
   if (itsFontInfo == 0)
     {
-      throw rutz::error(rutz::fstring("couldn't load X font '",
-                                      xname, "'"), SRC_POS);
+      throw rutz::error(rutz::cat("couldn't load X font '",
+                                  xname, "'"), SRC_POS);
     }
 
   dbg_eval_nl(2, itsFontInfo->fid);

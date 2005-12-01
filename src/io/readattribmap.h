@@ -124,9 +124,10 @@ io::attrib_map::attrib io::attrib_map::get(const rutz::fstring& attr_name)
       ++itr;
     }
 
-  rutz::fstring msg("no attribute named '",
-                    attr_name.c_str(), "' for ",
-                    m_obj_tag.c_str(), "\nknown attributes are:\n");
+  rutz::fstring msg =
+    rutz::cat("no attribute named '",
+              attr_name.c_str(), "' for ",
+              m_obj_tag.c_str(), "\nknown attributes are:\n");
 
   itr = m_attribs.begin();
   while (itr != end)

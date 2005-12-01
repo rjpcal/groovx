@@ -358,9 +358,10 @@ void tcl::script_app::run()
                         pkg->init_proc,
                         0);
 
-      rutz::fstring ifneededcmd("package ifneeded ",
-                                pkg->name, " ", pkg->version,
-                                " {load {} ", pkg->name, " }");
+      const rutz::fstring ifneededcmd =
+        rutz::cat("package ifneeded ",
+                  pkg->name, " ", pkg->version,
+                  " {load {} ", pkg->name, " }");
 
       interp.eval(ifneededcmd);
     }

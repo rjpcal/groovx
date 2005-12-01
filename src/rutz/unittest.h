@@ -50,10 +50,10 @@ namespace rutz
   {
     dbg_print(3, expr_string); dbg_eval_nl(3, expr);
     if (!expr)
-      throw rutz::error(rutz::fstring(pos.m_file_name, ":",
-                                      pos.m_line_no, ":\n"
-                                      "\texpected: ",
-                                      expr_string, "\n"), pos);
+      throw rutz::error(rutz::cat(pos.m_file_name, ":",
+                                  pos.m_line_no, ":\n"
+                                  "\texpected: ",
+                                  expr_string, "\n"), pos);
   }
 
   template <class T, class U>
@@ -67,8 +67,9 @@ namespace rutz
     dbg_print(3, expr_string2); dbg_eval_nl(3, expr2);
     if (!(expr1 == expr2))
       {
-        rutz::fstring msg(pos.m_file_name, ":", pos.m_line_no,
-                          ": failed test:\n");
+        rutz::fstring msg =
+          rutz::cat(pos.m_file_name, ":", pos.m_line_no,
+                    ": failed test:\n");
         msg.append("\texpected ", expr_string1, " (lhs) "
                    "== ", expr_string2, " (rhs)\n");
         msg.append("\tgot: (lhs) ", expr_string1, " == ", expr1, "\n");
@@ -96,8 +97,9 @@ namespace rutz
     dbg_eval_nl(3, tol);
     if (!approx_eq(expr1, expr2, tol))
       {
-        rutz::fstring msg(pos.m_file_name, ":", pos.m_line_no,
-                          ": failed test:\n");
+        rutz::fstring msg =
+          rutz::cat(pos.m_file_name, ":", pos.m_line_no,
+                    ": failed test:\n");
         msg.append("\texpected ", expr_string1, " (lhs) "
                    "~= ", expr_string2, " (rhs)\n");
         msg.append("\tgot: (lhs) ", expr_string1, " == ", expr1, "\n");

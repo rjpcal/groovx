@@ -95,8 +95,8 @@ public:
     mxArray* arr = engGetVariable(itsEngine, name);
     if (arr == 0)
       {
-        throw rutz::error(rutz::fstring("no such MATLAB variable: '",
-                                        name, "'"), SRC_POS);
+        throw rutz::error(rutz::cat("no such MATLAB variable: '",
+                                    name, "'"), SRC_POS);
       }
 
     nub::ref<MtxObj> m(new MtxObj(make_mtx(arr, mtx::COPY)));

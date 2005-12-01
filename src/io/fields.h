@@ -460,10 +460,10 @@ public:
                  ? CheckedDataMemberFieldImpl<PM>::make(memptr, min, max)
                  : DataMemberFieldImpl<PM>::make(memptr)
                  ),
-    itsDefaultValue(def),
-    itsMin(min),
-    itsMax(max),
-    itsRes(res),
+    itsDefaultValue(rutz::cat(def)),
+    itsMin(rutz::cat(min)),
+    itsMax(rutz::cat(max)),
+    itsRes(rutz::cat(res)),
     itsFlags(flags),
     itsMinVersion(0),
     itsMaxVersion(std::numeric_limits<io::version_id>::max())
@@ -478,10 +478,10 @@ public:
         unsigned int flags=0) :
     itsName(name),
     itsFieldImpl(new FuncMemberFieldImpl<C,T>(getter, setter)),
-    itsDefaultValue(def),
-    itsMin(min),
-    itsMax(max),
-    itsRes(res),
+    itsDefaultValue(rutz::cat(def)),
+    itsMin(rutz::cat(min)),
+    itsMax(rutz::cat(max)),
+    itsRes(rutz::cat(res)),
     itsFlags(flags),
     itsMinVersion(0),
     itsMaxVersion(std::numeric_limits<io::version_id>::max())

@@ -180,67 +180,6 @@ namespace rutz
       init_range(r);
     }
 
-    /// Construct by converting args to strings and concatenating.
-    template <class T1>
-    explicit fstring(const T1& part1) :
-      m_rep(0)
-    {
-      init_empty(); append(part1);
-    }
-
-    /// Construct by converting args to strings and concatenating.
-    template <class T1, class T2>
-    fstring(const T1& part1, const T2& part2) :
-      m_rep(0)
-    {
-      init_empty(); append(part1); append(part2);
-    }
-
-    /// Construct by converting args to strings and concatenating.
-    template <class T1, class T2, class T3>
-    fstring(const T1& part1, const T2& part2, const T3& part3) :
-      m_rep(0)
-    {
-      init_empty(); append(part1); append(part2, part3);
-    }
-
-    /// Construct by converting args to strings and concatenating.
-    template <class T1, class T2, class T3, class T4>
-    fstring(const T1& part1, const T2& part2, const T3& part3,
-            const T4& part4) :
-      m_rep(0)
-    {
-      init_empty(); append(part1); append(part2, part3, part4);
-    }
-
-    /// Construct by converting args to strings and concatenating.
-    template <class T1, class T2, class T3, class T4, class T5>
-    fstring(const T1& part1, const T2& part2, const T3& part3,
-            const T4& part4, const T5& part5) :
-      m_rep(0)
-    {
-      init_empty(); append(part1); append(part2, part3, part4, part5);
-    }
-
-    /// Construct by converting args to strings and concatenating.
-    template <class T1, class T2, class T3, class T4, class T5, class T6>
-    fstring(const T1& part1, const T2& part2, const T3& part3,
-            const T4& part4, const T5& part5, const T6& part6) :
-      m_rep(0)
-    {
-      init_empty(); append(part1); append(part2, part3, part4, part5, part6);
-    }
-
-    /// Construct by converting args to strings and concatenating.
-    template <class T1, class T2, class T3, class T4, class T5, class T6, class T7>
-    fstring(const T1& part1, const T2& part2, const T3& part3,
-            const T4& part4, const T5& part5, const T6& part6,
-            const T7& part7) :
-      m_rep(0)
-    {
-      init_empty(); append(part1); append(part2, part3, part4, part5, part6, part7);
-    }
-
     /// Swap contents with another fstring object.
     void swap(fstring& other) throw();
 
@@ -339,7 +278,8 @@ namespace rutz
     }
 
     /// Convert args to string and append to the fstring.
-    template <class T1, class T2, class T3, class T4>
+    template <class T1, class T2, class T3,
+              class T4>
     fstring& append(const T1& part1, const T2& part2, const T3& part3,
                     const T4& part4)
     {
@@ -348,7 +288,8 @@ namespace rutz
     }
 
     /// Convert args to string and append to the fstring.
-    template <class T1, class T2, class T3, class T4, class T5>
+    template <class T1, class T2, class T3,
+              class T4, class T5>
     fstring& append(const T1& part1, const T2& part2, const T3& part3,
                     const T4& part4, const T5& part5)
     {
@@ -357,12 +298,26 @@ namespace rutz
     }
 
     /// Convert args to string and append to the fstring.
-    template <class T1, class T2, class T3, class T4, class T5, class T6>
+    template <class T1, class T2, class T3,
+              class T4, class T5, class T6>
     fstring& append(const T1& part1, const T2& part2, const T3& part3,
                     const T4& part4, const T5& part5, const T6& part6)
     {
       do_append(part1); do_append(part2); do_append(part3);
       do_append(part4); do_append(part5); do_append(part6); return *this;
+    }
+
+    /// Convert args to string and append to the fstring.
+    template <class T1, class T2, class T3,
+              class T4, class T5, class T6,
+              class T7>
+    fstring& append(const T1& part1, const T2& part2, const T3& part3,
+                    const T4& part4, const T5& part5, const T6& part6,
+                    const T7& part7)
+    {
+      do_append(part1); do_append(part2); do_append(part3);
+      do_append(part4); do_append(part5); do_append(part6);
+      do_append(part7); return *this;
     }
 
     //
@@ -422,6 +377,79 @@ namespace rutz
 
     string_rep* m_rep;
   };
+
+
+  ///////////////////////////////////////////////////////////
+  //
+  // Concatenation for building strings
+  //
+  ///////////////////////////////////////////////////////////
+
+  /// Concatenate args into a single fstring
+  template <class T1>
+  fstring cat(const T1& part1)
+  {
+    fstring f; f.append(part1);
+    return f;
+  }
+
+  /// Concatenate args into a single fstring
+  template <class T1, class T2>
+  fstring cat(const T1& part1, const T2& part2)
+  {
+    fstring f; f.append(part1, part2);
+    return f;
+  }
+
+  /// Concatenate args into a single fstring
+  template <class T1, class T2, class T3>
+  fstring cat(const T1& part1, const T2& part2, const T3& part3)
+  {
+    fstring f; f.append(part1, part2, part3);
+    return f;
+  }
+
+  /// Concatenate args into a single fstring
+  template <class T1, class T2, class T3,
+            class T4>
+  fstring cat(const T1& part1, const T2& part2, const T3& part3,
+              const T4& part4)
+  {
+    fstring f; f.append(part1, part2, part3, part4);
+    return f;
+  }
+
+  /// Concatenate args into a single fstring
+  template <class T1, class T2, class T3,
+            class T4, class T5>
+  fstring cat(const T1& part1, const T2& part2, const T3& part3,
+              const T4& part4, const T5& part5)
+  {
+    fstring f; f.append(part1, part2, part3, part4, part5);
+    return f;
+  }
+
+  /// Concatenate args into a single fstring
+  template <class T1, class T2, class T3,
+            class T4, class T5, class T6>
+  fstring cat(const T1& part1, const T2& part2, const T3& part3,
+              const T4& part4, const T5& part5, const T6& part6)
+  {
+    fstring f; f.append(part1, part2, part3, part4, part5, part6);
+    return f;
+  }
+
+  /// Concatenate args into a single fstring
+  template <class T1, class T2, class T3,
+            class T4, class T5, class T6,
+            class T7>
+  fstring cat(const T1& part1, const T2& part2, const T3& part3,
+              const T4& part4, const T5& part5, const T6& part6,
+              const T7& part7)
+  {
+    fstring f; f.append(part1, part2, part3, part4, part5, part6, part7);
+    return f;
+  }
 
 
 

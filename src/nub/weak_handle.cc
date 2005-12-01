@@ -41,8 +41,8 @@
 void nub::detail::throw_soft_ref_invalid(const std::type_info& info,
                                       const rutz::file_pos& pos)
 {
-  throw rutz::error(rutz::fstring("attempted to access invalid object "
-                                  "in soft_ref<", rutz::demangled_name(info), ">"),
+  throw rutz::error(rutz::cat("attempted to access invalid object "
+                              "in soft_ref<", rutz::demangled_name(info), ">"),
                     pos);
 }
 

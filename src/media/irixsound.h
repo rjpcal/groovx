@@ -89,7 +89,7 @@ GVX_TRACE("media::irix_audio_sound_rep::irix_audio_sound_rep");
   AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
   if (audiofile == AF_NULL_FILEHANDLE)
     {
-      throw rutz::error(rutz::fstring("couldn't open sound file ", filename),
+      throw rutz::error(rutz::cat("couldn't open sound file ", filename),
                         SRC_POS);
     }
 
@@ -100,8 +100,8 @@ GVX_TRACE("media::irix_audio_sound_rep::irix_audio_sound_rep");
   const int num_channels = afGetChannels(audiofile, AF_DEFAULT_TRACK);
   if (num_channels == -1)
     {
-      throw rutz::error(rutz::fstring("error reading the number of channels "
-                                      "in sound file ", filename), SRC_POS);
+      throw rutz::error(rutz::cat("error reading the number of channels "
+                                  "in sound file ", filename), SRC_POS);
     }
   alSetChannels(m_audio_config, num_channels);
 
@@ -109,8 +109,8 @@ GVX_TRACE("media::irix_audio_sound_rep::irix_audio_sound_rep");
   m_frame_count = afGetFrameCount(audiofile, AF_DEFAULT_TRACK);
   if (m_frame_count < 0)
     {
-      throw rutz::error(rutz::fstring("error reading the frame count "
-                                      "in sound file ", filename), SRC_POS);
+      throw rutz::error(rutz::cat("error reading the frame count "
+                                  "in sound file ", filename), SRC_POS);
     }
 
   // Sample format and width
@@ -149,14 +149,14 @@ GVX_TRACE("media::irix_audio_sound_rep::irix_audio_sound_rep");
 
   if (read_result == -1)
     {
-      throw rutz::error(rutz::fstring("error reading sound data "
-                                      "from file ", filename), SRC_POS);
+      throw rutz::error(rutz::cat("error reading sound data "
+                                  "from file ", filename), SRC_POS);
     }
 
   if (close_result == -1)
     {
-      throw rutz::error(rutz::fstring("error closing sound file ",
-                                      filename), SRC_POS);
+      throw rutz::error(rutz::cat("error closing sound file ",
+                                  filename), SRC_POS);
     }
 }
 

@@ -52,8 +52,8 @@ namespace
     Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patrn.get(), flags);
     if (!regexp)
       {
-        throw rutz::error(rutz::fstring("error getting a regexp from '",
-                                        Tcl_GetString(patrn.get()), "'"),
+        throw rutz::error(rutz::cat("error getting a regexp from '",
+                                    Tcl_GetString(patrn.get()), "'"),
                           SRC_POS);
       }
     return regexp;

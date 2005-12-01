@@ -92,9 +92,9 @@ namespace
 
     rutz::fstring what() const
     {
-      return rutz::fstring("audiofile error: ",
-                           message,
-                           " [error code = ", code, "]");
+      return rutz::cat("audiofile error: ",
+                       message,
+                       " [error code = ", code, "]");
     }
 
     static const int MSG_SIZE = 512;
@@ -142,8 +142,8 @@ GVX_TRACE("media::esd_sound_rep::esd_sound_rep");
       if (last_error.error == true)
         throw rutz::error(last_error.what(), SRC_POS);
       else
-        throw rutz::error(rutz::fstring("couldn't open sound file '",
-                                        filename, "'"), SRC_POS);
+        throw rutz::error(rutz::cat("couldn't open sound file '",
+                                    filename, "'"), SRC_POS);
     }
 
   int close_result = afCloseFile(audiofile);
@@ -153,8 +153,8 @@ GVX_TRACE("media::esd_sound_rep::esd_sound_rep");
       if (last_error.error == true)
         throw rutz::error(last_error.what(), SRC_POS);
       else
-        throw rutz::error(rutz::fstring("error closing sound file '",
-                                        filename, "'"), SRC_POS);
+        throw rutz::error(rutz::cat("error closing sound file '",
+                                    filename, "'"), SRC_POS);
     }
 
   m_filename = filename;
@@ -183,8 +183,8 @@ void media::esd_sound_rep::play()
       if (last_error.error == true)
         throw rutz::error(last_error.what(), SRC_POS);
       else
-        throw rutz::error(rutz::fstring("couldn't open sound file '",
-                                        fname, "'"), SRC_POS);
+        throw rutz::error(rutz::cat("couldn't open sound file '",
+                                    fname, "'"), SRC_POS);
     }
 
   // get audio file parameters
@@ -210,9 +210,9 @@ void media::esd_sound_rep::play()
   else
     {
       throw rutz::error
-        (rutz::fstring("while attempting to play sound file '",
-                       fname, "': only sample widths of 8 and 16 "
-                       "are supported"), SRC_POS);
+        (rutz::cat("while attempting to play sound file '",
+                   fname, "': only sample widths of 8 and 16 "
+                   "are supported"), SRC_POS);
     }
 
   const int bytes_per_frame = (in_width * in_channels) / 8;
@@ -227,9 +227,9 @@ void media::esd_sound_rep::play()
   else
     {
       throw rutz::error
-        (rutz::fstring("while attempting to play sound file '",
-                       fname, "': only 1 or 2 channel samples "
-                       "are supported"), SRC_POS);
+        (rutz::cat("while attempting to play sound file '",
+                   fname, "': only 1 or 2 channel samples "
+                   "are supported"), SRC_POS);
     }
 
   const int out_mode = ESD_STREAM;
@@ -246,8 +246,8 @@ void media::esd_sound_rep::play()
   if (out_sock <= 0)
     {
       throw rutz::error
-        (rutz::fstring("while attempting to play sound file '",
-                       fname, "': couldn't open esd sound socket"),
+        (rutz::cat("while attempting to play sound file '",
+                   fname, "': couldn't open esd sound socket"),
          SRC_POS);
     }
 
@@ -301,8 +301,8 @@ void media::esd_sound_rep::play()
       if (last_error.error == true)
         throw rutz::error(last_error.what(), SRC_POS);
       else
-        throw rutz::error(rutz::fstring("error closing sound file '",
-                                        fname, "'"), SRC_POS);
+        throw rutz::error(rutz::cat("error closing sound file '",
+                                    fname, "'"), SRC_POS);
     }
 
   if (total_frames_read < frame_count)

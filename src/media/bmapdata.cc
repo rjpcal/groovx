@@ -394,8 +394,8 @@ GVX_TRACE("media::bmap_data::make_scrambled");
 
   if (rep->m_bits_per_pixel != 8 && rep->m_bits_per_pixel != 24)
     {
-      throw rutz::error(rutz::fstring("unknown bits-per-pixel value: ",
-                                      rep->m_bits_per_pixel), SRC_POS);
+      throw rutz::error(rutz::cat("unknown bits-per-pixel value: ",
+                                  rep->m_bits_per_pixel), SRC_POS);
     }
 
   const int bytes_per_pixel = rep->m_bits_per_pixel/8;

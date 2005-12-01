@@ -134,24 +134,24 @@ void range_checking::in_full_open(const void* x,
 void range_checking::geq(int x, int lim, const char* f, int ln)
 {
   if (x>=lim) ; // OK
-  else raise_exception(fstring("geq: integer range error ",
-                               x, " !>= ", lim),
+  else raise_exception(rutz::cat("geq: integer range error ",
+                                 x, " !>= ", lim),
                        f, ln);
 }
 
 void range_checking::lt(int x, int lim, const char* f, int ln)
 {
   if (x<lim) ; // OK
-  else raise_exception(fstring("less: integer range error ",
-                               x, " !< ", lim),
+  else raise_exception(rutz::cat("less: integer range error ",
+                                 x, " !< ", lim),
                        f, ln);
 }
 
 void range_checking::leq(int x, int lim, const char* f, int ln)
 {
   if (x<=lim) ; // OK
-  else raise_exception(fstring("leq: integer range error ",
-                               x, " !<= ", lim),
+  else raise_exception(rutz::cat("leq: integer range error ",
+                                 x, " !<= ", lim),
                        f, ln);
 }
 
@@ -160,8 +160,8 @@ void range_checking::in_half_open(int x,
                                   const char* f, int ln)
 {
   if (x>=llim && x<ulim) ; // OK
-  else raise_exception(fstring("in_half_open: integer range error ",
-                               x, " !in [", llim, ", ", ulim, ")"),
+  else raise_exception(rutz::cat("in_half_open: integer range error ",
+                                 x, " !in [", llim, ", ", ulim, ")"),
                        f, ln);
 }
 
@@ -170,8 +170,8 @@ void range_checking::in_full_open(int x,
                                   const char* f, int ln)
 {
   if (x>=llim && x<=ulim) ; // OK
-  else raise_exception(fstring("in_full_open: integer range error ",
-                               x, " !in [", llim, ", ", ulim, "]"),
+  else raise_exception(rutz::cat("in_full_open: integer range error ",
+                                 x, " !in [", llim, ", ", ulim, "]"),
                        f, ln);
 }
 
@@ -556,9 +556,9 @@ GVX_TRACE("mtx::from_stream");
 
   s >> buf;
   if (buf != "mrows")
-    throw rutz::error(fstring("parse error while scanning mtx "
-                              "from stream: expected 'mrows', got '",
-                              buf, "'"),
+    throw rutz::error(rutz::cat("parse error while scanning mtx "
+                                "from stream: expected 'mrows', got '",
+                                buf, "'"),
                       SRC_POS);
 
   s >> mrows;
@@ -568,9 +568,9 @@ GVX_TRACE("mtx::from_stream");
 
   s >> buf;
   if (buf != "ncols")
-    throw rutz::error(fstring("parse error while scanning mtx "
-                              "from stream: expected 'ncols', got '",
-                              buf, "'"),
+    throw rutz::error(rutz::cat("parse error while scanning mtx "
+                                "from stream: expected 'ncols', got '",
+                                buf, "'"),
                       SRC_POS);
 
   s >> ncols;

@@ -415,7 +415,7 @@ GVX_TRACE("GLCanvas::throwIfError");
     {
       const char* msg =
         reinterpret_cast<const char*>(gluErrorString(status));
-      throw rutz::error(rutz::fstring("GL error: ", msg, " ", where), pos);
+      throw rutz::error(rutz::cat("GL error: ", msg, " ", where), pos);
     }
 }
 

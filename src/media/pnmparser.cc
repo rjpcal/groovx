@@ -62,8 +62,8 @@ namespace
       case 24: return 6; // RGB
       }
 
-    throw rutz::error(rutz::fstring("invalid PNM bit depth value: ",
-                                    depth), SRC_POS);
+    throw rutz::error(rutz::cat("invalid PNM bit depth value: ",
+                                depth), SRC_POS);
 
     GVX_ASSERT(0); return 0; // can't get here
   }
@@ -77,7 +77,7 @@ namespace
       case 3: case 6: return 24; // RGB
       }
 
-    throw rutz::error(rutz::fstring("invalid PNM mode value: ", mode),
+    throw rutz::error(rutz::cat("invalid PNM mode value: ", mode),
                       SRC_POS);
 
     GVX_ASSERT(0); return 0; // can't happen
@@ -246,8 +246,8 @@ GVX_TRACE("media::load_pnm");
   int c = is.get();
   if (c != 'P')
     {
-      throw rutz::error(rutz::fstring("bad magic number while "
-                                      "reading pnm file: ", c), SRC_POS);
+      throw rutz::error(rutz::cat("bad magic number while "
+                                  "reading pnm file: ", c), SRC_POS);
     }
 
   int mode;
@@ -284,9 +284,9 @@ GVX_TRACE("media::load_pnm");
 
   if (max_grey < 1)
     {
-      throw rutz::error(rutz::fstring("while reading pnm file: "
-                                      "invalid max grey value: ",
-                                      max_grey), SRC_POS);
+      throw rutz::error(rutz::cat("while reading pnm file: "
+                                  "invalid max grey value: ",
+                                  max_grey), SRC_POS);
     }
 
   // one more character of whitespace after max_grey

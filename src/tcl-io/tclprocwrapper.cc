@@ -45,7 +45,7 @@ namespace
   fstring uniqName()
   {
     static int c = 0;
-    return fstring("::ProcWrapper_UniqCmd", ++c);
+    return rutz::cat("::ProcWrapper_UniqCmd", ++c);
   }
 }
 
@@ -108,17 +108,13 @@ void tcl::ProcWrapper::invoke(const fstring& args)
 {
   if (isNoop()) return;
 
-  fstring cmd(itsName, " ", args);
-
-  itsInterp.eval(cmd);
+  itsInterp.eval(rutz::cat(itsName, " ", args));
 }
 
 fstring tcl::ProcWrapper::fullSpec() const
 {
-  fstring result;
-  result.append('{', itsArgs, "} ");
-  result.append('{', itsBody, '}');
-  return result;
+  return rutz::cat('{', itsArgs, "} ",
+                   '{', itsBody, '}');
 }
 
 static const char vcid_groovx_tcl_io_tclprocwrapper_cc_utc20050712162004[] = "$Id$ $HeadURL$";

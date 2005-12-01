@@ -144,10 +144,10 @@ GVX_TRACE("io::xml_parser::parse");
           != XML_STATUS_OK)
         {
           throw rutz::error
-            (rutz::fstring("xml parse error at input line ",
-                           XML_GetCurrentLineNumber(m_parser),
-                           ":\n",
-                           XML_ErrorString(XML_GetErrorCode(m_parser))),
+            (rutz::cat("xml parse error at input line ",
+                       XML_GetCurrentLineNumber(m_parser),
+                       ":\n",
+                       XML_ErrorString(XML_GetErrorCode(m_parser))),
              SRC_POS);
         }
 

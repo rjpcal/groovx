@@ -75,8 +75,8 @@ namespace
       }
     catch (std::exception& e)
       {
-        rutz::fstring msg("during cxa_demangle of '",
-                          mangled.c_str(), "': ");
+        rutz::fstring msg = rutz::cat("during cxa_demangle of '",
+                                      mangled.c_str(), "': ");
 
         switch (status)
           {

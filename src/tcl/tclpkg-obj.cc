@@ -140,7 +140,7 @@ namespace
 
     rutz::fstring origcmdname = ctx.get_arg<rutz::fstring>(2);
 
-    rutz::fstring newcmdname(namesp, "::", origcmdname);
+    rutz::fstring newcmdname = rutz::cat(namesp, "::", origcmdname);
 
     tcl::list newargs;
 

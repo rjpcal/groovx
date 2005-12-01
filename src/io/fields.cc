@@ -55,8 +55,8 @@ using rutz::fstring;
 void FieldAux::throwNotAllowed(const char* what,
                                const rutz::file_pos& pos)
 {
-  throw rutz::error(fstring("'", what, "' operation "
-                            "not allowed for that field"), pos);
+  throw rutz::error(rutz::cat("'", what, "' operation "
+                              "not allowed for that field"), pos);
 }
 
 FieldImpl::~FieldImpl() {}
@@ -141,7 +141,7 @@ const Field& FieldMap::field(const fstring& name) const
     }
   else
     {
-      throw rutz::error(fstring("no such field: '", name.c_str(), "'"),
+      throw rutz::error(rutz::cat("no such field: '", name.c_str(), "'"),
                         SRC_POS);
     }
 }

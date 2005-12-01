@@ -67,9 +67,10 @@ namespace
       {
       case tcl::THROW_ERROR:
         {
-          const fstring msg("error while evaluating ",
-                            Tcl_GetString(code.get()),
-                            ":\n", interp.get_result<const char*>());
+          const fstring msg =
+            rutz::cat("error while evaluating ",
+                      Tcl_GetString(code.get()),
+                      ":\n", interp.get_result<const char*>());
 
           // Now clear the interpreter's result string, since we've
           // already incorporated that message into our error message:
@@ -325,8 +326,8 @@ GVX_TRACE("tcl::interpreter::set_global_var");
   if (Tcl_SetVar2Ex(intp(), const_cast<char*>(var_name), /*name2*/0,
                     var.get(), TCL_GLOBAL_ONLY) == 0)
     {
-      throw rutz::error(fstring("couldn't set global variable'",
-                                var_name, "'"), SRC_POS);
+      throw rutz::error(rutz::cat("couldn't set global variable'",
+                                  var_name, "'"), SRC_POS);
     }
 }
 
@@ -337,8 +338,8 @@ GVX_TRACE("tcl::interpreter::unset_global_var");
   if (Tcl_UnsetVar(intp(), const_cast<char*>(var_name),
                    TCL_GLOBAL_ONLY) != TCL_OK)
     {
-      throw rutz::error(fstring("couldn't unset global variable'",
-                                var_name, "'"), SRC_POS);
+      throw rutz::error(rutz::cat("couldn't unset global variable'",
+                                  var_name, "'"), SRC_POS);
     }
 }
 
@@ -353,8 +354,8 @@ GVX_TRACE("tcl::interpreter::get_obj_global_var");
 
   if (obj == 0)
     {
-      throw rutz::error(fstring("couldn't get global variable '",
-                                name1, "'"), SRC_POS);
+      throw rutz::error(rutz::cat("couldn't get global variable '",
+                                  name1, "'"), SRC_POS);
     }
 
   return obj;
@@ -514,7 +515,7 @@ GVX_TRACE("tcl::interpreter::get_proc_body");
     {
       reset_result();
 
-      if (eval(fstring("info body ", proc_name)))
+      if (eval(rutz::cat("info body ", proc_name)))
         {
           fstring result = get_result<const char*>();
           reset_result();

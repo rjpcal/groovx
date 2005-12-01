@@ -97,8 +97,8 @@ GVX_TRACE("tcl::dict::do_put");
   tcl::obj key_obj = tcl::convert_from(key);
   if (Tcl_DictObjPut(0, m_obj.get(), key_obj.get(), val.get()) != TCL_OK)
     {
-      throw rutz::error(rutz::fstring("couldn't put object in dict "
-                                      "with key: ", key), SRC_POS);
+      throw rutz::error(rutz::cat("couldn't put object in dict "
+                                  "with key: ", key), SRC_POS);
     }
 }
 
@@ -116,8 +116,8 @@ GVX_TRACE("tcl::dict::do_get");
         return tcl::obj(dest);
     }
 
-  throw rutz::error(rutz::fstring("couldn't get value from dict "
-                                  "with key: ", key), SRC_POS);
+  throw rutz::error(rutz::cat("couldn't get value from dict "
+                              "with key: ", key), SRC_POS);
 }
 
 #endif // defined(HAVE_TCL_DICT)

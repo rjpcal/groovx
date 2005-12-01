@@ -79,10 +79,8 @@ namespace
     if (cmd == 0)
       throw rutz::error("no such tcl::command_group", SRC_POS);
 
-    rutz::fstring result(name, " resolves to ",
-                         cmd->resolved_name(), "\n");
-    result.append(cmd->usage());
-    return result;
+    return rutz::cat(name, " resolves to ",
+                     cmd->resolved_name(), "\n", cmd->usage());
   }
 
   unsigned long get_default_seed() { return rutz::default_rand_seed; }
