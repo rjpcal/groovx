@@ -79,4 +79,16 @@ for d in $tosync; do
 	    rm tmpdiff
 	fi
     done
+
+    if test -d "$saliencydir/$d"; then
+	files=`ls -1 "$saliencydir/$d"/*.{h,cc,dxy}`
+
+	for f in $files; do
+	    base=`basename $f`
+	    if test ! -f "$d/$base"; then
+		echo "only in $saliencydir: $f"
+	    fi
+	done
+    fi
+
 done

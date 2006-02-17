@@ -159,11 +159,52 @@ private:
 class rutz::bidir_pipe
 {
 public:
+  /// Default construct; you MUST call init() before using any of the streams!
+  bidir_pipe();
+
   /// Set up a pipe to a child process with the given argv array.
+  /** BE SURE the argv array is NULL-terminated! */
   bidir_pipe(char* const* argv);
+
+  /// Set up a pipe to a child process with the given list of args.
+  /** BE SURE the variable-length argument list is NULL-terminated!
+
+      A private copy will be made of all the arguments, so it is safe
+      to pass const strings here (such as the result of str.c_str()
+      for a std::string object).
+  */
+  bidir_pipe(const char* argv0, ...);
 
   /// Destructor cleans up child process and the pipe's file descriptors.
   ~bidir_pipe() throw();
+
+  /// Request that SIGINT be ignored in the child process.
+  /** You must request this BEFORE calling init(); so the proper
+      sequence is:
+
+      \code
+      rutz::bidir_pipe prog;
+      prog.block_child_signals();
+      prog.init("progname", "arg1", "arg2", NULL);
+      \endcode
+
+      This functionality is useful if the parent process is already
+      handling SIGINT specially; if you don't block SIGINT in the
+      child process, then when the user presses Ctrl-C, the following
+      happens: (1) the main parent handles the SIGINT, as desired, but
+      (2) the child process also receives a SIGINT, thus it dies, and
+      (3) the parent process then gets a SIGPIPE and dies itself
+      without getting a chance for a clean exit.
+  */
+  void block_child_sigint();
+
+  /// Core code for starting the child process.
+  /** NOTE the argv array must be NULL-terminated! */
+  void init(char* const* argv);
+
+  /// Core code for starting the child process.
+  /** BE SURE the variable-length argument list is NULL-terminated! */
+  void init(const char* argv0, ...);
 
   /// Get the stream that is receiving input from the child process.
   std::iostream& in_stream() throw();
@@ -181,11 +222,15 @@ public:
   int exit_status() throw();
 
 private:
+  bidir_pipe(const bidir_pipe&); // not implemented
+  bidir_pipe& operator=(const bidir_pipe&); // not implemented
+
   pipe_fds           m_in_pipe;
   pipe_fds           m_out_pipe;
   child_process      m_child;
   rutz::stdiostream* m_in_stream;
   rutz::stdiostream* m_out_stream;
+  bool               m_block_child_sigint;
 };
 
 static const char vcid_groovx_rutz_pipe_h_utc20050626084019[] = "$Id$ $HeadURL$";

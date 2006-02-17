@@ -34,6 +34,7 @@
 #define GROOVX_RUTZ_UNIXCALL_H_UTC20050626084019_DEFINED
 
 #include <sys/types.h>
+#include <unistd.h>
 
 namespace rutz
 {
@@ -122,6 +123,11 @@ namespace rutz
 
     /// Get the absolute pathname of the current working directory.
     rutz::fstring getcwd();
+
+    /// Check if any processes (other than self) are using the file.
+    /** Returns the pid of the first process that has the file open,
+        or 0 if no processes are using the file. */
+    pid_t get_file_user_pid(const char* fname);
 
   } // end namespace unixcall
 

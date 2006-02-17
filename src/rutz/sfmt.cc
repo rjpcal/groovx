@@ -35,6 +35,7 @@
 
 #include "rutz/sfmt.h"
 
+#include "rutz/compat_snprintf.h"
 #include "rutz/error.h"
 
 #include "rutz/debug.h"

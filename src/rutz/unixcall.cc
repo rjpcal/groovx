@@ -41,8 +41,10 @@
 
 #include <cerrno> // for ::errno
 #include <cstdio> // for ::rename(), ::remove()
+#include <cstdlib> // for ::atoi()
 #include <cstring> // for ::strerror()
-#include <sys/stat.h> // for ::chmod()
+#include <dirent.h> // for ::opendir(), ::readdir()
+#include <sys/stat.h> // for ::chmod(), ::stat()
 #include <unistd.h> // for ::getcwd() (POSIX)
 
 #include "rutz/trace.h"
@@ -127,6 +129,70 @@ GVX_TRACE("rutz::unixcall::getcwd");
     }
 
   return rutz::fstring(&buf[0]);
+}
+
+pid_t rutz::unixcall::get_file_user_pid(const char* fname)
+{
+GVX_TRACE("rutz::unixcall::get_file_user_pid");
+  DIR* const proc_dir = opendir("/proc");
+
+  if (proc_dir == 0)
+    return 0;
+
+  struct stat target_statbuf;
+  if (stat(fname, &target_statbuf) != 0)
+    return 0;
+
+  const pid_t my_pid = getpid();
+
+  struct dirent* proc_dent = 0;
+
+  while ((proc_dent = readdir(proc_dir)) != 0)
+    {
+      if (proc_dent == 0)
+        break;
+
+      if (!isdigit(proc_dent->d_name[0]))
+        continue;
+
+      const pid_t pid = atoi(proc_dent->d_name);
+
+      if (pid == my_pid)
+        continue;
+
+      const rutz::fstring fd_dirname =
+        rutz::cat("/proc/", proc_dent->d_name, "/fd");
+
+      DIR* const fd_dir = opendir(fd_dirname.c_str());
+
+      if (fd_dir == 0)
+        continue;
+
+      struct dirent* fd_dent = 0;
+
+      while ((fd_dent = readdir(fd_dir)) != 0)
+        {
+          if (!isdigit(fd_dent->d_name[0]))
+            continue;
+
+          const rutz::fstring fd_fname =
+            rutz::cat(fd_dirname, '/', fd_dent->d_name);
+
+          struct stat fd_statbuf;
+          if (stat(fd_fname.c_str(), &fd_statbuf) != 0)
+            continue;
+
+          if (fd_statbuf.st_dev == target_statbuf.st_dev &&
+              fd_statbuf.st_ino == target_statbuf.st_ino)
+            return pid;
+        }
+
+      closedir(fd_dir);
+    }
+
+  closedir(proc_dir);
+
+  return 0;
 }
 
 static const char vcid_groovx_rutz_unixcall_cc_utc20050626084019[] = "$Id$ $HeadURL$";

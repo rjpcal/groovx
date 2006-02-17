@@ -36,6 +36,7 @@
 #include "fstring.h"
 
 #include "rutz/algo.h"
+#include "rutz/compat_snprintf.h"
 #include "rutz/freelist.h"
 #include "rutz/mutex.h"
 

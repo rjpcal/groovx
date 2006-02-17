@@ -38,8 +38,55 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 
+#include <cerrno>
+#include <cstdarg>
+#include <vector>
+
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
+
+namespace
+{
+  char** make_argv(const char* argv0, va_list a)
+  {
+    std::vector<const char*> args;
+    std::vector<size_t> offsets;
+    size_t totalchars = 0;
+    for (const char* arg = argv0;
+         arg != 0;
+         arg = va_arg(a, char*))
+      {
+        args.push_back(arg);
+        offsets.push_back(totalchars);
+
+        totalchars += strlen(arg) + 1;
+      }
+
+    void* mem = malloc(totalchars + (args.size() + 1) * sizeof(char*));
+
+    if (mem == 0)
+      throw rutz::error("memory allocation failed", SRC_POS);
+
+    char** const ptrs = static_cast<char**>(mem);
+    char* const chars = static_cast<char*>(mem) + (args.size() + 1) * sizeof(char*);
+
+    char* q = chars;
+
+    for (uint i = 0; i < args.size(); ++i)
+      {
+        ptrs[i] = &chars[0] + offsets[i];
+
+        for (const char* p = args[i]; *p != '\0'; ++p)
+          *q++ = *p;
+
+        *q++ = '\0';
+      }
+
+    ptrs[args.size()] = 0;
+
+    return ptrs;
+  }
+}
 
 rutz::shell_pipe::shell_pipe(const char* command, const char* mode) :
   m_file(popen(command, mode)),
@@ -150,7 +197,9 @@ rutz::exec_pipe::exec_pipe(const char* m, char* const* argv) :
 
           if (dup2(m_fds.writer(), STDOUT_FILENO) == -1)
             {
-              fprintf(stderr, "dup2 failed in child process\n");
+              fprintf(stderr, "dup2 failed in child process (%s):\n",
+                      argv[0]);
+              fprintf(stderr, "%s\n", strerror(errno));
               exit(-1);
             }
         }
@@ -160,14 +209,17 @@ rutz::exec_pipe::exec_pipe(const char* m, char* const* argv) :
 
           if (dup2(m_fds.reader(), STDIN_FILENO) == -1)
             {
-              fprintf(stderr, "dup2 failed in child process\n");
+              fprintf(stderr, "dup2 failed in child process (%s):\n",
+                      argv[0]);
+              fprintf(stderr, "%s\n", strerror(errno));
               exit(-1);
             }
         }
 
       execv(argv[0], argv);
 
-      fprintf(stderr, "execv failed in child process\n");
+      fprintf(stderr, "execv failed in child process (%s)\n", argv[0]);
+      fprintf(stderr, "%s\n", strerror(errno));
       exit(-1);
     }
 }
@@ -208,12 +260,62 @@ int rutz::exec_pipe::exit_status() throw()
   return 0;
 }
 
+rutz::bidir_pipe::bidir_pipe() :
+  m_in_pipe(),
+  m_out_pipe(),
+  m_child(),
+  m_in_stream(0),
+  m_out_stream(0),
+  m_block_child_sigint(true)
+{
+  // user must call init() before using the bidir_pipe's streams
+}
+
 rutz::bidir_pipe::bidir_pipe(char* const* argv) :
   m_in_pipe(),
   m_out_pipe(),
   m_child(),
   m_in_stream(0),
-  m_out_stream(0)
+  m_out_stream(0),
+  m_block_child_sigint(true)
+{
+  this->init(argv);
+}
+
+rutz::bidir_pipe::bidir_pipe(const char* argv0, ...) :
+  m_in_pipe(),
+  m_out_pipe(),
+  m_child(),
+  m_in_stream(0),
+  m_out_stream(0),
+  m_block_child_sigint(true)
+{
+  va_list a;
+  va_start(a, argv0);
+  char** argv = make_argv(argv0, a);
+  va_end(a);
+
+  try { this->init(argv); }
+  catch (...) { free(argv); throw; }
+
+  free(argv);
+}
+
+rutz::bidir_pipe::~bidir_pipe() throw()
+{
+  close_in();
+  close_out();
+
+  delete m_out_stream;
+  delete m_in_stream;
+}
+
+void rutz::bidir_pipe::block_child_sigint()
+{
+  m_block_child_sigint = true;
+}
+
+void rutz::bidir_pipe::init(char* const* argv)
 {
   if (m_child.in_parent())
     {
@@ -243,7 +345,9 @@ rutz::bidir_pipe::bidir_pipe(char* const* argv) :
 
       if (dup2(m_in_pipe.writer(), STDOUT_FILENO) == -1)
         {
-          fprintf(stderr, "dup2 failed in child process\n");
+          fprintf(stderr, "dup2 failed in child process (%s):\n",
+                  argv[0]);
+          fprintf(stderr, "%s\n", strerror(errno));
           exit(-1);
         }
 
@@ -251,25 +355,36 @@ rutz::bidir_pipe::bidir_pipe(char* const* argv) :
 
       if (dup2(m_out_pipe.reader(), STDIN_FILENO) == -1)
         {
-          fprintf(stderr, "dup2 failed in child process\n");
+          fprintf(stderr, "dup2 failed in child process (%s):\n",
+                  argv[0]);
+          fprintf(stderr, "%s\n", strerror(errno));
           exit(-1);
         }
 
+      if (m_block_child_sigint)
+        signal(SIGINT, SIG_IGN);
+
+      errno = 0;
+
       execv(argv[0], argv);
 
-      fprintf(stderr, "execv failed in child process\n");
+      fprintf(stderr, "execv failed in child process (%s):\n", argv[0]);
+      fprintf(stderr, "%s\n", strerror(errno));
       exit(-1);
     }
 }
 
-
-rutz::bidir_pipe::~bidir_pipe() throw()
+void rutz::bidir_pipe::init(const char* argv0, ...)
 {
-  close_in();
-  close_out();
+  va_list a;
+  va_start(a, argv0);
+  char** argv = make_argv(argv0, a);
+  va_end(a);
 
-  delete m_out_stream;
-  delete m_in_stream;
+  try { this->init(argv); }
+  catch (...) { free(argv); throw; }
+
+  free(argv);
 }
 
 std::iostream& rutz::bidir_pipe::in_stream() throw()
