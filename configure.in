@@ -588,6 +588,8 @@ case $windowsystem in
       ;;
 esac
 
+AC_CHECK_HEADERS([tclInt.h])
+
 ### --with-matlab
 
 AC_MSG_CHECKING([whether to enable matlab support])

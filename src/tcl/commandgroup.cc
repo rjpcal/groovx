@@ -45,7 +45,9 @@
 
 #include <list>
 #include <tcl.h>
+#ifdef HAVE_TCLINT_H
 #include <tclInt.h> // for Tcl_GetFullCommandName()
+#endif
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -56,6 +58,7 @@ using rutz::shared_ptr;
 
 namespace
 {
+#ifdef HAVE_TCLINT_H
   fstring get_full_command_name(tcl::interpreter& interp,
                                 Tcl_Command token)
   {
@@ -65,6 +68,7 @@ namespace
     Tcl_GetCommandFullName(interp.intp(), token, result.get());
     return tcl::convert_to<rutz::fstring>(result);
   }
+#endif
 
   void append_usage(fstring& dest, const fstring& usage)
   {
@@ -88,7 +92,11 @@ public:
                                    static_cast<Tcl_ObjCmdProc*>(0),
                                    static_cast<ClientData>(0),
                                    static_cast<Tcl_CmdDeleteProc*>(0))),
+#ifdef HAVE_TCLINT_H
     initial_cmd_name(get_full_command_name(intp, cmd_token)),
+#else
+    initial_cmd_name(cmd_name),
+#endif
     cmd_list(),
     prof_name(rutz::cat("tcl/", cmd_name)),
     prof(prof_name.c_str(), src_pos.m_file_name, src_pos.m_line_no)
@@ -379,7 +387,11 @@ GVX_TRACE("tcl::command_group::add");
 
 fstring tcl::command_group::resolved_name() const
 {
+#ifdef HAVE_TCLINT_H
   return get_full_command_name(rep->interp, rep->cmd_token);
+#else
+  return rep->initial_cmd_name;
+#endif
 }
 
 fstring tcl::command_group::usage() const

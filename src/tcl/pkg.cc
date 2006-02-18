@@ -36,15 +36,18 @@
 #include "tcl/pkg.h"
 
 #include "tcl/command.h"
-#include "tcl/list.h"
 #include "tcl/interp.h"
+#include "tcl/list.h"
+#include "tcl/namesp.h"
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/sharedptr.h"
 
 #include <tcl.h>
+#ifdef HAVE_TCLINT_H
 #include <tclInt.h> // for Tcl_FindNamespace() etc.
+#endif
 #include <cctype>
 #include <iostream>
 #include <typeinfo>
@@ -182,27 +185,6 @@ public:
   std::vector<shared_ptr<int> >        owned_ints;
   std::vector<shared_ptr<double> >     owned_doubles;
   exit_callback*                       on_exit;
-
-  Tcl_Namespace* tcl_namespace() const
-  {
-  GVX_TRACE("tcl::pkg::impl::tcl_namespace");
-
-    Tcl_Namespace* namesp =
-      Tcl_FindNamespace(this->interp.intp(), this->namesp_name.c_str(),
-                        0 /* namespaceContextPtr*/, TCL_GLOBAL_ONLY);
-
-    if (namesp == 0)
-      {
-        namesp = Tcl_CreateNamespace(this->interp.intp(),
-                                     this->namesp_name.c_str(),
-                                     0 /*clientdata*/,
-                                     0 /*delete_proc*/);
-      }
-
-    GVX_ASSERT(namesp != 0);
-
-    return namesp;
-  }
 
   static void c_exit_handler(void* clientdata)
   {
@@ -367,26 +349,15 @@ GVX_TRACE("tcl::pkg::inherit_namesp");
 
   // (2) get the export patterns from 'namesp' and include those as
   // export patterns for this tcl::pkg's namespace
-  Tcl_Interp* const interp = rep->interp.intp();
+  const tcl::namesp otherns = tcl::namesp::lookup(rep->interp, namesp);
 
-  Tcl_Namespace* const othernsptr =
-    Tcl_FindNamespace(interp, namesp, 0, TCL_GLOBAL_ONLY);
+  const tcl::list exportlist = otherns.get_export_list(rep->interp);
 
-  if (othernsptr == 0)
-    throw rutz::error(rutz::cat("no Tcl namespace '", namesp, "'"),
-                      SRC_POS);
+  const tcl::namesp thisns(rep->interp, rep->namesp_name.c_str());
 
-  tcl::obj obj;
-  Tcl_AppendExportList(interp, othernsptr, obj.get());
-
-  Tcl_Namespace* const thisnsptr = rep->tcl_namespace();
-
-  tcl::list exportlist(obj);
   for (unsigned int i = 0; i < exportlist.size(); ++i)
     {
-      Tcl_Export(interp, thisnsptr,
-                 exportlist.get<const char*>(i),
-                 /*resetExportListFirst*/ false);
+      thisns.export_cmd(rep->interp, exportlist.get<const char*>(i));
     }
 }
 
@@ -436,10 +407,9 @@ GVX_TRACE("tcl::pkg::make_pkg_cmd_name");
     {
       if (!(flags & NO_EXPORT))
         {
-          Tcl_Namespace* const namesp = rep->tcl_namespace();
+          const tcl::namesp ns(rep->interp, rep->namesp_name.c_str());
 
-          Tcl_Export(rep->interp.intp(), namesp, cmd_name_cstr,
-                     /*resetExportListFirst*/ false);
+          ns.export_cmd(rep->interp, cmd_name_cstr);
         }
 
       static string name;
