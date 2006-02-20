@@ -129,11 +129,21 @@ private:
 /// An exception-safe wrapper around a pipe-fork-exec sequence.
 class rutz::exec_pipe
 {
+private:
+  void init(const char* m, char* const* argv);
+
 public:
   /// Set up a pipe to a child process with the given argv array.
   /** The mode should be "r" if the parent is reading, and "w" if the
-      parent is writing. */
+      parent is writing. NOTE that the argv array MUST be
+      NULL-terminated! */
   exec_pipe(const char* m, char* const* argv);
+
+  /// Set up a pipe to a child process with the given list of args.
+  /** The mode should be "r" if the parent is reading, and "w" if the
+      parent is writing. NOTE that the variable length argument list
+      MUST NULL-terminated! */
+  exec_pipe(const char* m, const char* argv0, ...);
 
   /// Destructor cleans up child process and the pipe's file descriptors.
   ~exec_pipe() throw();

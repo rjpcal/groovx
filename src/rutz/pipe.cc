@@ -161,11 +161,7 @@ namespace
   }
 }
 
-rutz::exec_pipe::exec_pipe(const char* m, char* const* argv) :
-  m_parent_is_reader(is_read_mode(m)),
-  m_fds(),
-  m_child(),
-  m_stream(0)
+void rutz::exec_pipe::init(const char* m, char* const* argv)
 {
   if (m_child.in_parent())
     {
@@ -224,6 +220,31 @@ rutz::exec_pipe::exec_pipe(const char* m, char* const* argv) :
     }
 }
 
+rutz::exec_pipe::exec_pipe(const char* m, char* const* argv) :
+  m_parent_is_reader(is_read_mode(m)),
+  m_fds(),
+  m_child(),
+  m_stream(0)
+{
+  this->init(m, argv);
+}
+
+rutz::exec_pipe::exec_pipe(const char* m, const char* argv0, ...) :
+  m_parent_is_reader(is_read_mode(m)),
+  m_fds(),
+  m_child(),
+  m_stream(0)
+{
+  va_list a;
+  va_start(a, argv0);
+  char** argv = make_argv(argv0, a);
+  va_end(a);
+
+  try { this->init(m, argv); }
+  catch (...) { free(argv); throw; }
+
+  free(argv);
+}
 
 rutz::exec_pipe::~exec_pipe() throw()
 {
