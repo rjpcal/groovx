@@ -304,9 +304,6 @@ namespace rutz
   struct func_traits<mem_functor_base<MF> > : public func_traits<MF>
   {};
 
-  template <class C>
-  C* extract_ptr(C* c) { return c; }
-
   /// mem_functor_base adapts a member function to an ordinary operator().
   /** The "this" pointer is passed through the first argument of the
       operator() call, via a raw pointer or a smart pointer. */
@@ -329,35 +326,35 @@ namespace rutz
     template <class ptr>
     R operator()(ptr obj)
     {
-      return (extract_ptr(obj)->*m_held_func)();
+      return ((*obj).*m_held_func)();
     }
 
     /// Function-call operator for object + 1 arg.
     template <class ptr, class P1>
     R operator()(ptr obj, P1 p1)
     {
-      return (extract_ptr(obj)->*m_held_func)(p1);
+      return ((*obj).*m_held_func)(p1);
     }
 
     /// Function-call operator for object + 2 args.
     template <class ptr, class P1, class P2>
     R operator()(ptr obj, P1 p1, P2 p2)
     {
-      return (extract_ptr(obj)->*m_held_func)(p1, p2);
+      return ((*obj).*m_held_func)(p1, p2);
     }
 
     /// Function-call operator for object + 3 args.
     template <class ptr, class P1, class P2, class P3>
     R operator()(ptr obj, P1 p1, P2 p2, P3 p3)
     {
-      return (extract_ptr(obj)->*m_held_func)(p1, p2, p3);
+      return ((*obj).*m_held_func)(p1, p2, p3);
     }
 
     /// Function-call operator for object + 4 args.
     template <class ptr, class P1, class P2, class P3, class P4>
     R operator()(ptr obj, P1 p1, P2 p2, P3 p3, P4 p4)
     {
-      return (extract_ptr(obj)->*m_held_func)(p1, p2, p3, p4);
+      return ((*obj).*m_held_func)(p1, p2, p3, p4);
     }
 
     /// Function-call operator for object + 5 args.
@@ -365,7 +362,7 @@ namespace rutz
               class P5>
     R operator()(ptr obj, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
     {
-      return (extract_ptr(obj)->*m_held_func)(p1, p2, p3, p4, p5);
+      return ((*obj).*m_held_func)(p1, p2, p3, p4, p5);
     }
 
     /// Function-call operator for object + 6 args.
@@ -373,7 +370,7 @@ namespace rutz
               class P5, class P6>
     R operator()(ptr obj, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)
     {
-      return (extract_ptr(obj)->*m_held_func)(p1, p2, p3, p4, p5, p6);
+      return ((*obj).*m_held_func)(p1, p2, p3, p4, p5, p6);
     }
   };
 

@@ -50,9 +50,6 @@ namespace rutz
 {
   struct file_pos;
 
-  template <class C>
-  C* extract_ptr(const nub::soft_ref<C>& c) { return c.get(); }
-
   /// Specialization of func_traits for mem_functor.
   template <class MF>
   struct func_traits<mem_functor<MF> > : public func_traits<MF>

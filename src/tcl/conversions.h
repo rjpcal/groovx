@@ -92,6 +92,26 @@ namespace tcl
   // Functions for converting from Tcl objects to C++ types.
   //
 
+  /// Convert a tcl::obj to a native c++ object.
+  /** Will select a matching aux_convert_to() overload. NOTE! Due to
+      two-phase name lookup, this convert_to() definition must occur
+      before ALL aux_convert_to() overloads. */
+  template <class T>
+  inline typename returnable<T>::type convert_to( const tcl::obj& obj )
+  {
+    return aux_convert_to(obj.get(), static_cast<typename returnable<T>::type*>(0));
+  }
+
+  /// Convert a tcl::obj to a native c++ object.
+  /** Will select a matching aux_convert_to() overload. NOTE! Due to
+      two-phase name lookup, this convert_to() definition must occur
+      before ALL aux_convert_to() overloads. */
+  template <class T>
+  inline typename returnable<T>::type convert_to( Tcl_Obj* obj )
+  {
+    return aux_convert_to(obj, static_cast<typename returnable<T>::type*>(0));
+  }
+
   // Note that the trailing pointer params are not actually used, they
   // are simply present to allow overload selection. See e.g. how
   // aux_convert_to() is called below in the implementation of
@@ -116,23 +136,19 @@ namespace tcl
   tcl::obj      aux_convert_to(Tcl_Obj* obj, tcl::obj*)
   { return tcl::obj(obj); }
 
-  template <class T>
-  inline typename returnable<T>::type convert_to( Tcl_Obj* obj )
-  {
-    return aux_convert_to(obj, static_cast<typename returnable<T>::type*>(0));
-  }
-
-  /// Convert a tcl::obj to a native c++ object.
-  /** Will select a matching aux_convert_to() overload. */
-  template <class T>
-  inline typename returnable<T>::type convert_to( const tcl::obj& obj )
-  {
-    return aux_convert_to(obj.get(), static_cast<typename returnable<T>::type*>(0));
-  }
-
   //
   // Functions for converting from C++ types to Tcl objects.
   //
+
+  /// Convert a native c++ object to a tcl::obj.
+  /** Will select a matching aux_convert_from() overload. NOTE! Due to
+      two-phase name lookup, this convert_from() definition must occur
+      before ALL aux_convert_from() overloads. */
+  template <class T>
+  inline tcl::obj convert_from(const T& val)
+  {
+    return aux_convert_from(val);
+  }
 
   tcl::obj aux_convert_from(long long val);
   tcl::obj aux_convert_from(long val);
@@ -154,14 +170,6 @@ namespace tcl
   inline
   tcl::obj aux_convert_from(tcl::obj val)
   { return val; }
-
-  /// Convert a native c++ object to a tcl::obj.
-  /** Will select a matching aux_convert_from() overload. */
-  template <class T>
-  inline tcl::obj convert_from(const T& val)
-  {
-    return aux_convert_from(val);
-  }
 }
 
 static const char vcid_groovx_tcl_conversions_h_utc20050628162420[] = "$Id$ $HeadURL$";
