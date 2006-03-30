@@ -130,7 +130,7 @@ private:
 class rutz::exec_pipe
 {
 private:
-  void init(const char* m, char* const* argv);
+  void init(char* const* argv);
 
 public:
   /// Set up a pipe to a child process with the given argv array.
