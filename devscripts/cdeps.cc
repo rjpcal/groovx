@@ -863,13 +863,6 @@ namespace
   // Typedefs and enums
   typedef vector<file_info*>      dep_list_t;
 
-  enum parse_state
-    {
-      NOT_STARTED = 0,
-      IN_PROGRESS = 1,
-      COMPLETE = 2
-    };
-
   struct string_cmp
   {
     bool operator()(const char* p1, const char* p2)
@@ -1231,7 +1224,6 @@ namespace
     bool                    m_literal; // if true, then don't try to look up nested includes
     bool                    m_phantom; // if true, then only consider for link deps
     const bool              m_pruned;
-    parse_state             m_cdep_parse_state;
     bool                    m_direct_cdeps_done;
     dep_list_t              m_direct_cdeps;
     bool                    m_nested_cdeps_done;
@@ -1243,6 +1235,7 @@ namespace
   public:
     shared_ptr<ldep_group>  m_ldep_group;
   private:
+    int                     m_cdep_epoch;
     int                     m_epoch;
     bool                    m_is_header_only;
   };
@@ -1361,7 +1354,6 @@ namespace
     m_literal(false),
     m_phantom(false),
     m_pruned(this->should_prune()),
-    m_cdep_parse_state(NOT_STARTED),
     m_direct_cdeps_done(false),
     m_direct_cdeps(),
     m_nested_cdeps_done(false),
@@ -1370,6 +1362,7 @@ namespace
     m_direct_ldeps(),
     m_nested_ldeps_done(false),
     m_nested_ldeps(),
+    m_cdep_epoch(0),
     m_epoch(0),
     m_is_header_only(false)
   {
@@ -1722,21 +1715,12 @@ namespace
     if (this->m_nested_cdeps_done)
       return this->m_nested_cdeps;
 
-    if (this->m_cdep_parse_state == IN_PROGRESS)
-      {
-        cerr << "ERROR: in " << this->m_fname
-             << ": untrapped nested #include recursion\n";
-        exit(1);
-      }
-
     if (this->m_phantom)
       {
         cerr << "ERROR: get_nested_cdeps() called for phantom file: "
              << this->m_fname << '\n';
         exit(1);
       }
-
-    this->m_cdep_parse_state = IN_PROGRESS;
 
     // use a set to build up the list of #includes, so that
     //   (1) we automatically avoid duplicates
@@ -1747,64 +1731,93 @@ namespace
     // vec.erase() at the end
     set<file_info*, file_info_cmp> dep_set;
 
-    dep_set.insert(this);
+    dep_list_t to_handle = this->get_direct_cdeps();
 
-    const dep_list_t& direct = this->get_direct_cdeps();
+    // Enforce that this function is not safe for being called
+    // recursively.
+    static bool computing_cdeps = false;
+    assert(!computing_cdeps);
+    computing_cdeps = true;
 
-    for (dep_list_t::const_iterator
-           i = direct.begin(),
-           istop = direct.end();
-         i != istop;
-         ++i)
+    static int cdep_epoch = 0;
+    ++cdep_epoch;
+
+    // A note on the algorithm used here. Previously, we took the
+    // following approach: first, get the list of direct cdeps; then
+    // for each of those, get its nested cdeps with
+    // get_nested_cdeps(), so that we'd have a recursive series of
+    // calls to get_nested_cdeps(). With each result we'd merge the
+    // list back into a std::set, relying on the uniqueness and sorted
+    // properties of that set. But the drawback of that approach is
+    // that it relied on many many std::set insertions, most of which
+    // were no-ops because the item already existed in the set; that's
+    // because the nested cdeps trees for different files overlap
+    // substantially. This in turn meant many wasted file_info_cmp
+    // operations. So the new approach involves NOT using recursive
+    // calls to get_nested_cdeps(), but just calling
+    // get_direct_cdeps() at most once per file. This is more
+    // efficient since we can use an epoch flag in the file_info
+    // object itself to tell us whether it has been visited in this
+    // traversal or not, saving us from lots of expensive
+    // std::set::find() calls.
+
+    while (to_handle.size() > 0)
       {
-        // Check for self-inclusion to avoid infinite recursion.
-        if (*i == this)
+        file_info* f = to_handle.back();
+        to_handle.pop_back();
+
+        // Check if we've already come across this file in this
+        // traversal epoch; if so, then just continue on to the next
+        // one:
+        if (f->m_cdep_epoch == cdep_epoch)
           continue;
+
+        // Check for self-inclusion to avoid infinite recursion.
+        if (f == this)
+          continue;
+
+        dep_set.insert(f);
+        f->m_cdep_epoch = cdep_epoch;
 
         // Check if the included file is to be treated as a 'phantom'
         // file -- these would be e.g. system headers (#include'd with
         // angle brackets) that we don't to treat as compile
         // dependencies, but for which we would like to compute link
         // dependencies.
-        if ((*i)->m_phantom == true)
+        if (f->m_phantom == true)
           {
-            dep_set.insert(*i);
             continue;
           }
 
-        // Check if the included file is to be treated as a 'literal' file,
-        // meaning that we don't look for nested includes, and thus don't
-        // require the file to currently exist. This is useful for handling
-        // files that are generated by an intermediate rule in some makefile.
-        if ((*i)->m_literal == true)
+        // Check if the included file is to be treated as a 'literal'
+        // file, meaning that we don't look for nested includes, and
+        // thus don't require the file to currently exist. This is
+        // useful for handling files that are generated by an
+        // intermediate rule in some makefile.
+        if (f->m_literal == true)
           {
-            dep_set.insert(*i);
             continue;
           }
 
-        // Check for other recursion cycles
-        if ((*i)->m_cdep_parse_state == IN_PROGRESS)
-          {
-            if (cfg.verbosity >= NORMAL)
-              cfg.warning() << "in " << this->m_fname
-                            << ": recursive #include cycle with "
-                            << (*i)->m_fname << "\n";
-            continue;
-          }
+        const dep_list_t& d = f->get_direct_cdeps();
 
-        ++cfg.nest_level;
-        const dep_list_t& indirect = (*i)->get_nested_cdeps();
-        --cfg.nest_level;
-        if (cfg.verbosity >= NOISY)
+        for (size_t i = 0; i < d.size(); ++i)
           {
-            for (dep_list_t::const_iterator
-                   itr = indirect.begin(), end = indirect.end();
-                 itr != end;
-                 ++itr)
-              cfg.info() << (*i)->name() << " --> (direct) " << (*itr)->name() << '\n';
+            // Check for other recursion cycles
+            if (d[i] == this)
+              {
+                if (cfg.verbosity >= NORMAL)
+                  cfg.warning() << "in " << this->m_fname
+                                << ": recursive #include cycle with "
+                                << f->m_fname << "\n";
+                continue;
+              }
+
+            to_handle.push_back(d[i]);
           }
-        dep_set.insert(indirect.begin(), indirect.end());
       }
+
+    dep_set.insert(this);
 
     assert(this->m_nested_cdeps.empty());
     this->m_nested_cdeps.assign(dep_set.begin(), dep_set.end());
@@ -1820,7 +1833,8 @@ namespace
       }
 
     this->m_nested_cdeps_done = true;
-    this->m_cdep_parse_state = COMPLETE;
+
+    computing_cdeps = false;
 
     return this->m_nested_cdeps;
   }
