@@ -809,7 +809,9 @@ namespace
       nest_level(0),
       output_comment_character("#"),
       ldep_raw_mode(false),
-      cache_file_name()
+      cache_file_name(),
+      sources_make_variable(),
+      headers_make_variable()
     {}
 
     ostream& info()
@@ -853,6 +855,9 @@ namespace
     bool            ldep_raw_mode;
 
     string          cache_file_name;
+
+    string          sources_make_variable;
+    string          headers_make_variable;
   };
 
   dep_config cfg;
@@ -929,12 +934,13 @@ namespace
     // source-file counterpart.
     bool is_header_only() const { return this->m_is_header_only; }
 
-    // Returns true if m_fname has a c++ source file extension, and
-    // assigns the stem (without the extension) to 'stem'.
-    bool is_cc_file() const;
+    // Returns true if m_fname has a c++ source file extension.
+    bool is_cc_fname() const;
 
-    // Like is_cc_fname(), but also checks for header-file
-    // extensions (e.g., '.h').
+    // Returns true if m_fname has a c++ header file extension.
+    bool is_h_fname() const;
+
+    // Returns true if m_fname has a c++ source or header file extension.
     bool is_cc_or_h_fname() const;
 
     // Find the source file that corresponds to the given header file
@@ -1187,6 +1193,48 @@ namespace
                  << cfg.cache_file_name << "\n";
     }
 
+    static void dump_sources_variable()
+    {
+      printf("%s :=", cfg.sources_make_variable.c_str());
+
+      for (info_map_t::const_iterator
+             itr = s_info_map.begin(),
+             stop = s_info_map.end();
+           itr != stop;
+           ++itr)
+        {
+          file_info* const fi = (*itr).second;
+
+          if (fi->is_cc_fname() && !fi->m_phantom)
+            {
+              printf(" %s", fi->m_fname.c_str());
+            }
+        }
+
+      printf("\n");
+    }
+
+    static void dump_headers_variable()
+    {
+      printf("%s :=", cfg.headers_make_variable.c_str());
+
+      for (info_map_t::const_iterator
+             itr = s_info_map.begin(),
+             stop = s_info_map.end();
+           itr != stop;
+           ++itr)
+        {
+          file_info* const fi = (*itr).second;
+
+          if (fi->is_h_fname() && !fi->m_phantom)
+            {
+              printf(" %s", fi->m_fname.c_str());
+            }
+        }
+
+      printf("\n");
+    }
+
     static void find_ldep_groups(set<shared_ptr<ldep_group> >& result)
     {
       result.clear();
@@ -1199,7 +1247,7 @@ namespace
         {
           file_info* finfo = (*itr).second;
 
-          if (!finfo->is_cc_file() && !finfo->is_header_only())
+          if (!finfo->is_cc_fname() && !finfo->is_header_only())
             continue;
 
           result.insert(finfo->m_ldep_group);
@@ -1617,7 +1665,7 @@ namespace
     return (*i).second;
   }
 
-  bool file_info::is_cc_file() const
+  bool file_info::is_cc_fname() const
   {
     for (unsigned int i = 0; i < cfg.source_exts.size(); ++i)
       {
@@ -1630,16 +1678,8 @@ namespace
     return false;
   }
 
-  bool file_info::is_cc_or_h_fname() const
+  bool file_info::is_h_fname() const
   {
-    for (unsigned int i = 0; i < cfg.source_exts.size(); ++i)
-      {
-        if (this->m_extension == cfg.source_exts[i])
-          {
-            return true;
-          }
-      }
-
     for (unsigned int i = 0; i < cfg.header_exts.size(); ++i)
       {
         if (this->m_extension == cfg.header_exts[i])
@@ -1649,6 +1689,11 @@ namespace
       }
 
     return false;
+  }
+
+  bool file_info::is_cc_or_h_fname() const
+  {
+    return this->is_cc_fname() || this->is_h_fname();
   }
 
   file_info* file_info::raw_find_source_for_header()
@@ -2509,6 +2554,16 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
       cfg.cache_file_name = optarg;
       return true;
     }
+  else if (strcmp(option, "--sources-variable") == 0)
+    {
+      cfg.sources_make_variable = optarg;
+      return true;
+    }
+  else if (strcmp(option, "--headers-variable") == 0)
+    {
+      cfg.headers_make_variable = optarg;
+      return true;
+    }
   else
     {
       cerr << "ERROR: unrecognized command-line option: "
@@ -2624,7 +2679,7 @@ void cppdeps::print_direct_cdeps(file_info* finfo)
 
 void cppdeps::print_makefile_dep(file_info* finfo)
 {
-  if (!finfo->is_cc_file())
+  if (!finfo->is_cc_fname())
     {
       if (cfg.verbosity >= NOISY)
         cfg.info() << finfo->name() << " is not a c++ file\n";
@@ -2680,7 +2735,7 @@ void cppdeps::print_makefile_dep(file_info* finfo)
 
 void cppdeps::print_link_deps(file_info* finfo)
 {
-  if (!finfo->is_cc_file())
+  if (!finfo->is_cc_fname())
     return;
 
   string group;
@@ -2876,7 +2931,7 @@ void cppdeps::traverse_sources()
               (cfg.output_mode & LDEP_ADJACENCY) ||
               (cfg.output_mode & LDEP_RAW))
             {
-              if (finfo->is_cc_file())
+              if (finfo->is_cc_fname())
                 (void) finfo->get_nested_ldeps();
             }
 
@@ -2913,6 +2968,16 @@ void cppdeps::traverse_sources()
   if (cfg.cache_file_name.length() > 0)
     {
       file_info::save_cache_file();
+    }
+
+  if (cfg.sources_make_variable.length() > 0)
+    {
+      file_info::dump_sources_variable();
+    }
+
+  if (cfg.headers_make_variable.length() > 0)
+    {
+      file_info::dump_headers_variable();
     }
 }
 
