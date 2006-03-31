@@ -1009,7 +1009,7 @@ namespace
 
       fprintf(f, "VE %d\n", CACHE_FORMAT_VERSION);
 
-      fprintf(f, "TT %d\n", cfg.start_time);
+      fprintf(f, "TT %ld\n", static_cast<long>(cfg.start_time));
 
       for (info_map_t::const_iterator
              itr = s_info_map.begin(),
