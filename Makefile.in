@@ -184,6 +184,7 @@ $(DEP)/cppdepends: $(DEVSCRIPTS)/cdeps $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cdeps \
 		--objdir $(OBJ)/ \
 		--srcdir $(SRC) \
+		--cachefile $(DEP)/cppdepends.cache \
 		| sort > $(@).tmp
 	mv $(@).tmp $@
 
@@ -253,7 +254,7 @@ $(GVX_PKG_LIB_DIR)/pkgIndex.tcl: $(ALL_SRCS)
 
 $(DEP)/pkgdepends: $(DEVSCRIPTS)/cdeps $(ALL_SRCS)
 	@mkdir -p $(dir $@)
-	$(DEVSCRIPTS)/cdeps \
+	time $(DEVSCRIPTS)/cdeps \
 	  --objdir $(OBJ)/ \
 	  --srcdir $(SRC) \
 	  --output-link-deps \
