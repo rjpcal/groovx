@@ -63,6 +63,8 @@ using std::vector;
 
 namespace
 {
+  const int CACHE_FORMAT_VERSION = 1;
+
   //----------------------------------------------------------
   //
   // helper functions
@@ -806,7 +808,8 @@ namespace
       start_time(time((time_t*) 0)),
       nest_level(0),
       output_comment_character("#"),
-      ldep_raw_mode(false)
+      ldep_raw_mode(false),
+      cache_file_name()
     {}
 
     ostream& info()
@@ -848,6 +851,8 @@ namespace
     const char*     output_comment_character;
 
     bool            ldep_raw_mode;
+
+    string          cache_file_name;
   };
 
   dep_config cfg;
@@ -933,6 +938,9 @@ namespace
     bool is_cc_or_h_fname() const;
 
     // Find the source file that corresponds to the given header file
+    file_info* raw_find_source_for_header();
+
+    // Cached version of the above
     file_info* find_source_for_header();
 
     bool resolve_include(const string& include_name,
@@ -986,6 +994,197 @@ namespace
           cerr << (*itr).second->m_nested_ldeps_done
                << ' ' << (*itr).second->m_fname << '\n';;
         }
+    }
+
+    static void save_cache_file()
+    {
+      FILE* f = fopen(cfg.cache_file_name.c_str(), "w");
+
+      if (f == 0)
+        {
+          cerr << "ERROR: couldn't open " << cfg.cache_file_name
+               << " for writing\n";
+          exit(1);
+        }
+
+      fprintf(f, "VE %d\n", CACHE_FORMAT_VERSION);
+
+      fprintf(f, "TT %d\n", cfg.start_time);
+
+      for (info_map_t::const_iterator
+             itr = s_info_map.begin(),
+             stop = s_info_map.end();
+           itr != stop;
+           ++itr)
+        {
+          file_info* const fi = (*itr).second;
+
+          if (!fi->m_literal && !fi->m_phantom
+              && fi->is_cc_or_h_fname())
+            {
+              fprintf(f, "BF %s\n", fi->m_fname.c_str());
+
+              const dep_list_t& cdeps = fi->get_direct_cdeps();
+
+              for (size_t i = 0; i < cdeps.size(); ++i)
+                {
+                  if (cdeps[i]->m_phantom)
+                    fprintf(f, "IP %s\n", cdeps[i]->m_fname.c_str());
+                  else if (cdeps[i]->m_literal)
+                    fprintf(f, "IL %s\n", cdeps[i]->m_fname.c_str());
+                  else
+                    fprintf(f, "II %s\n", cdeps[i]->m_fname.c_str());
+                }
+
+              fprintf(f, "EF %s\n", fi->m_fname.c_str());
+            }
+        }
+
+      fclose(f);
+    }
+
+    static void load_cache_file()
+    {
+      std::ifstream f(cfg.cache_file_name.c_str());
+
+      if (!f.is_open())
+        {
+          cfg.warning() << "couldn't open " << cfg.cache_file_name
+                        << " for reading\n";
+          return;
+        }
+
+      std::string key;
+
+      f >> key;
+
+      if (key.compare("VE") != 0)
+        {
+          cfg.warning() << "invalid cache file: " << cfg.cache_file_name
+                        << " (expected 'VE' but got '" << key << "')\n";
+          return;
+        }
+
+      int ver;
+      f >> ver;
+      if (ver != CACHE_FORMAT_VERSION)
+        {
+          cfg.warning() << "invalid cache file: " << cfg.cache_file_name
+                        << " (expected version " << CACHE_FORMAT_VERSION
+                        << " but got '" << ver << "')\n";
+          return;
+        }
+
+      f >> key;
+
+      if (key.compare("TT") != 0)
+        {
+          cfg.warning() << "invalid cache file: " << cfg.cache_file_name
+                        << " (expected 'TT' but got '" << key << "')\n";
+          return;
+        }
+
+      time_t cachetime;
+      f >> cachetime;
+
+      file_info* current_file = 0;
+
+      std::string name;
+
+      int num_cache = 0;
+      int num_valid = 0;
+
+      while (f >> key)
+        {
+          f >> name;
+
+          if (key.compare("BF") == 0)
+            {
+              struct stat statbuf;
+
+              ++num_cache;
+
+              if (stat(name.c_str(), &statbuf) == -1)
+                {
+                  cfg.info() << name << " is in the cache "
+                             << "but no longer exists\n";
+                  current_file = 0;
+                  continue;
+                }
+              else if (statbuf.st_mtime > cachetime)
+                {
+                  cfg.info() << name
+                             << " is newer than the cache file\n";
+                  current_file = 0;
+                  continue;
+                }
+
+              current_file = file_info::get(name);
+            }
+
+          else if (key.compare("EF") == 0)
+            {
+              if (current_file != 0)
+                {
+                  if (name.compare(current_file->m_fname) != 0)
+                    {
+                      cfg.warning()
+                        << "invalid cache file: "
+                        << cfg.cache_file_name
+                        << " (mismatched 'BF' and 'EF' tags for "
+                        << current_file->m_fname << ")\n";
+                      return;
+                    }
+
+                  current_file->m_direct_cdeps_done = true;
+                  current_file = 0;
+
+                  ++num_valid;
+                }
+            }
+
+          else if (key.compare("II") == 0)
+            {
+              if (current_file != 0)
+                {
+                  file_info* dep = file_info::get(name);
+                  current_file->m_direct_cdeps.push_back(dep);
+                }
+            }
+
+          else if (key.compare("IP") == 0)
+            {
+              if (current_file != 0)
+                {
+                  file_info* dep = file_info::get(name);
+                  dep->m_phantom = true;
+                  current_file->m_direct_cdeps.push_back(dep);
+                }
+            }
+
+          else if (key.compare("IL") == 0)
+            {
+              if (current_file != 0)
+                {
+                  file_info* dep = file_info::get(name);
+                  dep->m_literal = true;
+                  current_file->m_direct_cdeps.push_back(dep);
+                }
+            }
+
+          else
+            {
+              cfg.warning() << "invalid cache file: "
+                            << cfg.cache_file_name
+                            << " (unknown field key '"
+                            << key << "')\n";
+              return;
+            }
+        }
+
+      cfg.info() << "used " << num_valid << "/" << num_cache
+                 << " entries from cache file "
+                 << cfg.cache_file_name << "\n";
     }
 
     static void find_ldep_groups(set<shared_ptr<ldep_group> >& result)
@@ -1238,6 +1437,9 @@ namespace
     int                     m_cdep_epoch;
     int                     m_epoch;
     bool                    m_is_header_only;
+
+    file_info*              m_source_for_header;
+    bool                    m_source_for_header_done;
   };
 
   struct file_info_cmp
@@ -1364,7 +1566,9 @@ namespace
     m_nested_ldeps(),
     m_cdep_epoch(0),
     m_epoch(0),
-    m_is_header_only(false)
+    m_is_header_only(false),
+    m_source_for_header(0),
+    m_source_for_header_done(false)
   {
     assert(this->m_dirname_without_slash.length() > 0); // must be at least '.'
     assert(this->m_dirname_without_slash[this->m_dirname_without_slash.length()-1] != '/');
@@ -1447,7 +1651,7 @@ namespace
     return false;
   }
 
-  file_info* file_info::find_source_for_header()
+  file_info* file_info::raw_find_source_for_header()
   {
     if (this->m_phantom)
       return this;
@@ -1471,6 +1675,16 @@ namespace
       // transitive link dependencies due to the headers #include'd
       // within the .h file):
       return 0;
+  }
+
+  file_info* file_info::find_source_for_header()
+  {
+    if (this->m_source_for_header_done)
+      return this->m_source_for_header;
+
+    this->m_source_for_header = this->raw_find_source_for_header();
+    this->m_source_for_header_done = true;
+    return this->m_source_for_header;
   }
 
   bool file_info::resolve_include(const string& include_name,
@@ -1722,14 +1936,7 @@ namespace
         exit(1);
       }
 
-    // use a set to build up the list of #includes, so that
-    //   (1) we automatically avoid duplicates
-    //   (2) we get sorting for free
-    //
-    // this turns out to be cheaper than building up the list in a
-    // std::vector and then doing a big std::sort, std::unique(), and
-    // vec.erase() at the end
-    set<file_info*, file_info_cmp> dep_set;
+    assert(this->m_nested_cdeps.empty());
 
     dep_list_t to_handle = this->get_direct_cdeps();
 
@@ -1776,7 +1983,7 @@ namespace
         if (f == this)
           continue;
 
-        dep_set.insert(f);
+        this->m_nested_cdeps.push_back(f);
         f->m_cdep_epoch = cdep_epoch;
 
         // Check if the included file is to be treated as a 'phantom'
@@ -1817,10 +2024,11 @@ namespace
           }
       }
 
-    dep_set.insert(this);
+    this->m_nested_cdeps.push_back(this);
 
-    assert(this->m_nested_cdeps.empty());
-    this->m_nested_cdeps.assign(dep_set.begin(), dep_set.end());
+    std::sort(this->m_nested_cdeps.begin(),
+              this->m_nested_cdeps.end(),
+              file_info_cmp());
 
     if (cfg.verbosity >= NOISY)
       {
@@ -2296,6 +2504,11 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
       m_inspect = true;
       return false;
     }
+  else if (strcmp(option, "--cachefile") == 0)
+    {
+      cfg.cache_file_name = optarg;
+      return true;
+    }
   else
     {
       cerr << "ERROR: unrecognized command-line option: "
@@ -2570,6 +2783,11 @@ void cppdeps::print_link_deps(file_info* finfo)
 
 void cppdeps::traverse_sources()
 {
+  if (cfg.cache_file_name.length() > 0)
+    {
+      file_info::load_cache_file();
+    }
+
   // start off with a copy of m_src_files
   vector<string> files (m_src_files);
 
@@ -2690,6 +2908,11 @@ void cppdeps::traverse_sources()
   if (cfg.output_mode & LDEP_RAW)
     {
       file_info::dump_ldep_raw();
+    }
+
+  if (cfg.cache_file_name.length() > 0)
+    {
+      file_info::save_cache_file();
     }
 }
 
