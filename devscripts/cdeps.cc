@@ -505,21 +505,31 @@ namespace
           exit(1);
         }
 
-      m_mem = mmap(0, m_statbuf.st_size,
-                   PROT_READ, MAP_PRIVATE, m_fileno, 0);
-
-      if (m_mem == (void*)-1)
+      if (m_statbuf.st_size == 0)
         {
-          cerr << "in mapped_file(): mmap() failed for file "
-               << filename << ":\n"
-               << strerror(errno) << "\n";
-          exit(1);
+          // ok, the file is empty, so we don't need to actually mmap
+          // anything:
+          m_mem = 0;
+        }
+      else
+        {
+          m_mem = mmap(0, m_statbuf.st_size,
+                       PROT_READ, MAP_PRIVATE, m_fileno, 0);
+
+          if (m_mem == (void*)-1)
+            {
+              cerr << "in mapped_file(): mmap() failed for file "
+                   << filename << ":\n"
+                   << strerror(errno) << "\n";
+              exit(1);
+            }
         }
     }
 
     ~mapped_file()
     {
-      munmap(m_mem, m_statbuf.st_size);
+      if (m_mem != 0)
+        munmap(m_mem, m_statbuf.st_size);
       close(m_fileno);
     }
 
@@ -2679,6 +2689,15 @@ void cppdeps::print_direct_cdeps(file_info* finfo)
 
 void cppdeps::print_makefile_dep(file_info* finfo)
 {
+  if (finfo->is_cc_or_h_fname())
+    {
+      // print an empty dependency into the makefile; that way, if for
+      // some reason the file disappears before the dependencies are
+      // regenerated, we force make to ignore the file rather than
+      // saying that it doesn't know how to build the file
+      printf("%s:\n", finfo->name().c_str());
+    }
+
   if (!finfo->is_cc_fname())
     {
       if (cfg.verbosity >= NOISY)
