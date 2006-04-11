@@ -1163,8 +1163,20 @@ namespace
             {
               if (current_file != 0)
                 {
-                  file_info* dep = file_info::get(name);
-                  current_file->m_direct_cdeps.push_back(dep);
+                  struct stat statbuf;
+
+                  if (stat(name.c_str(), &statbuf) == -1)
+                    {
+                      cfg.warning() << name << " no longer exists, "
+                                    << "but is #include'd by "
+                                    << current_file->m_fname
+                                    << " in the cache file\n";
+                    }
+                  else
+                    {
+                      file_info* dep = file_info::get(name);
+                      current_file->m_direct_cdeps.push_back(dep);
+                    }
                 }
             }
 
