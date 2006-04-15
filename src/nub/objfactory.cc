@@ -54,5 +54,5 @@ nub::obj_factory& nub::obj_factory::instance()
   return *s_instance;
 }
 
-static const char vcid_groovx_nub_objfactory_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_nub_objfactory_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_OBJFACTORY_CC_UTC20050626084019_DEFINED

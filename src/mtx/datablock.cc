@@ -298,5 +298,5 @@ void data_ref_holder::swap(data_ref_holder& other)
   std::swap(m_ref, other.m_ref);
 }
 
-static const char vcid_groovx_pkgs_mtx_datablock_cc_utc20050626084022[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_pkgs_mtx_datablock_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MTX_DATABLOCK_CC_UTC20050626084022_DEFINED

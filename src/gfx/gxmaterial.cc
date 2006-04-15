@@ -133,5 +133,5 @@ GVX_TRACE("GxMaterial::draw");
                      &shininess);
 }
 
-static const char vcid_groovx_gfx_gxmaterial_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxmaterial_cc_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXMATERIAL_CC_UTC20050626084024_DEFINED

@@ -190,5 +190,5 @@ namespace rutz
   shared_ptr<T> make_shared(T* t) { return shared_ptr<T>(t); }
 }
 
-static const char vcid_groovx_rutz_sharedptr_h_utc20050626084019[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_sharedptr_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_SHAREDPTR_H_UTC20050626084019_DEFINED

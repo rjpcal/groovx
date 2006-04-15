@@ -366,5 +366,5 @@ GVX_TRACE("media::save_png");
 
 #endif // HAVE_LIBPNG
 
-static const char vcid_groovx_media_pngparser_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_media_pngparser_cc_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_PNGPARSER_CC_UTC20050626084018_DEFINED

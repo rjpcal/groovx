@@ -354,5 +354,5 @@ GVX_TRACE("ElementContainer::isComplete");
   return (rep->sequencePos >= rep->elements.size());
 }
 
-static const char vcid_groovx_visx_elementcontainer_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_elementcontainer_cc_utc20050626084017[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_ELEMENTCONTAINER_CC_UTC20050626084017_DEFINED

@@ -54,5 +54,5 @@ public:
   static rutz::shared_ptr<GxFont> makeFont(const char* name);
 };
 
-static const char vcid_groovx_gfx_gxfactory_h_utc20050706224701[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxfactory_h_utc20050706224701[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXFACTORY_H_UTC20050706224701DEFINED

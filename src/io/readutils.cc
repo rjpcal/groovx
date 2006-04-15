@@ -54,5 +54,5 @@ fstring io::read_utils::make_seq_length_name(const fstring& seq_name)
   return result;
 }
 
-static const char vcid_groovx_io_readutils_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_io_readutils_cc_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_READUTILS_CC_UTC20050626084021_DEFINED

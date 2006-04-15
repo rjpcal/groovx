@@ -1017,5 +1017,5 @@ GVX_TRACE("max(mtx, mtx)");
   return binary_op(m1, m2, dash::max());
 }
 
-static const char vcid_groovx_pkgs_mtx_mtx_cc_utc20050626084022[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_pkgs_mtx_mtx_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MTX_MTX_CC_UTC20050626084022_DEFINED

@@ -54,5 +54,5 @@ GVX_TRACE("nub::volatile_object::destroy");
   delete this;
 }
 
-static const char vcid_groovx_nub_volatileobject_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_nub_volatileobject_cc_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_VOLATILEOBJECT_CC_UTC20050626084018_DEFINED

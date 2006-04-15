@@ -644,5 +644,5 @@ GVX_TRACE("io::legacy_writer::write_root");
                                                nub::PRIVATE));
 }
 
-static const char vcid_groovx_io_iolegacy_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_io_iolegacy_cc_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_IOLEGACY_CC_UTC20050626084021_DEFINED

@@ -180,5 +180,5 @@ private:
   static timing_mode s_timing_mode;
 };
 
-static const char vcid_groovx_rutz_prof_h_utc20050630214711[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_prof_h_utc20050630214711[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_PROF_H_UTC20050630214711DEFINED

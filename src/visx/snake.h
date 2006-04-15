@@ -93,5 +93,5 @@ private:
                      int i2, const geom::vec2<double>& new2);
 };
 
-static const char vcid_groovx_visx_snake_h_utc20050626084016[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_snake_h_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_SNAKE_H_UTC20050626084016_DEFINED

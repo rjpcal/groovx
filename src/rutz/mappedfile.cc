@@ -84,5 +84,5 @@ rutz::mapped_infile::~mapped_infile()
   close(m_fileno);
 }
 
-static const char vcid_groovx_rutz_mappedfile_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_mappedfile_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_MAPPEDFILE_CC_UTC20050626084020_DEFINED

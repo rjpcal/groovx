@@ -203,5 +203,5 @@ GVX_TRACE("media::irix_audio_sound_rep::play");
     }
 }
 
-static const char vcid_groovx_media_irixsound_h_utc20050626084018[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_media_irixsound_h_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_IRIXSOUND_H_UTC20050626084018_DEFINED

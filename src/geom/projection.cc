@@ -78,5 +78,5 @@ GVX_TRACE("geom::project");
                0.5 * (s1.z()+1));
 }
 
-static const char vcid_groovx_geom_projection_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_geom_projection_cc_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GEOM_PROJECTION_CC_UTC20050626084023_DEFINED

@@ -89,5 +89,5 @@ bool tcl::regexp::matches_string(const char* str)
   return false;
 }
 
-static const char vcid_groovx_tcl_regexp_cc_utc20050628162420[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_regexp_cc_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_REGEXP_CC_UTC20050628162420_DEFINED

@@ -76,5 +76,5 @@ void tcl::obj::decr_ref(Tcl_Obj* obj)
   Tcl_DecrRefCount(obj);
 }
 
-static const char vcid_groovx_tcl_obj_cc_utc20050628162420[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_obj_cc_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_OBJ_CC_UTC20050628162420_DEFINED

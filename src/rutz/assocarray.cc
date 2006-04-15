@@ -146,5 +146,5 @@ GVX_TRACE("rutz::assoc_array_base::set_value_for_key");
   ptr_slot = ptr;
 }
 
-static const char vcid_groovx_rutz_assocarray_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_assocarray_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_ASSOCARRAY_CC_UTC20050626084020_DEFINED

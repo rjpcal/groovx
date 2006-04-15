@@ -299,5 +299,5 @@ inline tcl::list::iterator<T> tcl::list::end(T* /*dummy*/)
   return iterator<T>(*this, iterator_base::END);
 }
 
-static const char vcid_groovx_tcl_list_h_utc20050628162420[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_list_h_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_LIST_H_UTC20050628162420_DEFINED

@@ -147,5 +147,5 @@ void io::attrib_map::add_attrib(const rutz::fstring& attr_name,
   m_attribs.push_back(value_type(attr_name, attrib(type,value)));
 }
 
-static const char vcid_groovx_io_readattribmap_h_utc20050626084021[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_io_readattribmap_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_READATTRIBMAP_H_UTC20050626084021_DEFINED

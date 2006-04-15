@@ -134,5 +134,5 @@ inline nub::ref<const serializable> make_const_proxy(const C* ref)
 
 } // end namespace io
 
-static const char vcid_groovx_io_ioproxy_h_utc20050626084021[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_io_ioproxy_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_IOPROXY_H_UTC20050626084021_DEFINED

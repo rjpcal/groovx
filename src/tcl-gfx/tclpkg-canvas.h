@@ -39,5 +39,5 @@ struct Tcl_Interp;
 extern "C" int Canvas_Init(Tcl_Interp* interp);
 extern "C" int Glcanvas_Init(Tcl_Interp* interp);
 
-static const char vcid_groovx_gfx_tclpkg_canvas_h_utc20050628170310[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_tclpkg_canvas_h_utc20050628170310[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_TCLPKG_CANVAS_H_UTC20050628170310_DEFINED

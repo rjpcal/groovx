@@ -132,5 +132,5 @@ GVX_TRACE("GxSphere::draw");
   canvas.drawSphere(itsRadius, itsSlices, itsStacks, itsFilled);
 }
 
-static const char vcid_groovx_gfx_gxsphere_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxsphere_cc_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXSPHERE_CC_UTC20050626084025_DEFINED

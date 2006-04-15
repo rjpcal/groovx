@@ -96,5 +96,5 @@ namespace tcl
             std::ios::openmode flags = std::ios::openmode(0));
 }
 
-static const char vcid_groovx_tcl_channelbuf_h_utc20050628162420[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_channelbuf_h_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_CHANNELBUF_H_UTC20050628162420_DEFINED

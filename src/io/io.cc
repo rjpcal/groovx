@@ -54,5 +54,5 @@ GVX_TRACE("io::serializable::class_version_id");
   return 0;
 }
 
-static const char vcid_groovx_io_io_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_io_io_cc_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_IO_CC_UTC20050626084021_DEFINED

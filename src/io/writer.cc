@@ -109,5 +109,5 @@ GVX_TRACE("io::writer::default_write_byte_array");
   write_cstring(name, reinterpret_cast<char*>(&encoded.vec[0]));
 }
 
-static const char vcid_groovx_io_writer_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_io_writer_cc_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_WRITER_CC_UTC20050626084021_DEFINED

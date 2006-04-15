@@ -76,5 +76,5 @@ GVX_TRACE("Fish_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_visx_tclpkg_fish_cc_utc20050628171008[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_tclpkg_fish_cc_utc20050628171008[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TCLPKG_FISH_CC_UTC20050628171008_DEFINED

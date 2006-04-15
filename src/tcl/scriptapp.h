@@ -128,5 +128,5 @@ private:
     }                                                           \
   return -1;
 
-static const char vcid_groovx_tcl_scriptapp_h_utc20050628162420[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_scriptapp_h_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_SCRIPTAPP_H_UTC20050628162420_DEFINED

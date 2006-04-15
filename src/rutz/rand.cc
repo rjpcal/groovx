@@ -37,5 +37,5 @@
 
 unsigned long rutz::default_rand_seed = 0;
 
-static const char vcid_groovx_rutz_rand_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_rand_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_RAND_CC_UTC20050626084020_DEFINED

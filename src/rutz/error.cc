@@ -147,5 +147,5 @@ void rutz::error::get_last_backtrace(rutz::backtrace& dst)
   dst = *g_last_backtrace;
 }
 
-static const char vcid_groovx_rutz_error_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_error_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_ERROR_CC_UTC20050626084020_DEFINED

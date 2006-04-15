@@ -173,5 +173,5 @@ void media::save_image(const char* filename,
   nub::log(rutz::cat("saved image file ", filename));
 }
 
-static const char vcid_groovx_media_imgfile_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_media_imgfile_cc_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_IMGFILE_CC_UTC20050626084018_DEFINED

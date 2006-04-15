@@ -380,5 +380,5 @@ GVX_TRACE("nub::objectdb::insert_obj_weak");
   rep->insert_obj(obj, false);
 }
 
-static const char vcid_groovx_nub_objdb_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_nub_objdb_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_OBJDB_CC_UTC20050626084019_DEFINED

@@ -104,5 +104,5 @@ namespace tcl
   };
 }
 
-static const char vcid_groovx_tcl_argspec_h_utc20050628064704[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_argspec_h_utc20050628064704[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_ARGSPEC_H_UTC20050628064704DEFINED

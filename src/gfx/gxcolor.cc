@@ -99,5 +99,5 @@ void GxColor::draw(Gfx::Canvas& canvas) const
   canvas.setColor(rgbaColor);
 }
 
-static const char vcid_groovx_gfx_gxcolor_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxcolor_cc_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXCOLOR_CC_UTC20050626084025_DEFINED

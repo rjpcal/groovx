@@ -324,5 +324,5 @@ void GlxWrapper::swapBuffers() const
 
 #endif // GVX_GL_PLATFORM_GLX
 
-static const char vcid_groovx_gfx_glxwrapper_cc_utc20051112001015[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_glxwrapper_cc_utc20051112001015[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GLXWRAPPER_CC_UTC20051112001015DEFINED

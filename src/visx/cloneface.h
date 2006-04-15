@@ -89,5 +89,5 @@ private:
   double itsCtrlPnts[24];       // Bezier control points for face outline
 };
 
-static const char vcid_groovx_visx_cloneface_h_utc20050626084016[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_cloneface_h_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_CLONEFACE_H_UTC20050626084016_DEFINED

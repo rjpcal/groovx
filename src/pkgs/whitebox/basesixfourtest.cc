@@ -234,5 +234,5 @@ GVX_TRACE("Basesixfourtest_Unload");
 extern "C" int Basesixfourtest_SafeUnload(Tcl_Interp*, int /*flags*/)
 { return 1; }
 
-static const char vcid_groovx_pkgs_whitebox_basesixfourtest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_pkgs_whitebox_basesixfourtest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_WHITEBOX_BASESIXFOURTEST_CC_UTC20050626084022_DEFINED

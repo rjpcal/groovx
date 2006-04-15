@@ -115,5 +115,5 @@ private:
   const tcl::obj m_obj;
 };
 
-static const char vcid_groovx_tcl_io_objreader_h_utc20051108233735[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_io_objreader_h_utc20051108233735[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_IO_OBJREADER_H_UTC20051108233735DEFINED

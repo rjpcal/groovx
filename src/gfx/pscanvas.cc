@@ -1094,5 +1094,5 @@ GVX_TRACE("Gfx::PSCanvas::flushOutput");
   rep->itsFstream << std::flush;
 }
 
-static const char vcid_groovx_gfx_pscanvas_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_pscanvas_cc_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_PSCANVAS_CC_UTC20050626084023_DEFINED

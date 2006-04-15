@@ -135,5 +135,5 @@ GVX_TRACE("Numtest_Unload");
 
 extern "C" int Numtest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }
 
-static const char vcid_groovx_pkgs_whitebox_numtest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_pkgs_whitebox_numtest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_WHITEBOX_NUMTEST_CC_UTC20050626084022_DEFINED

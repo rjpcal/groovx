@@ -174,5 +174,5 @@ GVX_TRACE("Multievent_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_visx_tclpkg_trialevent_cc_utc20050628171009[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_tclpkg_trialevent_cc_utc20050628171009[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TCLPKG_TRIALEVENT_CC_UTC20050628171009_DEFINED

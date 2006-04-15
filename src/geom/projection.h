@@ -51,5 +51,5 @@ namespace geom
                        const vec3<double>& world_pos);
 }
 
-static const char vcid_groovx_geom_projection_h_utc20050626084022[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_geom_projection_h_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GEOM_PROJECTION_H_UTC20050626084022_DEFINED

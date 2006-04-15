@@ -62,5 +62,5 @@ GVX_TRACE("Log_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_tcl_tclpkg_log_cc_utc20050628161246[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_tclpkg_log_cc_utc20050628161246[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_TCLPKG_LOG_CC_UTC20050628161246_DEFINED

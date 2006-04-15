@@ -441,5 +441,5 @@ public:
 
 } // end namespace Gfx
 
-static const char vcid_groovx_gfx_canvas_h_utc20050626084023[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_canvas_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_CANVAS_H_UTC20050626084023_DEFINED

@@ -156,5 +156,5 @@ GVX_TRACE("quicktime_sound_rep::close_sound");
     }
 }
 
-static const char vcid_groovx_media_quicktimesound_h_utc20050626084018[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_media_quicktimesound_h_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_QUICKTIMESOUND_H_UTC20050626084018_DEFINED

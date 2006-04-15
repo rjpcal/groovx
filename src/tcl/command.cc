@@ -204,5 +204,5 @@ GVX_TRACE("tcl::call_context::set_obj_result");
   m_interp.set_result(obj);
 }
 
-static const char vcid_groovx_tcl_command_cc_utc20050628162421[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_command_cc_utc20050628162421[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_COMMAND_CC_UTC20050628162421_DEFINED

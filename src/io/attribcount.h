@@ -44,5 +44,5 @@ namespace io
   unsigned int attrib_count(const io::serializable& obj);
 }
 
-static const char vcid_groovx_io_attribcount_h_utc20051112011550[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_io_attribcount_h_utc20051112011550[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_ATTRIBCOUNT_H_UTC20051112011550DEFINED

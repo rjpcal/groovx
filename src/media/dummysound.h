@@ -62,5 +62,5 @@ void media::dummy_sound_rep::play()
 GVX_TRACE("dummy_sound_rep::play");
 }
 
-static const char vcid_groovx_media_dummysound_h_utc20050626084018[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_media_dummysound_h_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_DUMMYSOUND_H_UTC20050626084018_DEFINED

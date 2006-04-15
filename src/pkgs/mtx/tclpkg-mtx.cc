@@ -69,5 +69,5 @@ GVX_TRACE("Mtx_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_pkgs_mtx_tclpkg_mtx_cc_utc20050628170148[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_pkgs_mtx_tclpkg_mtx_cc_utc20050628170148[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MTX_TCLPKG_MTX_CC_UTC20050628170148_DEFINED

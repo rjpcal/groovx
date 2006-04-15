@@ -54,5 +54,5 @@ double rutz::compat_m_ln2()  { return m_ln2_value; }
 
 #endif
 
-static const char vcid_groovx_rutz_compat_cmath_cc_utc20060117021840[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_compat_cmath_cc_utc20060117021840[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_COMPAT_CMATH_CC_UTC20060117021840DEFINED

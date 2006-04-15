@@ -601,5 +601,5 @@ GVX_TRACE("io::xml_debug");
   root.trace(std::cout, 0, "root");
 }
 
-static const char vcid_groovx_io_xmlreader_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_io_xmlreader_cc_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_XMLREADER_CC_UTC20050626084021_DEFINED

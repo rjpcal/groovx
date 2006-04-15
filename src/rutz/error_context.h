@@ -132,5 +132,5 @@ private:
 #define GVX_ERR_CONTEXT(msg) \
   rutz::error_context_entry e_c_object_(msg)
 
-static const char vcid_groovx_rutz_error_context_h_utc20051118001406[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_error_context_h_utc20051118001406[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_ERROR_CONTEXT_H_UTC20051118001406DEFINED

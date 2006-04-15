@@ -138,5 +138,5 @@ rutz::error_context_entry::~error_context_entry()
     m_context->remove_entry(this);
 }
 
-static const char vcid_groovx_rutz_error_context_cc_utc20051118001411[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_error_context_cc_utc20051118001411[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_ERROR_CONTEXT_CC_UTC20051118001411DEFINED

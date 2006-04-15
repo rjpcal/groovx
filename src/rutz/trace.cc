@@ -162,5 +162,5 @@ rutz::trace::~trace() throw()
     print_out(this->m_prof.context_name());
 }
 
-static const char vcid_groovx_rutz_trace_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_trace_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_TRACE_CC_UTC20050626084020_DEFINED

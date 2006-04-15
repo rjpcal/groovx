@@ -484,5 +484,5 @@ GVX_TRACE("tcl::command_group::invoke_raw");
   return TCL_ERROR;
 }
 
-static const char vcid_groovx_tcl_commandgroup_cc_utc20050628162421[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_commandgroup_cc_utc20050628162421[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_COMMANDGROUP_CC_UTC20050628162421_DEFINED

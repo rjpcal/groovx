@@ -175,4 +175,4 @@ int main(int argc, char** argv)
   GVX_SCRIPT_PROG_END(app);
 }
 
-static const char vcid_groovx_groovx_groovx_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_groovx_groovx_cc_utc20050626084019[] = "$Id$ $HeadURL$";

@@ -230,5 +230,5 @@ GVX_TRACE("GxTransform::draw");
     }
 }
 
-static const char vcid_groovx_gfx_gxtransform_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxtransform_cc_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXTRANSFORM_CC_UTC20050626084023_DEFINED

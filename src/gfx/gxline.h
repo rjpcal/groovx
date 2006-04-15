@@ -96,5 +96,5 @@ private:
   GxLine& operator=(const GxLine&);
 };
 
-static const char vcid_groovx_gfx_gxline_h_utc20050626084024[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxline_h_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXLINE_H_UTC20050626084024_DEFINED

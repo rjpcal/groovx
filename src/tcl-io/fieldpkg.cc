@@ -173,5 +173,5 @@ GVX_TRACE("tcl::defAllFields");
                FieldsLister(fieldmap, true), src_pos);
 }
 
-static const char vcid_groovx_tcl_io_fieldpkg_cc_utc20050712162004[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_io_fieldpkg_cc_utc20050712162004[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_IO_FIELDPKG_CC_UTC20050712162004_DEFINED

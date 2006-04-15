@@ -76,5 +76,5 @@ GVX_TRACE("Tkwidget_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_tk_tclpkg_widget_cc_utc20050628165845[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tk_tclpkg_widget_cc_utc20050628165845[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TK_TCLPKG_WIDGET_CC_UTC20050628165845_DEFINED

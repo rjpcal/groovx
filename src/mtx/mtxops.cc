@@ -100,5 +100,5 @@ mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
   return result;
 }
 
-static const char vcid_groovx_pkgs_mtx_mtxops_cc_utc20050626084022[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_pkgs_mtx_mtxops_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MTX_MTXOPS_CC_UTC20050626084022_DEFINED

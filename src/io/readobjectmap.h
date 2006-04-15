@@ -151,5 +151,5 @@ void io::object_map::clear()
   m_objects.clear();
 }
 
-static const char vcid_groovx_io_readobjectmap_h_utc20050626084021[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_io_readobjectmap_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_READOBJECTMAP_H_UTC20050626084021_DEFINED

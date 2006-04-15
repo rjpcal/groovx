@@ -61,5 +61,5 @@ void rutz::free_list_base::deallocate(void* space)
   m_node_list = n;
 }
 
-static const char vcid_groovx_rutz_freelist_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_freelist_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_FREELIST_CC_UTC20050626084019_DEFINED

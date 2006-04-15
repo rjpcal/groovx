@@ -786,5 +786,5 @@ void tcl::TkWidget::hook()
   sigKeyPressed.connect(rep, &TkWidgImpl::dbgKeyPress);
 }
 
-static const char vcid_groovx_tk_widget_cc_utc20050628165845[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tk_widget_cc_utc20050628165845[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TK_WIDGET_CC_UTC20050628165845_DEFINED

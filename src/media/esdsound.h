@@ -311,5 +311,5 @@ void media::esd_sound_rep::play()
     }
 }
 
-static const char vcid_groovx_media_esdsound_h_utc20050626084018[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_media_esdsound_h_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_ESDSOUND_H_UTC20050626084018_DEFINED

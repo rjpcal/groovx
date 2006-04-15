@@ -530,5 +530,5 @@ GVX_TRACE("MorphyFace::grGetBoundingBox");
   bbox.drawRect(geom::rect<double>::ltrb(l,t,r,b));
 }
 
-static const char vcid_groovx_visx_morphyface_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_morphyface_cc_utc20050626084017[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_MORPHYFACE_CC_UTC20050626084017_DEFINED

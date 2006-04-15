@@ -150,5 +150,5 @@ public:
   double operator()() { return draw(); }
 };
 
-static const char vcid_groovx_rutz_rand_h_utc20050626084020[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_rand_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_RAND_H_UTC20050626084020_DEFINED

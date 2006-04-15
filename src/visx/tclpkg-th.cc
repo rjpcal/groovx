@@ -132,5 +132,5 @@ GVX_TRACE("Timinghandler_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_visx_tclpkg_th_cc_utc20050628171009[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_tclpkg_th_cc_utc20050628171009[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TCLPKG_TH_CC_UTC20050628171009_DEFINED

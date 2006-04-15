@@ -75,5 +75,5 @@ namespace rutz
   };
 }
 
-static const char vcid_groovx_rutz_mappedfile_h_utc20050626084020[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_mappedfile_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_MAPPEDFILE_H_UTC20050626084020_DEFINED

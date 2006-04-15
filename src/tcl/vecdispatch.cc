@@ -190,5 +190,5 @@ void tcl::use_vec_dispatch(tcl::command& cmd, unsigned int key_argn)
   cmd.set_dispatcher(rutz::make_shared(new vec_dispatcher(key_argn)));
 }
 
-static const char vcid_groovx_tcl_vecdispatch_cc_utc20050628162420[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_vecdispatch_cc_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_VECDISPATCH_CC_UTC20050628162420_DEFINED

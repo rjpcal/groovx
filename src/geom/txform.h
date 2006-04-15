@@ -109,5 +109,5 @@ namespace geom
 
 } // end namespace geom
 
-static const char vcid_groovx_geom_txform_h_utc20050626084022[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_geom_txform_h_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GEOM_TXFORM_H_UTC20050626084022_DEFINED

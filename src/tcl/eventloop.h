@@ -76,5 +76,5 @@ private:
   event_loop& operator=(const event_loop&);
 };
 
-static const char vcid_groovx_tcl_eventloop_h_utc20050628162420[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_eventloop_h_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_EVENTLOOP_H_UTC20050628162420_DEFINED

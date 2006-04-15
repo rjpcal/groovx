@@ -326,5 +326,5 @@ GVX_TRACE("AglWrapper::swapBuffers");
 
 #endif // GVX_GL_PLATFORM_AGL
 
-static const char vcid_groovx_gfx_aglwrapper_cc_utc20051112002830[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_aglwrapper_cc_utc20051112002830[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_AGLWRAPPER_CC_UTC20051112002830DEFINED

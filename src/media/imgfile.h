@@ -44,5 +44,5 @@ namespace media
   void save_image(const char* filename, const media::bmap_data& data);
 }
 
-static const char vcid_groovx_media_imgfile_h_utc20050626084018[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_media_imgfile_h_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_IMGFILE_H_UTC20050626084018_DEFINED

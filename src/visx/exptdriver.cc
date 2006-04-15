@@ -502,5 +502,5 @@ GVX_TRACE("ExptDriver::storeData");
   rep->addLogInfo("Experiment saved.");
 }
 
-static const char vcid_groovx_visx_exptdriver_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_exptdriver_cc_utc20050626084017[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_EXPTDRIVER_CC_UTC20050626084017_DEFINED

@@ -366,5 +366,5 @@ shared_ptr<io::writer> io::make_asw_writer(const char* filename)
   return rutz::make_shared(new asw_writer(filename));
 }
 
-static const char vcid_groovx_io_asciistreamwriter_cc_utc20050626084021[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_io_asciistreamwriter_cc_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_ASCIISTREAMWRITER_CC_UTC20050626084021_DEFINED

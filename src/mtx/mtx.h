@@ -1094,5 +1094,5 @@ mtx arr_div(const mtx& m1, const mtx& m2);
 mtx min(const mtx& m1, const mtx& m2);
 mtx max(const mtx& m1, const mtx& m2);
 
-static const char vcid_groovx_pkgs_mtx_mtx_h_utc20050626084022[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_pkgs_mtx_mtx_h_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MTX_MTX_H_UTC20050626084022_DEFINED

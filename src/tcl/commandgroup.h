@@ -112,5 +112,5 @@ private:
   command_group& operator=(const command_group&); // not implemented
 };
 
-static const char vcid_groovx_tcl_commandgroup_h_utc20050628162421[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_commandgroup_h_utc20050628162421[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_COMMANDGROUP_H_UTC20050628162421_DEFINED

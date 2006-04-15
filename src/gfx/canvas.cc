@@ -262,5 +262,5 @@ void Gfx::Canvas::finishDrawing()
 GVX_TRACE("Gfx::Canvas::finishDrawing");
 }
 
-const char vcid_canvas_cc[] = "$Id$ $URL$";
+const char __attribute__((used)) vcid_canvas_cc[] = "$Id$ $URL$";
 #endif // !GROOVX_GFX_CANVAS_CC_UTC20050626084025_DEFINED

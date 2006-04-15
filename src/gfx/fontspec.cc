@@ -73,5 +73,5 @@ void parseFontSpec(const rutz::fstring& spec,
     }
 }
 
-static const char vcid_groovx_gfx_fontspec_cc_utc20051111225622[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_fontspec_cc_utc20051111225622[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_FONTSPEC_CC_UTC20051111225622DEFINED

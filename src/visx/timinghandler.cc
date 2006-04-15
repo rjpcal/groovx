@@ -149,5 +149,5 @@ void TimingHandler::setTimeout(int msec)
   getEvent(FROM_START, timeout_start_id)->setDelay(msec);
 }
 
-static const char vcid_groovx_visx_timinghandler_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_timinghandler_cc_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TIMINGHANDLER_CC_UTC20050626084016_DEFINED

@@ -64,5 +64,5 @@ const double* GbColor::const_begin() const
   return Gfx::RgbaColor::data();
 }
 
-static const char vcid_groovx_gfx_gbcolor_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gbcolor_cc_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GBCOLOR_CC_UTC20050626084025_DEFINED

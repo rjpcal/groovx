@@ -37,5 +37,5 @@ struct Tcl_Interp;
 
 extern "C" int Tkwidget_Init(Tcl_Interp* interp);
 
-static const char vcid_groovx_tk_tclpkg_widget_h_utc20050628165845[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tk_tclpkg_widget_h_utc20050628165845[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TK_TCLPKG_WIDGET_H_UTC20050628165845_DEFINED

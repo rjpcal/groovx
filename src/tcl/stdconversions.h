@@ -53,5 +53,5 @@ namespace tcl
   }
 }
 
-static const char vcid_groovx_tcl_stdconversions_h_utc20050628163220[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_stdconversions_h_utc20050628163220[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_STDCONVERSIONS_H_UTC20050628163220_DEFINED

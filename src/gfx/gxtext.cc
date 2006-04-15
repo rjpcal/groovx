@@ -208,5 +208,5 @@ GVX_TRACE("GxText::grRender");
   itsFont->drawText(itsText.c_str(), canvas);
 }
 
-static const char vcid_groovx_gfx_gxtext_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxtext_cc_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXTEXT_CC_UTC20050626084025_DEFINED

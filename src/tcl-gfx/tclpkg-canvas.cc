@@ -131,5 +131,5 @@ GVX_TRACE("Glcanvas_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char vcid_groovx_gfx_tclpkg_canvas_cc_utc20050628170310[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_tclpkg_canvas_cc_utc20050628170310[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_TCLPKG_CANVAS_CC_UTC20050628170310_DEFINED

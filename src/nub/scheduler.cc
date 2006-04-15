@@ -40,5 +40,5 @@ nub::timer_token::~timer_token() throw() {}
 
 nub::scheduler::~scheduler() throw() {}
 
-static const char vcid_groovx_nub_scheduler_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_nub_scheduler_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_SCHEDULER_CC_UTC20050626084019_DEFINED

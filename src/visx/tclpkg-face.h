@@ -39,5 +39,5 @@ struct Tcl_Interp;
 extern "C" int Face_Init(Tcl_Interp* interp);
 extern "C" int Cloneface_Init(Tcl_Interp* interp);
 
-static const char vcid_groovx_visx_tclpkg_face_h_utc20050628171008[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_tclpkg_face_h_utc20050628171008[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TCLPKG_FACE_H_UTC20050628171008_DEFINED

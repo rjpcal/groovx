@@ -133,5 +133,5 @@ namespace rutz
 
 } // end namespace rutz
 
-static const char vcid_groovx_rutz_unixcall_h_utc20050626084019[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_unixcall_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_UNIXCALL_H_UTC20050626084019_DEFINED

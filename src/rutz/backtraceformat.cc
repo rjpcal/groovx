@@ -73,5 +73,5 @@ rutz::fstring rutz::format(const rutz::backtrace& bt)
   return result;
 }
 
-static const char vcid_groovx_rutz_backtraceformat_cc_utc20050630214129[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_backtraceformat_cc_utc20050630214129[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_BACKTRACEFORMAT_CC_UTC20050630214129DEFINED

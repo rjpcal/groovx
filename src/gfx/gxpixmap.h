@@ -197,5 +197,5 @@ private:
   GxPixmapImpl* const rep;
 };
 
-static const char vcid_groovx_gfx_gxpixmap_h_utc20050626084023[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxpixmap_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXPIXMAP_H_UTC20050626084023_DEFINED

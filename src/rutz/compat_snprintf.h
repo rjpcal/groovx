@@ -44,5 +44,5 @@ extern "C"
 #include <cstdio>
 #endif
 
-static const char vcid_groovx_rutz_compat_snprintf_h_utc20060117014341[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_compat_snprintf_h_utc20060117014341[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_COMPAT_SNPRINTF_H_UTC20060117014341DEFINED

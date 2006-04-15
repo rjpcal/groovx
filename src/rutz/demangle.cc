@@ -109,5 +109,5 @@ GVX_TRACE("rutz::demangled_name");
   return (*result.first).second.c_str();
 }
 
-static const char vcid_groovx_rutz_demangle_cc_utc20050626084020[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_demangle_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_DEMANGLE_CC_UTC20050626084020_DEFINED

@@ -51,5 +51,5 @@ void GxBin::setChild(const nub::ref<GxNode>& child)
   this->sigNodeChanged.emit();
 }
 
-static const char vcid_groovx_gfx_gxbin_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxbin_cc_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXBIN_CC_UTC20050626084024_DEFINED

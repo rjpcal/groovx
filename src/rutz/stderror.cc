@@ -49,5 +49,5 @@ void rutz::throw_bad_cast(const std::type_info& to,
                               "'"), pos);
 }
 
-static const char vcid_groovx_rutz_stderror_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_stderror_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_STDERROR_CC_UTC20050626084019_DEFINED

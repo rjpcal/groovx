@@ -143,5 +143,5 @@ GVX_TRACE("CloneFace::getVertOffset");
   return itsVertOffset;
 }
 
-static const char vcid_groovx_visx_cloneface_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_cloneface_cc_utc20050626084017[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_CLONEFACE_CC_UTC20050626084017_DEFINED

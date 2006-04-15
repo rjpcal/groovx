@@ -356,5 +356,5 @@ GVX_TRACE("GxPsyphyCamera::draw");
   orthoFixed(canvas, width(), height(), pixels_per_unit);
 }
 
-static const char vcid_groovx_gfx_gxcamera_cc_utc20050626084024[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxcamera_cc_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXCAMERA_CC_UTC20050626084024_DEFINED

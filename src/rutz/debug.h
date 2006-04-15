@@ -108,7 +108,7 @@ static inline int GVX_CONCAT(dbg_level_, ext) ()                     \
 #define GVX_DBG_REGISTER GVX_DO_DBG_REGISTER(1)
 #define GVX_DBG_LEVEL dbg_level_1
 
-static const char vcid_groovx_rutz_debug_h_utc20050626084020[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_debug_h_utc20050626084020[] = "$Id$ $HeadURL$";
 
 #else // DEBUG_H_DEFINED
 

@@ -49,5 +49,5 @@ namespace io
   rutz::shared_ptr<io::writer> make_xml_writer(const char* filename);
 }
 
-static const char vcid_groovx_io_xmlwriter_h_utc20050626084021[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_io_xmlwriter_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_XMLWRITER_H_UTC20050626084021_DEFINED

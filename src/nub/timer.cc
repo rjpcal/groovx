@@ -124,5 +124,5 @@ GVX_TRACE("nub::timer::dummy_callback");
   timer->sig_timeout.emit();
 }
 
-static const char vcid_groovx_nub_timer_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_nub_timer_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_TIMER_CC_UTC20050626084019_DEFINED

@@ -399,5 +399,5 @@ GVX_TRACE("tcl::aux_convert_from(const rutz::value&)");
   return Tcl_NewStringObj(val.get_string().c_str(), -1);
 }
 
-static const char vcid_groovx_tcl_conversions_cc_utc20050628162420[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_conversions_cc_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_CONVERSIONS_CC_UTC20050628162420_DEFINED

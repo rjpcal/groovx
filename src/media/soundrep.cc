@@ -60,5 +60,5 @@ GVX_TRACE("sound_rep::check_filename");
     }
 }
 
-static const char vcid_groovx_media_soundrep_cc_utc20050626084018[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_media_soundrep_cc_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_SOUNDREP_CC_UTC20050626084018_DEFINED

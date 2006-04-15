@@ -67,5 +67,5 @@ private:
   rutz::time m_start_time;
 };
 
-static const char vcid_groovx_rutz_stopwatch_h_utc20050626084019[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_stopwatch_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_STOPWATCH_H_UTC20050626084019_DEFINED

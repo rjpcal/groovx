@@ -54,5 +54,5 @@ public:
   virtual int rasterHeight() const = 0;
 };
 
-static const char vcid_groovx_gfx_gxrasterfont_h_utc20050626084023[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxrasterfont_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXRASTERFONT_H_UTC20050626084023_DEFINED

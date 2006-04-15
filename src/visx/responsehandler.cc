@@ -53,5 +53,5 @@ ResponseHandler::~ResponseHandler() throw()
 GVX_TRACE("ResponseHandler::~ResponseHandler");
 }
 
-static const char vcid_groovx_visx_responsehandler_cc_utc20050626084017[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_responsehandler_cc_utc20050626084017[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_RESPONSEHANDLER_CC_UTC20050626084017_DEFINED

@@ -90,5 +90,5 @@ namespace tcl
 }
 
 
-static const char vcid_groovx_tcl_namesp_h_utc20060218005818[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_namesp_h_utc20060218005818[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_NAMESP_H_UTC20060218005818DEFINED

@@ -186,5 +186,5 @@ GVX_TRACE("MaskHatch::grRender");
   canvas.vertex2(vec2d(1.0, 1.0));
 }
 
-static const char vcid_groovx_visx_maskhatch_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_maskhatch_cc_utc20050626084015[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_MASKHATCH_CC_UTC20050626084015_DEFINED

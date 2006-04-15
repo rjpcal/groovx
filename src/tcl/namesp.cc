@@ -136,5 +136,5 @@ tcl::list tcl::emu_namesp::get_export_list(tcl::interpreter& interp) const
   return exportlist;
 }
 
-static const char vcid_groovx_tcl_namesp_cc_utc20060218010119[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_namesp_cc_utc20060218010119[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_NAMESP_CC_UTC20060218010119DEFINED

@@ -548,5 +548,5 @@ tcl::list TlistUtils::loadObjidFile(const char* objid_file,
   return result;
 }
 
-static const char vcid_groovx_visx_tlistutils_cc_utc20050626084015[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_tlistutils_cc_utc20050626084015[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TLISTUTILS_CC_UTC20050626084015_DEFINED

@@ -64,5 +64,5 @@ namespace rutz
 #define                cbrt(x)  (pow(x, 1.0/3.0))
 #endif
 
-static const char vcid_groovx_rutz_compat_cmath_h_utc20060117021640[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_compat_cmath_h_utc20060117021640[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_COMPAT_CMATH_H_UTC20060117021640DEFINED

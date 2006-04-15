@@ -83,5 +83,5 @@ private:
   mutable rutz::stopwatch            m_stopwatch;
 };
 
-static const char vcid_groovx_nub_timer_h_utc20050626084019[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_nub_timer_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_TIMER_H_UTC20050626084019_DEFINED

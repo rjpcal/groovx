@@ -71,5 +71,5 @@ private:
 #define GVX_MUTEX_LOCK(x) \
   ::rutz::mutex_lock_class GVX_MUTEX_CONCAT(anonymous_lock,__LINE__) (x)
 
-static const char vcid_groovx_rutz_mutex_h_utc20050913161502[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_mutex_h_utc20050913161502[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_MUTEX_H_UTC20050913161502DEFINED

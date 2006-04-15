@@ -195,5 +195,5 @@ GVX_TRACE("rutz::unixcall::get_file_user_pid");
   return 0;
 }
 
-static const char vcid_groovx_rutz_unixcall_cc_utc20050626084019[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_rutz_unixcall_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_UNIXCALL_CC_UTC20050626084019_DEFINED

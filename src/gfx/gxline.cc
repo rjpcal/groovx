@@ -142,5 +142,5 @@ GVX_TRACE("GxLine::draw");
   canvas.vertex3(stop.vec());
 }
 
-static const char vcid_groovx_gfx_gxline_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxline_cc_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXLINE_CC_UTC20050626084025_DEFINED

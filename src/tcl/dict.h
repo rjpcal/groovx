@@ -94,5 +94,5 @@ private:
   tcl::obj m_obj;
 };
 
-static const char vcid_groovx_tcl_dict_h_utc20050628162420[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_dict_h_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_DICT_H_UTC20050628162420_DEFINED

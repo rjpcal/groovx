@@ -178,5 +178,5 @@ private:
   impl* const rep;
 };
 
-static const char vcid_groovx_nub_objdb_h_utc20050626084019[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_nub_objdb_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_OBJDB_H_UTC20050626084019_DEFINED

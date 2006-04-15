@@ -155,5 +155,5 @@ GVX_TRACE("XBmapRenderer::doRender");
   XFree(image);
 }
 
-static const char vcid_groovx_gfx_xbmaprenderer_h_utc20050626084024[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_xbmaprenderer_h_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_XBMAPRENDERER_H_UTC20050626084024_DEFINED

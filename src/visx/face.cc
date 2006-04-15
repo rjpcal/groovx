@@ -357,5 +357,5 @@ GVX_TRACE("Face::getVertOffset");
   return 0.0;
 }
 
-static const char vcid_groovx_visx_face_cc_utc20050626084016[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_visx_face_cc_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_FACE_CC_UTC20050626084016_DEFINED

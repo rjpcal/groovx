@@ -671,5 +671,5 @@ GVX_TRACE("tcl::event_loop::command_line");
   return tcl::event_loop_impl::get()->command_line();
 }
 
-static const char vcid_groovx_tcl_eventloop_cc_utc20050628162420[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_eventloop_cc_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_EVENTLOOP_CC_UTC20050628162420_DEFINED

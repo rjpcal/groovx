@@ -70,5 +70,5 @@ private:
   int            const m_buf_size;
 };
 
-static const char vcid_groovx_io_xmlparser_h_utc20050626084021[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_io_xmlparser_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_XMLPARSER_H_UTC20050626084021_DEFINED

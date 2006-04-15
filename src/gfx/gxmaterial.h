@@ -90,5 +90,5 @@ private:
   GxMaterial& operator=(const GxMaterial&);
 };
 
-static const char vcid_groovx_gfx_gxmaterial_h_utc20050626084025[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxmaterial_h_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXMATERIAL_H_UTC20050626084025_DEFINED

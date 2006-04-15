@@ -181,5 +181,5 @@ protected:
   void default_read_byte_array(const rutz::fstring& name, rutz::byte_array& data);
 };
 
-static const char vcid_groovx_io_reader_h_utc20050626084021[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_io_reader_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_READER_H_UTC20050626084021_DEFINED

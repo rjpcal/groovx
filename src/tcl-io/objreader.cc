@@ -126,5 +126,5 @@ rutz::fstring tcl::obj_reader::read_string_impl(const rutz::fstring& /*name*/)
   return tcl::convert_to<rutz::fstring>(m_obj);
 }
 
-static const char vcid_groovx_tcl_io_objreader_cc_utc20051108233806[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tcl_io_objreader_cc_utc20051108233806[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_IO_OBJREADER_CC_UTC20051108233806DEFINED

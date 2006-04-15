@@ -169,5 +169,5 @@ private:
   TkWidgImpl* const rep;
 };
 
-static const char vcid_groovx_tk_widget_h_utc20050628165845[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_tk_widget_h_utc20050628165845[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TK_WIDGET_H_UTC20050628165845_DEFINED

@@ -42,5 +42,5 @@ GxRasterFont::~GxRasterFont() throw()
 GVX_TRACE("GxRasterFont::~GxRasterFont");
 }
 
-static const char vcid_groovx_gfx_gxrasterfont_cc_utc20050626084023[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gxrasterfont_cc_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXRASTERFONT_CC_UTC20050626084023_DEFINED

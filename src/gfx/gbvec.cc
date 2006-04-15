@@ -79,5 +79,5 @@ template class GbVec2<double>;
 template class GbVec3<int>;
 template class GbVec3<double>;
 
-static const char vcid_groovx_gfx_gbvec_cc_utc20050626084025[] = "$Id$ $HeadURL$";
+static const char __attribute__((used)) vcid_groovx_gfx_gbvec_cc_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GBVEC_CC_UTC20050626084025_DEFINED
