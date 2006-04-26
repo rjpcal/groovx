@@ -200,6 +200,16 @@ void dyn_cast_to_from(nub::ref<To>& dest, nub::ref<Fr> p)
   dest = dyn_cast<To, Fr>(p);
 }
 
+// Compatibility interface with alternate function-naming:
+
+template <class To, class Fr>
+nub::ref<To> dynCast(nub::ref<Fr> p)
+{ return dyn_cast<To, Fr>(p); }
+
+template <class To, class Fr>
+void dynCastToFrom(nub::ref<To>& dest, nub::ref<Fr> p)
+{ dyn_cast_to_from<To, Fr>(dest, p); }
+
 
 ///////////////////////////////////////////////////////////
 /**
