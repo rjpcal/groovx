@@ -974,6 +974,8 @@ namespace
     const string& name() const { return m_fname; }
     const string& stripped_name() const { return m_stripped_name; }
 
+    const void touch() const { m_is_referenced = true; }
+
     static void merge_ldep_groups(file_info* f1,
                                   file_info* f2)
     {
@@ -1483,6 +1485,26 @@ namespace
         }
     }
 
+    static void warn_orphans()
+    {
+      for (info_map_t::const_iterator
+             itr = s_info_map.begin(),
+             stop = s_info_map.end();
+           itr != stop;
+           ++itr)
+        {
+          if (!(*itr).second->m_is_referenced &&
+              (*itr).second->is_cc_or_h_fname() &&
+              !(*itr).second->is_phantom() &&
+              !(*itr).second->is_pruned())
+            {
+              cfg.warning()
+                << "source file not referenced by any executables: "
+                << (*itr).second->m_fname << '\n';
+            }
+        }
+    }
+
   private:
     const string            m_fname;
     const string::size_type m_dotpos; // position of the final "."
@@ -1510,6 +1532,7 @@ namespace
 
     file_info*              m_source_for_header;
     bool                    m_source_for_header_done;
+    mutable bool            m_is_referenced;
   };
 
   struct file_info_cmp
@@ -1638,7 +1661,8 @@ namespace
     m_epoch(0),
     m_is_header_only(false),
     m_source_for_header(0),
-    m_source_for_header_done(false)
+    m_source_for_header_done(false),
+    m_is_referenced(false)
   {
     assert(this->m_dirname_without_slash.length() > 0); // must be at least '.'
     assert(this->m_dirname_without_slash[this->m_dirname_without_slash.length()-1] != '/');
@@ -2258,6 +2282,7 @@ private:
   static const int LDEP_LEVELSV        = (1 << 5);
   static const int LDEP_ADJACENCY      = (1 << 6);
   static const int LDEP_RAW            = (1 << 7);
+  static const int WARN_ORPHANS        = (1 << 8);
 
   // Member variables
 
@@ -2341,6 +2366,8 @@ cppdeps::cppdeps(const int argc, char** const argv) :
          "                          directories are \".\", \"..\", \"RCS\", \"CVS\"\n"
          "    --prune-ext [.ext]    don't consider any source files whose names end with\n"
          "                          the given extension\n"
+         "    --warn-orphans        warn about orphaned source files (source files that\n"
+         "                          aren't reference by any --exeformat\n"
          "    --verbosity [level]   level -1: suppress warnings and error messages\n"
          "                                    (you'll still get the errors themselves :)\n"
          "                          level  0: suppress warnings\n"
@@ -2586,6 +2613,10 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
       cfg.headers_make_variable = optarg;
       return true;
     }
+  else if (strcmp(option, "--warn-orphans") == 0)
+    {
+      cfg.output_mode |= WARN_ORPHANS;
+    }
   else
     {
       cerr << "ERROR: unrecognized command-line option: "
@@ -2758,6 +2789,9 @@ void cppdeps::print_makefile_dep(file_info* finfo)
       if ((*itr)->is_phantom())
         continue;
 
+      if (*itr != finfo)
+        (*itr)->touch();
+
       printf(" %s", (*itr)->name().c_str());
     }
 
@@ -2811,6 +2845,7 @@ void cppdeps::print_link_deps(file_info* finfo)
           if (!t.empty())
             {
               links.insert(t);
+              (*itr)->touch();
             }
 
           if (cfg.verbosity >= NOISY)
@@ -3009,6 +3044,11 @@ void cppdeps::traverse_sources()
   if (cfg.headers_make_variable.length() > 0)
     {
       file_info::dump_headers_variable();
+    }
+
+  if (cfg.output_mode & WARN_ORPHANS)
+    {
+      file_info::warn_orphans();
     }
 }
 
