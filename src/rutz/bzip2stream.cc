@@ -289,10 +289,14 @@ namespace
       BZ2_bzRead(&bzerror, m_bzfile,
                  m_buf+s_pback_size, s_buf_size-s_pback_size);
 
-    if (bzerror != BZ_OK)
+    if (num <= 0) // error (0) or end-of-file (-1)
       return EOF;
 
-    if (num <= 0) // error (0) or end-of-file (-1)
+    // BZ_STREAM_END isn't really an error as long as we still read
+    // more than zero bytes... in that case, we don't want to return
+    // EOF yet
+
+    if (bzerror != BZ_OK && bzerror != BZ_STREAM_END)
       return EOF;
 
     // reset buffer pointers
