@@ -53,15 +53,16 @@ for d in $tosync; do
 	echo "considering $d ..."
     fi
     if test -d "$d"; then
-	files=`ls -1 ${d}/*.{h,cc,dxy}`;
+	files=`ls -1 $saliencydir/$d/*.{h,cc,dxy}`;
     else
-	files="$d";
+	files="$saliencydir/$d";
     fi
     for f in $files; do
-	if test ! -f $saliencydir/$f; then
-	    echo "no such file: $saliencydir/$f"
+	localfile=${f#$saliencydir/}
+	if test ! -f $localfile; then
+	    echo "no such file: $localfile"
 	else
-	    diff -u $f $saliencydir/$f \
+	    diff -u $localfile $f \
 		| grep "^\(+\|-\)" \
 		| grep -v "^+++" \
 		| grep -v "^---" \
@@ -71,24 +72,13 @@ for d in $tosync; do
 		> tmpdiff
 	    if test -s tmpdiff; then
 		if test $listmode -eq 1; then
-		    echo "$f"
+		    echo "$localfile"
 		else
-		    diff -u $f $saliencydir/$f
+		    diff -u $localfile $f
 		fi
 	    fi
 	    rm tmpdiff
 	fi
     done
-
-    if test -d "$saliencydir/$d"; then
-	files=`ls -1 "$saliencydir/$d"/*.{h,cc,dxy}`
-
-	for f in $files; do
-	    base=`basename $f`
-	    if test ! -f "$d/$base"; then
-		echo "only in $saliencydir: $f"
-	    fi
-	done
-    fi
 
 done
