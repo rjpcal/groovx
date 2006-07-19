@@ -52,6 +52,7 @@ private:
   };
 
   node* m_node_list;
+  std::size_t m_num_allocations;
   const std::size_t m_size_check;
 
   free_list_base(const free_list_base&);
@@ -73,6 +74,9 @@ public:
 
   /// Query the chunk size that this freelist is for.
   std::size_t alloc_size() const { return m_size_check; }
+
+  /// Query how many allocations have been made.
+  std::size_t num_allocations() const { return m_num_allocations; }
 };
 
 /// Typesafe wrapper of free_list_base for maintaining free-list memory pools.

@@ -39,7 +39,7 @@
 GVX_DBG_REGISTER
 
 rutz::free_list_base::free_list_base(std::size_t size_check) :
-  m_node_list(0), m_size_check(size_check)
+  m_node_list(0), m_num_allocations(0), m_size_check(size_check)
 {
   GVX_ASSERT(m_size_check >= sizeof(node));
 }
@@ -48,7 +48,10 @@ void* rutz::free_list_base::allocate(std::size_t bytes)
 {
   GVX_ASSERT(bytes == m_size_check);
   if (m_node_list == 0)
-    return ::operator new(bytes);
+    {
+      ++m_num_allocations;
+      return ::operator new(bytes);
+    }
   node* n = m_node_list;
   m_node_list = m_node_list->next;
   return static_cast<void*>(n);
