@@ -39,7 +39,7 @@
 #include "gfx/gbvec.h"
 
 #include "rutz/arrays.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 class GaborArrayElement;
 class Snake;

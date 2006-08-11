@@ -37,7 +37,7 @@
 #include "nub/scheduler.h"
 #include "nub/signal.h"
 
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 #include "rutz/stopwatch.h"
 
 namespace nub

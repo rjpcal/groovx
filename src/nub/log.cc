@@ -38,7 +38,7 @@
 #include "nub/object.h"
 
 #include "rutz/fstring.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 #include "rutz/stopwatch.h"
 #include "rutz/time.h"
 #include "rutz/timeformat.h"

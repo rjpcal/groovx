@@ -51,7 +51,7 @@
 #include "rutz/algo.h"
 #include "rutz/error.h"
 #include "rutz/iter.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 #include "visx/trial.h"
 

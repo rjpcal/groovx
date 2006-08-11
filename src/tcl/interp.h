@@ -38,7 +38,7 @@
 #include "tcl/obj.h"
 
 #include "rutz/fileposition.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 struct Tcl_Interp;
 typedef struct Tcl_Obj Tcl_Obj;

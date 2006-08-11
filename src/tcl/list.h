@@ -38,7 +38,7 @@
 #include "tcl/conversions.h"
 #include "tcl/obj.h"
 
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 namespace tcl
 {

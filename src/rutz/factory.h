@@ -39,7 +39,7 @@
 #include "rutz/demangle.h"
 #include "rutz/fileposition.h"
 #include "rutz/mutex.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 #include "rutz/traits.h"
 
 #include <typeinfo>

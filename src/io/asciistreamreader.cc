@@ -46,7 +46,7 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/gzstreambuf.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 #include "rutz/value.h"
 
 #include <istream>

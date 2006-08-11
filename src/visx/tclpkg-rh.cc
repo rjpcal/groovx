@@ -45,7 +45,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 #include "rutz/serialport.h"
 
 #include "visx/eventresponsehdlr.h"

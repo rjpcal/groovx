@@ -34,7 +34,7 @@
 #ifndef GROOVX_IO_ASCIISTREAMREADER_H_UTC20050626084021_DEFINED
 #define GROOVX_IO_ASCIISTREAMREADER_H_UTC20050626084021_DEFINED
 
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 #include <iosfwd>
 

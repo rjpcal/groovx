@@ -40,7 +40,7 @@
 #include "tcl/pkg.h"
 #include "tcl/timerscheduler.h"
 
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 #include "rutz/unittest.h"
 
 #include <cstdlib> // for abs()

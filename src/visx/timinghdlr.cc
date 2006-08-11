@@ -45,7 +45,7 @@
 #include "tcl/timerscheduler.h"
 
 #include "rutz/error.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 #include "rutz/stopwatch.h"
 
 #include "visx/trialevent.h"

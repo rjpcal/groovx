@@ -38,7 +38,7 @@
 #include "tcl/eventloop.h"
 #include "tcl/interp.h"
 
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 #include <tcl.h>
 

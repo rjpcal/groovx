@@ -42,7 +42,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 #include <tcl.h>
 #ifdef HAVE_TCLINT_H

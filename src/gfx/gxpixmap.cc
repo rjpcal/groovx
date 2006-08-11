@@ -54,7 +54,7 @@
 #include "rutz/cstrstream.h"
 #include "rutz/fstring.h"
 #include "rutz/mappedfile.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 #include "rutz/trace.h"
 

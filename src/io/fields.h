@@ -42,7 +42,7 @@
 #include "rutz/algo.h"
 #include "rutz/fileposition.h"
 #include "rutz/fstring.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 #include "rutz/stderror.h"
 #include "rutz/traits.h"
 #include "rutz/value.h"

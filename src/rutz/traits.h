@@ -198,20 +198,20 @@ namespace rutz
   template <class T>
   struct full_object_caster<T, false>
   {
-    static void* cast(T* p) { return static_cast<void*>(p); }
+    static const void* cast(const T* p) { return static_cast<const void*>(p); }
   };
 
   template <class T>
   struct full_object_caster<T, true>
   {
-    static void* cast(T* p) { return dynamic_cast<void*>(p); }
+    static const void* cast(const T* p) { return dynamic_cast<const void*>(p); }
   };
 
   /// Cast a pointer to the beginning of the full object.
   /** Here we select between static_cast and dynamic_cast depending on
       whether T is polymorphic. */
   template <class T>
-  inline void* full_object_cast(T* p)
+  inline const void* full_object_cast(const T* p)
   {
     return full_object_caster<T>::cast(p);
   }

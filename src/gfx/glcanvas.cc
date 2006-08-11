@@ -50,7 +50,7 @@
 #include "media/bmapdata.h"
 
 #include "rutz/error.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 #include <vector>
 

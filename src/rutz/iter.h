@@ -33,7 +33,7 @@
 #ifndef GROOVX_RUTZ_ITER_H_UTC20050626084019_DEFINED
 #define GROOVX_RUTZ_ITER_H_UTC20050626084019_DEFINED
 
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 #include <utility> // for std::pair
 

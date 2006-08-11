@@ -37,7 +37,7 @@
 
 #include "nub/scheduler.h"
 
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"

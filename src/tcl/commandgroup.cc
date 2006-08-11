@@ -41,7 +41,7 @@
 
 #include "rutz/fileposition.h"
 #include "rutz/fstring.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 #include <list>
 #include <tcl.h>

@@ -44,7 +44,7 @@
 #include "tcl/vecdispatch.h"
 
 #include "rutz/functors.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 namespace rutz
 {

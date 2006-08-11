@@ -37,7 +37,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 #ifdef HAVE_BZLIB_H
 #include <bzlib.h>

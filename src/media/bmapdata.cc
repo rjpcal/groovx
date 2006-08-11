@@ -41,7 +41,7 @@
 #include "rutz/arrays.h"
 #include "rutz/error.h"
 #include "rutz/rand.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 #include <algorithm>
 #include <cstring>              // for memcpy

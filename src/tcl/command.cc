@@ -36,7 +36,7 @@
 #include "tcl/command.h"
 
 #include "rutz/fstring.h"
-#include "rutz/sharedptr.h"
+#include "rutz/shared_ptr.h"
 
 #include "tcl/interp.h"
 
