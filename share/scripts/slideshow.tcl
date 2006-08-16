@@ -172,6 +172,9 @@ namespace eval pl {
 		-fresh {
 		    set doFresh 1
 		}
+		-hq {
+		    set aux::FAST_RESIZE_CUTOFF 100000000
+		}
 	    }
 	}
 
