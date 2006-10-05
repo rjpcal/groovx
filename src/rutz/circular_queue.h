@@ -33,7 +33,6 @@
 #ifndef GROOVX_RUTZ_CIRCULAR_QUEUE_H_UTC20061005174345_DEFINED
 #define GROOVX_RUTZ_CIRCULAR_QUEUE_H_UTC20061005174345_DEFINED
 
-#include "rutz/abort.h"
 #include "rutz/atomic.h"
 
 #include <cstddef> // for size_t
