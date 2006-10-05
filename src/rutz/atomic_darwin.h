@@ -1,4 +1,4 @@
-/*!@file rutz/atomic_unsafe.h Thread-UNSAFE integer class */
+/*!@file rutz/atomic_darwin.H Atomic integer operations implemented using Apple Darwin's OSAtomicAdd32Barrier() */
 
 // //////////////////////////////////////////////////////////////////// //
 // The iLab Neuromorphic Vision C++ Toolkit - Copyright (C) 2000-2005   //
@@ -35,29 +35,30 @@
 // $Id$
 //
 
-#ifndef RUTZ_ATOMIC_UNSAFE_H_DEFINED
-#define RUTZ_ATOMIC_UNSAFE_H_DEFINED
+#ifndef RUTZ_ATOMIC_DARWIN_H_DEFINED
+#define RUTZ_ATOMIC_DARWIN_H_DEFINED
 
+#include <libkern/OSAtomic.h>
 #include <limits>
 
 namespace rutz
 {
 
-/// Thread-UNSAFE integer class.
-class unsafe_atomic_int
+///  Atomic integer operations implemented using Apple Darwin's OSAtomicAdd32Barrier().
+class darwin_atomic_int
 {
 private:
-  int x;
+  int32_t x;
 
-  unsafe_atomic_int(const unsafe_atomic_int&);
-  unsafe_atomic_int& operator=(const unsafe_atomic_int&);
+  darwin_atomic_int(const darwin_atomic_int&);
+  darwin_atomic_int& operator=(const darwin_atomic_int&);
 
 public:
   //! Construct with an initial value of 0.
-  unsafe_atomic_int() : x(0) {}
+  darwin_atomic_int() : x(0) {}
 
   //! Get the maximum representable value
-  static int max_value() { return std::numeric_limits<int>::max(); }
+  static int max_value() { return std::numeric_limits<int32_t>::max(); }
 
   //! Get the current value.
   int atomic_get() const
@@ -69,47 +70,47 @@ public:
 
   //! Add \a v to the value.
   void atomic_add(int i)
-  { x += i; }
+  { OSAtomicAdd32Barrier(i, &x); }
 
   //! Subtract \a v from the value.
   void atomic_sub(int i)
-  { x -= i; }
+  { OSAtomicAdd32Barrier(-i, &x); }
 
   //! Subtract \a v from the value; return true if the new value is zero.
   bool atomic_sub_test_zero(int i)
-  { return bool((x -= i) == 0); }
+  { return (OSAtomicAdd32Barrier(-i, &x) == 0); }
 
   //! Increment the value by one.
   void atomic_incr()
-  { ++x; }
+  { OSAtomicAdd32Barrier(1, &x); }
 
   //! Decrement the value by one.
   void atomic_decr()
-  { --x; }
+  { OSAtomicAdd32Barrier(-1, &x); }
 
   //! Decrement the value by one; return true if the new value is zero.
   bool atomic_decr_test_zero()
-  { return bool(--x == 0); }
+  { return (OSAtomicAdd32Barrier(-1, &x) == 0); }
 
   //! Increment the value by one; return true if the new value is zero.
   bool atomic_incr_test_zero()
-  { return bool(++x == 0); }
+  { return (OSAtomicAdd32Barrier(1, &x) == 0); }
 
   //! Add \a v to the value and return the new value
   int atomic_add_return(int i)
-  { return (x += i); }
+  { return OSAtomicAdd32Barrier(i, &x); }
 
   //! Subtract \a v from the value and return the new value
   int atomic_sub_return(int i)
-  { return (x -= i); }
+  { return OSAtomicAdd32Barrier(-i, &x); }
 
   //! Increment the value by one and return the new value.
   int atomic_incr_return()
-  { return ++x; }
+  { return OSAtomicAdd32Barrier(1, &x); }
 
   //! Decrement the value by one and return the new value.
   int atomic_decr_return()
-  { return --x; }
+  { return OSAtomicAdd32Barrier(-1, &x); }
 };
 
 } // end namespace rutz
@@ -121,4 +122,4 @@ public:
 /* indent-tabs-mode: nil */
 /* End: */
 
-#endif // RUTZ_ATOMIC_UNSAFE_H_DEFINED
+#endif // RUTZ_ATOMIC_DARWIN_H_DEFINED

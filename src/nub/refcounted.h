@@ -34,6 +34,8 @@
 #ifndef GROOVX_NUB_REFCOUNTED_H_UTC20050626084018_DEFINED
 #define GROOVX_NUB_REFCOUNTED_H_UTC20050626084018_DEFINED
 
+#include "rutz/atomic.h"
+
 #include <cstdlib>
 
 namespace nub
@@ -71,8 +73,6 @@ struct nub::ref_counts
 public:
   friend class nub::ref_counted;
 
-  typedef unsigned short count_type;
-
   void* operator new(size_t bytes);
   void operator delete(void* space, size_t bytes);
 
@@ -87,7 +87,7 @@ public:
   bool is_owner_alive() const throw() { return m_owner_alive; }
 
   void acquire_weak() throw();
-  count_type release_weak() throw();
+  int release_weak() throw();
 
   void debug_dump() const throw();
 
@@ -96,11 +96,11 @@ private:
   ref_counts& operator=(const ref_counts&) throw();
 
   void acquire_strong() throw();
-  count_type release_strong() throw();
+  int release_strong() throw();
   void release_strong_no_delete() throw();
 
-  count_type m_strong;
-  count_type m_weak;
+  rutz::atomic_int_t m_strong;
+  rutz::atomic_int_t m_weak;
   bool m_owner_alive;
   bool m_volatile;
 };

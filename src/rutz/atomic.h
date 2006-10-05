@@ -41,13 +41,17 @@
 // For now we only have inline assembly for atomic integer operations
 // for ix86 cpus; would be nice to eventually have analogous
 // operations for ppc.
-#ifdef INVT_CPU_IX86
+#if defined(INVT_CPU_IX86)
 #  include "rutz/atomic_ix86.h"
-#  define REFCOUNT_THREADSAFE
 namespace rutz { typedef ix86_atomic_int atomic_int_t; }
+
+#elif defined(HAVE_LIBKERN_OSATOMIC_H)
+#  include "rutz/atomic_darwin.h"
+namespace rutz { typedef darwin_atomic_int atomic_int_t; }
+
 #else
-#  include "rutz/atomic_unsafe.h"
-namespace rutz { typedef unsafe_atomic_int atomic_int_t; }
+#  include "rutz/atomic_mutex.h"
+namespace rutz { typedef mutex_atomic_int atomic_int_t; }
 #endif
 
 // ######################################################################

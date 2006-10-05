@@ -1,4 +1,4 @@
-/*!@file rutz/atomic_unsafe.h Thread-UNSAFE integer class */
+/*!@file rutz/atomic_mutex.h Heavyweight atomic integer implementation using mutexes */
 
 // //////////////////////////////////////////////////////////////////// //
 // The iLab Neuromorphic Vision C++ Toolkit - Copyright (C) 2000-2005   //
@@ -35,26 +35,29 @@
 // $Id$
 //
 
-#ifndef RUTZ_ATOMIC_UNSAFE_H_DEFINED
-#define RUTZ_ATOMIC_UNSAFE_H_DEFINED
+#ifndef RUTZ_ATOMIC_MUTEX_H_DEFINED
+#define RUTZ_ATOMIC_MUTEX_H_DEFINED
 
 #include <limits>
+#include <pthread.h>
 
 namespace rutz
 {
 
-/// Thread-UNSAFE integer class.
-class unsafe_atomic_int
+/// Heavyweight atomic integer implementation using mutexes
+class mutex_atomic_int
 {
 private:
   int x;
+  pthread_mutex_t mut;
 
-  unsafe_atomic_int(const unsafe_atomic_int&);
-  unsafe_atomic_int& operator=(const unsafe_atomic_int&);
+  mutex_atomic_int(const mutex_atomic_int&);
+  mutex_atomic_int& operator=(const mutex_atomic_int&);
 
 public:
   //! Construct with an initial value of 0.
-  unsafe_atomic_int() : x(0) {}
+  mutex_atomic_int() : x(0)
+  { pthread_mutex_init(&mut, NULL); }
 
   //! Get the maximum representable value
   static int max_value() { return std::numeric_limits<int>::max(); }
@@ -65,51 +68,93 @@ public:
 
   //! Set value to the given value \a v.
   void atomic_set(int v)
-  { x = v; }
+  { pthread_mutex_lock(&mut); x = v; pthread_mutex_unlock(&mut); }
 
   //! Add \a v to the value.
   void atomic_add(int i)
-  { x += i; }
+  { pthread_mutex_lock(&mut); x += i; pthread_mutex_unlock(&mut); }
 
   //! Subtract \a v from the value.
   void atomic_sub(int i)
-  { x -= i; }
+  { pthread_mutex_lock(&mut); x -= i; pthread_mutex_unlock(&mut); }
 
   //! Subtract \a v from the value; return true if the new value is zero.
   bool atomic_sub_test_zero(int i)
-  { return bool((x -= i) == 0); }
+  {
+    bool ret;
+    pthread_mutex_lock(&mut);
+    ret = bool((x -= i) == 0);
+    pthread_mutex_unlock(&mut);
+    return ret;
+  }
 
   //! Increment the value by one.
   void atomic_incr()
-  { ++x; }
+  { pthread_mutex_lock(&mut); ++x; pthread_mutex_unlock(&mut); }
 
   //! Decrement the value by one.
   void atomic_decr()
-  { --x; }
+  { pthread_mutex_lock(&mut); --x; pthread_mutex_unlock(&mut); }
 
   //! Decrement the value by one; return true if the new value is zero.
   bool atomic_decr_test_zero()
-  { return bool(--x == 0); }
+  {
+    bool ret;
+    pthread_mutex_lock(&mut);
+    ret = bool(--x == 0);
+    pthread_mutex_unlock(&mut);
+    return ret;
+  }
 
   //! Increment the value by one; return true if the new value is zero.
   bool atomic_incr_test_zero()
-  { return bool(++x == 0); }
+  {
+    bool ret;
+    pthread_mutex_lock(&mut);
+    ret = bool(++x == 0);
+    pthread_mutex_unlock(&mut);
+    return ret;
+  }
 
   //! Add \a v to the value and return the new value
   int atomic_add_return(int i)
-  { return (x += i); }
+  {
+    int ret;
+    pthread_mutex_lock(&mut);
+    ret = (x += i);
+    pthread_mutex_unlock(&mut);
+    return ret;
+  }
 
   //! Subtract \a v from the value and return the new value
   int atomic_sub_return(int i)
-  { return (x -= i); }
+  {
+    int ret;
+    pthread_mutex_lock(&mut);
+    ret = (x -= i);
+    pthread_mutex_unlock(&mut);
+    return ret;
+  }
 
   //! Increment the value by one and return the new value.
   int atomic_incr_return()
-  { return ++x; }
+  {
+    int ret;
+    pthread_mutex_lock(&mut);
+    ret = ++x;
+    pthread_mutex_unlock(&mut);
+    return ret;
+  }
 
   //! Decrement the value by one and return the new value.
   int atomic_decr_return()
-  { return --x; }
+  {
+    int ret;
+    pthread_mutex_lock(&mut);
+    ret = --x;
+    pthread_mutex_unlock(&mut);
+    return ret;
+  }
 };
 
 } // end namespace rutz
@@ -121,4 +166,4 @@ public:
 /* indent-tabs-mode: nil */
 /* End: */
 
-#endif // RUTZ_ATOMIC_UNSAFE_H_DEFINED
+#endif // RUTZ_ATOMIC_MUTEX_H_DEFINED

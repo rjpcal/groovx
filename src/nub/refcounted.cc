@@ -49,12 +49,6 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-namespace
-{
-  const nub::ref_counts::count_type REFCOUNT_MAX =
-    std::numeric_limits<nub::ref_counts::count_type>::max();
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // ref_counts member definitions
@@ -72,8 +66,8 @@ void nub::ref_counts::operator delete(void* space, size_t /*bytes*/)
 }
 
 nub::ref_counts::ref_counts() throw() :
-  m_strong(0),
-  m_weak(0),
+  m_strong(),
+  m_weak(),
   m_owner_alive(true),
   m_volatile(false)
 {
@@ -84,30 +78,29 @@ nub::ref_counts::~ref_counts() throw()
 {
 GVX_TRACE("nub::ref_counts::~ref_counts");
 
-  if (m_strong > 0) GVX_PANIC("ref_counts object destroyed before strong refcount fell to 0");
-  if (m_weak > 0) GVX_PANIC("ref_counts object destroyed before weak refcount fell to 0");
+  if (m_strong.atomic_get() > 0) GVX_PANIC("ref_counts object destroyed before strong refcount fell to 0");
+  if (m_weak.atomic_get() > 0) GVX_PANIC("ref_counts object destroyed before weak refcount fell to 0");
 }
 
 void nub::ref_counts::acquire_weak() throw()
 {
 GVX_TRACE("nub::ref_counts::acquire_weak");
 
-  if (m_weak == REFCOUNT_MAX) GVX_PANIC("weak refcount overflow");
-
-  ++m_weak;
+  if (m_weak.atomic_incr_return() == rutz::atomic_int_t::max_value())
+    GVX_PANIC("weak refcount overflow");
 }
 
-nub::ref_counts::count_type nub::ref_counts::release_weak() throw()
+int nub::ref_counts::release_weak() throw()
 {
 GVX_TRACE("nub::ref_counts::release_weak");
 
-  if (m_weak == 0) GVX_PANIC("weak refcount already 0 in release_weak()");
+  const int result = m_weak.atomic_decr_return();
 
-  const count_type result = --m_weak;
+  if (result < 0) GVX_PANIC("weak refcount already 0 in release_weak()");
 
-  if (m_weak == 0)
+  if (result == 0)
     {
-      if (m_strong > 0) GVX_PANIC("weak refcount fell to 0 before strong refcount");
+      if (m_strong.atomic_get() > 0) GVX_PANIC("weak refcount fell to 0 before strong refcount");
       delete this;
     }
 
@@ -119,36 +112,38 @@ void nub::ref_counts::acquire_strong() throw()
 GVX_TRACE("nub::ref_counts::acquire_strong");
 
   if (m_volatile) GVX_PANIC("attempt to use strong refcount with volatile object");
-  if (m_strong == REFCOUNT_MAX) GVX_PANIC("strong refcount overflow");
-
-  ++m_strong;
+  if (m_strong.atomic_incr_return() == rutz::atomic_int_t::max_value())
+    GVX_PANIC("strong refcount overflow");
 }
 
-nub::ref_counts::count_type nub::ref_counts::release_strong() throw()
+int nub::ref_counts::release_strong() throw()
 {
 GVX_TRACE("nub::ref_counts::release_strong");
 
   if (m_volatile) GVX_PANIC("attempt to use strong refcount with volatile object");
-  if (m_strong == 0) GVX_PANIC("strong refcount already 0 in release_strong()");
-  if (m_weak == 0) GVX_PANIC("weak refcount prematurely fell to 0");
+  if (m_weak.atomic_get() == 0) GVX_PANIC("weak refcount prematurely fell to 0");
 
-  return --m_strong;
+  const int result = m_strong.atomic_decr_return();
+
+  if (result < 0) GVX_PANIC("strong refcount already 0 in release_strong()");
+
+  return result;
 }
 
 void nub::ref_counts::release_strong_no_delete() throw()
 {
 GVX_TRACE("nub::ref_counts::release_strong_no_delete");
 
-  if (m_strong == 0) GVX_PANIC("strong refcount already 0 in release_strong_no_delete()");
+  const int result = m_strong.atomic_decr_return();
 
-  --m_strong;
+  if (result < 0) GVX_PANIC("strong refcount already 0 in release_strong_no_delete()");
 }
 
 void nub::ref_counts::debug_dump() const throw()
 {
   dbg_eval_nl(0, this);
-  dbg_eval_nl(0, m_strong);
-  dbg_eval_nl(0, m_weak);
+  dbg_eval_nl(0, m_strong.atomic_get());
+  dbg_eval_nl(0, m_weak.atomic_get());
   dbg_eval_nl(0, m_owner_alive);
 }
 
@@ -189,7 +184,7 @@ GVX_TRACE("nub::ref_counted::~ref_counted");
   // destroyed. Without that guarantee, weak references will be messed up,
   // since they'll think that the object is still alive (i.e. strong
   // refcount > 0) when it actually is already destroyed.
-  if (m_ref_counts->m_strong > 0)
+  if (m_ref_counts->m_strong.atomic_get() > 0)
     GVX_PANIC("ref_counted object destroyed before strong refcount dropped to 0");
 
   m_ref_counts->m_owner_alive = false;
@@ -199,7 +194,7 @@ GVX_TRACE("nub::ref_counted::~ref_counted");
 void nub::ref_counted::mark_as_volatile() throw()
 {
 GVX_TRACE("nub::ref_counted::mark_as_volatile");
-  if (m_ref_counts->m_strong > 0)
+  if (m_ref_counts->m_strong.atomic_get() > 0)
     GVX_PANIC("can't make volatile object that already has strong refs");
 
   if (m_ref_counts->m_volatile)
@@ -231,7 +226,7 @@ bool nub::ref_counted::is_shared() const throw()
 {
 GVX_TRACE("nub::ref_counted::is_shared");
 
-  return (m_ref_counts->m_strong > 1) || is_not_shareable();
+  return (m_ref_counts->m_strong.atomic_get() > 1) || is_not_shareable();
   // We check is_not_shareable() so that volatile objects always appear
   // shared, so that they cannot be removed from the nub::objectdb until
   // they become invalid.
@@ -257,12 +252,12 @@ GVX_TRACE("nub::ref_counted::get_counts");
 
 int nub::ref_counted::dbg_ref_count() const throw()
 {
-  return m_ref_counts->m_strong;
+  return m_ref_counts->m_strong.atomic_get();
 }
 
 int nub::ref_counted::dbg_weak_ref_count() const throw()
 {
-  return m_ref_counts->m_weak;
+  return m_ref_counts->m_weak.atomic_get();
 }
 
 static const char __attribute__((used)) vcid_groovx_nub_refcounted_cc_utc20050626084018[] = "$Id$ $HeadURL$";

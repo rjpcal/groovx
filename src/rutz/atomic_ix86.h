@@ -1,4 +1,4 @@
-/*!@file rutz/atomic_ix86.H Inline x86 assembly functions imported
+/*!@file rutz/atomic_ix86.h Inline x86 assembly functions imported
          from Linux kernel headers circa version 2.4.18-41mdk. */
 
 // Primary maintainer for this file: Rob Peters <rjpeters@klab.caltech.edu>
@@ -197,6 +197,9 @@ private:
 public:
   //! Construct with an initial value of 0.
   ix86_atomic_int() { this->atomic_set(0); }
+
+  //! Get the maximum representable value
+  static int max_value() { return ((1 << 24) - 1); }
 
   //! Get the current value.
   int atomic_get() const
