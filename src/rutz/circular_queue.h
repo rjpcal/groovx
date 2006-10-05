@@ -62,6 +62,9 @@ namespace rutz
       delete [] m_q;
     }
 
+    /// Get the number of spaces in the queue (not all of which may be currently occupied)
+    size_t size() const { return m_q_size; }
+
     /// Returns true of the pop succeeded
     bool pop_front(T& dest)
     {
