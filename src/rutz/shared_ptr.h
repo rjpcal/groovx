@@ -267,6 +267,12 @@ template <class T> inline
 rutz::shared_ptr<T>::shared_ptr(T* p) :
   px(p), pn(0)
 {
+#if defined(GVX_MEM_DEBUG)
+  // Only call check_ptr() if GVX_MEM_DEBUG has been defined, because
+  // this is a relatively expensive operation and can bog things down
+  // if many shared_ptr objects are being created/destroyed in an
+  // inner loop.
+
   // We use full_object_cast() to get the address of the beginning of
   // the full object. That is slightly non-trivial, because, depending
   // on whether or not T is a polymorphic type, we might either have
@@ -274,6 +280,7 @@ rutz::shared_ptr<T>::shared_ptr(T* p) :
   // full object address. That is all encapsulated by
   // rutz::full_object_cast().
   rutz::shared_ptr_aux::check_ptr(rutz::full_object_cast(p));
+#endif
 
   // prevent leak if new throws:
   try { pn = new rutz::atomic_int_t; pn->atomic_set(1); }
