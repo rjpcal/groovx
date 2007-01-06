@@ -67,7 +67,7 @@ namespace rutz
 #ifdef MISSING_ISNAN
 #  if defined(HAVE_STD_ISNAN)
 template <class T> inline
-int                    isnan(x) { return std::isnan(x); }
+int                    isnan(T x) { return std::isnan(x); }
 #  endif
 #endif
 
