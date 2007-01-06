@@ -197,7 +197,13 @@ GVX_TRACE("tcl::aux_convert_to(unsigned long*)");
                                   "but got \"", Tcl_GetString(obj),
                                   "\" (value was negative)"), SRC_POS);
     }
-  else if (wideval > static_cast<Tcl_WideInt>(ulongmax))
+  // OK, now we know our wideval is non-negative, so we can safely
+  // cast it to an unsigned type (Tcl_WideUInt) for comparison against
+  // ulongmax (note: don't try to do this comparison by casting
+  // ulongmax to a signed type like Tcl_WideInt, since the result of
+  // the cast will be a negative number, leading to a bogus
+  // comparison)
+  else if (static_cast<Tcl_WideUInt>(wideval) > ulongmax)
     {
       throw rutz::error(rutz::cat("expected unsigned long value "
                                   "but got \"", Tcl_GetString(obj),
