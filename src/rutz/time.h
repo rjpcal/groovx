@@ -64,6 +64,13 @@ public:
     reset(s, us);
   }
 
+  explicit time(double ss) throw() : m_timeval()
+  {
+    const unsigned long s = (unsigned long)(ss);
+    const long us = long((ss - s) * 1000000);
+    reset(s, us);
+  }
+
   /// Copy construct.
   time(const time& x) throw() : m_timeval(x.m_timeval) {}
 
@@ -141,6 +148,49 @@ public:
     normalize(this->m_timeval);
 
     return *this;
+  }
+
+  /// Less-than comparison
+  bool operator<(const time& t2) throw()
+  {
+    return (m_timeval.tv_sec < t2.m_timeval.tv_sec)
+      ||
+      (m_timeval.tv_sec == t2.m_timeval.tv_sec
+       && m_timeval.tv_usec < t2.m_timeval.tv_usec);
+  }
+
+  /// Less-than-or-equal comparison
+  bool operator<=(const time& t2) throw()
+  {
+    return (m_timeval.tv_sec <= t2.m_timeval.tv_sec)
+      ||
+      (m_timeval.tv_sec == t2.m_timeval.tv_sec
+       && m_timeval.tv_usec <= t2.m_timeval.tv_usec);
+  }
+
+  /// Equality comparison
+  bool operator==(const time& t2) throw()
+  {
+    return (m_timeval.tv_sec == t2.m_timeval.tv_sec
+            && m_timeval.tv_usec == t2.m_timeval.tv_usec);
+  }
+
+  /// Greater-than comparison
+  bool operator>(const time& t2) throw()
+  {
+    return (m_timeval.tv_sec > t2.m_timeval.tv_sec)
+      ||
+      (m_timeval.tv_sec == t2.m_timeval.tv_sec
+       && m_timeval.tv_usec > t2.m_timeval.tv_usec);
+  }
+
+  /// Greater-than-or-equal comparison
+  bool operator>=(const time& t2) throw()
+  {
+    return (m_timeval.tv_sec >= t2.m_timeval.tv_sec)
+      ||
+      (m_timeval.tv_sec == t2.m_timeval.tv_sec
+       && m_timeval.tv_usec >= t2.m_timeval.tv_usec);
   }
 
   /// Return time in floating-point seconds.
