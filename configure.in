@@ -505,6 +505,9 @@ esac
 AC_CHECK_LIB_CXX(expat, [#include <expat.h>], [XML_ParserFree(0)],
 		 [LIBS="-lexpat $LIBS"], [AC_MSG_ERROR(libexpat check failed)])
 
+AC_CHECK_LIB_CXX(pthread, [#include <pthread.h>], [pthread_once(0,0)],
+		 [LIBS="$LIBS -lpthread"], [AC_MSG_ERROR(libpthread check failed)])
+
 # add -lefence to LIBS for Electric Fence mem debugging
 
 ###
