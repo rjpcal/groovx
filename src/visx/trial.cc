@@ -74,7 +74,7 @@ rutz::tracer Trial::tracer;
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace
+namespace dummy_namespace_to_avoid_gcc411_bug_trial_cc
 {
   const io::version_id TRIAL_SVID = 5;
 
@@ -107,6 +107,8 @@ namespace
     Element::ChildStatus status;
   };
 }
+
+using namespace dummy_namespace_to_avoid_gcc411_bug_trial_cc;
 
 ///////////////////////////////////////////////////////////////////////
 //
