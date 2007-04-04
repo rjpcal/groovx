@@ -163,8 +163,8 @@ namespace
     errno = 0;
     if (stat(fname, &statbuf) != 0)
       {
-        cerr << "ERROR: in is_directory: stat failed " << fname << "\n";
-        cerr << strerror(errno) << "\n";
+        cerr << "WARNING: stat failed for " << fname
+             << " (" << strerror(errno) << ")\n";
         return false;
       }
 
@@ -874,14 +874,9 @@ namespace
 
   //----------------------------------------------------------
   //
-  // file_info class
+  // dir_info class
   //
   //----------------------------------------------------------
-
-  class file_info;
-
-  // Typedefs and enums
-  typedef vector<file_info*>      dep_list_t;
 
   struct string_cmp
   {
@@ -890,6 +885,115 @@ namespace
       return (strcmp(p1, p2) < 0);
     }
   };
+
+  class dir_info
+  {
+  public:
+    typedef map<const char*, dir_info*, string_cmp> map_t;
+
+  private:
+    static map_t s_dir_map;
+
+    const string m_dname;
+    vector<string> m_fname_vec;
+    set<string> m_fname_set;
+
+    dir_info(const string& dname, bool* success)
+      :
+      m_dname(dname)
+    {
+      *success = false;
+
+      if (cfg.verbosity >= NOISY)
+        cfg.info() << "considering directory:" << dname << '\n';
+
+      ++cfg.nest_level;
+
+      errno = 0;
+      DIR* d = opendir(dname.c_str());
+      if (d == 0)
+        {
+          // we leave it up to the caller to check *success and
+          // determine whether a failed opendir() is a fatal error or
+          // not
+          return;
+        }
+
+      for (dirent* e = readdir(d); e != 0; e = readdir(d))
+        {
+          if (cfg.verbosity >= NOISY)
+            cfg.info() << "adding file:" << e->d_name << '\n';
+
+          m_fname_vec.push_back(e->d_name);
+          m_fname_set.insert(e->d_name);
+        }
+
+      --cfg.nest_level;
+
+      if (cfg.verbosity >= NOISY)
+        cfg.info() << "finished directory:" << dname << '\n';
+
+      closedir(d);
+
+      *success = true;
+    }
+
+  public:
+    static const dir_info* try_get(const string& dname)
+    {
+      map_t::iterator p = s_dir_map.find(dname.c_str());
+      if (p != s_dir_map.end())
+        return (*p).second;
+
+      bool ok = false;
+      dir_info* d = new dir_info(dname, &ok);
+      if (!ok)
+        {
+          delete d;
+          return 0;
+        }
+
+      map_t::iterator i =
+        s_dir_map.insert(map_t::value_type(d->m_dname.c_str(), d)).first;
+
+      return (*i).second;
+    }
+
+    static const dir_info* get(const string& dname)
+    {
+      const dir_info* d = dir_info::try_get(dname);
+      if (d == 0)
+        {
+          cerr << "ERROR: couldn't open directory: "
+               << dname << " ("
+               << strerror(errno) << ")\n";
+          exit(1);
+        }
+      return d;
+    }
+
+    const string& name() const { return m_dname; }
+
+    size_t num_fnames() const { return m_fname_vec.size(); }
+
+    const string& fname(size_t i) const { return m_fname_vec[i]; }
+
+    bool has_fname(const string& s) const
+    { return m_fname_set.find(s) != m_fname_set.end(); }
+  };
+
+  dir_info::map_t dir_info::s_dir_map;
+
+  //----------------------------------------------------------
+  //
+  // file_info class
+  //
+  //----------------------------------------------------------
+
+  class file_info;
+
+  // Typedefs and enums
+  typedef vector<file_info*>      dep_list_t;
 
   class ldep_group
   {
@@ -1511,6 +1615,7 @@ namespace
     const string            m_rootname; // filename without trailing .extension
     const string            m_stripped_name; // rootname without leading src root dir
     const string            m_extension; // trailing .extension, including the "."
+    const string            m_tail; // rootname without leading directory prefixes
     const string            m_dirname_without_slash;
     bool                    m_literal; // if true, then don't try to look up nested includes
     bool                    m_phantom; // if true, then only consider for link deps
@@ -1645,6 +1750,7 @@ namespace
     m_rootname(m_fname.substr(0,m_dotpos)),
     m_stripped_name(strip_leading_prefix(m_rootname, cfg.strip_prefix)),
     m_extension(m_fname.substr(m_dotpos, string::npos)),
+    m_tail(file_tail(m_rootname)),
     m_dirname_without_slash(get_dirname_of(t)),
     m_literal(false),
     m_phantom(false),
@@ -1747,12 +1853,15 @@ namespace
     if (this->m_phantom)
       return this;
 
-    for (unsigned int i = 0; i < cfg.source_exts.size(); ++i)
-      {
-        const string result = this->m_rootname + cfg.source_exts[i];
-        if (file_exists(result.c_str()))
-          return file_info::get(result);
-      }
+    const dir_info* d = dir_info::try_get(this->m_dirname_without_slash);
+
+    if (d != 0)
+      for (unsigned int i = 0; i < cfg.source_exts.size(); ++i)
+        {
+          const string tail = this->m_tail + cfg.source_exts[i];
+          if (d->has_fname(tail))
+            return file_info::get(this->m_rootname + cfg.source_exts[i]);
+        }
 
     if (cfg.ldep_raw_mode)
       // if we're doing --output-ldep-raw, then we want to list .h
@@ -1786,6 +1895,9 @@ namespace
     // literal file:
     for (unsigned int i = 0; i < literal.size(); ++i)
       {
+        if (include_name.length() < literal[i].length())
+          continue;
+
         const char* extension =
           include_name.c_str() + include_name.length() - literal[i].length();
 
@@ -2301,7 +2413,7 @@ public:
 
   void inspect(char** arg0, char** argn);
 
-  bool should_prune_directory(const char* fname) const;
+  bool should_prune_directory(const string& fname) const;
 
   void print_direct_cdeps(file_info* finfo);
   void print_makefile_dep(file_info* finfo);
@@ -2690,10 +2802,10 @@ void cppdeps::inspect(char** arg0, char** argn)
   cerr << "obj_prefix: '" << cfg.obj_prefix << "'\n\n";
 }
 
-bool cppdeps::should_prune_directory(const char* fname) const
+bool cppdeps::should_prune_directory(const string& fname) const
 {
-  if (strcmp(fname, ".") == 0)  return true;
-  if (strcmp(fname, "..") == 0) return true;
+  if (fname.compare(".") == 0)  return true;
+  if (fname.compare("..") == 0) return true;
 
   for (unsigned int i = 0; i < cfg.prune_dirs.size(); ++i)
     if (cfg.prune_dirs[i] == fname)
@@ -2707,7 +2819,7 @@ void cppdeps::print_direct_cdeps(file_info* finfo)
   if (!finfo->is_cc_or_h_fname())
     {
       if (cfg.verbosity >= NOISY)
-        cfg.info() << finfo->name() << " is not a c++ file\n";
+        cfg.info() << finfo->name() << " is not a c/c++ source or header file\n";
       return;
     }
 
@@ -2744,7 +2856,7 @@ void cppdeps::print_makefile_dep(file_info* finfo)
   if (!finfo->is_cc_fname())
     {
       if (cfg.verbosity >= NOISY)
-        cfg.info() << finfo->name() << " is not a c++ file\n";
+        cfg.info() << finfo->name() << " is not a c/c++ source file\n";
       return;
     }
 
@@ -2926,43 +3038,22 @@ void cppdeps::traverse_sources()
 
       if (is_directory(current_file.c_str()))
         {
-          if (cfg.verbosity >= NOISY)
-            cfg.info() << "considering directory:" << current_file << '\n';
+          const dir_info* d = dir_info::get(current_file);
 
-          ++cfg.nest_level;
-
-          errno = 0;
-          DIR* d = opendir(current_file.c_str());
-          if (d == 0)
+          for (size_t i = 0; i < d->num_fnames(); ++i)
             {
-              cerr << "ERROR: couldn't read directory: "
-                   << current_file.c_str() << "\n"
-                   << strerror(errno) << "\n";
-              exit(1);
-            }
-
-          for (dirent* e = readdir(d); e != 0; e = readdir(d))
-            {
-              if (should_prune_directory(e->d_name))
+              if (should_prune_directory(d->fname(i)))
                 {
                   if (cfg.verbosity >= NOISY)
-                    cfg.info() << "pruning file:" << e->d_name << '\n';
-
-                  continue;
+                    cfg.info() << "pruning file:" << d->fname(i) << '\n';
                 }
+              else
+                {
+                  const string joined = join_filename(current_file, d->fname(i));
 
-              if (cfg.verbosity >= NOISY)
-                cfg.info() << "adding file:" << e->d_name << '\n';
-
-              files.push_back(join_filename(current_file, e->d_name));
+                  files.push_back(joined);
+                }
             }
-
-          --cfg.nest_level;
-
-          if (cfg.verbosity >= NOISY)
-            cfg.info() << "finished directory:" << current_file << '\n';
-
-          closedir(d);
         }
       else
         {
