@@ -36,6 +36,9 @@
 #include "tcl/scriptapp.h"
 
 #include "nub/objfactory.h"
+
+#include "rutz/sfmt.h"
+
 #include "tcl/list.h"
 #include "tcl/eventloop.h"
 #include "tcl/pkg.h"
@@ -359,9 +362,8 @@ void tcl::script_app::run()
                         0);
 
       const rutz::fstring ifneededcmd =
-        rutz::cat("package ifneeded ",
-                  pkg->name, " ", pkg->version,
-                  " {load {} ", pkg->name, " }");
+        rutz::sfmt("package ifneeded %s %s {load {} %s }",
+                   pkg->name, pkg->version, pkg->name);
 
       interp.eval(ifneededcmd);
     }

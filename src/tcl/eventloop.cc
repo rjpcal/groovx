@@ -43,6 +43,7 @@
 #include "rutz/backtraceformat.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <iostream>
 #include <tk.h>
@@ -266,7 +267,7 @@ GVX_TRACE("tcl::event_loop_impl::do_prompt");
 
   if (isatty(1))
     {
-      color_prompt = rutz::cat("\033[1;32m", text, "\033[0m");
+      color_prompt = rutz::sfmt("\033[1;32m%s\033[0m", text);
     }
 
 #ifdef GVX_WITH_READLINE
@@ -298,9 +299,9 @@ GVX_TRACE("tcl::event_loop_impl::prompt");
   else
     {
 #ifdef GVX_WITH_READLINE
-      const rutz::fstring text = rutz::cat(m_argv0, " ", history_next(), ">>> ");
+      const rutz::fstring text = rutz::sfmt("%s %d>>> ", m_argv0, history_next());
 #else
-      const rutz::fstring text = rutz::cat(m_argv0, " ", history_next(), "> ");
+      const rutz::fstring text = rutz::sfmt("%s %d> ", m_argv0, history_next());
 #endif
 
       do_prompt(text.c_str(), text.length());

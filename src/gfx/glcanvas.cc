@@ -50,6 +50,7 @@
 #include "media/bmapdata.h"
 
 #include "rutz/error.h"
+#include "rutz/sfmt.h"
 #include "rutz/shared_ptr.h"
 
 #include <vector>
@@ -415,7 +416,7 @@ GVX_TRACE("GLCanvas::throwIfError");
     {
       const char* msg =
         reinterpret_cast<const char*>(gluErrorString(status));
-      throw rutz::error(rutz::cat("GL error: ", msg, " ", where), pos);
+      throw rutz::error(rutz::sfmt("GL error: %s %s", msg, where), pos);
     }
 }
 

@@ -42,6 +42,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 #include "rutz/shared_ptr.h"
 
 #include <tcl.h>
@@ -126,8 +127,8 @@ namespace
   {
   GVX_TRACE("export_into");
     const rutz::fstring cmd =
-      rutz::cat("namespace eval ", to, " { namespace import ::",
-                from, "::", pattern, " }");
+      rutz::sfmt("namespace eval %s { namespace import ::%s::%s }",
+                 to, from, pattern);
 
     interp.eval(cmd);
   }
@@ -135,7 +136,7 @@ namespace
   tcl::list get_command_list(tcl::interpreter& interp, const char* namesp)
   {
     tcl::obj saveresult = interp.get_result<tcl::obj>();
-    rutz::fstring cmd = rutz::cat("info commands ::", namesp, "::*");
+    rutz::fstring cmd = rutz::sfmt("info commands ::%s::*", namesp);
     interp.eval(cmd);
     tcl::list cmdlist = interp.get_result<tcl::list>();
     interp.set_result(saveresult);
@@ -368,7 +369,7 @@ GVX_TRACE("tcl::pkg::inherit_pkg");
   tcl::pkg* other = lookup(rep->interp, name, version);
 
   if (other == 0)
-    throw rutz::error(rutz::cat("no tcl::pkg named '", name, "'"),
+    throw rutz::error(rutz::sfmt("no tcl::pkg named '%s'", name),
                       SRC_POS);
 
   inherit_namesp(other->namesp_name());

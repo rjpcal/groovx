@@ -38,6 +38,8 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "rutz/sfmt.h"
+
 using rutz::fstring;
 
 namespace
@@ -45,7 +47,7 @@ namespace
   fstring uniqName()
   {
     static int c = 0;
-    return rutz::cat("::ProcWrapper_UniqCmd", ++c);
+    return rutz::sfmt("::ProcWrapper_UniqCmd%d", ++c);
   }
 }
 
@@ -108,13 +110,12 @@ void tcl::ProcWrapper::invoke(const fstring& args)
 {
   if (isNoop()) return;
 
-  itsInterp.eval(rutz::cat(itsName, " ", args));
+  itsInterp.eval(rutz::sfmt("%s %s", itsName.c_str(), args.c_str()));
 }
 
 fstring tcl::ProcWrapper::fullSpec() const
 {
-  return rutz::cat('{', itsArgs, "} ",
-                   '{', itsBody, '}');
+  return rutz::sfmt("{%s} {%s}", itsArgs.c_str(), itsBody.c_str());
 }
 
 static const char __attribute__((used)) vcid_groovx_tcl_io_tclprocwrapper_cc_utc20050712162004[] = "$Id$ $HeadURL$";

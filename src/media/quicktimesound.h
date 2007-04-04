@@ -37,6 +37,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <Carbon/Carbon.h>
 #include <QuickTime/Movies.h>
@@ -81,7 +82,7 @@ GVX_TRACE("media::quicktime_sound_rep::quicktime_sound_rep");
                             &ref, 0);
 
   if (noErr != err)
-    throw rutz::error(rutz::cat("error in FSPathMakeRef: ", err),
+    throw rutz::error(rutz::sfmt("error in FSPathMakeRef: %d", int(err)),
                       SRC_POS);
 
   // (2) Get an FSSpec from the FSRef
@@ -91,14 +92,14 @@ GVX_TRACE("media::quicktime_sound_rep::quicktime_sound_rep");
                          NULL, NULL, &spec, NULL);
 
   if (noErr != err)
-    throw rutz::error(rutz::cat("error in FSGetCatalogInfo: ", err),
+    throw rutz::error(rutz::sfmt("error in FSGetCatalogInfo: %d", int(err)),
                       SRC_POS);
 
   // (3) Get a movie file descriptor from the FSSpec
   err = OpenMovieFile(&spec, &m_file_ref_num, fsRdPerm);
 
   if (noErr != err)
-    throw rutz::error(rutz::cat("error in OpenMovieFile: ", err),
+    throw rutz::error(rutz::sfmt("error in OpenMovieFile: %d", int(err)),
                       SRC_POS);
 
   // (4) Get a movie object from the movie file
@@ -108,7 +109,7 @@ GVX_TRACE("media::quicktime_sound_rep::quicktime_sound_rep");
   if (noErr != err)
     {
       CloseMovieFile(m_file_ref_num);
-      throw rutz::error(rutz::cat("error in NewMovieFromFile: ", err),
+      throw rutz::error(rutz::sfmt("error in NewMovieFromFile: %d", int(err)),
                         SRC_POS);
     }
 }

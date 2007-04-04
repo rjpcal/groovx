@@ -38,6 +38,7 @@
 #include "rutz/demangle.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include "tcl/list.h" // for eval_objv()
 
@@ -68,9 +69,9 @@ namespace
       case tcl::THROW_ERROR:
         {
           const fstring msg =
-            rutz::cat("error while evaluating ",
-                      Tcl_GetString(code.get()),
-                      ":\n", interp.get_result<const char*>());
+            rutz::sfmt("error while evaluating %s:\n%s",
+                       Tcl_GetString(code.get()),
+                       interp.get_result<const char*>());
 
           // Now clear the interpreter's result string, since we've
           // already incorporated that message into our error message:
@@ -326,8 +327,8 @@ GVX_TRACE("tcl::interpreter::set_global_var");
   if (Tcl_SetVar2Ex(intp(), const_cast<char*>(var_name), /*name2*/0,
                     var.get(), TCL_GLOBAL_ONLY) == 0)
     {
-      throw rutz::error(rutz::cat("couldn't set global variable'",
-                                  var_name, "'"), SRC_POS);
+      throw rutz::error(rutz::sfmt("couldn't set global variable '%s'",
+                                   var_name), SRC_POS);
     }
 }
 
@@ -338,13 +339,13 @@ GVX_TRACE("tcl::interpreter::unset_global_var");
   if (Tcl_UnsetVar(intp(), const_cast<char*>(var_name),
                    TCL_GLOBAL_ONLY) != TCL_OK)
     {
-      throw rutz::error(rutz::cat("couldn't unset global variable'",
-                                  var_name, "'"), SRC_POS);
+      throw rutz::error(rutz::sfmt("couldn't unset global variable '%s'",
+                                   var_name), SRC_POS);
     }
 }
 
 Tcl_Obj* tcl::interpreter::get_obj_global_var(const char* name1,
-                                           const char* name2) const
+                                              const char* name2) const
 {
 GVX_TRACE("tcl::interpreter::get_obj_global_var");
   Tcl_Obj* obj = Tcl_GetVar2Ex(intp(),
@@ -354,8 +355,8 @@ GVX_TRACE("tcl::interpreter::get_obj_global_var");
 
   if (obj == 0)
     {
-      throw rutz::error(rutz::cat("couldn't get global variable '",
-                                  name1, "'"), SRC_POS);
+      throw rutz::error(rutz::sfmt("couldn't get global variable '%s'",
+                                   name1), SRC_POS);
     }
 
   return obj;
@@ -515,7 +516,7 @@ GVX_TRACE("tcl::interpreter::get_proc_body");
     {
       reset_result();
 
-      if (eval(rutz::cat("info body ", proc_name)))
+      if (eval(rutz::sfmt("info body %s", proc_name)))
         {
           fstring result = get_result<const char*>();
           reset_result();

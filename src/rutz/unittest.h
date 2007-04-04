@@ -36,6 +36,7 @@
 #include "rutz/error.h"
 
 #include "rutz/fileposition.h"
+#include "rutz/sfmt.h"
 
 #include <cmath>
 
@@ -50,10 +51,10 @@ namespace rutz
   {
     dbg_print(3, expr_string); dbg_eval_nl(3, expr);
     if (!expr)
-      throw rutz::error(rutz::cat(pos.m_file_name, ":",
-                                  pos.m_line_no, ":\n"
-                                  "\texpected: ",
-                                  expr_string, "\n"), pos);
+      throw rutz::error(rutz::sfmt("%s:%d:\n\texpected: %s\n",
+                                   pos.m_file_name,
+                                   pos.m_line_no,
+                                   expr_string), pos);
   }
 
   template <class T, class U>
@@ -67,13 +68,15 @@ namespace rutz
     dbg_print(3, expr_string2); dbg_eval_nl(3, expr2);
     if (!(expr1 == expr2))
       {
-        rutz::fstring msg =
-          rutz::cat(pos.m_file_name, ":", pos.m_line_no,
-                    ": failed test:\n");
-        msg.append("\texpected ", expr_string1, " (lhs) "
-                   "== ", expr_string2, " (rhs)\n");
-        msg.append("\tgot: (lhs) ", expr_string1, " == ", expr1, "\n");
-        msg.append("\t     (rhs) ", expr_string2, " == ", expr2, "\n");
+        const rutz::fstring msg =
+          rutz::sfmt("%s:%d: failed test:\n"
+                     "\texpected %s (lhs) == %s (rhs)\n"
+                     "\tgot: (lhs) %s == %s\n"
+                     "\t     (rhs) %s == %s\n",
+                     pos.m_file_name, pos.m_line_no,
+                     expr_string1, expr_string2,
+                     expr_string1, rutz::sconvert(expr1).c_str(),
+                     expr_string2, rutz::sconvert(expr2).c_str());
         throw rutz::error(msg, pos);
       }
   }
@@ -97,15 +100,19 @@ namespace rutz
     dbg_eval_nl(3, tol);
     if (!approx_eq(expr1, expr2, tol))
       {
-        rutz::fstring msg =
-          rutz::cat(pos.m_file_name, ":", pos.m_line_no,
-                    ": failed test:\n");
-        msg.append("\texpected ", expr_string1, " (lhs) "
-                   "~= ", expr_string2, " (rhs)\n");
-        msg.append("\tgot: (lhs) ", expr_string1, " == ", expr1, "\n");
-        msg.append("\t     (rhs) ", expr_string2, " == ", expr2, "\n");
-        msg.append("\tallowable tolerance was: ", tol, "\n");
-        msg.append("\tactual difference was:   ", expr1-expr2, "\n");
+        const rutz::fstring msg =
+          rutz::sfmt("%s:%d: failed test:\n"
+                     "\texpected %s (lhs) ~= %s (rhs)\n"
+                     "\tgot: (lhs) %s == %g\n"
+                     "\t     (rhs) %s == %g\n"
+                     "\tallowable tolerance was: %g\n"
+                     "\tactual difference was:   %g\n",
+                     pos.m_file_name, pos.m_line_no,
+                     expr_string1, expr_string2,
+                     expr_string1, expr1,
+                     expr_string2, expr2,
+                     tol,
+                     expr1-expr2);
         throw rutz::error(msg, pos);
       }
   }

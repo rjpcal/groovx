@@ -51,6 +51,7 @@
 #include "rutz/algo.h"
 #include "rutz/error.h"
 #include "rutz/iter.h"
+#include "rutz/sfmt.h"
 #include "rutz/shared_ptr.h"
 
 #include "visx/trial.h"
@@ -153,8 +154,8 @@ GVX_TRACE("TrialEvent::invokeTemplate");
 
   nub::logging::add_obj_scope(*this);
 
-  nub::log( rutz::cat("req ", itsRequestedDelay,
-                      " - ", -itsEstimatedOffset) );
+  nub::log( rutz::sfmt("req %u - %f",
+                       itsRequestedDelay, -itsEstimatedOffset) );
 
   itsTotalOffset += error;
   itsTotalError += (itsRequestedDelay - msec);
@@ -268,8 +269,8 @@ void FileWriteEvent::invoke(Trial& /*trial*/)
     {
       itsFile->stream().put(static_cast<char>(itsByte));
       itsFile->stream().flush();
-      nub::log( rutz::cat("wrote '", itsByte, "' to '",
-                          itsFile->get_filename(), "'") );
+      nub::log( rutz::sfmt("wrote '%d' to '%s'",
+                           itsByte, itsFile->get_filename().c_str()) );
     }
 }
 

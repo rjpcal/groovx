@@ -41,6 +41,7 @@
 #include "rutz/arrays.h"
 #include "rutz/error.h"
 #include "rutz/rand.h"
+#include "rutz/sfmt.h"
 #include "rutz/shared_ptr.h"
 
 #include <algorithm>
@@ -394,8 +395,8 @@ GVX_TRACE("media::bmap_data::make_scrambled");
 
   if (rep->m_bits_per_pixel != 8 && rep->m_bits_per_pixel != 24)
     {
-      throw rutz::error(rutz::cat("unknown bits-per-pixel value: ",
-                                  rep->m_bits_per_pixel), SRC_POS);
+      throw rutz::error(rutz::sfmt("unknown bits-per-pixel value: %d",
+                                   rep->m_bits_per_pixel), SRC_POS);
     }
 
   const int bytes_per_pixel = rep->m_bits_per_pixel/8;

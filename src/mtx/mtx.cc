@@ -38,6 +38,7 @@
 #include "rutz/cstrstream.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <algorithm>
 #include <iostream>
@@ -134,24 +135,24 @@ void range_checking::in_full_open(const void* x,
 void range_checking::geq(int x, int lim, const char* f, int ln)
 {
   if (x>=lim) ; // OK
-  else raise_exception(rutz::cat("geq: integer range error ",
-                                 x, " !>= ", lim),
+  else raise_exception(rutz::sfmt("geq: integer range error "
+                                  "%d !>= %d", x, lim),
                        f, ln);
 }
 
 void range_checking::lt(int x, int lim, const char* f, int ln)
 {
   if (x<lim) ; // OK
-  else raise_exception(rutz::cat("less: integer range error ",
-                                 x, " !< ", lim),
+  else raise_exception(rutz::sfmt("less: integer range error "
+                                  "%d !< %d", x, lim),
                        f, ln);
 }
 
 void range_checking::leq(int x, int lim, const char* f, int ln)
 {
   if (x<=lim) ; // OK
-  else raise_exception(rutz::cat("leq: integer range error ",
-                                 x, " !<= ", lim),
+  else raise_exception(rutz::sfmt("leq: integer range error "
+                                  "%d !<= %d", x, lim),
                        f, ln);
 }
 
@@ -160,8 +161,8 @@ void range_checking::in_half_open(int x,
                                   const char* f, int ln)
 {
   if (x>=llim && x<ulim) ; // OK
-  else raise_exception(rutz::cat("in_half_open: integer range error ",
-                                 x, " !in [", llim, ", ", ulim, ")"),
+  else raise_exception(rutz::sfmt("in_half_open: integer range error "
+                                  "%d !in [%d, %d[", x, llim, ulim),
                        f, ln);
 }
 
@@ -170,8 +171,8 @@ void range_checking::in_full_open(int x,
                                   const char* f, int ln)
 {
   if (x>=llim && x<=ulim) ; // OK
-  else raise_exception(rutz::cat("in_full_open: integer range error ",
-                                 x, " !in [", llim, ", ", ulim, "]"),
+  else raise_exception(rutz::sfmt("in_full_open: integer range error "
+                                  "%d !in [%d, %d]", x, llim, ulim),
                        f, ln);
 }
 
@@ -556,9 +557,9 @@ GVX_TRACE("mtx::from_stream");
 
   s >> buf;
   if (buf != "mrows")
-    throw rutz::error(rutz::cat("parse error while scanning mtx "
-                                "from stream: expected 'mrows', got '",
-                                buf, "'"),
+    throw rutz::error(rutz::sfmt("parse error while scanning mtx "
+                                 "from stream: expected 'mrows', got '%s'",
+                                 buf.c_str()),
                       SRC_POS);
 
   s >> mrows;
@@ -568,9 +569,9 @@ GVX_TRACE("mtx::from_stream");
 
   s >> buf;
   if (buf != "ncols")
-    throw rutz::error(rutz::cat("parse error while scanning mtx "
-                                "from stream: expected 'ncols', got '",
-                                buf, "'"),
+    throw rutz::error(rutz::sfmt("parse error while scanning mtx "
+                                 "from stream: expected 'ncols', got '%s'",
+                                 buf.c_str()),
                       SRC_POS);
 
   s >> ncols;

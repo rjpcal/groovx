@@ -37,6 +37,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 #include "rutz/value.h"
 
 #include <limits>
@@ -107,8 +108,8 @@ GVX_TRACE("tcl::aux_convert_to(int*)");
 
   if ( Tcl_GetIntFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
-      throw rutz::error(rutz::cat("expected integer but got \"",
-                                  Tcl_GetString(obj), "\""), SRC_POS);
+      throw rutz::error(rutz::sfmt("expected integer but got \"%s\"",
+                                   Tcl_GetString(obj)), SRC_POS);
     }
 
   return val;
@@ -122,9 +123,9 @@ GVX_TRACE("tcl::aux_convert_to(unsigned int*)");
 
   if (sval < 0)
     {
-      throw rutz::error(rutz::cat("expected integer "
-                                  "but got \"", Tcl_GetString(obj),
-                                  "\" (value was negative)"), SRC_POS);
+      throw rutz::error(rutz::sfmt("expected integer but got \"%s\" "
+                                   "(value was negative)",
+                                   Tcl_GetString(obj)), SRC_POS);
     }
 
   return static_cast<unsigned int>(sval);
@@ -147,25 +148,22 @@ GVX_TRACE("tcl::aux_convert_to(long*)");
 
   if ( Tcl_GetWideIntFromObj(0, safeobj.get(), &wideval) != TCL_OK )
     {
-      throw rutz::error(rutz::cat("expected long value "
-                                  "but got \"", Tcl_GetString(obj),
-                                  "\""), SRC_POS);
+      throw rutz::error(rutz::sfmt("expected long value but got \"%s\"",
+                                   Tcl_GetString(obj)), SRC_POS);
     }
   else if (wideval > static_cast<Tcl_WideInt>(longmax))
     {
-      throw rutz::error(rutz::cat("expected long value "
-                                  "but got \"", Tcl_GetString(obj),
-                                  "\" (value too large, max is ",
-                                  longmax,
-                                  ")"), SRC_POS);
+      throw rutz::error(rutz::sfmt("expected long value but got \"%s\" "
+                                   "(value too large, max is %ld)",
+                                   Tcl_GetString(obj),
+                                   longmax), SRC_POS);
     }
   else if (wideval < static_cast<Tcl_WideInt>(longmin))
     {
-      throw rutz::error(rutz::cat("expected long value "
-                                  "but got \"", Tcl_GetString(obj),
-                                  "\" (value too small, min is ",
-                                  longmin,
-                                  ")"), SRC_POS);
+      throw rutz::error(rutz::sfmt("expected long value but got \"%s\" "
+                                   "(value too small, min is %ld)",
+                                   Tcl_GetString(obj),
+                                   longmin), SRC_POS);
     }
 
   return static_cast<long>(wideval);
@@ -187,15 +185,15 @@ GVX_TRACE("tcl::aux_convert_to(unsigned long*)");
 
   if ( Tcl_GetWideIntFromObj(0, safeobj.get(), &wideval) != TCL_OK )
     {
-      throw rutz::error(rutz::cat("expected unsigned long value "
-                                  "but got \"", Tcl_GetString(obj),
-                                  "\""), SRC_POS);
+      throw rutz::error(rutz::sfmt("expected unsigned long value "
+                                   "but got \"%s\"", Tcl_GetString(obj)),
+                        SRC_POS);
     }
   else if (wideval < 0)
     {
-      throw rutz::error(rutz::cat("expected unsigned long value "
-                                  "but got \"", Tcl_GetString(obj),
-                                  "\" (value was negative)"), SRC_POS);
+      throw rutz::error(rutz::sfmt("expected unsigned long value "
+                                   "but got \"%s\" (value was negative)",
+                                   Tcl_GetString(obj)), SRC_POS);
     }
   // OK, now we know our wideval is non-negative, so we can safely
   // cast it to an unsigned type (Tcl_WideUInt) for comparison against
@@ -205,11 +203,11 @@ GVX_TRACE("tcl::aux_convert_to(unsigned long*)");
   // comparison)
   else if (static_cast<Tcl_WideUInt>(wideval) > ulongmax)
     {
-      throw rutz::error(rutz::cat("expected unsigned long value "
-                                  "but got \"", Tcl_GetString(obj),
-                                  "\" (value too large, max is ",
-                                  ulongmax,
-                                  ")"), SRC_POS);
+      throw rutz::error(rutz::sfmt("expected unsigned long value "
+                                   "but got \"%s\" "
+                                   "(value too large, max is %lu)",
+                                   Tcl_GetString(obj), ulongmax),
+                        SRC_POS);
     }
 
   return static_cast<unsigned long>(wideval);
@@ -229,9 +227,8 @@ GVX_TRACE("tcl::aux_convert_to(long long*)");
 
   if ( Tcl_GetWideIntFromObj(0, safeobj.get(), &wideval) != TCL_OK )
     {
-      throw rutz::error(rutz::cat("expected long value "
-                                  "but got \"", Tcl_GetString(obj),
-                                  "\""), SRC_POS);
+      throw rutz::error(rutz::sfmt("expected long value but got \"%s\"",
+                                   Tcl_GetString(obj)), SRC_POS);
     }
 
   return wideval;
@@ -251,8 +248,8 @@ GVX_TRACE("tcl::aux_convert_to(bool*)");
 
   if ( Tcl_GetBooleanFromObj(0, safeobj.get(), &int_val) != TCL_OK )
     {
-      throw rutz::error(rutz::cat("expected boolean value but got \"",
-                                  Tcl_GetString(obj), "\""), SRC_POS);
+      throw rutz::error(rutz::sfmt("expected boolean value but got \"%s\"",
+                                   Tcl_GetString(obj)), SRC_POS);
     }
   return bool(int_val);
 }
@@ -271,8 +268,9 @@ GVX_TRACE("tcl::aux_convert_to(double*)");
 
   if ( Tcl_GetDoubleFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
-      throw rutz::error(rutz::cat("expected floating-point number but got \"",
-                                  Tcl_GetString(obj), "\""), SRC_POS);
+      throw rutz::error(rutz::sfmt("expected floating-point number "
+                                   "but got \"%s\"",
+                                   Tcl_GetString(obj)), SRC_POS);
     }
   return val;
 }

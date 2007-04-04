@@ -37,22 +37,23 @@
 
 #include "rutz/demangle.h"
 #include "rutz/error.h"
+#include "rutz/sfmt.h"
 
 void nub::detail::throw_ref_null(const std::type_info& info,
                                  const rutz::file_pos& pos)
 {
-  throw rutz::error(rutz::cat("attempted to construct a ref<",
-                              rutz::demangled_name(info),
-                              "> with a null pointer"),
+  throw rutz::error(rutz::sfmt("attempted to construct a ref<%s> "
+                               "with a null pointer",
+                               rutz::demangled_name(info)),
                     pos);
 }
 
 void nub::detail::throw_ref_unshareable(const std::type_info& info,
                                         const rutz::file_pos& pos)
 {
-  throw rutz::error(rutz::cat("attempted to construct a ref<",
-                              rutz::demangled_name(info),
-                              "> with an unshareable object"),
+  throw rutz::error(rutz::sfmt("attempted to construct a ref<%s> "
+                               "with an unshareable object",
+                               rutz::demangled_name(info)),
                     pos);
 }
 

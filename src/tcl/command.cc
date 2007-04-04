@@ -36,6 +36,7 @@
 #include "tcl/command.h"
 
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 #include "rutz/shared_ptr.h"
 
 #include "tcl/interp.h"
@@ -154,13 +155,13 @@ rutz::fstring tcl::command::usage_string() const
 GVX_TRACE("tcl::command::usage_string");
   if (rep->argspec.argc_min() ==
       rep->argspec.argc_max())
-    return rutz::cat(rep->usage,
-                     " (argc=", rep->argspec.argc_min(), ")");
+    return rutz::sfmt("%s (argc=%u)", rep->usage.c_str(),
+                      rep->argspec.argc_min());
 
   // else...
-  return rutz::cat(rep->usage,
-                   " (argc=[", rep->argspec.argc_min(),
-                   "..", rep->argspec.argc_min(), "])");
+  return rutz::sfmt("%s (argc=[%u..%u])", rep->usage.c_str(),
+                    rep->argspec.argc_min(),
+                    rep->argspec.argc_max());
 }
 
 void tcl::command::call(tcl::interpreter& interp,

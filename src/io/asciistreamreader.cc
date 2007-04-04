@@ -46,6 +46,7 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/gzstreambuf.h"
+#include "rutz/sfmt.h"
 #include "rutz/shared_ptr.h"
 #include "rutz/value.h"
 
@@ -70,8 +71,10 @@ namespace
                         const fstring& attrib_value,
                         const rutz::file_pos& pos)
   {
-    throw rutz::error(rutz::cat("error reading attribute '", attrib_name,
-                                "' with value '", attrib_value, "'"),
+    throw rutz::error(rutz::sfmt("error reading attribute '%s' "
+                                 "with value '%s'",
+                                 attrib_name.c_str(),
+                                 attrib_value.c_str()),
                       pos);
   }
 
@@ -121,8 +124,9 @@ namespace
               default:
                 buffer.push_back('\0');
                 throw rutz::error
-                  (rutz::cat("invalid escape character '", char(ch2),
-                             "' with buffer contents: ", &buffer[0]),
+                  (rutz::sfmt("invalid escape character '%c' "
+                              "with buffer contents: %s",
+                              ch2, &buffer[0]),
                    SRC_POS);
                 break;
               }
@@ -275,8 +279,8 @@ namespace
 
     if (len < 0)
       {
-        throw rutz::error(rutz::cat("found a negative length "
-                                    "for a string attribute: ", len),
+        throw rutz::error(rutz::sfmt("found a negative length "
+                                     "for a string attribute: %d", len),
                           SRC_POS);
       }
 
@@ -406,9 +410,10 @@ namespace
 
         if ( m_buf.fail() )
           {
-            throw rutz::error(rutz::cat("input failed "
-                                        "while parsing ending bracket\n",
-                                        "\tbracket: ", bracket), SRC_POS);
+            throw rutz::error(rutz::sfmt("input failed "
+                                         "while parsing ending bracket\n"
+                                         "\tbracket: %s", bracket.c_str()),
+                              SRC_POS);
           }
       }
 
@@ -449,14 +454,14 @@ namespace
 
     if (attrib_count < 0)
       {
-        throw rutz::error(rutz::cat("found a negative attribute count: ",
-                                    attrib_count), SRC_POS);
+        throw rutz::error(rutz::sfmt("found a negative attribute count: %d",
+                                     attrib_count), SRC_POS);
       }
 
     if ( buf.fail() )
       {
-        throw rutz::error(rutz::cat("input failed while reading "
-                                    "attribute count: ", attrib_count),
+        throw rutz::error(rutz::sfmt("input failed while reading "
+                                     "attribute count: %d", attrib_count),
                           SRC_POS);
       }
 

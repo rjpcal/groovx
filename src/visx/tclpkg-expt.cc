@@ -45,6 +45,7 @@
 #include "tcl-gfx/toglet.h"
 
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include "visx/exptdriver.h"
 
@@ -65,27 +66,29 @@ namespace
 
     // Create the begin key binding
     w->bind("<Control-KeyPress-b>",
-            rutz::cat("-> ", w.id(), " takeFocus; -> ", xp.id(), " begin"));
+            rutz::sfmt("-> %lu takeFocus; -> %lu begin",
+                       w.id(), xp.id()));
 
     // Create the quit key binding
     w->bind("<Control-KeyPress-q>",
-            rutz::cat("-> ", xp.id(), " halt; -> ", xp.id(), " storeData; exit"));
+            rutz::sfmt("-> %lu halt; -> %lu storeData; exit",
+                       xp.id(), xp.id()));
 
     // Create the quit-without-save key binding
     w->bind("<Control-Alt-KeyPress-x>", "exit");
 
     // Create the save key binding
-    w->bind("<Control-KeyPress-s>", rutz::cat("-> ", xp.id(), " storeData"));
+    w->bind("<Control-KeyPress-s>", rutz::sfmt("-> %lu storeData", xp.id()));
 
     // Create the stop key binding
-    w->bind("<Control-KeyPress-c>", rutz::cat("-> ", xp.id(), " stop"));
+    w->bind("<Control-KeyPress-c>", rutz::sfmt("-> %lu stop", xp.id()));
 
     // Create the reset key binding
-    w->bind("<Control-KeyPress-r>", rutz::cat("-> ", xp.id(), " reset"));
+    w->bind("<Control-KeyPress-r>", rutz::sfmt("-> %lu reset", xp.id()));
 
 #if 0
     // Create the pause key binding
-    w->bind("<KeyPress-p>", rutz::cat("-> ", xp.id(), " pause"));
+    w->bind("<KeyPress-p>", rutz::sfmt("-> %lu pause", xp.id()));
 #endif
 
     // Force the focus to the widget
@@ -105,8 +108,8 @@ namespace
     // keypress)
     // (2) actually start the experimeent
     const fstring script =
-      rutz::cat("-> ", w.id(), " bind ", event, " {}; "
-                "-> ", xp.id(), " begin");
+      rutz::sfmt("-> %lu bind %s {}; -> %lu begin",
+                 w.id(), event, xp.id());
 
     w->bind(event, script);
     w->takeFocus();

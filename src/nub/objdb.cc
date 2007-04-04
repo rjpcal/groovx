@@ -41,6 +41,8 @@
 #include "nub/object.h"
 #include "nub/weak_handle.h"
 
+#include "rutz/sfmt.h"
+
 #include <typeinfo>
 #include <map>
 
@@ -53,8 +55,8 @@ using rutz::shared_ptr;
 nub::invalid_uid_error::invalid_uid_error(nub::uid id,
                                     const rutz::file_pos& pos)
   :
-  rutz::error(rutz::cat("attempted to access "
-                        "invalid object '", id, "'"), pos)
+  rutz::error(rutz::sfmt("attempted to access invalid object '%ld'",
+                         id), pos)
 {}
 
 nub::invalid_uid_error::~invalid_uid_error() throw() {}

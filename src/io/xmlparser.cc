@@ -37,6 +37,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <istream>
 
@@ -144,10 +145,9 @@ GVX_TRACE("io::xml_parser::parse");
           != XML_STATUS_OK)
         {
           throw rutz::error
-            (rutz::cat("xml parse error at input line ",
-                       XML_GetCurrentLineNumber(m_parser),
-                       ":\n",
-                       XML_ErrorString(XML_GetErrorCode(m_parser))),
+            (rutz::sfmt("xml parse error at input line %d:\n%s",
+                        int(XML_GetCurrentLineNumber(m_parser)),
+                        XML_ErrorString(XML_GetErrorCode(m_parser))),
              SRC_POS);
         }
 

@@ -37,6 +37,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <map>
 
@@ -98,11 +99,10 @@ get_known_keys(const char* sep) const
 void rutz::assoc_array_base::
 throw_for_key(const char* key, const rutz::file_pos& pos) const
 {
-  throw rutz::error(rutz::cat("known keys are:\n\t",
-                              get_known_keys("\n\t"),
-                              "\nunknown ",
-                              rep->key_description,
-                              " '", key, "'"),
+  throw rutz::error(rutz::sfmt("known keys are:\n\t%s\nunknown %s '%s'",
+                               get_known_keys("\n\t").c_str(),
+                               rep->key_description.c_str(),
+                               key),
                     pos);
 }
 

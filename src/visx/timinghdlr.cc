@@ -45,6 +45,7 @@
 #include "tcl/timerscheduler.h"
 
 #include "rutz/error.h"
+#include "rutz/sfmt.h"
 #include "rutz/shared_ptr.h"
 #include "rutz/stopwatch.h"
 
@@ -292,8 +293,8 @@ GVX_TRACE("TimingHdlr::Impl::scheduleAll");
         events[i]->schedule(s, *trial, minimum_delay);
       minimum_delay = scheduled_delay+1;
 
-      nub::log(rutz::cat("scheduled @ ", scheduled_delay,
-                         ": ", events[i]->unique_name()));
+      nub::log(rutz::sfmt("scheduled @ %u: %s", scheduled_delay,
+                          events[i]->unique_name().c_str()));
     }
 }
 

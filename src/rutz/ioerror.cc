@@ -35,12 +35,13 @@
 
 #include "ioerror.h"
 
+#include "rutz/sfmt.h"
 #include "rutz/trace.h"
 
 rutz::filename_error::filename_error(const char* str,
                                      const rutz::file_pos& pos)
   :
-  rutz::error(rutz::cat("couldn't use file '", str, "'"), pos)
+  rutz::error(rutz::sfmt("couldn't use file '%s'", str), pos)
 {
 GVX_TRACE("rutz::filename_error::filename_error");
 }

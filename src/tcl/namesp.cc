@@ -77,7 +77,7 @@ tcl::native_namesp tcl::native_namesp::lookup(tcl::interpreter& interp,
     Tcl_FindNamespace(interp.intp(), name, 0, TCL_GLOBAL_ONLY);
 
   if (ns == 0)
-    throw rutz::error(rutz::cat("no Tcl namespace '", name, "'"),
+    throw rutz::error(rutz::sfmt("no Tcl namespace '%s;", name),
                       SRC_POS);
 
   return tcl::native_namesp(ns);

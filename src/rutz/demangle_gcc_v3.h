@@ -37,6 +37,7 @@
 #include "rutz/error.h"
 
 #include "rutz/demangle_cxxfilt.h"
+#include "rutz/sfmt.h"
 
 #include <cstdlib>
 #include <cxxabi.h>
@@ -47,6 +48,28 @@
 
 namespace
 {
+  const char* get_err_reason(int status)
+  {
+    switch (status)
+      {
+      case -1:
+        return "memory allocation error";
+        break;
+
+      case -2:
+        return "invalid mangled name";
+        break;
+
+      case -3:
+        return "invalid arguments (e.g. buf non-NULL "
+                   "and length NULL)";
+        break;
+      }
+
+    // default:
+    return "unknown error code";
+  }
+
   std::string demangle_gcc_v3(const std::string& mangled)
   {
     GVX_TRACE("demangle_gcc_v3");
@@ -75,29 +98,11 @@ namespace
       }
     catch (std::exception& e)
       {
-        rutz::fstring msg = rutz::cat("during cxa_demangle of '",
-                                      mangled.c_str(), "': ");
-
-        switch (status)
-          {
-          case -1:
-            msg.append("memory allocation error");
-            break;
-
-          case -2:
-            msg.append("invalid mangled name");
-            break;
-
-          case -3:
-            msg.append("invalid arguments (e.g. buf non-NULL "
-                       "and length NULL)");
-            break;
-
-          default:
-            msg.append("unknown error code (", status, ")");
-          }
-
-        msg.append("\n(c++filt also failed: ", e.what(), ")");
+        const rutz::fstring msg =
+          rutz::sfmt("during cxa_demangle of '%s': %s\n"
+                     "(c++filt also failed: %s)",
+                     mangled.c_str(), get_err_reason(status),
+                     e.what());
 
         throw rutz::error(msg, SRC_POS);
       }

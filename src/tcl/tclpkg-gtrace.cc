@@ -39,6 +39,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <sstream>
 
@@ -58,7 +59,7 @@ namespace
   void setOneLevel(int key, int level)
   {
     if (!rutz::debug::is_valid_key(key))
-      throw rutz::error(rutz::cat("no such debug key '", key, "'"),
+      throw rutz::error(rutz::sfmt("no such debug key '%d'", key),
                         SRC_POS);
 
     // else...
@@ -69,7 +70,7 @@ namespace
   {
     const int key = rutz::debug::lookup_key(fname);
     if (key == -1)
-      throw rutz::error(rutz::cat("no debug key for file '", fname, "'"),
+      throw rutz::error(rutz::sfmt("no debug key for file '%s'", fname),
                         SRC_POS);
 
     GVX_ASSERT(rutz::debug::is_valid_key(key));

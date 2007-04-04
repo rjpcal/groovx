@@ -36,6 +36,8 @@
 
 #include "nub/uid.h"
 
+#include "rutz/sfmt.h"
+
 #include <map>
 
 namespace rutz
@@ -99,8 +101,8 @@ io::object_map::get_existing_object(nub::uid id)
   map_type::const_iterator itr = m_objects.find(id);
   if ( itr == m_objects.end() )
     {
-      throw rutz::error(rutz::cat("no object was found "
-                                  "for the given id:", id),
+      throw rutz::error(rutz::sfmt("no object was found "
+                                   "for the given id: %lu", id),
                         SRC_POS);
     }
 

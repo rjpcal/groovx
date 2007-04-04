@@ -40,6 +40,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 #include "rutz/value.h"
 
 #include <cctype>
@@ -103,8 +104,8 @@ public:
       {
         // If we got here, then none of the substrings matched so we must
         // raise an exception.
-        throw rutz::error(rutz::cat("couldn't read typename for ",
-                                    correct_name.c_str()), SRC_POS);
+        throw rutz::error(rutz::sfmt("couldn't read typename for %s",
+                                     correct_name.c_str()), SRC_POS);
       }
   }
 
@@ -120,8 +121,8 @@ public:
       {
         // If we got here, then none of the substrings matched so we must
         // raise an exception.
-        throw rutz::error(rutz::cat("couldn't read typename for ",
-                                    correct_name.c_str()), SRC_POS);
+        throw rutz::error(rutz::sfmt("couldn't read typename for %s",
+                                     correct_name.c_str()), SRC_POS);
       }
   }
 

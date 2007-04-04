@@ -51,6 +51,7 @@
 #include "rutz/arrays.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <fstream>
 
@@ -355,8 +356,8 @@ GVX_TRACE("Fish::readSplineFile");
   std::ifstream ifs(splinefile);
   if (ifs.fail())
     {
-      throw rutz::error(rutz::cat("error opening file '",
-                                  splinefile, "'"), SRC_POS);
+      throw rutz::error(rutz::sfmt("error opening file '%s'",
+                                   splinefile), SRC_POS);
     }
 
   for(i = 0; i < 4; ++i)
@@ -404,8 +405,8 @@ GVX_TRACE("Fish::readSplineFile");
 
       if (ifs.fail())
         {
-          throw rutz::error(rutz::cat("error reading file '",
-                                      splinefile, "'"), SRC_POS);
+          throw rutz::error(rutz::sfmt("error reading file '%s'",
+                                       splinefile), SRC_POS);
         }
     }
 
@@ -423,8 +424,8 @@ GVX_TRACE("Fish::readSplineFile");
 
       if (which <= 0)
         {
-          throw rutz::error(rutz::cat("bad 'which' value '", which,
-                                      "' while reading fish coords"),
+          throw rutz::error(rutz::sfmt("bad 'which' value '%d' while "
+                                       "reading fish coords", which),
                             SRC_POS);
         }
 
@@ -437,8 +438,8 @@ GVX_TRACE("Fish::readSplineFile");
 
       if (ifs.fail())
         {
-          throw rutz::error(rutz::cat("error reading file '",
-                                      splinefile, "'"), SRC_POS);
+          throw rutz::error(rutz::sfmt("error reading file '%s'",
+                                       splinefile), SRC_POS);
         }
     }
 }
@@ -451,8 +452,8 @@ GVX_TRACE("Fish::readCoordFile");
   std::ifstream ifs(coordfile);
   if (ifs.fail())
     {
-      throw rutz::error(rutz::cat("error opening file '",
-                                  coordfile, "'"), SRC_POS);
+      throw rutz::error(rutz::sfmt("error opening file '%s'",
+                                   coordfile), SRC_POS);
     }
 
   // Skip (index-1) lines
@@ -470,8 +471,8 @@ GVX_TRACE("Fish::readCoordFile");
 
   if (ifs.fail())
     {
-      throw rutz::error(rutz::cat("error reading file '",
-                                  coordfile, "'"), SRC_POS);
+      throw rutz::error(rutz::sfmt("error reading file '%s'",
+                                   coordfile), SRC_POS);
     }
 }
 

@@ -37,6 +37,7 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/pipe.h"
+#include "rutz/sfmt.h"
 
 #include <string>
 
@@ -50,14 +51,15 @@ namespace
   {
     GVX_TRACE("demangle_cxxfilt");
 
-    rutz::shell_pipe pipe(rutz::cat("c++filt ",
-                                    mangled.c_str()).c_str(), "r");
+    rutz::shell_pipe pipe(rutz::sfmt("c++filt %s",
+                                     mangled.c_str()).c_str(),
+                          "r");
 
     if (pipe.is_closed())
       {
-        throw rutz::error(rutz::cat("while demangling '",
-                                    mangled.c_str(),
-                                    "': couldn't open pipe to c++filt"),
+        throw rutz::error(rutz::sfmt("while demangling '%s': "
+                                     "couldn't open pipe to c++filt",
+                                     mangled.c_str()),
                           SRC_POS);
       }
 

@@ -36,6 +36,7 @@
 #include "tcl/regexp.h"
 
 #include "rutz/error.h"
+#include "rutz/sfmt.h"
 
 #include <tcl.h>
 
@@ -52,8 +53,8 @@ namespace
     Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patrn.get(), flags);
     if (!regexp)
       {
-        throw rutz::error(rutz::cat("error getting a regexp from '",
-                                    Tcl_GetString(patrn.get()), "'"),
+        throw rutz::error(rutz::sfmt("error getting a regexp from '%s'",
+                                     Tcl_GetString(patrn.get())),
                           SRC_POS);
       }
     return regexp;

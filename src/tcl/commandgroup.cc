@@ -41,6 +41,7 @@
 
 #include "rutz/fileposition.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 #include "rutz/shared_ptr.h"
 
 #include <list>
@@ -98,7 +99,7 @@ public:
     initial_cmd_name(cmd_name),
 #endif
     cmd_list(),
-    prof_name(rutz::cat("tcl/", cmd_name)),
+    prof_name(rutz::sfmt("tcl/%s", cmd_name.c_str())),
     prof(prof_name.c_str(), src_pos.m_file_name, src_pos.m_line_no)
   {}
 
@@ -326,7 +327,7 @@ tcl::command_group* tcl::command_group::lookup_original(
 {
 GVX_TRACE("tcl::command_group::lookup_original");
 
-  const fstring script = rutz::cat("namespace origin ", name);
+  const fstring script = rutz::sfmt("namespace origin %s", name);
   if (interp.eval(script, tcl::IGNORE_ERROR) == false)
     {
       return 0;

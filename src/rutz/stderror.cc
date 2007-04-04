@@ -37,16 +37,15 @@
 
 #include "rutz/demangle.h"
 #include "rutz/error.h"
+#include "rutz/sfmt.h"
 
 void rutz::throw_bad_cast(const std::type_info& to,
                           const std::type_info& from,
                           const rutz::file_pos& pos)
 {
-  throw rutz::error(rutz::cat("failed cast: expected '",
-                              rutz::demangled_name(to),
-                              "', got '",
-                              rutz::demangled_name(from),
-                              "'"), pos);
+  throw rutz::error(rutz::sfmt("failed cast: expected '%s', got '%s'",
+                               rutz::demangled_name(to),
+                               rutz::demangled_name(from)), pos);
 }
 
 static const char __attribute__((used)) vcid_groovx_rutz_stderror_cc_utc20050626084019[] = "$Id$ $HeadURL$";

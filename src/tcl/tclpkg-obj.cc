@@ -44,6 +44,7 @@
 #include "tcl/interp.h"
 
 #include "rutz/demangle.h"
+#include "rutz/sfmt.h"
 
 #include <tcl.h>
 
@@ -140,7 +141,8 @@ namespace
 
     rutz::fstring origcmdname = ctx.get_arg<rutz::fstring>(2);
 
-    rutz::fstring newcmdname = rutz::cat(namesp, "::", origcmdname);
+    rutz::fstring newcmdname =
+      rutz::sfmt("%s::%s", namesp.c_str(), origcmdname.c_str());
 
     tcl::list newargs;
 

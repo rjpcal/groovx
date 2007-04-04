@@ -37,6 +37,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <cerrno>
 #include <cstdarg>
@@ -155,7 +156,7 @@ namespace
       case 'w': return false;
       }
 
-    throw rutz::error(rutz::cat("invalid read/write mode '", m, "'"),
+    throw rutz::error(rutz::sfmt("invalid read/write mode '%s'", m),
                       SRC_POS);
     return false; // "can't happen"
   }

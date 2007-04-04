@@ -47,6 +47,7 @@
 #include "rutz/fstring.h"
 #include "rutz/iter.h"
 #include "rutz/scopedptr.h"
+#include "rutz/sfmt.h"
 
 #include "tcl-gfx/toglet.h"
 
@@ -173,8 +174,8 @@ public:
     if (activeState->widget.is_valid() && currentNode < gxNodes.size())
       {
         activeState->widget->setDrawable(gxNodes[currentNode]);
-        nub::log(rutz::cat("current node is ",
-                           gxNodes[currentNode]->unique_name()));
+        nub::log(rutz::sfmt("current node is %s",
+                            gxNodes[currentNode]->unique_name().c_str()));
       }
   }
 };
@@ -412,8 +413,8 @@ void Trial::setCurrentNode(unsigned int nodeNumber)
 GVX_TRACE("Trial::setCurrentNode");
   if (nodeNumber >= rep->gxNodes.size())
     {
-      throw rutz::error(rutz::cat("invalid node number ", nodeNumber),
-                        SRC_POS);
+      throw rutz::error(rutz::sfmt("invalid node number %u",
+                                   nodeNumber), SRC_POS);
     }
   rep->currentNode = nodeNumber;
 }

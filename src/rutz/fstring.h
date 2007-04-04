@@ -380,78 +380,13 @@ namespace rutz
   };
 
 
-  ///////////////////////////////////////////////////////////
-  //
-  // Concatenation for building strings
-  //
-  ///////////////////////////////////////////////////////////
-
   /// Concatenate args into a single fstring
   template <class T1>
-  fstring cat(const T1& part1)
+  fstring sconvert(const T1& part1)
   {
     fstring f; f.append(part1);
     return f;
   }
-
-  /// Concatenate args into a single fstring
-  template <class T1, class T2>
-  fstring cat(const T1& part1, const T2& part2)
-  {
-    fstring f; f.append(part1, part2);
-    return f;
-  }
-
-  /// Concatenate args into a single fstring
-  template <class T1, class T2, class T3>
-  fstring cat(const T1& part1, const T2& part2, const T3& part3)
-  {
-    fstring f; f.append(part1, part2, part3);
-    return f;
-  }
-
-  /// Concatenate args into a single fstring
-  template <class T1, class T2, class T3,
-            class T4>
-  fstring cat(const T1& part1, const T2& part2, const T3& part3,
-              const T4& part4)
-  {
-    fstring f; f.append(part1, part2, part3, part4);
-    return f;
-  }
-
-  /// Concatenate args into a single fstring
-  template <class T1, class T2, class T3,
-            class T4, class T5>
-  fstring cat(const T1& part1, const T2& part2, const T3& part3,
-              const T4& part4, const T5& part5)
-  {
-    fstring f; f.append(part1, part2, part3, part4, part5);
-    return f;
-  }
-
-  /// Concatenate args into a single fstring
-  template <class T1, class T2, class T3,
-            class T4, class T5, class T6>
-  fstring cat(const T1& part1, const T2& part2, const T3& part3,
-              const T4& part4, const T5& part5, const T6& part6)
-  {
-    fstring f; f.append(part1, part2, part3, part4, part5, part6);
-    return f;
-  }
-
-  /// Concatenate args into a single fstring
-  template <class T1, class T2, class T3,
-            class T4, class T5, class T6,
-            class T7>
-  fstring cat(const T1& part1, const T2& part2, const T3& part3,
-              const T4& part4, const T5& part5, const T6& part6,
-              const T7& part7)
-  {
-    fstring f; f.append(part1, part2, part3, part4, part5, part6, part7);
-    return f;
-  }
-
 
 
   ///////////////////////////////////////////////////////////

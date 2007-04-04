@@ -39,6 +39,7 @@
 #include "rutz/error_context.h"
 #include "rutz/fstring.h"
 #include "rutz/mutex.h"
+#include "rutz/sfmt.h"
 
 #include <cstdlib>
 #include <new>
@@ -131,9 +132,8 @@ GVX_TRACE("rutz::error::~error");
 
 const char* rutz::error::what() const throw()
 {
-  m_what = rutz::cat("at ", m_file_pos.m_file_name,
-                     ":", m_file_pos.m_line_no, ":\n",
-                     m_msg);
+  m_what = rutz::sfmt("at %s:%d:\n%s", m_file_pos.m_file_name,
+                      m_file_pos.m_line_no, m_msg.c_str());
   return m_what.c_str();
 }
 

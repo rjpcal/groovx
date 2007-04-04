@@ -37,12 +37,14 @@
 
 #include "rutz/error.h"
 #include "rutz/demangle.h"
+#include "rutz/sfmt.h"
 
 void nub::detail::throw_soft_ref_invalid(const std::type_info& info,
                                       const rutz::file_pos& pos)
 {
-  throw rutz::error(rutz::cat("attempted to access invalid object "
-                              "in soft_ref<", rutz::demangled_name(info), ">"),
+  throw rutz::error(rutz::sfmt("attempted to access invalid object "
+                               "in soft_ref<%s>",
+                               rutz::demangled_name(info)),
                     pos);
 }
 

@@ -38,6 +38,7 @@
 #include "nub/object.h"
 
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 #include "rutz/shared_ptr.h"
 #include "rutz/stopwatch.h"
 #include "rutz/time.h"
@@ -98,8 +99,8 @@ void nub::logging::reset()
 GVX_TRACE("nub::logging::reset");
   scopes.clear();
 
-  log(rutz::cat("log reset ",
-                rutz::format_time(rutz::time::wall_clock_now())));
+  log(rutz::sfmt("log reset %s",
+                 rutz::format_time(rutz::time::wall_clock_now()).c_str()));
 }
 
 void nub::logging::add_scope(const fstring& name)
@@ -133,7 +134,7 @@ GVX_TRACE("nub::logging::add_obj_scope");
 
   add_scope(scopename);
 
-  log(rutz::cat("entering ", scopename));
+  log(rutz::sfmt("entering %s", scopename.c_str()));
 }
 
 void nub::logging::remove_obj_scope(const nub::object& obj)
@@ -142,7 +143,7 @@ GVX_TRACE("nub::logging::remove_obj_scope");
 
   const fstring scopename = obj.unique_name();
 
-  log(rutz::cat("leaving ", scopename));
+  log(rutz::sfmt("leaving %s", scopename.c_str()));
 
   remove_scope(scopename);
 }

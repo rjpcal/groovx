@@ -48,6 +48,7 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/rand.h"
+#include "rutz/sfmt.h"
 
 #include <unistd.h>
 
@@ -79,8 +80,9 @@ namespace
     if (cmd == 0)
       throw rutz::error("no such tcl::command_group", SRC_POS);
 
-    return rutz::cat(name, " resolves to ",
-                     cmd->resolved_name(), "\n", cmd->usage());
+    return rutz::sfmt("%s resolves to %s\n%s",
+                      name, cmd->resolved_name().c_str(),
+                      cmd->usage().c_str());
   }
 
   unsigned long get_default_seed() { return rutz::default_rand_seed; }

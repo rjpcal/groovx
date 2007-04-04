@@ -45,6 +45,7 @@
 #include "media/bmapdata.h"
 
 #include "rutz/error.h"
+#include "rutz/sfmt.h"
 
 #include <fstream>
 #include <list>
@@ -93,8 +94,7 @@ public:
     itsPrimPtr(0)
   {
     if (!itsFstream.is_open())
-      raiseError(rutz::cat("couldn't open '",
-                           filename, "' for writing"),
+      raiseError(rutz::sfmt("couldn't open '%s' for writing", filename),
                  SRC_POS);
 
     itsStates.push_back(State());
@@ -605,7 +605,7 @@ public:
 
   void raiseError(const rutz::fstring& msg, const rutz::file_pos& pos)
   {
-    throw rutz::error(rutz::cat("PSCanvas error: ", msg), pos);
+    throw rutz::error(rutz::sfmt("PSCanvas error: %s", msg.c_str()), pos);
   }
 
   void beginPrimitive(Primitive* ptr, const char* comment)

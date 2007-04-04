@@ -43,6 +43,7 @@
 
 #include "rutz/error.h"
 #include "rutz/pipe.h"
+#include "rutz/sfmt.h"
 
 #include <cctype>
 
@@ -115,9 +116,9 @@ namespace
   GVX_TRACE("<imgfile.cc>::pipe_load");
 
     if (access(progname, R_OK|X_OK) != 0)
-      throw rutz::error(rutz::cat("couldn't access program '", progname, "'"), SRC_POS);
+      throw rutz::error(rutz::sfmt("couldn't access program '%s'", progname), SRC_POS);
     if (access(filename, R_OK)      != 0)
-      throw rutz::error(rutz::cat("couldn't read file '", filename, "'"), SRC_POS);
+      throw rutz::error(rutz::sfmt("couldn't read file '%s'", filename), SRC_POS);
 
     fstring nm_copy(filename);
     char* const argv[] = { (char*) progname, nm_copy.data(), (char*) 0 };
@@ -150,13 +151,13 @@ GVX_TRACE("media::load_image");
       // anytopnm, and pipe the output via a stream into a pnm parser.
     default:   pipe_load(GVX_ANYTOPNM_PROG, filename, data); break;
 #else
-    default:   throw rutz::error(rutz::cat("unknown image file format: ",
-                                           filename), SRC_POS);
+    default:   throw rutz::error(rutz::sfmt("unknown image file format: %s",
+                                            filename), SRC_POS);
       break;
 #endif
     }
 
-  nub::log(rutz::cat("loaded image file ", filename));
+  nub::log(rutz::sfmt("loaded image file %s", filename));
 }
 
 void media::save_image(const char* filename,
@@ -167,10 +168,11 @@ void media::save_image(const char* filename,
     case PNM:  media::save_pnm(filename, data); break;
     case PNG:  media::save_png(filename, data); break;
     default:
-      throw rutz::error(rutz::cat("unknown file format: ", filename), SRC_POS);
+      throw rutz::error(rutz::sfmt("unknown file format: %s", filename),
+                        SRC_POS);
     }
 
-  nub::log(rutz::cat("saved image file ", filename));
+  nub::log(rutz::sfmt("saved image file %s", filename));
 }
 
 static const char __attribute__((used)) vcid_groovx_media_imgfile_cc_utc20050626084018[] = "$Id$ $HeadURL$";

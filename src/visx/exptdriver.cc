@@ -52,6 +52,7 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/iter.h"
+#include "rutz/sfmt.h"
 #include "rutz/timeformat.h"
 #include "rutz/unixcall.h"
 
@@ -311,8 +312,10 @@ GVX_TRACE("ExptDriver::setFilePrefix");
 void ExptDriver::claimLogFile() const
 {
 GVX_TRACE("ExptDriver::claimLogFile");
-  nub::logging::set_log_filename(rutz::cat(rep->filePrefix, "_",
-                                           rep->fileTimestamp, ".log"));
+  nub::logging::set_log_filename
+    (rutz::sfmt("%s_%s.log",
+                rep->filePrefix.c_str(),
+                rep->fileTimestamp.c_str()));
 }
 
 int ExptDriver::getAutosavePeriod() const
@@ -375,10 +378,11 @@ GVX_TRACE("ExptDriver::edBeginExpt");
 
   claimLogFile();
 
-  nub::log(rutz::cat("expt begin: ", rep->beginDate));
-  nub::log(rutz::cat("hostname: ", rep->hostname));
-  nub::log(rutz::cat("cwd: ", cwd));
-  nub::log(rutz::cat("cmdline: ", tcl::event_loop::command_line()));
+  nub::log(rutz::sfmt("expt begin: %s", rep->beginDate.c_str()));
+  nub::log(rutz::sfmt("hostname: %s", rep->hostname.c_str()));
+  nub::log(rutz::sfmt("cwd: %s", cwd.c_str()));
+  nub::log(rutz::sfmt("cmdline: %s",
+                      tcl::event_loop::command_line().c_str()));
 
   currentElement()->vxRun(*this);
 }
@@ -483,7 +487,7 @@ GVX_TRACE("ExptDriver::storeData");
   expt_filename.append(".gvx");
   renameFileIfExists(expt_filename);
   io::save_gvx(nub::ref<io::serializable>(this), expt_filename.c_str());
-  nub::log( rutz::cat( "wrote file ", expt_filename.c_str()) );
+  nub::log( rutz::sfmt("wrote file %s", expt_filename.c_str()) );
 
   // Write the responses file
   fstring resp_filename = rep->filePrefix;
@@ -491,7 +495,7 @@ GVX_TRACE("ExptDriver::storeData");
   resp_filename.append(".resp");
   renameFileIfExists(resp_filename);
   TlistUtils::writeResponses(resp_filename.c_str());
-  nub::log( rutz::cat( "wrote file ", resp_filename.c_str()) );
+  nub::log( rutz::sfmt("wrote file %s", resp_filename.c_str()) );
 
   // Change file access modes to allow read-only by all
   const mode_t datafile_mode = S_IRUSR | S_IRGRP | S_IROTH;

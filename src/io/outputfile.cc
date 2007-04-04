@@ -41,6 +41,7 @@
 #include "io/writer.h"
 
 #include "rutz/error.h"
+#include "rutz/sfmt.h"
 
 #include <fstream>
 
@@ -85,8 +86,8 @@ void output_file::set_filename(rutz::fstring fname)
   shared_ptr<std::ostream> s(new std::ofstream(fname.c_str()));
 
   if (s->fail())
-    throw rutz::error(rutz::cat("couldn't open '", fname,
-                                "' for writing"), SRC_POS);
+    throw rutz::error(rutz::sfmt("couldn't open '%s' for writing",
+                                 fname.c_str()), SRC_POS);
 
   m_stream.swap(s);
   m_filename = fname;

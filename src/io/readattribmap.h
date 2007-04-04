@@ -37,6 +37,7 @@
 #include "io/io.h"
 
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <utility>
 #include <vector>
@@ -125,9 +126,10 @@ io::attrib_map::attrib io::attrib_map::get(const rutz::fstring& attr_name)
     }
 
   rutz::fstring msg =
-    rutz::cat("no attribute named '",
-              attr_name.c_str(), "' for ",
-              m_obj_tag.c_str(), "\nknown attributes are:\n");
+    rutz::sfmt("no attribute named '%s' for %s\n"
+               "known attributes are:\n",
+               attr_name.c_str(),
+               m_obj_tag.c_str());
 
   itr = m_attribs.begin();
   while (itr != end)

@@ -37,6 +37,7 @@
 
 #include "rutz/demangle.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <typeinfo>
 
@@ -77,7 +78,7 @@ GVX_TRACE("nub::object::obj_typename");
 rutz::fstring nub::object::unique_name() const
 {
 GVX_TRACE("nub::object::unique_name");
-  return rutz::cat(obj_typename(), "(", id(), ")");
+  return rutz::sfmt("%s(%lu)", obj_typename().c_str(), id());
 }
 
 static const char __attribute__((used)) vcid_groovx_nub_object_cc_utc20050626084019[] = "$Id$ $HeadURL$";

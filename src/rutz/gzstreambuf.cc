@@ -37,6 +37,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 #include "rutz/shared_ptr.h"
 
 #include <fstream>
@@ -93,13 +94,13 @@ rutz::gzstreambuf::gzstreambuf(const char* name, int om,
     {
       if (om & std::ios::in)
         {
-          throw rutz::error(rutz::cat("couldn't open file '",
-                                      name, "' for reading"), SRC_POS);
+          throw rutz::error(rutz::sfmt("couldn't open file '%s' "
+                                       "for reading", name), SRC_POS);
         }
       else if (om & std::ios::out)
         {
-          throw rutz::error(rutz::cat("couldn't open file '", name,
-                                      "' for writing"), SRC_POS);
+          throw rutz::error(rutz::sfmt("couldn't open file '%s' "
+                                       "for writing", name), SRC_POS);
         }
     }
 }
@@ -234,8 +235,9 @@ shared_ptr<std::ostream> rutz::ogzopen(const fstring& filename,
       shared_ptr<std::ostream> result =
         make_shared(new std::ofstream(filename.c_str(), flags));
       if (result->fail())
-        throw rutz::error(rutz::cat("couldn't open file '", filename,
-                                    "' for writing"), SRC_POS);
+        throw rutz::error(rutz::sfmt("couldn't open file '%s' "
+                                     "for writing", filename.c_str()),
+                          SRC_POS);
 
       return result;
     }

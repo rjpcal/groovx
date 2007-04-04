@@ -37,6 +37,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 #include "rutz/shared_ptr.h"
 
 #include "rutz/trace.h"
@@ -49,8 +50,8 @@ tcl::channel_buf::channel_buf(Tcl_Interp* interp,
   chan = Tcl_GetChannel(interp, channame, &origmode);
   if (chan == 0)
     {
-      throw rutz::error(rutz::cat("no channel named '",
-                                  channame, "'"), SRC_POS);
+      throw rutz::error(rutz::sfmt("no channel named '%s'",
+                                   channame), SRC_POS);
     }
   opened = true;
 }

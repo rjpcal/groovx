@@ -51,6 +51,7 @@
 
 #include "rutz/error.h"
 #include "rutz/rand.h"
+#include "rutz/sfmt.h"
 
 #include "visx/gaborpatch.h"
 #include "visx/snake.h"
@@ -544,8 +545,8 @@ bool GaborArray::tryPush(const GaborArrayElement& e) const
 
   if (itsTotalNumber >= MAX_GABOR_NUMBER)
     {
-      throw rutz::error(rutz::cat(" More than ", MAX_GABOR_NUMBER,
-                                  " elements!\n"), SRC_POS);
+      throw rutz::error(rutz::sfmt(" More than %d elements!\n",
+                                   MAX_GABOR_NUMBER), SRC_POS);
     }
 
   itsArray[itsTotalNumber++] = e;

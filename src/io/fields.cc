@@ -43,6 +43,7 @@
 
 #include "rutz/error.h"
 #include "rutz/iter.h"
+#include "rutz/sfmt.h"
 
 #include <map>
 
@@ -55,8 +56,8 @@ using rutz::fstring;
 void FieldAux::throwNotAllowed(const char* what,
                                const rutz::file_pos& pos)
 {
-  throw rutz::error(rutz::cat("'", what, "' operation "
-                              "not allowed for that field"), pos);
+  throw rutz::error(rutz::sfmt("'%s' operation not allowed "
+                               "for that field", what), pos);
 }
 
 FieldImpl::~FieldImpl() {}
@@ -141,7 +142,7 @@ const Field& FieldMap::field(const fstring& name) const
     }
   else
     {
-      throw rutz::error(rutz::cat("no such field: '", name.c_str(), "'"),
+      throw rutz::error(rutz::sfmt("no such field: '%s'", name.c_str()),
                         SRC_POS);
     }
 }

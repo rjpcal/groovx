@@ -43,6 +43,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <cstdio>
 #include <iostream>
@@ -593,8 +594,8 @@ GVX_TRACE("tcl::TkWidget::setCursor");
 
       if (new_cursor == 0)
         {
-          throw rutz::error(rutz::cat("couldn't set cursor to '",
-                                      cursor_spec, "'"), SRC_POS);
+          throw rutz::error(rutz::sfmt("couldn't set cursor to '%s'",
+                                       cursor_spec), SRC_POS);
         }
 
       // OK, creating the new cursor succeeded, now free the old one
@@ -646,8 +647,8 @@ GVX_TRACE("tcl::TkWidget::repack");
 
   if (!Tk_IsTopLevel(rep->tkWin))
     {
-      rep->interp.eval(rutz::cat("pack ", pathname(), " ",
-                                 options, "; update"));
+      rep->interp.eval(rutz::sfmt("pack %s %s; update",
+                                  pathname(), options));
     }
 }
 
@@ -657,7 +658,7 @@ GVX_TRACE("tcl::TkWidget::unpack");
 
   if (!Tk_IsTopLevel(rep->tkWin))
     {
-      rep->interp.eval(rutz::cat("pack forget ", pathname()));
+      rep->interp.eval(rutz::sfmt("pack forget %s", pathname()));
     }
 }
 
@@ -726,21 +727,15 @@ void tcl::TkWidget::bind(const fstring& event_sequence,
 {
 GVX_TRACE("tcl::TkWidget::bind");
 
-  fstring cmd_str =
-    rutz::cat("bind ", pathname(), " ", event_sequence, " ");
-
-  if (script.length() == 0)
-    {
-      // If the script is the empty string, then we want to destroy
-      // the binding, so we need to actually give an empty string to
-      // the "bind" command; any empty pair of braces "{ }" will not
-      // suffice.
-      cmd_str.append( "\"\"" );
-    }
-  else
-    {
-      cmd_str.append("{ ", script, " }");
-    }
+ const fstring cmd_str =
+   script.length() == 0
+   // If the script is the empty string, then we want to destroy the
+   // binding, so we need to actually give an empty string to the
+   // "bind" command; any empty pair of braces "{ }" will not
+   // suffice.
+   ? rutz::sfmt("bind %s %s \"\"", pathname(), event_sequence.c_str())
+   : rutz::sfmt("bind %s %s { %s }",
+                pathname(), event_sequence.c_str(), script.c_str());
 
   rep->interp.eval(cmd_str);
 }
@@ -749,7 +744,7 @@ void tcl::TkWidget::takeFocus()
 {
 GVX_TRACE("tcl::TkWidget::takeFocus");
 
-  rep->interp.eval(rutz::cat("focus -force ", pathname()));
+  rep->interp.eval(rutz::sfmt("focus -force %s", pathname()));
 }
 
 void tcl::TkWidget::loseFocus()
@@ -765,8 +760,8 @@ GVX_TRACE("tcl::TkWidget::loseFocus");
 
   const char* pathname = Tk_PathName(toplev);
 
-  rep->interp.eval(rutz::cat("wm iconify ", pathname,
-                             "; wm deiconify ", pathname));
+  rep->interp.eval(rutz::sfmt("wm iconify %s; wm deiconify %s ",
+                              pathname, pathname));
 }
 
 void tcl::TkWidget::requestRedisplay()

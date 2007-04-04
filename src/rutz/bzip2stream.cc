@@ -37,6 +37,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 #include "rutz/shared_ptr.h"
 
 #ifdef HAVE_BZLIB_H
@@ -47,7 +48,7 @@
 
 #include "rutz/trace.h"
 
-using rutz::cat;
+using rutz::sfmt;
 using rutz::error;
 using rutz::fstring;
 using rutz::shared_ptr;
@@ -61,17 +62,17 @@ shared_ptr<std::ostream> rutz::obzip2open(const fstring& filename,
 
   if (filename.ends_with(bzip2_ext))
     {
-      throw error(cat("couldn't open file '", filename,
-                      "' for writing: "
-                      "bzip2 libraries must be installed"), SRC_POS);
+      throw error(sfmt("couldn't open file '%s' for writing: "
+                       "bzip2 libraries must be installed",
+                       filename.c_str()), SRC_POS);
     }
   else
     {
       shared_ptr<std::ostream> result =
         make_shared(new std::ofstream(filename.c_str(), flags));
       if (result->fail())
-        throw error(cat("couldn't open file '", filename,
-                        "' for writing"), SRC_POS);
+        throw error(sfmt("couldn't open file '%s' for writing",
+                         filename.c_str()), SRC_POS);
 
       return result;
     }
@@ -84,17 +85,17 @@ shared_ptr<std::istream> rutz::ibzip2open(const fstring& filename,
 
   if (filename.ends_with(bzip2_ext))
     {
-      throw error(cat("couldn't open file '", filename,
-                      "' for reading: "
-                      "bzip2 libraries must be installed"), SRC_POS);
+      throw error(sfmt("couldn't open file '%s' for reading: "
+                       "bzip2 libraries must be installed",
+                       filename.c_str()), SRC_POS);
     }
   else
     {
       shared_ptr<std::istream> result =
         make_shared(new std::ifstream(filename.c_str(), flags));
       if (result->fail())
-        throw error(cat("couldn't open file '", filename,
-                        "' for reading"), SRC_POS);
+        throw error(sfmt("couldn't open file '%s' for reading",
+                         filename.c_str()), SRC_POS);
 
       return result;
     }
@@ -173,8 +174,8 @@ namespace
             m_file = fopen(name, "rb");
 
             if (m_file == 0)
-              throw error(cat("couldn't open file '",
-                              name, "' for reading"), SRC_POS);
+              throw error(sfmt("couldn't open file '%s' for reading",
+                               name), SRC_POS);
 
             int bzerror = BZ_OK;
             m_bzfile = BZ2_bzReadOpen(&bzerror, m_file,
@@ -187,8 +188,8 @@ namespace
               {
                 fclose(m_file);
 
-                throw error(cat("couldn't open file '",
-                                name, "' for bzip2 decompression"), SRC_POS);
+                throw error(sfmt("couldn't open file '%s' for "
+                                 "bzip2 decompression", name), SRC_POS);
               }
 
             setg(m_buf+s_pback_size,
@@ -200,8 +201,8 @@ namespace
             m_file = fopen(name, "wb");
 
             if (m_file == 0)
-              throw error(cat("couldn't open file '", name,
-                              "' for writing"), SRC_POS);
+              throw error(sfmt("couldn't open file '%s' for writing",
+                               name), SRC_POS);
 
             int bzerror = BZ_OK;
             m_bzfile = BZ2_bzWriteOpen(&bzerror, m_file,
@@ -213,8 +214,8 @@ namespace
               {
                 fclose(m_file);
 
-                throw error(cat("couldn't open file '",
-                                name, "' for bzip2 decompression"), SRC_POS);
+                throw error(sfmt("couldn't open file '%s' for "
+                                 "bzip2 compression", name), SRC_POS);
               }
 
             setp(m_buf, m_buf+(s_buf_size-1));
@@ -231,13 +232,13 @@ namespace
       {
         if (om & std::ios::in)
           {
-            throw error(cat("couldn't open file '",
-                            name, "' for reading"), SRC_POS);
+            throw error(sfmt("couldn't open file '%s' for reading",
+                             name), SRC_POS);
           }
         else if (om & std::ios::out)
           {
-            throw error(cat("couldn't open file '", name,
-                            "' for writing"), SRC_POS);
+            throw error(sfmt("couldn't open file '%s' for writing",
+                             name), SRC_POS);
           }
       }
   }
@@ -372,8 +373,8 @@ shared_ptr<std::ostream> rutz::obzip2open(const fstring& filename,
       shared_ptr<std::ostream> result =
         make_shared(new std::ofstream(filename.c_str(), flags));
       if (result->fail())
-        throw error(cat("couldn't open file '", filename,
-                        "' for writing"), SRC_POS);
+        throw error(sfmt("couldn't open file '%s' for writing",
+                         filename.c_str()), SRC_POS);
 
       return result;
     }
@@ -394,8 +395,8 @@ shared_ptr<std::istream> rutz::ibzip2open(const fstring& filename,
       shared_ptr<std::istream> result =
         make_shared(new std::ifstream(filename.c_str(), flags));
       if (result->fail())
-        throw error(cat("couldn't open file '", filename,
-                        "' for reading"), SRC_POS);
+        throw error(sfmt("couldn't open file '%s' for reading",
+                         filename.c_str()), SRC_POS);
 
       return result;
     }

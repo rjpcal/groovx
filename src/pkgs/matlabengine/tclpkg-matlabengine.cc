@@ -43,6 +43,8 @@
 #include "nub/objfactory.h"
 #include "nub/ref.h"
 
+#include "rutz/sfmt.h"
+
 #include "tcl/objpkg.h"
 #include "tcl/pkg.h"
 
@@ -95,8 +97,8 @@ public:
     mxArray* arr = engGetVariable(itsEngine, name);
     if (arr == 0)
       {
-        throw rutz::error(rutz::cat("no such MATLAB variable: '",
-                                    name, "'"), SRC_POS);
+        throw rutz::error(rutz::sfmt("no such MATLAB variable: '%s'",
+                                     name), SRC_POS);
       }
 
     nub::ref<MtxObj> m(new MtxObj(make_mtx(arr, mtx::COPY)));

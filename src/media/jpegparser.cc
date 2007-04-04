@@ -52,6 +52,7 @@ void media::load_jpeg(const char* /*filename*/, media::bmap_data& /*data*/)
 #include "media/bmapdata.h"
 
 #include "rutz/error.h"
+#include "rutz/sfmt.h"
 
 #include <csetjmp>
 #include <cstdio>
@@ -134,8 +135,8 @@ GVX_TRACE("media::load_jpeg");
 
   if (aux.infile == 0)
     {
-      throw rutz::error(rutz::cat("couldn't open '", filename,
-                                  "' for reading"), SRC_POS);
+      throw rutz::error(rutz::sfmt("couldn't open '%s' for reading",
+                                   filename), SRC_POS);
     }
 
 

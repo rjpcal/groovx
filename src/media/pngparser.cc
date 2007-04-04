@@ -59,6 +59,7 @@ void media::save_png(const char* /*filename*/, const media::bmap_data& /*data*/)
 
 #include "rutz/arrays.h"
 #include "rutz/error.h"
+#include "rutz/sfmt.h"
 
 #include <cstdio>
 #include <png.h>
@@ -133,8 +134,8 @@ namespace
     int is_png = !png_sig_cmp(header, 0, nheader);
     if (!is_png)
       {
-        throw rutz::error(rutz::cat(filename,
-                                    " is not a PNG image file"),
+        throw rutz::error(rutz::sfmt("%s is not a PNG image file",
+                                     filename),
                           SRC_POS);
       }
 
@@ -184,9 +185,10 @@ namespace
         break;
 
       default:
-        throw rutz::error(rutz::cat("bit-depth '", bit_depth,
-                                    "' is not supported for PNG images "
-                                    "(must be 8- or 16-bit)"),
+        throw rutz::error(rutz::sfmt("bit-depth '%d' is not supported "
+                                     "for PNG images "
+                                     "(must be 8- or 16-bit)",
+                                     bit_depth),
                           SRC_POS);
       }
 
@@ -287,8 +289,8 @@ namespace
       case 24: return PNG_COLOR_TYPE_RGB;
       case 32: return PNG_COLOR_TYPE_RGB_ALPHA;
       default:
-        throw rutz::error(rutz::cat("invalid bits_per_pixel value: ",
-                                    data.bits_per_pixel()), SRC_POS);
+        throw rutz::error(rutz::sfmt("invalid bits_per_pixel value: %d",
+                                     data.bits_per_pixel()), SRC_POS);
       }
     return 0; // can't happen, but placate compiler
   }
@@ -301,8 +303,8 @@ namespace
     m_file = fopen(filename, "wb");
     if (m_file == 0)
       {
-        throw rutz::error(rutz::cat("couldn't open file '",
-                                    filename, "' for png writing"), SRC_POS);
+        throw rutz::error(rutz::sfmt("couldn't open file '%s' for "
+                                     "png writing", filename), SRC_POS);
       }
 
     m_png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);

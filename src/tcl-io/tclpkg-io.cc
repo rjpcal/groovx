@@ -48,6 +48,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <fstream>
 
@@ -104,8 +105,8 @@ namespace
     std::ofstream ofs(filename);
     if (ofs.fail())
       {
-        throw rutz::error(rutz::cat("error opening file: ",
-                                    filename), SRC_POS);
+        throw rutz::error(rutz::sfmt("error opening file: %s",
+                                     filename), SRC_POS);
       }
 
     io::legacy_writer writer(ofs, use_bases);

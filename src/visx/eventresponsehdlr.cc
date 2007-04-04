@@ -52,6 +52,7 @@
 #include "rutz/fstring.h"
 #include "rutz/shared_ptr.h"
 #include "rutz/scopedptr.h"
+#include "rutz/sfmt.h"
 
 #include "visx/feedbackmap.h"
 #include "visx/sound.h"
@@ -79,7 +80,7 @@ namespace
   {
     static int cmdCounter = 0;
 
-    return rutz::cat("::__ERHPrivate::", stem, ++cmdCounter);
+    return rutz::sfmt("::__ERHPrivate::%s%d", stem, ++cmdCounter);
   }
 }
 
@@ -157,7 +158,7 @@ public:
 
       theResponse.setMsec(int(itsTrial.trElapsedMsec() + 0.5));
 
-      nub::log( rutz::cat("event_info: ", event_info) );
+      nub::log( rutz::sfmt("event_info: %s", event_info) );
 
       theResponse.setVal(Response::INVALID_VALUE);
 
@@ -168,7 +169,7 @@ public:
           } catch (...) {}
         }
 
-      nub::log( rutz::cat("response val: ", theResponse.val()) );
+      nub::log( rutz::sfmt("response val: %d", theResponse.val()) );
 
       if (theResponse.shouldIgnore())
         return;
@@ -191,11 +192,12 @@ public:
 
   void becomeActive(nub::soft_ref<Toglet> widget, Trial& trial) const
   {
-    nub::log( rutz::cat("binding to ", itsCallbackName) );
+    nub::log( rutz::sfmt("binding to %s", itsCallbackName.c_str()) );
 
     const fstring script =
-      rutz::cat(itsCallbackName, ' ', itsOwner->id(),
-                " [list ", itsBindingSubstitution, ']');
+      rutz::sfmt("%s %lu [list %s]",
+                 itsCallbackName.c_str(), itsOwner->id(),
+                 itsBindingSubstitution.c_str());
 
     itsState.reset(new ActiveState(this, widget, trial,
                                    itsEventSequence, script));
@@ -347,16 +349,17 @@ void EventResponseHdlr::setInputResponseMap(const fstring& s)
 {
 GVX_TRACE("EventResponseHdlr::setInputResponseMap");
 
-  fstring args("inp");
+  const fstring args("inp");
 
-  fstring body =
-    rutz::cat( "set map {", s, "}\n"
+  const fstring body =
+    rutz::sfmt("set map {%s}\n"
                "foreach pair $map {\n"
                "  foreach {rx val} $pair {\n"
                "    if [regexp $rx $inp] { return $val }\n"
                "  }\n"
                "}\n"
-               "return -1\n");
+               "return -1\n",
+               s.c_str());
 
   setResponseProc(args, body);
 }

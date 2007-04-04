@@ -38,6 +38,7 @@
 #include "tcl/pkg.h"
 
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 #include "rutz/unittest.h"
 
 #include <cstring>
@@ -78,14 +79,14 @@ namespace
 
   void testConstruct2()
   {
-    fstring s = rutz::cat("foo", " fighters!");
+    fstring s = rutz::sfmt("%s%s", "foo", " fighters!");
     TEST_REQUIRE(s.length() == 13);
     TEST_REQUIRE(s == "foo fighters!");
   }
 
   void testConstructNum()
   {
-    fstring s = rutz::cat("double val: ", 1.234, ", int val: ", 1234);
+    fstring s = rutz::sfmt("double val: %g, int val: %d", 1.234, 1234);
     TEST_REQUIRE(s == "double val: 1.234, int val: 1234");
   }
 

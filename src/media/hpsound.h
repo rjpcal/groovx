@@ -37,6 +37,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <Alib.h>
 
@@ -173,7 +174,7 @@ GVX_TRACE("media::hp_audio_sound_rep::error_handler");
 
   dbg_eval_nl(3, buf);
 
-  throw rutz::error(rutz::cat("HP Audio Error: ", buf), SRC_POS);
+  throw rutz::error(rutz::sfmt("HP Audio Error: %s", buf), SRC_POS);
 
   // we'll never get here, but we need to placate the compiler
   return 0;

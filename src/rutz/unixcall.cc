@@ -38,6 +38,7 @@
 #include "rutz/arrays.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <cerrno> // for ::errno
 #include <cstdio> // for ::rename(), ::remove()
@@ -55,8 +56,8 @@ namespace
 {
   void throwErrno(const char* where, const rutz::file_pos& pos)
   {
-    throw rutz::error(rutz::cat("in \"", where, "\": ",
-                                ::strerror(errno)), pos);
+    throw rutz::error(rutz::sfmt("in \"%s\": %s", where,
+                                 ::strerror(errno)), pos);
   }
 
   class ErrnoSaver
@@ -161,7 +162,7 @@ GVX_TRACE("rutz::unixcall::get_file_user_pid");
         continue;
 
       const rutz::fstring fd_dirname =
-        rutz::cat("/proc/", proc_dent->d_name, "/fd");
+        rutz::sfmt("/proc/%s/fd", proc_dent->d_name);
 
       DIR* const fd_dir = opendir(fd_dirname.c_str());
 
@@ -176,7 +177,7 @@ GVX_TRACE("rutz::unixcall::get_file_user_pid");
             continue;
 
           const rutz::fstring fd_fname =
-            rutz::cat(fd_dirname, '/', fd_dent->d_name);
+            rutz::sfmt("%s/%s", fd_dirname.c_str(), fd_dent->d_name);
 
           struct stat fd_statbuf;
           if (stat(fd_fname.c_str(), &fd_statbuf) != 0)
