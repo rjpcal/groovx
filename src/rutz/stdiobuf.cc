@@ -87,7 +87,7 @@ void rutz::stdiobuf::close()
 GVX_TRACE("rutz::stdiobuf::close");
   if (is_open())
     {
-      sync();
+      this->sync();
       // NOTE: We don't do ::close(m_filedes) here since we leave that
       // up to whoever instantiated this stdiobuf.
       m_filedes = -1;
