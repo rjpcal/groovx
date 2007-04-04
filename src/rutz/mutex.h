@@ -38,6 +38,7 @@
 namespace rutz
 {
   class mutex_lock_class;
+  class mutex_unlocker;
 }
 
 //! Quick mutex locking class
@@ -48,14 +49,23 @@ namespace rutz
 class rutz::mutex_lock_class
 {
 public:
-  mutex_lock_class(pthread_mutex_t* mut) throw() : m_mutex(mut)
-  {
-    pthread_mutex_lock(m_mutex);
-  }
+  /// Throws an exception if pthread_mutex_lock() fails
+  mutex_lock_class(pthread_mutex_t* mut = 0);
 
   ~mutex_lock_class() throw()
   {
-    pthread_mutex_unlock(m_mutex);
+    this->unlock();
+  }
+
+  bool is_locked() const throw() { return m_mutex != 0; }
+
+  void unlock() throw();
+
+  void swap(mutex_lock_class& that) throw()
+  {
+    pthread_mutex_t* const this_mutex = this->m_mutex;
+    this->m_mutex = that.m_mutex;
+    that.m_mutex = this_mutex;
   }
 
 private:
