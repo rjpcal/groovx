@@ -45,6 +45,7 @@
 #include "rutz/shared_ptr.h"
 
 #include <list>
+#include <sstream>
 #include <tcl.h>
 #ifdef HAVE_TCLINT_H
 #include <tclInt.h> // for Tcl_GetFullCommandName()
@@ -71,10 +72,10 @@ namespace
   }
 #endif
 
-  void append_usage(fstring& dest, const fstring& usage)
+  void append_usage(std::ostream& dest, const fstring& usage)
   {
     if (!usage.is_empty())
-      dest.append(" ", usage);
+      dest << " " << usage;
   }
 }
 
@@ -137,39 +138,41 @@ fstring tcl::command_group::impl::usage_warning(
                                       const fstring& argv0) const
 {
 GVX_TRACE("tcl::command_group::usage_warning");
-  fstring warning("wrong # args: should be ");
+
+  std::ostringstream warning;
+  warning << "wrong # args: should be ";
 
   if (cmd_list.size() == 1)
     {
-      warning.append("\"", argv0);
+      warning << "\"" << argv0;
       append_usage(warning, cmd_list.front()->usage_string());
-      warning.append("\"");
+      warning << "\"";
     }
   else
     {
-      warning.append("one of:");
+      warning << "one of:";
       for (impl::cmd_list_type::const_iterator
              itr = cmd_list.begin(),
              end = cmd_list.end();
            itr != end;
            ++itr)
         {
-          warning.append("\n\t\"", argv0);
+          warning << "\n\t\"" << argv0;
           append_usage(warning, (*itr)->usage_string());
-          warning.append("\"");
+          warning << "\"";
         }
     }
 
-  warning.append("\n(");
+  warning << "\n(";
 
   if (argv0 != initial_cmd_name)
-    warning.append("resolves to ", initial_cmd_name, ", ");
+    warning << "resolves to " << initial_cmd_name << ", ";
 
-  warning.append("defined at ",
-                 prof.src_file_name(), ":",
-                 prof.src_line_no(), ")");
+  warning << "defined at "
+          << prof.src_file_name() << ":"
+          << prof.src_line_no() << ")";
 
-  return warning;
+  return fstring(warning.str().c_str());
 }
 
 #ifdef REAL_BACKTRACE
@@ -398,7 +401,8 @@ fstring tcl::command_group::resolved_name() const
 fstring tcl::command_group::usage() const
 {
 GVX_TRACE("tcl::command_group::usage");
-  fstring result;
+
+  std::ostringstream result;
 
   impl::cmd_list_type::const_iterator
     itr = rep->cmd_list.begin(),
@@ -406,18 +410,18 @@ GVX_TRACE("tcl::command_group::usage");
 
   while (true)
     {
-      result.append("\t", resolved_name());
+      result << "\t" << resolved_name();
       append_usage(result, (*itr)->usage_string());
-      result.append("\n");
+      result << "\n";
       if (++itr == end)
         break;
     }
 
-  result.append("\t(defined at ",
-                rep->prof.src_file_name(), ":",
-                rep->prof.src_line_no(), ")");
+  result << "\t(defined at "
+         << rep->prof.src_file_name() << ":"
+         << rep->prof.src_line_no() << ")";
 
-  return result;
+  return fstring(result.str().c_str());
 }
 
 int tcl::command_group::invoke_raw(int s_objc,

@@ -38,6 +38,7 @@
 #include "rutz/base64.h"
 #include "rutz/bytearray.h"
 #include "rutz/error.h"
+#include "rutz/sfmt.h"
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -66,11 +67,11 @@ io::read_version_error::read_version_error(const char* classname,
                                            const rutz::file_pos& pos) :
   rutz::error(pos)
 {
-  rutz::fstring m;
-  m.append("io::read_version_error: in ", classname,
-           ", serial version ", attempted_id, " is not supported. ");
-  m.append("The lowest supported version is ", lowest_supported_id,
-           ". ", info);
+  const rutz::fstring m =
+    rutz::sfmt("io::read_version_error: in %s, serial version %ld "
+               "is not supported. The lowest supported version "
+               "is %ld. %s",
+               classname, attempted_id, lowest_supported_id, info);
   this->set_msg(m);
 }
 

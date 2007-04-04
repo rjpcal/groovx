@@ -634,9 +634,9 @@ GVX_TRACE("tcl::TkWidget::pack");
 
   if (!Tk_IsTopLevel(rep->tkWin))
     {
-      fstring pack_cmd = "pack ";
-      pack_cmd.append( pathname() );
-      pack_cmd.append( " -side left -expand 1 -fill both; update" );
+      const fstring pack_cmd =
+        rutz::sfmt("pack %s -side left -expand 1 -fill both; update",
+                   pathname());
       rep->interp.eval(pack_cmd);
     }
 }

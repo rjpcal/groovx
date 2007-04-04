@@ -37,6 +37,7 @@
 #include "rutz/atomic.h"
 
 #include <cstddef>
+#include <cstring>
 #include <iosfwd>
 
 namespace rutz
@@ -53,36 +54,15 @@ namespace rutz
 
   class string_rep
   {
-  private:
-    string_rep(const string_rep& other); // not implemented
-    string_rep& operator=(const string_rep& other); // not implemented
-
-    // Class-specific operator new.
-    void* operator new(std::size_t bytes);
-
-    // Class-specific operator delete.
-    void operator delete(void* space);
-
-    // Constructor builds a string_rep with ref-count 0. 'length' here
-    // does NOT need to "+1" for a null-terminator
-    string_rep(std::size_t length, const char* text, std::size_t capacity=0);
-
-    ~string_rep() throw();
-
-    // To be called once via pthread_once()
-    static void initialize_empty_rep();
-
-    static string_rep* get_empty_rep();
-
   public:
     static string_rep* make(std::size_t length, const char* text,
                             std::size_t capacity=0);
 
-    static void make_unique(string_rep*& rep);
+    static string_rep* read_from_stream(std::istream& is);
 
-    string_rep* clone() const;
+    static string_rep* readsome_from_stream(std::istream& is, unsigned int count);
 
-    bool is_unique() const throw() { return m_refcount.atomic_get() == 1; }
+    static string_rep* readline_from_stream(std::istream& is, char eol = '\n');
 
     void incr_ref_count() throw() { m_refcount.atomic_incr(); }
 
@@ -98,34 +78,39 @@ namespace rutz
     std::size_t capacity() const throw() { return m_capacity; }
     const char* text() const throw() { return m_text; }
 
-    // Member functions whose names are prefixed with "uniq_" require as
-    // a precondition that the string_rep object be unshared, so callers
-    // are required to call string_rep::make_unique() on the string_rep
-    // before calling such a member function. It's not possible for
-    // string_rep to handle this itself, because the act of doing a
-    // make_unique() requires actually substituting one string_rep
-    // object for another, which is something that can only done by the
-    // caller.
-
-    char* uniq_data() throw();
-
-    void uniq_clear() throw();
-
-    void uniq_append_no_terminate(char c);
-
-    void add_terminator() throw();
-
-    void uniq_set_length(std::size_t length) throw();
-
-    void uniq_append(std::size_t length, const char* text);
-
-    void uniq_realloc(std::size_t capacity);
-
-    void uniq_reserve(std::size_t capacity);
-
     void debug_dump() const throw();
 
   private:
+    // Class-specific operator new.
+    void* operator new(std::size_t bytes);
+
+    // Class-specific operator delete.
+    void operator delete(void* space);
+
+    // Constructor builds a string_rep with ref-count 0. 'length' here
+    // does NOT need to "+1" for a null-terminator
+    string_rep(std::size_t length, const char* text, std::size_t capacity=0);
+
+    ~string_rep() throw();
+
+    // To be called once via pthread_once()
+    static void initialize_empty_rep();
+
+    // Member functions whose names are prefixed with "uniq_" require
+    // as a precondition that the string_rep object be unshared. In
+    // order to ensure thread safety, such mutating calls are private
+    // and can be made only during the process of construction of a
+    // string_rep object.
+
+    void uniq_append_no_terminate(char c);
+    void add_terminator() throw();
+    void uniq_set_length(std::size_t length) throw();
+    void uniq_append(std::size_t length, const char* text);
+    void uniq_realloc(std::size_t capacity);
+
+    string_rep(const string_rep& other); // not implemented
+    string_rep& operator=(const string_rep& other); // not implemented
+
     rutz::atomic_int_t m_refcount;
 
     std::size_t m_capacity;
@@ -147,10 +132,15 @@ namespace rutz
   /**
    *
    * \c fstring is a simple string class that holds a pointer to a
-   * dynamically-allocated char array. The initializer does not have to
-   * reside in permanent storage, since a copy is made when the \c
+   * dynamically-allocated char array. The initializer does not have
+   * to reside in permanent storage, since a copy is made when the \c
    * fstring is constructed. Assignment is allowed, with copy
-   * semantics. Also, a \c swap() operation is provided.
+   * semantics. Also, a \c swap() operation is provided. The internal
+   * implementation uses reference counting to allow for efficient
+   * copies; however, to allow safe multi-threaded access to fstring,
+   * fstring's interface is read-only, except for a few functions
+   * (assignment operator, swap(), clear() read(), readline(),
+   * readsome()) which safely replace the entire string.
    *
    **/
   ///////////////////////////////////////////////////////////
@@ -171,11 +161,11 @@ namespace rutz
     fstring(const char* s) :
       m_rep(0)
     {
-      init_empty(); append(s);
+      init_range(char_range(s, s ? strlen(s) : 0));
     }
 
     /// Construct from a character range (pointer plus length).
-    fstring(char_range r) :
+    explicit fstring(char_range r) :
       m_rep(0)
     {
       init_range(r);
@@ -189,12 +179,6 @@ namespace rutz
 
     /// Assignment operator.
     fstring& operator=(const fstring& other) throw();
-
-    /// Get a pointer to the non-const underlying data array.
-    char* data()
-    {
-      string_rep::make_unique(m_rep); return m_rep->uniq_data();
-    }
 
     /// Get a pointer to the const underlying data array.
     const char* c_str() const throw() { return m_rep->text(); }
@@ -251,77 +235,6 @@ namespace rutz
     }
 
     //
-    // Appending
-    //
-
-    /// Append a range of characters.
-    void append_range(const char* text, std::size_t length);
-
-    /// Convert args to string and append to the fstring.
-    template <class T1>
-    fstring& append(const T1& part1)
-    {
-      do_append(part1); return *this;
-    }
-
-    /// Convert args to string and append to the fstring.
-    template <class T1, class T2>
-    fstring& append(const T1& part1, const T2& part2)
-    {
-      do_append(part1); do_append(part2); return *this;
-    }
-
-    /// Convert args to string and append to the fstring.
-    template <class T1, class T2, class T3>
-    fstring& append(const T1& part1, const T2& part2, const T3& part3)
-    {
-      do_append(part1); do_append(part2); do_append(part3); return *this;
-    }
-
-    /// Convert args to string and append to the fstring.
-    template <class T1, class T2, class T3,
-              class T4>
-    fstring& append(const T1& part1, const T2& part2, const T3& part3,
-                    const T4& part4)
-    {
-      do_append(part1); do_append(part2); do_append(part3);
-      do_append(part4); return *this;
-    }
-
-    /// Convert args to string and append to the fstring.
-    template <class T1, class T2, class T3,
-              class T4, class T5>
-    fstring& append(const T1& part1, const T2& part2, const T3& part3,
-                    const T4& part4, const T5& part5)
-    {
-      do_append(part1); do_append(part2); do_append(part3);
-      do_append(part4); do_append(part5); return *this;
-    }
-
-    /// Convert args to string and append to the fstring.
-    template <class T1, class T2, class T3,
-              class T4, class T5, class T6>
-    fstring& append(const T1& part1, const T2& part2, const T3& part3,
-                    const T4& part4, const T5& part5, const T6& part6)
-    {
-      do_append(part1); do_append(part2); do_append(part3);
-      do_append(part4); do_append(part5); do_append(part6); return *this;
-    }
-
-    /// Convert args to string and append to the fstring.
-    template <class T1, class T2, class T3,
-              class T4, class T5, class T6,
-              class T7>
-    fstring& append(const T1& part1, const T2& part2, const T3& part3,
-                    const T4& part4, const T5& part5, const T6& part6,
-                    const T7& part7)
-    {
-      do_append(part1); do_append(part2); do_append(part3);
-      do_append(part4); do_append(part5); do_append(part6);
-      do_append(part7); return *this;
-    }
-
-    //
     // Input/Output
     //
 
@@ -335,16 +248,10 @@ namespace rutz
     void write(std::ostream& os) const;
 
     /// Set the string by reading characters up until newline or EOF.
-    void readline(std::istream& is);
-
-    /// Set the string by reading characters up until \a eol or EOF.
-    void readline(std::istream& is, char eol);
+    void readline(std::istream& is, char eol = '\n');
 
     //
-    // Operators -- note that these are member functions rather than free
-    // functions in order to avoid problems with buggy compilers that are too
-    // loose about implicitly converting anything to an fstring to match an ==
-    // or != call.
+    // Operators
     //
 
     /// Equality operator.
@@ -361,32 +268,28 @@ namespace rutz
     void debug_dump() const throw();
 
   private:
-    void do_append(char c);
-    void do_append(const char* s);
-    void do_append(const fstring& s);
-
-    void do_append(bool x);
-    void do_append(int x);
-    void do_append(unsigned int x);
-    void do_append(long x);
-    void do_append(unsigned long x);
-    void do_append(double x);
-
     void init_empty();
 
     void init_range(char_range r);
+
+    /// Construct from an existing string_rep object
+    /** The string_rep should have refcount==0 on entry. */
+    fstring(string_rep* r);
 
     string_rep* m_rep;
   };
 
 
-  /// Concatenate args into a single fstring
-  template <class T1>
-  fstring sconvert(const T1& part1)
-  {
-    fstring f; f.append(part1);
-    return f;
-  }
+  fstring sconvert(char x);            ///< Convert char -> fstring
+  fstring sconvert(const char* x);     ///< Convert c string -> fstring
+  fstring sconvert(const fstring& x);  ///< Convert fstring -> fstring
+
+  fstring sconvert(bool x);            ///< Convert bool -> fstring
+  fstring sconvert(int x);             ///< Convert int -> fstring
+  fstring sconvert(unsigned int x);    ///< Convert uint -> fstring
+  fstring sconvert(long x);            ///< Convert long -> fstring
+  fstring sconvert(unsigned long x);   ///< Convert ulong -> fstring
+  fstring sconvert(double x);          ///< Convert double -> fstring
 
 
   ///////////////////////////////////////////////////////////

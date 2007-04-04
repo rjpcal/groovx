@@ -41,6 +41,7 @@
 #include "rutz/trace.h" // for rutz::prof
 
 #include <cstdio> // for snprintf()
+#include <sstream>
 
 rutz::fstring rutz::format(const rutz::backtrace& bt)
 {
@@ -48,7 +49,7 @@ rutz::fstring rutz::format(const rutz::backtrace& bt)
 
   if (size == 0) return rutz::fstring();
 
-  rutz::fstring result;
+  std::ostringstream result;
 
   const int LINELEN = 256;
   char line[LINELEN];
@@ -67,10 +68,10 @@ rutz::fstring rutz::format(const rutz::backtrace& bt)
                bt[i-1]->src_file_name(),
                bt[i-1]->src_line_no());
 
-      result.append(&line[0]);
+      result << &line[0];
     }
 
-  return result;
+  return rutz::fstring(result.str().c_str());
 }
 
 static const char __attribute__((used)) vcid_groovx_rutz_backtraceformat_cc_utc20050630214129[] = "$Id$ $HeadURL$";

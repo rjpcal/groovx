@@ -36,22 +36,19 @@
 #include "io/readutils.h"
 
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 using rutz::fstring;
 
 fstring io::read_utils::make_element_name(const fstring& seq_name,
                                           int element_num)
 {
-  fstring result(seq_name);
-  result.append( element_num );
-  return result;
+  return rutz::sfmt("%s%d", seq_name.c_str(), element_num);
 }
 
 fstring io::read_utils::make_seq_length_name(const fstring& seq_name)
 {
-  fstring result(seq_name);
-  result.append( "Count" );
-  return result;
+  return rutz::sfmt("%sCount", seq_name.c_str());
 }
 
 static const char __attribute__((used)) vcid_groovx_io_readutils_cc_utc20050626084021[] = "$Id$ $HeadURL$";

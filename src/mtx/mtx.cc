@@ -89,9 +89,9 @@ void range_checking::raise_exception(const fstring& msg,
                                      const char* f, int ln)
 {
   dbg_print_nl(3, msg);
-  fstring errmsg;
-  errmsg.append("range check failed in file '", f, "' at line #");
-  errmsg.append(ln, ": ", msg);
+  const fstring errmsg =
+    rutz::sfmt("range check failed in file '%s' at line #%d: %s",
+               f, ln, msg.c_str());
   throw rutz::error(errmsg, SRC_POS);
 }
 
@@ -387,10 +387,10 @@ mtx_specs mtx_specs::as_shape(const mtx_shape& s) const
 GVX_TRACE("mtx_specs::as_shape");
   if (s.nelems() != this->nelems())
     {
-      fstring msg;
-      msg.append("as_shape(): dimension mismatch: ");
-      msg.append("current nelems == ", nelems(), "; requested ");
-      msg.append(s.mrows(), "x", s.ncols());
+      const fstring msg =
+        rutz::sfmt("as_shape(): dimension mismatch: "
+                   "current nelems == %d; requested %dx%d",
+                   nelems(), s.mrows(), s.ncols());
       throw rutz::error(msg, SRC_POS);
     }
 

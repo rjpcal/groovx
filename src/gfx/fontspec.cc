@@ -37,6 +37,8 @@
 
 #include "rutz/fstring.h"
 
+#include <vector>
+
 void parseFontSpec(const rutz::fstring& spec,
                    rutz::fstring* family,
                    rutz::fstring* pxlsize,
@@ -44,16 +46,16 @@ void parseFontSpec(const rutz::fstring& spec,
 {
   unsigned int i = 0;
 
-  *family = rutz::fstring();
-  *pxlsize = rutz::fstring();
-  *mods = rutz::fstring();
+  std::vector<char> vfamily;
+  std::vector<char> vpxlsize;
+  std::vector<char> vmods;
 
   for ( ; i < spec.length(); ++i)
     {
       if (spec[i] == ':')
         { ++i; break; }
       else
-        family->append(spec[i]);
+        vfamily.push_back(spec[i]);
     }
 
   for ( ; i < spec.length(); ++i)
@@ -61,7 +63,7 @@ void parseFontSpec(const rutz::fstring& spec,
       if (spec[i] == ':')
         { ++i; break; }
       else
-        pxlsize->append(spec[i]);
+        vpxlsize.push_back(spec[i]);
     }
 
   for ( ; i < spec.length(); ++i)
@@ -69,8 +71,16 @@ void parseFontSpec(const rutz::fstring& spec,
       if (spec[i] == ':')
         { ++i; break; }
       else
-        mods->append(spec[i]);
+        vmods.push_back(spec[i]);
     }
+
+  vfamily.push_back('\0');
+  vpxlsize.push_back('\0');
+  vmods.push_back('\0');
+
+  *family = rutz::fstring(&vfamily[0]);
+  *pxlsize = rutz::fstring(&vpxlsize[0]);
+  *mods = rutz::fstring(&vmods[0]);
 }
 
 static const char __attribute__((used)) vcid_groovx_gfx_fontspec_cc_utc20051111225622[] = "$Id$ $HeadURL$";

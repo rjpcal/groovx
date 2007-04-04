@@ -368,12 +368,10 @@ void tcl::interpreter::link_int(const char* var_name, int* addr,
 GVX_TRACE("tcl::interpreter::link_int");
   dbg_eval_nl(3, var_name);
 
-  fstring temp = var_name;
-
   int flag = TCL_LINK_INT;
   if (read_only) flag |= TCL_LINK_READ_ONLY;
 
-  if ( Tcl_LinkVar(intp(), temp.data(),
+  if ( Tcl_LinkVar(intp(), var_name,
                    reinterpret_cast<char *>(addr), flag)
        != TCL_OK )
     throw rutz::error("error while linking int variable", SRC_POS);
@@ -385,12 +383,10 @@ void tcl::interpreter::link_double(const char* var_name, double* addr,
 GVX_TRACE("tcl::interpreter::link_double");
   dbg_eval_nl(3, var_name);
 
-  fstring temp = var_name;
-
   int flag = TCL_LINK_DOUBLE;
   if (read_only) flag |= TCL_LINK_READ_ONLY;
 
-  if ( Tcl_LinkVar(intp(), temp.data(),
+  if ( Tcl_LinkVar(intp(), var_name,
                    reinterpret_cast<char *>(addr), flag)
        != TCL_OK )
     throw rutz::error("error while linking double variable", SRC_POS);
@@ -402,12 +398,10 @@ void tcl::interpreter::link_boolean(const char* var_name, int* addr,
 GVX_TRACE("tcl::interpreter::link_boolean");
   dbg_eval_nl(3, var_name);
 
-  fstring temp = var_name;
-
   int flag = TCL_LINK_BOOLEAN;
   if (read_only) flag |= TCL_LINK_READ_ONLY;
 
-  if ( Tcl_LinkVar(intp(), temp.data(),
+  if ( Tcl_LinkVar(intp(), var_name,
                    reinterpret_cast<char *>(addr), flag)
        != TCL_OK )
     throw rutz::error("error while linking boolean variable", SRC_POS);
@@ -428,18 +422,18 @@ GVX_TRACE("tcl::interpreter::handle_live_exception");
 
       if (is_valid())
         {
-          fstring msg;
-
-          msg.append(rutz::demangled_name(typeid(err)), " caught at ",
-                     pos.m_file_name, ":", pos.m_line_no, ":\n");
-
-          if (where != 0 && where[0] != '\0')
-            msg.append(where, ": ");
-
           const char* what = err.what();
 
-          if (what != 0 && what[0] != '\0')
-            msg.append(what, " ");
+          const fstring msg =
+            rutz::sfmt("%s caught at %s:%d:\n%s%s",
+                       rutz::demangled_name(typeid(err)),
+                       pos.m_file_name, pos.m_line_no,
+                       ((where != 0 && where[0] != '\0')
+                        ? rutz::sfmt("%s: ", where).c_str()
+                        : ""),
+                       ((what != 0 && what[0] != '\0')
+                        ? rutz::sfmt("%s ", what).c_str()
+                        : ""));
 
           append_result(msg);
         }
@@ -450,13 +444,12 @@ GVX_TRACE("tcl::interpreter::handle_live_exception");
 
       if (is_valid())
         {
-          fstring msg;
-
-          msg.append("exception of unknown type caught at ",
-                     pos.m_file_name, ":", pos.m_line_no, ":\n");
-
-          if (where != 0 && where[0] != '\0')
-            msg.append(where, ": ");
+          const fstring msg =
+            rutz::sfmt("exception of unknown type caught at %s:%d\n%s",
+                       pos.m_file_name, pos.m_line_no,
+                       ((where != 0 && where[0] != '\0')
+                        ? where
+                        : ""));
 
           append_result(msg);
         }
@@ -537,12 +530,9 @@ GVX_TRACE("tcl::interpreter::create_proc");
       namesp = "::";
     }
 
-  fstring proc_cmd;
-  proc_cmd.append("namespace eval ", namesp);
-  proc_cmd.append(" { proc ", proc_name, " {");
-  if (args)
-    proc_cmd.append(args);
-  proc_cmd.append("} {", body, "} }");
+  const fstring proc_cmd =
+    rutz::sfmt("namespace eval %s { proc %s {%s} {%s} }",
+               namesp, proc_name, args ? args : "", body);
 
   eval(proc_cmd);
 }
@@ -551,17 +541,11 @@ void tcl::interpreter::delete_proc(const char* namesp, const char* proc_name)
 {
 GVX_TRACE("tcl::interpreter::delete_proc");
 
-  fstring cmd_str;
-
-  cmd_str.append("rename ");
-
-  if (namesp && (*namesp != '\0'))
-    {
-      cmd_str.append(namesp);
-    }
-
   // by renaming to the empty string "", we delete the Tcl proc
-  cmd_str.append("::", proc_name, " \"\"");
+  const fstring cmd_str =
+    rutz::sfmt("rename %s::%s \"\"",
+               ((namesp != 0) && (*namesp != '\0')) ? namesp : "",
+               proc_name);
 
   eval(cmd_str);
 }

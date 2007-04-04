@@ -46,6 +46,8 @@
 #include "rutz/sfmt.h"
 
 #include <cctype>
+#include <iterator>
+#include <vector>
 
 #include "rutz/trace.h"
 
@@ -55,14 +57,16 @@ namespace
 {
   fstring tolower(const char* inp)
   {
-    fstring result;
+    std::vector<char> result;
 
     while (*inp != '\0')
       {
-        result.append(char(std::tolower(*inp++)));
+        result.push_back(char(std::tolower(*inp++)));
       }
 
-    return result;
+    result.push_back('\0');
+
+    return fstring(&result[0]);
   }
 
   enum image_file_type
@@ -120,8 +124,10 @@ namespace
     if (access(filename, R_OK)      != 0)
       throw rutz::error(rutz::sfmt("couldn't read file '%s'", filename), SRC_POS);
 
-    fstring nm_copy(filename);
-    char* const argv[] = { (char*) progname, nm_copy.data(), (char*) 0 };
+    std::vector<char> nm_copy;
+    std::copy(filename, filename+strlen(filename)+1,
+              std::back_inserter(nm_copy));
+    char* const argv[] = { (char*) progname, &nm_copy[0], (char*) 0 };
 
     rutz::exec_pipe p("r", argv);
 

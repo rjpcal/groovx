@@ -64,9 +64,6 @@ namespace
 {
   rutz::free_list<rutz::string_rep>* g_rep_list;
   pthread_mutex_t g_rep_list_mutex = PTHREAD_MUTEX_INITIALIZER;
-
-  rutz::string_rep* g_empty_rep = 0;
-  pthread_once_t g_empty_rep_once = PTHREAD_ONCE_INIT;
 }
 
 void* rutz::string_rep::operator new(size_t bytes)
@@ -105,61 +102,72 @@ GVX_TRACE("rutz::string_rep::~string_rep");
   m_text = (char*)0xdeadbeef;
 }
 
-void rutz::string_rep::initialize_empty_rep()
-{
-  g_empty_rep = new rutz::string_rep(0, 0);
-  g_empty_rep->incr_ref_count();
-}
-
-rutz::string_rep* rutz::string_rep::get_empty_rep()
-{
-  pthread_once(&g_empty_rep_once, &initialize_empty_rep);
-
-  return g_empty_rep;
-}
-
 rutz::string_rep* rutz::string_rep::make(std::size_t length,
                                          const char* text,
                                          std::size_t capacity)
 {
-  if (length == 0)
-    return get_empty_rep();
-
   return new rutz::string_rep(length, text, capacity);
 }
 
-rutz::string_rep* rutz::string_rep::clone() const
+rutz::string_rep* rutz::string_rep::read_from_stream(std::istream& is)
 {
-  return new rutz::string_rep(m_length, m_text, m_capacity);
+  rutz::string_rep* result = rutz::string_rep::make(0, 0, 32);
+  is >> std::ws;
+  while ( true )
+    {
+      int c = is.get();
+      if (c == EOF || isspace(c))
+        {
+          is.unget();
+          break;
+        }
+      result->uniq_append_no_terminate(char(c));
+    }
+  result->add_terminator();
+
+  return result;
 }
 
-void rutz::string_rep::make_unique(rutz::string_rep*& rep)
+rutz::string_rep* rutz::string_rep::readsome_from_stream(std::istream& is, unsigned int count)
 {
-  if (rep->m_refcount.atomic_get() <= 1) return;
+  rutz::string_rep* result = rutz::string_rep::make(0, 0, count+2);
 
-  rutz::string_rep* new_rep = rep->clone();
+  if (count > 0)
+    {
+      unsigned int numread = is.readsome(result->m_text, count);
+      result->uniq_set_length(numread); // includes add_terminator()
+    }
 
-  rep->decr_ref_count();
-  new_rep->incr_ref_count();
-
-  rep = new_rep;
-
-  GVX_POSTCONDITION(new_rep->m_refcount.atomic_get() == 1);
+  return result;
 }
 
-char* rutz::string_rep::uniq_data() throw()
+rutz::string_rep* rutz::string_rep::readline_from_stream(std::istream& is, char eol)
 {
-  GVX_PRECONDITION(m_refcount.atomic_get() <= 1);
+  rutz::string_rep* result = rutz::string_rep::make(0, 0, 32);
 
-  return m_text;
+  while ( true )
+    {
+      int c = is.get();
+      if (c == EOF || c == eol)
+        break;
+      result->uniq_append_no_terminate(char(c));
+    }
+
+  result->add_terminator();
+
+  return result;
 }
 
-void rutz::string_rep::uniq_clear() throw()
+void rutz::string_rep::debug_dump() const throw()
 {
-  GVX_PRECONDITION(m_refcount.atomic_get() <= 1);
-
-  m_length = 0;
-  add_terminator();
+  dbg_eval_nl(0, (const void*)this);
+  dbg_eval_nl(0, m_refcount.atomic_get());
+  dbg_eval_nl(0, m_length);
+  dbg_eval_nl(0, (void*)m_text);
+  dbg_eval_nl(0, m_text);
+  for (unsigned int i = 0; i < m_length; ++i)
+    dbg_print(0, (void*)(size_t)m_text[i]);
+  dbg_print_nl(0, "");
 }
 
 void rutz::string_rep::uniq_append_no_terminate(char c)
@@ -222,24 +230,6 @@ void rutz::string_rep::uniq_realloc(std::size_t capac)
   rutz::swap2(m_text, new_rep.m_text);
 }
 
-void rutz::string_rep::uniq_reserve(std::size_t capac)
-{
-  if (m_capacity < capac)
-    uniq_realloc(capac);
-}
-
-void rutz::string_rep::debug_dump() const throw()
-{
-  dbg_eval_nl(0, (const void*)this);
-  dbg_eval_nl(0, m_refcount.atomic_get());
-  dbg_eval_nl(0, m_length);
-  dbg_eval_nl(0, (void*)m_text);
-  dbg_eval_nl(0, m_text);
-  for (unsigned int i = 0; i < m_length; ++i)
-    dbg_print(0, (void*)(size_t)m_text[i]);
-  dbg_print_nl(0, "");
-}
-
 //---------------------------------------------------------------------
 //
 // fstring member definitions
@@ -258,11 +248,19 @@ GVX_TRACE("rutz::fstring::init_empty");
 
 void rutz::fstring::init_range(char_range r)
 {
-GVX_TRACE("rutz::fstring::init");
+GVX_TRACE("rutz::fstring::init_range");
   GVX_PRECONDITION(m_rep == 0);
 
   m_rep = string_rep::make(r.len, r.text);
 
+  m_rep->incr_ref_count();
+}
+
+rutz::fstring::fstring(rutz::string_rep* r)
+  :
+  m_rep(r)
+{
+GVX_TRACE("rutz::fstring::fstring(string_rep*)");
   m_rep->incr_ref_count();
 }
 
@@ -331,14 +329,7 @@ void rutz::fstring::clear()
 {
 GVX_TRACE("rutz::fstring::clear");
 
-  if (m_rep->is_unique())
-    {
-      m_rep->uniq_clear();
-    }
-  else
-    {
-      fstring().swap(*this);
-    }
+  fstring().swap(*this);
 }
 
 bool rutz::fstring::equals(const char* other) const throw()
@@ -375,50 +366,6 @@ GVX_TRACE("rutz::fstring::operator>");
   return strcmp(c_str(), other) > 0;
 }
 
-void rutz::fstring::do_append(char c) { append_range(&c, 1); }
-void rutz::fstring::do_append(const char* s) { if (s != 0) append_range(s, strlen(s)); }
-void rutz::fstring::do_append(const fstring& s) { append_range(s.c_str(), s.length()); }
-
-#define APPEND(fmt, val)                        \
-  const int SZ = 64;                            \
-  char buf[SZ];                                 \
-  int n = snprintf(buf, SZ, fmt, (val));        \
-  GVX_ASSERT(n > 0 && n < SZ);                      \
-  append_range(&buf[0], std::size_t(n))
-
-void rutz::fstring::do_append(bool x)          { APPEND("%d", int(x)); }
-void rutz::fstring::do_append(int x)           { APPEND("%d", x); }
-void rutz::fstring::do_append(unsigned int x)  { APPEND("%u", x); }
-void rutz::fstring::do_append(long x)          { APPEND("%ld", x); }
-void rutz::fstring::do_append(unsigned long x) { APPEND("%lu", x); }
-void rutz::fstring::do_append(double x)        { APPEND("%g", x); }
-
-#undef APPEND
-
-void rutz::fstring::append_range(const char* text, std::size_t len)
-{
-GVX_TRACE("rutz::fstring::append_range");
-
-  if (len == 0)
-    return;
-
-  // special case for when the current string is empty: just make a new
-  // rep with the to-be-appended text and swap
-  if (m_rep->length() == 0)
-    {
-      string_rep* newrep = string_rep::make(len, text);
-      string_rep* oldrep = m_rep;
-      m_rep = newrep;
-      oldrep->decr_ref_count();
-      m_rep->incr_ref_count();
-    }
-  else
-    {
-      string_rep::make_unique(m_rep);
-      m_rep->uniq_append(len, text);
-    }
-}
-
 //---------------------------------------------------------------------
 //
 // Input/Output function definitions
@@ -428,36 +375,13 @@ GVX_TRACE("rutz::fstring::append_range");
 void rutz::fstring::read(std::istream& is)
 {
 GVX_TRACE("rutz::fstring::read");
-  clear();
-  string_rep::make_unique(m_rep);
-  is >> std::ws;
-  while ( true )
-    {
-      int c = is.get();
-      if (c == EOF || isspace(c))
-        {
-          is.unget();
-          break;
-        }
-      m_rep->uniq_append_no_terminate(char(c));
-    }
-
-  m_rep->add_terminator();
+  rutz::fstring(string_rep::read_from_stream(is)).swap(*this);
 }
 
 void rutz::fstring::readsome(std::istream& is, unsigned int count)
 {
 GVX_TRACE("rutz::fstring::readsome");
-
-  if (count > 0)
-    {
-      string_rep::make_unique(m_rep);
-
-      m_rep->uniq_reserve(count+1);
-
-      unsigned int numread = is.readsome(m_rep->uniq_data(), count);
-      m_rep->uniq_set_length(numread);
-    }
+  rutz::fstring(string_rep::readsome_from_stream(is, count)).swap(*this);
 }
 
 void rutz::fstring::write(std::ostream& os) const
@@ -466,25 +390,10 @@ GVX_TRACE("rutz::fstring::write");
   os.write(c_str(), length());
 }
 
-void rutz::fstring::readline(std::istream& is)
-{
-  readline(is, '\n');
-}
-
 void rutz::fstring::readline(std::istream& is, char eol)
 {
 GVX_TRACE("rutz::fstring::readline");
-  clear();
-  string_rep::make_unique(m_rep);
-  while ( true )
-    {
-      int c = is.get();
-      if (c == EOF || c == eol)
-        break;
-      m_rep->uniq_append_no_terminate(char(c));
-    }
-
-  m_rep->add_terminator();
+  rutz::fstring(string_rep::readline_from_stream(is, eol)).swap(*this);
 }
 
 void rutz::fstring::debug_dump() const throw()
@@ -492,6 +401,28 @@ void rutz::fstring::debug_dump() const throw()
   dbg_eval_nl(0, (const void*)this);
   m_rep->debug_dump();
 }
+
+using rutz::fstring;
+
+fstring rutz::sconvert(char x)          { return fstring(rutz::char_range(&x, 1)); }
+fstring rutz::sconvert(const char* x)   { return fstring(x); }
+fstring rutz::sconvert(const fstring& x){ return x; }
+
+#define NUM_CONVERT(fmt, val)                   \
+  const int SZ = 64;                            \
+  char buf[SZ];                                 \
+  int n = snprintf(buf, SZ, fmt, (val));        \
+  GVX_ASSERT(n > 0 && n < SZ);                  \
+  return fstring(&buf[0]);
+
+fstring rutz::sconvert(bool x)          { NUM_CONVERT("%d", int(x)) }
+fstring rutz::sconvert(int x)           { NUM_CONVERT("%d", x) }
+fstring rutz::sconvert(unsigned int x)  { NUM_CONVERT("%u", x) }
+fstring rutz::sconvert(long x)          { NUM_CONVERT("%ld", x) }
+fstring rutz::sconvert(unsigned long x) { NUM_CONVERT("%lu", x) }
+fstring rutz::sconvert(double x)        { NUM_CONVERT("%g", x) }
+
+#undef NUM_CONVERT
 
 static const char __attribute__((used)) vcid_groovx_rutz_fstring_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_FSTRING_CC_UTC20050626084020_DEFINED

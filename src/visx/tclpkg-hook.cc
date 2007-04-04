@@ -62,66 +62,8 @@ void operator delete(void* space)
 }
 #endif
 
-#include "rutz/fstring.h"
-
-using rutz::fstring;
-
-template <class T>
-const char* sformat_partial(char x, fstring& str, const char* format,
-                            const T& arg)
-{
-  const char* p = format;
-  for (; *p != '\0'; ++p)
-    {
-      if (*p == x)
-        {
-          str.append_range(format, p - format);
-          str.append(arg);
-          return p+1;
-        }
-    }
-  return p; // here, *p == '\0'
-}
-
-template <char x, class T1, class T2>
-const char* sformat_partial(fstring& str, const char* format,
-                            const T1& arg1, const T2& arg2)
-{
-  const char* remainder = sformat_partial(x, str, format, arg1);
-  return sformat_partial(x, str, remainder, arg2);
-}
-
-template <char x, class T1, class T2, class T3>
-const char* sformat_partial(fstring& str, const char* format,
-                            const T1& arg1, const T2& arg2, const T3& arg3)
-{
-  const char* remainder = sformat_partial<x>(str, format, arg1, arg2);
-  return sformat_partial(x, str, remainder, arg3);
-}
-
-template <char x, class T>
-fstring sformat(const char* format, const T& arg)
-{
-  fstring result;
-  result.append(sformat_partial(x, result, format, arg));
-  return result;
-}
-
-template <char x, class T1, class T2>
-fstring sformat(const char* format, const T1& arg1, const T2& arg2)
-{
-  fstring result;
-  result.append(sformat_partial<x>(result, format, arg1, arg2));
-  return result;
-}
-
 namespace HookTcl
 {
-  fstring hook()
-  {
-    return sformat<'*'>("The * is *, so there.", "value", 42);
-  }
-
   size_t memUsage() { return TOTAL; }
 }
 
@@ -379,7 +321,6 @@ int Hook_Init(Tcl_Interp* interp)
 
   pkg->def( "::bug", "", &bug, SRC_POS );
 
-  pkg->def( "::hook", "", HookTcl::hook, SRC_POS );
   pkg->def( "::memUsage", 0, HookTcl::memUsage, SRC_POS );
 
   Tcl_RegisterObjType(&genericObjType);

@@ -60,6 +60,7 @@
 
 #include <cstdlib> // for getenv()
 #include <cstring> // for strncmp()
+#include <string>
 #include <sys/stat.h> // for mode_t constants S_IRUSR etc.
 #include <unistd.h> // for sleep()
 
@@ -120,11 +121,8 @@ public:
     const fstring date_string =
       rutz::format_time(rutz::time::wall_clock_now());
 
-    infoLog.append("@");
-    infoLog.append(date_string);
-    infoLog.append(" ");
-    infoLog.append(message);
-    infoLog.append("\n");
+    infoLog += rutz::sfmt("@%s %s\n",
+                          date_string.c_str(), message).c_str();
   }
 
   //
@@ -142,7 +140,7 @@ public:
   fstring autosaveFile; // Filename used for autosaves
   fstring filePrefix;   // String used as filename prefix for output files
 
-  fstring infoLog;
+  std::string infoLog;
 
   int autosavePeriod;
 
@@ -194,7 +192,11 @@ GVX_TRACE("ExptDriver::read_from");
   reader.read_value("endDate", rep->endDate);
   reader.read_value("autosaveFile", rep->autosaveFile);
   reader.read_value("autosavePeriod", rep->autosavePeriod);
-  reader.read_value("infoLog", rep->infoLog);
+  {
+    rutz::fstring tmp;
+    reader.read_value("infoLog", tmp);
+    rep->infoLog = tmp.c_str();
+  }
   reader.read_owned_object("doWhenComplete", rep->doWhenComplete);
   reader.read_value("filePrefix", rep->filePrefix);
 
@@ -215,7 +217,7 @@ GVX_TRACE("ExptDriver::write_to");
   writer.write_value("endDate", rep->endDate);
   writer.write_value("autosaveFile", rep->autosaveFile);
   writer.write_value("autosavePeriod", rep->autosavePeriod);
-  writer.write_value("infoLog", rep->infoLog);
+  writer.write_value("infoLog", rutz::fstring(rep->infoLog.c_str()));
   writer.write_owned_object("doWhenComplete", rep->doWhenComplete);
   writer.write_value("filePrefix", rep->filePrefix);
 
@@ -462,8 +464,7 @@ namespace
 
     while (stat(newname.c_str(), &buf) == 0)
       {
-        newname = fname;
-        newname.append(".bkp", i++);
+        newname = rutz::sfmt("%s.bkp%d", fname.c_str(), i++);
       }
 
     rutz::unixcall::rename(fname.c_str(), newname.c_str());
@@ -482,17 +483,17 @@ GVX_TRACE("ExptDriver::storeData");
   rep->endDate = rutz::format_time(timestamp);
 
   // Write the main experiment file
-  fstring expt_filename = rep->filePrefix;
-  expt_filename.append("_", rep->fileTimestamp);
-  expt_filename.append(".gvx");
+  const fstring expt_filename =
+    rutz::sfmt("%s_%s.gvx", rep->filePrefix.c_str(),
+               rep->fileTimestamp.c_str());
   renameFileIfExists(expt_filename);
   io::save_gvx(nub::ref<io::serializable>(this), expt_filename.c_str());
   nub::log( rutz::sfmt("wrote file %s", expt_filename.c_str()) );
 
   // Write the responses file
-  fstring resp_filename = rep->filePrefix;
-  resp_filename.append("_", rep->fileTimestamp);
-  resp_filename.append(".resp");
+  const fstring resp_filename =
+    rutz::sfmt("%s_%s.resp", rep->filePrefix.c_str(),
+               rep->fileTimestamp.c_str());
   renameFileIfExists(resp_filename);
   TlistUtils::writeResponses(resp_filename.c_str());
   nub::log( rutz::sfmt("wrote file %s", resp_filename.c_str()) );

@@ -40,6 +40,7 @@
 #include "rutz/sfmt.h"
 
 #include <map>
+#include <sstream>
 
 #include "rutz/trace.h"
 
@@ -75,7 +76,7 @@ GVX_TRACE("rutz::assoc_array_base::~assoc_array_base");
 rutz::fstring rutz::assoc_array_base::
 get_known_keys(const char* sep) const
 {
-  rutz::fstring result;
+  std::ostringstream result;
 
   bool first = true;
 
@@ -85,15 +86,15 @@ get_known_keys(const char* sep) const
     {
       if (ii->second != 0)
         {
-          if (!first) result.append(sep);
+          if (!first) result << sep;
 
-          result.append(ii->first);
+          result << ii->first;
 
           first = false;
         }
     }
 
-  return result;
+  return rutz::fstring(result.str().c_str());
 }
 
 void rutz::assoc_array_base::

@@ -382,12 +382,14 @@ namespace
 
         if ( m_buf.fail() )
           {
-            fstring msg;
-            msg.append("input failed while reading typename and object id\n");
-            msg.append("\ttype: ", type, "\n");
-            msg.append("id: ", id, "\n");
-            msg.append("\tequal: ", equal, "\n");
-            msg.append("\tbracket: ", bracket);
+            const fstring msg =
+              rutz::sfmt("input failed while reading "
+                         "typename and object id\n"
+                         "\ttype: %s\n"
+                         "\tid: %lu\n"
+                         "\tequal: %s\n"
+                         "\tbracket: %s",
+                         type.c_str(), id, equal.c_str(), bracket.c_str());
             throw rutz::error(msg, SRC_POS);
           }
 
@@ -476,11 +478,14 @@ namespace
 
         if ( buf.fail() )
           {
-            fstring msg;
-            msg.append("input failed while reading attribute type and name\n");
-            msg.append("\ttype: ", type, "\n");
-            msg.append("\tname: ", name, "\n");
-            msg.append("\tequal: ", equal);
+            const fstring msg =
+              rutz::sfmt("input failed while reading "
+                         "attribute type and name\n"
+                         "\ttype: %s\n"
+                         "\tname: %s\n"
+                         "\tequal: %s",
+                         type.c_str(), name.c_str(), equal.c_str());
+
             throw rutz::error(msg, SRC_POS);
           }
 

@@ -54,6 +54,7 @@
 #include "tcl/timerscheduler.h"
 
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 
 #include <limits>
 #include <tk.h>
@@ -144,16 +145,6 @@ namespace
   // the main window can be specified with either PARENT = "" or "."
   rutz::fstring PARENT = "";
 
-  const char* widgetName(nub::uid id)
-  {
-    static rutz::fstring buf;
-    buf = PARENT;
-    buf.append(".togl_private");
-    buf.append(int(id));
-
-    return buf.c_str();
-  }
-
 #ifdef GVX_GL_PLATFORM_GLX
   void configureGlxWindow(Tk_Window tkWin, const GlxWrapper* glx)
   {
@@ -205,7 +196,10 @@ namespace
 ///////////////////////////////////////////////////////////////////////
 
 Toglet::Toglet(bool pack, bool topLevel) :
-  tcl::TkWidget(tcl::event_loop::interp(), "Toglet", widgetName(id()), topLevel),
+  tcl::TkWidget(tcl::event_loop::interp(), "Toglet",
+                rutz::sfmt("%s.togl_private%lu",
+                           PARENT.c_str(), id()).c_str(),
+                topLevel),
   rep(new Impl(this))
 {
 GVX_TRACE("Toglet::Toglet");

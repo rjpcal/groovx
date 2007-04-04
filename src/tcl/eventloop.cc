@@ -46,6 +46,8 @@
 #include "rutz/sfmt.h"
 
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <tk.h>
 #include <unistd.h>
 
@@ -92,7 +94,7 @@ private:
   const char*         m_startup_filename;
   const char*         m_argv0;
   Tcl_Channel         m_stdin_chan;
-  rutz::fstring       m_command; // Build lines of tty input into Tcl commands.
+  std::string         m_command; // Build lines of tty input into Tcl commands.
   bool                m_got_partial;
   bool                m_is_interactive; // True if input is a terminal-like device.
   rutz::fstring       m_command_line; // Entire command-line as a string
@@ -180,11 +182,18 @@ GVX_TRACE("tcl::event_loop_impl::event_loop_impl");
 
   Tcl_FindExecutable(argv[0]);
 
-  m_command_line.append(argv[0]);
-  for (int i = 1; i < argc; ++i)
-    {
-      m_command_line.append(" ", argv[i]);
-    }
+  {
+    std::ostringstream buf;
+
+    buf << argv[0];
+
+    for (int i = 1; i < argc; ++i)
+      {
+        buf << " " << argv[i];
+      }
+
+    m_command_line = rutz::fstring(buf.str().c_str());
+  }
 
   // Parse command-line arguments.  If the next argument doesn't start
   // with a "-" then strip it off and use it as the name of a script
@@ -388,7 +397,8 @@ GVX_TRACE("tcl::event_loop_impl::handle_line");
 
   GVX_ASSERT(line != 0);
 
-  m_command.append(line, "\n");
+  m_command += line;
+  m_command += "\n";
 
   dbg_eval_nl(3, m_command.c_str());
 

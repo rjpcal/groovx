@@ -55,6 +55,7 @@
 #include "visx/responsehandler.h"
 #include "visx/timinghdlr.h"
 
+#include <sstream>
 #include <vector>
 
 #define GVX_DYNAMIC_TRACE_EXPR Trial::tracer.status()
@@ -429,8 +430,8 @@ fstring Trial::stdInfo() const
 {
 GVX_TRACE("Trial::stdInfo");
 
-  fstring objids;
-  fstring cats;
+  std::ostringstream objids;
+  std::ostringstream cats;
 
   for (Impl::GxNodes::const_iterator
          ii = rep->gxNodes.begin(),
@@ -447,18 +448,16 @@ GVX_TRACE("Trial::stdInfo");
 
           if (g)
             {
-              objids.append(" ", g->unique_name());
-              cats.append(" ", g->category());
+              objids << " " << g->unique_name();
+              cats << " " << g->category();
             }
         }
     }
 
-  fstring buf;
-
-  buf.append("trial type == ", rep->trialType);
-  buf.append(", objs ==", objids, ", categories == ", cats);
-
-  return buf;
+  return rutz::sfmt("trial type == %d, objs ==%s, categories == %s",
+                    rep->trialType,
+                    objids.str().c_str(),
+                    cats.str().c_str());
 }
 
 void Trial::setInfo(fstring info)

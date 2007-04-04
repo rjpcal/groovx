@@ -137,10 +137,11 @@ void io::object_map::add_object_for_id(nub::uid id,
   // See if an object has already been created for this id
   if ( itr != m_objects.end() )
     {
-      rutz::fstring msg;
-      msg.append("object has already been created\n");
-      msg.append("\ttype: ", object->obj_typename().c_str(), "\n");
-      msg.append("\tid: ", id);
+      const rutz::fstring msg =
+        rutz::sfmt("object has already been created\n"
+                   "\ttype: %s\n"
+                   "\tid: %lu",
+                   object->obj_typename().c_str(), id);
       throw rutz::error(msg, SRC_POS);
     }
 

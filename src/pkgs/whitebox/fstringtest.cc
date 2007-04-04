@@ -172,20 +172,6 @@ namespace
     TEST_REQUIRE(s1 == "");
   }
 
-  void testCopyOnWrite()
-  {
-    fstring s1("copyme");
-    fstring s2 = s1;
-
-    TEST_REQUIRE(s1 == s2);
-
-    s1.append(" orig");
-
-    TEST_REQUIRE(s1 != s2);
-    TEST_REQUIRE(s1 == "copyme orig");
-    TEST_REQUIRE(s2 == "copyme");
-  }
-
   void testLessThan()
   {
     fstring s("apple");
@@ -285,7 +271,6 @@ GVX_TRACE("Fstringtest_Init");
   DEF_TEST(pkg, testAssign2);
   DEF_TEST(pkg, testAssignEmptyString);
   DEF_TEST(pkg, testAssignNullString);
-  DEF_TEST(pkg, testCopyOnWrite);
   DEF_TEST(pkg, testLessThan);
   DEF_TEST(pkg, testGreaterThan);
   DEF_TEST(pkg, testRead);

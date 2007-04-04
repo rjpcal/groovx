@@ -54,6 +54,7 @@
 #include <istream>           // for tree_builder constructor
 #include <map>               // for group_element
 #include <ostream>           // for xml_element::trace()
+#include <string>            // for string_element implementation
 #include <typeinfo>          // for error reporting and xml_element::trace()
 #include <vector>            // for stack in tree_builder
 
@@ -208,10 +209,10 @@ namespace
 
     virtual void character_data(const char* text, int len)
     {
-      m_value.append_range(text, len);
+      m_value.append(text, len);
     }
 
-    fstring m_value;
+    std::string m_value;
   };
 
   typedef basic_element<double> double_element;
@@ -401,7 +402,7 @@ namespace
     {
       el_ptr el = m_elems[name];
       string_element& slp = element_cast<string_element>(el.get(), name, SRC_POS);
-      return slp.m_value;
+      return fstring(slp.m_value.c_str());
     }
 
   public:

@@ -61,6 +61,7 @@
 
 #include <fstream>
 #include <iomanip>
+#include <vector>
 
 #include "rutz/trace.h"
 
@@ -154,21 +155,28 @@ namespace
   }
 
   rutz::fstring gsubst(const rutz::fstring& in,
-                       char match, const char* replace)
+                       const char match,
+                       const char* const replace)
   {
-    rutz::fstring result;
+    std::vector<char> result;
+    result.reserve(in.length());
+
     for (const char* p = in.c_str(); *p != '\0'; ++p)
       {
         if (*p == match)
           {
-            result.append(replace);
+            for (const char* q = replace; *q != '\0'; ++q)
+              result.push_back(*q);
           }
         else
           {
-            result.append(*p);
+            result.push_back(*p);
           }
       }
-    return result;
+
+    result.push_back('\0');
+
+    return rutz::fstring(&result[0]);
   }
 }
 

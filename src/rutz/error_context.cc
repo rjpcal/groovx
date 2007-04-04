@@ -37,6 +37,7 @@
 
 #include <new>
 #include <pthread.h>
+#include <sstream>
 
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
@@ -110,17 +111,17 @@ void rutz::error_context::remove_entry(const error_context_entry* e)
 
 rutz::fstring rutz::error_context::get_text() const
 {
-  rutz::fstring result;
+  std::ostringstream result;
 
   const char* prefix = "==> while ";
 
   for (unsigned int i = 0; i < m_entries.size(); ++i)
     {
-      result.append(prefix, m_entries[i]->text(), ":");
+      result << prefix << m_entries[i]->text() << ":";
       prefix = "\n==> while ";
     }
 
-  return result;
+  return rutz::fstring(result.str().c_str());
 }
 
 rutz::error_context_entry::error_context_entry(const rutz::fstring& msg)

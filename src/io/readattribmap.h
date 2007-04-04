@@ -40,6 +40,7 @@
 #include "rutz/sfmt.h"
 
 #include <utility>
+#include <sstream>
 #include <vector>
 
 namespace io
@@ -125,20 +126,24 @@ io::attrib_map::attrib io::attrib_map::get(const rutz::fstring& attr_name)
       ++itr;
     }
 
-  rutz::fstring msg =
+  const rutz::fstring msg =
     rutz::sfmt("no attribute named '%s' for %s\n"
                "known attributes are:\n",
                attr_name.c_str(),
                m_obj_tag.c_str());
 
+  std::ostringstream buf;
+
+  buf << msg;
+
   itr = m_attribs.begin();
   while (itr != end)
     {
-      msg.append("\t", (*itr).first, "\n");
+      buf << '\t' << (*itr).first << '\n';
       ++itr;
     }
 
-  throw rutz::error(msg, SRC_POS);
+  throw rutz::error(rutz::fstring(buf.str().c_str()), SRC_POS);
 }
 
 inline
