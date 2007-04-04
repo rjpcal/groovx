@@ -35,6 +35,7 @@
 #define GROOVX_RUTZ_ARRAYS_H_UTC20050626084020_DEFINED
 
 #include "rutz/algo.h"
+#include "rutz/atomic.h"
 
 #include <cstddef>
 
@@ -273,46 +274,38 @@ namespace rutz
         exception, the pointed-to array will be destroyed. */
     explicit shared_array(T* p =0) : px(p)
     {
-      try { pn = new long(1); }  // fix: prevent leak if new throws
-      catch (...) { delete [] p; throw; }
+      try { pn = new rutz::atomic_int_t; pn->atomic_set(1); }
+      catch (...) { delete [] p; throw; }  // don't leak p if new throws
     }
 
     /// Copy constructor.
-    shared_array(const shared_array& r) throw() : px(r.px)
-    { ++*(pn = r.pn); }
+    shared_array(const shared_array& r) throw() : px(r.px), pn(r.pn)
+    { pn->atomic_incr(); }
 
     /// Destructor.
-    ~shared_array() { dispose(); }
+    ~shared_array()
+    {
+      if (pn->atomic_decr_test_zero())
+        {
+          delete [] px; px = 0;
+          delete pn;    pn = 0;
+        }
+    }
 
     /// Assignment oeprator.
     shared_array& operator=(const shared_array& r)
     {
-      if (pn != r.pn)
-        { // Q: why not px != r.px? A: fails when both px == 0
-          dispose();
-          px = r.px;
-          ++*(pn = r.pn);
-        }
+      if (pn != r.pn) // Q: why not px != r.px? A: fails when both px == 0
+        shared_array(r).swap(*this);
       return *this;
     }
 
     /// Reset to point to a new array.
     void reset(T* p=0)
     {
-      if ( px == p ) return;  // fix: self-assignment safe
-      if (--*pn == 0) { delete [] px; }
-      else { // allocate new reference counter
-        try { pn = new long; }  // fix: prevent leak if new throws
-        catch (...)
-          {
-            ++*pn;  // undo effect of --*pn above to meet effects guarantee
-            delete [] p;
-            throw;
-          } // catch
-      } // allocate new reference counter
-      *pn = 1;
-      px = p;
-    } // reset
+      if (px != p) // self-assignment safe
+        shared_array(p).swap(*this);
+    }
 
     /// Get a pointer to the pointed-to array.
     T* get() const                     throw() { return px; }
@@ -321,22 +314,18 @@ namespace rutz
     T& operator[](std::size_t i) const throw() { return px[i]; }
 
     /// Get the reference count of the shared array.
-    long use_count() const             throw() { return *pn; }
+    long use_count() const             throw() { return pn->atomic_get(); }
 
     /// Query whether the shared array is uniquely owned (i.e. refcount == 1).
-    bool unique() const                throw() { return *pn == 1; }
+    bool unique() const                throw() { return use_count() == 1; }
 
     /// Swap pointees with another shared_array.
     void swap(shared_array<T>& other) throw()
     { rutz::swap2(px,other.px); rutz::swap2(pn,other.pn); }
 
   private:
-
-    T*     px;     // contained pointer
-    long*  pn;     // ptr to reference counter
-
-    void dispose() { if (--*pn == 0) { delete [] px; delete pn; } }
-
+    T*                   px;     // contained pointer
+    rutz::atomic_int_t*  pn;     // ptr to reference counter
   };  // shared_array
 
   /// Equality for shared_array; returns true if both have the same pointee.
