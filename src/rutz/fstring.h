@@ -34,8 +34,9 @@
 #ifndef GROOVX_RUTZ_FSTRING_H_UTC20050626084021_DEFINED
 #define GROOVX_RUTZ_FSTRING_H_UTC20050626084021_DEFINED
 
-#include <cstddef>
+#include "rutz/atomic.h"
 
+#include <cstddef>
 #include <iosfwd>
 
 namespace rutz
@@ -81,13 +82,13 @@ namespace rutz
 
     string_rep* clone() const;
 
-    bool is_unique() const throw() { return m_refcount == 1; }
+    bool is_unique() const throw() { return m_refcount.atomic_get() == 1; }
 
-    void incr_ref_count() throw() { ++m_refcount; }
+    void incr_ref_count() throw() { m_refcount.atomic_incr(); }
 
-    std::size_t decr_ref_count() throw()
+    int decr_ref_count() throw()
     {
-      std::size_t c = --m_refcount;
+      const int c = m_refcount.atomic_decr_return();
       if (c <= 0)
         delete this;
       return c;
@@ -125,7 +126,7 @@ namespace rutz
     void debug_dump() const throw();
 
   private:
-    unsigned int m_refcount;
+    rutz::atomic_int_t m_refcount;
 
     std::size_t m_capacity;
     std::size_t m_length;

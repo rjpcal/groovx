@@ -84,11 +84,13 @@ void rutz::string_rep::operator delete(void* space)
 
 rutz::string_rep::string_rep(std::size_t len, const char* txt,
                              std::size_t capac) :
-  m_refcount(0),
+  m_refcount(),
   m_capacity(rutz::max(len+1, capac)),
   m_length(0),
   m_text(new char[m_capacity])
 {
+  m_refcount.atomic_set(0);
+
   if (txt)
     uniq_append(len, txt);
   else
@@ -133,7 +135,7 @@ rutz::string_rep* rutz::string_rep::clone() const
 
 void rutz::string_rep::make_unique(rutz::string_rep*& rep)
 {
-  if (rep->m_refcount <= 1) return;
+  if (rep->m_refcount.atomic_get() <= 1) return;
 
   rutz::string_rep* new_rep = rep->clone();
 
@@ -142,19 +144,19 @@ void rutz::string_rep::make_unique(rutz::string_rep*& rep)
 
   rep = new_rep;
 
-  GVX_POSTCONDITION(new_rep->m_refcount == 1);
+  GVX_POSTCONDITION(new_rep->m_refcount.atomic_get() == 1);
 }
 
 char* rutz::string_rep::uniq_data() throw()
 {
-  GVX_PRECONDITION(m_refcount <= 1);
+  GVX_PRECONDITION(m_refcount.atomic_get() <= 1);
 
   return m_text;
 }
 
 void rutz::string_rep::uniq_clear() throw()
 {
-  GVX_PRECONDITION(m_refcount <= 1);
+  GVX_PRECONDITION(m_refcount.atomic_get() <= 1);
 
   m_length = 0;
   add_terminator();
@@ -180,7 +182,7 @@ void rutz::string_rep::add_terminator() throw()
 
 void rutz::string_rep::uniq_set_length(std::size_t len) throw()
 {
-  GVX_PRECONDITION(m_refcount <= 1);
+  GVX_PRECONDITION(m_refcount.atomic_get() <= 1);
   GVX_PRECONDITION(len+1 < m_capacity);
   m_length = len;
   add_terminator();
@@ -188,7 +190,7 @@ void rutz::string_rep::uniq_set_length(std::size_t len) throw()
 
 void rutz::string_rep::uniq_append(std::size_t len, const char* txt)
 {
-  GVX_PRECONDITION(m_refcount <= 1);
+  GVX_PRECONDITION(m_refcount.atomic_get() <= 1);
   GVX_PRECONDITION(txt != 0);
 
   if (m_length + len + 1 <= m_capacity)
@@ -209,7 +211,7 @@ void rutz::string_rep::uniq_append(std::size_t len, const char* txt)
 
 void rutz::string_rep::uniq_realloc(std::size_t capac)
 {
-  GVX_PRECONDITION(m_refcount <= 1);
+  GVX_PRECONDITION(m_refcount.atomic_get() <= 1);
 
   rutz::string_rep new_rep(rutz::max(m_capacity*2 + 32, capac), 0);
 
@@ -229,7 +231,7 @@ void rutz::string_rep::uniq_reserve(std::size_t capac)
 void rutz::string_rep::debug_dump() const throw()
 {
   dbg_eval_nl(0, (const void*)this);
-  dbg_eval_nl(0, m_refcount);
+  dbg_eval_nl(0, m_refcount.atomic_get());
   dbg_eval_nl(0, m_length);
   dbg_eval_nl(0, (void*)m_text);
   dbg_eval_nl(0, m_text);
