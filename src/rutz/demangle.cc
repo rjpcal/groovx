@@ -80,21 +80,31 @@ namespace
   //   (1) gcc libstdc++ doesn't seem to have type_info::operator<()
   //   (2) gcc libstdc++ doesn't allow copying of type_info objects
   typedef std::map<std::string, std::string> cache_type;
-  cache_type g_name_cache;
+  cache_type* g_name_cache = 0;
+  pthread_once_t g_name_cache_init_once = PTHREAD_ONCE_INIT;
   pthread_mutex_t g_name_cache_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+  void name_cache_init()
+  {
+    GVX_ASSERT(g_name_cache == 0);
+    g_name_cache = new cache_type;
+  }
 }
 
 const char* rutz::demangled_name(const std::type_info& info)
 {
 GVX_TRACE("rutz::demangled_name");
 
+  pthread_once(&g_name_cache_init_once, &name_cache_init);
+  GVX_ASSERT(g_name_cache != 0);
+
   const std::string mangled = info.name();
 
   GVX_MUTEX_LOCK(&g_name_cache_mutex);
 
-  cache_type::iterator itr = g_name_cache.find(mangled);
+  cache_type::iterator itr = g_name_cache->find(mangled);
 
-  if (itr != g_name_cache.end())
+  if (itr != g_name_cache->end())
     {
       return (*itr).second.c_str();
     }
@@ -102,7 +112,7 @@ GVX_TRACE("rutz::demangled_name");
   const std::string demangled = DEMANGLE_IMPL(info.name());
 
   std::pair<cache_type::iterator, bool> result =
-    g_name_cache.insert(cache_type::value_type(mangled, demangled));
+    g_name_cache->insert(cache_type::value_type(mangled, demangled));
 
   GVX_ASSERT(result.second == true);
 
