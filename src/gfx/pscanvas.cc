@@ -785,11 +785,12 @@ GVX_TRACE("Gfx::PSCanvas::setPolygonFill");
   rep->current_state().polygonFill = on;
 }
 
-void Gfx::PSCanvas::setPointSize(double /*size*/)
+void Gfx::PSCanvas::setPointSize(double size)
 {
 GVX_TRACE("Gfx::PSCanvas::setPointSize");
 // FIXME
-  rep->raiseError("not implemented", SRC_POS);
+  if (size != 1.0)
+    rep->raiseError("not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::setLineWidth(double width)
