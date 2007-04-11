@@ -73,7 +73,8 @@ GVX_TRACE("GxPointSet::make");
 
 GxPointSet::GxPointSet() :
   FieldContainer(&sigNodeChanged),
-  itsPoints()
+  itsPoints(),
+  itsStyle(Gfx::Canvas::LINE_STRIP)
 {
 GVX_TRACE("GxPointSet::GxPointSet");
   setFieldMap(GxPointSet::classFields());
