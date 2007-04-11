@@ -362,16 +362,18 @@ public:
   /// Symbolic tags for the vertex-series specified by the begin*() functions.
   enum VertexStyle
     {
-      POINTS,
-      LINES,
-      LINE_STRIP,
-      LINE_LOOP,
-      TRIANGLES,
-      TRIANGLE_STRIP,
-      TRIANGLE_FAN,
-      QUADS,
-      QUAD_STRIP,
-      POLYGON
+      // NOTE: Don't change these numeric values since they are
+      // required for compatibility of serialized object dumps
+      POINTS          = 1,
+      LINES           = 2,
+      LINE_STRIP      = 3,
+      LINE_LOOP       = 4,
+      TRIANGLES       = 5,
+      TRIANGLE_STRIP  = 6,
+      TRIANGLE_FAN    = 7,
+      QUADS           = 8,
+      QUAD_STRIP      = 9,
+      POLYGON         = 10
     };
 
   /// Start a series of vertices according to the given Vertex Style.
