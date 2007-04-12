@@ -447,7 +447,7 @@ GVX_TRACE("tcl::event_loop_impl::eval_command");
   const int status =
     history_expand(const_cast<char*>(m_command.c_str()), &expansion);
 #else
-  char* expansion = m_command.data();
+  const char* expansion = m_command.data();
   const int status = 0;
 #endif
 
@@ -486,7 +486,7 @@ GVX_TRACE("tcl::event_loop_impl::eval_command");
       // is empty, we can just skip executing it altogether.
 
       // Skip over leading whitespace
-      char* trimmed = expansion;
+      const char* trimmed = expansion;
 
       while (isspace(trimmed[0]) && trimmed[0] != '\0')
         {

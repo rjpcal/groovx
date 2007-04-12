@@ -42,6 +42,7 @@
 #if defined(GVX_GL_PLATFORM_GLX)
 #  include "gfx/glxrasterfont.h"
 #elif defined(GVX_GL_PLATFORM_AGL)
+#  define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_3
 #  include "gfx/aglrasterfont.h"
 #else
 #  error no GVX_GL_PLATFORM macro defined

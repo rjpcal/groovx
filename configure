@@ -2345,9 +2345,11 @@ _ACEOF
       # The /sw/lib and /sw/include directories are managed by Fink
       CPPFLAGS="$CPPFLAGS -I/sw/include"
 
-      # We are slightly bending the rules here by putting a "-l" directive
-      # in LDFLAGS (which normally should only have "-L" directives
-      LDFLAGS="$LDFLAGS -L/sw/lib -lcc_dynamic"
+      # At one point we had -lcc_dynamic in $LDFLAGS but as of Mac OSX
+      # 10.4.9 (Intel) this seems to be no longer necessary -- anyway,
+      # that was a slight bending of the rules to include an "-l" directive
+      # in $LDFLAGS (which normally should only have "-L" directives)
+      LDFLAGS="$LDFLAGS -L/sw/lib"
       ;;
    *)
       { { echo "$as_me:$LINENO: error: unknown operating system $OS" >&5
@@ -3157,7 +3159,7 @@ ac_x_header_dirs='
 /usr/openwin/share/include'
 
 if test "$ac_x_includes" = no; then
-  # Guess where to find include files, by looking for Xlib.h.
+  # Guess where to find include files, by looking for Intrinsic.h.
   # First, try using that file with no special directory specified.
   cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
@@ -3165,7 +3167,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include <X11/Xlib.h>
+#include <X11/Intrinsic.h>
 _ACEOF
 if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
   (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
@@ -3192,7 +3194,7 @@ else
 sed 's/^/| /' conftest.$ac_ext >&5
 
   for ac_dir in $ac_x_header_dirs; do
-  if test -r "$ac_dir/X11/Xlib.h"; then
+  if test -r "$ac_dir/X11/Intrinsic.h"; then
     ac_x_includes=$ac_dir
     break
   fi
@@ -3206,18 +3208,18 @@ if test "$ac_x_libraries" = no; then
   # See if we find them without any special options.
   # Don't add to $LIBS permanently.
   ac_save_LIBS=$LIBS
-  LIBS="-lX11 $LIBS"
+  LIBS="-lXt $LIBS"
   cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include <X11/Xlib.h>
+#include <X11/Intrinsic.h>
 int
 main ()
 {
-XrmInitialize ()
+XtMalloc (0)
   ;
   return 0;
 }
@@ -5918,7 +5920,7 @@ fi
 
 ### --enable-readline
 
-enable_readline=yes
+have_readline_headers=yes
 
 
 
@@ -5973,13 +5975,17 @@ if test `eval echo '${'$as_ac_Header'}'` = yes; then
 _ACEOF
 
 else
-  enable_readline=no
+  have_readline_headers=no
 fi
 
 done
 
 
-if test $enable_readline = yes; then
+disable_readline=0
+
+if test $have_readline_headers = yes; then
+
+   LIBS_SAVE="$LIBS"
 
    echo "$as_me:$LINENO: checking for libtermcap" >&5
 echo $ECHO_N "checking for libtermcap... $ECHO_C" >&6
@@ -6039,10 +6045,11 @@ echo "${ECHO_T}yes" >&6
 	 else
 	    echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
-
+	    disable_readline=1
 	 fi
 
-   echo "$as_me:$LINENO: checking for libreadline" >&5
+   if test $disable_readline -eq 0; then
+      echo "$as_me:$LINENO: checking for libreadline" >&5
 echo $ECHO_N "checking for libreadline... $ECHO_C" >&6
 	 libs_save=$LIBS
 	 LIBS="$LIBS -lreadline"
@@ -6053,11 +6060,12 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <stdio.h>
-		     #include <readline/readline.h>
+		        #include <readline/readline.h>
 int
 main ()
 {
-rl_callback_handler_install(0,0)
+extern void readline_line_complete(char* line);
+		        rl_callback_handler_install(0,&readline_line_complete)
   ;
   return 0;
 }
@@ -6101,14 +6109,28 @@ echo "${ECHO_T}yes" >&6
 	 else
 	    echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
-
+	    disable_readline=1
 	 fi
-else
+   fi
 
-cat >>confdefs.h <<\_ACEOF
+   if test $disable_readline -eq 1; then
+      LIBS="$LIBS_SAVE"
+   fi
+fi
+
+echo "$as_me:$LINENO: checking whether to include readline support" >&5
+echo $ECHO_N "checking whether to include readline support... $ECHO_C" >&6
+if test $disable_readline -eq 1; then
+
+cat >>confdefs.h <<_ACEOF
 #define GVX_NO_READLINE 1
 _ACEOF
 
+   echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+else
+   echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
 fi
 
 ### --enable-debug

@@ -234,9 +234,11 @@ case $OS in
       # The /sw/lib and /sw/include directories are managed by Fink
       CPPFLAGS="$CPPFLAGS -I/sw/include"
 
-      # We are slightly bending the rules here by putting a "-l" directive
-      # in LDFLAGS (which normally should only have "-L" directives
-      LDFLAGS="$LDFLAGS -L/sw/lib -lcc_dynamic"
+      # At one point we had -lcc_dynamic in $LDFLAGS but as of Mac OSX
+      # 10.4.9 (Intel) this seems to be no longer necessary -- anyway,
+      # that was a slight bending of the rules to include an "-l" directive
+      # in $LDFLAGS (which normally should only have "-L" directives)
+      LDFLAGS="$LDFLAGS -L/sw/lib"
       ;;
    *)
       AC_MSG_ERROR([unknown operating system $OS])
@@ -634,23 +636,40 @@ AC_SUBST(matlab_lib)
 
 ### --enable-readline
 
-enable_readline=yes
+have_readline_headers=yes
 
 AC_CHECK_HEADERS([readline/readline.h readline/history.h],
-		  , enable_readline=no,-)
+		  , have_readline_headers=no,-)
 
-if test $enable_readline = yes; then
+disable_readline=0
+
+if test $have_readline_headers = yes; then
+
+   LIBS_SAVE="$LIBS"
 
    AC_CHECK_LIB_CXX(termcap, [#include <termcap.h>], [tgetent(0,0)],
-		    [LIBS="-ltermcap $LIBS"])
+		    [LIBS="-ltermcap $LIBS"], [disable_readline=1])
 
-   AC_CHECK_LIB_CXX(readline,
-		    [#include <stdio.h>
-		     #include <readline/readline.h>],
-		    [rl_callback_handler_install(0,0)],
-		    [LIBS="-lreadline $LIBS"])
+   if test $disable_readline -eq 0; then
+      AC_CHECK_LIB_CXX(readline,
+		       [#include <stdio.h>
+		        #include <readline/readline.h>],
+		       [extern void readline_line_complete(char* line);
+		        rl_callback_handler_install(0,&readline_line_complete)],
+		       [LIBS="-lreadline $LIBS"], [disable_readline=1])
+   fi
+
+   if test $disable_readline -eq 1; then
+      LIBS="$LIBS_SAVE"
+   fi
+fi
+
+AC_MSG_CHECKING([whether to include readline support])
+if test $disable_readline -eq 1; then
+   AC_DEFINE_UNQUOTED(GVX_NO_READLINE,1,[don't do readline support?])
+   AC_MSG_RESULT([no])
 else
-   AC_DEFINE(GVX_NO_READLINE,1,[don't do readline support?])
+   AC_MSG_RESULT([yes])
 fi
 
 ### --enable-debug

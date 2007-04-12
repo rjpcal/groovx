@@ -90,7 +90,7 @@ public:
 private:
   rutz::fstring itsFontName;
   FontInfo itsFontInfo;
-  const AppleFontSpec itsFontSpec;
+  AppleFontSpec itsFontSpec;
   unsigned int itsListBase;
   unsigned int itsListCount;
 };
@@ -107,7 +107,7 @@ GVX_TRACE("AglRasterFont::AglRasterFont");
 
   // SetOutlinePreferred(TRUE);
 
-  AppleFontSpec itsFontSpec = pickAppleFont(fontname);
+  itsFontSpec = pickAppleFont(fontname);
 
   itsListCount = 256;
   itsListBase = GLCanvas::genLists( 256 );

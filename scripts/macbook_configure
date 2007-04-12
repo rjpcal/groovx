@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# $Id$
+
+# standard configuration for my macbook pro
+
+set -o xtrace
+
+mkdir -p build/compat/include build/compat/lib
+
+ln -sf /usr/X11R6/include/expat.h        build/compat/include
+
+ln -sf /usr/X11R6/lib/libexpat.1.0.dylib build/compat/lib
+ln -sf /usr/X11R6/lib/libexpat.1.dylib   build/compat/lib
+ln -sf /usr/X11R6/lib/libexpat.a         build/compat/lib
+ln -sf /usr/X11R6/lib/libexpat.dylib     build/compat/lib
+
+for f in generic/tkInt.h generic/tkPort.h generic/tkIntDecls.h macosx/tkMacOSXPort.h; do
+    base=`basename $f`
+    if ! test -f build/compat/include/$base; then
+	curl \
+	    http://www.opensource.apple.com/darwinsource/10.4/tcl-20/tk/tk/$f \
+	    -o build/compat/include/$base
+    fi
+done
+
+./configure \
+    --prefix=/Users/rjpeters/local/groovx \
+    --with-tcltk=/System/Library/Frameworks \
+    --enable-aqua
