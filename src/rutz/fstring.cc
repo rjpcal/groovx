@@ -1,8 +1,10 @@
 /** @file rutz/fstring.cc ref-counted string type that allows much
     faster compile times than std::string */
+
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2004-2005
+// Copyright (c) 2000-2004 California Institute of Technology
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Oct 15 15:43:41 2004

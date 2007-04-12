@@ -2,7 +2,8 @@
     lighting */
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2002-2005
+// Copyright (c) 2002-2004 California Institute of Technology
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jul  5 15:17:06 2002

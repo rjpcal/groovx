@@ -2,7 +2,8 @@
     files in the GVX format */
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2003-2005
+// Copyright (c) 2003-2004 California Institute of Technology
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Jun 19 18:26:48 2003

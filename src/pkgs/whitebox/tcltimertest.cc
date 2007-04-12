@@ -2,7 +2,7 @@
     testing class tcl::timer_scheduler */
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2004-2005
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Oct 12 18:25:51 2004

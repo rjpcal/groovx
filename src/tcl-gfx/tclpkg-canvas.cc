@@ -2,7 +2,7 @@
     and derivatives */
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2004-2005
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Oct 23 19:24:11 2004

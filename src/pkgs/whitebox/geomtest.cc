@@ -2,7 +2,7 @@
     class geom::txform and related classes */
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2004-2005
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct 28 12:13:08 2004

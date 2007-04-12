@@ -2,7 +2,8 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2005-2005
+// Copyright (c) 1999-2004 California Institute of Technology
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Jun 30 14:47:13 2005

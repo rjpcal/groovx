@@ -2,7 +2,8 @@
     during a psychophysics experiment */
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 1999-2005
+// Copyright (c) 1999-2004 California Institute of Technology
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue May 18 16:21:09 1999

@@ -2,7 +2,8 @@
     transformations */
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2002-2005
+// Copyright (c) 2002-2004 California Institute of Technology
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jun 21 14:00:54 2002

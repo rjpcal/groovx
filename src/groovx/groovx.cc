@@ -3,7 +3,8 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 1998-2005
+// Copyright (c) 1998-2004 California Institute of Technology
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Nov  2 08:00:00 1998
@@ -161,7 +162,8 @@ int main(int argc, char** argv)
 
   app.splash(PACKAGE_STRING " (" __DATE__ ")\n"
              "\n"
-             "Copyright (c) 1998-2005 Rob Peters\n"
+             "Copyright (c) 1998-2004 California Institute of Technology
+// Copyright (c) 2004-2007 University of Southern California
              "<http://ilab.usc.edu/rjpeters/groovx/>\n"
              PACKAGE_NAME " is free software, covered by "
              "the GNU General Public License, and you are "

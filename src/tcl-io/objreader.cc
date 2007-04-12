@@ -2,7 +2,7 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2005-2005
+// Copyright (c) 2005-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Nov  8 15:38:06 2005

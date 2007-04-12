@@ -2,7 +2,7 @@
     a thin wrapper around std::map<rutz::fstring, void*> */
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2004-2005
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct 14 18:42:05 2004

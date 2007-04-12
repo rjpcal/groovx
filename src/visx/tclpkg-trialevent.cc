@@ -2,7 +2,8 @@
     TrialEvent and derivatives */
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2003-2005
+// Copyright (c) 2003-2004 California Institute of Technology
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu May 22 14:37:17 2003

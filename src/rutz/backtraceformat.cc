@@ -2,7 +2,7 @@
     a rutz::backtrace object */
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2005-2005
+// Copyright (c) 2005-2007 University of Southern California
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Jun 30 14:41:29 2005

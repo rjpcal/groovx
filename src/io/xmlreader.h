@@ -3,7 +3,8 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2003-2005
+// Copyright (c) 2003-2004 California Institute of Technology
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jun 20 16:09:38 2003

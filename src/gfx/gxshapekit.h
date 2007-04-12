@@ -3,7 +3,8 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 1998-2005
+// Copyright (c) 1998-2004 California Institute of Technology
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Dec  1 08:00:00 1998 (as grobj.h)

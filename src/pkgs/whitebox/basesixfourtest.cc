@@ -2,7 +2,7 @@
     testing base64 encoding/decoding */
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2004-2005
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Oct 13 13:51:48 2004

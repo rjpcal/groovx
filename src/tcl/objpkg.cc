@@ -2,7 +2,8 @@
     class-level tcl commands (e.g. find all objects of a given type) */
 ///////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2002-2005
+// Copyright (c) 2002-2004 California Institute of Technology
+// Copyright (c) 2004-2007 University of Southern California
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Nov 22 17:06:50 2002
