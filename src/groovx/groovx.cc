@@ -162,8 +162,8 @@ int main(int argc, char** argv)
 
   app.splash(PACKAGE_STRING " (" __DATE__ ")\n"
              "\n"
-             "Copyright (c) 1998-2004 California Institute of Technology
-// Copyright (c) 2004-2007 University of Southern California
+             "Copyright (c) 1998-2004 California Institute of Technology\n"
+             "Copyright (c) 2004-2007 University of Southern California\n"
              "<http://ilab.usc.edu/rjpeters/groovx/>\n"
              PACKAGE_NAME " is free software, covered by "
              "the GNU General Public License, and you are "
