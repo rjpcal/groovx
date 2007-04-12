@@ -384,6 +384,19 @@ GVX_TRACE("tcl::event_loop_impl::handle_line");
         {
           if (m_is_interactive)
             {
+              // OK, here we're in interactive mode and we're going to
+              // exit because stdin has been closed -- this means that
+              // the user probably typed Ctrl-D, so let's send a
+              // newline to stdout before exiting so that the user's
+              // shell prompt starts on a fresh line rather than
+              // overwriting the final tcl prompt
+              Tcl_Channel out_chan = Tcl_GetStdChannel(TCL_STDOUT);
+              if (out_chan)
+                {
+                  const char nl = '\n';
+                  Tcl_WriteChars(out_chan, &nl, 1);
+                }
+
               Tcl_Exit(0);
             }
           else
@@ -487,7 +500,11 @@ GVX_TRACE("tcl::event_loop_impl::eval_command");
       // is empty, we can just skip executing it altogether.
 
       // Skip over leading whitespace
+#ifdef GVX_WITH_READLINE
+      char* trimmed = expansion;
+#else
       const char* trimmed = expansion;
+#endif
 
       while (isspace(trimmed[0]) && trimmed[0] != '\0')
         {

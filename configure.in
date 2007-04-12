@@ -654,8 +654,8 @@ if test $have_readline_headers = yes; then
       AC_CHECK_LIB_CXX(readline,
 		       [#include <stdio.h>
 		        #include <readline/readline.h>],
-		       [extern void readline_line_complete(char* line);
-		        rl_callback_handler_install(0,&readline_line_complete)],
+		       [typedef void callback_type(char*);
+		        rl_callback_handler_install(0,(callback_type*)0)],
 		       [LIBS="-lreadline $LIBS"], [disable_readline=1])
    fi
 
