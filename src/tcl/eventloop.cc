@@ -277,7 +277,16 @@ GVX_TRACE("tcl::event_loop_impl::do_prompt");
 
   if (isatty(1))
     {
+#if defined(GVX_WITH_READLINE) && defined(RL_PROMPT_START_IGNORE)
+      color_prompt = rutz::sfmt("%c\033[1;32m%c%s%c\033[0m%c",
+                                RL_PROMPT_START_IGNORE,
+                                RL_PROMPT_END_IGNORE,
+                                text,
+                                RL_PROMPT_START_IGNORE,
+                                RL_PROMPT_END_IGNORE);
+#else
       color_prompt = rutz::sfmt("\033[1;32m%s\033[0m", text);
+#endif
     }
 
 #ifdef GVX_WITH_READLINE
