@@ -179,6 +179,12 @@ namespace rutz
 
       if (creator == 0)
         {
+          // note that we must call try_fallback() with our mutex
+          // UN-locked because the intention is that the fallback
+          // function will try do something to cause a new entry to be
+          // inserted into this very factory object; that insertion
+          // will require locking the mutex so if we have the mutex
+          // locked here we will end up with a deadlock:
           m_base.try_fallback(key);
 
           {
