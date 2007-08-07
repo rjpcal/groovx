@@ -57,7 +57,10 @@ public:
   }
 
   /// Construct from a timeval.
-  time(const timeval& t) throw() : m_timeval(t) {}
+  time(const timeval& t) throw() : m_timeval(t)
+  {
+    normalize(this->m_timeval);
+  }
 
   /// Construct with given seconds+microseconds values.
   time(unsigned long s, long us) throw() : m_timeval()
@@ -96,6 +99,7 @@ public:
   {
     m_timeval.tv_sec = s;
     m_timeval.tv_usec = us;
+    normalize(this->m_timeval);
   }
 
   /// Assignment operator.
@@ -152,7 +156,7 @@ public:
   }
 
   /// Less-than comparison
-  bool operator<(const time& t2) throw()
+  bool operator<(const time& t2) const throw()
   {
     return (m_timeval.tv_sec < t2.m_timeval.tv_sec)
       ||
@@ -161,7 +165,7 @@ public:
   }
 
   /// Less-than-or-equal comparison
-  bool operator<=(const time& t2) throw()
+  bool operator<=(const time& t2) const throw()
   {
     return (m_timeval.tv_sec <= t2.m_timeval.tv_sec)
       ||
@@ -170,14 +174,14 @@ public:
   }
 
   /// Equality comparison
-  bool operator==(const time& t2) throw()
+  bool operator==(const time& t2) const throw()
   {
     return (m_timeval.tv_sec == t2.m_timeval.tv_sec
             && m_timeval.tv_usec == t2.m_timeval.tv_usec);
   }
 
   /// Greater-than comparison
-  bool operator>(const time& t2) throw()
+  bool operator>(const time& t2) const throw()
   {
     return (m_timeval.tv_sec > t2.m_timeval.tv_sec)
       ||
@@ -186,7 +190,7 @@ public:
   }
 
   /// Greater-than-or-equal comparison
-  bool operator>=(const time& t2) throw()
+  bool operator>=(const time& t2) const throw()
   {
     return (m_timeval.tv_sec >= t2.m_timeval.tv_sec)
       ||
