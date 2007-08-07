@@ -52,11 +52,16 @@ namespace rutz
     typedef void (kill_func_t) (void*);
 
     /// Default constructor.
-    /** descr is a human-readable description of what this array's
+    /** @param descr a human-readable description of what this array's
         keys represent; this is used in error messages, e.g. if descr
         is "frobnicator", then error messages would include "unknown
-        frobnicator" */
-    assoc_array_base(kill_func_t* f, const char* descr = "key");
+        frobnicator"
+
+        @param nocase true if the array should use case-insensitive
+        string comparisons (default is false, giving normal
+        case-sensitive string comparisons)
+    */
+    assoc_array_base(kill_func_t* f, const char* descr, bool nocase);
 
     /// Virtual destructor.
     ~assoc_array_base();
@@ -100,11 +105,17 @@ namespace rutz
   {
   public:
     /// Default constructor
-    /** descr is a human-readable description of what this array's
+    /** @param descr a human-readable description of what this array's
         keys represent; this is used in error messages, e.g. if descr
         is "frobnicator", then error messages would include "unknown
-        frobnicator" */
-    assoc_array(const char* descr) : base(&delete_ptr, descr) {}
+        frobnicator"
+
+        @param nocase true if the array should use case-insensitive
+        string comparisons (default is false, giving normal
+        case-sensitive string comparisons)
+    */
+    assoc_array(const char* descr, bool nocase = false)
+      : base(&delete_ptr, descr, nocase) {}
 
     /// Get a string listing of known keys, separated by the string sep.
     rutz::fstring get_known_keys(const char* sep) const

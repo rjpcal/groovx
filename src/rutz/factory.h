@@ -198,8 +198,17 @@ namespace rutz
 
   public:
     /// Default constructor.
-    factory(const char* keydescr = "object type") :
-      m_base(), m_map(keydescr), m_mutex()
+    /** @param key_descr a human-readable description of what this
+        factory's keys represent; this is used in error messages,
+        e.g. if descr is "frobnicator", then error messages would
+        include "unknown frobnicator"
+
+        @param nocase true if the factory should use case-insensitive
+        string comparisons (default is false, giving normal
+        case-sensitive string comparisons)
+    */
+    factory(const char* keydescr = "object type", bool nocase = false)
+      : m_base(), m_map(keydescr, nocase), m_mutex()
     {
       pthread_mutex_init(&m_mutex, (pthread_mutexattr_t*) 0);
     }

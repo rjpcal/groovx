@@ -39,6 +39,7 @@
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
 
+#include <algorithm> // for lexicographical_compare()
 #include <map>
 #include <sstream>
 
@@ -46,14 +47,41 @@
 
 struct rutz::assoc_array_base::impl
 {
-  impl(kill_func_t* f, const char* descr)
+  impl(kill_func_t* f, const char* descr, bool nocase)
     :
-    values(),
+    values(fstring_cmp(nocase)),
     kill_func(f),
     key_description(descr)
   {}
 
-  typedef std::map<rutz::fstring, void*> map_t;
+  static bool nocase_char_cmp(char c1, char c2)
+  {
+    return toupper(c1) < toupper(c2);
+  }
+
+  struct fstring_cmp
+  {
+    fstring_cmp(bool nocase_) : nocase(nocase_) {}
+
+    const bool nocase;
+
+    bool operator()(const rutz::fstring& s1,
+                    const rutz::fstring& s2) const
+    {
+      if (nocase)
+        {
+          return std::lexicographical_compare
+            (s1.c_str(), s1.c_str() + s1.length(),
+             s2.c_str(), s2.c_str() + s2.length(),
+             nocase_char_cmp);
+        }
+
+      // else...
+      return (s1 < s2);
+    }
+  };
+
+  typedef std::map<rutz::fstring, void*, fstring_cmp> map_t;
 
   map_t         values;
   kill_func_t*  kill_func;
@@ -61,8 +89,9 @@ struct rutz::assoc_array_base::impl
 };
 
 rutz::assoc_array_base::assoc_array_base(kill_func_t* f,
-                                         const char* descr) :
-  rep(new impl(f, descr))
+                                         const char* descr,
+                                         bool nocase) :
+  rep(new impl(f, descr, nocase))
 {
 GVX_TRACE("rutz::assoc_array_base::assoc_array_base");
 }
