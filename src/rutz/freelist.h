@@ -73,6 +73,9 @@ public:
   /// Return an object to the free list.
   void deallocate(void* space);
 
+  /// Release all nodes currently on the free list (e.g. to conserve memory).
+  void release_free_nodes();
+
   /// Query the chunk size that this freelist is for.
   std::size_t alloc_size() const { return m_size_check; }
 
@@ -101,6 +104,9 @@ public:
   {
     m_base.deallocate(space);
   }
+
+  /// Release all nodes currently on the free list (e.g. to conserve memory).
+  void release_free_nodes() { m_base.release_free_nodes(); }
 };
 
 static const char __attribute__((used)) vcid_groovx_rutz_freelist_h_utc20050626084020[] = "$Id$ $HeadURL$";
