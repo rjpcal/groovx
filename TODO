@@ -170,9 +170,6 @@
 
 * (1-Jun-2004) Serialization goodies
 
-** Need to allow fields to be versioned
-   Need readFieldsFrom() and writeFieldsTo() to respect the versioning.
-
 ** Allow default values to be skipped in XML format.
 
    We don't want to rely on the default values themselves to be stored
