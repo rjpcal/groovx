@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-ldep-html.sh 5033 2005-07-05 20:21:18Z rjpeters $
+# $Id: make-ldep-html.sh 10170 2008-02-25 22:07:15Z rjpeters $
 
 # Quick script to build a set of html pages showing the link
 # dependencies, with clickable directed graphs made by 'dot'. You
@@ -17,11 +17,9 @@ function generate_html () {
     local mapname=$2
     local outdir=$3
 
-    ### (1) generate a gif file containing the graph (we don't use png
-    ### here because unfortunately dot's png renderer apparently has
-    ### some bugs, such as not rendered dashed lines properly)
+    ### (1) generate a png file containing the graph
 
-    dot -Tgif $dotfilename > $outdir/$mapname.gif
+    dot -Tpng $dotfilename > $outdir/$mapname.png
 
 
     ### (2) generate a client-side image map file that contains the
@@ -65,7 +63,7 @@ function generate_html () {
     echo "</head>" 			   >> $outdir/$mapname.html
     echo "<body>"  			   >> $outdir/$mapname.html
     echo "<img border=\"0\" "              >> $outdir/$mapname.html
-    echo "     src=\"$mapname.gif\""       >> $outdir/$mapname.html
+    echo "     src=\"$mapname.png\""       >> $outdir/$mapname.html
     echo "     usemap=#$usemap>"           >> $outdir/$mapname.html
     cat $outdir/$mapname.map               >> $outdir/$mapname.html
     echo "</body>"                         >> $outdir/$mapname.html
