@@ -41,6 +41,7 @@ GVX_DBG_REGISTER
 #include "rutz/mutex.h"
 
 #include <cstdlib>
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 
