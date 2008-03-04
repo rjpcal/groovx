@@ -35,7 +35,7 @@
 
 #include "rutz/mutex.h"
 
-#include "rutz/error.h"
+#include "rutz/abort.h"
 
 rutz::mutex_lock_class::mutex_lock_class(pthread_mutex_t* mut)
   : m_mutex(mut)
@@ -43,7 +43,7 @@ rutz::mutex_lock_class::mutex_lock_class(pthread_mutex_t* mut)
   if (m_mutex)
     {
       if (pthread_mutex_lock(m_mutex) != 0)
-        throw rutz::error("pthread_mutex_lock failed", SRC_POS);
+        GVX_ABORT("pthread_mutex_lock failed");
     }
 }
 
