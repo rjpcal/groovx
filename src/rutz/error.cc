@@ -40,8 +40,8 @@
 #include "rutz/error_context.h"
 #include "rutz/fstring.h"
 #include "rutz/mutex.h"
-#include "rutz/sfmt.h"
 
+#include <cmath>
 #include <cstdlib>
 #include <new>
 #include <pthread.h>
@@ -133,8 +133,32 @@ GVX_TRACE("rutz::error::~error");
 
 const char* rutz::error::what() const throw()
 {
-  m_what = rutz::sfmt("at %s:%d:\n%s", m_file_pos.m_file_name,
-                      m_file_pos.m_line_no, m_msg.c_str());
+  if (m_what.length() == 0)
+    {
+      // we don't use rutz::sfmt() here to generate the fstring,
+      // because then we'd have a cyclic dependency between
+      // rutz/sfmt.cc and rutz/error.cc
+
+      const size_t len =
+        strlen(m_file_pos.m_file_name)
+        + 2 + size_t(ceil(log10(m_file_pos.m_line_no)))
+        + m_msg.length()
+        + 1;
+
+      char buf[len];
+
+      if (snprintf(&buf[0], len, "at %s:%d:\n%s",
+                   m_file_pos.m_file_name,
+                   m_file_pos.m_line_no, m_msg.c_str()) < 0)
+        {
+          m_what = m_msg;
+        }
+      else
+        {
+          m_what = rutz::fstring(&buf[0]);
+        }
+    }
+
   return m_what.c_str();
 }
 
