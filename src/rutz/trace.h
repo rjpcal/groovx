@@ -112,10 +112,13 @@ private:
 #  define GVX_TRACE_EXPR false
 #endif
 
+#define GVX_TRACE_CONCAT2(x,y) x##y
+#define GVX_TRACE_CONCAT(x,y) GVX_TRACE_CONCAT2(x,y)
+
 #ifndef GVX_NO_PROF
 #  define GVX_TRACE(x) \
-         static rutz::prof  P_x_  (x,   __FILE__, __LINE__); \
-         rutz::trace        T_x_  (P_x_, GVX_TRACE_EXPR)
+         static rutz::prof  GVX_TRACE_CONCAT(P_x_, __LINE__)  (x,   __FILE__, __LINE__); \
+         rutz::trace        GVX_TRACE_CONCAT(T_x_, __LINE__)  (GVX_TRACE_CONCAT(P_x_, __LINE__), GVX_TRACE_EXPR)
 #else
 #  define GVX_TRACE(x) do {} while(0)
 #endif
