@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Nov 21 15:22:25 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -357,5 +355,4 @@ GVX_TRACE("GxPsyphyCamera::draw");
   orthoFixed(canvas, width(), height(), pixels_per_unit);
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxcamera_cc_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXCAMERA_CC_UTC20050626084024_DEFINED

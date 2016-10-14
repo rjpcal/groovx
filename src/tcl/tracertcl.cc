@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Feb 17 13:34:40 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -50,5 +48,4 @@ void tcl::def_tracing(tcl::pkg* pkg, rutz::tracer& t)
   pkg->def( "traceStatus", "", bind_first(mem_func(&tracer::status), &t), SRC_POS );
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_tracertcl_cc_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_TRACERTCL_CC_UTC20050626084018_DEFINED

@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Nov 21 15:18:58 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -235,5 +233,4 @@ private:
   double itsViewingDistance;    // inches
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxcamera_h_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXCAMERA_H_UTC20050626084024_DEFINED

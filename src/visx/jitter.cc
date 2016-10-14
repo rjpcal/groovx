@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Apr  7 13:46:41 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -144,5 +142,4 @@ GVX_TRACE("Jitter::draw");
   canvas.rotate(rotationAxis, itsRotationAngle+itsRShift);
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_jitter_cc_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_JITTER_CC_UTC20050626084016_DEFINED

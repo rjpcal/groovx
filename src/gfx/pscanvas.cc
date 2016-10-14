@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Aug 27 17:20:09 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -1153,5 +1151,4 @@ GVX_TRACE("Gfx::PSCanvas::flushOutput");
   rep->itsFstream << std::flush;
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_pscanvas_cc_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_PSCANVAS_CC_UTC20050626084023_DEFINED

@@ -3,7 +3,6 @@
 # grshtest.tcl
 # Rob Peters Apr-99
 #
-# $Id$
 #
 # This test script which is to be run on grsh. The spirit of this test file is 
 # to test every nook and cranny of the C++ code that has been used to create

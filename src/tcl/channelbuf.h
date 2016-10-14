@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Jun 30 17:01:08 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -97,5 +95,4 @@ namespace tcl
             std::ios::openmode flags = std::ios::openmode(0));
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_channelbuf_h_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_CHANNELBUF_H_UTC20050628162420_DEFINED

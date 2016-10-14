@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Dec  5 16:43:54 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -356,5 +354,4 @@ GVX_TRACE("ElementContainer::isComplete");
   return (rep->sequencePos >= rep->elements.size());
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_elementcontainer_cc_utc20050626084017[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_ELEMENTCONTAINER_CC_UTC20050626084017_DEFINED

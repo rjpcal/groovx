@@ -2,7 +2,6 @@ function make_snd_files()
 
 % Generate a series of audio files of different pitches and different timbres.
 
-% $Id$
 
   samp_freq = 44100;
 

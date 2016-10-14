@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jul  5 16:06:59 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -91,5 +89,4 @@ private:
   GxMaterial& operator=(const GxMaterial&);
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxmaterial_h_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXMATERIAL_H_UTC20050626084025_DEFINED

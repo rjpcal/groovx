@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Dec  1 08:00:00 1998
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -131,5 +129,4 @@ private:
   Face& operator=(const Face&);
 };
 
-static const char __attribute__((used)) vcid_groovx_visx_face_h_utc20050626084017[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_FACE_H_UTC20050626084017_DEFINED

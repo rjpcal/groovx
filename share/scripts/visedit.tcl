@@ -19,7 +19,6 @@
 # \
     export GROOVX_BINDIR=`dirname $0`; exec ${GROOVX_BINDIR}/groovx "$0" "$@"
 
-# $Id$
 
 # Copyright (c) 2004-2005 Rob Peters <rjpeters at klab dot caltech dot edu>
 

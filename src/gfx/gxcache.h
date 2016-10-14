@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov 13 14:03:23 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -103,5 +101,4 @@ private:
   mutable nub::soft_ref<GLCanvas> itsCanvas;
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxcache_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXCACHE_H_UTC20050626084023_DEFINED

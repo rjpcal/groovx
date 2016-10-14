@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jan  4 08:00:00 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -123,5 +121,4 @@ private:
 #  define GVX_TRACE(x) do {} while(0)
 #endif
 
-static const char __attribute__((used)) vcid_groovx_rutz_trace_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_TRACE_H_UTC20050626084019_DEFINED

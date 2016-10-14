@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct  5 13:51:43 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -345,5 +343,4 @@ int Hook_Init(Tcl_Interp* interp)
   GVX_PKG_RETURN(pkg);
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_tclpkg_hook_cc_utc20050628171008[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TCLPKG_HOOK_CC_UTC20050628171008_DEFINED

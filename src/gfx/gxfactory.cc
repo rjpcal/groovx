@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Jul  6 15:49:13 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -94,5 +92,4 @@ rutz::shared_ptr<GxFont> GxFactory::makeFont(const char* name_cstr)
   return font;
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxfactory_cc_utc20050706224913[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXFACTORY_CC_UTC20050706224913DEFINED

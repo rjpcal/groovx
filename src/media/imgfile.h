@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Apr 25 09:06:46 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -45,5 +43,4 @@ namespace media
   void save_image(const char* filename, const media::bmap_data& data);
 }
 
-static const char __attribute__((used)) vcid_groovx_media_imgfile_h_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_IMGFILE_H_UTC20050626084018_DEFINED

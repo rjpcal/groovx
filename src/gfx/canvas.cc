@@ -9,8 +9,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Nov 15 18:00:38 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -263,5 +261,4 @@ void Gfx::Canvas::finishDrawing()
 GVX_TRACE("Gfx::Canvas::finishDrawing");
 }
 
-const char __attribute__((used)) vcid_canvas_cc[] = "$Id$ $URL$";
 #endif // !GROOVX_GFX_CANVAS_CC_UTC20050626084025_DEFINED

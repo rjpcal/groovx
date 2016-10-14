@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jun 15 16:59:35 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -170,5 +168,4 @@ private:
   TkWidgImpl* const rep;
 };
 
-static const char __attribute__((used)) vcid_groovx_tk_widget_h_utc20050628165845[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TK_WIDGET_H_UTC20050628165845_DEFINED

@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sun Aug  4 16:28:37 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -64,5 +62,4 @@ struct GlxOpts
   bool transparent;      ///< whether to request transparency
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_glxopts_h_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GLXOPTS_H_UTC20050626084024_DEFINED

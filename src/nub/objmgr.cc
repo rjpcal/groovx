@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Apr 23 01:13:16 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -53,5 +51,4 @@ GVX_TRACE("nub::obj_mgr::new_obj(const fstring&)");
   return soft_ref<object>(obj_factory::instance().new_checked_object(type));
 }
 
-static const char __attribute__((used)) vcid_groovx_nub_objmgr_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_OBJMGR_CC_UTC20050626084019_DEFINED

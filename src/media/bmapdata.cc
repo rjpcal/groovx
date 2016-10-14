@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Jan 20 00:37:03 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -476,5 +474,4 @@ GVX_TRACE("media::bmap_data::make_scrambled");
   return result;
 }
 
-static const char __attribute__((used)) vcid_groovx_media_bmapdata_cc_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_BMAPDATA_CC_UTC20050626084018_DEFINED

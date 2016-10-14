@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Feb 17 13:32:11 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -46,5 +44,4 @@ namespace tcl
   void def_tracing(tcl::pkg* pkg, rutz::tracer& tracer);
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_tracertcl_h_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_TRACERTCL_H_UTC20050626084018_DEFINED

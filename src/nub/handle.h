@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov 16 08:50:12 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -104,5 +102,4 @@ private:
 
 };
 
-static const char __attribute__((used)) vcid_groovx_nub_handle_h_utc20051116165012[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_HANDLE_H_UTC20051116165012DEFINED

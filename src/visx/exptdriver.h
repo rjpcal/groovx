@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue May 11 13:33:50 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -165,5 +163,4 @@ private:
   Impl* const rep;
 };
 
-static const char __attribute__((used)) vcid_groovx_visx_exptdriver_h_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_EXPTDRIVER_H_UTC20050626084016_DEFINED

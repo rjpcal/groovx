@@ -5,7 +5,6 @@
 # Copyright (c) 2002-2005
 # Rob Peters <rjpeters at klab dot caltech dot edu>
 
-# $Id$
 
 # rseq == random sequence
 namespace eval rseq {

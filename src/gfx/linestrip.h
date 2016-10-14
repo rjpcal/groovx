@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Jun  3 17:01:33 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -87,5 +85,4 @@ namespace Gfx
 
 } // end namespace Gfx
 
-static const char __attribute__((used)) vcid_groovx_gfx_linestrip_h_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_LINESTRIP_H_UTC20050626084024_DEFINED

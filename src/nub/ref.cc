@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov 16 09:06:27 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -91,5 +89,4 @@ void nub::detail::insert_item(nub::object* obj, ref_vis vis)
     }
 }
 
-static const char __attribute__((used)) vcid_groovx_nub_ref_cc_utc20051116170627[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_REF_CC_UTC20051116170627DEFINED

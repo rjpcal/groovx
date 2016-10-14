@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Jun 15 16:41:06 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -53,5 +51,4 @@ namespace media
   void save_pnm(std::ostream& os, const media::bmap_data& data);
 };
 
-static const char __attribute__((used)) vcid_groovx_media_pnmparser_h_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_PNMPARSER_H_UTC20050626084018_DEFINED

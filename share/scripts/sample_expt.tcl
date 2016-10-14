@@ -8,7 +8,6 @@
 # to press either 1 or 2 indicating which of two regions they thought
 # contained the most interesting point in the image.
 
-# $Id$
 
 
 ######################################################################

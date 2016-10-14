@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov 13 14:03:42 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -148,5 +146,4 @@ GVX_TRACE("GxCache::setMode");
   itsMode = new_mode;
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxcache_cc_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXCACHE_CC_UTC20050626084023_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Jun  5 10:26:14 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -82,5 +80,4 @@ GVX_TRACE("nub::object::unique_name");
   return rutz::sfmt("%s(%lu)", obj_typename().c_str(), id());
 }
 
-static const char __attribute__((used)) vcid_groovx_nub_object_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_OBJECT_CC_UTC20050626084019_DEFINED

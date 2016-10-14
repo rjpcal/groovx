@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Jun 25 16:59:06 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -38,5 +36,4 @@ struct Tcl_Interp;
 
 extern "C" int Matlabengine_Init(Tcl_Interp* interp);
 
-static const char __attribute__((used)) vcid_groovx_pkgs_matlabengine_tclpkg_matlabengine_h_utc20050628170029[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MATLABENGINE_TCLPKG_MATLABENGINE_H_UTC20050628170029_DEFINED

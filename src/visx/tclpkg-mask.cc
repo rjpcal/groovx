@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Sep 23 18:19:05 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -55,5 +53,4 @@ GVX_TRACE("Maskhatch_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_tclpkg_mask_cc_utc20050628171008[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TCLPKG_MASK_CC_UTC20050628171008_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Dec  4 03:04:32 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -558,5 +556,4 @@ tcl::list TlistUtils::loadObjidFile(const char* objid_file,
   return result;
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_tlistutils_cc_utc20050626084015[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TLISTUTILS_CC_UTC20050626084015_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Jun 25 16:59:55 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -39,5 +37,4 @@ struct Tcl_Interp;
 extern "C" int Objectdb_Init(Tcl_Interp* interp);
 extern "C" int Obj_Init(Tcl_Interp* interp);
 
-static const char __attribute__((used)) vcid_groovx_tcl_tclpkg_obj_h_utc20050628161246[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_TCLPKG_OBJ_H_UTC20050628161246_DEFINED

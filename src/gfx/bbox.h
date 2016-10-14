@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Nov 19 12:37:16 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -93,5 +91,4 @@ private:
   Impl* const rep;
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_bbox_h_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_BBOX_H_UTC20050626084025_DEFINED

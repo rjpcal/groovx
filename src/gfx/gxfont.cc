@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Nov 12 18:35:02 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -38,5 +36,4 @@
 
 GxFont::~GxFont() throw() {}
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxfont_cc_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXFONT_CC_UTC20050626084025_DEFINED

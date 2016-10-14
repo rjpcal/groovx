@@ -2,7 +2,6 @@
 
 # A tcl script for generating link-time dependency information.
 
-# $Id$
 
 source [file dirname [info script]]/deps.tcl
 

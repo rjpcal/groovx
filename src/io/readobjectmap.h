@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Jun 25 13:13:18 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -155,5 +153,4 @@ void io::object_map::clear()
   m_objects.clear();
 }
 
-static const char __attribute__((used)) vcid_groovx_io_readobjectmap_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_READOBJECTMAP_H_UTC20050626084021_DEFINED

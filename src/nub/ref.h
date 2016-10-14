@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct 26 17:50:59 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -456,5 +454,4 @@ inline nub::ref<T>::ref(const soft_ref<U>& other) :
   m_handle(other.get())
 {}
 
-static const char __attribute__((used)) vcid_groovx_nub_ref_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_REF_H_UTC20050626084019_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Oct 13 10:41:19 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -120,5 +118,4 @@ GVX_TRACE("rutz::demangled_name");
   return (*result.first).second.c_str();
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_demangle_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_DEMANGLE_CC_UTC20050626084020_DEFINED

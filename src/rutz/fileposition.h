@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Oct  5 19:58:48 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -52,5 +50,4 @@ namespace rutz
 /// This macro can be used to capture the current source filename and line-number.
 #define SRC_POS rutz::file_pos(__FILE__, __LINE__)
 
-static const char __attribute__((used)) vcid_groovx_rutz_fileposition_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_FILEPOSITION_H_UTC20050626084020_DEFINED

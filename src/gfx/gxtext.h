@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Jul  1 11:54:47 1999 (as gtext.h)
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -99,5 +97,4 @@ private:
   int itsStrokeWidth;
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxtext_h_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXTEXT_H_UTC20050626084024_DEFINED

@@ -1,7 +1,5 @@
 ####################### -*- makefile -*- #############################
 #
-# $Id$
-# $HeadURL$
 #
 # This is a makefile fragment that goes along with the devscripts
 # directory, and includes several common make rules that can be used

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jun 27 13:23:46 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -128,5 +126,4 @@ private:
     }                                                           \
   return -1;
 
-static const char __attribute__((used)) vcid_groovx_tcl_scriptapp_h_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_SCRIPTAPP_H_UTC20050628162420_DEFINED

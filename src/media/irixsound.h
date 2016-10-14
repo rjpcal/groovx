@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct 14 11:23:12 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -207,5 +205,4 @@ GVX_TRACE("media::irix_audio_sound_rep::play");
     }
 }
 
-static const char __attribute__((used)) vcid_groovx_media_irixsound_h_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_IRIXSOUND_H_UTC20050626084018_DEFINED

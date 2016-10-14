@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Feb 25 13:27:36 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -134,5 +132,4 @@ public:
   void close() { m_buf.close(); }
 };
 
-static const char __attribute__((used)) vcid_groovx_rutz_stdiobuf_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_STDIOBUF_H_UTC20050626084019_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Nov 26 18:44:29 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -136,5 +134,4 @@ GVX_TRACE("GxDisk::draw");
                     itsNumSlices, itsNumLoops);
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxdisk_cc_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXDISK_CC_UTC20050626084024_DEFINED

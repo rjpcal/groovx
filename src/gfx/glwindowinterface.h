@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jul 19 18:42:10 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -68,5 +66,4 @@ public:
   virtual void swapBuffers() const = 0;
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_glwindowinterface_h_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GLWINDOWINTERFACE_H_UTC20050626084024_DEFINED

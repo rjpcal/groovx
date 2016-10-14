@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat May 24 13:02:28 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -49,5 +47,4 @@ void rutz::throw_bad_cast(const std::type_info& to,
                                rutz::demangled_name(from)), pos);
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_stderror_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_STDERROR_CC_UTC20050626084019_DEFINED

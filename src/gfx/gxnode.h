@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov  1 18:26:45 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -111,5 +109,4 @@ public:
   void undraw(Gfx::Canvas& canvas) const;
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxnode_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXNODE_H_UTC20050626084023_DEFINED

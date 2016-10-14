@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jun  7 12:49:49 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -175,5 +173,4 @@ protected:
                                 unsigned int length);
 };
 
-static const char __attribute__((used)) vcid_groovx_io_writer_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_WRITER_H_UTC20050626084021_DEFINED

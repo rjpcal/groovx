@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Sep  8 15:38:42 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -531,5 +529,4 @@ GVX_TRACE("MorphyFace::grGetBoundingBox");
   bbox.drawRect(geom::rect<double>::ltrb(l,t,r,b));
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_morphyface_cc_utc20050626084017[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_MORPHYFACE_CC_UTC20050626084017_DEFINED

@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct 14 10:03:46 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -143,5 +141,4 @@ GVX_TRACE("tcl::timer_scheduler::schedule");
     (new tcl::timer_scheduler_token(msec, callback, clientdata));
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_timerscheduler_cc_utc20050628162421[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_TIMERSCHEDULER_CC_UTC20050628162421_DEFINED

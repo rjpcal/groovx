@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Jul  3 15:03:23 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -199,5 +197,4 @@ namespace geom
 
 } // end namespace geom
 
-static const char __attribute__((used)) vcid_groovx_geom_box_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GEOM_BOX_H_UTC20050626084023_DEFINED

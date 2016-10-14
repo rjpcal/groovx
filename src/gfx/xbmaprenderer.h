@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Dec  1 17:19:23 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -156,5 +154,4 @@ GVX_TRACE("XBmapRenderer::doRender");
   XFree(image);
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_xbmaprenderer_h_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_XBMAPRENDERER_H_UTC20050626084024_DEFINED

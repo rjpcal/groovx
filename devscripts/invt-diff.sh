@@ -1,6 +1,5 @@
 #!/bin/sh
 
-# $Id$
 
 # Quick script for checking that src files are in sync between groovx
 # and invt.

@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Oct 20 11:54:23 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -60,5 +58,4 @@ GVX_TRACE("sound_rep::check_filename");
     }
 }
 
-static const char __attribute__((used)) vcid_groovx_media_soundrep_cc_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_SOUNDREP_CC_UTC20050626084018_DEFINED

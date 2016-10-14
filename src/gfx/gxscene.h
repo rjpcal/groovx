@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Nov 23 17:42:38 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -141,5 +139,4 @@ private:
   nub::ref<nub::slot0> slotNodeChanged;
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxscene_h_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXSCENE_H_UTC20050626084024_DEFINED

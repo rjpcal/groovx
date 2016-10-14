@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jun 21 13:09:57 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -366,5 +364,4 @@ GVX_TRACE("TimingHdlr::thHaltExpt");
   Impl::cancelAll(rep->abortEvents);
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_timinghdlr_cc_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TIMINGHDLR_CC_UTC20050626084016_DEFINED

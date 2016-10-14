@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jun 24 17:14:36 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -294,5 +292,4 @@ GVX_TRACE("Fstringtest_Unload");
 
 extern "C" int Fstringtest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }
 
-static const char __attribute__((used)) vcid_groovx_pkgs_whitebox_fstringtest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_WHITEBOX_FSTRINGTEST_CC_UTC20050626084022_DEFINED

@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jun 11 21:43:43 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -68,5 +66,4 @@ namespace io
   void save_gvx(nub::ref<io::serializable> obj, rutz::fstring filename);
 }
 
-static const char __attribute__((used)) vcid_groovx_io_ioutil_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_IOUTIL_H_UTC20050626084021_DEFINED

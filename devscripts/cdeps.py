@@ -1,4 +1,3 @@
-# $Id$
 
 import os, re, sys, operator, math
 

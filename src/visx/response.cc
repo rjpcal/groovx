@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Mar 13 18:33:17 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -72,5 +70,4 @@ GVX_TRACE("Response::scan_from");
   is >> itsVal >> itsMsec;
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_response_cc_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_RESPONSE_CC_UTC20050626084016_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Apr 23 01:12:37 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -63,5 +61,4 @@ namespace nub
   }
 }
 
-static const char __attribute__((used)) vcid_groovx_nub_objmgr_h_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_OBJMGR_H_UTC20050626084018_DEFINED

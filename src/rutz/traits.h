@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri May 18 16:13:27 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -219,5 +217,4 @@ namespace rutz
 
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_traits_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_TRAITS_H_UTC20050626084021_DEFINED

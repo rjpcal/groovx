@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Sep 13 15:14:19 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -56,5 +54,4 @@ GVX_TRACE("House_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_tclpkg_house_cc_utc20050628171008[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TCLPKG_HOUSE_CC_UTC20050628171008_DEFINED

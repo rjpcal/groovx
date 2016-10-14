@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Sep  4 14:12:19 2007
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -88,5 +86,4 @@ public:
 #define GVX_SPIN_LOCK_IF(doit, x) \
   ::rutz::spin_lock_locker GVX_SPIN_CONCAT(anonymous_lock,__LINE__) ((doit) ? (x) : 0)
 
-static const char vcid_groovx_rutz_spin_lock_h_utc20070904211219[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_SPIN_LOCK_H_UTC20070904211219DEFINED

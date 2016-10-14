@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Jul  5 11:02:46 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -111,5 +109,4 @@ fstring rutz::sfmt(const char* fmt, ...)
   return result;
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_sfmt_cc_utc20050705180246[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_SFMT_CC_UTC20050705180246DEFINED

@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Jun 14 15:02:40 2006
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -416,5 +414,4 @@ shared_ptr<std::istream> rutz::ibzip2open(const char* filename,
   return ibzip2open(fstring(filename), flags);
 }
 
-static const char vcid_groovx_rutz_bzip2stream_cc_utc20060614220240[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_BZIP2STREAM_CC_UTC20060614220240DEFINED

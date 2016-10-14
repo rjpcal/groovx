@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jun 25 14:09:24 1999
-// commit: $Id$
-// $HeadURL$
 //
 // The random number generator classes here are taken from _The C++
 // Programming Language_, 3rd ed., by Bjarne Stroustrup.
@@ -151,5 +149,4 @@ public:
   double operator()() { return draw(); }
 };
 
-static const char __attribute__((used)) vcid_groovx_rutz_rand_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_RAND_H_UTC20050626084020_DEFINED

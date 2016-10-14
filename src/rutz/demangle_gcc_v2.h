@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Jun 19 16:58:19 2001 (as gcc_v2_demangle.h)
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -266,5 +264,4 @@ namespace
   }
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_demangle_gcc_v2_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_DEMANGLE_GCC_V2_H_UTC20050626084020_DEFINED

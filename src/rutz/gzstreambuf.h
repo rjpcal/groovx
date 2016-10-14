@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Jun 20 09:12:51 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -106,5 +104,4 @@ namespace rutz
                                    std::ios::openmode(0));
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_gzstreambuf_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_GZSTREAMBUF_H_UTC20050626084020_DEFINED

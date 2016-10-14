@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jan 16 18:18:40 2006
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -54,5 +52,4 @@ double rutz::compat_m_ln2()  { return m_ln2_value; }
 
 #endif
 
-static const char __attribute__((used)) vcid_groovx_rutz_compat_cmath_cc_utc20060117021840[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_COMPAT_CMATH_CC_UTC20060117021840DEFINED

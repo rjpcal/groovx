@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov 13 16:44:36 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -55,5 +53,4 @@ public:
   virtual int rasterHeight() const = 0;
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxrasterfont_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXRASTERFONT_H_UTC20050626084023_DEFINED

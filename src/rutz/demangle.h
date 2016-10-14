@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Oct 13 10:41:03 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -43,5 +41,4 @@ namespace rutz
   const char* demangled_name(const std::type_info& info);
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_demangle_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_DEMANGLE_H_UTC20050626084020_DEFINED

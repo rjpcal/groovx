@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jun 21 18:09:12 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -61,5 +59,4 @@ KbdResponseHdlr::KbdResponseHdlr() :
 
 KbdResponseHdlr::~KbdResponseHdlr() throw() {}
 
-static const char __attribute__((used)) vcid_groovx_visx_kbdresponsehdlr_cc_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_KBDRESPONSEHDLR_CC_UTC20050626084016_DEFINED

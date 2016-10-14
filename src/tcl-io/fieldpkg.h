@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sun Nov 12 17:45:52 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -64,5 +62,4 @@ namespace tcl
   }
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_io_fieldpkg_h_utc20050712162004[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_IO_FIELDPKG_H_UTC20050712162004_DEFINED

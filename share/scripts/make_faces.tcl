@@ -6,7 +6,6 @@
 # portable bitmap (PBM) file.
 
 # Rob Peters <rjpeters at klab dot caltech dot edu>
-# $Id$
 
 Togl::width 128
 Togl::height 128

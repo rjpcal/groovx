@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed May 19 21:39:51 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -150,5 +148,4 @@ void TimingHandler::setTimeout(int msec)
   getEvent(FROM_START, timeout_start_id)->setDelay(msec);
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_timinghandler_cc_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TIMINGHANDLER_CC_UTC20050626084016_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Oct 25 12:49:03 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -129,5 +127,4 @@ namespace geom
   };
 }
 
-static const char __attribute__((used)) vcid_groovx_geom_span_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GEOM_SPAN_H_UTC20050626084023_DEFINED

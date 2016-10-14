@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Jun 25 16:59:54 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -38,5 +36,4 @@ struct Tcl_Interp;
 
 extern "C" int Misc_Init(Tcl_Interp* interp);
 
-static const char __attribute__((used)) vcid_groovx_tcl_tclpkg_misc_h_utc20050628161246[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_TCLPKG_MISC_H_UTC20050628161246_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Nov 11 15:16:06 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -182,5 +180,4 @@ GVX_TRACE("media::load_jpeg");
 
 #endif // HAVE_LIBJPEG
 
-static const char __attribute__((used)) vcid_groovx_media_jpegparser_cc_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_JPEGPARSER_CC_UTC20050626084018_DEFINED

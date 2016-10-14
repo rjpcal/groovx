@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Oct  8 13:44:09 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -260,5 +258,4 @@ void rutz::base64_decode(const rutz::byte_array& src,
                 dst);
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_base64_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_BASE64_CC_UTC20050626084020_DEFINED

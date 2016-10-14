@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sun Oct 22 14:40:28 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -261,5 +259,4 @@ int nub::ref_counted::dbg_weak_ref_count() const throw()
   return m_ref_counts->m_weak.atomic_get();
 }
 
-static const char __attribute__((used)) vcid_groovx_nub_refcounted_cc_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_REFCOUNTED_CC_UTC20050626084018_DEFINED

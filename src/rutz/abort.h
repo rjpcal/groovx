@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Jun 30 15:26:45 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -48,5 +46,4 @@ namespace rutz { namespace debug {
 #define GVX_ABORT(message) \
   rutz::debug::abort_aux(message, __FILE__, __LINE__)
 
-static const char __attribute__((used)) vcid_groovx_rutz_abort_h_utc20050630222645[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_ABORT_H_UTC20050630222645DEFINED

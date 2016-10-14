@@ -4,7 +4,6 @@
 # inclusion into a Makefile, by scanning for source files ('.cc'
 # files) within a source tree passed as a command-line argument.
 
-# $Id$
 
 import cppdeps, os, sys
 

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Nov  9 15:32:48 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -479,5 +477,4 @@ void EventResponseHdlr::rhDenyResponses() const
   GVX_POSTCONDITION( rep->isInactive() );
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_eventresponsehdlr_cc_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_EVENTRESPONSEHDLR_CC_UTC20050626084016_DEFINED

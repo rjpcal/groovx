@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Mar 13 12:38:37 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -83,5 +81,4 @@ GVX_TRACE("Tlist_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_tclpkg_tlist_cc_utc20050628171009[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TCLPKG_TLIST_CC_UTC20050628171009_DEFINED

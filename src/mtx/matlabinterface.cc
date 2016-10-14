@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Dec 21 11:10:52 2004
-// commit: $Id$
-// $HeadURL$
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -80,5 +78,4 @@ GVX_TRACE("make_mxarray");
 
 #endif // HAVE_MATLAB
 
-static const char __attribute__((used)) vcid_groovx_pkgs_mtx_matlabinterface_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MTX_MATLABINTERFACE_CC_UTC20050626084022_DEFINED

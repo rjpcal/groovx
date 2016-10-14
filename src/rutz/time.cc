@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Nov  7 16:58:26 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -60,5 +58,4 @@ rutz::time rutz::time::sys_rusage() throw()
   return rutz::time(ru.ru_stime);
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_time_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_TIME_CC_UTC20050626084019_DEFINED

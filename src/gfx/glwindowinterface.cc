@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jul 19 18:42:28 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -43,5 +41,4 @@ GlWindowInterface::~GlWindowInterface()
 GVX_TRACE("GlWindowInterface::~GlWindowInterface");
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_glwindowinterface_cc_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GLWINDOWINTERFACE_CC_UTC20050626084023_DEFINED

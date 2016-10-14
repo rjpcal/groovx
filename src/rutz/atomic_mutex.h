@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct  5 10:55:50 2006
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -161,5 +159,4 @@ public:
 /* indent-tabs-mode: nil */
 /* End: */
 
-static const char __attribute__((used)) vcid_groovx_rutz_atomic_mutex_h_utc20070412044614[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_ATOMIC_MUTEX_H_UTC20070412044614DEFINED

@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jan 16 17:43:41 2006
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -44,5 +42,4 @@ extern "C"
 #include <cstdio>
 #endif
 
-static const char __attribute__((used)) vcid_groovx_rutz_compat_snprintf_h_utc20060117014341[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_COMPAT_SNPRINTF_H_UTC20060117014341DEFINED

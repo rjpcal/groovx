@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov 16 08:50:18 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -151,5 +149,4 @@ private:
   mutable nub::ref_counts* m_counts;
 };
 
-static const char __attribute__((used)) vcid_groovx_nub_weak_handle_h_utc20051116165018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_WEAK_HANDLE_H_UTC20051116165018DEFINED

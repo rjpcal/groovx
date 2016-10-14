@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Nov 16 14:25:40 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -52,5 +50,4 @@ fstring io::read_utils::make_seq_length_name(const fstring& seq_name)
   return rutz::sfmt("%sCount", seq_name.c_str());
 }
 
-static const char __attribute__((used)) vcid_groovx_io_readutils_cc_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_READUTILS_CC_UTC20050626084021_DEFINED

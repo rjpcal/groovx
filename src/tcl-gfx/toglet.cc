@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jan  4 08:00:00 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -416,5 +414,4 @@ void Toglet::animate(unsigned int framesPerSecond)
   rep->scene->animate(framesPerSecond);
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_toglet_cc_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_TOGLET_CC_UTC20050626084024_DEFINED

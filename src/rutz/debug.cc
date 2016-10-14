@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Oct  9 18:48:38 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -230,5 +228,4 @@ void rutz::debug::set_global_level(int lev)
     g_key_levels[i] = (unsigned char) lev;
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_debug_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_DEBUG_CC_UTC20050626084020_DEFINED

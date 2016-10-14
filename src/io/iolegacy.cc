@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Sep 27 08:40:04 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -646,5 +644,4 @@ GVX_TRACE("io::legacy_writer::write_root");
                                                nub::PRIVATE));
 }
 
-static const char __attribute__((used)) vcid_groovx_io_iolegacy_cc_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_IOLEGACY_CC_UTC20050626084021_DEFINED

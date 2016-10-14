@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon May 12 11:15:58 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -671,5 +669,4 @@ GVX_TRACE("GaborArray::backgJitter");
     }
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_gaborarray_cc_utc20050626084015[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_GABORARRAY_CC_UTC20050626084015_DEFINED

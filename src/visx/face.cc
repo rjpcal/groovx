@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Dec  1 08:00:00 1998
-// commit: $Id$
-// $HeadURL$
 //
 // This file is part of GroovX.
 //   [http://ilab.usc.edu/rjpeters/groovx/]
@@ -358,5 +356,4 @@ GVX_TRACE("Face::getVertOffset");
   return 0.0;
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_face_cc_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_FACE_CC_UTC20050626084016_DEFINED

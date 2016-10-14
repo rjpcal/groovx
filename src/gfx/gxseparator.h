@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Nov  2 11:20:15 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -116,5 +114,4 @@ private:
   Impl* const rep;
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxseparator_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXSEPARATOR_H_UTC20050626084023_DEFINED

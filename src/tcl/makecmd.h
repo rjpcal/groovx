@@ -9,8 +9,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jun 22 09:07:27 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -491,5 +489,4 @@ namespace tcl
 
 } // end namespace tcl
 
-static const char __attribute__((used)) vcid_groovx_tcl_makecmd_h_utc20050628162421[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_MAKECMD_H_UTC20050628162421_DEFINED

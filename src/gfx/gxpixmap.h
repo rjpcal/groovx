@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Jun 15 11:30:24 1999 (as bitmap.h)
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -198,5 +196,4 @@ private:
   GxPixmapImpl* const rep;
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxpixmap_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXPIXMAP_H_UTC20050626084023_DEFINED

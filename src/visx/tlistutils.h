@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Dec  4 02:58:20 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -82,5 +80,4 @@ namespace TlistUtils
                           tcl::list posids, int num_lines);
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_tlistutils_h_utc20050626084017[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TLISTUTILS_H_UTC20050626084017_DEFINED

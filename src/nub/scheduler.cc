@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct 14 10:05:02 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -40,5 +38,4 @@ nub::timer_token::~timer_token() throw() {}
 
 nub::scheduler::~scheduler() throw() {}
 
-static const char __attribute__((used)) vcid_groovx_nub_scheduler_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_SCHEDULER_CC_UTC20050626084019_DEFINED

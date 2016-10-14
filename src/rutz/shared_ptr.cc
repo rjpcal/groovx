@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Aug 16 14:39:14 2006
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -60,5 +58,4 @@ void rutz::shared_ptr_aux::check_ptr(const void* p)
 /* indent-tabs-mode: nil */
 /* End: */
 
-static const char __attribute__((used)) vcid_groovx_rutz_shared_ptr_cc_utc20070412044845[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_SHARED_PTR_CC_UTC20070412044845DEFINED

@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Nov 11 15:25:00 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -670,5 +668,4 @@ inline C& FieldAux::cast(F& p)
   return *result;
 }
 
-static const char __attribute__((used)) vcid_groovx_io_fields_h_utc20051109000918[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_FIELDS_H_UTC20051109000918DEFINED

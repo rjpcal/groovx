@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Dec  1 08:00:00 1998 (as grobj.h)
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -244,5 +242,4 @@ private:
   GxShapeKitImpl* const rep;    // opaque pointer to implementation
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxshapekit_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXSHAPEKIT_H_UTC20050626084023_DEFINED

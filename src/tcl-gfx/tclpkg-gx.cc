@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Nov  2 14:39:14 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -544,5 +542,4 @@ GVX_TRACE("Gxdisk_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_tclpkg_gx_cc_utc20050628170310[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_TCLPKG_GX_CC_UTC20050628170310_DEFINED

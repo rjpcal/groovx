@@ -1,4 +1,3 @@
-# $Id$
 
 TAGS: *.tcl
 	etags *.tcl

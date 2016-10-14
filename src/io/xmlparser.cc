@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue May 25 10:29:42 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -200,5 +198,4 @@ void Outliner::element_end(const char* el)
 }
 #endif
 
-static const char __attribute__((used)) vcid_groovx_io_xmlparser_cc_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_XMLPARSER_CC_UTC20050626084021_DEFINED

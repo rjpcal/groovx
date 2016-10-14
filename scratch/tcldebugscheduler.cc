@@ -6,7 +6,6 @@
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Fri Oct 15 17:56:46 2004
-// commit: $Id$
 //
 // --------------------------------------------------------------------
 //

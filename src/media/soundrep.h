@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Oct 20 11:53:57 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -54,5 +52,4 @@ namespace media
   };
 }
 
-static const char __attribute__((used)) vcid_groovx_media_soundrep_h_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_SOUNDREP_H_UTC20050626084018_DEFINED

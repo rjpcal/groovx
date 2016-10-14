@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Mar  8 16:28:26 2001 (split from num.h)
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -61,5 +59,4 @@ GVX_TRACE("dash::detail::gammaln_engine");
   return -tmp+log(2.5066282746310005*ser/xx);
 }
 
-static const char __attribute__((used)) vcid_groovx_pkgs_mtx_mathspecial_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MTX_MATHSPECIAL_CC_UTC20050626084022_DEFINED

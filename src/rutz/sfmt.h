@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Jul  5 11:02:38 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -55,5 +53,4 @@ namespace rutz
   ;
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_sfmt_h_utc20050705180238[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_SFMT_H_UTC20050705180238DEFINED

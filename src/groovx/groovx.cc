@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Nov  2 08:00:00 1998
-// commit: $Id$
-// $HeadURL$
 //
 // This is the main application file for a Tcl/Tk application that
 // runs visual experiments.
@@ -177,4 +175,3 @@ int main(int argc, char** argv)
   GVX_SCRIPT_PROG_END(app);
 }
 
-static const char __attribute__((used)) vcid_groovx_groovx_groovx_cc_utc20050626084019[] = "$Id$ $HeadURL$";

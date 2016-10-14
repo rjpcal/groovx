@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Aug 21 15:28:54 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -40,5 +38,4 @@ namespace nub
   typedef unsigned long uid;
 }
 
-static const char __attribute__((used)) vcid_groovx_nub_uid_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_UID_H_UTC20050626084019_DEFINED

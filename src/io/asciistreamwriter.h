@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jun  7 13:05:56 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -54,5 +52,4 @@ namespace io
   rutz::shared_ptr<io::writer> make_asw_writer(const char* filename);
 }
 
-static const char __attribute__((used)) vcid_groovx_io_asciistreamwriter_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_ASCIISTREAMWRITER_H_UTC20050626084021_DEFINED

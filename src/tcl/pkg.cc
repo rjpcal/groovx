@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Jun 15 12:33:54 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -507,5 +505,4 @@ const char* const tcl::pkg::action_usage = "objref(s)";
 const char* const tcl::pkg::getter_usage = "objref(s)";
 const char* const tcl::pkg::setter_usage = "objref(s) new_value(s)";
 
-static const char __attribute__((used)) vcid_groovx_tcl_pkg_cc_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_PKG_CC_UTC20050628162420_DEFINED

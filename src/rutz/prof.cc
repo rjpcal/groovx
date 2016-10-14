@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Jun 30 14:47:13 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -316,5 +314,4 @@ void rutz::prof::print_all_prof_data(std::ostream& os) throw()
     }
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_prof_cc_utc20050630214713[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_PROF_CC_UTC20050630214713DEFINED

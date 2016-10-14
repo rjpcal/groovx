@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Mar 22 21:41:38 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -135,5 +133,4 @@ inline nub::ref<const serializable> make_const_proxy(const C* ref)
 
 } // end namespace io
 
-static const char __attribute__((used)) vcid_groovx_io_ioproxy_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_IOPROXY_H_UTC20050626084021_DEFINED

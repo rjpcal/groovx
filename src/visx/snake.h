@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon May 12 11:15:02 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -94,5 +92,4 @@ private:
                      int i2, const geom::vec2<double>& new2);
 };
 
-static const char __attribute__((used)) vcid_groovx_visx_snake_h_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_SNAKE_H_UTC20050626084016_DEFINED

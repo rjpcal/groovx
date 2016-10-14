@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Nov 11 15:24:47 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -220,5 +218,4 @@ GVX_TRACE("FieldContainer::child");
   return 0;
 }
 
-static const char __attribute__((used)) vcid_groovx_io_fields_cc_utc20051109000948[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_FIELDS_CC_UTC20051109000948DEFINED

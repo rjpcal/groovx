@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Dec 21 10:49:48 2004
-// commit: $Id$
-// $HeadURL$
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -52,5 +50,4 @@ public:
   virtual void          set_bool_field(const char* field_name, bool field) = 0;
 };
 
-static const char __attribute__((used)) vcid_groovx_pkgs_mtx_variant_h_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MTX_VARIANT_H_UTC20050626084022_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Nov 26 18:43:56 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -90,5 +88,4 @@ private:
   GxDisk& operator=(const GxDisk&);
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxdisk_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXDISK_H_UTC20050626084023_DEFINED

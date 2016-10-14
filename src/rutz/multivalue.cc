@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Aug 22 16:58:56 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -103,5 +101,4 @@ template class rutz::multi_value<int>;
 template class rutz::multi_value<float>;
 template class rutz::multi_value<double>;
 
-static const char __attribute__((used)) vcid_groovx_rutz_multivalue_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_MULTIVALUE_CC_UTC20050626084019_DEFINED

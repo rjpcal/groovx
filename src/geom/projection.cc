@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct 28 16:55:06 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -78,5 +76,4 @@ GVX_TRACE("geom::project");
                0.5 * (s1.z()+1));
 }
 
-static const char __attribute__((used)) vcid_groovx_geom_projection_cc_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GEOM_PROJECTION_CC_UTC20050626084023_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Jan 30 11:47:10 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -119,5 +117,4 @@ fstring tcl::ProcWrapper::fullSpec() const
   return rutz::sfmt("{%s} {%s}", itsArgs.c_str(), itsBody.c_str());
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_io_tclprocwrapper_cc_utc20050712162004[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_IO_TCLPROCWRAPPER_CC_UTC20050712162004_DEFINED

@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Jun 30 15:18:13 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -51,5 +49,4 @@ rutz::fstring rutz::format_time(const timeval& tval,
   return rutz::fstring(rutz::char_range(&buf[0], count));
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_timeformat_cc_utc20050630221813[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_TIMEFORMAT_CC_UTC20050630221813DEFINED

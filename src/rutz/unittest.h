@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Sep 10 18:57:59 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -132,5 +130,4 @@ namespace rutz
 
 #define DEF_TEST(pkg, func) pkg->def(#func, "", &func, SRC_POS)
 
-static const char __attribute__((used)) vcid_groovx_rutz_unittest_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_UNITTEST_H_UTC20050626084020_DEFINED

@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Dec  4 15:35:37 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -103,5 +101,4 @@ public:
   virtual void vxReset() = 0;
 };
 
-static const char __attribute__((used)) vcid_groovx_visx_element_h_utc20050626084015[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_ELEMENT_H_UTC20050626084015_DEFINED

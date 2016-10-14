@@ -9,8 +9,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov 20 15:15:24 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -118,5 +116,4 @@ private:
   friend class GxTransformImpl;
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxtransform_h_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXTRANSFORM_H_UTC20050626084024_DEFINED

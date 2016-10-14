@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Apr 17 15:53:53 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -97,5 +95,4 @@ private:
   GxLine& operator=(const GxLine&);
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxline_h_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXLINE_H_UTC20050626084024_DEFINED

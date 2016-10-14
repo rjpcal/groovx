@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Nov 12 18:34:57 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -65,5 +63,4 @@ public:
   virtual void drawText(const char* text, Gfx::Canvas& canvas) const = 0;
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxfont_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXFONT_H_UTC20050626084023_DEFINED

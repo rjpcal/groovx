@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jun  7 12:47:00 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -109,5 +107,4 @@ GVX_TRACE("io::reader::default_read_byte_array");
                       data);
 }
 
-static const char __attribute__((used)) vcid_groovx_io_reader_cc_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_READER_CC_UTC20050626084021_DEFINED

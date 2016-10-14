@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sun Aug  4 16:29:23 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -76,5 +74,4 @@ GlxOpts::GlxOpts() :
 GVX_TRACE("GlxOpts::GlxOpts");
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_glxopts_cc_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GLXOPTS_CC_UTC20050626084023_DEFINED

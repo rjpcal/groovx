@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jun 27 13:34:19 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -406,5 +404,4 @@ void tcl::script_app::run()
   tclmain.run();
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_scriptapp_cc_utc20050628162421[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_SCRIPTAPP_CC_UTC20050628162421_DEFINED

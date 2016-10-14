@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Jul  1 11:54:48 1999 (as gtext.cc)
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -209,5 +207,4 @@ GVX_TRACE("GxText::grRender");
   itsFont->drawText(itsText.c_str(), canvas);
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxtext_cc_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXTEXT_CC_UTC20050626084025_DEFINED

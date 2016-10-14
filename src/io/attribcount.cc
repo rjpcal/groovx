@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Nov 11 17:16:09 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -91,5 +89,4 @@ GVX_TRACE("io::attrib_count");
   return counter.get_count();
 }
 
-static const char __attribute__((used)) vcid_groovx_io_attribcount_cc_utc20051112011609[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_ATTRIBCOUNT_CC_UTC20051112011609DEFINED

@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Sep 13 12:43:15 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -141,5 +139,4 @@ private:
   House& operator=(const House&);
 };
 
-static const char __attribute__((used)) vcid_groovx_visx_house_h_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_HOUSE_H_UTC20050626084016_DEFINED

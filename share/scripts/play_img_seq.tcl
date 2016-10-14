@@ -3,7 +3,6 @@
 # Copyright (c) 2004-2005
 # Rob Peters <rjpeters at klab dot caltech dot edu>
 
-# $Id$
 
 if { [llength $argv] == 0 } {
     puts "usage: [file tail $argv0] <image filename(s)>..."

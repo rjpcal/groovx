@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Apr 17 16:00:32 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -143,5 +141,4 @@ GVX_TRACE("GxLine::draw");
   canvas.vertex3(stop.vec());
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxline_cc_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXLINE_CC_UTC20050626084025_DEFINED

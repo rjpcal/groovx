@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct 14 10:56:13 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -124,5 +122,4 @@ GVX_TRACE("nub::timer::dummy_callback");
   timer->sig_timeout.emit();
 }
 
-static const char __attribute__((used)) vcid_groovx_nub_timer_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_TIMER_CC_UTC20050626084019_DEFINED

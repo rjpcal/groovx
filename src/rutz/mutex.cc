@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Mar 30 10:25:47 2007
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -56,5 +54,4 @@ void rutz::mutex_lock_class::unlock() throw()
     }
 }
 
-static const char vcid_groovx_rutz_mutex_cc_utc20070330172547[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_MUTEX_CC_UTC20070330172547DEFINED

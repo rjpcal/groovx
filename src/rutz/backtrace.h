@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Oct 13 16:32:38 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -92,5 +90,4 @@ private:
   rutz::static_stack<rutz::prof*, 256> m_vec;
 };
 
-static const char __attribute__((used)) vcid_groovx_rutz_backtrace_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_BACKTRACE_H_UTC20050626084020_DEFINED

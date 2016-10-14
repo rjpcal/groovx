@@ -2,8 +2,6 @@
          from Linux kernel headers circa version 2.4.18-41mdk. */
 
 // Primary maintainer for this file: Rob Peters <rjpeters@klab.caltech.edu>
-// $HeadURL$
-// $Id$
 
 #ifndef RUTZ_ATOMIC_IX86_H_UTC20050728203342_DEFINED
 #define RUTZ_ATOMIC_IX86_H_UTC20050728203342_DEFINED

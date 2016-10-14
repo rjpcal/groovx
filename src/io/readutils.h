@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Nov 16 14:25:40 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -130,5 +128,4 @@ namespace read_utils
 
 }} // end namespace io::read_utils
 
-static const char __attribute__((used)) vcid_groovx_io_readutils_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_READUTILS_H_UTC20050626084021_DEFINED

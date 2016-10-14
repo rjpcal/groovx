@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Jun 26 12:29:34 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -162,5 +160,4 @@ GVX_TRACE("Block::vxAllChildrenFinished");
   p->vxReturn(CHILD_OK);
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_block_cc_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_BLOCK_CC_UTC20050626084016_DEFINED

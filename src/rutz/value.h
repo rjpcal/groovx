@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Sep 28 11:19:17 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -104,5 +102,4 @@ inline std::istream& operator>>(std::istream& is,
   return is;
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_value_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_VALUE_H_UTC20050626084020_DEFINED

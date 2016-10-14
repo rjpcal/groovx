@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Dec 21 10:54:38 2004
-// commit: $Id$
-// $HeadURL$
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -18,5 +16,4 @@
 
 dash::variant::~variant() {}
 
-static const char __attribute__((used)) vcid_groovx_pkgs_mtx_variant_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MTX_VARIANT_CC_UTC20050626084022_DEFINED

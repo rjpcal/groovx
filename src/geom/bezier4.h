@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov 20 12:17:39 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -177,5 +175,4 @@ inline double geom::bezier4::eval_min()
   return m_val_min;
 }
 
-static const char __attribute__((used)) vcid_groovx_geom_bezier4_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GEOM_BEZIER4_H_UTC20050626084023_DEFINED

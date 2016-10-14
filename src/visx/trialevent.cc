@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jun 25 12:44:55 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -433,5 +431,4 @@ GVX_TRACE("MultiEvent::clearEvents");
   itsEvents.clear();
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_trialevent_cc_utc20050626084017[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TRIALEVENT_CC_UTC20050626084017_DEFINED

@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Apr 29 09:19:25 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -90,5 +88,4 @@ private:
   double itsCtrlPnts[24];       // Bezier control points for face outline
 };
 
-static const char __attribute__((used)) vcid_groovx_visx_cloneface_h_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_CLONEFACE_H_UTC20050626084016_DEFINED

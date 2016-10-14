@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Nov 23 17:42:51 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -215,5 +213,4 @@ GVX_TRACE("GxScene::animate");
     }
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxscene_cc_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXSCENE_CC_UTC20050626084025_DEFINED

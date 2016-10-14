@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Aug 10 16:56:03 2006
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -56,5 +54,4 @@ namespace rutz { typedef mutex_atomic_int atomic_int_t; }
 /* indent-tabs-mode: nil */
 /* End: */
 
-static const char __attribute__((used)) vcid_groovx_rutz_atomic_h_utc20070412044324[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_ATOMIC_H_UTC20070412044324DEFINED

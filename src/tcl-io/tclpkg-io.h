@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Jun 25 16:59:56 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -39,5 +37,4 @@ struct Tcl_Interp;
 extern "C" int Io_Init(Tcl_Interp* interp);
 extern "C" int Outputfile_Init(Tcl_Interp* interp);
 
-static const char __attribute__((used)) vcid_groovx_tcl_io_tclpkg_io_h_utc20050712162004[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_IO_TCLPKG_IO_H_UTC20050712162004_DEFINED

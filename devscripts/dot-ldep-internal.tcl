@@ -1,6 +1,5 @@
 #!/usr/bin/tclsh
 
-# $Id$
 
 # Script use to transform the output of devscripts/cdeps
 # --output-ldep-raw into a format that is usable the graph-drawing

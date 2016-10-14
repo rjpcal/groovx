@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct 28 12:13:08 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -109,5 +107,4 @@ GVX_TRACE("Geomtest_Unload");
 
 extern "C" int Geomtest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }
 
-static const char __attribute__((used)) vcid_groovx_pkgs_whitebox_geomtest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_WHITEBOX_GEOMTEST_CC_UTC20050626084022_DEFINED

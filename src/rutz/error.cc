@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Jun 22 14:59:48 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -173,5 +171,4 @@ void rutz::error::get_last_backtrace(rutz::backtrace& dst)
   dst = *g_last_backtrace;
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_error_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_ERROR_CC_UTC20050626084020_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jul 16 13:05:59 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -56,5 +54,4 @@ private:
   tcl::obj m_pattern;
 };
 
-static const char __attribute__((used)) vcid_groovx_tcl_regexp_h_utc20050628162421[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_REGEXP_H_UTC20050628162421_DEFINED

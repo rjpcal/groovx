@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon May 12 14:45:52 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -150,5 +148,4 @@ double GaborPatch::compute(int x, int y) const
   return sinus * gauss;
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_gaborpatch_cc_utc20050626084015[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_GABORPATCH_CC_UTC20050626084015_DEFINED

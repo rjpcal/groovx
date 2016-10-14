@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov 13 20:05:41 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -865,5 +863,4 @@ GVX_TRACE("GxVectorFont::vectorHeight");
   return 8.0;
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxvectorfont_cc_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXVECTORFONT_CC_UTC20050626084024_DEFINED

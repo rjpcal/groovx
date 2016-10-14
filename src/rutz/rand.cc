@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Oct 13 14:28:06 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -37,5 +35,4 @@
 
 unsigned long rutz::default_rand_seed = 0;
 
-static const char __attribute__((used)) vcid_groovx_rutz_rand_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_RAND_CC_UTC20050626084020_DEFINED

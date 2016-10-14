@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jul  5 15:15:40 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -96,5 +94,4 @@ private:
   GxLighting& operator=(const GxLighting&);
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxlighting_h_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXLIGHTING_H_UTC20050626084024_DEFINED

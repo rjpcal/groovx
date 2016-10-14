@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Sep  5 12:08:48 2007
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -67,5 +65,4 @@ public:
 
 }
 
-static const char vcid_groovx_rutz_spin_lock_pthreads_h_utc20070905190848[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_SPIN_LOCK_PTHREADS_H_UTC20070905190848DEFINED

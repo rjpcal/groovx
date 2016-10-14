@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Nov 16 14:18:36 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -133,5 +131,4 @@ namespace write_utils
 
 }} // end namespace io::write_utils
 
-static const char __attribute__((used)) vcid_groovx_io_writeutils_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_WRITEUTILS_H_UTC20050626084021_DEFINED

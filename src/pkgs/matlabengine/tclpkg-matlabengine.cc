@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Jul 10 12:16:44 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -173,5 +171,4 @@ GVX_TRACE("Matlabengine_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char __attribute__((used)) vcid_groovx_pkgs_matlabengine_tclpkg_matlabengine_cc_utc20050628170029[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MATLABENGINE_TCLPKG_MATLABENGINE_CC_UTC20050628170029_DEFINED

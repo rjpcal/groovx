@@ -9,7 +9,6 @@
 # which of two regions they thought contained the most interesting
 # point in the image.
 
-# $Id$
 
 
 ######################################################################

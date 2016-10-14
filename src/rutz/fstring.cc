@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Oct 15 15:43:41 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -426,5 +424,4 @@ fstring rutz::sconvert(double x)        { NUM_CONVERT("%g", x) }
 
 #undef NUM_CONVERT
 
-static const char __attribute__((used)) vcid_groovx_rutz_fstring_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_FSTRING_CC_UTC20050626084020_DEFINED

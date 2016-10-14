@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Feb 27 16:30:08 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -71,5 +69,4 @@ namespace
   }
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_demangle_cxxfilt_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_DEMANGLE_CXXFILT_H_UTC20050626084020_DEFINED

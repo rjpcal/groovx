@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Nov 11 14:56:22 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -83,5 +81,4 @@ void parseFontSpec(const rutz::fstring& spec,
   *mods = rutz::fstring(&vmods[0]);
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_fontspec_cc_utc20051111225622[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_FONTSPEC_CC_UTC20051111225622DEFINED

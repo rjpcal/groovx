@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Feb 25 13:52:11 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -194,5 +192,4 @@ int rutz::stdiobuf::flushoutput()
 template class std::basic_iostream<char>;
 #endif
 
-static const char __attribute__((used)) vcid_groovx_rutz_stdiobuf_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_STDIOBUF_CC_UTC20050626084020_DEFINED

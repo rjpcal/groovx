@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Nov 11 15:15:46 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -42,5 +40,4 @@ namespace media
   void load_jpeg(const char* filename, media::bmap_data& data);
 }
 
-static const char __attribute__((used)) vcid_groovx_media_jpegparser_h_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_JPEGPARSER_H_UTC20050626084018_DEFINED

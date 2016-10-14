@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Jun  3 17:03:05 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -218,5 +216,4 @@ GVX_TRACE("Gfx::LineStrip::drawJoinedLineStrip");
   canvas->end();
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_linestrip_cc_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_LINESTRIP_CC_UTC20050626084024_DEFINED

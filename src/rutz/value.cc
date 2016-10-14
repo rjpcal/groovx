@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Sep 28 11:21:32 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -69,5 +67,4 @@ void rutz::value::set_string(rutz::fstring val)
   scan_from(ist);
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_value_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_VALUE_CC_UTC20050626084019_DEFINED

@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Feb 17 17:01:19 2006
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -136,5 +134,4 @@ tcl::list tcl::emu_namesp::get_export_list(tcl::interpreter& interp) const
   return exportlist;
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_namesp_cc_utc20060218010119[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_NAMESP_CC_UTC20060218010119DEFINED

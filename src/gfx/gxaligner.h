@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov 13 12:58:27 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -116,5 +114,4 @@ public:
 };
 
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxaligner_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXALIGNER_H_UTC20050626084023_DEFINED

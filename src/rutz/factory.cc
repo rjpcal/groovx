@@ -9,8 +9,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Nov 20 22:37:31 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -101,5 +99,4 @@ GVX_TRACE("rutz::factory_base::try_fallback");
     m_fallback->try_fallback(key);
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_factory_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_FACTORY_CC_UTC20050626084020_DEFINED

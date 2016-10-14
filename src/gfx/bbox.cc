@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Nov 19 13:49:58 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -237,5 +235,4 @@ GVX_TRACE("Gfx::Bbox::rect");
   return rep->cube.rect();
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_bbox_cc_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_BBOX_CC_UTC20050626084024_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Oct  6 10:45:58 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -311,5 +309,4 @@ GVX_TRACE("Gabor::grRender");
                     vec2d(itsPointSize, itsPointSize));
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_gabor_cc_utc20050626084017[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_GABOR_CC_UTC20050626084017_DEFINED

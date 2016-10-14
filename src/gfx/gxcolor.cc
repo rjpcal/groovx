@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Aug 22 17:45:52 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -100,5 +98,4 @@ void GxColor::draw(Gfx::Canvas& canvas) const
   canvas.setColor(rgbaColor);
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxcolor_cc_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXCOLOR_CC_UTC20050626084025_DEFINED

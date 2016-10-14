@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Mar  7 13:12:33 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -97,5 +95,4 @@ public:
   icstrstream(const char* s);
 };
 
-static const char __attribute__((used)) vcid_groovx_rutz_cstrstream_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_CSTRSTREAM_H_UTC20050626084019_DEFINED

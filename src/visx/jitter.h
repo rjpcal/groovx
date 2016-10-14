@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Apr  7 13:46:40 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -95,5 +93,4 @@ private:
   mutable double itsRShift;
 };
 
-static const char __attribute__((used)) vcid_groovx_visx_jitter_h_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_JITTER_H_UTC20050626084016_DEFINED

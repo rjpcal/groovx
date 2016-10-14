@@ -9,8 +9,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jul 22 16:34:05 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -709,5 +707,4 @@ GVX_TRACE("tcl::event_loop::command_line");
   return tcl::event_loop_impl::get()->command_line();
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_eventloop_cc_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_EVENTLOOP_CC_UTC20050628162420_DEFINED

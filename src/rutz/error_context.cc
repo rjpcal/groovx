@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Nov 17 16:14:11 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -139,5 +137,4 @@ rutz::error_context_entry::~error_context_entry()
     m_context->remove_entry(this);
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_error_context_cc_utc20051118001411[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_ERROR_CONTEXT_CC_UTC20051118001411DEFINED

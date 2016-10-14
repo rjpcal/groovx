@@ -9,8 +9,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri May 23 10:03:19 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -107,5 +105,4 @@ std::ostream& output_file::stream()
   return *m_stream;
 }
 
-static const char __attribute__((used)) vcid_groovx_io_outputfile_cc_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_OUTPUTFILE_CC_UTC20050626084021_DEFINED

@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Nov  8 15:38:56 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -112,5 +110,4 @@ void tcl::obj_writer::write_cstring(const char* /*name*/, const char* val)
   m_obj = tcl::convert_from(val);
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_io_objwriter_cc_utc20051108233856[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_IO_OBJWRITER_CC_UTC20051108233856DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Jul 20 20:21:35 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -429,5 +427,4 @@ GVX_TRACE("AglRasterFont::rasterHeight");
   return itsFontInfo.ascent + itsFontInfo.descent + itsFontInfo.leading;
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_aglrasterfont_h_utc20050626084024[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_AGLRASTERFONT_H_UTC20050626084024_DEFINED

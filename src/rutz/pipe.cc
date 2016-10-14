@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri May  2 16:38:30 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -459,5 +457,4 @@ int rutz::bidir_pipe::exit_status() throw()
   return 0;
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_pipe_cc_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_PIPE_CC_UTC20050626084019_DEFINED

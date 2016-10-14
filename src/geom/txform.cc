@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jun 21 14:00:54 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -554,5 +552,4 @@ GVX_TRACE("geom::txform::debug_sse");
   return result;
 }
 
-static const char __attribute__((used)) vcid_groovx_geom_txform_cc_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GEOM_TXFORM_CC_UTC20050626084023_DEFINED

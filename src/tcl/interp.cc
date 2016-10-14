@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Oct 11 10:27:35 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -551,5 +549,4 @@ GVX_TRACE("tcl::interpreter::delete_proc");
   eval(cmd_str);
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_interp_cc_utc20050628162421[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_INTERP_CC_UTC20050628162421_DEFINED

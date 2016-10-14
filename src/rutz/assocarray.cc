@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct 14 18:42:05 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -176,5 +174,4 @@ GVX_TRACE("rutz::assoc_array_base::set_value_for_key");
   ptr_slot = ptr;
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_assocarray_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_ASSOCARRAY_CC_UTC20050626084020_DEFINED

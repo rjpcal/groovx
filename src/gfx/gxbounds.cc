@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov 13 13:34:18 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -141,5 +139,4 @@ GVX_TRACE("GxBounds::getBoundingCube");
   dbg_dump(2, bbox.cube());
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxbounds_cc_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXBOUNDS_CC_UTC20050626084023_DEFINED

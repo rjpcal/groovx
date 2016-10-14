@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Apr 25 09:06:51 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -187,5 +185,4 @@ void media::save_image(const char* filename,
   nub::log(rutz::sfmt("saved image file %s", filename));
 }
 
-static const char __attribute__((used)) vcid_groovx_media_imgfile_cc_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_IMGFILE_CC_UTC20050626084018_DEFINED

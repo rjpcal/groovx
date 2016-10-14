@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Mar  6 15:56:36 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -478,5 +476,4 @@ namespace rutz
   };
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_arrays_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_ARRAYS_H_UTC20050626084020_DEFINED

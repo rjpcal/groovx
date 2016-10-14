@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Sep  8 15:37:45 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -159,5 +157,4 @@ private:
   MorphyFace& operator=(const MorphyFace&); // assignment operator not to be used
 };
 
-static const char __attribute__((used)) vcid_groovx_visx_morphyface_h_utc20050626084015[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_MORPHYFACE_H_UTC20050626084015_DEFINED

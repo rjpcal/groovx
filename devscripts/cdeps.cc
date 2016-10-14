@@ -6,7 +6,6 @@
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Jul 16 15:47:10 2003
-// commit: $Id$
 //
 // --------------------------------------------------------------------
 //
@@ -3152,5 +3151,4 @@ int main(int argc, char** argv)
   exit(0);
 }
 
-static const char vcid_cppdeps_cc[] = "$Id$ $HeadURL$";
 #endif // !CPPDEPS_CC_DEFINED

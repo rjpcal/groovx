@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Dec  2 13:10:25 2000
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -65,5 +63,4 @@ const float* GbColor::const_begin() const
   return Gfx::RgbaColor::data();
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_gbcolor_cc_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GBCOLOR_CC_UTC20050626084025_DEFINED

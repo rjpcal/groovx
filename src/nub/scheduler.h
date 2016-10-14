@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct 14 10:02:53 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -69,5 +67,4 @@ public:
            void* clientdata) = 0;
 };
 
-static const char __attribute__((used)) vcid_groovx_nub_scheduler_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_SCHEDULER_H_UTC20050626084019_DEFINED

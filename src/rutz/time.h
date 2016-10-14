@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Nov  7 16:43:03 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -244,5 +242,4 @@ private:
   timeval m_timeval;
 };
 
-static const char __attribute__((used)) vcid_groovx_rutz_time_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_TIME_H_UTC20050626084020_DEFINED

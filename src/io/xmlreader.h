@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jun 20 16:09:38 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -50,5 +48,4 @@ namespace io
   void xml_debug(const char* filename);
 }
 
-static const char __attribute__((used)) vcid_groovx_io_xmlreader_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_XMLREADER_H_UTC20050626084021_DEFINED

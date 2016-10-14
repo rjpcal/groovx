@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Nov  8 15:38:06 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -126,5 +124,4 @@ rutz::fstring tcl::obj_reader::read_string_impl(const rutz::fstring& /*name*/)
   return tcl::convert_to<rutz::fstring>(m_obj);
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_io_objreader_cc_utc20051108233806[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_IO_OBJREADER_CC_UTC20051108233806DEFINED

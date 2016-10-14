@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Jul 12 12:14:43 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -42,5 +40,4 @@ namespace tcl
   void use_vec_dispatch(tcl::command& cmd, unsigned int key_argn);
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_vecdispatch_h_utc20050628162421[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_VECDISPATCH_H_UTC20050628162421_DEFINED

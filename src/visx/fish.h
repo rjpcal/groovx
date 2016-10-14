@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Sep 29 11:44:56 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -150,5 +148,4 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const;
 };
 
-static const char __attribute__((used)) vcid_groovx_visx_fish_h_utc20050626084015[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_FISH_H_UTC20050626084015_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Jul  8 11:43:07 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -95,5 +93,4 @@ private:
   rutz::shared_ptr<media::sound_rep> itsRep;
 };
 
-static const char __attribute__((used)) vcid_groovx_visx_sound_h_utc20050626084016[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_SOUND_H_UTC20050626084016_DEFINED

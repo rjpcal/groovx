@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Oct 12 18:25:51 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -218,5 +216,4 @@ GVX_TRACE("Tcltimertest_Unload");
 extern "C" int Tcltimertest_SafeUnload(Tcl_Interp*, int /*flags*/)
 { return 1; }
 
-static const char __attribute__((used)) vcid_groovx_pkgs_whitebox_tcltimertest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_WHITEBOX_TCLTIMERTEST_CC_UTC20050626084022_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Jul 11 18:30:47 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -77,5 +75,4 @@ void tcl::obj::decr_ref(Tcl_Obj* obj)
   Tcl_DecrRefCount(obj);
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_obj_cc_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_OBJ_CC_UTC20050628162420_DEFINED

@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Oct  5 10:43:45 2006
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -120,5 +118,4 @@ namespace rutz
   };
 }
 
-static const char vcid_groovx_rutz_circular_queue_h_utc20061005174345[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_CIRCULAR_QUEUE_H_UTC20061005174345DEFINED

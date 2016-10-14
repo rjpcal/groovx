@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Feb 22 11:24:07 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -135,5 +133,4 @@ GVX_TRACE("Numtest_Unload");
 
 extern "C" int Numtest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }
 
-static const char __attribute__((used)) vcid_groovx_pkgs_whitebox_numtest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_WHITEBOX_NUMTEST_CC_UTC20050626084022_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Nov 14 16:59:04 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -59,5 +57,4 @@ public:
   static GxEmptyNode* make();
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxemptynode_h_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXEMPTYNODE_H_UTC20050626084023_DEFINED

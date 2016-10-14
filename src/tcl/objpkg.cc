@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Nov 22 17:06:50 2002
-// commit: $Id$
-// $HeadURL$
 //
 // This file is part of GroovX.
 //   [http://ilab.usc.edu/rjpeters/groovx/]
@@ -147,5 +145,4 @@ GVX_TRACE("tcl::def_basic_type_cmds");
             rutz::bind_first(get_sizeof, caster), src_pos, flags );
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_objpkg_cc_utc20050626084017[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_OBJPKG_CC_UTC20050626084017_DEFINED

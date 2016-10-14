@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Jun 25 16:59:13 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -38,5 +36,4 @@ struct Tcl_Interp;
 
 extern "C" int Fstringtest_Init(Tcl_Interp* interp);
 
-static const char __attribute__((used)) vcid_groovx_pkgs_whitebox_fstringtest_h_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_WHITEBOX_FSTRINGTEST_H_UTC20050626084022_DEFINED

@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Mar 12 18:04:10 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -213,5 +211,4 @@ private:
 };
 
 
-static const char __attribute__((used)) vcid_groovx_pkgs_mtx_datablock_h_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MTX_DATABLOCK_H_UTC20050626084022_DEFINED

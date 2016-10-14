@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Jun 20 17:47:13 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -68,5 +66,4 @@ namespace nub
   void log(const rutz::fstring& msg);
 }
 
-static const char __attribute__((used)) vcid_groovx_nub_log_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_LOG_H_UTC20050626084019_DEFINED

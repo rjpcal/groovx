@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Oct 23 19:24:11 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -131,5 +129,4 @@ GVX_TRACE("Glcanvas_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_tclpkg_canvas_cc_utc20050628170310[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_TCLPKG_CANVAS_CC_UTC20050628170310_DEFINED

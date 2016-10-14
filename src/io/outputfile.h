@@ -9,8 +9,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri May 23 10:01:57 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -77,5 +75,4 @@ private:
   rutz::shared_ptr<std::ostream> m_stream;
 };
 
-static const char __attribute__((used)) vcid_groovx_io_outputfile_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_OUTPUTFILE_H_UTC20050626084021_DEFINED

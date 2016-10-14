@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Nov 11 16:10:15 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -324,5 +322,4 @@ void GlxWrapper::swapBuffers() const
 
 #endif // GVX_GL_PLATFORM_GLX
 
-static const char __attribute__((used)) vcid_groovx_gfx_glxwrapper_cc_utc20051112001015[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GLXWRAPPER_CC_UTC20051112001015DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Oct 12 13:03:47 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -181,5 +179,4 @@ GVX_TRACE("media::hp_audio_sound_rep::error_handler");
   return 0;
 }
 
-static const char __attribute__((used)) vcid_groovx_media_hpsound_h_utc20050626084018[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_MEDIA_HPSOUND_H_UTC20050626084018_DEFINED

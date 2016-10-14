@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Dec  1 08:00:00 1998
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -743,5 +741,4 @@ GVX_TRACE("Dlist_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_tclpkg_dlist_cc_utc20050628161246[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_TCLPKG_DLIST_CC_UTC20050628161246_DEFINED

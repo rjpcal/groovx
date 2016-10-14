@@ -1,4 +1,3 @@
-# $Id$
 
 # A tcl library for computing compile and link dependencies for c/c++
 # source code.

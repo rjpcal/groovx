@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jul 20 07:54:29 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -109,5 +107,4 @@ public:
   void release_free_nodes() { m_base.release_free_nodes(); }
 };
 
-static const char __attribute__((used)) vcid_groovx_rutz_freelist_h_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_FREELIST_H_UTC20050626084020_DEFINED

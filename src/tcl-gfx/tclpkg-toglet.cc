@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -129,5 +127,4 @@ GVX_TRACE("Toglet_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_tclpkg_toglet_cc_utc20050628170310[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_TCLPKG_TOGLET_CC_UTC20050628170310_DEFINED

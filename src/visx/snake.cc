@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon May 12 11:15:20 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -496,5 +494,4 @@ GVX_TRACE("Snake::transformPath");
     }
 }
 
-static const char __attribute__((used)) vcid_groovx_visx_snake_cc_utc20050626084015[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_SNAKE_CC_UTC20050626084015_DEFINED

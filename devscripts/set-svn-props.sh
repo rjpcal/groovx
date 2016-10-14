@@ -1,6 +1,5 @@
 #!/bin/sh
 
-# $Id$
 
 # Quick script to set svn:keywords and svn:eol-style properties
 # uniformly on all source files.

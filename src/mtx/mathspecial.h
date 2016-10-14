@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Mar  8 16:27:36 2001 (split from num.h)
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -91,5 +89,4 @@ namespace dash
   }
 }
 
-static const char __attribute__((used)) vcid_groovx_pkgs_mtx_mathspecial_h_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MTX_MATHSPECIAL_H_UTC20050626084022_DEFINED

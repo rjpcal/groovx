@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov 16 09:01:10 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -58,5 +56,4 @@ void nub::detail::throw_ref_unshareable(const std::type_info& info,
                     pos);
 }
 
-static const char __attribute__((used)) vcid_groovx_nub_handle_cc_utc20051116170110[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_HANDLE_CC_UTC20051116170110DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon May 12 17:57:12 2003
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -149,5 +147,4 @@ GVX_TRACE("Vectwotest_Unload");
 
 extern "C" int Vectwotest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }
 
-static const char __attribute__((used)) vcid_groovx_pkgs_whitebox_vectwotest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_WHITEBOX_VECTWOTEST_CC_UTC20050626084022_DEFINED

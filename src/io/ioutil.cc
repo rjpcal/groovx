@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jun 11 21:43:28 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -129,5 +127,4 @@ nub::ref<io::serializable> io::retrieve_asw(fstring fname)
   return reader->read_root();
 }
 
-static const char __attribute__((used)) vcid_groovx_io_ioutil_cc_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_IOUTIL_CC_UTC20050626084021_DEFINED

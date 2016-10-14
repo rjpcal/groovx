@@ -3,7 +3,6 @@
 # Loads a chromatic scale of sound files and assign them to suitably named
 # variables.
 
-# $Id$
 
 set notes {
     329.6 E

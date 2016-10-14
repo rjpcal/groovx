@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Sat Jun 26 23:40:06 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -62,5 +60,4 @@ public:
   static obj_factory& instance();
 };
 
-static const char __attribute__((used)) vcid_groovx_nub_objfactory_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_NUB_OBJFACTORY_H_UTC20050626084019_DEFINED

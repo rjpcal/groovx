@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed May 26 10:58:49 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -78,5 +76,4 @@ namespace io
   };
 }
 
-static const char __attribute__((used)) vcid_groovx_io_writeidmap_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_WRITEIDMAP_H_UTC20050626084021_DEFINED

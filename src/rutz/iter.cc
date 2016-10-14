@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue Jul  6 17:48:28 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -38,5 +36,4 @@
 
 const rutz::iter_end_t rutz::iter_end = {};
 
-static const char __attribute__((used)) vcid_groovx_rutz_iter_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_ITER_CC_UTC20050626084020_DEFINED

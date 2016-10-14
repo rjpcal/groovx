@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Sep 12 21:43:15 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -49,5 +47,4 @@ GVX_TRACE("rutz::filename_error::filename_error");
 
 rutz::filename_error::~filename_error() throw() {}
 
-static const char __attribute__((used)) vcid_groovx_rutz_ioerror_cc_utc20050626084020[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_IOERROR_CC_UTC20050626084020_DEFINED

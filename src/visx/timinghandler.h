@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed May 19 10:56:20 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -74,5 +72,4 @@ private:
   unsigned int abortwait_abort_id;
 };
 
-static const char __attribute__((used)) vcid_groovx_visx_timinghandler_h_utc20050626084015[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TIMINGHANDLER_H_UTC20050626084015_DEFINED

@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Sep 12 21:42:09 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -53,5 +51,4 @@ namespace rutz
 
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_ioerror_h_utc20050626084019[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_IOERROR_H_UTC20050626084019_DEFINED

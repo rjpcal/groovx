@@ -8,8 +8,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Aug 29 10:16:30 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -76,5 +74,4 @@ public:
   virtual void draw(Gfx::Canvas& canvas) const;
 };
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxdrawstyle_h_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXDRAWSTYLE_H_UTC20050626084025_DEFINED

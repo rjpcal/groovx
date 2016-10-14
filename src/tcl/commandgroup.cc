@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Jun  9 09:45:36 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -490,5 +488,4 @@ GVX_TRACE("tcl::command_group::invoke_raw");
   return TCL_ERROR;
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_commandgroup_cc_utc20050628162421[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_COMMANDGROUP_CC_UTC20050628162421_DEFINED

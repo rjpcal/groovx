@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jul 16 13:09:12 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -91,5 +89,4 @@ bool tcl::regexp::matches_string(const char* str)
   return false;
 }
 
-static const char __attribute__((used)) vcid_groovx_tcl_regexp_cc_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_REGEXP_CC_UTC20050628162420_DEFINED

@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Oct 13 08:31:39 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -215,5 +213,4 @@ GVX_TRACE("Signaltest_Unload");
 extern "C" int Signaltest_SafeUnload(Tcl_Interp*, int /*flags*/)
 { return 1; }
 
-static const char __attribute__((used)) vcid_groovx_pkgs_whitebox_signaltest_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_WHITEBOX_SIGNALTEST_CC_UTC20050626084022_DEFINED

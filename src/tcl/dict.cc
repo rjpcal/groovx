@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon May 24 16:21:12 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -124,5 +122,4 @@ GVX_TRACE("tcl::dict::do_get");
 
 #endif // defined(HAVE_TCL_DICT)
 
-static const char __attribute__((used)) vcid_groovx_tcl_dict_cc_utc20050628162420[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_TCL_DICT_CC_UTC20050628162420_DEFINED

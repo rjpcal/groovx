@@ -9,8 +9,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Nov 20 15:15:50 2002
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -231,5 +229,4 @@ GVX_TRACE("GxTransform::draw");
     }
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxtransform_cc_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXTRANSFORM_CC_UTC20050626084023_DEFINED

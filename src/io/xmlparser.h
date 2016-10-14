@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Tue May 25 10:29:24 2004
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -71,5 +69,4 @@ private:
   int            const m_buf_size;
 };
 
-static const char __attribute__((used)) vcid_groovx_io_xmlparser_h_utc20050626084021[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_IO_XMLPARSER_H_UTC20050626084021_DEFINED

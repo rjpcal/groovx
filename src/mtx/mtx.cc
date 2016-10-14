@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Mar 12 12:39:12 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -1019,5 +1017,4 @@ GVX_TRACE("max(mtx, mtx)");
   return binary_op(m1, m2, dash::max());
 }
 
-static const char __attribute__((used)) vcid_groovx_pkgs_mtx_mtx_cc_utc20050626084022[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_PKGS_MTX_MTX_CC_UTC20050626084022_DEFINED

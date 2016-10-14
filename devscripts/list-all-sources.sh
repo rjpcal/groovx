@@ -1,6 +1,5 @@
 #!/bin/sh
 
-# $Id$
 
 # Just print a list of all source files to stdout, for use in other
 # scripts.

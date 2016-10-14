@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Wed Aug 29 10:19:31 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -108,5 +106,4 @@ void GxDrawStyle::draw(Gfx::Canvas& canvas) const
   canvas.setLineStipple(static_cast<unsigned short>(linePattern));
 }
 
-static const char __attribute__((used)) vcid_groovx_gfx_gxdrawstyle_cc_utc20050626084025[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GFX_GXDRAWSTYLE_CC_UTC20050626084025_DEFINED

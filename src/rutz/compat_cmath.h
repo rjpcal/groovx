@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Mon Jan 16 18:16:40 2006
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -71,5 +69,4 @@ int                    isnan(T x) { return std::isnan(x); }
 #  endif
 #endif
 
-static const char __attribute__((used)) vcid_groovx_rutz_compat_cmath_h_utc20060117021640[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_COMPAT_CMATH_H_UTC20060117021640DEFINED

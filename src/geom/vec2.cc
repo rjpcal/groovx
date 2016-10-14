@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Thu Aug  9 14:38:13 2001
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -34,5 +32,4 @@
 #ifndef GROOVX_GEOM_VEC2_CC_UTC20050626084023_DEFINED
 #define GROOVX_GEOM_VEC2_CC_UTC20050626084023_DEFINED
 
-static const char __attribute__((used)) vcid_groovx_geom_vec2_cc_utc20050626084023[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_GEOM_VEC2_CC_UTC20050626084023_DEFINED

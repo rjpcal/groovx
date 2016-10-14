@@ -6,8 +6,6 @@
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Jun 30 15:26:51 2005
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -46,5 +44,4 @@ void rutz::debug::abort_aux (const char* what, const char* where,
   abort();
 }
 
-static const char __attribute__((used)) vcid_groovx_rutz_abort_cc_utc20050630222651[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_RUTZ_ABORT_CC_UTC20050630222651DEFINED

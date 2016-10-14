@@ -7,8 +7,6 @@
 // Rob Peters <rjpeters at usc dot edu>
 //
 // created: Fri Jun 25 12:45:05 1999
-// commit: $Id$
-// $HeadURL$
 //
 // --------------------------------------------------------------------
 //
@@ -348,5 +346,4 @@ private:
   std::vector<nub::ref<TrialEvent> > itsEvents;
 };
 
-static const char __attribute__((used)) vcid_groovx_visx_trialevent_h_utc20050626084015[] = "$Id$ $HeadURL$";
 #endif // !GROOVX_VISX_TRIALEVENT_H_UTC20050626084015_DEFINED
