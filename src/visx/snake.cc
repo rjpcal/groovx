@@ -43,6 +43,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
@@ -89,14 +90,6 @@ namespace
     }
 
     std::sort(i, i+4);
-  }
-
-  Tuple4 getEdgeLengths(const vec2d no[4])
-  {
-    return Tuple4(no[0].distance_to(no[1]),
-                  no[1].distance_to(no[2]),
-                  no[2].distance_to(no[3]),
-                  no[3].distance_to(no[0]));
   }
 
   Tuple4 getThetas(const vec2d no[4])

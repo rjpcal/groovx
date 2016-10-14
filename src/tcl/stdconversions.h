@@ -42,15 +42,19 @@
 
 namespace tcl
 {
-  inline tcl::obj aux_convert_from(std::string s)
+  template <>
+  struct help_convert<std::string>
   {
-    return convert_from<const char*>(s.c_str());
-  }
+    static tcl::obj to_tcl(std::string s)
+    {
+      return convert_from<const char*>(s.c_str());
+    }
 
-  inline std::string aux_convert_to(Tcl_Obj* obj, std::string*)
-  {
-    return std::string(aux_convert_to(obj, (rutz::fstring*)0).c_str());
-  }
+    static std::string from_tcl(Tcl_Obj* obj)
+    {
+      return std::string(help_convert<rutz::fstring>::from_tcl(obj).c_str());
+    }
+  };
 }
 
 static const char __attribute__((used)) vcid_groovx_tcl_stdconversions_h_utc20050628163220[] = "$Id$ $HeadURL$";

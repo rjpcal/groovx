@@ -68,7 +68,7 @@ namespace
     safe_unshared_obj& operator=(const safe_unshared_obj&);
 
   public:
-    safe_unshared_obj(Tcl_Obj* obj, Tcl_ObjType* target_type) :
+    safe_unshared_obj(Tcl_Obj* obj, const Tcl_ObjType* target_type) :
       m_obj(obj), m_is_owning(false)
     {
       if ( (m_obj->typePtr != target_type) && Tcl_IsShared(m_obj) )
@@ -91,17 +91,17 @@ namespace
 
 ///////////////////////////////////////////////////////////////////////
 //
-// (Tcl --> C++) aux_convert_to specializations
+// (Tcl --> C++) help_convert<>::from_tcl specializations
 //
 ///////////////////////////////////////////////////////////////////////
 
-int tcl::aux_convert_to(Tcl_Obj* obj, int*)
+int tcl::help_convert<int>::from_tcl(Tcl_Obj* obj)
 {
-GVX_TRACE("tcl::aux_convert_to(int*)");
+GVX_TRACE("tcl::help_convert<int>::from_tcl");
 
   int val;
 
-  static Tcl_ObjType* const int_type = Tcl_GetObjType("int");
+  static const Tcl_ObjType* const int_type = Tcl_GetObjType("int");
 
   GVX_ASSERT(int_type != 0);
 
@@ -116,11 +116,11 @@ GVX_TRACE("tcl::aux_convert_to(int*)");
   return val;
 }
 
-unsigned int tcl::aux_convert_to(Tcl_Obj* obj, unsigned int*)
+unsigned int tcl::help_convert<unsigned int>::from_tcl(Tcl_Obj* obj)
 {
-GVX_TRACE("tcl::aux_convert_to(unsigned int*)");
+GVX_TRACE("tcl::help_convert<unsigned int>::from_tcl");
 
-  int sval = aux_convert_to(obj, static_cast<int*>(0));
+  int sval = help_convert<int>::from_tcl(obj);
 
   if (sval < 0)
     {
@@ -132,13 +132,13 @@ GVX_TRACE("tcl::aux_convert_to(unsigned int*)");
   return static_cast<unsigned int>(sval);
 }
 
-long tcl::aux_convert_to(Tcl_Obj* obj, long*)
+long tcl::help_convert<long>::from_tcl(Tcl_Obj* obj)
 {
-GVX_TRACE("tcl::aux_convert_to(long*)");
+GVX_TRACE("tcl::help_convert<long>::from_tcl");
 
   Tcl_WideInt wideval;
 
-  static Tcl_ObjType* const wide_int_type = Tcl_GetObjType("wideInt");
+  static const Tcl_ObjType* const wide_int_type = Tcl_GetObjType("wideInt");
 
   GVX_ASSERT(wide_int_type != 0);
 
@@ -170,13 +170,13 @@ GVX_TRACE("tcl::aux_convert_to(long*)");
   return static_cast<long>(wideval);
 }
 
-unsigned long tcl::aux_convert_to(Tcl_Obj* obj, unsigned long*)
+unsigned long tcl::help_convert<unsigned long>::from_tcl(Tcl_Obj* obj)
 {
-GVX_TRACE("tcl::aux_convert_to(unsigned long*)");
+GVX_TRACE("tcl::help_convert<unsigned long>::from_tcl");
 
   Tcl_WideInt wideval;
 
-  static Tcl_ObjType* const wide_int_type = Tcl_GetObjType("wideInt");
+  static const Tcl_ObjType* const wide_int_type = Tcl_GetObjType("wideInt");
 
   GVX_ASSERT(wide_int_type != 0);
 
@@ -214,11 +214,11 @@ GVX_TRACE("tcl::aux_convert_to(unsigned long*)");
   return static_cast<unsigned long>(wideval);
 }
 
-long long tcl::aux_convert_to(Tcl_Obj* obj, long long*)
+long long tcl::help_convert<long long>::from_tcl(Tcl_Obj* obj)
 {
-GVX_TRACE("tcl::aux_convert_to(long long*)");
+GVX_TRACE("tcl::help_convert<longlong>::from_tcl");
 
-  static Tcl_ObjType* const wide_int_type = Tcl_GetObjType("wideInt");
+  static const Tcl_ObjType* const wide_int_type = Tcl_GetObjType("wideInt");
 
   GVX_ASSERT(wide_int_type != 0);
 
@@ -235,13 +235,13 @@ GVX_TRACE("tcl::aux_convert_to(long long*)");
   return wideval;
 }
 
-bool tcl::aux_convert_to(Tcl_Obj* obj, bool*)
+bool tcl::help_convert<bool>::from_tcl(Tcl_Obj* obj)
 {
-GVX_TRACE("tcl::aux_convert_to(bool*)");
+GVX_TRACE("tcl::help_convert<bool>::from_tcl");
 
   int int_val;
 
-  static Tcl_ObjType* const boolean_type = Tcl_GetObjType("boolean");
+  static const Tcl_ObjType* const boolean_type = Tcl_GetObjType("boolean");
 
   GVX_ASSERT(boolean_type != 0);
 
@@ -255,13 +255,13 @@ GVX_TRACE("tcl::aux_convert_to(bool*)");
   return bool(int_val);
 }
 
-double tcl::aux_convert_to(Tcl_Obj* obj, double*)
+double tcl::help_convert<double>::from_tcl(Tcl_Obj* obj)
 {
-GVX_TRACE("tcl::aux_convert_to(double*)");
+GVX_TRACE("tcl::help_convert<double>::from_tcl");
 
   double val;
 
-  static Tcl_ObjType* const double_type = Tcl_GetObjType("double");
+  static const Tcl_ObjType* const double_type = Tcl_GetObjType("double");
 
   GVX_ASSERT(double_type != 0);
 
@@ -276,23 +276,23 @@ GVX_TRACE("tcl::aux_convert_to(double*)");
   return val;
 }
 
-float tcl::aux_convert_to(Tcl_Obj* obj, float*)
+float tcl::help_convert<float>::from_tcl(Tcl_Obj* obj)
 {
-GVX_TRACE("tcl::aux_convert_to(float*)");
+GVX_TRACE("tcl::help_convert<float>::from_tcl");
 
-  return float(aux_convert_to(obj, static_cast<double*>(0)));
+  return float(help_convert<double>::from_tcl(obj));
 }
 
-const char* tcl::aux_convert_to(Tcl_Obj* obj, const char**)
+const char* tcl::help_convert<const char*>::from_tcl(Tcl_Obj* obj)
 {
-GVX_TRACE("tcl::aux_convert_to(const char**)");
+GVX_TRACE("tcl::help_convert<const char*>::from_tcl");
 
   return Tcl_GetString(obj);
 }
 
-fstring tcl::aux_convert_to(Tcl_Obj* obj, fstring*)
+fstring tcl::help_convert<fstring>::from_tcl(Tcl_Obj* obj)
 {
-GVX_TRACE("tcl::aux_convert_to(fstring*)");
+GVX_TRACE("tcl::help_convert<fstring>::from_tcl");
 
   int length;
 
@@ -306,27 +306,27 @@ GVX_TRACE("tcl::aux_convert_to(fstring*)");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// (C++ --> Tcl) aux_convert_from specializations
+// (C++ --> Tcl) convert_from overloads
 //
 ///////////////////////////////////////////////////////////////////////
 
-tcl::obj tcl::aux_convert_from(long long val)
+tcl::obj tcl::help_convert<long long>::to_tcl(long long val)
 {
-GVX_TRACE("tcl::aux_convert_from(long long)");
+GVX_TRACE("tcl::convert_from(long long)");
 
   return Tcl_NewWideIntObj(val);
 }
 
-tcl::obj tcl::aux_convert_from(long val)
+tcl::obj tcl::help_convert<long>::to_tcl(long val)
 {
-GVX_TRACE("tcl::aux_convert_from(long)");
+GVX_TRACE("tcl::convert_from(long)");
 
   return Tcl_NewLongObj(val);
 }
 
-tcl::obj tcl::aux_convert_from(unsigned long val)
+tcl::obj tcl::help_convert<unsigned long>::to_tcl(unsigned long val)
 {
-GVX_TRACE("tcl::aux_convert_from(unsigned long)");
+GVX_TRACE("tcl::convert_from(unsigned long)");
 
   long sval(val);
 
@@ -336,16 +336,16 @@ GVX_TRACE("tcl::aux_convert_from(unsigned long)");
   return Tcl_NewLongObj(sval);
 }
 
-tcl::obj tcl::aux_convert_from(int val)
+tcl::obj tcl::help_convert<int>::to_tcl(int val)
 {
-GVX_TRACE("tcl::aux_convert_from(int)");
+GVX_TRACE("tcl::convert_from(int)");
 
   return Tcl_NewIntObj(val);
 }
 
-tcl::obj tcl::aux_convert_from(unsigned int val)
+tcl::obj tcl::help_convert<unsigned int>::to_tcl(unsigned int val)
 {
-GVX_TRACE("tcl::aux_convert_from(unsigned int)");
+GVX_TRACE("tcl::convert_from(unsigned int)");
 
   int sval(val);
 
@@ -355,51 +355,51 @@ GVX_TRACE("tcl::aux_convert_from(unsigned int)");
   return Tcl_NewIntObj(sval);
 }
 
-tcl::obj tcl::aux_convert_from(unsigned char val)
+tcl::obj tcl::help_convert<unsigned char>::to_tcl(unsigned char val)
 {
-GVX_TRACE("tcl::aux_convert_from(unsigne char)");
+GVX_TRACE("tcl::convert_from(unsigne char)");
 
   return Tcl_NewIntObj(val);
 }
 
-tcl::obj tcl::aux_convert_from(bool val)
+tcl::obj tcl::help_convert<bool>::to_tcl(bool val)
 {
-GVX_TRACE("tcl::aux_convert_from(bool)");
+GVX_TRACE("tcl::convert_from(bool)");
 
   return Tcl_NewBooleanObj(val);
 }
 
-tcl::obj tcl::aux_convert_from(double val)
+tcl::obj tcl::help_convert<double>::to_tcl(double val)
 {
-GVX_TRACE("tcl::aux_convert_from(double)");
+GVX_TRACE("tcl::convert_from(double)");
 
   return Tcl_NewDoubleObj(val);
 }
 
-tcl::obj tcl::aux_convert_from(float val)
+tcl::obj tcl::help_convert<float>::to_tcl(float val)
 {
-GVX_TRACE("tcl::aux_convert_from(float)");
+GVX_TRACE("tcl::convert_from(float)");
 
   return Tcl_NewDoubleObj(val);
 }
 
-tcl::obj tcl::aux_convert_from(const char* val)
+tcl::obj tcl::help_convert<const char*>::to_tcl(const char* val)
 {
-GVX_TRACE("tcl::aux_convert_from(const char*)");
+GVX_TRACE("tcl::convert_from(const char*)");
 
   return Tcl_NewStringObj(val, -1);
 }
 
-tcl::obj tcl::aux_convert_from(const fstring& val)
+tcl::obj tcl::help_convert<rutz::fstring>::to_tcl(const rutz::fstring& val)
 {
-GVX_TRACE("tcl::aux_convert_from(const fstring&)");
+GVX_TRACE("tcl::convert_from(const fstring&)");
 
   return Tcl_NewStringObj(val.c_str(), val.length());
 }
 
-tcl::obj tcl::aux_convert_from(const rutz::value& val)
+tcl::obj tcl::help_convert<rutz::value>::to_tcl(const rutz::value& val)
 {
-GVX_TRACE("tcl::aux_convert_from(const rutz::value&)");
+GVX_TRACE("tcl::convert_from(const rutz::value&)");
 
   return Tcl_NewStringObj(val.get_string().c_str(), -1);
 }

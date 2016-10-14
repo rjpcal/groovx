@@ -100,6 +100,7 @@ GVX_TRACE("rutz::multi_value<T>::scan_from");
 }
 
 template class rutz::multi_value<int>;
+template class rutz::multi_value<float>;
 template class rutz::multi_value<double>;
 
 static const char __attribute__((used)) vcid_groovx_rutz_multivalue_cc_utc20050626084019[] = "$Id$ $HeadURL$";

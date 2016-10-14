@@ -32,6 +32,7 @@
 #ifndef CPPDEPS_CC_DEFINED
 #define CPPDEPS_CC_DEFINED
 
+#include <algorithm>   // for sort()
 #include <cassert>
 #include <cctype>
 #include <cstdlib>     // for atoi()

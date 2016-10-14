@@ -61,43 +61,39 @@ namespace rutz
 
 namespace tcl
 {
-  /// Overload of aux_convert_to for nub::ref.
-  /** This allows us to receive nub::ref objects from Tcl via the
+  /// Specialization of help_convert for nub::ref.
+  /** This allows us to pass+receive nub::ref objects from Tcl via the
       nub::uid's of the referred-to objects. */
   template <class T>
-  inline nub::ref<T> aux_convert_to(Tcl_Obj* obj, nub::ref<T>*)
+  struct help_convert<nub::ref<T> >
   {
-    nub::uid uid = tcl::convert_to<nub::uid>(obj);
-    return nub::ref<T>(uid);
-  }
+    static nub::ref<T> from_tcl(Tcl_Obj* obj)
+    {
+      nub::uid uid = tcl::convert_to<nub::uid>(obj);
+      return nub::ref<T>(uid);
+    }
+    static tcl::obj to_tcl(nub::ref<T> obj)
+    {
+      return convert_from(obj.id());
+    }
+  };
 
-  /// Overload of aux_convert_from for nub::ref.
-  /** This allows us to pass nub::ref objects to Tcl via the
+  /// Specialization of help_convert for nub::soft_ref.
+  /** This allows us to pass+receive nub::soft_ref objects from Tcl via the
       nub::uid's of the referred-to objects. */
   template <class T>
-  inline tcl::obj aux_convert_from(nub::ref<T> obj)
+  struct help_convert<nub::soft_ref<T> >
   {
-    return convert_from<nub::uid>(obj.id());
-  }
-
-  /// Overload of aux_convert_to for nub::soft_ref.
-  /** This allows us to receive nub::soft_ref objects from Tcl via the
-      nub::uid's of the referred-to objects. */
-  template <class T>
-  inline nub::soft_ref<T> aux_convert_to(Tcl_Obj* obj, nub::soft_ref<T>*)
-  {
-    nub::uid uid = tcl::convert_to<nub::uid>(obj);
-    return nub::soft_ref<T>(uid);
-  }
-
-  /// Overload of aux_convert_from for nub::soft_ref.
-  /** This allows us to pass nub::soft_ref objects to Tcl via the
-      nub::uid's of the referred-to objects. */
-  template <class T>
-  inline tcl::obj aux_convert_from(nub::soft_ref<T> obj)
-  {
-    return convert_from<nub::uid>(obj.id());
-  }
+    static nub::soft_ref<T> from_tcl(Tcl_Obj* obj)
+    {
+      nub::uid uid = tcl::convert_to<nub::uid>(obj);
+      return nub::soft_ref<T>(uid);
+    }
+    static tcl::obj to_tcl(nub::soft_ref<T> obj)
+    {
+      return convert_from<nub::uid>(obj.id());
+    }
+  };
 
 
 ///////////////////////////////////////////////////////////////////////

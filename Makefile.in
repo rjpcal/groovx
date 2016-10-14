@@ -54,7 +54,7 @@ OBJEXT          := @OBJEXT@
 SHLIB_EXT       := @SHLIB_EXT@
 STATLIB_EXT     := @STATLIB_EXT@
 CPPFLAGS        := @CPPFLAGS@ -include config.h
-CXXFLAGS        := @CXXFLAGS@
+CXXFLAGS        := @CXXFLAGS@ -fPIC
 DEFS            := @DEFS@
 LDFLAGS         := @LDFLAGS@
 LIBS            := @LIBS@ @X_EXTRA_LIBS@
@@ -158,7 +158,7 @@ $(SRC)/%.cc.E : $(SRC)/%.h
 
 %.$(SHLIB_EXT):
 	@[ -d ${@D} ] || mkdir -p ${@D}
-	time $(SHLIB_CMD) $@ $(LDFLAGS) $^ $(LIBS)
+	time $(SHLIB_CMD) $@ $(LDFLAGS) $(filter %.o,$^) $(filter-out %.o,$^) $(LIBS)
 
 %.$(STATLIB_EXT):
 	@[ -d ${@D} ] || mkdir -p ${@D}

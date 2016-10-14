@@ -42,6 +42,7 @@
 
 #include <cerrno>
 #include <cstdarg>
+#include <cstdlib> // for free()
 #include <vector>
 
 #include "rutz/debug.h"

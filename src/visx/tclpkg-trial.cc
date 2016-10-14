@@ -52,6 +52,12 @@
 
 #include "rutz/trace.h"
 
+namespace tcl
+{
+  template <>
+  struct help_convert<Response> : public help_convert<rutz::value> {};
+}
+
 extern "C"
 int Trial_Init(Tcl_Interp* interp)
 {

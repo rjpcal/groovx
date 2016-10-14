@@ -43,36 +43,38 @@
 
 namespace tcl
 {
-  /// Conversion routines for Tcl object to geom::rect.
   template <class T>
-  inline geom::rect<T> aux_convert_to(Tcl_Obj* obj, geom::rect<T>*)
+  struct help_convert<geom::rect<T> >
   {
-    tcl::list listObj(obj);
-    geom::rect<T> result = geom::rect<T>::ltrb(listObj.template get<T>(0),
-                                               listObj.template get<T>(1),
-                                               listObj.template get<T>(2),
-                                               listObj.template get<T>(3));
+    /// Conversion routines for Tcl object to geom::rect.
+    static geom::rect<T> from_tcl(Tcl_Obj* obj)
+    {
+      tcl::list listObj(obj);
+      geom::rect<T> result = geom::rect<T>::ltrb(listObj.template get<T>(0),
+                                                 listObj.template get<T>(1),
+                                                 listObj.template get<T>(2),
+                                                 listObj.template get<T>(3));
 
-    if (result.width() <= 0.0)
-      throw rutz::error("invalid rect (width was <= 0)", SRC_POS);
+      if (result.width() <= 0.0)
+        throw rutz::error("invalid rect (width was <= 0)", SRC_POS);
 
-    if (result.height() <= 0.0)
-      throw rutz::error("invalid rect (height was <= 0)", SRC_POS);
+      if (result.height() <= 0.0)
+        throw rutz::error("invalid rect (height was <= 0)", SRC_POS);
 
-    return result;
-  }
+      return result;
+    }
 
-  /// Conversion routine for geom::rect to tcl::obj.
-  template <class T>
-  inline tcl::obj aux_convert_from( const geom::rect<T>& rect )
-  {
-    tcl::list listObj;
-    listObj.append(rect.left());
-    listObj.append(rect.top());
-    listObj.append(rect.right());
-    listObj.append(rect.bottom());
-    return listObj.as_obj();
-  }
+    /// Conversion routine for geom::rect to tcl::obj.
+    static tcl::obj to_tcl( const geom::rect<T>& rect )
+    {
+      tcl::list listObj;
+      listObj.append(rect.left());
+      listObj.append(rect.top());
+      listObj.append(rect.right());
+      listObj.append(rect.bottom());
+      return listObj.as_obj();
+    }
+  };
 }
 
 static const char __attribute__((used)) vcid_groovx_gfx_recttcl_h_utc20050626084023[] = "$Id$ $HeadURL$";

@@ -57,15 +57,6 @@ GVX_DBG_REGISTER
 namespace
 {
 
-  bool havearg(char** args, const char* arg)
-  {
-    for ( ; *args != 0; ++args)
-      if (strcmp(*args, arg) == 0)
-        return true;
-
-    return false;
-  }
-
   std::string centerline(unsigned int totallen,
                          const char* pfx, const char* sfx,
                          std::string txt)

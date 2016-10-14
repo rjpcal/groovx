@@ -38,14 +38,14 @@
 
 #include "rutz/fstring.h"
 
-GbColor::GbColor(double v) :
+GbColor::GbColor(float v) :
   Gfx::RgbaColor(v),
-  rutz::multi_value<double>(4)
+  rutz::multi_value<float>(4)
 {}
 
-GbColor::GbColor(double r, double g, double b, double a) :
+GbColor::GbColor(float r, float g, float b, float a) :
   Gfx::RgbaColor(r,g,b,a),
-  rutz::multi_value<double>(4)
+  rutz::multi_value<float>(4)
 {}
 
 GbColor::~GbColor() {}
@@ -60,7 +60,7 @@ rutz::fstring GbColor::value_typename() const
   return name;
 }
 
-const double* GbColor::const_begin() const
+const float* GbColor::const_begin() const
 {
   return Gfx::RgbaColor::data();
 }

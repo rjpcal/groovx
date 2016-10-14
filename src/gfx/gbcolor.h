@@ -39,14 +39,14 @@
 #include "gfx/rgbacolor.h"
 
 /// Field class for RGBA colors.
-class GbColor : public Gfx::RgbaColor, public rutz::multi_value<double>
+class GbColor : public Gfx::RgbaColor, public rutz::multi_value<float>
 {
 public:
   /// Construct with a given luminance (default = white).
-  GbColor(double v = 1.0);
+  GbColor(float v = 1.0);
 
   /// Construct with given red/green/blue/alpha values.
-  GbColor(double r, double g, double b, double a);
+  GbColor(float r, float g, float b, float a);
   virtual ~GbColor();
 
   /// Get the underlying color value.
@@ -56,7 +56,7 @@ public:
 
   virtual rutz::fstring value_typename() const;
 
-  virtual const double* const_begin() const;
+  virtual const float* const_begin() const;
 };
 
 static const char __attribute__((used)) vcid_groovx_gfx_gbcolor_h_utc20050626084024[] = "$Id$ $HeadURL$";

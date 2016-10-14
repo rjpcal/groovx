@@ -51,6 +51,7 @@
 #include "rutz/shared_ptr.h"
 #include "rutz/value.h"
 
+#include <cstdio>
 #include <istream>
 #include <vector>
 

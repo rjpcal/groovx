@@ -39,6 +39,7 @@
 #include "rutz/value.h"
 
 #include <iomanip>
+#include <istream>
 #include <vector>
 
 namespace rutz

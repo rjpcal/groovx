@@ -96,14 +96,6 @@ namespace
     return (value == GL_TRUE);
   }
 
-  geom::span<double> rawGepthRange()
-  {
-    GVX_TRACE("<glcanvas.cc>::depthRange");
-    GLdouble vals[2];
-    glGetDoublev(GL_DEPTH_RANGE, &vals[0]);
-    return geom::span<double>(vals[0], vals[1]);
-  }
-
   txform rawGetModelview()
   {
     GVX_TRACE("<glcanvas.cc>::rawGetModelview");
@@ -450,7 +442,7 @@ GVX_TRACE("GLCanvas::drawOnBackBuffer");
 void GLCanvas::setColor(const Gfx::RgbaColor& rgba)
 {
 GVX_TRACE("GLCanvas::setColor");
-  glColor4dv(rgba.data());
+  glColor4fv(rgba.data());
 }
 
 void GLCanvas::setClearColor(const Gfx::RgbaColor& rgba)
@@ -1254,13 +1246,13 @@ GVX_TRACE("GLCanvas::light");
       const GLfloat w = (attenuation == 0.0) ? 0.0 : 1.0;
       const GLfloat m = (attenuation == 0.0) ? 1.0 : (1.0/attenuation);
 
-      const GLfloat fposition[] = { m*posi->x(), m*posi->y(), m*posi->z(), w };
+      const GLfloat fposition[] = { GLfloat(m*posi->x()), GLfloat(m*posi->y()), GLfloat(m*posi->z()), w };
       glLightfv(GL_LIGHT0+lightnum, GL_POSITION, fposition);
     }
 
   if (sdir != 0)
     {
-      const GLfloat fdirection[] = { sdir->x(), sdir->y(), sdir->z(), 0.0 };
+      const GLfloat fdirection[] = { (GLfloat) sdir->x(), (GLfloat) sdir->y(), (GLfloat) sdir->z(), 0.0 };
 
       glLightfv(GL_LIGHT0+lightnum, GL_SPOT_DIRECTION, fdirection);
       glLightf(GL_LIGHT0+lightnum, GL_SPOT_EXPONENT, spotExponent);

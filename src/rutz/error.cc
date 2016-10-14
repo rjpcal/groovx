@@ -42,6 +42,7 @@
 #include "rutz/mutex.h"
 
 #include <cmath>
+#include <cstdio> // for snprintf()
 #include <cstdlib>
 #include <new>
 #include <pthread.h>

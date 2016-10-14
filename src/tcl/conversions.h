@@ -93,84 +93,67 @@ namespace tcl
   // Functions for converting from Tcl objects to C++ types.
   //
 
+  template <class T>
+  struct help_convert;
+
   /// Convert a tcl::obj to a native c++ object.
-  /** Will select a matching aux_convert_to() overload. NOTE! Due to
-      two-phase name lookup, this convert_to() definition must occur
-      before ALL aux_convert_to() overloads. */
+  /** Will select a matching help_convert<T> specialization. */
   template <class T>
   inline typename returnable<T>::type convert_to( const tcl::obj& obj )
   {
-    return aux_convert_to(obj.get(), static_cast<typename returnable<T>::type*>(0));
+    return help_convert<typename returnable<T>::type>::from_tcl(obj.get());
   }
 
   /// Convert a tcl::obj to a native c++ object.
-  /** Will select a matching aux_convert_to() overload. NOTE! Due to
-      two-phase name lookup, this convert_to() definition must occur
-      before ALL aux_convert_to() overloads. */
+  /** Will select a matching help_convert<T> specialization. */
   template <class T>
   inline typename returnable<T>::type convert_to( Tcl_Obj* obj )
   {
-    return aux_convert_to(obj, static_cast<typename returnable<T>::type*>(0));
+    return help_convert<typename returnable<T>::type>::from_tcl(obj);
   }
 
-  // Note that the trailing pointer params are not actually used, they
-  // are simply present to allow overload selection. See e.g. how
-  // aux_convert_to() is called below in the implementation of
-  // convert_to().
+  template <> struct help_convert<int          > { static int           from_tcl(Tcl_Obj* obj); static tcl::obj to_tcl(int val); };
+  template <> struct help_convert<unsigned int > { static unsigned int  from_tcl(Tcl_Obj* obj); static tcl::obj to_tcl(unsigned int val); };
+  template <> struct help_convert<long         > { static long          from_tcl(Tcl_Obj* obj); static tcl::obj to_tcl(long val); };
+  template <> struct help_convert<unsigned long> { static unsigned long from_tcl(Tcl_Obj* obj); static tcl::obj to_tcl(unsigned long val); };
+  template <> struct help_convert<long long    > { static long long     from_tcl(Tcl_Obj* obj); static tcl::obj to_tcl(long long val); };
+  template <> struct help_convert<bool         > { static bool          from_tcl(Tcl_Obj* obj); static tcl::obj to_tcl(bool val); };
+  template <> struct help_convert<double       > { static double        from_tcl(Tcl_Obj* obj); static tcl::obj to_tcl(double val); };
+  template <> struct help_convert<float        > { static float         from_tcl(Tcl_Obj* obj); static tcl::obj to_tcl(float val); };
+  template <> struct help_convert<const char*  > { static const char*   from_tcl(Tcl_Obj* obj); static tcl::obj to_tcl(const char* val); };
+  template <> struct help_convert<rutz::fstring> { static rutz::fstring from_tcl(Tcl_Obj* obj); static tcl::obj to_tcl(const rutz::fstring& val); };
+  template <> struct help_convert<unsigned char> {                                              static tcl::obj to_tcl(unsigned char val); };
+  template <> struct help_convert<rutz::value>   {                                              static tcl::obj to_tcl(const rutz::value& val); };
 
-  int           aux_convert_to(Tcl_Obj* obj, int*);
-  unsigned int  aux_convert_to(Tcl_Obj* obj, unsigned int*);
-  long          aux_convert_to(Tcl_Obj* obj, long*);
-  unsigned long aux_convert_to(Tcl_Obj* obj, unsigned long*);
-  long long     aux_convert_to(Tcl_Obj* obj, long long*);
-  bool          aux_convert_to(Tcl_Obj* obj, bool*);
-  double        aux_convert_to(Tcl_Obj* obj, double*);
-  float         aux_convert_to(Tcl_Obj* obj, float*);
-  const char*   aux_convert_to(Tcl_Obj* obj, const char**);
-  rutz::fstring aux_convert_to(Tcl_Obj* obj, rutz::fstring*);
+  template <> struct help_convert<char*>
+  {
+    static tcl::obj to_tcl(char* val) { return help_convert<const char*>::to_tcl(val); }
+  };
 
-  inline
-  Tcl_Obj*      aux_convert_to(Tcl_Obj* obj, Tcl_Obj**)
-  { return obj; }
+  template <unsigned int N> struct help_convert<char[N]>
+  {
+    static tcl::obj to_tcl(const char* val) { return help_convert<const char*>::to_tcl(val); }
+  };
 
-  inline
-  tcl::obj      aux_convert_to(Tcl_Obj* obj, tcl::obj*)
-  { return tcl::obj(obj); }
+  template <> struct help_convert<Tcl_Obj*>
+  {
+    static Tcl_Obj* from_tcl(Tcl_Obj* obj) { return obj; }
+    static tcl::obj to_tcl(Tcl_Obj* val) { return tcl::obj(val); }
+  };
 
-  //
-  // Functions for converting from C++ types to Tcl objects.
-  //
+  template <> struct help_convert<tcl::obj>
+  {
+    static tcl::obj from_tcl(Tcl_Obj* obj) { return tcl::obj(obj); }
+    static tcl::obj to_tcl(tcl::obj val) { return val; }
+  };
 
   /// Convert a native c++ object to a tcl::obj.
-  /** Will select a matching aux_convert_from() overload. NOTE! Due to
-      two-phase name lookup, this convert_from() definition must occur
-      before ALL aux_convert_from() overloads. */
+  /** Will select a matching help_convert<T>::to_tcl() specialization. */
   template <class T>
   inline tcl::obj convert_from(const T& val)
   {
-    return aux_convert_from(val);
+    return help_convert<T>::to_tcl(val);
   }
-
-  tcl::obj aux_convert_from(long long val);
-  tcl::obj aux_convert_from(long val);
-  tcl::obj aux_convert_from(unsigned long val);
-  tcl::obj aux_convert_from(int val);
-  tcl::obj aux_convert_from(unsigned int val);
-  tcl::obj aux_convert_from(unsigned char val);
-  tcl::obj aux_convert_from(bool val);
-  tcl::obj aux_convert_from(double val);
-  tcl::obj aux_convert_from(float val);
-  tcl::obj aux_convert_from(const char* val);
-  tcl::obj aux_convert_from(const rutz::fstring& val);
-  tcl::obj aux_convert_from(const rutz::value& v);
-
-  inline
-  tcl::obj aux_convert_from(Tcl_Obj* val)
-  { return tcl::obj(val); }
-
-  inline
-  tcl::obj aux_convert_from(tcl::obj val)
-  { return val; }
 }
 
 static const char __attribute__((used)) vcid_groovx_tcl_conversions_h_utc20050628162420[] = "$Id$ $HeadURL$";

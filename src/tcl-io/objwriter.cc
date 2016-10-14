@@ -53,7 +53,8 @@ GVX_TRACE("tcl::obj_writer::~obj_writer");
 
 void tcl::obj_writer::write_char(const char* /*name*/, char val)
 {
-  m_obj = tcl::convert_from(val);
+  const char arr[2] = { val, '\0' };
+  m_obj = tcl::convert_from(&arr[0]);
 }
 
 void tcl::obj_writer::write_int(const char* /*name*/, int val)

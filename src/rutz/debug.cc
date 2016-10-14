@@ -40,6 +40,7 @@ GVX_DBG_REGISTER
 #include "rutz/backtrace.h"
 #include "rutz/mutex.h"
 
+#include <cstdio> // for stderr
 #include <cstdlib>
 #include <cstring>
 #include <iomanip>

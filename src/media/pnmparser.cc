@@ -47,6 +47,7 @@
 #include "rutz/shared_ptr.h"
 
 #include <cctype>
+#include <cstdio>
 #include <iostream>
 
 #include "rutz/trace.h"

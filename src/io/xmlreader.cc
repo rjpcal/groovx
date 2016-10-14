@@ -50,6 +50,7 @@
 #include "rutz/shared_ptr.h"
 #include "rutz/value.h"
 
+#include <cstdio>            // for sscanf()
 #include <cstring>           // for strcmp()
 #include <iostream>          // for cout in xml_debug()
 #include <istream>           // for tree_builder constructor

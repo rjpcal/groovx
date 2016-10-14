@@ -213,7 +213,7 @@ public:
   template <class T>
   void set_result(T t)
     {
-      set_obj_result(tcl::convert_from<T>(t));
+      set_obj_result(tcl::convert_from(t));
     }
 
   /// Get the raw objv array.

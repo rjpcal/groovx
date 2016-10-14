@@ -53,6 +53,14 @@ namespace write_utils
 
   rutz::fstring make_seq_length_name(const rutz::fstring& seq_name);
 
+  template <class Itr>
+  int compute_seq_length(Itr begin, Itr end)
+    {
+      int count = 0;
+      while (begin != end) { ++count; ++begin; }
+      return count;
+    }
+
   /** A generic interface for handling containers, sequences, etc. of
       value types. */
   template <class Itr>
@@ -121,14 +129,6 @@ namespace write_utils
           ++begin;
           ++count;
         }
-    }
-
-  template <class Itr>
-  int compute_seq_length(Itr begin, Itr end)
-    {
-      int count = 0;
-      while (begin != end) { ++count; ++begin; }
-      return count;
     }
 
 }} // end namespace io::write_utils

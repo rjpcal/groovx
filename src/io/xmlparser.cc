@@ -40,6 +40,7 @@
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
 
+#include <cstdio> // for EOF
 #include <istream>
 
 #include "rutz/trace.h"

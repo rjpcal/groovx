@@ -41,6 +41,7 @@
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
 
+#include <cctype> // for ::isdigit()
 #include <cerrno> // for ::errno
 #include <cstdio> // for ::rename(), ::remove()
 #include <cstdlib> // for ::atoi()

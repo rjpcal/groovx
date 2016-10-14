@@ -134,6 +134,7 @@ namespace
     interp.eval(cmd);
   }
 
+#ifndef HAVE_TCL_NAMESPACE_API
   tcl::list get_command_list(tcl::interpreter& interp, const char* namesp)
   {
     tcl::obj saveresult = interp.get_result<tcl::obj>();
@@ -143,20 +144,7 @@ namespace
     interp.set_result(saveresult);
     return cmdlist;
   }
-
-  const char* get_name_tail(const char* name)
-  {
-    const char* p = name;
-    while (*p != '\0') ++p; // skip to end of string
-    while (--p > name) {
-      if ((*p == ':') && (*(p-1) == ':')) {
-        ++p;
-        break;
-      }
-    }
-    GVX_ASSERT(p >= name);
-    return p;
-  }
+#endif
 }
 
 const int tcl::pkg::STATUS_OK = TCL_OK;

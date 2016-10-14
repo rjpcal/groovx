@@ -245,6 +245,7 @@ int MyObj::counter = 0;
 
 namespace
 {
+#if 0
   GbVec3<double> data[4];
 
   rutz::array_value<GbVec3<double> > arraydata;
@@ -269,6 +270,7 @@ namespace
         ++iter; ++i;
       }
   }
+#endif
 
   tcl::obj dictGet(tcl::dict dict, const char* key)
   {
@@ -329,12 +331,14 @@ int Hook_Init(Tcl_Interp* interp)
   pkg->def( "::myobj", "val", MyObj::make, SRC_POS );
   pkg->def( "::myinfo", "obj", MyObj::info, SRC_POS );
 
+#if 0
   pkg->def( "::getData", 0, getData, SRC_POS );
   pkg->def( "::setData", "list", setData, SRC_POS );
 
   pkg->def( "::getArray", 0, getArray, SRC_POS );
   pkg->def( "::getArraySize", 0, getArraySize, SRC_POS );
   pkg->def( "::setArray", "list", setArray, SRC_POS );
+#endif
 
   pkg->def( "::dictGet", "dict key", dictGet, SRC_POS );
 

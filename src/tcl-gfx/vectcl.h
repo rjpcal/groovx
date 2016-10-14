@@ -41,47 +41,51 @@
 
 namespace tcl
 {
-  /// Conversion routine for Tcl object to geom::vec2.
   template <class T>
-  inline geom::vec2<T> aux_convert_to(Tcl_Obj* obj, geom::vec2<T>*)
+  struct help_convert<geom::vec2<T> >
   {
-    tcl::list listObj(obj);
+    /// Conversion routine for Tcl object to geom::vec2.
+    static geom::vec2<T> from_tcl(Tcl_Obj* obj)
+    {
+      tcl::list listObj(obj);
 
-    return geom::vec2<T>(listObj.template get<T>(0),
-                         listObj.template get<T>(1));
-  }
+      return geom::vec2<T>(listObj.template get<T>(0),
+                           listObj.template get<T>(1));
+    }
 
-  /// Conversion routine for geom::vec2 to tcl::obj.
+    /// Conversion routine for geom::vec2 to tcl::obj.
+    static tcl::obj to_tcl( const geom::vec2<T>& v )
+    {
+      tcl::list listObj;
+      listObj.append(v.x());
+      listObj.append(v.y());
+      return listObj.as_obj();
+    }
+  };
+
   template <class T>
-  inline tcl::obj aux_convert_from( const geom::vec2<T>& v )
+  struct help_convert<geom::vec3<T> >
   {
-    tcl::list listObj;
-    listObj.append(v.x());
-    listObj.append(v.y());
-    return listObj.as_obj();
-  }
+    /// Conversion routine for Tcl object to geom::vec3.
+    static geom::vec3<T> from_tcl(Tcl_Obj* obj)
+    {
+      tcl::list listObj(obj);
 
-  /// Conversion routine for Tcl object to geom::vec3.
-  template <class T>
-  inline geom::vec3<T> aux_convert_to(Tcl_Obj* obj, geom::vec3<T>*)
-  {
-    tcl::list listObj(obj);
+      return geom::vec3<T>(listObj.template get<T>(0),
+                           listObj.template get<T>(1),
+                           listObj.template get<T>(2));
+    }
 
-    return geom::vec3<T>(listObj.template get<T>(0),
-                         listObj.template get<T>(1),
-                         listObj.template get<T>(2));
-  }
-
-  /// Conversion routine for geom::vec3 to tcl::obj.
-  template <class T>
-  inline tcl::obj aux_convert_from( const geom::vec3<T>& v )
-  {
-    tcl::list listObj;
-    listObj.append(v.x());
-    listObj.append(v.y());
-    listObj.append(v.z());
-    return listObj.as_obj();
-  }
+    /// Conversion routine for geom::vec3 to tcl::obj.
+    static tcl::obj to_tcl( const geom::vec3<T>& v )
+    {
+      tcl::list listObj;
+      listObj.append(v.x());
+      listObj.append(v.y());
+      listObj.append(v.z());
+      return listObj.as_obj();
+    }
+  };
 }
 
 static const char __attribute__((used)) vcid_groovx_gfx_vectcl_h_utc20050626084023[] = "$Id$ $HeadURL$";

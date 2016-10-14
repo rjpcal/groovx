@@ -54,16 +54,16 @@ GVX_DBG_REGISTER
 #  undef HAVE_TCL_DICT
 #endif
 
-tcl::dict tcl::aux_convert_to(Tcl_Obj* obj, tcl::dict*)
+tcl::dict tcl::help_convert<tcl::dict>::from_tcl(Tcl_Obj* obj)
 {
-GVX_TRACE("tcl::aux_convert_to(tcl::dict*)");
+GVX_TRACE("tcl::help_convert<tcl::dict>::from_tcl");
 
   return tcl::dict(obj);
 }
 
-tcl::obj tcl::aux_convert_from(tcl::dict dict_value)
+tcl::obj tcl::help_convert<tcl::dict>::to_tcl(tcl::dict dict_value)
 {
-GVX_TRACE("tcl::aux_convert_from(tcl::dict)");
+GVX_TRACE("tcl::help_convert<tcl::dict>::to_tcl");
 
   return dict_value.as_obj();
 }

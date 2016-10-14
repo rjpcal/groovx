@@ -35,6 +35,8 @@
 
 #include "cstrstream.h"
 
+#include <cstdio> // for EOF
+
 rutz::imembuf::imembuf(const char* s) :
   m_len(strlen(s)),
   m_buf(s),

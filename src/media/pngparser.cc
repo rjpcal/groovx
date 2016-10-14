@@ -130,7 +130,10 @@ namespace
     const int nheader = 8;
     png_byte header[nheader];
 
-    fread(header, 1, nheader, m_file);
+    if (nheader != fread(header, 1, nheader, m_file))
+      {
+        throw rutz::error(rutz::sfmt("couldn't read header %s", filename), SRC_POS);
+      }
 
     int is_png = !png_sig_cmp(header, 0, nheader);
     if (!is_png)

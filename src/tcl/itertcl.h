@@ -41,23 +41,25 @@
 namespace tcl
 {
   template <class T>
-  inline rutz::fwd_iter<T> aux_convert_to(Tcl_Obj* obj, rutz::fwd_iter<T>*)
+  struct help_convert<rutz::fwd_iter<T> >
   {
-    tcl::list l(obj);
-    return rutz::fwd_iter<T>(l.template begin<T>(), l.template end<T>());
-  }
+    static rutz::fwd_iter<T> from_tcl(Tcl_Obj* obj)
+    {
+      tcl::list l(obj);
+      return rutz::fwd_iter<T>(l.template begin<T>(), l.template end<T>());
+    }
 
-  template <class T>
-  inline tcl::obj aux_convert_from( rutz::fwd_iter<T> iter )
-  {
-    tcl::list result;
-    while ( !iter.at_end() )
-      {
-        result.append(*iter);
-        iter.next();
-      }
-    return result.as_obj();
-  }
+    static tcl::obj to_tcl( rutz::fwd_iter<T> iter )
+    {
+      tcl::list result;
+      while ( !iter.at_end() )
+        {
+          result.append(*iter);
+          iter.next();
+        }
+      return result.as_obj();
+    }
+  };
 }
 
 static const char __attribute__((used)) vcid_groovx_tcl_itertcl_h_utc20050626084017[] = "$Id$ $HeadURL$";

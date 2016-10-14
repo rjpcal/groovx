@@ -42,8 +42,12 @@ namespace tcl
 {
   class dict;
 
-  tcl::dict aux_convert_to(Tcl_Obj* obj, tcl::dict*);
-  tcl::obj aux_convert_from(tcl::dict dict_value);
+  template <>
+  struct help_convert<tcl::dict>
+  {
+    static tcl::dict from_tcl(Tcl_Obj* obj);
+    static tcl::obj to_tcl(tcl::dict dict_value);
+  };
 }
 
 ///////////////////////////////////////////////////////////////////////

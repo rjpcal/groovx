@@ -62,7 +62,7 @@ void tcl::obj::make_unique() const
 
 const char* tcl::obj::tcltype_name() const
 {
-  Tcl_ObjType* type = m_obj->typePtr;
+  const Tcl_ObjType* type = m_obj->typePtr;
 
   return type ? type->name : "(none)";
 }

@@ -113,6 +113,8 @@ namespace
     return UNKNOWN;
   }
 
+#if defined(GVX_GIFTOPNM_PROG) || defined(GVX_ANYTOPNM_PROG)
+
   // A fallback function to try to read an image by filtering it
   // through a pipe that will convert it to PNM format.
   void pipe_load(const char* progname,
@@ -137,6 +139,9 @@ namespace
     if (p.exit_status() != 0)
       throw rutz::error("child process exited abnormally", SRC_POS);
   }
+
+#endif
+
 }
 
 void media::load_image(const char* filename, media::bmap_data& data)
