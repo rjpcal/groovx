@@ -64,8 +64,10 @@
 
 #include "rutz/trace.h"
 
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -537,6 +539,8 @@ GVX_TRACE("Gl_Init");
   GVX_PKG_RETURN(pkg);
 }
 
+#ifdef __clang__
 #pragma clang diagnostic pop
+#endif
 
 #endif // !GROOVX_VISX_TCLPKG_GL_CC_UTC20050628171008_DEFINED
