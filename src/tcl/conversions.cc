@@ -134,61 +134,32 @@ long tcl::help_convert<long>::from_tcl(Tcl_Obj* obj)
 {
 GVX_TRACE("tcl::help_convert<long>::from_tcl");
 
-  Tcl_WideInt wideval;
+  long val;
 
-  static const Tcl_ObjType* const wide_int_type = Tcl_GetObjType("wideInt");
+  static const Tcl_ObjType* const int_type = Tcl_GetObjType("int");
 
-  GVX_ASSERT(wide_int_type != 0);
+  GVX_ASSERT(int_type != 0);
 
-  safe_unshared_obj safeobj(obj, wide_int_type);
+  safe_unshared_obj safeobj(obj, int_type);
 
-  const long longmax = std::numeric_limits<long>::max();
-  const long longmin = std::numeric_limits<long>::min();
-
-  if ( Tcl_GetWideIntFromObj(0, safeobj.get(), &wideval) != TCL_OK )
+  if ( Tcl_GetLongFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
-      throw rutz::error(rutz::sfmt("expected long value but got \"%s\"",
+      throw rutz::error(rutz::sfmt("expected integer but got \"%s\"",
                                    Tcl_GetString(obj)), SRC_POS);
     }
-  else if (wideval > static_cast<Tcl_WideInt>(longmax))
-    {
-      throw rutz::error(rutz::sfmt("expected long value but got \"%s\" "
-                                   "(value too large, max is %ld)",
-                                   Tcl_GetString(obj),
-                                   longmax), SRC_POS);
-    }
-  else if (wideval < static_cast<Tcl_WideInt>(longmin))
-    {
-      throw rutz::error(rutz::sfmt("expected long value but got \"%s\" "
-                                   "(value too small, min is %ld)",
-                                   Tcl_GetString(obj),
-                                   longmin), SRC_POS);
-    }
 
-  return static_cast<long>(wideval);
+  return val;
 }
 
 unsigned long tcl::help_convert<unsigned long>::from_tcl(Tcl_Obj* obj)
 {
 GVX_TRACE("tcl::help_convert<unsigned long>::from_tcl");
 
-  Tcl_WideInt wideval;
-
-  static const Tcl_ObjType* const wide_int_type = Tcl_GetObjType("wideInt");
-
-  GVX_ASSERT(wide_int_type != 0);
-
-  safe_unshared_obj safeobj(obj, wide_int_type);
+  long long wideval = help_convert<long long>::from_tcl(obj);
 
   const unsigned long ulongmax = std::numeric_limits<unsigned long>::max();
 
-  if ( Tcl_GetWideIntFromObj(0, safeobj.get(), &wideval) != TCL_OK )
-    {
-      throw rutz::error(rutz::sfmt("expected unsigned long value "
-                                   "but got \"%s\"", Tcl_GetString(obj)),
-                        SRC_POS);
-    }
-  else if (wideval < 0)
+  if (wideval < 0)
     {
       throw rutz::error(rutz::sfmt("expected unsigned long value "
                                    "but got \"%s\" (value was negative)",
@@ -216,6 +187,12 @@ long long tcl::help_convert<long long>::from_tcl(Tcl_Obj* obj)
 {
 GVX_TRACE("tcl::help_convert<longlong>::from_tcl");
 
+#ifdef TCL_WIDE_INT_IS_LONG
+
+  return help_convert<long>::from_tcl(obj);
+
+#else
+
   static const Tcl_ObjType* const wide_int_type = Tcl_GetObjType("wideInt");
 
   GVX_ASSERT(wide_int_type != 0);
@@ -231,6 +208,8 @@ GVX_TRACE("tcl::help_convert<longlong>::from_tcl");
     }
 
   return wideval;
+
+#endif
 }
 
 bool tcl::help_convert<bool>::from_tcl(Tcl_Obj* obj)
