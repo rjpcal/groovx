@@ -57,7 +57,10 @@ fstring rutz::vsfmt(const char* fmt, va_list ap)
       // std::vector here
       char buf[bufsize];
 
-      const int nchars = vsnprintf(buf, bufsize, fmt, ap);
+      va_list apcopy;
+      va_copy(apcopy, ap);
+      const int nchars = vsnprintf(&buf[0], bufsize, fmt, apcopy);
+      va_end(apcopy);
 
       if (nchars < 0)
         {
@@ -104,7 +107,8 @@ fstring rutz::sfmt(const char* fmt, ...)
 {
   va_list a;
   va_start(a, fmt);
-  const fstring result = rutz::vsfmt(fmt, a);
+  try { const fstring result = rutz::vsfmt(fmt, a); }
+  catch (...) { va_end(a); throw; }
   va_end(a);
   return result;
 }
