@@ -118,7 +118,7 @@ namespace
   typedef nub::ref<nub::slot_base> slot_ref;
 }
 
-struct nub::signal_base::impl
+class nub::signal_base::impl
 {
 public:
   impl() :
@@ -178,9 +178,13 @@ GVX_TRACE("nub::signal_base::do_emit");
            ii != end;
            /* incr in loop */)
         {
-          dbg_eval(3, typeid(**ii).name());
-          dbg_eval_nl(3, (*ii)->dbg_ref_count());
-          dbg_eval_nl(3, (*ii)->exists());
+          if (GVX_DBG_LEVEL() >= 3)
+            {
+              const nub::slot_base& thing = **ii;
+              dbg_eval(3, typeid(thing).name());
+              dbg_eval_nl(3, (*ii)->dbg_ref_count());
+              dbg_eval_nl(3, (*ii)->exists());
+            }
           if ((*ii)->exists())
             {
               (*ii)->do_call(params);

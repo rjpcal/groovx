@@ -135,7 +135,7 @@ public:
       itsBindingScript(script),
       itsResponseCount(0)
     {
-      GVX_PRECONDITION((erh != 0) && (widget.is_valid()) && (&trial != 0));
+      GVX_PRECONDITION((erh != 0) && (widget.is_valid()));
       attend();
     }
 

@@ -60,6 +60,7 @@
 
 #ifdef GVX_GL_PLATFORM_AGL
 #  define HAVE_LIMITS_H
+#  include <tkInt.h>
 #  include <tkMacOSX.h>
 #endif
 
@@ -227,7 +228,7 @@ GVX_TRACE("Toglet::Toglet");
 #if defined(GVX_GL_PLATFORM_GLX)
   rep->glx->bindWindow(Tk_WindowId(rep->tkWin));
 #elif defined(GVX_GL_PLATFORM_AGL)
-  rep->glx->bindDrawable(TkMacOSXGetDrawablePort(Tk_WindowId(rep->tkWin)));
+  rep->glx->bindDrawable((CGrafPtr)TkMacOSXGetDrawablePort(Tk_WindowId(rep->tkWin)));
 #endif
 
   // Bind the context to the window and make it the current context

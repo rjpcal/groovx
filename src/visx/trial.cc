@@ -470,8 +470,6 @@ void Trial::vxRun(Element& parent)
 {
 GVX_TRACE("Trial::vxRun");
 
-  GVX_PRECONDITION(&parent != 0);
-
   soft_ref<Toglet> widget = parent.getWidget();
 
   GVX_PRECONDITION(widget.is_valid());

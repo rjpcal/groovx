@@ -62,8 +62,9 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-struct GxTransformImpl
+class GxTransformImpl
 {
+public:
   GxTransformImpl(GxTransform* p) :
     owner(p),
     txformCache(geom::txform::identity())

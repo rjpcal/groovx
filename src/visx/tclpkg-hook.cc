@@ -280,7 +280,7 @@ namespace
 #if defined(GVX_GL_PLATFORM_GLX)
 #  include <GL/gl.h>
 #elif defined(GVX_GL_PLATFORM_AGL)
-#  include <AGL/gl.h>
+#  include <AGL/agl.h>
 #endif
 
 namespace

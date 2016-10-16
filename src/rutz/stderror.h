@@ -40,7 +40,7 @@
 
 namespace rutz
 {
-  class file_pos;
+  struct file_pos;
 
   void throw_bad_cast(const std::type_info& to,
                       const std::type_info& from,

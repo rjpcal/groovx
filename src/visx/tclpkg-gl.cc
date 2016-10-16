@@ -58,11 +58,14 @@
 #  include <GL/glu.h>
 #  include <GL/glx.h>
 #elif defined(GVX_GL_PLATFORM_AGL)
-#  include <AGL/gl.h>
-#  include <AGL/glu.h>
+#  include <AGL/agl.h>
+#  include <OpenGL/glu.h>
 #endif
 
 #include "rutz/trace.h"
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -533,5 +536,7 @@ GVX_TRACE("Gl_Init");
 
   GVX_PKG_RETURN(pkg);
 }
+
+#pragma clang diagnostic pop
 
 #endif // !GROOVX_VISX_TCLPKG_GL_CC_UTC20050628171008_DEFINED

@@ -43,7 +43,7 @@ typedef struct Tcl_Obj Tcl_Obj;
 
 namespace rutz
 {
-  class file_pos;
+  struct file_pos;
   class fstring;
   template <class T> class shared_ptr;
 }

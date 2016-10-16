@@ -36,8 +36,7 @@
 
 namespace rutz
 {
-  class file_pos;
-  //  class fstring;
+  struct file_pos;
 
   /// A non-typesafe wrapper around std::map<string, void*>.
   /** The use must provide a pointer to a function that knows how to

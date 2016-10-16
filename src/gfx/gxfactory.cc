@@ -40,13 +40,15 @@
 #if defined(GVX_GL_PLATFORM_GLX)
 #  include "gfx/glxrasterfont.h"
 #elif defined(GVX_GL_PLATFORM_AGL)
-#  define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_3
-#  include "gfx/aglrasterfont.h"
+// #  define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_3
+// #  include "gfx/aglrasterfont.h"
 #else
 #  error no GVX_GL_PLATFORM macro defined
 #endif
 
+#include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/sfmt.h"
 #include "rutz/shared_ptr.h"
 
 #include <map>
@@ -67,7 +69,9 @@ GVX_TRACE("GxFactory::makeRasterFont");
 #if defined(GVX_GL_PLATFORM_GLX)
   return rutz::make_shared(new GlxRasterFont(fontname));
 #elif defined(GVX_GL_PLATFORM_AGL)
-  return rutz::make_shared(new AglRasterFont(fontname));
+//   return rutz::make_shared(new AglRasterFont(fontname));
+  throw rutz::error(rutz::sfmt("couldn't create font %s: AglRasterFont not supported",
+                               fontname), SRC_POS);
 #endif
 }
 

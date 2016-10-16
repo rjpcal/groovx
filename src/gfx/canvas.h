@@ -39,7 +39,7 @@
 
 namespace rutz
 {
-  class file_pos;
+  struct file_pos;
   class fstring;
   template <class T> class dynamic_block;
 }

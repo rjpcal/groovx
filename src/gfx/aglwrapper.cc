@@ -34,6 +34,9 @@
 
 #ifdef GVX_GL_PLATFORM_AGL
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 #define MAC_OS_X_VERSION_MIN_REQUIRED MAC_OS_X_VERSION_10_3
 
 #include "gfx/aglwrapper.h"
@@ -193,13 +196,9 @@ AglWrapper::AglWrapper(GlxOpts& opts) :
 {
 GVX_TRACE("AglWrapper::AglWrapper");
 
-  // AGLDevice is a typedef for GDHandle
-  AGLDevice gdev = GetMainDevice();
-  const GLint ndev = 1;
-
   AttribList attribs(opts);
 
-  itsPixFormat = aglChoosePixelFormat(&gdev, ndev, attribs.get());
+  itsPixFormat = aglCreatePixelFormat(attribs.get());
 
   if (itsPixFormat == 0)
     throw rutz::error("couldn't choose Apple-OpenGL pixel format",
@@ -281,17 +280,6 @@ GVX_TRACE("AglWrapper::makeCurrent");
 
   GVX_ASSERT(itsDrawable != 0);
 
-  if (GVX_DBG_LEVEL() >= 3)
-    {
-      WindowRef macWindow = GetWindowFromPort(itsDrawable);
-      Rect rectPort;
-      GetWindowPortBounds(macWindow, &rectPort);
-      dbg_eval(0, rectPort.right);
-      dbg_eval_nl(0, rectPort.left);
-      dbg_eval(0, rectPort.bottom);
-      dbg_eval_nl(0, rectPort.top);
-    }
-
   int status1 = aglSetDrawable(itsContext, itsDrawable);
 
   if (status1 == GL_FALSE)
@@ -323,6 +311,8 @@ void AglWrapper::swapBuffers() const
 GVX_TRACE("AglWrapper::swapBuffers");
   aglSwapBuffers(itsContext);
 }
+
+#pragma clang diagnostic pop
 
 #endif // GVX_GL_PLATFORM_AGL
 

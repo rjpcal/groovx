@@ -132,8 +132,6 @@ GVX_TRACE("Block::vxRun");
 
   if ( isComplete() ) return;
 
-  GVX_PRECONDITION( &e != 0 );
-
   nub::log( vxInfo() );
 
   itsParent = &e;

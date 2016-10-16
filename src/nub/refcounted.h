@@ -67,7 +67,7 @@ namespace nub
  **/
 ///////////////////////////////////////////////////////////////////////
 
-struct nub::ref_counts
+class nub::ref_counts
 {
 public:
   friend class nub::ref_counted;

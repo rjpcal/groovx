@@ -37,7 +37,7 @@
 
 #include "nub/volatileobject.h"
 
-class GlxOpts;
+struct GlxOpts;
 class GlWindowInterface;
 
 namespace rutz

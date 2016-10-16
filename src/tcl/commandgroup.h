@@ -38,7 +38,7 @@ struct Tcl_Interp;
 
 namespace rutz
 {
-  class file_pos;
+  struct file_pos;
   class fstring;
   template <class T> class shared_ptr;
 }

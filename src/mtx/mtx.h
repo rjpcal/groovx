@@ -206,7 +206,10 @@ public:
 
   bool operator!=(const stride_iterator_base& other) const { return data != other.data; }
 
-  bool operator<(const stride_iterator_base& other) const { return data < other.data; }
+  bool operator< (const stride_iterator_base& other) const { return data <  other.data; }
+  bool operator<=(const stride_iterator_base& other) const { return data <= other.data; }
+  bool operator> (const stride_iterator_base& other) const { return data >  other.data; }
+  bool operator>=(const stride_iterator_base& other) const { return data >= other.data; }
 
   difference_type operator-(const stride_iterator_base& other) const
     { return (data - other.data) / stride; }

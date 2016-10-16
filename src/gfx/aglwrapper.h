@@ -35,9 +35,12 @@
 
 #include "gfx/glwindowinterface.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 #include <AGL/agl.h>
 
-class GlxOpts;
+struct GlxOpts;
 
 /// Wraps the AGLContext mechanism.
 class AglWrapper : public GlWindowInterface
@@ -82,5 +85,7 @@ public:
 
   void bindDrawable(CGrafPtr drawable) { itsDrawable = drawable; }
 };
+
+#pragma clang diagnostic pop
 
 #endif // !GROOVX_GFX_AGLWRAPPER_H_UTC20050626084024_DEFINED

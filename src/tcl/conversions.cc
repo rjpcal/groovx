@@ -222,7 +222,7 @@ GVX_TRACE("tcl::help_convert<longlong>::from_tcl");
 
   safe_unshared_obj safeobj(obj, wide_int_type);
 
-  long long wideval;
+  Tcl_WideInt wideval;
 
   if ( Tcl_GetWideIntFromObj(0, safeobj.get(), &wideval) != TCL_OK )
     {

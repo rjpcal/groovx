@@ -32,6 +32,9 @@
 #ifndef GROOVX_GFX_GLCANVAS_CC_UTC20050626084024_DEFINED
 #define GROOVX_GFX_GLCANVAS_CC_UTC20050626084024_DEFINED
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 #include "glcanvas.h"
 
 #include "geom/projection.h"
@@ -58,8 +61,8 @@
 #  include <GL/gl.h>
 #  include <GL/glu.h>
 #elif defined(GVX_GL_PLATFORM_AGL)
-#  include <AGL/gl.h>
-#  include <AGL/glu.h>
+#  include <AGL/agl.h>
+#  include <OpenGL/glu.h>
 #endif
 
 #include "rutz/trace.h"
@@ -1286,5 +1289,7 @@ void GLCanvas::material(const Gfx::RgbaColor* spec,
   if (shininess != 0)
     glMaterialf(GL_FRONT, GL_SHININESS, *shininess);
 }
+
+#pragma clang diagnostic pop
 
 #endif // !GROOVX_GFX_GLCANVAS_CC_UTC20050626084024_DEFINED

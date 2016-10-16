@@ -49,9 +49,9 @@
 #  include "media/irixsound.h"
    typedef media::irix_audio_sound_rep sound_rep_t;
 
-#elif defined(HAVE_QUICKTIME_MOVIES_H)
-#  include "media/quicktimesound.h"
-   typedef media::quicktime_sound_rep sound_rep_t;
+// #elif defined(HAVE_QUICKTIME_MOVIES_H)
+// #  include "media/quicktimesound.h" // FIXME old QuickTime code won't compile; needs overhaul
+//    typedef media::quicktime_sound_rep sound_rep_t;
 
 #elif defined(HAVE_ESD_H)
 #  include "media/esdsound.h"

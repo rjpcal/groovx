@@ -95,13 +95,15 @@ namespace rutz {namespace debug
 
 #define GVX_CONCAT(x, y) x ## y
 
-#define GVX_DO_DBG_REGISTER(ext)                                     \
-static const int GVX_CONCAT(DEBUG_KEY, ext) =                        \
-  rutz::debug::create_key(__FILE__);                                 \
-                                                                     \
-static inline int GVX_CONCAT(dbg_level_, ext) ()                     \
-{                                                                    \
-  return rutz::debug::get_level_for_key(GVX_CONCAT(DEBUG_KEY, ext)); \
+#define GVX_DO_DBG_REGISTER(ext)                                        \
+static const int GVX_CONCAT(DEBUG_KEY, ext) =                           \
+  rutz::debug::create_key(__FILE__);                                    \
+                                                                        \
+static inline int GVX_CONCAT(dbg_level_, ext) () __attribute__((used)); \
+                                                                        \
+static inline int GVX_CONCAT(dbg_level_, ext) ()                        \
+{                                                                       \
+  return rutz::debug::get_level_for_key(GVX_CONCAT(DEBUG_KEY, ext));    \
 }
 
 #define GVX_DBG_REGISTER GVX_DO_DBG_REGISTER(1)

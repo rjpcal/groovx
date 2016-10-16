@@ -40,7 +40,7 @@
 #include "rutz/arrays.h"
 #include "rutz/shared_ptr.h"
 
-class GaborArrayElement;
+struct GaborArrayElement;
 class Snake;
 
 namespace media

@@ -40,7 +40,7 @@
 
 namespace rutz
 {
-  class byte_array;
+  struct byte_array;
   class value;
 }
 

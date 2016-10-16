@@ -38,7 +38,7 @@
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 
-class GlxOpts;
+struct GlxOpts;
 
 /// Wraps the GLXContext mechanism.
 class GlxWrapper : public GlWindowInterface

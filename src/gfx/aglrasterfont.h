@@ -50,7 +50,7 @@
 #include <cstdlib> // for atoi()
 #include <cstring>
 #include <AGL/agl.h>
-#include <AGL/gl.h>
+#include <OpenGL/gl.h>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"

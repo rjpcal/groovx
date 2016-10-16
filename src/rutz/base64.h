@@ -33,7 +33,7 @@
 
 namespace rutz
 {
-  class byte_array;
+  struct byte_array;
 
   void base64_encode(const unsigned char* src,
                      unsigned int src_len,

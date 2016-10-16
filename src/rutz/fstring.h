@@ -34,6 +34,7 @@
 #define GROOVX_RUTZ_FSTRING_H_UTC20050626084021_DEFINED
 
 #include "rutz/atomic.h"
+#include "rutz/debug.h"
 
 #include <cstddef>
 #include <cstring>

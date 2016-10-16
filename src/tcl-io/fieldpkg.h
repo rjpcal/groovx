@@ -38,7 +38,7 @@
 
 namespace rutz
 {
-  class file_pos;
+  struct file_pos;
 }
 
 class Field;

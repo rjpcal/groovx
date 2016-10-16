@@ -39,7 +39,7 @@
 #include "rutz/sfmt.h"
 
 #include <Carbon/Carbon.h>
-#include <QuickTime/Movies.h>
+#include <QuickTime/QuickTime.h>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
