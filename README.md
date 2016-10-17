@@ -14,12 +14,12 @@ See also the TUTORIAL file for more getting-started help.
 
 Table of contents:
 
-- [overview](#overview)
-- [files](#organization-of-the-files)
-- [dependencies](#dependencies)
-- [configuration](#configuration)
-- [building](#building)
-- [portability](#portability)
+- [overview](#1-overview)
+- [files](#2-organization-of-the-files)
+- [dependencies](#3-dependencies)
+- [configuration](#4-configuration)
+- [building](#5-building)
+- [portability](#6-portability)
 
 -----------------------------------------------------------
 
