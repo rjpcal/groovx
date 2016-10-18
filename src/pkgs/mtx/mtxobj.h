@@ -55,7 +55,7 @@ public:
   template <class T1, class T2, class T3, class T4>
   MtxObj(T1 t1, T2 t2, T3 t3, T4 t4) : mtx(t1, t2, t3, t4) {}
 
-  virtual ~MtxObj() throw() {}
+  virtual ~MtxObj() noexcept {}
 
   static MtxObj* make() { return new MtxObj(mtx::empty_mtx()); }
 

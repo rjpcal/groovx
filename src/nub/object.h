@@ -63,18 +63,18 @@ class nub::object : public nub::ref_counted
 {
 protected:
   /// Default constructor.
-  /** Can't have an empty throw() spec here, because ref_counted's
-      constructor might throw (because it has to allocate memory for
-      a nub::ref_counts object). */
+  /** Can't have noexcept here, because ref_counted's constructor
+      might throw (because it has to allocate memory for a
+      nub::ref_counts object). */
   object();
 
   /// Virtual destructor.
-  virtual ~object() GVX_DTOR_NOTHROW;
+  virtual ~object() noexcept;
 
 public:
   /** Returns the unique id for this object. The unique id will always
       be strictly positive; zero is always an invalid unique id. */
-  nub::uid id() const throw();
+  nub::uid id() const noexcept;
 
   /// Returns the typename of the full object.
   /** The result is a demangled version of \c typeid(*this).name(), which

@@ -60,29 +60,29 @@ public:
   error(const rutz::fstring& msg, const rutz::file_pos& pos);
 
   /// Copy constructor.
-  error(const error& other) throw();
+  error(const error& other) noexcept;
 
   /// Virtual destructor.
-  virtual ~error() throw();
+  virtual ~error() noexcept;
 
   /// Get the decorated error message as a C-style string.
-  virtual const char* what() const throw();
+  virtual const char* what() const noexcept;
 
   /// Get the source file position where the error was generated.
-  const rutz::file_pos& src_pos() const throw() { return m_file_pos; }
+  const rutz::file_pos& src_pos() const noexcept { return m_file_pos; }
 
   /// Get the stack back trace associated with this exception.
-  const rutz::backtrace& get_backtrace() const throw() { return *m_backtrace; }
+  const rutz::backtrace& get_backtrace() const noexcept { return *m_backtrace; }
 
   /// Copy out the back trace most recently used in constructing a rutz::error.
   static void get_last_backtrace(rutz::backtrace& dst);
 
 protected:
   /// Reset the error message.
-  void set_msg(const rutz::fstring& new_msg) throw() { m_msg = new_msg; }
+  void set_msg(const rutz::fstring& new_msg) noexcept { m_msg = new_msg; }
 
   /// Get the (un-decorated) error message.
-  const rutz::fstring& get_msg() const throw() { return m_msg; }
+  const rutz::fstring& get_msg() const noexcept { return m_msg; }
 
 private:
   error& operator=(const error& other);

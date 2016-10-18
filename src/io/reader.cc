@@ -54,8 +54,6 @@ namespace io
                        io::version_id lowest_supported_id,
                        const char* msg,
                        const rutz::file_pos& pos);
-
-    virtual ~read_version_error() throw();
   };
 }
 
@@ -74,9 +72,7 @@ io::read_version_error::read_version_error(const char* classname,
   this->set_msg(m);
 }
 
-io::read_version_error::~read_version_error() throw() {}
-
-io::reader::~reader() throw() {}
+io::reader::~reader() noexcept {}
 
 int io::reader::ensure_version_id(const char* name,
                                   io::version_id lowest_supported_version,

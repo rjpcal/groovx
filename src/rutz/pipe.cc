@@ -115,7 +115,7 @@ rutz::pipe_fds::pipe_fds()
     throw rutz::error("couldn't create pipe", SRC_POS);
 }
 
-rutz::pipe_fds::~pipe_fds() throw()
+rutz::pipe_fds::~pipe_fds() noexcept
 {
   close_reader();
   close_writer();
@@ -129,12 +129,12 @@ rutz::child_process::child_process() :
     throw rutz::error("couldn't fork child process", SRC_POS);
 }
 
-rutz::child_process::~child_process() throw()
+rutz::child_process::~child_process() noexcept
 {
   wait();
 }
 
-int rutz::child_process::wait() throw()
+int rutz::child_process::wait() noexcept
 {
   if (m_pid != 0)
     {
@@ -247,12 +247,12 @@ rutz::exec_pipe::exec_pipe(const char* m, const char* argv0, ...) :
   free(argv);
 }
 
-rutz::exec_pipe::~exec_pipe() throw()
+rutz::exec_pipe::~exec_pipe() noexcept
 {
   delete m_stream;
 }
 
-std::iostream& rutz::exec_pipe::stream() throw()
+std::iostream& rutz::exec_pipe::stream() noexcept
 {
   GVX_ASSERT(m_stream != 0);
   return *m_stream;
@@ -268,7 +268,7 @@ void rutz::exec_pipe::close()
     }
 }
 
-int rutz::exec_pipe::exit_status() throw()
+int rutz::exec_pipe::exit_status() noexcept
 {
   const int child_status = m_child.wait();
 
@@ -323,7 +323,7 @@ rutz::bidir_pipe::bidir_pipe(const char* argv0, ...) :
   free(argv);
 }
 
-rutz::bidir_pipe::~bidir_pipe() throw()
+rutz::bidir_pipe::~bidir_pipe() noexcept
 {
   close_in();
   close_out();
@@ -409,13 +409,13 @@ void rutz::bidir_pipe::init(const char* argv0, ...)
   free(argv);
 }
 
-std::iostream& rutz::bidir_pipe::in_stream() throw()
+std::iostream& rutz::bidir_pipe::in_stream() noexcept
 {
   GVX_ASSERT(m_in_stream != 0);
   return *m_in_stream;
 }
 
-std::iostream& rutz::bidir_pipe::out_stream() throw()
+std::iostream& rutz::bidir_pipe::out_stream() noexcept
 {
   GVX_ASSERT(m_out_stream != 0);
   return *m_out_stream;
@@ -443,7 +443,7 @@ void rutz::bidir_pipe::close_out()
   m_out_pipe.close_writer();
 }
 
-int rutz::bidir_pipe::exit_status() throw()
+int rutz::bidir_pipe::exit_status() noexcept
 {
   const int child_status = m_child.wait();
 

@@ -58,14 +58,14 @@ public:
   static GLCanvas* make(rutz::shared_ptr<GlxOpts> opts,
                         rutz::shared_ptr<GlWindowInterface> glx);
 
-  virtual ~GLCanvas() throw();
+  virtual ~GLCanvas() noexcept;
 
   void makeCurrent();
 
   static nub::soft_ref<GLCanvas> getCurrent();
 
-  void drawBufferFront() throw();
-  void drawBufferBack() throw();
+  void drawBufferFront() noexcept;
+  void drawBufferBack() noexcept;
 
   virtual geom::vec3<double> screenFromWorld3(const geom::vec3<double>& world_pos) const;
   virtual geom::vec3<double> worldFromScreen3(const geom::vec3<double>& screen_pos) const;

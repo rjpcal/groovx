@@ -80,7 +80,7 @@ class Canvas : public virtual nub::object
 {
 public:
   /// Virtual destructor ensures proper destruction of subclasses.
-  virtual ~Canvas() throw();
+  virtual ~Canvas() noexcept;
 
   ///////////////////////////////////////////////////////////
   //

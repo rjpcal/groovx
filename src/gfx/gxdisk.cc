@@ -86,7 +86,7 @@ GVX_TRACE("GxDisk::GxDisk");
   setFieldMap(GxDisk::classFields());
 }
 
-GxDisk::~GxDisk() throw()
+GxDisk::~GxDisk() noexcept
 {
 GVX_TRACE("GxDisk::~GxDisk");
 }

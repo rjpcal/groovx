@@ -278,7 +278,7 @@ namespace rutz
     }
 
     /// Copy constructor.
-    shared_array(const shared_array& r) throw() : px(r.px), pn(r.pn)
+    shared_array(const shared_array& r) noexcept : px(r.px), pn(r.pn)
     { pn->atomic_incr(); }
 
     /// Destructor.
@@ -307,19 +307,19 @@ namespace rutz
     }
 
     /// Get a pointer to the pointed-to array.
-    T* get() const                     throw() { return px; }
+    T* get() const                     noexcept { return px; }
 
     /// Index into the pointed-to array.
-    T& operator[](std::size_t i) const throw() { return px[i]; }
+    T& operator[](std::size_t i) const noexcept { return px[i]; }
 
     /// Get the reference count of the shared array.
-    long use_count() const             throw() { return pn->atomic_get(); }
+    long use_count() const             noexcept { return pn->atomic_get(); }
 
     /// Query whether the shared array is uniquely owned (i.e. refcount == 1).
-    bool unique() const                throw() { return use_count() == 1; }
+    bool unique() const                noexcept { return use_count() == 1; }
 
     /// Swap pointees with another shared_array.
-    void swap(shared_array<T>& other) throw()
+    void swap(shared_array<T>& other) noexcept
     { rutz::swap2(px,other.px); rutz::swap2(pn,other.pn); }
 
   private:

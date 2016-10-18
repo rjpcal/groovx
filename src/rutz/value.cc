@@ -43,16 +43,6 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-rutz::value::value()
-{
-GVX_TRACE("rutz::value::value");
-}
-
-rutz::value::~value()
-{
-GVX_TRACE("rutz::value::~value");
-}
-
 rutz::fstring rutz::value::get_string() const
 {
   std::ostringstream oss;

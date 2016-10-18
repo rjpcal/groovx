@@ -58,8 +58,6 @@ nub::invalid_uid_error::invalid_uid_error(nub::uid id,
                          id), pos)
 {}
 
-nub::invalid_uid_error::~invalid_uid_error() throw() {}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // nub::objectdb::impl definition
@@ -84,7 +82,7 @@ public:
   // Check whether the iterator points to a valid spot in the map, AND
   // that it points to a still-living object. If the object has died,
   // then we erase the iterator.
-  bool is_valid_itr(map_type::iterator itr) const throw()
+  bool is_valid_itr(map_type::iterator itr) const noexcept
   {
     if (itr == m_obj_map.end()) return false;
 
@@ -97,13 +95,13 @@ public:
     return true;
   }
 
-  bool is_valid_uid(nub::uid id) const throw()
+  bool is_valid_uid(nub::uid id) const noexcept
     {
       map_type::iterator itr = m_obj_map.find(id);
       return is_valid_itr(itr);
     }
 
-  int count() const throw()
+  int count() const noexcept
     { return m_obj_map.size(); }
 
   void release(nub::uid id)
@@ -174,7 +172,7 @@ public:
 #endif
     }
 
-  nub::object* get_checked_obj(nub::uid id) throw (nub::invalid_uid_error)
+  nub::object* get_checked_obj(nub::uid id)
     {
       map_type::iterator itr = m_obj_map.find(id);
       if (!is_valid_itr(itr))
@@ -317,14 +315,14 @@ GVX_TRACE("nub::objectdb::~objectdb");
   delete rep;
 }
 
-int nub::objectdb::count() const throw()
+int nub::objectdb::count() const noexcept
 {
 GVX_TRACE("nub::objectdb::count");
 
   return rep->count();
 }
 
-bool nub::objectdb::is_valid_uid(nub::uid id) const throw()
+bool nub::objectdb::is_valid_uid(nub::uid id) const noexcept
 {
 GVX_TRACE("nub::objectdb::is_valid_uid");
   return rep->is_valid_uid(id);
@@ -363,7 +361,7 @@ GVX_TRACE("nub::objectdb::clear_on_exit");
   rep->clear_all();
 }
 
-nub::object* nub::objectdb::get_checked_obj(nub::uid id) throw (nub::invalid_uid_error)
+nub::object* nub::objectdb::get_checked_obj(nub::uid id)
 {
 GVX_TRACE("nub::objectdb::get_checked_obj");
   return rep->get_checked_obj(id);

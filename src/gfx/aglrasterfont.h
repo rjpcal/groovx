@@ -60,7 +60,7 @@ class AglRasterFont : public GxRasterFont
 {
 public:
   AglRasterFont(const char* n);
-  virtual ~AglRasterFont() throw();
+  virtual ~AglRasterFont() noexcept;
 
   struct AppleFontSpec
   {
@@ -159,7 +159,7 @@ GVX_TRACE("AglRasterFont::AglRasterFont");
 #endif
 }
 
-AglRasterFont::~AglRasterFont() throw()
+AglRasterFont::~AglRasterFont() noexcept
 {
 GVX_TRACE("AglRasterFont::~AglRasterFont");
 

@@ -84,7 +84,7 @@ GVX_TRACE("GxSphere::GxSphere");
   setFieldMap(GxSphere::classFields());
 }
 
-GxSphere::~GxSphere() throw()
+GxSphere::~GxSphere() noexcept
 {
 GVX_TRACE("GxSphere::~GxSphere");
 }

@@ -210,7 +210,7 @@ void tcl::script_app::handle_exception_in_macro_only
 }
 
 tcl::script_app::script_app(const char* appname,
-                            int argc_, char** argv_) throw()
+                            int argc_, char** argv_) noexcept
   :
   m_appname(appname),
   m_script_argc(0),
@@ -267,7 +267,7 @@ tcl::script_app::script_app(const char* appname,
   m_script_argv[m_script_argc] = 0;
 }
 
-tcl::script_app::~script_app() throw()
+tcl::script_app::~script_app() noexcept
 {
   delete [] m_script_argv;
 }

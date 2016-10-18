@@ -67,7 +67,7 @@ namespace
   };
 }
 
-Gfx::Canvas::~Canvas() throw() {}
+Gfx::Canvas::~Canvas() noexcept {}
 
 vec2d Gfx::Canvas::screenFromWorld2(const vec2d& world_pos) const
 {

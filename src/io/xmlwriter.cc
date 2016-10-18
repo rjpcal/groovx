@@ -64,7 +64,7 @@ public:
 
   xml_writer(const char* filename);
 
-  virtual ~xml_writer() throw();
+  virtual ~xml_writer() noexcept;
 
   virtual void write_char(const char* name, char val);
   virtual void write_int(const char* name, int val);
@@ -153,7 +153,7 @@ xml_writer::xml_writer(const char* filename) :
 GVX_TRACE("xml_writer::xml_writer(const char*)");
 }
 
-xml_writer::~xml_writer () throw()
+xml_writer::~xml_writer () noexcept
 {
 GVX_TRACE("xml_writer::~xml_writer");
 }

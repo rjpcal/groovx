@@ -40,7 +40,7 @@ class GxVectorFont : public GxFont
 public:
   GxVectorFont();
 
-  virtual ~GxVectorFont() throw();
+  virtual ~GxVectorFont() noexcept;
 
   virtual const char* fontName() const;
 

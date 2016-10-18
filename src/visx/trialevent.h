@@ -77,7 +77,7 @@ protected:
 
 public:
   /// Destructor cancels any pending callback to \c invoke().
-  virtual ~TrialEvent() throw();
+  virtual ~TrialEvent() noexcept;
 
   virtual void read_from(io::reader& reader);
   virtual void write_to(io::writer& writer) const;
@@ -156,7 +156,7 @@ protected:
   NullTrialEvent(unsigned int msec = 0);
 
   /// Virtual destructor.
-  virtual ~NullTrialEvent() throw();
+  virtual ~NullTrialEvent() noexcept;
 
   virtual void invoke(Trial&);
 
@@ -189,7 +189,7 @@ protected:
                     unsigned int msec = 0);
 
   /// Virtual destructor.
-  virtual ~TrialMemFuncEvent() throw();
+  virtual ~TrialMemFuncEvent() noexcept;
 
   virtual void invoke(Trial& trial);
 
@@ -243,7 +243,7 @@ protected:
   FileWriteEvent(unsigned int msec = 0);
 
   /// Virtual destructor.
-  virtual ~FileWriteEvent() throw();
+  virtual ~FileWriteEvent() noexcept;
 
   virtual void invoke(Trial& trial);
 
@@ -282,7 +282,7 @@ protected:
   GenericEvent(unsigned int msec = 0);
 
   /// Virtual destructor.
-  virtual ~GenericEvent() throw();
+  virtual ~GenericEvent() noexcept;
 
   virtual void invoke(Trial& trial);
 
@@ -319,7 +319,7 @@ protected:
   MultiEvent(unsigned int msec = 0);
 
   /// Virtual destructor.
-  virtual ~MultiEvent() throw();
+  virtual ~MultiEvent() noexcept;
 
   virtual void invoke(Trial& trial);
 

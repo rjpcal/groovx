@@ -54,7 +54,7 @@ output_file::output_file() :
 {
 }
 
-output_file::~output_file() throw() {}
+output_file::~output_file() noexcept {}
 
 void output_file::read_from(io::reader& reader)
 {

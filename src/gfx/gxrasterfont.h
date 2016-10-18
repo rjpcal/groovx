@@ -39,7 +39,7 @@
 class GxRasterFont : public GxFont
 {
 public:
-  virtual ~GxRasterFont() throw() = 0;
+  virtual ~GxRasterFont() noexcept = 0;
 
   virtual const char* fontName() const = 0;
 

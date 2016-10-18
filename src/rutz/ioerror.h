@@ -44,9 +44,6 @@ namespace rutz
   public:
     /// Default constructor.
     filename_error(const char* filename, const rutz::file_pos& pos);
-
-    /// Virtual destructor
-    virtual ~filename_error() throw();
   };
 
 }

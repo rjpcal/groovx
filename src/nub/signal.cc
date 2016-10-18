@@ -56,7 +56,7 @@ nub::slot_base::slot_base()
 GVX_TRACE("nub::slot_base::slot_base");
 }
 
-nub::slot_base::~slot_base() throw()
+nub::slot_base::~slot_base() noexcept
 {
 GVX_TRACE("nub::slot_base::~slot_base");
 }
@@ -78,7 +78,7 @@ nub::slot0::slot0()
 GVX_TRACE("nub::slot0::slot0");
 }
 
-nub::slot0::~slot0() throw()
+nub::slot0::~slot0() noexcept
 {
 GVX_TRACE("nub::slot0::~slot0");
 }
@@ -94,7 +94,7 @@ nub::slot_adapter_free_func0::slot_adapter_free_func0(free_func* f)
   : m_free_func(f)
 {}
 
-nub::slot_adapter_free_func0::~slot_adapter_free_func0() throw() {}
+nub::slot_adapter_free_func0::~slot_adapter_free_func0() noexcept {}
 
 nub::slot_adapter_free_func0*
 nub::slot_adapter_free_func0::make(free_func* f)
@@ -161,7 +161,7 @@ nub::signal_base::signal_base() :
   rep(new impl)
 {}
 
-nub::signal_base::~signal_base() throw()
+nub::signal_base::~signal_base() noexcept
 {
   delete rep;
 }
@@ -233,7 +233,7 @@ nub::signal0::signal0() :
 GVX_TRACE("nub::signal0::signal0");
 }
 
-nub::signal0::~signal0() throw()
+nub::signal0::~signal0() noexcept
 {
 GVX_TRACE("nub::signal0::~signal0");
 }

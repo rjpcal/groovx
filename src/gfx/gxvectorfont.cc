@@ -795,7 +795,7 @@ GxVectorFont::GxVectorFont()
 GVX_TRACE("GxVectorFont::GxVectorFont");
 }
 
-GxVectorFont::~GxVectorFont() throw()
+GxVectorFont::~GxVectorFont() noexcept
 {
 GVX_TRACE("GxVectorFont::~GxVectorFont");
 }

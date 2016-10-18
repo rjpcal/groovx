@@ -55,7 +55,7 @@ using rutz::fstring;
 namespace
 {
   inline void domemswap(double* buf1, double* buf2,
-                        double* tempbuf1, size_t nelems) throw()
+                        double* tempbuf1, size_t nelems) noexcept
   {
     memcpy(tempbuf1, buf1, nelems*sizeof(double));
     memcpy(buf1, buf2, nelems*sizeof(double));
@@ -450,6 +450,12 @@ void mtx_base<Data>::swap(mtx_base& other)
 
 template <class Data>
 mtx_base<Data>::mtx_base(const mtx_base& other) :
+  mtx_specs(other),
+  m_data(other.m_data)
+{}
+
+template <class Data>
+mtx_base<Data>::mtx_base(mtx_base&& other) :
   mtx_specs(other),
   m_data(other.m_data)
 {}

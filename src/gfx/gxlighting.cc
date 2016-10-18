@@ -99,7 +99,7 @@ GVX_TRACE("GxLighting::GxLighting");
   setFieldMap(GxLighting::classFields());
 }
 
-GxLighting::~GxLighting() throw()
+GxLighting::~GxLighting() noexcept
 {
 GVX_TRACE("GxLighting::~GxLighting");
 }

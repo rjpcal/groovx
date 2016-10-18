@@ -102,7 +102,7 @@ namespace
       GVX_ABORT("memory allocation failed");
   }
 
-  prof_list& all_profs() throw()
+  prof_list& all_profs() noexcept
   {
     pthread_once(&g_prof_list_once, &initialize_prof_list);
 
@@ -130,7 +130,7 @@ namespace
 
 rutz::prof::timing_mode rutz::prof::s_timing_mode = rutz::prof::RUSAGE;
 
-rutz::prof::prof(const char* s, const char* fname, int lineno)  throw():
+rutz::prof::prof(const char* s, const char* fname, int lineno)  noexcept:
   m_context_name(s),
   m_src_file_name(fname),
   m_src_line_no(lineno)
@@ -145,7 +145,7 @@ rutz::prof::prof(const char* s, const char* fname, int lineno)  throw():
   pthread_once(&g_start_once, &initialize_start_time);
 }
 
-rutz::prof::~prof() throw()
+rutz::prof::~prof() noexcept
 {
   if (g_pdata_print_at_exit)
     {
@@ -160,64 +160,64 @@ rutz::prof::~prof() throw()
     }
 }
 
-void rutz::prof::reset() throw()
+void rutz::prof::reset() noexcept
 {
   m_call_count = 0;
   m_total_time.reset();
   m_children_time.reset();
 }
 
-unsigned int rutz::prof::count() const throw()
+unsigned int rutz::prof::count() const noexcept
 {
   return m_call_count;
 }
 
-void rutz::prof::add_time(const rutz::time& t) throw()
+void rutz::prof::add_time(const rutz::time& t) noexcept
 {
   m_total_time += t;
   ++m_call_count;
 }
 
-void rutz::prof::add_child_time(const rutz::time& t) throw()
+void rutz::prof::add_child_time(const rutz::time& t) noexcept
 {
   m_children_time += t;
 }
 
-const char* rutz::prof::context_name() const throw()
+const char* rutz::prof::context_name() const noexcept
 {
   return m_context_name;
 }
 
-const char* rutz::prof::src_file_name() const throw()
+const char* rutz::prof::src_file_name() const noexcept
 {
   return m_src_file_name;
 }
 
-int rutz::prof::src_line_no() const throw()
+int rutz::prof::src_line_no() const noexcept
 {
   return m_src_line_no;
 }
 
-double rutz::prof::total_time() const throw()
+double rutz::prof::total_time() const noexcept
 {
   return (m_call_count > 0)
     ? m_total_time.usec()
     : 0.0;
 }
 
-double rutz::prof::self_time() const throw()
+double rutz::prof::self_time() const noexcept
 {
   return (m_call_count > 0)
     ? m_total_time.usec() - m_children_time.usec()
     : 0.0;
 }
 
-double rutz::prof::avg_self_time() const throw()
+double rutz::prof::avg_self_time() const noexcept
 {
   return m_call_count > 0 ? (total_time() / m_call_count) : 0.0;
 }
 
-void rutz::prof::print_prof_data(FILE* file) const throw()
+void rutz::prof::print_prof_data(FILE* file) const noexcept
 {
   if (file == 0)
     GVX_ABORT("FILE* was null");
@@ -235,7 +235,7 @@ void rutz::prof::print_prof_data(FILE* file) const throw()
           m_context_name);
 }
 
-void rutz::prof::print_prof_data(std::ostream& os) const throw()
+void rutz::prof::print_prof_data(std::ostream& os) const noexcept
 {
   os.exceptions(std::ios::goodbit);
 
@@ -257,7 +257,7 @@ void rutz::prof::print_prof_data(std::ostream& os) const throw()
      << m_context_name << '\n';
 }
 
-void rutz::prof::print_at_exit(bool yes_or_no) throw()
+void rutz::prof::print_at_exit(bool yes_or_no) noexcept
 {
   g_pdata_print_at_exit = yes_or_no;
 }
@@ -272,7 +272,7 @@ void rutz::prof::prof_summary_file_name(const char* fname)
   g_pdata_fname = fname;
 }
 
-void rutz::prof::reset_all_prof_data() throw()
+void rutz::prof::reset_all_prof_data() noexcept
 {
   GVX_MUTEX_LOCK(&g_prof_list_mutex);
   std::for_each(all_profs().begin(), all_profs().end(),
@@ -282,13 +282,13 @@ void rutz::prof::reset_all_prof_data() throw()
 namespace
 {
   // comparison function for use with std::stable_sort()
-  bool compare_total_time(rutz::prof* p1, rutz::prof* p2) throw()
+  bool compare_total_time(rutz::prof* p1, rutz::prof* p2) noexcept
   {
     return p1->total_time() < p2->total_time();
   }
 }
 
-void rutz::prof::print_all_prof_data(FILE* file) throw()
+void rutz::prof::print_all_prof_data(FILE* file) noexcept
 {
   GVX_MUTEX_LOCK(&g_prof_list_mutex);
   std::stable_sort(all_profs().begin(), all_profs().end(),
@@ -301,7 +301,7 @@ void rutz::prof::print_all_prof_data(FILE* file) throw()
     }
 }
 
-void rutz::prof::print_all_prof_data(std::ostream& os) throw()
+void rutz::prof::print_all_prof_data(std::ostream& os) noexcept
 {
   GVX_MUTEX_LOCK(&g_prof_list_mutex);
   std::stable_sort(all_profs().begin(), all_profs().end(),

@@ -48,43 +48,43 @@ class rutz::backtrace
 {
 public:
   /// Default construct an empty call stack.
-  backtrace() throw();
+  backtrace() noexcept;
 
   /// Copy constructor.
-  backtrace(const backtrace& other) throw();
+  backtrace(const backtrace& other) noexcept;
 
   /// Assignment operator.
-  backtrace& operator=(const backtrace& other) throw();
+  backtrace& operator=(const backtrace& other) noexcept;
 
   /// Destructor.
-  ~backtrace() throw();
+  ~backtrace() noexcept;
 
   /// Access the current call stack.
-  static backtrace& current() throw();
+  static backtrace& current() noexcept;
 
   /// Push a new element onto the call stack. Returns true if successful.
-  bool push(rutz::prof* p) throw();
+  bool push(rutz::prof* p) noexcept;
 
   /// Pop the most recent element off of the call stack.
-  void pop() throw();
+  void pop() noexcept;
 
   /// Get the number of elements in the call stack.
-  unsigned int size() const throw();
+  unsigned int size() const noexcept;
 
   /// Get the top stack frame, or null if the backtrace is empty.
-  rutz::prof* top() const throw();
+  rutz::prof* top() const noexcept;
 
   /// Will return a null pointer if i is out of range.
-  rutz::prof* at(unsigned int i) const throw();
+  rutz::prof* at(unsigned int i) const noexcept;
 
   /// Shorthand for at(i).
-  rutz::prof* operator[](unsigned int i) const throw() { return at(i); }
+  rutz::prof* operator[](unsigned int i) const noexcept { return at(i); }
 
   /// Print the call stack on stderr.
-  void print() const throw();
+  void print() const noexcept;
 
   /// Print the call stack to the given stream.
-  void print(std::ostream& os) const throw();
+  void print(std::ostream& os) const noexcept;
 
 private:
   rutz::static_stack<rutz::prof*, 256> m_vec;

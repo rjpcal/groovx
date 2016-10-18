@@ -578,10 +578,10 @@ public:
   static const FieldMap* emptyFieldMap();
 
   /// Query whether this FieldMap has a parent.
-  bool hasParent() const throw();
+  bool hasParent() const noexcept;
 
   /// Get this FieldMap's parent (or null if non-existent).
-  const FieldMap* parent() const throw();
+  const FieldMap* parent() const noexcept;
 
   /// Look up the field associated with the given name.
   /** Parent FieldMap objects will be searched recursively. An exception
@@ -626,7 +626,7 @@ public:
   FieldContainer(nub::signal0* sig);
 
   /// Virtual destructor.
-  virtual ~FieldContainer() throw();
+  virtual ~FieldContainer() noexcept;
 
   /// Set the field map for this object.
   void setFieldMap(const FieldMap& fields);

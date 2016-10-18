@@ -36,7 +36,7 @@
 
 GxEmptyNode::GxEmptyNode() {}
 
-GxEmptyNode::~GxEmptyNode() throw() {}
+GxEmptyNode::~GxEmptyNode() noexcept {}
 
 void GxEmptyNode::read_from(io::reader&) {}
 void GxEmptyNode::write_to(io::writer&) const {}

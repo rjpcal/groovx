@@ -78,7 +78,7 @@ GVX_TRACE("TimingHandler::TimingHandler");
   abortwait_abort_id = addEventByName("EndTrialEvent", FROM_ABORT, 1000);
 }
 
-TimingHandler::~TimingHandler() throw()
+TimingHandler::~TimingHandler() noexcept
 {
 GVX_TRACE("TimingHandler::~TimingHandler");
 }

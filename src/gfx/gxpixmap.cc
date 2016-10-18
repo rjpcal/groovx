@@ -211,7 +211,7 @@ GVX_TRACE("GxPixmap::make");
   return new GxPixmap;
 }
 
-GxPixmap::~GxPixmap() throw()
+GxPixmap::~GxPixmap() noexcept
 {
 GVX_TRACE("GxPixmap::~GxPixmap");
   delete rep;

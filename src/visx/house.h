@@ -58,7 +58,7 @@ public:
   static House* make();
 
   /// Virtual destructor.
-  virtual ~House() throw();
+  virtual ~House() noexcept;
 
   virtual io::version_id class_version_id() const;
   virtual void read_from(io::reader& reader);

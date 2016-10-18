@@ -54,7 +54,7 @@ namespace
   const int GXPPC_SVID = 0;
 }
 
-GxCamera::~GxCamera() throw() {}
+GxCamera::~GxCamera() noexcept {}
 
 void GxCamera::reshape(Gfx::Canvas& canvas, int w, int h)
 {
@@ -85,7 +85,7 @@ GxPerspectiveCamera::GxPerspectiveCamera() :
   itsFarZ(30)
 {}
 
-GxPerspectiveCamera::~GxPerspectiveCamera() throw() {}
+GxPerspectiveCamera::~GxPerspectiveCamera() noexcept {}
 
 const FieldMap& GxPerspectiveCamera::classFields()
 {
@@ -140,7 +140,7 @@ GVX_TRACE("GxPerspectiveCamera::draw");
 }
 
 
-GxFixedRectCamera::~GxFixedRectCamera() throw() {}
+GxFixedRectCamera::~GxFixedRectCamera() noexcept {}
 
 void GxFixedRectCamera::draw(Gfx::Canvas& canvas) const
 {
@@ -150,7 +150,7 @@ GVX_TRACE("GxFixedRectCamera::draw");
   canvas.orthographic(itsRect, -10.0, 10.0);
 }
 
-GxMinRectCamera::~GxMinRectCamera() throw() {}
+GxMinRectCamera::~GxMinRectCamera() noexcept {}
 
 void GxMinRectCamera::draw(Gfx::Canvas& canvas) const
 {
@@ -201,7 +201,7 @@ GxFixedScaleCamera::GxFixedScaleCamera() :
   itsPixelsPerUnit(100.0)
 {}
 
-GxFixedScaleCamera::~GxFixedScaleCamera() throw() {}
+GxFixedScaleCamera::~GxFixedScaleCamera() noexcept {}
 
 const FieldMap& GxFixedScaleCamera::classFields()
 {
@@ -278,7 +278,7 @@ GxPsyphyCamera::GxPsyphyCamera() :
   itsViewingDistance(30.0)
 {}
 
-GxPsyphyCamera::~GxPsyphyCamera() throw() {}
+GxPsyphyCamera::~GxPsyphyCamera() noexcept {}
 
 const FieldMap& GxPsyphyCamera::classFields()
 {

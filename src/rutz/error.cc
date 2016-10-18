@@ -108,7 +108,7 @@ GVX_TRACE("rutz::error::error(fstring)");
     }
 }
 
-rutz::error::error(const rutz::error& other) throw() :
+rutz::error::error(const rutz::error& other) noexcept :
   std::exception(other),
   m_msg(other.m_msg),
   m_context(other.m_context),
@@ -124,13 +124,13 @@ GVX_TRACE("rutz::error::error(copy)");
       new (std::nothrow) rutz::backtrace(*other.m_backtrace);
 }
 
-rutz::error::~error() throw()
+rutz::error::~error() noexcept
 {
 GVX_TRACE("rutz::error::~error");
   delete m_backtrace;
 }
 
-const char* rutz::error::what() const throw()
+const char* rutz::error::what() const noexcept
 {
   if (m_what.length() == 0)
     {

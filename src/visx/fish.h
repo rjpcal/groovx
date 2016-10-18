@@ -81,7 +81,7 @@ public:
                              const char* coordfile, int index);
 
   /// Virtual destructor.
-  virtual ~Fish() throw();
+  virtual ~Fish() noexcept;
 
   virtual io::version_id class_version_id() const;
   virtual void read_from(io::reader& reader);

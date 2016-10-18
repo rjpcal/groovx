@@ -45,7 +45,7 @@ rutz::mutex_lock_class::mutex_lock_class(pthread_mutex_t* mut)
     }
 }
 
-void rutz::mutex_lock_class::unlock() throw()
+void rutz::mutex_lock_class::unlock() noexcept
 {
   if (m_mutex)
     {

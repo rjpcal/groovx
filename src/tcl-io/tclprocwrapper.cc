@@ -65,7 +65,7 @@ tcl::ProcWrapper::ProcWrapper(const tcl::interpreter& interp,
   itsBody()
 {}
 
-tcl::ProcWrapper::~ProcWrapper() throw()
+tcl::ProcWrapper::~ProcWrapper() noexcept
 {
   // We must check is_valid() in case we are here because the application
   // is being exited, causing the interpreter to be deleted, in which case

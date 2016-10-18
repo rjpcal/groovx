@@ -154,7 +154,7 @@ TimingHdlr::TimingHdlr() :
 GVX_TRACE("TimingHdlr::TimingHdlr");
 }
 
-TimingHdlr::~TimingHdlr() throw()
+TimingHdlr::~TimingHdlr() noexcept
 {
 GVX_TRACE("TimingHdlr::~TimingHdlr");
 

@@ -59,7 +59,7 @@ public:
   GxBin(nub::ref<GxNode> child);
 
   /// Virtual destructor.
-  virtual ~GxBin() throw();
+  virtual ~GxBin() noexcept;
 
   /// Get the bin's child node.
   const nub::ref<GxNode>& child() const { return itsChild; }

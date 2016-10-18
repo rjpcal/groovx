@@ -80,7 +80,7 @@ ElementContainer::ElementContainer() :
 GVX_TRACE("ElementContainer::ElementContainer");
 }
 
-ElementContainer::~ElementContainer() throw()
+ElementContainer::~ElementContainer() noexcept
 {
 GVX_TRACE("ElementContainer::~ElementContainer");
   delete rep;

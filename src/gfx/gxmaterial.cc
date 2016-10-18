@@ -87,7 +87,7 @@ GVX_TRACE("GxMaterial::GxMaterial");
   setFieldMap(GxMaterial::classFields());
 }
 
-GxMaterial::~GxMaterial() throw()
+GxMaterial::~GxMaterial() noexcept
 {
 GVX_TRACE("GxMaterial::~GxMaterial");
 }

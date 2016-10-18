@@ -37,21 +37,21 @@
 #include <sys/resource.h>
 #include <time.h>
 
-rutz::time rutz::time::wall_clock_now() throw()
+rutz::time rutz::time::wall_clock_now() noexcept
 {
   rutz::time t;
   gettimeofday(&t.m_timeval, /* timezone */ 0);
   return t;
 }
 
-rutz::time rutz::time::user_rusage() throw()
+rutz::time rutz::time::user_rusage() noexcept
 {
   rusage ru;
   getrusage(RUSAGE_SELF, &ru);
   return rutz::time(ru.ru_utime);
 }
 
-rutz::time rutz::time::sys_rusage() throw()
+rutz::time rutz::time::sys_rusage() noexcept
 {
   rusage ru;
   getrusage(RUSAGE_SELF, &ru);

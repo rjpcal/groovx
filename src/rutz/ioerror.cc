@@ -45,6 +45,4 @@ rutz::filename_error::filename_error(const char* str,
 GVX_TRACE("rutz::filename_error::filename_error");
 }
 
-rutz::filename_error::~filename_error() throw() {}
-
 #endif // !GROOVX_RUTZ_IOERROR_CC_UTC20050626084020_DEFINED

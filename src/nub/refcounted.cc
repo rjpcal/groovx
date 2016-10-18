@@ -64,7 +64,7 @@ void nub::ref_counts::operator delete(void* space, size_t /*bytes*/)
   ::operator delete(space);
 }
 
-nub::ref_counts::ref_counts() throw() :
+nub::ref_counts::ref_counts() noexcept :
   m_strong(),
   m_weak(),
   m_owner_alive(true),
@@ -73,7 +73,7 @@ nub::ref_counts::ref_counts() throw() :
 GVX_TRACE("nub::ref_counts::ref_counts");
 }
 
-nub::ref_counts::~ref_counts() throw()
+nub::ref_counts::~ref_counts() noexcept
 {
 GVX_TRACE("nub::ref_counts::~ref_counts");
 
@@ -81,7 +81,7 @@ GVX_TRACE("nub::ref_counts::~ref_counts");
   if (m_weak.atomic_get() > 0) GVX_PANIC("ref_counts object destroyed before weak refcount fell to 0");
 }
 
-void nub::ref_counts::acquire_weak() throw()
+void nub::ref_counts::acquire_weak() noexcept
 {
 GVX_TRACE("nub::ref_counts::acquire_weak");
 
@@ -89,7 +89,7 @@ GVX_TRACE("nub::ref_counts::acquire_weak");
     GVX_PANIC("weak refcount overflow");
 }
 
-int nub::ref_counts::release_weak() throw()
+int nub::ref_counts::release_weak() noexcept
 {
 GVX_TRACE("nub::ref_counts::release_weak");
 
@@ -106,7 +106,7 @@ GVX_TRACE("nub::ref_counts::release_weak");
   return result;
 }
 
-void nub::ref_counts::acquire_strong() throw()
+void nub::ref_counts::acquire_strong() noexcept
 {
 GVX_TRACE("nub::ref_counts::acquire_strong");
 
@@ -115,7 +115,7 @@ GVX_TRACE("nub::ref_counts::acquire_strong");
     GVX_PANIC("strong refcount overflow");
 }
 
-int nub::ref_counts::release_strong() throw()
+int nub::ref_counts::release_strong() noexcept
 {
 GVX_TRACE("nub::ref_counts::release_strong");
 
@@ -129,7 +129,7 @@ GVX_TRACE("nub::ref_counts::release_strong");
   return result;
 }
 
-void nub::ref_counts::release_strong_no_delete() throw()
+void nub::ref_counts::release_strong_no_delete() noexcept
 {
 GVX_TRACE("nub::ref_counts::release_strong_no_delete");
 
@@ -138,7 +138,7 @@ GVX_TRACE("nub::ref_counts::release_strong_no_delete");
   if (result < 0) GVX_PANIC("strong refcount already 0 in release_strong_no_delete()");
 }
 
-void nub::ref_counts::debug_dump() const throw()
+void nub::ref_counts::debug_dump() const noexcept
 {
   dbg_eval_nl(0, this);
   dbg_eval_nl(0, m_strong.atomic_get());
@@ -173,7 +173,7 @@ GVX_TRACE("nub::ref_counted::ref_counted");
   m_ref_counts->acquire_weak();
 }
 
-nub::ref_counted::~ref_counted() GVX_DTOR_NOTHROW
+nub::ref_counted::~ref_counted() noexcept
 {
 GVX_TRACE("nub::ref_counted::~ref_counted");
   dbg_print(7, "ref_counted dtor"); dbg_eval_nl(7, this);
@@ -190,7 +190,7 @@ GVX_TRACE("nub::ref_counted::~ref_counted");
   m_ref_counts->release_weak();
 }
 
-void nub::ref_counted::mark_as_volatile() throw()
+void nub::ref_counted::mark_as_volatile() noexcept
 {
 GVX_TRACE("nub::ref_counted::mark_as_volatile");
   if (m_ref_counts->m_strong.atomic_get() > 0)
@@ -202,12 +202,12 @@ GVX_TRACE("nub::ref_counted::mark_as_volatile");
   m_ref_counts->m_volatile = true;
 }
 
-void nub::ref_counted::incr_ref_count() const throw()
+void nub::ref_counted::incr_ref_count() const noexcept
 {
   m_ref_counts->acquire_strong();
 }
 
-void nub::ref_counted::decr_ref_count() const throw()
+void nub::ref_counted::decr_ref_count() const noexcept
 {
   if (m_ref_counts->release_strong() == 0)
     {
@@ -216,12 +216,12 @@ void nub::ref_counted::decr_ref_count() const throw()
     }
 }
 
-void nub::ref_counted::decr_ref_count_no_delete() const throw()
+void nub::ref_counted::decr_ref_count_no_delete() const noexcept
 {
   m_ref_counts->release_strong_no_delete();
 }
 
-bool nub::ref_counted::is_shared() const throw()
+bool nub::ref_counted::is_shared() const noexcept
 {
 GVX_TRACE("nub::ref_counted::is_shared");
 
@@ -231,30 +231,30 @@ GVX_TRACE("nub::ref_counted::is_shared");
   // they become invalid.
 }
 
-bool nub::ref_counted::is_unshared() const throw()
+bool nub::ref_counted::is_unshared() const noexcept
 {
 GVX_TRACE("nub::ref_counted::is_unshared");
   return !is_shared();
 }
 
-bool nub::ref_counted::is_not_shareable() const throw()
+bool nub::ref_counted::is_not_shareable() const noexcept
 {
 GVX_TRACE("nub::ref_counted::is_not_shareable");
   return m_ref_counts->m_volatile;
 }
 
-nub::ref_counts* nub::ref_counted::get_counts() const throw()
+nub::ref_counts* nub::ref_counted::get_counts() const noexcept
 {
 GVX_TRACE("nub::ref_counted::get_counts");
   return m_ref_counts;
 }
 
-int nub::ref_counted::dbg_ref_count() const throw()
+int nub::ref_counted::dbg_ref_count() const noexcept
 {
   return m_ref_counts->m_strong.atomic_get();
 }
 
-int nub::ref_counted::dbg_weak_ref_count() const throw()
+int nub::ref_counted::dbg_weak_ref_count() const noexcept
 {
   return m_ref_counts->m_weak.atomic_get();
 }

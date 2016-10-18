@@ -57,6 +57,6 @@ KbdResponseHdlr::KbdResponseHdlr() :
   setBindingSubstitution("%K");
 }
 
-KbdResponseHdlr::~KbdResponseHdlr() throw() {}
+KbdResponseHdlr::~KbdResponseHdlr() noexcept {}
 
 #endif // !GROOVX_VISX_KBDRESPONSEHDLR_CC_UTC20050626084016_DEFINED

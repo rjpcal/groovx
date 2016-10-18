@@ -49,7 +49,7 @@ public:
   static Jitter* make();
 
   /// Virtual destructor.
-  virtual ~Jitter() throw();
+  virtual ~Jitter() noexcept;
 
   virtual io::version_id class_version_id() const;
   virtual void read_from(io::reader& reader);

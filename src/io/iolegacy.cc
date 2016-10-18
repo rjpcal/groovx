@@ -202,7 +202,7 @@ io::legacy_reader::legacy_reader(std::istream& is) :
 GVX_TRACE("io::legacy_reader::legacy_reader");
 }
 
-io::legacy_reader::~legacy_reader() throw()
+io::legacy_reader::~legacy_reader() noexcept
 {
 GVX_TRACE("io::legacy_reader::~legacy_reader");
   delete rep;
@@ -537,7 +537,7 @@ io::legacy_writer::legacy_writer(std::ostream& os, bool write_bases) :
 GVX_TRACE("io::legacy_writer::legacy_writer");
 }
 
-io::legacy_writer::~legacy_writer() throw()
+io::legacy_writer::~legacy_writer() noexcept
 {
 GVX_TRACE("io::legacy_writer::~legacy_writer");
   rep->flush_whitespace();

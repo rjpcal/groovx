@@ -49,7 +49,7 @@ class output_file : public io::serializable
 protected:
   output_file();
 
-  virtual ~output_file() throw();
+  virtual ~output_file() noexcept;
 
 public:
   /// Default creator.

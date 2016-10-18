@@ -129,7 +129,7 @@ GVX_TRACE("Gabor::Gabor");
   setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
 }
 
-Gabor::~Gabor () throw()
+Gabor::~Gabor () noexcept
 {
 GVX_TRACE("Gabor::~Gabor");
 }

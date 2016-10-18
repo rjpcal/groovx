@@ -57,7 +57,7 @@ GxBounds::GxBounds(nub::soft_ref<GxNode> child) :
   itsMask(0x3333)     // 0011001100110011
 {}
 
-GxBounds::~GxBounds() throw() {}
+GxBounds::~GxBounds() noexcept {}
 
 void GxBounds::read_from(io::reader& reader)
 {

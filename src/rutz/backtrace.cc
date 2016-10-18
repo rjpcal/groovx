@@ -65,24 +65,24 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-rutz::backtrace::backtrace() throw() :
+rutz::backtrace::backtrace() noexcept :
   m_vec()
 {}
 
-rutz::backtrace::backtrace(const backtrace& other) throw() :
+rutz::backtrace::backtrace(const backtrace& other) noexcept :
   m_vec(other.m_vec)
 {}
 
-rutz::backtrace& rutz::backtrace::operator=(const backtrace& other) throw()
+rutz::backtrace& rutz::backtrace::operator=(const backtrace& other) noexcept
 {
   m_vec = other.m_vec;
   return *this;
 }
 
-rutz::backtrace::~backtrace() throw()
+rutz::backtrace::~backtrace() noexcept
 {}
 
-rutz::backtrace& rutz::backtrace::current() throw()
+rutz::backtrace& rutz::backtrace::current() noexcept
 {
   // we need one backtrace per thread, so we use pthreads thread-local
   // storage to set up that association
@@ -109,32 +109,32 @@ rutz::backtrace& rutz::backtrace::current() throw()
   return *bt;
 }
 
-bool rutz::backtrace::push(rutz::prof* p) throw()
+bool rutz::backtrace::push(rutz::prof* p) noexcept
 {
   return m_vec.push(p);
 }
 
-void rutz::backtrace::pop() throw()
+void rutz::backtrace::pop() noexcept
 {
   m_vec.pop();
 }
 
-unsigned int rutz::backtrace::size() const throw()
+unsigned int rutz::backtrace::size() const noexcept
 {
   return m_vec.size();
 }
 
-rutz::prof* rutz::backtrace::top() const throw()
+rutz::prof* rutz::backtrace::top() const noexcept
 {
   return m_vec.top();
 }
 
-rutz::prof* rutz::backtrace::at(unsigned int i) const throw()
+rutz::prof* rutz::backtrace::at(unsigned int i) const noexcept
 {
   return m_vec.at(i);
 }
 
-void rutz::backtrace::print() const throw()
+void rutz::backtrace::print() const noexcept
 {
   const unsigned int end = size();
 
@@ -153,7 +153,7 @@ void rutz::backtrace::print() const throw()
     }
 }
 
-void rutz::backtrace::print(std::ostream& os) const throw()
+void rutz::backtrace::print(std::ostream& os) const noexcept
 {
   const unsigned int end = size();
 

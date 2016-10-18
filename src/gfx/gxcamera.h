@@ -55,7 +55,7 @@ public:
   GxCamera() : GxNode(), itsWidth(0), itsHeight(0) {}
 
   /// Virtual no-throw destructor.
-  virtual ~GxCamera() throw();
+  virtual ~GxCamera() noexcept;
 
   /// Notifies the GxCamera that its window has changed size.
   void reshape(Gfx::Canvas& canvas, int w, int h);
@@ -81,7 +81,7 @@ public:
   GxPerspectiveCamera();
 
   /// Virtual no-throw destructor.
-  virtual ~GxPerspectiveCamera() throw();
+  virtual ~GxPerspectiveCamera() noexcept;
 
   /// Factory function.
   static GxPerspectiveCamera* make() { return new GxPerspectiveCamera; }
@@ -113,7 +113,7 @@ public:
   {}
 
   /// Virtual no-throw destructor.
-  virtual ~GxFixedRectCamera() throw();
+  virtual ~GxFixedRectCamera() noexcept;
 
   virtual void read_from(io::reader& /*reader*/) {}
   virtual void write_to(io::writer& /*writer*/) const {}
@@ -141,7 +141,7 @@ public:
   {}
 
   /// Virtual no-throw destructor.
-  virtual ~GxMinRectCamera() throw();
+  virtual ~GxMinRectCamera() noexcept;
 
   virtual void read_from(io::reader& /*reader*/) {}
   virtual void write_to(io::writer& /*writer*/) const {}
@@ -166,7 +166,7 @@ public:
   GxFixedScaleCamera();
 
   /// Virtual no-throw destructor.
-  virtual ~GxFixedScaleCamera() throw();
+  virtual ~GxFixedScaleCamera() noexcept;
 
   /// Factory function.
   static GxFixedScaleCamera* make() { return new GxFixedScaleCamera; }
@@ -204,7 +204,7 @@ public:
   GxPsyphyCamera();
 
   /// Virtual no-throw destructor.
-  virtual ~GxPsyphyCamera() throw();
+  virtual ~GxPsyphyCamera() noexcept;
 
   /// Factory function.
   static GxPsyphyCamera* make() { return new GxPsyphyCamera; }

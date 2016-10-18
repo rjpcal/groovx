@@ -40,7 +40,7 @@ GxBin::GxBin() : itsChild(GxEmptyNode::make()) {}
 
 GxBin::GxBin(nub::ref<GxNode> child) : itsChild(child) {}
 
-GxBin::~GxBin() throw() {}
+GxBin::~GxBin() noexcept {}
 
 void GxBin::setChild(const nub::ref<GxNode>& child)
 {

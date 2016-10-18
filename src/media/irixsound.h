@@ -58,7 +58,7 @@ namespace media
   {
   public:
     irix_audio_sound_rep(const char* filename = 0);
-    virtual ~irix_audio_sound_rep() throw();
+    virtual ~irix_audio_sound_rep() noexcept;
 
     virtual void play();
 
@@ -162,7 +162,7 @@ GVX_TRACE("media::irix_audio_sound_rep::irix_audio_sound_rep");
     }
 }
 
-media::irix_audio_sound_rep::~irix_audio_sound_rep() throw()
+media::irix_audio_sound_rep::~irix_audio_sound_rep() noexcept
 {
 GVX_TRACE("media::irix_audio_sound_rep::~irix_audio_sound_rep");
   if (m_audio_config != 0)

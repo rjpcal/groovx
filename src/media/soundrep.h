@@ -41,7 +41,7 @@ namespace media
   class sound_rep
   {
   public:
-    virtual ~sound_rep() throw();
+    virtual ~sound_rep() noexcept;
 
     virtual void play() = 0;
 

@@ -87,7 +87,7 @@ GVX_TRACE("MaskHatch::MaskHatch");
   dbg_eval(3, getAlignmentMode());
 }
 
-MaskHatch::~MaskHatch() throw()
+MaskHatch::~MaskHatch() noexcept
 {
 GVX_TRACE("MaskHatch::~MaskHatch");
 }

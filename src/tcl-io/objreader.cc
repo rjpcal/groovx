@@ -47,7 +47,7 @@ tcl::obj_reader::obj_reader(tcl::obj x)
 GVX_TRACE("tcl::obj_reader::obj_reader");
 }
 
-tcl::obj_reader::~obj_reader() throw()
+tcl::obj_reader::~obj_reader() noexcept
 {
 GVX_TRACE("tcl::obj_reader::~obj_reader");
 }

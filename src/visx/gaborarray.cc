@@ -131,7 +131,7 @@ GVX_TRACE("GaborArray::GaborArray");
   setPercentBorder(0);
 }
 
-GaborArray::~GaborArray() throw() {}
+GaborArray::~GaborArray() noexcept {}
 
 const FieldMap& GaborArray::classFields()
 {

@@ -55,10 +55,10 @@ public:
   timer_scheduler_token(int msec,
                         void (*callback)(void*),
                         void* clientdata);
-  virtual ~timer_scheduler_token() throw();
+  virtual ~timer_scheduler_token() noexcept;
 
 private:
-  static void c_callback(void* token) throw();
+  static void c_callback(void* token) noexcept;
 
   typedef void (Callback)(void*);
 
@@ -81,13 +81,13 @@ timer_scheduler_token(int msec,
 GVX_TRACE("tcl::timer_scheduler_token::timer_scheduler_token");
 }
 
-tcl::timer_scheduler_token::~timer_scheduler_token() throw()
+tcl::timer_scheduler_token::~timer_scheduler_token() noexcept
 {
 GVX_TRACE("tcl::timer_scheduler_token::~timer_scheduler_token");
   Tcl_DeleteTimerHandler(m_token);
 }
 
-void tcl::timer_scheduler_token::c_callback(void* token) throw()
+void tcl::timer_scheduler_token::c_callback(void* token) noexcept
 {
   timer_scheduler_token* tok = static_cast<timer_scheduler_token*>(token);
 
@@ -114,7 +114,7 @@ tcl::timer_scheduler::timer_scheduler()
 GVX_TRACE("tcl::timer_scheduler::timer_scheduler");
 }
 
-tcl::timer_scheduler::~timer_scheduler() throw()
+tcl::timer_scheduler::~timer_scheduler() noexcept
 {
 GVX_TRACE("tcl::timer_scheduler::~timer_scheduler");
 }

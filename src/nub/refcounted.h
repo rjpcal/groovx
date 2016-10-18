@@ -44,14 +44,6 @@ namespace nub
 }
 
 
-// If we want to enforce that destructors of objects derived form
-// nub::ref_counted (and nub::object) should have an empty throw-spec
-// (i.e. "throw()"), then need "#define GVX_DTOR_NOTHROW throw()",
-// otherwise we just define GVX_DTOR_NOTHROW to be empty
-#ifndef GVX_DTOR_NOTHROW
-#  define GVX_DTOR_NOTHROW
-#endif
-
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -75,28 +67,28 @@ public:
   void* operator new(size_t bytes);
   void operator delete(void* space, size_t bytes);
 
-  ref_counts() throw();
+  ref_counts() noexcept;
 
 private:
   /// Private destructor since the object destroys itself eventually in release_weak().
-  ~ref_counts() throw();
+  ~ref_counts() noexcept;
 
 public:
 
-  bool is_owner_alive() const throw() { return m_owner_alive; }
+  bool is_owner_alive() const noexcept { return m_owner_alive; }
 
-  void acquire_weak() throw();
-  int release_weak() throw();
+  void acquire_weak() noexcept;
+  int release_weak() noexcept;
 
-  void debug_dump() const throw();
+  void debug_dump() const noexcept;
 
 private:
-  ref_counts(const ref_counts&) throw();
-  ref_counts& operator=(const ref_counts&) throw();
+  ref_counts(const ref_counts&) noexcept;
+  ref_counts& operator=(const ref_counts&) noexcept;
 
-  void acquire_strong() throw();
-  int release_strong() throw();
-  void release_strong_no_delete() throw();
+  void acquire_strong() noexcept;
+  int release_strong() noexcept;
+  void release_strong_no_delete() noexcept;
 
   rutz::atomic_int_t m_strong;
   rutz::atomic_int_t m_weak;
@@ -168,17 +160,17 @@ public:
       reference count falls to zero or below. Clients are forced to
       create ref_counted objects dynamically using \c new, which is
       what we need in order for 'delete this' to be valid later on. */
-  virtual ~ref_counted() GVX_DTOR_NOTHROW;
+  virtual ~ref_counted() noexcept;
 
   /// Mark this object as a volatile (unshareable) object.
-  void mark_as_volatile() throw();
+  void mark_as_volatile() noexcept;
 
 public:
   /// Increment the object's reference count.
   /** This operation (on the strong reference count) is not permitted if
       the object is unshareable. Unshareable objects can only have their
       weak reference counts manipulated. */
-  void incr_ref_count() const throw();
+  void incr_ref_count() const noexcept;
 
   /// Decrement the object's reference count.
   /** If this causes the reference count to fall to zero or below, the
@@ -186,7 +178,7 @@ public:
       this'. This operation (on the strong reference count) is not
       permitted if the object is unshareable. Unshareable objects can only
       have their weak reference counts manipulated. */
-  void decr_ref_count() const throw();
+  void decr_ref_count() const noexcept;
 
   /// Decrement the object's reference count, but don't delete it.
   /** Unlike decr_ref_count(), the object will NOT be delete'd if the
@@ -194,35 +186,35 @@ public:
       reference count) is not permitted if the object is
       unshareable. Unshareable objects can only have their weak reference
       counts manipulated. */
-  void decr_ref_count_no_delete() const throw();
+  void decr_ref_count_no_delete() const noexcept;
 
   /// Returns true if no external client has sole ownership of the object.
   /** This may occur if either (1) the reference count is greater than one,
       or (2) the object is_not_shareable(), meaning that the object itself is
       the only "owner". */
-  bool is_shared() const throw();
+  bool is_shared() const noexcept;
 
   /// Returns true if there is a sole external owner of the object.
   /** This occurs if the reference count is one or less and the object is
       shareable. */
-  bool is_unshared() const throw();
+  bool is_unshared() const noexcept;
 
   /** Returns true if the object is not shareable for any reason. This
       could be because its lifespan is volatile (such as objects
       representing on-screen windows that can be dismissed by the
       user). The default is for objects to be shareable; objects can
       declare themselves as unshareable by calling mark_as_volatile(). */
-  bool is_not_shareable() const throw();
+  bool is_not_shareable() const noexcept;
 
   /// Returns the object's reference count manager.
-  ref_counts* get_counts() const throw();
+  ref_counts* get_counts() const noexcept;
 
 
   /// FOR TEST/DEBUG ONLY! Returns the object's (strong) reference count.
-  int dbg_ref_count() const throw();
+  int dbg_ref_count() const noexcept;
 
   /// FOR TEST/DEBUG ONLY! Returns the object's weak reference count.
-  int dbg_weak_ref_count() const throw();
+  int dbg_weak_ref_count() const noexcept;
 };
 
 #endif // !GROOVX_NUB_REFCOUNTED_H_UTC20050626084018_DEFINED

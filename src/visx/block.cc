@@ -81,7 +81,7 @@ Block::Block() :
 GVX_TRACE("Block::Block");
 }
 
-Block::~Block() throw()
+Block::~Block() noexcept
 {}
 
 io::version_id Block::class_version_id() const

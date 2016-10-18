@@ -50,8 +50,6 @@ public:
     itsVal(v), itsMsec(m)
   {}
 
-  virtual ~Response() throw();
-
   virtual rutz::fstring value_typename() const;
 
   virtual void print_to(std::ostream& os) const;

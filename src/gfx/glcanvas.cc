@@ -92,7 +92,7 @@ namespace
     return d;
   }
 
-  bool rasterPositionValid() throw()
+  bool rasterPositionValid() noexcept
   {
     GLboolean value = GL_FALSE;
     glGetBooleanv(GL_CURRENT_RASTER_POSITION_VALID, &value);
@@ -261,7 +261,7 @@ GVX_TRACE("GLCanvas::make");
   return new GLCanvas(opts, glx);
 }
 
-GLCanvas::~GLCanvas() throw()
+GLCanvas::~GLCanvas() noexcept
 {
 GVX_TRACE("GLCanvas::~GLCanvas");
   delete rep;
@@ -288,13 +288,13 @@ GVX_TRACE("GLCanvas::getCurrent");
   return theCurrentCanvas;
 }
 
-void GLCanvas::drawBufferFront() throw()
+void GLCanvas::drawBufferFront() noexcept
 {
 GVX_TRACE("GLCanvas::drawBufferFront");
   glDrawBuffer(GL_FRONT);
 }
 
-void GLCanvas::drawBufferBack() throw()
+void GLCanvas::drawBufferBack() noexcept
 {
 GVX_TRACE("GLCanvas::drawBufferBack");
   glDrawBuffer(GL_BACK);

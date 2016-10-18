@@ -46,7 +46,7 @@ class Gfx::PSCanvas : public Gfx::Canvas
 public:
   PSCanvas(const char* filename);
 
-  virtual ~PSCanvas() throw();
+  virtual ~PSCanvas() noexcept;
 
   virtual geom::vec3<double> screenFromWorld3(const geom::vec3<double>& world_pos) const;
   virtual geom::vec3<double> worldFromScreen3(const geom::vec3<double>& screen_pos) const;

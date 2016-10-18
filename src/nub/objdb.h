@@ -60,9 +60,6 @@ class nub::invalid_uid_error : public rutz::error
 public:
   /// Constructor.
   invalid_uid_error(nub::uid id, const rutz::file_pos& pos);
-
-  /// Virtual destructor.
-  virtual ~invalid_uid_error() throw();
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -130,10 +127,10 @@ public:
   //
 
   /// Returns the number of valid objects in the database.
-  int count() const throw();
+  int count() const noexcept;
 
   /// Returns true if 'id' is a valid uid.
-  bool is_valid_uid(nub::uid id) const throw();
+  bool is_valid_uid(nub::uid id) const noexcept;
 
   /// Releases the object specified by \a id, but only if it is unshared.
   /** This causes the object to be destroyed since it was unshared. If
@@ -162,7 +159,7 @@ public:
   /// Return the \c nub::object* with the uid given by \a id.
   /** Checks first if \a id is a valid uid, and throws an \c
       nub::invalid_uid_error if it is not. */
-  nub::object* get_checked_obj(nub::uid id) throw (nub::invalid_uid_error);
+  nub::object* get_checked_obj(nub::uid id);
 
   /// Insert a strong reference to obj into the database.
   void insert_obj(nub::object* obj);

@@ -71,10 +71,10 @@ private:
 
 protected:
   /// Default constructor.
-  serializable() throw();
+  serializable() noexcept;
 
   /// Virtual destructor to ensure correct destruction of subclasses
-  virtual ~serializable() GVX_DTOR_NOTHROW;
+  virtual ~serializable() noexcept;
 
 public:
   /** Subclasses implement this method to save the object's state via

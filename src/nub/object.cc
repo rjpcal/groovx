@@ -52,12 +52,12 @@ nub::object::object() : m_uid(++s_id_counter)
 GVX_TRACE("nub::object::object");
 }
 
-nub::object::~object() GVX_DTOR_NOTHROW
+nub::object::~object() noexcept
 {
 GVX_TRACE("nub::object::~object");
 }
 
-nub::uid nub::object::id() const throw()
+nub::uid nub::object::id() const noexcept
 {
   return m_uid;
 }

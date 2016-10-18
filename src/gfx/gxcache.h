@@ -73,7 +73,7 @@ public:
   GxCache(nub::soft_ref<GxNode> child);
 
   /// Virtual destructor.
-  virtual ~GxCache() throw();
+  virtual ~GxCache() noexcept;
 
   io::version_id class_version_id() const;
 
@@ -86,13 +86,13 @@ public:
   virtual void getBoundingCube(Gfx::Bbox& bbox) const;
 
   /// Invalidate any current cache.
-  void invalidate() throw();
+  void invalidate() noexcept;
 
   /// Get the current drawing mode.
   Mode getMode() const { return itsMode; }
 
   /// Set the current drawing mode.
-  void setMode(Mode new_mode) throw();
+  void setMode(Mode new_mode) noexcept;
 
 private:
   Mode itsMode;

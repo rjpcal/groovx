@@ -59,7 +59,7 @@ public:
   static CloneFace* make();
 
   /// Virtual destructor.
-  virtual ~CloneFace() throw();
+  virtual ~CloneFace() noexcept;
 
   virtual io::version_id class_version_id() const;
   virtual void read_from(io::reader& reader);

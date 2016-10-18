@@ -106,7 +106,7 @@ namespace
 
     asw_writer(const char* filename);
 
-    virtual ~asw_writer() throw();
+    virtual ~asw_writer() noexcept;
 
     virtual void write_char(const char* name, char val);
     virtual void write_int(const char* name, int val);
@@ -206,7 +206,7 @@ namespace
   GVX_TRACE("asw_writer::asw_writer(const char*)");
   }
 
-  asw_writer::~asw_writer () throw()
+  asw_writer::~asw_writer () noexcept
   {
   GVX_TRACE("asw_writer::~asw_writer");
   }

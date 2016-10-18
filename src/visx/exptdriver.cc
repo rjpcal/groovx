@@ -165,7 +165,7 @@ GVX_TRACE("ExptDriver::ExptDriver");
   rep->addLogInfo(tcl::event_loop::command_line().c_str());
 }
 
-ExptDriver::~ExptDriver() throw()
+ExptDriver::~ExptDriver() noexcept
 {
 GVX_TRACE("ExptDriver::~ExptDriver");
   delete rep;

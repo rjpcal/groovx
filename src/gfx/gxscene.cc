@@ -69,7 +69,7 @@ GVX_TRACE("GxScene::GxScene");
   itsCamera->sigNodeChanged.connect(slotNodeChanged);
 }
 
-GxScene::~GxScene() throw()
+GxScene::~GxScene() noexcept
 {
 GVX_TRACE("GxScene::~GxScene");
 }

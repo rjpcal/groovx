@@ -79,7 +79,7 @@ GVX_TRACE("GxPointSet::GxPointSet");
   setFieldMap(GxPointSet::classFields());
 }
 
-GxPointSet::~GxPointSet() throw()
+GxPointSet::~GxPointSet() noexcept
 {
 GVX_TRACE("GxPointSet::~GxPointSet");
 }

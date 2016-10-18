@@ -51,7 +51,7 @@ GxColor::GxColor() :
   setFieldMap(GxColor::classFields());
 }
 
-GxColor::~GxColor() throw() {}
+GxColor::~GxColor() noexcept {}
 
 io::version_id GxColor::class_version_id() const
 {

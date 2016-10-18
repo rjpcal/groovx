@@ -35,29 +35,29 @@
 
 namespace rutz {namespace debug
 {
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, bool expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, char expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned char expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, short expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned short expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, int expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned int expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, long expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned long expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, float expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, double expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, const char* expr) throw();
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, void* expr) throw();
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, bool expr) noexcept;
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, char expr) noexcept;
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned char expr) noexcept;
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, short expr) noexcept;
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned short expr) noexcept;
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, int expr) noexcept;
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned int expr) noexcept;
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, long expr) noexcept;
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, unsigned long expr) noexcept;
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, float expr) noexcept;
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, double expr) noexcept;
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, const char* expr) noexcept;
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, void* expr) noexcept;
 
-  void dump (const char* what, int level, const char* where, int line_no) throw();
+  void dump (const char* what, int level, const char* where, int line_no) noexcept;
 
-  void start_newline () throw();
+  void start_newline () noexcept;
 
-  void panic_aux         (const char* what, const char* where, int line_no) throw();
-  void assert_aux        (const char* what, const char* where, int line_no) throw();
-  void precondition_aux  (const char* what, const char* where, int line_no) throw();
-  void postcondition_aux (const char* what, const char* where, int line_no) throw();
-  void invariant_aux     (const char* what, const char* where, int line_no) throw();
+  void panic_aux         (const char* what, const char* where, int line_no) noexcept;
+  void assert_aux        (const char* what, const char* where, int line_no) noexcept;
+  void precondition_aux  (const char* what, const char* where, int line_no) noexcept;
+  void postcondition_aux (const char* what, const char* where, int line_no) noexcept;
+  void invariant_aux     (const char* what, const char* where, int line_no) noexcept;
 
   /// Allocate a debug key for the given filename
   int create_key(const char* filename);

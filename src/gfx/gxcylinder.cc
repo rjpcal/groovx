@@ -88,7 +88,7 @@ GVX_TRACE("GxCylinder::GxCylinder");
   setFieldMap(GxCylinder::classFields());
 }
 
-GxCylinder::~GxCylinder() throw()
+GxCylinder::~GxCylinder() noexcept
 {
 GVX_TRACE("GxCylinder::~GxCylinder");
 }

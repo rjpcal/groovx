@@ -87,7 +87,7 @@ GVX_TRACE("GxText::GxText(const char*)");
   setHeight(1.0);
 }
 
-GxText::~GxText() throw()
+GxText::~GxText() noexcept
 {
 GVX_TRACE("GxText::~GxText");
 }

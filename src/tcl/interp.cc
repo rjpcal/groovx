@@ -53,7 +53,7 @@ using rutz::fstring;
 
 namespace
 {
-  void c_interp_delete_proc(void* clientdata, Tcl_Interp*) throw()
+  void c_interp_delete_proc(void* clientdata, Tcl_Interp*) noexcept
   {
     tcl::interpreter* intp = static_cast<tcl::interpreter*>(clientdata);
     intp->forget_interp();
@@ -105,7 +105,7 @@ GVX_TRACE("tcl::interpreter::interpreter");
                       static_cast<void*>(this));
 }
 
-tcl::interpreter::interpreter(const tcl::interpreter& other) throw() :
+tcl::interpreter::interpreter(const tcl::interpreter& other) noexcept :
   m_interp(other.m_interp)
 {
 GVX_TRACE("tcl::interpreter::interpreter(const interpreter&)");
@@ -117,7 +117,7 @@ GVX_TRACE("tcl::interpreter::interpreter(const interpreter&)");
     }
 }
 
-tcl::interpreter::~interpreter() throw()
+tcl::interpreter::~interpreter() noexcept
 {
 GVX_TRACE("tcl::interpreter::~interpreter");
 
@@ -141,20 +141,20 @@ Tcl_Interp* tcl::interpreter::intp() const
   return m_interp;
 }
 
-bool tcl::interpreter::is_deleted() const throw()
+bool tcl::interpreter::is_deleted() const noexcept
 {
 GVX_TRACE("tcl::interpreter::is_deleted");
 
   return (m_interp == 0) || Tcl_InterpDeleted(m_interp);
 }
 
-void tcl::interpreter::forget_interp() throw()
+void tcl::interpreter::forget_interp() noexcept
 {
 GVX_TRACE("tcl::interpreter::forget_interp");
   m_interp = 0;
 }
 
-void tcl::interpreter::destroy() throw()
+void tcl::interpreter::destroy() noexcept
 {
 GVX_TRACE("tcl::interpreter::destroy");
 
@@ -407,7 +407,7 @@ GVX_TRACE("tcl::interpreter::link_boolean");
 }
 
 void tcl::interpreter::handle_live_exception(const char* where,
-                                             const rutz::file_pos& pos) throw()
+                                             const rutz::file_pos& pos) noexcept
 {
 GVX_TRACE("tcl::interpreter::handle_live_exception");
 
@@ -455,7 +455,7 @@ GVX_TRACE("tcl::interpreter::handle_live_exception");
     }
 }
 
-void tcl::interpreter::background_error() throw()
+void tcl::interpreter::background_error() noexcept
 {
 GVX_TRACE("tcl::interpreter::background_error");
 

@@ -69,7 +69,7 @@ class io::writer
 public:
 
   /// Virtual destructor allows correct destruction of subclasses.
-  virtual ~writer() throw();
+  virtual ~writer() noexcept;
 
   /** A convenience function to ensure that the current serial version
       is no less than the \a lowest_supported_version. Returns the \a

@@ -47,7 +47,7 @@ public:
   GxBounds(nub::soft_ref<GxNode> child);
 
   /// Virtual destructor.
-  virtual ~GxBounds() throw();
+  virtual ~GxBounds() noexcept;
 
   /// Query whether the rect boundary should be drawn.
   bool isVisible() const { return isItVisible; }

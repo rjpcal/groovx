@@ -140,7 +140,7 @@ GVX_TRACE("GxTransform::GxTransform");
   setFieldMap(GxTransform::classFields());
 }
 
-GxTransform::~GxTransform() throw()
+GxTransform::~GxTransform() noexcept
 {
 GVX_TRACE("GxTransform::~GxTransform");
   delete rep;

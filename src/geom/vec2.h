@@ -204,7 +204,7 @@ namespace geom
     vec2& operator/=(const vec2<U>& factor)
     { xx /= factor.x(); yy /= factor.y(); return *this; }
 
-    void debug_dump() const throw()
+    void debug_dump() const noexcept
     {
       dbg_eval(0, xx);
       dbg_eval_nl(0, yy);

@@ -60,7 +60,7 @@ protected:
 
 public:
 
-  virtual ~Toglet() throw();
+  virtual ~Toglet() noexcept;
 
   /// Returns a new Toglet object.
   /** Note that the object will be "volatile" -- it manages its own

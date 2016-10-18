@@ -58,7 +58,7 @@ public:
           rutz::shared_ptr<nub::scheduler> sched);
 
   /// Virtual no-throw destructor.
-  virtual ~GxScene() throw();
+  virtual ~GxScene() noexcept;
 
   /// Undraw the scene from the canvas.
   void undraw();

@@ -42,7 +42,7 @@ namespace
 nub::obj_factory::obj_factory() :
   rutz::factory<soft_ref<nub::object> >() {}
 
-nub::obj_factory::~obj_factory() throw() {}
+nub::obj_factory::~obj_factory() noexcept {}
 
 nub::obj_factory& nub::obj_factory::instance()
 {

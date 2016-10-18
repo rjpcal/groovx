@@ -55,8 +55,8 @@ namespace tcl
 class tcl::script_app
 {
 public:
-  script_app(const char* appname_, int argc_, char** argv_) throw();
-  ~script_app() throw();
+  script_app(const char* appname_, int argc_, char** argv_) noexcept;
+  ~script_app() noexcept;
 
   /// Don't load any packages that require a windowing system.
   /** In particular, don't load Tk. */

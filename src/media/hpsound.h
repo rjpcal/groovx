@@ -54,7 +54,7 @@ namespace media
   {
   public:
     hp_audio_sound_rep(const char* filename = 0);
-    virtual ~hp_audio_sound_rep() throw();
+    virtual ~hp_audio_sound_rep() noexcept;
 
     virtual void play();
 
@@ -103,7 +103,7 @@ GVX_TRACE("hp_audio_sound_rep::hp_audio_sound_rep");
                          file_format, attr_mask, &attribs, NULL);
 }
 
-media::hp_audio_sound_rep::~hp_audio_sound_rep() throw()
+media::hp_audio_sound_rep::~hp_audio_sound_rep() noexcept
 {
 GVX_TRACE("hp_audio_sound_rep::~hp_audio_sound_rep");
   if ( s_audio != 0 )

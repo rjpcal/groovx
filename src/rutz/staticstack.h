@@ -44,15 +44,15 @@ namespace rutz
   class static_stack
   {
   public:
-    static_stack() throw() : vec(), sz(0) {}
+    static_stack() noexcept : vec(), sz(0) {}
 
-    static_stack(const static_stack& other) throw() :
+    static_stack(const static_stack& other) noexcept :
       vec(), sz(0)
     {
       *this = other;
     }
 
-    static_stack& operator=(const static_stack& other) throw()
+    static_stack& operator=(const static_stack& other) noexcept
     {
       sz = other.sz;
 
@@ -64,11 +64,11 @@ namespace rutz
       return *this;
     }
 
-    unsigned int size() const throw() { return sz; }
+    unsigned int size() const noexcept { return sz; }
 
-    static unsigned int capacity() throw() { return N; }
+    static unsigned int capacity() noexcept { return N; }
 
-    bool push(T p) throw()
+    bool push(T p) noexcept
     {
       if (sz >= N)
         return false;
@@ -77,7 +77,7 @@ namespace rutz
       return true;
     }
 
-    void pop() throw()
+    void pop() noexcept
     {
       if (sz == 0)
         GVX_ABORT("underflow in static_stack::pop");
@@ -85,26 +85,26 @@ namespace rutz
       --sz;
     }
 
-    T top() const throw()
+    T top() const noexcept
     {
       return (sz > 0) ? vec[sz-1] : 0;
     }
 
-    T at(unsigned int i) const throw()
+    T at(unsigned int i) const noexcept
     {
       return (i < sz) ? vec[i] : 0;
     }
 
-    T operator[](unsigned int i) const throw() { return at(i); }
+    T operator[](unsigned int i) const noexcept { return at(i); }
 
     typedef       T*       iterator;
     typedef const T* const_iterator;
 
-    iterator begin() throw() { return &vec[0]; }
-    iterator end()   throw() { return &vec[0] + sz; }
+    iterator begin() noexcept { return &vec[0]; }
+    iterator end()   noexcept { return &vec[0] + sz; }
 
-    const_iterator begin() const throw() { return &vec[0]; }
-    const_iterator end()   const throw() { return &vec[0] + sz; }
+    const_iterator begin() const noexcept { return &vec[0]; }
+    const_iterator end()   const noexcept { return &vec[0] + sz; }
 
   private:
     T vec[N];

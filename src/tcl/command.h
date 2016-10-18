@@ -62,7 +62,7 @@ namespace tcl
 class tcl::function
 {
 public:
-  virtual ~function() throw();
+  virtual ~function() noexcept;
 
   /// Abstract function performs this command's specific functionality.
   /** The \c tcl::call_context& argument allows Tcl command arguments
@@ -112,7 +112,7 @@ public:
           const char* usage, const arg_spec& spec);
 
   /// Non-virtual destructor since this class is not for use as a base class.
-  ~command() throw();
+  ~command() noexcept;
 
   /// Returns a string describing the arguments expected by this command.
   rutz::fstring usage_string() const;
@@ -159,7 +159,7 @@ class tcl::arg_dispatcher
 {
 public:
   /// Virtual destructor.
-  virtual ~arg_dispatcher() throw();
+  virtual ~arg_dispatcher() noexcept;
 
   /** Interprets the Tcl_Obj* arguments, sets up an appropriate
       tcl::call_context, and calls invoke() on the \a cmd with that
@@ -189,13 +189,13 @@ public:
                unsigned int objc, Tcl_Obj* const* objv);
 
   /// Virtual destructor.
-  virtual ~call_context() throw();
+  virtual ~call_context() noexcept;
 
   /// Get the Tcl interpreter of the current invocation.
-  tcl::interpreter& interp() const throw() { return m_interp; }
+  tcl::interpreter& interp() const noexcept { return m_interp; }
 
   /// Return the number of arguments in the current invocation.
-  unsigned int objc() const throw() { return m_objc; }
+  unsigned int objc() const noexcept { return m_objc; }
 
 
   /** Attempt to convert argument number \a argn to type \c T, and
@@ -215,14 +215,14 @@ public:
     }
 
   /// Get the raw objv array.
-  Tcl_Obj* const* get_raw_args() const throw()
+  Tcl_Obj* const* get_raw_args() const noexcept
     {
       return m_objv;
     }
 
 protected:
   /// Get the n'th argument.
-  virtual Tcl_Obj* get_objv(unsigned int n) throw() { return m_objv[n]; }
+  virtual Tcl_Obj* get_objv(unsigned int n) noexcept { return m_objv[n]; }
 
   /// Return a Tcl_Obj*.
   virtual void set_obj_result(const tcl::obj& obj);

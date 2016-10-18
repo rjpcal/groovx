@@ -103,7 +103,7 @@ public:
     prof(prof_name.c_str(), src_pos.m_file_name, src_pos.m_line_no)
   {}
 
-  ~impl() throw() {}
+  ~impl() noexcept {}
 
   typedef std::list<shared_ptr<tcl::command> > cmd_list_type;
 
@@ -119,14 +119,14 @@ public:
   static int c_invoke_callback(void* clientdata,
                                Tcl_Interp* interp,
                                int s_objc,
-                               Tcl_Obj *const objv[]) throw();
+                               Tcl_Obj *const objv[]) noexcept;
 
-  static void c_delete_callback(void* clientdata) throw();
+  static void c_delete_callback(void* clientdata) noexcept;
 
-  static void c_exit_callback(void* clientdata) throw();
+  static void c_exit_callback(void* clientdata) noexcept;
 
   static tcl::command_group* lookup_helper(tcl::interpreter& interp,
-                                           const char* name) throw();
+                                           const char* name) noexcept;
 
 private:
   impl(const impl&);
@@ -182,7 +182,7 @@ int tcl::command_group::impl::c_invoke_callback(
     void* clientdata,
     Tcl_Interp* interp,
     int s_objc,
-    Tcl_Obj *const objv[]) throw()
+    Tcl_Obj *const objv[]) noexcept
 {
   command_group* c = static_cast<command_group*>(clientdata);
 
@@ -210,7 +210,7 @@ int tcl::command_group::impl::c_invoke_callback(
 }
 
 void tcl::command_group::impl::c_delete_callback(
-    void* clientdata) throw()
+    void* clientdata) noexcept
 {
 GVX_TRACE("tcl::command_group::impl::c_delete_callback");
   command_group* c = static_cast<command_group*>(clientdata);
@@ -219,7 +219,7 @@ GVX_TRACE("tcl::command_group::impl::c_delete_callback");
 }
 
 void tcl::command_group::impl::c_exit_callback(
-    void* clientdata) throw()
+    void* clientdata) noexcept
 {
 GVX_TRACE("tcl::command_group::c_exit_callback");
   command_group* c = static_cast<command_group*>(clientdata);
@@ -229,7 +229,7 @@ GVX_TRACE("tcl::command_group::c_exit_callback");
 
 tcl::command_group* tcl::command_group::impl::lookup_helper(
     tcl::interpreter& interp,
-    const char* name) throw()
+    const char* name) noexcept
 {
 GVX_TRACE("tcl::command_group::impl::lookup_helper");
 
@@ -305,7 +305,7 @@ GVX_TRACE("tcl::command_group::command_group");
        would just mean that the remaining tcl::command objects in
        rep->cmd_list won't have any input sent their way
  */
-tcl::command_group::~command_group() throw()
+tcl::command_group::~command_group() noexcept
 {
 GVX_TRACE("tcl::command_group::~command_group");
 
@@ -316,7 +316,7 @@ GVX_TRACE("tcl::command_group::~command_group");
 }
 
 tcl::command_group* tcl::command_group::lookup(tcl::interpreter& interp,
-                                             const char* name) throw()
+                                             const char* name) noexcept
 {
 GVX_TRACE("tcl::command_group::lookup");
 
@@ -325,7 +325,7 @@ GVX_TRACE("tcl::command_group::lookup");
 
 tcl::command_group* tcl::command_group::lookup_original(
                                             tcl::interpreter& interp,
-                                            const char* name) throw()
+                                            const char* name) noexcept
 {
 GVX_TRACE("tcl::command_group::lookup_original");
 
@@ -424,7 +424,7 @@ GVX_TRACE("tcl::command_group::usage");
 }
 
 int tcl::command_group::invoke_raw(int s_objc,
-                                   Tcl_Obj *const objv[]) throw()
+                                   Tcl_Obj *const objv[]) noexcept
 {
 GVX_TRACE("tcl::command_group::invoke_raw");
 

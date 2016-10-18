@@ -63,7 +63,7 @@ public:
   /// Define with a given name.
   ProcWrapper(const tcl::interpreter& intp, const rutz::fstring& name);
 
-  virtual ~ProcWrapper() throw();
+  virtual ~ProcWrapper() noexcept;
 
   virtual void read_from(io::reader& reader);
   virtual void write_to(io::writer& writer) const;

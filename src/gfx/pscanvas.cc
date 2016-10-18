@@ -712,7 +712,7 @@ Gfx::PSCanvas::PSCanvas(const char* filename) :
 GVX_TRACE("Gfx::PSCanvas::PSCanvas");
 }
 
-Gfx::PSCanvas::~PSCanvas() throw()
+Gfx::PSCanvas::~PSCanvas() noexcept
 {
 GVX_TRACE("Gfx::PSCanvas::~PSCanvas");
   delete rep;

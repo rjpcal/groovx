@@ -189,6 +189,9 @@ public:
   /// Copy constructor.
   data_ref_holder(const data_ref_holder& other) : m_ref(other.m_ref) {}
 
+  /// Assignment not allowed
+  data_ref_holder& operator=(const data_ref_holder&) = delete;
+
   /// Destructor.
   ~data_ref_holder() {}
 
@@ -205,7 +208,6 @@ public:
   int storage_length() const { return m_ref->storage_length(); }
 
 private:
-  data_ref_holder& operator=(const data_ref_holder&); // not allowed
 
   data_holder* m_ref;
 };

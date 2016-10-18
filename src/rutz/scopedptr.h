@@ -51,13 +51,13 @@ namespace rutz
   {
   public:
     /// Construct with pointer to given object (or null).
-    explicit scoped_ptr( T* p=0 ) throw() :
+    explicit scoped_ptr( T* p=0 ) noexcept :
       ptr(p)
     {}
 
     /// Construct with pointer to given object of related type.
     template <class TT>
-    explicit scoped_ptr( TT* p ) throw() :
+    explicit scoped_ptr( TT* p ) noexcept :
       ptr(p)
     {}
 
@@ -73,15 +73,15 @@ namespace rutz
     }
 
     /// Dereference.
-    T& operator*() const throw()
+    T& operator*() const noexcept
     { return *ptr; }
 
     /// Dereference for member access.
-    T* operator->() const throw()
+    T* operator->() const noexcept
     { return ptr; }
 
     /// Get a pointer to the referred-to object.
-    T* get() const throw()
+    T* get() const noexcept
     { return ptr; }
 
   private:

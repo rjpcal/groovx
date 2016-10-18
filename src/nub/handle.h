@@ -69,31 +69,31 @@ public:
     m_master->incr_ref_count();
   }
 
-  ~handle() throw()
+  ~handle() noexcept
   { unref_policy::unref(m_master); }
 
-  handle(const handle& other) throw()
+  handle(const handle& other) noexcept
     :
     m_master(other.m_master)
   {
     m_master->incr_ref_count();
   }
 
-  handle& operator=(const handle& other) throw()
+  handle& operator=(const handle& other) noexcept
   {
     handle other_copy(other);
     this->swap(other_copy);
     return *this;
   }
 
-  T* get() const throw()
+  T* get() const noexcept
   { return m_master; }
 
-  bool operator==(const handle& other) const throw()
+  bool operator==(const handle& other) const noexcept
   { return m_master == other.m_master; }
 
 private:
-  void swap(handle& other) throw()
+  void swap(handle& other) noexcept
   {
     rutz::swap2(m_master, other.m_master);
   }

@@ -63,7 +63,7 @@ public:
   ResponseHandler();
 
   /// Virtual destructor.
-  virtual ~ResponseHandler() throw();
+  virtual ~ResponseHandler() noexcept;
 
   virtual void read_from(io::reader& reader) = 0;
   virtual void write_to(io::writer& writer) const = 0;

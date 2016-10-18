@@ -45,9 +45,9 @@ namespace
   public:
     typedef rutz::factory_base::fallback_t fallback_t;
 
-    function_fallback(fallback_t* f) throw() : m_func(f) {}
+    function_fallback(fallback_t* f) noexcept : m_func(f) {}
 
-    virtual ~function_fallback() throw() {}
+    virtual ~function_fallback() noexcept {}
 
     virtual void try_fallback(const rutz::fstring& key) const
     {
@@ -60,20 +60,20 @@ namespace
   };
 }
 
-rutz::factory_fallback::factory_fallback() throw()
+rutz::factory_fallback::factory_fallback() noexcept
 {}
 
-rutz::factory_fallback::~factory_fallback() throw()
+rutz::factory_fallback::~factory_fallback() noexcept
 {}
 
-rutz::factory_base::factory_base() throw()
+rutz::factory_base::factory_base() noexcept
   :
   m_fallback()
 {
 GVX_TRACE("rutz::factory_base::factory_base");
 }
 
-rutz::factory_base::~factory_base() throw()
+rutz::factory_base::~factory_base() noexcept
 {
 GVX_TRACE("rutz::factory_base::~factory_base");
 }

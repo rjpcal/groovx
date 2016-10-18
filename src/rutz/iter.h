@@ -133,7 +133,11 @@ namespace rutz
     typedef T value_t;
     typedef fwd_iter_ifx<T> ifx_t;
 
-    virtual        ~fwd_iter_ifx()  {}
+    fwd_iter_ifx() = default;
+    fwd_iter_ifx(const fwd_iter_ifx&) = default;
+    fwd_iter_ifx& operator=(const fwd_iter_ifx&) = default;
+
+    virtual        ~fwd_iter_ifx() = default;
     virtual ifx_t* clone()  const = 0;
     virtual void   next()         = 0;
     virtual T&     get()    const = 0;

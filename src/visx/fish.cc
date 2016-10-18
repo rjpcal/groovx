@@ -31,7 +31,6 @@
 
 #ifndef GROOVX_VISX_FISH_CC_UTC20050626084016_DEFINED
 #define GROOVX_VISX_FISH_CC_UTC20050626084016_DEFINED
-
 #include "fish.h"
 
 #include "geom/rect.h"
@@ -215,7 +214,7 @@ GVX_TRACE("Fish::Fish");
   this->sigNodeChanged.emit();
 }
 
-Fish::~Fish () throw()
+Fish::~Fish () noexcept
 {
 GVX_TRACE("Fish::~Fish");
   delete [] itsParts;

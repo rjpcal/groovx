@@ -47,7 +47,7 @@ ResponseHandler::ResponseHandler()
 GVX_TRACE("ResponseHandler::ResponseHandler");
 }
 
-ResponseHandler::~ResponseHandler() throw()
+ResponseHandler::~ResponseHandler() noexcept
 {
 GVX_TRACE("ResponseHandler::~ResponseHandler");
 }

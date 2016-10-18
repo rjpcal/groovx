@@ -72,7 +72,7 @@ protected:
 public:
   static Trial* make();
 
-  virtual ~Trial () throw();
+  virtual ~Trial () noexcept;
 
   virtual io::version_id class_version_id() const;
   virtual void read_from(io::reader& reader);

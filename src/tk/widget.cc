@@ -210,7 +210,7 @@ public:
              const char* pathname,
              bool topLevel);
 
-  virtual ~TkWidgImpl() throw();
+  virtual ~TkWidgImpl() noexcept;
 
   tcl::TkWidget*   owner;
   tcl::interpreter interp;
@@ -239,13 +239,13 @@ public:
 
   void keyEventProc(XKeyEvent* ev);
 
-  static void cEventCallback(ClientData clientData, XEvent* ev) throw();
+  static void cEventCallback(ClientData clientData, XEvent* ev) noexcept;
 
-  static void cRenderCallback(ClientData clientData) throw();
+  static void cRenderCallback(ClientData clientData) noexcept;
 
-  static void cEventuallyFreeCallback(char* clientData) throw();
+  static void cEventuallyFreeCallback(char* clientData) noexcept;
 
-  static void cTakeFocusCallback(ClientData clientData) throw();
+  static void cTakeFocusCallback(ClientData clientData) noexcept;
 };
 
 TkWidgImpl::TkWidgImpl(tcl::TkWidget* o, tcl::interpreter& p,
@@ -276,7 +276,7 @@ GVX_TRACE("TkWidgImpl::TkWidgImpl");
                         cast_to_void(this));
 }
 
-TkWidgImpl::~TkWidgImpl() throw()
+TkWidgImpl::~TkWidgImpl() noexcept
 {
 GVX_TRACE("TkWidgImpl::~TkWidgImpl");
 
@@ -346,7 +346,7 @@ GVX_TRACE("TkWidgImpl::keyEventProc");
 }
 
 void TkWidgImpl::cEventCallback(ClientData clientData,
-                                XEvent* ev) throw()
+                                XEvent* ev) noexcept
 {
 GVX_TRACE("TkWidgImpl::cEventCallback");
 
@@ -414,7 +414,7 @@ GVX_TRACE("TkWidgImpl::cEventCallback");
     }
 }
 
-void TkWidgImpl::cRenderCallback(ClientData clientData) throw()
+void TkWidgImpl::cRenderCallback(ClientData clientData) noexcept
 {
 GVX_TRACE("TkWidgImpl::cRenderCallback");
 
@@ -432,14 +432,14 @@ GVX_TRACE("TkWidgImpl::cRenderCallback");
     }
 }
 
-void TkWidgImpl::cEventuallyFreeCallback(char* clientData) throw()
+void TkWidgImpl::cEventuallyFreeCallback(char* clientData) noexcept
 {
 GVX_TRACE("TkWidgImpl::cEventuallyFreeCallback");
   TkWidgImpl* const rep = cast_from_void(clientData);
   delete rep->owner;
 }
 
-void TkWidgImpl::cTakeFocusCallback(ClientData clientData) throw()
+void TkWidgImpl::cTakeFocusCallback(ClientData clientData) noexcept
 {
 GVX_TRACE("TkWidgImpl::cTakeFocusCallback");
   TkWidgImpl* const rep = cast_from_void(clientData);
@@ -471,7 +471,7 @@ GVX_TRACE("tcl::TkWidget::TkWidget");
   this->mark_as_volatile();
 }
 
-tcl::TkWidget::~TkWidget() throw()
+tcl::TkWidget::~TkWidget() noexcept
 {
 GVX_TRACE("tcl::TkWidget::~TkWidget");
   delete rep;
@@ -531,7 +531,7 @@ GVX_TRACE("tcl::TkWidget::destroyWidget");
     }
 }
 
-void tcl::TkWidget::winInfo() throw()
+void tcl::TkWidget::winInfo() noexcept
 {
 GVX_TRACE("tcl::TkWidget::winInfo");
 
@@ -576,7 +576,7 @@ GVX_TRACE("tcl::TkWidget::pixelsPerInch");
 void tcl::TkWidget::setCursor(const char* cursor_spec)
 {
 GVX_TRACE("tcl::TkWidget::setCursor");
-  if (cursor_spec == 0 || cursor_spec == '\0')
+  if (cursor_spec == 0 || *cursor_spec == '\0')
     {
       // Empty string means to unset the cursor
       if (rep->cursor != 0)

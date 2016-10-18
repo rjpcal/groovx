@@ -50,8 +50,6 @@ const int Response::INVALID_VALUE;
 const int Response::ALWAYS_CORRECT;
 const int Response::IGNORE;
 
-Response::~Response() throw() {}
-
 rutz::fstring Response::value_typename() const
 {
 GVX_TRACE("Response::value_typename");

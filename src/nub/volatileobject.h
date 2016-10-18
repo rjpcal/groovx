@@ -48,7 +48,7 @@ class nub::volatile_object : public virtual nub::object
 {
 public:
   volatile_object();
-  virtual ~volatile_object() throw();
+  virtual ~volatile_object() noexcept;
 
   void destroy();
 };

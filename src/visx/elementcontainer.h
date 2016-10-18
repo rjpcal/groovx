@@ -55,7 +55,7 @@ public:
   ElementContainer();
 
   /// Virtual destructor.
-  virtual ~ElementContainer() throw();
+  virtual ~ElementContainer() noexcept;
 
   virtual void read_from(io::reader& reader);
 

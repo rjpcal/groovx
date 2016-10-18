@@ -118,12 +118,12 @@ const FieldMap* FieldMap::emptyFieldMap()
   return emptyMap;
 }
 
-bool FieldMap::hasParent() const throw()
+bool FieldMap::hasParent() const noexcept
 {
   return (rep->parent != 0);
 }
 
-const FieldMap* FieldMap::parent() const throw()
+const FieldMap* FieldMap::parent() const noexcept
 {
   return rep->parent;
 }
@@ -164,7 +164,7 @@ FieldContainer::FieldContainer(nub::signal0* sig) :
   itsSignal(sig)
 {}
 
-FieldContainer::~FieldContainer() throw() {}
+FieldContainer::~FieldContainer() noexcept {}
 
 void FieldContainer::setFieldMap(const FieldMap& fields)
 {

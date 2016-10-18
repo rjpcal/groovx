@@ -218,7 +218,7 @@ GVX_TRACE("Trial::Trial()");
   setFieldMap(Trial::classFields());
 }
 
-Trial::~Trial() throw()
+Trial::~Trial() noexcept
 {
 GVX_TRACE("Trial::~Trial");
   delete rep;

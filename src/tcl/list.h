@@ -183,7 +183,7 @@ class tcl::list::iterator_base
 {
 protected:
   // Make protected to prevent people from instantiating iterator_base directly.
-  ~iterator_base() {}
+  ~iterator_base() = default;
 
 public:
   typedef int difference_type;
@@ -201,6 +201,8 @@ public:
   {}
 
   // default copy-constructor, assignment operator OK
+  iterator_base(const iterator_base&) = default;
+  iterator_base& operator=(const iterator_base&) = default;
 
   iterator_base& operator++()
     { ++m_index; return *this; }

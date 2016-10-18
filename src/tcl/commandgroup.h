@@ -61,14 +61,14 @@ public:
       returned from this function! Its lifetime is managed internally
       by tcl. */
   static command_group* lookup(tcl::interpreter& interp,
-                               const char* name) throw();
+                               const char* name) noexcept;
 
   /// Find the named command, after following any namespace aliases.
   /** Returns null if no such command. DO NOT DELETE the pointer
       returned from this function! Its lifetime is managed internally
       by tcl. */
   static command_group* lookup_original(tcl::interpreter& interp,
-                                        const char* name) throw();
+                                        const char* name) noexcept;
 
   /// Build a new tcl::command object that will be hooked into a tcl::command_group.
   /** If there is already a tcl::command_group for the given name,
@@ -92,7 +92,7 @@ public:
   /// Returns a string giving the command's proper usage, including overloads.
   rutz::fstring usage() const;
 
-  int invoke_raw(int s_objc, Tcl_Obj *const objv[]) throw();
+  int invoke_raw(int s_objc, Tcl_Obj *const objv[]) noexcept;
 
 private:
   class impl;
@@ -105,7 +105,7 @@ private:
                const rutz::file_pos& src_pos);
 
   /// Private destructor since destruction is automated by Tcl.
-  ~command_group() throw();
+  ~command_group() noexcept;
 
   command_group(const command_group&); // not implemented
   command_group& operator=(const command_group&); // not implemented

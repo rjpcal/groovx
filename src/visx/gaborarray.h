@@ -57,14 +57,14 @@ template <class T>
 class Cached
 {
 public:
-  Cached(const T& v) throw() : val(v), oldval(v), changed(true) {}
+  Cached(const T& v) noexcept : val(v), oldval(v), changed(true) {}
 
-  operator       T&()       throw() { return val; }
-  operator const T&() const throw() { return val; }
+  operator       T&()       noexcept { return val; }
+  operator const T&() const noexcept { return val; }
 
-  void save()  const throw() { oldval = val; changed = false; }
-  bool ok()    const throw() { return (val == oldval) && !changed; }
-  void touch() const throw() { changed = true; }
+  void save()  const noexcept { oldval = val; changed = false; }
+  bool ok()    const noexcept { return (val == oldval) && !changed; }
+  void touch() const noexcept { changed = true; }
 
   T val;
   mutable T oldval;
@@ -89,7 +89,7 @@ public:
              double gridSpacing = 48.0,
              double minSpacing = 36.0);
 
-  virtual ~GaborArray() throw();
+  virtual ~GaborArray() noexcept;
 
   static GaborArray* make() { return new GaborArray; }
 

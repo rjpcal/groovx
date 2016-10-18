@@ -61,7 +61,7 @@ public:
   static Gabor* make();
 
   /// Virtual destructor.
-  virtual ~Gabor() throw();
+  virtual ~Gabor() noexcept;
 
   /// Get Gabor's fields.
   static const FieldMap& classFields();

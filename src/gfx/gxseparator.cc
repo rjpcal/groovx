@@ -69,7 +69,7 @@ public:
     debugMode(false)
   {}
 
-  virtual ~Impl() throw() {}
+  virtual ~Impl() noexcept {}
 
   static Impl* make(GxSeparator* owner) { return new Impl(owner); }
 
@@ -117,7 +117,7 @@ GxSeparator::GxSeparator() :
 GVX_TRACE("GxSeparator::GxSeparator");
 }
 
-GxSeparator::~GxSeparator() throw()
+GxSeparator::~GxSeparator() noexcept
 {
 GVX_TRACE("GxSeparator::~GxSeparator");
   rep->destroy();

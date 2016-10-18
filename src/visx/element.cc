@@ -34,7 +34,7 @@
 
 #include "visx/element.h"
 
-Element::~Element() throw() {}
+Element::~Element() noexcept {}
 
 void Element::vxEndTrialHook() { /* no-op */ }
 

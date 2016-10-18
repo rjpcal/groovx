@@ -43,7 +43,7 @@ protected:
 public:
   static NullResponseHdlr* make();
 
-  virtual ~NullResponseHdlr() throw();
+  virtual ~NullResponseHdlr() noexcept;
 
   virtual void read_from(io::reader& reader);
   virtual void write_to(io::writer& writer) const;

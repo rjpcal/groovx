@@ -180,12 +180,13 @@ protected:
 public:
   typedef std::random_access_iterator_tag iterator_category;
 
-  stride_iterator_base(const stride_iterator_base& other) :
-    data(other.data), stride(other.stride), stop(other.stop) {}
+  stride_iterator_base(const stride_iterator_base& other) = default;
 
   template <class U>
   explicit stride_iterator_base(const stride_iterator_base<U>& other) :
     data(other.data), stride(other.stride), stop(other.stop) {}
+
+  stride_iterator_base& operator=(const stride_iterator_base& other) = default;
 
   typedef T            value_type;
   typedef ptrdiff_t    difference_type;
@@ -271,6 +272,11 @@ private:
 public:
 
   // Default copy constructor OK
+  slice() = default;
+
+  // No copy; move OK
+  slice(const slice&) = delete;
+  slice(slice&&) = default;
 
   // No "default" assignment operator, since that would be assignment
   // of reference; instead we have an operator=() that does assignment
@@ -665,6 +671,7 @@ protected:
   void swap(mtx_base& other);
 
   mtx_base(const mtx_base& other);
+  mtx_base(mtx_base&& other);
 
   mtx_base(int mrows, int ncols, const Data& data);
 
@@ -813,6 +820,10 @@ public:
     Base(specs, data_ref_holder(&ref))
   {}
 
+  sub_mtx_ref (const sub_mtx_ref& other) = delete;
+
+  sub_mtx_ref (sub_mtx_ref&& other) : Base(other) {}
+
   sub_mtx_ref& operator=(const sub_mtx_ref& other);
   sub_mtx_ref& operator=(const mtx& other);
 };
@@ -941,7 +952,8 @@ public:
 
   sub_mtx_ref sub(const row_index_range& rng)
   {
-    return sub_mtx_ref(this->specs().sub_rows(rng), this->m_data);
+    sub_mtx_ref r(this->specs().sub_rows(rng), this->m_data);
+    return r;
   }
 
   sub_mtx_ref sub(const col_index_range& rng)

@@ -52,7 +52,7 @@ using rutz::shared_ptr;
 //
 ///////////////////////////////////////////////////////////////////////
 
-tcl::function::~function() throw() {}
+tcl::function::~function() noexcept {}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -60,7 +60,7 @@ tcl::function::~function() throw() {}
 //
 ///////////////////////////////////////////////////////////////////////
 
-tcl::arg_dispatcher::~arg_dispatcher() throw() {}
+tcl::arg_dispatcher::~arg_dispatcher() noexcept {}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -108,7 +108,7 @@ public:
     argspec(spec)
   {}
 
-  ~impl() throw() {}
+  ~impl() noexcept {}
 
   // These are set once per command object
   shared_ptr<tcl::function>             callback;
@@ -131,7 +131,7 @@ tcl::command::command(shared_ptr<tcl::function> callback,
 GVX_TRACE("tcl::command::command");
 }
 
-tcl::command::~command() throw()
+tcl::command::~command() noexcept
 {
 GVX_TRACE("tcl::command::~command");
 
@@ -195,7 +195,7 @@ tcl::call_context::call_context(tcl::interpreter& interp,
   m_objv(objv)
 {}
 
-tcl::call_context::~call_context() throw()
+tcl::call_context::~call_context() noexcept
 {}
 
 void tcl::call_context::set_obj_result(const tcl::obj& obj)

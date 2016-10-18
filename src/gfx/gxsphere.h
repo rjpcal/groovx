@@ -52,7 +52,7 @@ public:
   static GxSphere* make();
 
   /// Virtual destructor.
-  virtual ~GxSphere() throw();
+  virtual ~GxSphere() noexcept;
 
   virtual io::version_id class_version_id() const;
   virtual void read_from(io::reader& reader);

@@ -302,7 +302,7 @@ namespace
       GVX_ASSERT(m_version >= 0);
     }
 
-    virtual ~group_element() throw() {}
+    virtual ~group_element() noexcept {}
 
     virtual void add_child(const char* name, el_ptr elp)
     {

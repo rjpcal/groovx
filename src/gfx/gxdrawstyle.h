@@ -49,7 +49,7 @@ protected:
   GxDrawStyle();
 
 public:
-  virtual ~GxDrawStyle() throw();
+  virtual ~GxDrawStyle() noexcept;
 
   /// Factory function.
   static GxDrawStyle* make() { return new GxDrawStyle; }

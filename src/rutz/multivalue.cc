@@ -47,9 +47,6 @@ template <class T>
 rutz::multi_value<T>::multi_value(int num) : m_num_values(num) {}
 
 template <class T>
-rutz::multi_value<T>::~multi_value() {}
-
-template <class T>
 void rutz::multi_value<T>::print_to(std::ostream& os) const
 {
 GVX_TRACE("rutz::multi_value<T>::print_to");

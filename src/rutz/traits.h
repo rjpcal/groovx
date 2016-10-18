@@ -137,14 +137,14 @@ namespace rutz
     struct d1 : public ncvT
     {
       d1();
-      ~d1()throw();
+      ~d1() noexcept;
       char padding[256];
     };
 
     struct d2 : public ncvT
     {
       d2();
-      virtual ~d2() throw();
+      virtual ~d2() noexcept;
 
       struct unique{};
       virtual void unique_name_to_invt200507011541(unique*);

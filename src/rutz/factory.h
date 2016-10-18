@@ -57,6 +57,15 @@ namespace rutz
   public:
     typedef T base_t;
 
+    /// Default constructor
+    creator_base() = default;
+
+    /// Default copy constructor
+    creator_base(const creator_base&) = default;
+
+    /// Default copy assignment operator
+    creator_base& operator=(const creator_base&) = default;
+
     /// Virtual destructor.
     virtual ~creator_base() {}
 
@@ -100,10 +109,10 @@ namespace rutz
   {
   public:
     /// Default constructor.
-    factory_fallback() throw();
+    factory_fallback() noexcept;
 
     /// Virtual no-throw destructor for proper inheritance.
-    virtual ~factory_fallback() throw();
+    virtual ~factory_fallback() noexcept;
 
     /// This will be called with the key whose lookup failed in the factory.
     virtual void try_fallback(const rutz::fstring& key) const = 0;
@@ -116,10 +125,10 @@ namespace rutz
     typedef void (fallback_t)(const rutz::fstring&);
 
     /// Default constructor sets the fallback to null.
-    factory_base() throw();
+    factory_base() noexcept;
 
     /// Virtual no-throw destructor for proper inheritance.
-    virtual ~factory_base() throw();
+    virtual ~factory_base() noexcept;
 
     /// Change the fallback object.
     void set_fallback(rutz::shared_ptr<factory_fallback> f);
@@ -212,7 +221,7 @@ namespace rutz
     }
 
     /// Virtual no-throw destructor.
-    virtual ~factory() throw()
+    virtual ~factory() noexcept
     {
       pthread_mutex_destroy(&m_mutex);
     }

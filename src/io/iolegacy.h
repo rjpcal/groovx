@@ -53,7 +53,7 @@ class io::legacy_reader : public io::reader
 {
 public:
   legacy_reader(std::istream& is);
-  virtual ~legacy_reader() throw();
+  virtual ~legacy_reader() noexcept;
 
   virtual io::version_id input_version_id();
 
@@ -99,7 +99,7 @@ class io::legacy_writer : public io::writer
 {
 public:
   legacy_writer(std::ostream& os, bool write_bases=true);
-  virtual ~legacy_writer() throw();
+  virtual ~legacy_writer() noexcept;
 
   void use_pretty_print(bool yes=true);
 

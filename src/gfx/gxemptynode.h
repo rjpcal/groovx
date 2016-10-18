@@ -44,7 +44,7 @@ class GxEmptyNode : public GxNode
 private:
   GxEmptyNode();
 public:
-  virtual ~GxEmptyNode() throw();
+  virtual ~GxEmptyNode() noexcept;
 
   virtual void read_from(io::reader&);
   virtual void write_to(io::writer&) const;

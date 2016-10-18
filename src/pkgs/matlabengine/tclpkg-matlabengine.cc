@@ -79,7 +79,7 @@ protected:
 public:
   static MatlabEngine* make() { return new MatlabEngine; }
 
-  virtual ~MatlabEngine() throw()
+  virtual ~MatlabEngine() noexcept
   {
     delete [] itsBuf;
     engClose(itsEngine);
@@ -128,7 +128,7 @@ private:
 class MatlabEngine : public nub::object
 {
 public:
-  virtual ~MatlabEngine() throw() {}
+  virtual ~MatlabEngine() noexcept {}
 
   static MatlabEngine* make() { return new MatlabEngine; }
 

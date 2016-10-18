@@ -57,10 +57,16 @@ class rutz::value
 public:
 
   /// Default constructor.
-  value();
+  value() = default;
 
   /// Virtual destructor ensures proper destruction of base classes.
-  virtual ~value();
+  virtual ~value() = default;
+
+  /// Default copy
+  value(const value&) = default;
+
+  /// Default copy assignment
+  value& operator=(const value&) = default;
 
   /// Return a string giving the name of the native type.
   virtual rutz::fstring value_typename() const = 0;

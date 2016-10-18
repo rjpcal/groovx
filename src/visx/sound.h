@@ -68,7 +68,7 @@ public:
   /// Construct with the given sound file.
   Sound(const char* filename = 0);
 
-  virtual ~Sound() throw();
+  virtual ~Sound() noexcept;
 
   virtual void read_from(io::reader& reader);
   virtual void write_to(io::writer& writer) const;

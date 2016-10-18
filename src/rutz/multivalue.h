@@ -43,7 +43,6 @@ namespace rutz
   {
   public:
     multi_value(int num);
-    virtual ~multi_value();
 
     /// Get a string describing the underlying native type.
     virtual rutz::fstring value_typename() const = 0;

@@ -34,8 +34,8 @@
 #include "scheduler.h"
 
 nub::timer_token::timer_token() {}
-nub::timer_token::~timer_token() throw() {}
+nub::timer_token::~timer_token() noexcept {}
 
-nub::scheduler::~scheduler() throw() {}
+nub::scheduler::~scheduler() noexcept {}
 
 #endif // !GROOVX_NUB_SCHEDULER_CC_UTC20050626084019_DEFINED

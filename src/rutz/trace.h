@@ -75,28 +75,28 @@ class rutz::trace
 {
 public:
   /// Query whether we are unconditionally printing trace in/out messages.
-  static bool get_global_trace() throw();
+  static bool get_global_trace() noexcept;
   /// Set whether to unconditionally print trace in/out messages.
-  static void set_global_trace(bool on_off) throw();
+  static void set_global_trace(bool on_off) noexcept;
 
   /// Get the max nesting level for printing trace in/out messages.
-  static unsigned int get_max_level() throw();
+  static unsigned int get_max_level() noexcept;
   /// Set the max nesting level for printing trace in/out messages.
-  static void         set_max_level(unsigned int lev) throw();
+  static void         set_max_level(unsigned int lev) noexcept;
 
   /// Construct a rutz::trace object.
   /** Store the current time internally (either the wall clock time or
       current user+sys rusage, depending on the current
       timing_mode). If use_msg, then print a trace-begin message to
       stderr showing the name of the given rutz::prof. */
-  trace(rutz::prof& p, bool use_msg) throw();
+  trace(rutz::prof& p, bool use_msg) noexcept;
 
   /// Destruct the rutz::trace object, accumulating time information in the stored rutz::prof.
   /** Get the new time (either wall clock or user+sys rusage, matching
       whatever we did in the rutz::trace constructor. If we printed a
       trace-begin message, then also print a matching trace-end
       message. */
-  ~trace() throw();
+  ~trace() noexcept;
 
 private:
   rutz::prof&  m_prof;

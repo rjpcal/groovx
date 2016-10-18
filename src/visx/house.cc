@@ -259,7 +259,7 @@ GVX_TRACE("House::House");
   setFieldMap(House::classFields());
 }
 
-House::~House() throw()
+House::~House() noexcept
 {
 GVX_TRACE("House::~House");
 }

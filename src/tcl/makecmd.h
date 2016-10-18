@@ -147,8 +147,6 @@ namespace tcl
   public:
     func_wrapper<0, R, Func>(Func f) : m_held_func(f) {}
 
-    ~func_wrapper() throw() {}
-
     R operator()(tcl::call_context& /*ctx*/)
     {
       return m_held_func();
@@ -167,8 +165,6 @@ namespace tcl
 
   public:
     func_wrapper<1, R, Func>(Func f) : m_held_func(f) {}
-
-    ~func_wrapper() throw() {}
 
     R operator()(tcl::call_context& ctx)
     {
@@ -190,8 +186,6 @@ namespace tcl
   public:
     func_wrapper<2, R, Func>(Func f) : m_held_func(f) {}
 
-    ~func_wrapper() throw() {}
-
     R operator()(tcl::call_context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2);
@@ -212,8 +206,6 @@ namespace tcl
   public:
     func_wrapper<3, R, Func>(Func f) : m_held_func(f) {}
 
-    ~func_wrapper() throw() {}
-
     R operator()(tcl::call_context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
@@ -233,8 +225,6 @@ namespace tcl
 
   public:
     func_wrapper<4, R, Func>(Func f) : m_held_func(f) {}
-
-    ~func_wrapper() throw() {}
 
     R operator()(tcl::call_context& ctx)
     {
@@ -257,8 +247,6 @@ namespace tcl
   public:
     func_wrapper<5, R, Func>(Func f) : m_held_func(f) {}
 
-    ~func_wrapper() throw() {}
-
     R operator()(tcl::call_context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
@@ -280,8 +268,6 @@ namespace tcl
   public:
     func_wrapper<6, R, Func>(Func f) : m_held_func(f) {}
 
-    ~func_wrapper() throw() {}
-
     R operator()(tcl::call_context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
@@ -301,8 +287,6 @@ namespace tcl
 
   public:
     func_wrapper<7, R, Func>(Func f) : m_held_func(f) {}
-
-    ~func_wrapper() throw() {}
 
     R operator()(tcl::call_context& ctx)
     {
@@ -324,8 +308,6 @@ namespace tcl
 
   public:
     func_wrapper<8, R, Func>(Func f) : m_held_func(f) {}
-
-    ~func_wrapper() throw() {}
 
     R operator()(tcl::call_context& ctx)
     {
@@ -366,7 +348,7 @@ namespace tcl
       return rutz::shared_ptr<tcl::function>(new generic_function(f));
     }
 
-    virtual ~generic_function() throw() {}
+    virtual ~generic_function() noexcept {}
 
   protected:
     virtual void invoke(tcl::call_context& ctx)
@@ -393,7 +375,7 @@ namespace tcl
       return rutz::shared_ptr<tcl::function>(new generic_function(f));
     }
 
-    virtual ~generic_function() throw() {}
+    virtual ~generic_function() noexcept {}
 
   protected:
     virtual void invoke(tcl::call_context& ctx)

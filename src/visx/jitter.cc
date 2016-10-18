@@ -74,7 +74,7 @@ GVX_TRACE("Jitter::Jitter");
   // empty
 }
 
-Jitter::~Jitter () throw()
+Jitter::~Jitter () noexcept
 {
 GVX_TRACE("Jitter::~Jitter");
   // empty

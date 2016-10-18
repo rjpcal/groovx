@@ -52,7 +52,7 @@ protected:
   GxColor();
 
 public:
-  virtual ~GxColor() throw();
+  virtual ~GxColor() noexcept;
 
   /// Factory function.
   static GxColor* make() { return new GxColor; }

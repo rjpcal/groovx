@@ -71,7 +71,7 @@ namespace tcl
 
 namespace
 {
-  void c_exit_handler(void* /*clientdata*/) throw()
+  void c_exit_handler(void* /*clientdata*/) noexcept
   {
 #ifdef GVX_WITH_READLINE
     rl_callback_handler_remove();

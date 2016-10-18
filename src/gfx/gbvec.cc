@@ -43,9 +43,6 @@ GbVec2<T>::GbVec2(T x_, T y_) :
 {}
 
 template <class T>
-GbVec2<T>::~GbVec2() {}
-
-template <class T>
 rutz::fstring GbVec2<T>::value_typename() const
 {
   return rutz::fstring("GbVec2");
@@ -59,9 +56,6 @@ GbVec3<T>::GbVec3(T x_, T y_, T z_) :
   geom::vec3<T>(x_, y_, z_),
   rutz::multi_value<T>(3)
 {}
-
-template <class T>
-GbVec3<T>::~GbVec3() {}
 
 template <class T>
 rutz::fstring GbVec3<T>::value_typename() const

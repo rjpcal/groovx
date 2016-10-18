@@ -41,7 +41,7 @@
 
 #include "rutz/trace.h"
 
-media::sound_rep::~sound_rep() throw() {}
+media::sound_rep::~sound_rep() noexcept {}
 
 void media::sound_rep::check_filename(const char* filename)
 {

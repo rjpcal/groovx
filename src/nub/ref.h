@@ -57,7 +57,7 @@ namespace nub
 
   namespace detail
   {
-    bool is_valid_uid(nub::uid id) throw();
+    bool is_valid_uid(nub::uid id) noexcept;
     nub::object* get_checked_item(nub::uid id);
 
     void insert_item(nub::object* obj, ref_vis vis);
@@ -80,14 +80,14 @@ namespace nub
     template <class T>
     struct default_unref_policy
     {
-      static void unref(T* t) throw() { t->decr_ref_count(); }
+      static void unref(T* t) noexcept { t->decr_ref_count(); }
     };
 
     /// Policy class which decrements ref count without deletion.
     template <class T>
     struct no_delete_unref_policy
     {
-      static void unref(T* t) throw() { t->decr_ref_count_no_delete(); }
+      static void unref(T* t) noexcept { t->decr_ref_count_no_delete(); }
     };
 
   } // end namespace nub::detail
@@ -163,23 +163,23 @@ public:
       if T happens to be spelt SomeLongType<WithTemplateParams>. */
   void reset(T* p) { *this = ref(p); }
 
-  T* operator->() const throw() { return get(); }
-  T& operator*()  const throw() { return *(get()); }
+  T* operator->() const noexcept { return get(); }
+  T& operator*()  const noexcept { return *(get()); }
 
-  T* get()        const throw() { return m_handle.get(); }
+  T* get()        const noexcept { return m_handle.get(); }
 
-  bool operator==(const ref& other) const throw()
+  bool operator==(const ref& other) const noexcept
   { return m_handle == other.m_handle; }
 
-  bool operator!=(const ref& other) const throw()
+  bool operator!=(const ref& other) const noexcept
   { return !(operator==(other)); }
 
-  nub::uid id() const throw()
+  nub::uid id() const noexcept
   { return get()->id(); }
 
   /// Comparison operator for sorting.
   /** E.g. to allow insertion into std::map or std::set, etc. */
-  bool operator<(const ref& other) const throw()
+  bool operator<(const ref& other) const noexcept
   { return get() < other.get(); }
 };
 
@@ -276,31 +276,31 @@ public:
 
   /** Returns the pointee, or returns null if there is not a valid
       pointee. Will not throw an exception. */
-  T* get_weak() const throw() { return m_handle.get_weak(); }
+  T* get_weak() const noexcept { return m_handle.get_weak(); }
 
-  ref_type get_ref_type() const throw() { return m_handle.get_ref_type(); }
+  ref_type get_ref_type() const noexcept { return m_handle.get_ref_type(); }
 
-  bool is_valid()   const throw() { return m_handle.is_valid(); }
-  bool is_invalid() const throw() { return !(is_valid()); }
+  bool is_valid()   const noexcept { return m_handle.is_valid(); }
+  bool is_invalid() const noexcept { return !(is_valid()); }
 
-  bool operator==(const soft_ref& other) const throw()
+  bool operator==(const soft_ref& other) const noexcept
   { return get_weak() == other.get_weak(); }
 
-  bool operator!=(const soft_ref& other) const throw()
+  bool operator!=(const soft_ref& other) const noexcept
   { return get_weak() != other.get_weak(); }
 
   /// Comparison operator for sorting, to insert in std::map or std::set, etc.
-  bool operator<(const soft_ref& other) const throw()
+  bool operator<(const soft_ref& other) const noexcept
   { return get_weak() < other.get_weak(); }
 
-  nub::uid id() const throw()
+  nub::uid id() const noexcept
   { return m_handle.is_valid() ? m_handle.get()->id() : 0; }
 
   // Compatibility interface with alternate function-naming:
 
-  T*   getWeak()   const throw() { return this->get_weak(); }
-  bool isValid()   const throw() { return this->is_valid(); }
-  bool isInvalid() const throw() { return this->is_invalid(); }
+  T*   getWeak()   const noexcept { return this->get_weak(); }
+  bool isValid()   const noexcept { return this->is_valid(); }
+  bool isInvalid() const noexcept { return this->is_invalid(); }
 };
 
 
@@ -433,10 +433,10 @@ public:
 
   explicit floating_ref(T* ptr) : m_handle(ptr) {}
 
-  T* operator->() const throw() { return get(); }
-  T& operator*()  const throw() { return *(get()); }
+  T* operator->() const noexcept { return get(); }
+  T& operator*()  const noexcept { return *(get()); }
 
-  T* get()        const throw() { return m_handle.get(); }
+  T* get()        const noexcept { return m_handle.get(); }
 };
 
 

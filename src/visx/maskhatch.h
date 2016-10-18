@@ -56,7 +56,7 @@ public:
   static MaskHatch* make();
 
   /// Virtual destructor.
-  virtual ~MaskHatch() throw();
+  virtual ~MaskHatch() noexcept;
 
   virtual io::version_id class_version_id() const;
   virtual void read_from(io::reader& reader);

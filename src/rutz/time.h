@@ -49,24 +49,24 @@ class rutz::time
 {
 public:
   /// Construct with time=0.
-  time() throw() : m_timeval()
+  time() noexcept : m_timeval()
   {
     reset();
   }
 
   /// Construct from a timeval.
-  time(const timeval& t) throw() : m_timeval(t)
+  time(const timeval& t) noexcept : m_timeval(t)
   {
     normalize(this->m_timeval);
   }
 
   /// Construct with given seconds+microseconds values.
-  time(unsigned long s, long us) throw() : m_timeval()
+  time(unsigned long s, long us) noexcept : m_timeval()
   {
     reset(s, us);
   }
 
-  explicit time(double ss) throw() : m_timeval()
+  explicit time(double ss) noexcept : m_timeval()
   {
     const unsigned long s = (unsigned long)(ss);
     const long us = long((ss - s) * 1000000);
@@ -74,26 +74,26 @@ public:
   }
 
   /// Copy construct.
-  time(const time& x) throw() : m_timeval(x.m_timeval) {}
+  time(const time& x) noexcept : m_timeval(x.m_timeval) {}
 
   /// Destruct.
-  ~time() throw() {}
+  ~time() noexcept {}
 
   /// Create a time representing current wall-clock time.
-  static time wall_clock_now() throw();
+  static time wall_clock_now() noexcept;
 
   /// Create a time representing the current process's user cpu usage.
-  static time user_rusage() throw();
+  static time user_rusage() noexcept;
 
   /// Create a time representing the current process's sys cpu usage.
-  static time sys_rusage() throw();
+  static time sys_rusage() noexcept;
 
   /// Create a time representing the current process's total user+sys cpu usage.
-  static time rusage_now() throw()
+  static time rusage_now() noexcept
   { return rutz::time::user_rusage() + rutz::time::sys_rusage(); }
 
   /// Reset to given seconds+microseconds values.
-  void reset(unsigned long s = 0, long us = 0) throw()
+  void reset(unsigned long s = 0, long us = 0) noexcept
   {
     m_timeval.tv_sec = s;
     m_timeval.tv_usec = us;
@@ -101,14 +101,14 @@ public:
   }
 
   /// Assignment operator.
-  time& operator=(const time& x) throw()
+  time& operator=(const time& x) noexcept
   {
     m_timeval = x.m_timeval;
     return *this;
   }
 
   /// Addition operator.
-  time operator+(const time& t2) const throw()
+  time operator+(const time& t2) const noexcept
   {
     timeval result;
     result.tv_sec  = this->m_timeval.tv_sec  + t2.m_timeval.tv_sec;
@@ -120,7 +120,7 @@ public:
   }
 
   /// In-place addition operator.
-  time& operator+=(const time& t2) throw()
+  time& operator+=(const time& t2) noexcept
   {
     m_timeval.tv_sec  += t2.m_timeval.tv_sec;
     m_timeval.tv_usec += t2.m_timeval.tv_usec;
@@ -131,7 +131,7 @@ public:
   }
 
   /// Subtraction operator.
-  time operator-(const time& t2) const throw()
+  time operator-(const time& t2) const noexcept
   {
     timeval result;
     result.tv_sec  = this->m_timeval.tv_sec  - t2.m_timeval.tv_sec;
@@ -143,7 +143,7 @@ public:
   }
 
   /// In-place subtraction operator.
-  time& operator-=(const time& t2) throw()
+  time& operator-=(const time& t2) noexcept
   {
     m_timeval.tv_sec  -= t2.m_timeval.tv_sec;
     m_timeval.tv_usec -= t2.m_timeval.tv_usec;
@@ -154,7 +154,7 @@ public:
   }
 
   /// Less-than comparison
-  bool operator<(const time& t2) const throw()
+  bool operator<(const time& t2) const noexcept
   {
     return (m_timeval.tv_sec < t2.m_timeval.tv_sec)
       ||
@@ -163,7 +163,7 @@ public:
   }
 
   /// Less-than-or-equal comparison
-  bool operator<=(const time& t2) const throw()
+  bool operator<=(const time& t2) const noexcept
   {
     return (m_timeval.tv_sec <= t2.m_timeval.tv_sec)
       ||
@@ -172,14 +172,14 @@ public:
   }
 
   /// Equality comparison
-  bool operator==(const time& t2) const throw()
+  bool operator==(const time& t2) const noexcept
   {
     return (m_timeval.tv_sec == t2.m_timeval.tv_sec
             && m_timeval.tv_usec == t2.m_timeval.tv_usec);
   }
 
   /// Greater-than comparison
-  bool operator>(const time& t2) const throw()
+  bool operator>(const time& t2) const noexcept
   {
     return (m_timeval.tv_sec > t2.m_timeval.tv_sec)
       ||
@@ -188,7 +188,7 @@ public:
   }
 
   /// Greater-than-or-equal comparison
-  bool operator>=(const time& t2) const throw()
+  bool operator>=(const time& t2) const noexcept
   {
     return (m_timeval.tv_sec >= t2.m_timeval.tv_sec)
       ||
@@ -197,38 +197,38 @@ public:
   }
 
   /// Return time in floating-point seconds.
-  double sec() const throw()
+  double sec() const noexcept
   {
     return double(m_timeval.tv_sec) + m_timeval.tv_usec / 1000000.0;
   }
 
   /// Return time in floating-point milliseconds.
-  double msec() const throw()
+  double msec() const noexcept
   {
     return (m_timeval.tv_sec * 1000.0) + (m_timeval.tv_usec / 1000.0);
   }
 
   /// Return time in floating-point microseconds.
-  double usec() const throw()
+  double usec() const noexcept
   {
     return (m_timeval.tv_sec * 1000000.0) + double(m_timeval.tv_usec);
   }
 
   /// Return internal timeval.
-  const timeval& tval() const throw()
+  const timeval& tval() const noexcept
   {
     return m_timeval;
   }
 
   /// Conversion operator to timeval.
-  operator const timeval&() const throw()
+  operator const timeval&() const noexcept
   {
     return m_timeval;
   }
 
 private:
   /// Avoid overflow/underflow in the timeval's microseconds field.
-  static void normalize(timeval& t) throw()
+  static void normalize(timeval& t) noexcept
   {
     long s = t.tv_usec / 1000000;
 

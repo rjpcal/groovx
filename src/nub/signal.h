@@ -76,7 +76,7 @@ namespace nub
     slot_base();
 
     /// Virtual destructor.
-    virtual ~slot_base() throw();
+    virtual ~slot_base() noexcept;
 
     /// Answers whether the components of this slot still exist.
     /** This allows a slot adapter, for example, to indicate if its
@@ -100,7 +100,7 @@ namespace nub
     slot0();
 
     /// Virtual destructor.
-    virtual ~slot0() throw();
+    virtual ~slot0() noexcept;
 
     template <class C, class MF>
     static nub::soft_ref<slot0> make(C* obj, MF mf);
@@ -128,7 +128,7 @@ namespace nub
     slot_adapter_mem_func0(C* obj, MF mf) :
       m_object(obj, nub::WEAK, nub::PRIVATE), m_mem_func(mf) {}
 
-    virtual ~slot_adapter_mem_func0() throw() {}
+    virtual ~slot_adapter_mem_func0() noexcept {}
 
   public:
     static slot_adapter_mem_func0<C, MF>* make(C* obj, MF mf)
@@ -167,7 +167,7 @@ namespace nub
 
     slot_adapter_free_func0(free_func* f);
 
-    virtual ~slot_adapter_free_func0() throw();
+    virtual ~slot_adapter_free_func0() noexcept;
 
   public:
     static slot_adapter_free_func0* make(free_func* f);
@@ -200,7 +200,7 @@ namespace nub
     slot1() {}
 
     /// Virtual destructor.
-    virtual ~slot1() throw() {}
+    virtual ~slot1() noexcept {}
 
     template <class C, class MF>
     static nub::soft_ref<slot1<P1> > make(C* obj, MF mf);
@@ -232,7 +232,7 @@ namespace nub
     slot_adapter_mem_func1(C* obj, MF mf) :
       m_object(obj, nub::WEAK, nub::PRIVATE), m_mem_func(mf) {}
 
-    virtual ~slot_adapter_mem_func1() throw() {}
+    virtual ~slot_adapter_mem_func1() noexcept {}
 
   public:
     static slot_adapter_mem_func1<P1, C, MF>* make(C* obj, MF mf)
@@ -270,7 +270,7 @@ namespace nub
 
     slot_adapter_free_func1(FF f) : m_free_func(f) {}
 
-    virtual ~slot_adapter_free_func1() throw() {}
+    virtual ~slot_adapter_free_func1() noexcept {}
 
   public:
     static slot_adapter_free_func1<P1, FF>* make(FF f)
@@ -308,7 +308,7 @@ namespace nub
   {
   protected:
     signal_base();
-    virtual ~signal_base() throw();
+    virtual ~signal_base() noexcept;
 
     void do_emit(void* params) const;
 
@@ -339,7 +339,7 @@ namespace nub
     signal0();
 
     /// Virtual destructor.
-    virtual ~signal0() throw();
+    virtual ~signal0() noexcept;
 
     /// Add a slot to the list of those watching this Signal.
     nub::soft_ref<slot0> connect(nub::soft_ref<slot0> slot)
@@ -386,7 +386,7 @@ namespace nub
   public:
     Signal1() {}
 
-    virtual ~Signal1() throw() {}
+    virtual ~Signal1() noexcept {}
 
     nub::soft_ref<slot1<P1> > connect(nub::soft_ref<slot1<P1> > slot)
     { signal_base::do_connect(slot); return slot; }

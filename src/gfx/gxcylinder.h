@@ -52,7 +52,7 @@ public:
   static GxCylinder* make();
 
   /// Virtual destructor.
-  virtual ~GxCylinder() throw();
+  virtual ~GxCylinder() noexcept;
 
   virtual io::version_id class_version_id() const;
   virtual void read_from(io::reader& reader);

@@ -51,9 +51,6 @@ public:
     : rutz::multi_value<T>(2)
   { rutz::multi_value<T>::set_string(s); }
 
-  /// Virtual destructor.
-  virtual ~GbVec2();
-
   /// Get the underlying geom::vec2 value.
         geom::vec2<T>& vec()       { return *this; }
   /// Get the underlying geom::vec2 value.
@@ -77,9 +74,6 @@ public:
   GbVec3(const rutz::fstring& s)
     : rutz::multi_value<T>(3)
   { rutz::multi_value<T>::set_string(s); }
-
-  /// Virtual destructor.
-  virtual ~GbVec3();
 
   /// Get the underlying geom::vec3 value.
         geom::vec3<T>& vec()       { return *this; }

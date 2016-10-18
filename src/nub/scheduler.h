@@ -53,13 +53,13 @@ protected:
   timer_token();
 
 public:
-  virtual ~timer_token() throw();
+  virtual ~timer_token() noexcept;
 };
 
 class nub::scheduler
 {
 public:
-  virtual ~scheduler() throw();
+  virtual ~scheduler() noexcept;
 
   virtual rutz::shared_ptr<nub::timer_token>
   schedule(int msec,

@@ -45,7 +45,7 @@ public:
   obj_writer();
 
   /// Virtual destructor allows correct destruction of subclasses.
-  virtual ~obj_writer() throw();
+  virtual ~obj_writer() noexcept;
 
   tcl::obj get_obj() const { return m_obj; }
 

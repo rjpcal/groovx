@@ -91,7 +91,7 @@ public:
   explicit inline shared_ptr(T* p =0);
 
   //! Copy another shared_ptr. The ref count is incremented by one.
-  inline shared_ptr(const shared_ptr& r) throw();
+  inline shared_ptr(const shared_ptr& r) noexcept;
 
   //! Destructor decrements the ref count by one.
   /*! If we were the last pointer to the pointee, then the pointee and
@@ -106,7 +106,7 @@ public:
       inheritance relationship or by a change in
       const-qualification. */
   template<class TT>
-  inline shared_ptr(const shared_ptr<TT>& r) throw();
+  inline shared_ptr(const shared_ptr<TT>& r) noexcept;
 
   //! Assign from a shared_ptr of a different type.
   /*! The other type TT must be related to T by an appropriate
@@ -162,28 +162,28 @@ public:
   inline void reset(T* p=0);
 
   //! Get a reference to the pointee.
-  inline T& operator*() const throw() { return *px; }
+  inline T& operator*() const noexcept { return *px; }
 
   //! Get the pointee for accessing its members.
-  inline T* operator->() const throw() { return px; }
+  inline T* operator->() const noexcept { return px; }
 
   //! Get the pointee.
-  inline T* get() const throw() { return px; }
+  inline T* get() const noexcept { return px; }
 
   //! Query whether the pointee is non-null.
-  bool is_valid() const throw() { return px != 0; }
+  bool is_valid() const noexcept { return px != 0; }
 
   //! Query whether the pointee is non-null.
-  bool is_invalid() const throw() { return px == 0; }
+  bool is_invalid() const noexcept { return px == 0; }
 
   //! Query how many shared_ptr's are sharing the pointee.
-  inline int use_count() const throw() { return pn->atomic_get(); }
+  inline int use_count() const noexcept { return pn->atomic_get(); }
 
   //! Query whether the shared_ptr is the unique owner of its pointee.
-  inline bool unique() const throw() { return use_count() == 1; }
+  inline bool unique() const noexcept { return use_count() == 1; }
 
   //! Swap the pointees of two shared_ptr's.
-  inline void swap(shared_ptr<T>& that) throw();
+  inline void swap(shared_ptr<T>& that) noexcept;
 
 private:
   T*                   px; // pointee
@@ -282,7 +282,7 @@ rutz::shared_ptr<T>::shared_ptr(T* p) :
 
 // ######################################################################
 template <class T> inline
-rutz::shared_ptr<T>::shared_ptr(const shared_ptr<T>& r) throw() :
+rutz::shared_ptr<T>::shared_ptr(const shared_ptr<T>& r) noexcept :
   px(r.px), pn(r.pn)
 {
   pn->atomic_incr();
@@ -311,7 +311,7 @@ rutz::shared_ptr<T>::operator=(const rutz::shared_ptr<T>& r)
 // ######################################################################
 template <class T>
 template<class TT> inline
-rutz::shared_ptr<T>::shared_ptr(const rutz::shared_ptr<TT>& r) throw() :
+rutz::shared_ptr<T>::shared_ptr(const rutz::shared_ptr<TT>& r) noexcept :
   px(r.px), pn(r.pn)
 {
   pn->atomic_incr();
@@ -376,7 +376,7 @@ void rutz::shared_ptr<T>::reset(T* p)
 
 // ######################################################################
 template <class T> inline
-void rutz::shared_ptr<T>::swap(shared_ptr<T>& that) throw()
+void rutz::shared_ptr<T>::swap(shared_ptr<T>& that) noexcept
 {
   T* that_px = that.px; that.px = this->px; this->px = that_px;
   rutz::atomic_int_t* that_pn = that.pn; that.pn = this->pn; this->pn = that_pn;

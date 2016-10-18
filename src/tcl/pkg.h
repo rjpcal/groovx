@@ -85,7 +85,7 @@ private:
   pkg(Tcl_Interp* interp, const char* name, const char* version);
 
   /// Destructor destroys all \c tcl::command's owned by the package.
-  ~pkg() throw();
+  ~pkg() noexcept;
 
 public:
   static const int STATUS_OK;
@@ -121,27 +121,27 @@ public:
       suitable package cannot be found or loaded, a null pointer will
       be returned. */
   static pkg* lookup(tcl::interpreter& interp,
-                     const char* name, const char* version = 0) throw();
+                     const char* name, const char* version = 0) noexcept;
 
   /** Returns a Tcl status code indicating whether the package
       initialization was successful. */
-  int init_status() const throw();
+  int init_status() const noexcept;
 
   /// Mark the package as having failed its initialization.
-  void set_init_status_error() throw();
+  void set_init_status_error() noexcept;
 
   /// Returns the Tcl interpreter that was passed to the constructor.
-  tcl::interpreter& interp() throw();
+  tcl::interpreter& interp() noexcept;
 
   /// Trap a live exception, and leave a message in the Tcl_Interp's result.
-  void handle_live_exception(const rutz::file_pos& pos) throw();
+  void handle_live_exception(const rutz::file_pos& pos) noexcept;
 
   /// Returns the package's "namespace name".
   /** Note that the "namespace name" will be the same as the "package
       name" except possibly for capitalization. The "namespace name"
       is the name of the namespace that is used as the default prefix
       all commands contained in the package. */
-  const char* namesp_name() throw();
+  const char* namesp_name() noexcept;
 
   /// Return the package's "package name".
   /** Note that the "package name" will be the same as the "namespace
@@ -149,10 +149,10 @@ public:
       the name that is passed to Tcl_PkgProvide() and
       Tcl_PkgProvide(), and has a well-defined capitalization scheme:
       first character uppercase, all remaining letters lowercase. */
-  const char* pkg_name() const throw();
+  const char* pkg_name() const noexcept;
 
   /// Returns the package version string.
-  const char* version() const throw();
+  const char* version() const noexcept;
 
   /// Export commands into a different namespace.
   /** Causes all of our package's currently defined commands and
@@ -277,13 +277,13 @@ public:
   }
 
   /// Control whether packages should be verbose as they start up.
-  static void verbose_init(bool verbose) throw();
+  static void verbose_init(bool verbose) noexcept;
 
   /// Called just prior to returning from the *_Init function.
   /** If the package's status is OK, then this does the relevant
       Tcl_PkgProvide and returns TCL_OK. Otherwise, it returns
       TCL_ERROR. */
-  int finish_init() throw();
+  int finish_init() noexcept;
 
 private:
   pkg(const pkg&); // not implemented

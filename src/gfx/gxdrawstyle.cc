@@ -54,7 +54,7 @@ GxDrawStyle::GxDrawStyle() :
   setFieldMap(GxDrawStyle::classFields());
 }
 
-GxDrawStyle::~GxDrawStyle() throw() {}
+GxDrawStyle::~GxDrawStyle() noexcept {}
 
 io::version_id GxDrawStyle::class_version_id() const
 {

@@ -142,32 +142,32 @@ namespace
     asw_reader(std::istream& is);
     asw_reader(const char* filename);
 
-    virtual ~asw_reader() throw();
+    virtual ~asw_reader() noexcept;
 
-    virtual io::version_id input_version_id();
+    virtual io::version_id input_version_id() override;
 
-    virtual char read_char(const fstring& name);
-    virtual int read_int(const fstring& name);
-    virtual bool read_bool(const fstring& name);
-    virtual double read_double(const fstring& name);
-    virtual void read_value_obj(const fstring& name, rutz::value& v);
+    virtual char read_char(const fstring& name) override;
+    virtual int read_int(const fstring& name) override;
+    virtual bool read_bool(const fstring& name) override;
+    virtual double read_double(const fstring& name) override;
+    virtual void read_value_obj(const fstring& name, rutz::value& v) override;
 
-    virtual void read_byte_array(const fstring& name, rutz::byte_array& data)
+    virtual void read_byte_array(const fstring& name, rutz::byte_array& data) override
     { default_read_byte_array(name, data); }
 
-    virtual nub::ref<io::serializable> read_object(const fstring& name);
+    virtual nub::ref<io::serializable> read_object(const fstring& name) override;
     virtual nub::soft_ref<io::serializable>
-    read_weak_object(const fstring& name);
+    read_weak_object(const fstring& name) override;
 
     virtual void read_owned_object(const fstring& name,
-                                   nub::ref<io::serializable> obj);
+                                   nub::ref<io::serializable> obj) override;
     virtual void read_base_class(const fstring& base_class_name,
-                                 nub::ref<io::serializable> base_part);
+                                 nub::ref<io::serializable> base_part) override;
 
-    virtual nub::ref<io::serializable> read_root(io::serializable* root=0);
+    virtual nub::ref<io::serializable> read_root(io::serializable* root=0) override;
 
   protected:
-    virtual fstring read_string_impl(const fstring& name);
+    virtual fstring read_string_impl(const fstring& name) override;
 
   private:
     shared_ptr<std::istream>              m_owned_stream;
@@ -230,7 +230,7 @@ namespace
   GVX_TRACE("asw_reader::asw_reader");
   }
 
-  asw_reader::~asw_reader () throw()
+  asw_reader::~asw_reader () noexcept
   {
   GVX_TRACE("asw_reader::~asw_reader");
   }

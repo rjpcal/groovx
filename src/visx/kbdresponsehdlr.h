@@ -43,7 +43,7 @@ protected:
 public:
   static KbdResponseHdlr* make();
 
-  virtual ~KbdResponseHdlr() throw();
+  virtual ~KbdResponseHdlr() noexcept;
 };
 
 #endif // !GROOVX_VISX_KBDRESPONSEHDLR_H_UTC20050626084015_DEFINED

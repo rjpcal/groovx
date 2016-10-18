@@ -58,36 +58,36 @@ template <class T>
 class nub::detail::weak_handle
 {
 private:
-  static nub::ref_counts* get_counts(T* master, ref_type tp) throw()
+  static nub::ref_counts* get_counts(T* master, ref_type tp) noexcept
   {
     return (master && (tp == WEAK || master->is_not_shareable())) ?
       master->get_counts() : 0;
   }
 
 public:
-  weak_handle(T* master, ref_type tp) throw()
+  weak_handle(T* master, ref_type tp) noexcept
     :
     m_master(master),
     m_counts(get_counts(master, tp))
   { this->acquire(); }
 
-  ~weak_handle() throw()
+  ~weak_handle() noexcept
   { this->release(); }
 
-  weak_handle(const weak_handle& other) throw()
+  weak_handle(const weak_handle& other) noexcept
     :
     m_master(other.m_master),
     m_counts(other.m_counts)
   { this->acquire(); }
 
-  weak_handle& operator=(const weak_handle& other) throw()
+  weak_handle& operator=(const weak_handle& other) noexcept
   {
     weak_handle other_copy(other);
     this->swap(other_copy);
     return *this;
   }
 
-  bool is_valid() const throw()
+  bool is_valid() const noexcept
   {
     if (m_counts == 0) // implies we are using strong ref's
       {
@@ -100,15 +100,15 @@ public:
   }
 
   T* get()      const         { this->ensure_valid(); return m_master; }
-  T* get_weak() const throw() { return this->is_valid() ? m_master : 0; }
+  T* get_weak() const noexcept { return this->is_valid() ? m_master : 0; }
 
-  ref_type get_ref_type() const throw()
+  ref_type get_ref_type() const noexcept
   {
     return (m_master && !m_counts) ? STRONG : WEAK;
   }
 
 private:
-  void acquire() const throw()
+  void acquire() const noexcept
   {
     if (m_master)
       {
@@ -117,7 +117,7 @@ private:
       }
   }
 
-  void release() const throw()
+  void release() const noexcept
   {
     if (m_master)
       {
@@ -134,7 +134,7 @@ private:
       nub::detail::throw_soft_ref_invalid(typeid(T), SRC_POS);
   }
 
-  void swap(weak_handle& other) throw()
+  void swap(weak_handle& other) noexcept
   {
     rutz::swap2(m_master, other.m_master);
     rutz::swap2(m_counts, other.m_counts);

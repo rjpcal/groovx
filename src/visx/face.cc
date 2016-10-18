@@ -119,7 +119,7 @@ GVX_TRACE("Face::Face");
   setFieldMap(Face::classFields());
 }
 
-Face::~Face() throw()
+Face::~Face() noexcept
 {
 GVX_TRACE("Face::~Face");
   // nothing to do

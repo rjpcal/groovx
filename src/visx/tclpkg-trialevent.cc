@@ -54,7 +54,7 @@ namespace
 
   int addEventType(Tcl_Interp* interp,
                    CreatorFunc* func,
-                   const char* name) throw()
+                   const char* name) noexcept
   {
     GVX_PKG_CREATE(pkg, interp, name, "4.$Revision$");
     nub::obj_factory::instance().register_creator(func, name);

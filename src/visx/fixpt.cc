@@ -89,7 +89,7 @@ FixPt::FixPt(double len, int wid) :
   setFieldMap(FixPt::classFields());
 }
 
-FixPt::~FixPt() throw() {}
+FixPt::~FixPt() noexcept {}
 
 io::version_id FixPt::class_version_id() const
 {

@@ -51,7 +51,7 @@ NullResponseHdlr::NullResponseHdlr()
 GVX_TRACE("NullResponseHdlr::NullResponseHdlr");
 }
 
-NullResponseHdlr::~NullResponseHdlr() throw()
+NullResponseHdlr::~NullResponseHdlr() noexcept
 {
 GVX_TRACE("NullResponseHdlr::~NullResponseHdlr");
 }

@@ -94,7 +94,7 @@ rutz::string_rep::string_rep(std::size_t len, const char* txt,
     add_terminator();
 }
 
-rutz::string_rep::~string_rep() throw()
+rutz::string_rep::~string_rep() noexcept
 {
 GVX_TRACE("rutz::string_rep::~string_rep");
 
@@ -158,7 +158,7 @@ rutz::string_rep* rutz::string_rep::readline_from_stream(std::istream& is, char 
   return result;
 }
 
-void rutz::string_rep::debug_dump() const throw()
+void rutz::string_rep::debug_dump() const noexcept
 {
   dbg_eval_nl(0, (const void*)this);
   dbg_eval_nl(0, m_refcount.atomic_get());
@@ -183,12 +183,12 @@ void rutz::string_rep::uniq_append_no_terminate(char c)
     }
 }
 
-void rutz::string_rep::add_terminator() throw()
+void rutz::string_rep::add_terminator() noexcept
 {
   m_text[m_length] = '\0';
 }
 
-void rutz::string_rep::uniq_set_length(std::size_t len) throw()
+void rutz::string_rep::uniq_set_length(std::size_t len) noexcept
 {
   GVX_PRECONDITION(m_refcount.atomic_get() <= 1);
   GVX_PRECONDITION(len+1 < m_capacity);
@@ -272,14 +272,14 @@ GVX_TRACE("rutz::fstring::fstring");
   m_rep->incr_ref_count();
 }
 
-rutz::fstring::fstring(const rutz::fstring& other) throw() :
+rutz::fstring::fstring(const rutz::fstring& other) noexcept :
   m_rep(other.m_rep)
 {
 GVX_TRACE("rutz::fstring::fstring(const fstring&)");
   m_rep->incr_ref_count();
 }
 
-rutz::fstring::~fstring() throw()
+rutz::fstring::~fstring() noexcept
 {
 GVX_TRACE("rutz::fstring::~fstring");
 
@@ -289,7 +289,7 @@ GVX_TRACE("rutz::fstring::~fstring");
     m_rep = (string_rep*)0xdeadbeef;
 }
 
-void rutz::fstring::swap(rutz::fstring& other) throw()
+void rutz::fstring::swap(rutz::fstring& other) noexcept
 {
 GVX_TRACE("rutz::fstring::swap");
 
@@ -305,7 +305,7 @@ GVX_TRACE("rutz::fstring::operator=(const char*)");
   return *this;
 }
 
-rutz::fstring& rutz::fstring::operator=(const fstring& other) throw()
+rutz::fstring& rutz::fstring::operator=(const fstring& other) noexcept
 {
 GVX_TRACE("rutz::fstring::operator=(const fstring&)");
 
@@ -314,7 +314,7 @@ GVX_TRACE("rutz::fstring::operator=(const fstring&)");
   return *this;
 }
 
-bool rutz::fstring::ends_with(const fstring& ext) const throw()
+bool rutz::fstring::ends_with(const fstring& ext) const noexcept
 {
 GVX_TRACE("rutz::fstring::ends_with");
   if (ext.length() > this->length())
@@ -332,14 +332,14 @@ GVX_TRACE("rutz::fstring::clear");
   fstring().swap(*this);
 }
 
-bool rutz::fstring::equals(const char* other) const throw()
+bool rutz::fstring::equals(const char* other) const noexcept
 {
 GVX_TRACE("rutz::fstring::equals(const char*)");
   return ( c_str() == other ||
            strcmp(c_str(), other) == 0 );
 }
 
-bool rutz::fstring::equals(const fstring& other) const throw()
+bool rutz::fstring::equals(const fstring& other) const noexcept
 {
 GVX_TRACE("rutz::fstring::equals(const fstring&)");
 
@@ -348,7 +348,7 @@ GVX_TRACE("rutz::fstring::equals(const fstring&)");
       strcmp(c_str(), other.c_str()) == 0 );
 }
 
-bool rutz::fstring::operator<(const char* other) const throw()
+bool rutz::fstring::operator<(const char* other) const noexcept
 {
 GVX_TRACE("rutz::fstring::operator<");
   // Check if we are pointing to the same string
@@ -357,7 +357,7 @@ GVX_TRACE("rutz::fstring::operator<");
   return strcmp(c_str(), other) < 0;
 }
 
-bool rutz::fstring::operator>(const char* other) const throw()
+bool rutz::fstring::operator>(const char* other) const noexcept
 {
 GVX_TRACE("rutz::fstring::operator>");
   // Check if we are pointing to the same string
@@ -396,7 +396,7 @@ GVX_TRACE("rutz::fstring::readline");
   rutz::fstring(string_rep::readline_from_stream(is, eol)).swap(*this);
 }
 
-void rutz::fstring::debug_dump() const throw()
+void rutz::fstring::debug_dump() const noexcept
 {
   dbg_eval_nl(0, (const void*)this);
   m_rep->debug_dump();

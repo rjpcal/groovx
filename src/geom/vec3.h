@@ -139,7 +139,7 @@ namespace geom
     // debugging
     //
 
-    void debug_dump() const throw()
+    void debug_dump() const noexcept
     {
       dbg_eval(0, x());
       dbg_eval(0, y());

@@ -89,7 +89,7 @@ GVX_TRACE("CloneFace::CloneFace()");
     }
 }
 
-CloneFace::~CloneFace () throw()
+CloneFace::~CloneFace () noexcept
 {
 GVX_TRACE("CloneFace::~CloneFace");
 }

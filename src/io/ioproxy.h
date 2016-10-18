@@ -61,7 +61,7 @@ class proxy : public serializable
 {
 protected:
   proxy(C* ref) : serializable(), m_referand(ref) {}
-  virtual ~proxy() throw() {}
+  virtual ~proxy() noexcept {}
 
 public:
   static nub::ref<serializable> make(C* ref)
@@ -101,7 +101,7 @@ class const_proxy : public serializable
 {
 protected:
   const_proxy(const C* ref) : serializable(), m_referand(const_cast<C*>(ref)) {}
-  virtual ~const_proxy() throw() {}
+  virtual ~const_proxy() noexcept {}
 
 public:
   static nub::ref<const serializable> make(const C* ref)

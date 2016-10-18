@@ -73,7 +73,7 @@ GxNode::GxNode() : sigNodeChanged()
 GVX_TRACE("GxNode::GxNode");
 }
 
-GxNode::~GxNode() throw()
+GxNode::~GxNode() noexcept
 {
 GVX_TRACE("GxNode::~GxNode");
 }

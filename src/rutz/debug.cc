@@ -58,7 +58,7 @@ namespace
   const char*     g_key_filenames[MAX_KEYS];
   pthread_mutex_t g_debug_keys_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-  void show_position(int level, const char* where, int line_no) throw()
+  void show_position(int level, const char* where, int line_no) noexcept
   {
     std::cerr << "[" << std::setw(2) << level << "] "
               << std::setw(20) << where << ":"
@@ -69,7 +69,7 @@ namespace
 #define EVAL_IMPL(T)                                    \
 void rutz::debug::eval(const char* what, int level,     \
                        const char* where, int line_no,  \
-                       bool nl, T expr) throw()         \
+                       bool nl, T expr) noexcept        \
 {                                                       \
   GVX_MUTEX_LOCK(&g_debug_output_mutex);                \
   using std::cerr;                                      \
@@ -109,7 +109,7 @@ EVAL_IMPL(double);
 EVAL_IMPL(const char*);
 EVAL_IMPL(void*);
 
-void rutz::debug::dump(const char* what, int level, const char* where, int line_no) throw()
+void rutz::debug::dump(const char* what, int level, const char* where, int line_no) noexcept
 {
   GVX_MUTEX_LOCK(&g_debug_output_mutex);
   std::cerr.exceptions(std::ios::goodbit);
@@ -118,7 +118,7 @@ void rutz::debug::dump(const char* what, int level, const char* where, int line_
   g_debug_line_complete = false;
 }
 
-void rutz::debug::start_newline() throw()
+void rutz::debug::start_newline() noexcept
 {
   GVX_MUTEX_LOCK(&g_debug_output_mutex);
   std::cerr.exceptions(std::ios::goodbit);
@@ -130,7 +130,7 @@ void rutz::debug::start_newline() throw()
 }
 
 void rutz::debug::panic_aux(const char* what, const char* where,
-                            int line_no) throw()
+                            int line_no) noexcept
 {
   fprintf(stderr, "Panic (%s:%d):\n\t%s\n\n",
           where, line_no, what);
@@ -139,7 +139,7 @@ void rutz::debug::panic_aux(const char* what, const char* where,
 }
 
 void rutz::debug::assert_aux(const char* what, const char* where,
-                             int line_no) throw()
+                             int line_no) noexcept
 {
   fprintf(stderr, "Assertion failed (%s:%d):\n\texpected '%s'\n\n",
           where, line_no, what);
@@ -148,7 +148,7 @@ void rutz::debug::assert_aux(const char* what, const char* where,
 }
 
 void rutz::debug::precondition_aux(const char* what, const char* where,
-                                   int line_no) throw()
+                                   int line_no) noexcept
 {
   fprintf(stderr, "Precondition failed (%s:%d):\n\texpected '%s'\n\n",
           where, line_no, what);
@@ -157,7 +157,7 @@ void rutz::debug::precondition_aux(const char* what, const char* where,
 }
 
 void rutz::debug::postcondition_aux(const char* what, const char* where,
-                                    int line_no) throw()
+                                    int line_no) noexcept
 {
   fprintf(stderr, "Postcondition failed (%s:%d):\n\texpected '%s'\n\n",
           where, line_no, what);
@@ -166,7 +166,7 @@ void rutz::debug::postcondition_aux(const char* what, const char* where,
 }
 
 void rutz::debug::invariant_aux(const char* what, const char* where,
-                                int line_no) throw()
+                                int line_no) noexcept
 {
   fprintf(stderr, "Invariant failed (%s:%d):\n\texpected '%s'\n\n",
           where, line_no, what);

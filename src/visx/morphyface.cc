@@ -259,7 +259,7 @@ GVX_TRACE("MorphyFace::MorphyFace");
   setMaxDimension(1.0);
 }
 
-MorphyFace::~MorphyFace() throw()
+MorphyFace::~MorphyFace() noexcept
 {
 GVX_TRACE("MorphyFace::~MorphyFace");
   // nothing to do

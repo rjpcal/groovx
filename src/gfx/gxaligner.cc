@@ -59,7 +59,7 @@ GxAligner::GxAligner(nub::soft_ref<GxNode> child) :
   itsCenter(0.0, 0.0)
 {}
 
-GxAligner::~GxAligner() throw() {}
+GxAligner::~GxAligner() noexcept {}
 
 vec2d GxAligner::getCenter(const rectd& b) const
 {

@@ -78,7 +78,7 @@ protected:
 
 public:
   /// Virtual destructor.
-  virtual ~GxNode() throw();
+  virtual ~GxNode() noexcept;
 
   /// Signal that will be triggered whenever the node changes state.
   nub::signal0 sigNodeChanged;

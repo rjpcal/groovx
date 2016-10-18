@@ -60,7 +60,7 @@ class GlxRasterFont : public GxRasterFont
 {
 public:
   GlxRasterFont(const char* n);
-  virtual ~GlxRasterFont() throw();
+  virtual ~GlxRasterFont() noexcept;
 
   static rutz::fstring pickXFont(const char* spec);
 
@@ -149,7 +149,7 @@ GVX_TRACE("GlxRasterFont::GlxRasterFont");
 #endif
 }
 
-GlxRasterFont::~GlxRasterFont() throw()
+GlxRasterFont::~GlxRasterFont() noexcept
 {
 GVX_TRACE("GlxRasterFont::~GlxRasterFont");
 

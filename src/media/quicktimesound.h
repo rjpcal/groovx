@@ -52,7 +52,7 @@ namespace media
   public:
     quicktime_sound_rep(const char* filename);
 
-    virtual ~quicktime_sound_rep() throw();
+    virtual ~quicktime_sound_rep() noexcept;
 
     virtual void play();
 
@@ -113,7 +113,7 @@ GVX_TRACE("media::quicktime_sound_rep::quicktime_sound_rep");
     }
 }
 
-media::quicktime_sound_rep::~quicktime_sound_rep() throw()
+media::quicktime_sound_rep::~quicktime_sound_rep() noexcept
 {
 GVX_TRACE("media::quicktime_sound_rep::~quicktime_sound_rep");
   DisposeMovie(m_movie);

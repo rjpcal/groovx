@@ -70,7 +70,7 @@ class io::reader
 public:
 
   /// Virtual destructor allows correct destruction of subclasses.
-  virtual ~reader() throw();
+  virtual ~reader() noexcept;
 
   /** A convenience function to ensure that the current serial version
       is no less than the \a lowest_supported_version. Returns the

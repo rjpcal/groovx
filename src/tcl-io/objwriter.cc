@@ -44,7 +44,7 @@ tcl::obj_writer::obj_writer()
 GVX_TRACE("tcl::obj_writer::obj_writer");
 }
 
-tcl::obj_writer::~obj_writer() throw()
+tcl::obj_writer::~obj_writer() noexcept
 {
 GVX_TRACE("tcl::obj_writer::~obj_writer");
 }

@@ -58,7 +58,7 @@ class Element : public io::serializable
 {
 public:
   /// Virtual destructor.
-  virtual ~Element() throw();
+  virtual ~Element() noexcept;
 
   /// Status type for child to tell its parent how it ended.
   enum ChildStatus

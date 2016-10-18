@@ -34,6 +34,6 @@
 
 #include "gxfont.h"
 
-GxFont::~GxFont() throw() {}
+GxFont::~GxFont() noexcept {}
 
 #endif // !GROOVX_GFX_GXFONT_CC_UTC20050626084025_DEFINED

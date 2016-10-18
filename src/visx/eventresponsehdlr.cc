@@ -301,7 +301,7 @@ EventResponseHdlr::EventResponseHdlr() :
   rep(new Impl(this))
 {}
 
-EventResponseHdlr::~EventResponseHdlr() throw()
+EventResponseHdlr::~EventResponseHdlr() noexcept
   { delete rep; }
 
 io::version_id EventResponseHdlr::class_version_id() const

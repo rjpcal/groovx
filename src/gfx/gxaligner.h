@@ -86,7 +86,7 @@ public:
   GxAligner(nub::soft_ref<GxNode> child);
 
   /// Virtual nothrow destructor.
-  virtual ~GxAligner() throw();
+  virtual ~GxAligner() noexcept;
 
   /// Get the center after aligning the given rect.
   geom::vec2<double> getCenter(const geom::rect<double>& bounds) const;

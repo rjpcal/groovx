@@ -209,7 +209,7 @@ namespace geom
                      yy.union_with(other.y_span()));
     }
 
-    void debug_dump() const throw()
+    void debug_dump() const noexcept
     {
       dbg_eval(0, left());
       dbg_eval(0, right());

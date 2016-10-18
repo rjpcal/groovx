@@ -81,7 +81,7 @@ public:
       }
   }
 
-  virtual ~vec_context() throw() {}
+  virtual ~vec_context() noexcept {}
 
   void flush_result()
   {
@@ -98,7 +98,7 @@ public:
   }
 
 protected:
-  virtual Tcl_Obj* get_objv(unsigned int argn) throw()
+  virtual Tcl_Obj* get_objv(unsigned int argn) noexcept
   {
     if (argn == 0) return m_arg0;
 
@@ -139,7 +139,7 @@ class tcl::vec_dispatcher : public tcl::arg_dispatcher
 public:
   vec_dispatcher(unsigned int key_argn) : m_key_argn(key_argn) {}
 
-  virtual ~vec_dispatcher() throw() {}
+  virtual ~vec_dispatcher() noexcept {}
 
   virtual void dispatch(tcl::interpreter& interp,
                         unsigned int objc, Tcl_Obj* const objv[],

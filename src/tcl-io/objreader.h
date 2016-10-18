@@ -47,7 +47,7 @@ public:
   obj_reader(tcl::obj x);
 
   /// Virtual destructor allows correct destruction of subclasses.
-  virtual ~obj_reader() throw();
+  virtual ~obj_reader() noexcept;
 
   /** Returns the serialization version id that was stored with the
       object currently being read. */

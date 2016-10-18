@@ -58,7 +58,7 @@ namespace media
     esd_sound_rep(const char* filename = 0);
 
     /// Virtual destructor.
-    virtual ~esd_sound_rep() throw();
+    virtual ~esd_sound_rep() noexcept;
 
     /// Play the sound (in this case using the ESD daemon).
     virtual void play();
@@ -78,9 +78,9 @@ namespace
     af_error_info& operator=(const af_error_info&);
 
   public:
-    af_error_info() throw() : error(false), code(0) {}
+    af_error_info() noexcept : error(false), code(0) {}
 
-    void set(long v, const char* c) throw()
+    void set(long v, const char* c) noexcept
     {
       error = true;
       code = v;
@@ -88,7 +88,7 @@ namespace
       message[MSG_SIZE - 1] = '\0';
     }
 
-    void reset() throw() { error = false; }
+    void reset() noexcept { error = false; }
 
     rutz::fstring what() const
     {
@@ -105,7 +105,7 @@ namespace
 
   af_error_info last_error;
 
-  void af_error_handler(long v, const char* c) throw()
+  void af_error_handler(long v, const char* c) noexcept
   {
     dbg_eval_nl(3, v);
     dbg_eval_nl(3, c);
@@ -159,7 +159,7 @@ GVX_TRACE("media::esd_sound_rep::esd_sound_rep");
   m_filename = filename;
 }
 
-media::esd_sound_rep::~esd_sound_rep() throw() {}
+media::esd_sound_rep::~esd_sound_rep() noexcept {}
 
 void media::esd_sound_rep::play()
 {

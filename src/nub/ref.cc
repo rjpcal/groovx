@@ -62,7 +62,7 @@ void nub::set_default_ref_vis(nub::ref_vis vis)
   default_vis = vis;
 }
 
-bool nub::detail::is_valid_uid(nub::uid id) throw()
+bool nub::detail::is_valid_uid(nub::uid id) noexcept
 {
   return nub::objectdb::instance().is_valid_uid(id);
 }

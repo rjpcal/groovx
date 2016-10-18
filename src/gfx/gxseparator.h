@@ -63,7 +63,7 @@ public:
   static GxSeparator* make();
 
   /// Virtual destructor.
-  virtual ~GxSeparator() throw();
+  virtual ~GxSeparator() noexcept;
 
   virtual void read_from(io::reader& reader);
   virtual void write_to(io::writer& writer) const;

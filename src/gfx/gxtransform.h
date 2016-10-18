@@ -67,7 +67,7 @@ public:
   static GxTransform* make();
 
   /// Virtual destructor.
-  virtual ~GxTransform() throw();
+  virtual ~GxTransform() noexcept;
 
   virtual io::version_id class_version_id() const;
   virtual void read_from(io::reader& reader);

@@ -42,7 +42,7 @@ GVX_TRACE("nub::volatile_object::volatile_object");
   this->mark_as_volatile();
 }
 
-nub::volatile_object::~volatile_object() throw()
+nub::volatile_object::~volatile_object() noexcept
 {
 GVX_TRACE("nub::volatile_object::~volatile_object");
 }

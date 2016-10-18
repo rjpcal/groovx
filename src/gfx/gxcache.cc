@@ -59,7 +59,7 @@ GxCache::GxCache(nub::soft_ref<GxNode> child) :
 GVX_TRACE("GxCache::GxCache");
 }
 
-GxCache::~GxCache() throw()
+GxCache::~GxCache() noexcept
 {
 GVX_TRACE("GxCache::~GxCache");
   invalidate();
@@ -122,7 +122,7 @@ GVX_TRACE("GxCache::getBoundingCube");
   child()->getBoundingCube(bbox);
 }
 
-void GxCache::invalidate() throw()
+void GxCache::invalidate() noexcept
 {
 GVX_TRACE("GxCache::invalidate");
   if (itsCanvas.is_valid())
@@ -133,7 +133,7 @@ GVX_TRACE("GxCache::invalidate");
   itsCanvas = nub::soft_ref<GLCanvas>();
 }
 
-void GxCache::setMode(Mode new_mode) throw()
+void GxCache::setMode(Mode new_mode) noexcept
 {
 GVX_TRACE("GxCache::setMode");
 #ifdef GVX_BROKEN_GL_DISPLAY_LISTS

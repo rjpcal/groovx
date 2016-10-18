@@ -87,8 +87,8 @@ namespace rutz
 class rutz::prof
 {
 public:
-  prof(const char* s, const char* fname, int lineno) throw();
-  ~prof() throw();
+  prof(const char* s, const char* fname, int lineno) noexcept;
+  ~prof() noexcept;
 
   /// Different types of timing.
   enum timing_mode
@@ -98,15 +98,15 @@ public:
     };
 
   /// Get the current timing_mode.
-  static timing_mode get_timing_mode() throw()
+  static timing_mode get_timing_mode() noexcept
   { return s_timing_mode; }
 
   /// Set the current timing_mode.
-  static void set_timing_mode(timing_mode mode) throw()
+  static void set_timing_mode(timing_mode mode) noexcept
   { s_timing_mode = mode; }
 
   /// Get the current time according to the given timing_mode.
-  static rutz::time get_now_time(timing_mode mode) throw()
+  static rutz::time get_now_time(timing_mode mode) noexcept
   {
     switch (mode)
       {
@@ -120,54 +120,54 @@ public:
   }
 
   /// Reset the call count and elapsed time to zero.
-  void reset() throw();
+  void reset() noexcept;
 
   /// Returns the number of calls since the last reset().
-  unsigned int count() const throw();
+  unsigned int count() const noexcept;
 
-  void add_time(const rutz::time& t) throw();
+  void add_time(const rutz::time& t) noexcept;
 
-  void add_child_time(const rutz::time& t) throw();
+  void add_child_time(const rutz::time& t) noexcept;
 
-  const char* context_name() const throw();
+  const char* context_name() const noexcept;
 
-  const char* src_file_name() const throw();
+  const char* src_file_name() const noexcept;
 
-  int src_line_no() const throw();
+  int src_line_no() const noexcept;
 
   /// Get the total elapsed time in microsecs since the last reset().
-  double total_time() const throw();
+  double total_time() const noexcept;
 
   /// Get the total self time in microsecs since the last reset().
-  double self_time() const throw();
+  double self_time() const noexcept;
 
   /// Get the per-call average self time in microsecs since the last reset().
-  double avg_self_time() const throw();
+  double avg_self_time() const noexcept;
 
   /// Print this object's info to the given file.
-  void print_prof_data(FILE* f) const throw();
+  void print_prof_data(FILE* f) const noexcept;
 
   /// Print this object's info to the given stream.
-  void print_prof_data(std::ostream& os) const throw();
+  void print_prof_data(std::ostream& os) const noexcept;
 
   /// Whether to write a profiling summary file when the program exits.
-  static void print_at_exit(bool yes_or_no) throw();
+  static void print_at_exit(bool yes_or_no) noexcept;
 
   /// Specify the filename for the profiling summary (default is "prof.out").
   static void prof_summary_file_name(const char* fname);
 
   /// Reset all call counts and elapsed times to zero.
-  static void reset_all_prof_data() throw();
+  static void reset_all_prof_data() noexcept;
 
   /// Print all profile data to the given file.
-  static void print_all_prof_data(FILE* f) throw();
+  static void print_all_prof_data(FILE* f) noexcept;
 
   /// Print all profile data to the given stream.
-  static void print_all_prof_data(std::ostream& os) throw();
+  static void print_all_prof_data(std::ostream& os) noexcept;
 
 private:
-  prof(const prof&) throw();
-  prof& operator=(const prof&) throw();
+  prof(const prof&) noexcept;
+  prof& operator=(const prof&) noexcept;
 
   const char*  const m_context_name;
   const char*  const m_src_file_name;

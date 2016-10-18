@@ -48,7 +48,7 @@ class GxFont
 {
 public:
   /// Virtual destructor.
-  virtual ~GxFont() throw();
+  virtual ~GxFont() noexcept;
 
   /// Get the string name of the font.
   virtual const char* fontName() const = 0;

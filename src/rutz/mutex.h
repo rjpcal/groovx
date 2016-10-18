@@ -50,16 +50,16 @@ public:
   /// Throws an exception if pthread_mutex_lock() fails
   mutex_lock_class(pthread_mutex_t* mut = 0);
 
-  ~mutex_lock_class() throw()
+  ~mutex_lock_class() noexcept
   {
     this->unlock();
   }
 
-  bool is_locked() const throw() { return m_mutex != 0; }
+  bool is_locked() const noexcept { return m_mutex != 0; }
 
-  void unlock() throw();
+  void unlock() noexcept;
 
-  void swap(mutex_lock_class& that) throw()
+  void swap(mutex_lock_class& that) noexcept
   {
     pthread_mutex_t* const this_mutex = this->m_mutex;
     this->m_mutex = that.m_mutex;

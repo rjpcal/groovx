@@ -104,7 +104,7 @@ public:
   GxScene*                      const scene;
 
   Impl(Toglet* p);
-  ~Impl() throw()
+  ~Impl() noexcept
   {
     if (scene != 0)       scene->destroy();
     if (canvas.is_valid()) canvas->destroy();
@@ -250,7 +250,7 @@ GVX_TRACE("Toglet::Toglet");
   if (pack) tcl::TkWidget::pack();
 }
 
-Toglet::~Toglet() throw()
+Toglet::~Toglet() noexcept
 {
 GVX_TRACE("Toglet::~Toglet");
 

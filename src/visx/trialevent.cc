@@ -83,7 +83,7 @@ GVX_TRACE("TrialEvent::TrialEvent");
   itsTimer.sig_timeout.connect(this, &TrialEvent::invokeTemplate);
 }
 
-TrialEvent::~TrialEvent() throw()
+TrialEvent::~TrialEvent() noexcept
 {
 GVX_TRACE("TrialEvent::~TrialEvent");
 
@@ -188,7 +188,7 @@ GVX_TRACE("TrialEvent::invokeTemplate");
 
 NullTrialEvent::NullTrialEvent(unsigned int msec) : TrialEvent(msec) {}
 
-NullTrialEvent::~NullTrialEvent() throw() {}
+NullTrialEvent::~NullTrialEvent() noexcept {}
 
 void NullTrialEvent::invoke(Trial&) {}
 
@@ -218,7 +218,7 @@ TrialMemFuncEvent::TrialMemFuncEvent(CallbackType callback,
   itsTypename(type)
 {}
 
-TrialMemFuncEvent::~TrialMemFuncEvent() throw() {}
+TrialMemFuncEvent::~TrialMemFuncEvent() noexcept {}
 
 void TrialMemFuncEvent::invoke(Trial& trial)
 {
@@ -260,7 +260,7 @@ FileWriteEvent::FileWriteEvent(unsigned int msec) :
   itsFile(output_file::make())
 {}
 
-FileWriteEvent::~FileWriteEvent() throw() {}
+FileWriteEvent::~FileWriteEvent() noexcept {}
 
 void FileWriteEvent::invoke(Trial& /*trial*/)
 {
@@ -322,7 +322,7 @@ GenericEvent::GenericEvent(unsigned int msec) :
   itsCallback(new tcl::ProcWrapper(tcl::event_loop::interp()))
 {}
 
-GenericEvent::~GenericEvent() throw() {}
+GenericEvent::~GenericEvent() noexcept {}
 
 void GenericEvent::invoke(Trial& /*trial*/)
 {
@@ -366,7 +366,7 @@ MultiEvent::MultiEvent(unsigned int msec) :
   itsEvents()
 {}
 
-MultiEvent::~MultiEvent() throw() {}
+MultiEvent::~MultiEvent() noexcept {}
 
 void MultiEvent::invoke(Trial& trial)
 {

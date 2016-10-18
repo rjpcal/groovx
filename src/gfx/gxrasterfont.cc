@@ -36,7 +36,7 @@
 
 #include "rutz/trace.h"
 
-GxRasterFont::~GxRasterFont() throw()
+GxRasterFont::~GxRasterFont() noexcept
 {
 GVX_TRACE("GxRasterFont::~GxRasterFont");
 }

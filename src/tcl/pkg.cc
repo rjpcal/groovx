@@ -163,7 +163,7 @@ private:
 public:
   impl(Tcl_Interp* interp, const char* name, const char* version);
 
-  ~impl() throw();
+  ~impl() noexcept;
 
   tcl::interpreter                     interp;
   string                         const namesp_name;
@@ -197,7 +197,7 @@ tcl::pkg::impl::impl(Tcl_Interp* intp,
 GVX_TRACE("tcl::pkg::impl::impl");
 }
 
-tcl::pkg::impl::~impl() throw()
+tcl::pkg::impl::~impl() noexcept
 {
 GVX_TRACE("tcl::pkg::impl::~impl");
   if (on_exit != 0)
@@ -215,7 +215,7 @@ GVX_TRACE("tcl::pkg::pkg");
   ++INIT_DEPTH;
 }
 
-tcl::pkg::~pkg() throw()
+tcl::pkg::~pkg() noexcept
 {
 GVX_TRACE("tcl::pkg::~pkg");
 
@@ -270,7 +270,7 @@ GVX_TRACE("tcl::pkg::destroy_on_unload");
 }
 
 tcl::pkg* tcl::pkg::lookup(tcl::interpreter& interp, const char* name,
-                           const char* version) throw()
+                           const char* version) noexcept
 {
 GVX_TRACE("tcl::pkg::lookup");
 
@@ -298,7 +298,7 @@ GVX_TRACE("tcl::pkg::lookup");
   return 0;
 }
 
-int tcl::pkg::init_status() const throw()
+int tcl::pkg::init_status() const noexcept
 {
 GVX_TRACE("tcl::pkg::init_status");
   if (rep->interp.get_result<const char*>()[0] != '\0')
@@ -308,13 +308,13 @@ GVX_TRACE("tcl::pkg::init_status");
   return rep->init_status;
 }
 
-tcl::interpreter& tcl::pkg::interp() throw()
+tcl::interpreter& tcl::pkg::interp() noexcept
 {
 GVX_TRACE("tcl::pkg::interp");
   return rep->interp;
 }
 
-void tcl::pkg::handle_live_exception(const rutz::file_pos& pos) throw()
+void tcl::pkg::handle_live_exception(const rutz::file_pos& pos) noexcept
 {
 GVX_TRACE("tcl::pkg::handle_live_exception");
   rep->interp.handle_live_exception(rep->pkg_name.c_str(), pos);
@@ -362,17 +362,17 @@ GVX_TRACE("tcl::pkg::inherit_pkg");
   inherit_namesp(other->namesp_name());
 }
 
-const char* tcl::pkg::namesp_name() throw()
+const char* tcl::pkg::namesp_name() noexcept
 {
   return rep->namesp_name.c_str();
 }
 
-const char* tcl::pkg::pkg_name() const throw()
+const char* tcl::pkg::pkg_name() const noexcept
 {
   return rep->pkg_name.c_str();
 }
 
-const char* tcl::pkg::version() const throw()
+const char* tcl::pkg::version() const noexcept
 {
   return rep->version.c_str();
 }
@@ -454,20 +454,20 @@ GVX_TRACE("tcl::pkg::link_var_const double");
   rep->interp.link_double(var_name, &var, true);
 }
 
-void tcl::pkg::set_init_status_error() throw()
+void tcl::pkg::set_init_status_error() noexcept
 {
 GVX_TRACE("tcl::pkg::set_init_status_error");
   rep->init_status = TCL_ERROR;
 }
 
-void tcl::pkg::verbose_init(bool verbose) throw()
+void tcl::pkg::verbose_init(bool verbose) noexcept
 {
 GVX_TRACE("tcl::pkg::verbose_init");
 
   VERBOSE_INIT = verbose;
 }
 
-int tcl::pkg::finish_init() throw()
+int tcl::pkg::finish_init() noexcept
 {
 GVX_TRACE("tcl::pkg::finish_init");
 

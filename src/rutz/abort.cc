@@ -37,7 +37,7 @@
 #include <cstdio>
 
 void rutz::debug::abort_aux (const char* what, const char* where,
-                             int line_no) throw()
+                             int line_no) noexcept
 {
   fprintf(stderr, "Abort (%s:%d):\n\tgot '%s'\n\n",
           where, line_no, what);

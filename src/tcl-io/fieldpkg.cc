@@ -81,8 +81,6 @@ namespace tcl
       isItInited(false)
     {}
 
-    ~FieldsLister() throw() {}
-
     typedef void retn_t;
 
     void operator()(tcl::call_context& ctx);

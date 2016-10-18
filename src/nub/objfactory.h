@@ -53,7 +53,7 @@ protected:
   obj_factory();
 
   /// Virtual destructor.
-  virtual ~obj_factory() throw();
+  virtual ~obj_factory() noexcept;
 
 public:
   /// Return the singleton instance.

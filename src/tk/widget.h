@@ -87,12 +87,12 @@ public:
            const char* classname,
            const char* pathname,
            bool topLevel = false);
-  virtual ~TkWidget() throw();
+  virtual ~TkWidget() noexcept;
 
   void destroyWidget();
 
   /// Print this window's X11 tidbits to stderr.
-  void winInfo() throw();
+  void winInfo() noexcept;
 
   int width() const;
   int height() const;

@@ -59,7 +59,7 @@ public:
   static GxText* make();
 
   /// Virtual destructor.
-  virtual ~GxText() throw();
+  virtual ~GxText() noexcept;
 
   virtual io::version_id class_version_id() const;
   virtual void read_from(io::reader& reader);

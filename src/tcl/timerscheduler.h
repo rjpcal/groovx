@@ -43,7 +43,7 @@ class tcl::timer_scheduler : public nub::scheduler
 {
 public:
   timer_scheduler();
-  virtual ~timer_scheduler() throw();
+  virtual ~timer_scheduler() noexcept;
 
   virtual rutz::shared_ptr<nub::timer_token>
   schedule(int msec,

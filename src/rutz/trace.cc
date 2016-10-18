@@ -50,7 +50,7 @@ namespace
   unsigned int             g_max_trace_level     = 20;
   bool                     g_do_global_trace     = false;
 
-  void print_in(const char* context_name) throw()
+  void print_in(const char* context_name) noexcept
   {
     const unsigned int n = rutz::backtrace::current().size();
 
@@ -72,7 +72,7 @@ namespace
       }
   }
 
-  void print_out(const char* context_name) throw()
+  void print_out(const char* context_name) noexcept
   {
     const unsigned int n = rutz::backtrace::current().size();
 
@@ -98,27 +98,27 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool rutz::trace::get_global_trace() throw()
+bool rutz::trace::get_global_trace() noexcept
 {
   return g_do_global_trace;
 }
 
-void rutz::trace::set_global_trace(bool on_off) throw()
+void rutz::trace::set_global_trace(bool on_off) noexcept
 {
   g_do_global_trace = on_off;
 }
 
-unsigned int rutz::trace::get_max_level() throw()
+unsigned int rutz::trace::get_max_level() noexcept
 {
   return g_max_trace_level;
 }
 
-void rutz::trace::set_max_level(unsigned int lev) throw()
+void rutz::trace::set_max_level(unsigned int lev) noexcept
 {
   g_max_trace_level = lev;
 }
 
-rutz::trace::trace(prof& p, bool use_msg) throw()
+rutz::trace::trace(prof& p, bool use_msg) noexcept
   :
   m_prof(p),
   m_start(),
@@ -135,7 +135,7 @@ rutz::trace::trace(prof& p, bool use_msg) throw()
   this->m_start = rutz::prof::get_now_time(this->m_timing_mode);
 }
 
-rutz::trace::~trace() throw()
+rutz::trace::~trace() noexcept
 {
   // We want this to be the first thing in the destructor, so that we
   // don't include the rest of the destructor runtime in our elapsed

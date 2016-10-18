@@ -113,7 +113,7 @@ GVX_TRACE("Sound::Sound");
   setFile(filename);
 }
 
-Sound::~Sound() throw()
+Sound::~Sound() noexcept
 {
 GVX_TRACE("Sound::~Sound");
 }

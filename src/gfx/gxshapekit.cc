@@ -66,7 +66,7 @@ class GxShapeKitNode : public GxBin
 public:
   GxShapeKitNode(GxShapeKit* obj) : GxBin(), itsObj(obj) {}
 
-  virtual ~GxShapeKitNode() throw() {}
+  virtual ~GxShapeKitNode() noexcept {}
 
   virtual void read_from(io::reader& /*reader*/) {};
   virtual void write_to(io::writer& /*writer*/) const {};
@@ -133,7 +133,7 @@ public:
     obj->sigNodeChanged.connect(this, &GxShapeKitImpl::invalidateCaches);
   }
 
-  virtual ~GxShapeKitImpl() throw() {}
+  virtual ~GxShapeKitImpl() noexcept {}
 
   void invalidateCaches()
   {
@@ -175,7 +175,7 @@ GVX_TRACE("GxShapeKit::GxShapeKit");
 }
 
 // GxShapeKit destructor
-GxShapeKit::~GxShapeKit() throw()
+GxShapeKit::~GxShapeKit() noexcept
 {
 GVX_TRACE("GxShapeKit::~GxShapeKit");
   rep->destroy();

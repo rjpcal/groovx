@@ -84,13 +84,13 @@ public:
   pipe_fds();
 
   /// Destructor closes both file descriptors.
-  ~pipe_fds() throw();
+  ~pipe_fds() noexcept;
 
-  int reader() const throw() { return m_fds[0]; }
-  int writer() const throw() { return m_fds[1]; }
+  int reader() const noexcept { return m_fds[0]; }
+  int writer() const noexcept { return m_fds[1]; }
 
-  void close_reader() throw() { if (m_fds[0] >= 0) close(m_fds[0]); m_fds[0] = -1; }
-  void close_writer() throw() { if (m_fds[1] >= 0) close(m_fds[1]); m_fds[1] = -1; }
+  void close_reader() noexcept { if (m_fds[0] >= 0) close(m_fds[0]); m_fds[0] = -1; }
+  void close_writer() noexcept { if (m_fds[1] >= 0) close(m_fds[1]); m_fds[1] = -1; }
 
 private:
   pipe_fds(const pipe_fds&);
@@ -108,13 +108,13 @@ public:
   child_process();
 
   /// Destructor waits for child process to complete.
-  ~child_process() throw();
+  ~child_process() noexcept;
 
   /// Check if we're in the parent or child process after the fork().
-  bool in_parent() const throw() { return m_pid != 0; }
+  bool in_parent() const noexcept { return m_pid != 0; }
 
   /// Wait for child process to complete, and return its status code.
-  int wait() throw();
+  int wait() noexcept;
 
 private:
   child_process(const child_process&);
@@ -145,16 +145,16 @@ public:
   exec_pipe(const char* m, const char* argv0, ...);
 
   /// Destructor cleans up child process and the pipe's file descriptors.
-  ~exec_pipe() throw();
+  ~exec_pipe() noexcept;
 
   /// Get the stream that is linked to the child process.
-  std::iostream& stream() throw();
+  std::iostream& stream() noexcept;
 
   /// Close the underlying stream AND the underlying file descriptor.
   void close();
 
   /// Wait for child process to complete, return 0 if all is OK, -1 if error.
-  int exit_status() throw();
+  int exit_status() noexcept;
 
 private:
   bool               m_parent_is_reader;
@@ -185,7 +185,7 @@ public:
   bidir_pipe(const char* argv0, ...);
 
   /// Destructor cleans up child process and the pipe's file descriptors.
-  ~bidir_pipe() throw();
+  ~bidir_pipe() noexcept;
 
   /// Request that SIGINT be ignored in the child process.
   /** You must request this BEFORE calling init(); so the proper
@@ -216,10 +216,10 @@ public:
   void init(const char* argv0, ...);
 
   /// Get the stream that is receiving input from the child process.
-  std::iostream& in_stream() throw();
+  std::iostream& in_stream() noexcept;
 
   /// Get the stream that is sending output to the child process.
-  std::iostream& out_stream() throw();
+  std::iostream& out_stream() noexcept;
 
   /// Close the underlying input stream file descriptor.
   void close_in();
@@ -228,7 +228,7 @@ public:
   void close_out();
 
   /// Wait for child process to complete, return 0 if all is OK, -1 if error.
-  int exit_status() throw();
+  int exit_status() noexcept;
 
 private:
   bidir_pipe(const bidir_pipe&); // not implemented

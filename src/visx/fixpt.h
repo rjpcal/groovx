@@ -55,7 +55,7 @@ public:
   static FixPt* make();
 
   /// Virtual destructor.
-  virtual ~FixPt () throw();
+  virtual ~FixPt () noexcept;
 
   virtual io::version_id class_version_id() const;
   virtual void read_from(io::reader& reader);

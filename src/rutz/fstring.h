@@ -64,9 +64,9 @@ namespace rutz
 
     static string_rep* readline_from_stream(std::istream& is, char eol = '\n');
 
-    void incr_ref_count() throw() { m_refcount.atomic_incr(); }
+    void incr_ref_count() noexcept { m_refcount.atomic_incr(); }
 
-    int decr_ref_count() throw()
+    int decr_ref_count() noexcept
     {
       const int c = m_refcount.atomic_decr_return();
       if (c <= 0)
@@ -74,11 +74,11 @@ namespace rutz
       return c;
     }
 
-    std::size_t length() const throw() { return m_length; }
-    std::size_t capacity() const throw() { return m_capacity; }
-    const char* text() const throw() { return m_text; }
+    std::size_t length() const noexcept { return m_length; }
+    std::size_t capacity() const noexcept { return m_capacity; }
+    const char* text() const noexcept { return m_text; }
 
-    void debug_dump() const throw();
+    void debug_dump() const noexcept;
 
   private:
     // Class-specific operator new.
@@ -91,7 +91,7 @@ namespace rutz
     // does NOT need to "+1" for a null-terminator
     string_rep(std::size_t length, const char* text, std::size_t capacity=0);
 
-    ~string_rep() throw();
+    ~string_rep() noexcept;
 
     // To be called once via pthread_once()
     static void initialize_empty_rep();
@@ -103,8 +103,8 @@ namespace rutz
     // string_rep object.
 
     void uniq_append_no_terminate(char c);
-    void add_terminator() throw();
-    void uniq_set_length(std::size_t length) throw();
+    void add_terminator() noexcept;
+    void uniq_set_length(std::size_t length) noexcept;
     void uniq_append(std::size_t length, const char* text);
     void uniq_realloc(std::size_t capacity);
 
@@ -152,10 +152,10 @@ namespace rutz
     fstring();
 
     /// Copy constructor.
-    fstring(const fstring& other) throw();
+    fstring(const fstring& other) noexcept;
 
     /// Destructory.
-    ~fstring() throw();
+    ~fstring() noexcept;
 
     /// Construct by copying from a C-style null-terminated char array.
     fstring(const char* s) :
@@ -172,25 +172,25 @@ namespace rutz
     }
 
     /// Swap contents with another fstring object.
-    void swap(fstring& other) throw();
+    void swap(fstring& other) noexcept;
 
     /// Assign from a C-style null-terminated char array.
     fstring& operator=(const char* text);
 
     /// Assignment operator.
-    fstring& operator=(const fstring& other) throw();
+    fstring& operator=(const fstring& other) noexcept;
 
     /// Get a pointer to the const underlying data array.
-    const char* c_str() const throw() { return m_rep->text(); }
+    const char* c_str() const noexcept { return m_rep->text(); }
 
     /// Get the number of characters in the string (NOT INCLUDING the null terminator).
-    std::size_t length() const throw() { return m_rep->length(); }
+    std::size_t length() const noexcept { return m_rep->length(); }
 
     /// Query whether the length of the string is 0.
-    bool is_empty() const throw() { return (length() == 0); }
+    bool is_empty() const noexcept { return (length() == 0); }
 
     /// Same as is_empty(); for compatibility with std::string interface.
-    bool empty() const throw() { return is_empty(); }
+    bool empty() const noexcept { return is_empty(); }
 
     /// Return the character at position i.
     char operator[](unsigned int i) const { return m_rep->text()[i]; }
@@ -203,33 +203,33 @@ namespace rutz
     //
 
     /// Query whether the terminal substring matches the given string.
-    bool ends_with(const fstring& ext) const throw();
+    bool ends_with(const fstring& ext) const noexcept;
 
     //
     // Comparison operators
     //
 
     /// Query for equality with a C-style string.
-    bool equals(const char* other) const throw();
+    bool equals(const char* other) const noexcept;
     /// Query for equality with another fstring object.
-    bool equals(const fstring& other) const throw();
+    bool equals(const fstring& other) const noexcept;
 
     /// Query if string is lexicographically less-than another string.
-    bool operator<(const char* other) const throw();
+    bool operator<(const char* other) const noexcept;
 
     /// Query if string is lexicographically less-than another string.
     template <class string_type>
-    bool operator<(const string_type& other) const throw()
+    bool operator<(const string_type& other) const noexcept
     {
       return operator<(other.c_str());
     }
 
     /// Query if string is lexicographically greater-than another string.
-    bool operator>(const char* other) const throw();
+    bool operator>(const char* other) const noexcept;
 
     /// Query if string is lexicographically greater-than another string.
     template <class string_type>
-    bool operator>(const string_type& other) const throw()
+    bool operator>(const string_type& other) const noexcept
     {
       return operator>(other.c_str());
     }
@@ -255,17 +255,17 @@ namespace rutz
     //
 
     /// Equality operator.
-    bool operator==(const char* rhs)    const throw() { return equals(rhs); }
+    bool operator==(const char* rhs)    const noexcept { return equals(rhs); }
     /// Equality operator.
-    bool operator==(const fstring& rhs) const throw() { return equals(rhs); }
+    bool operator==(const fstring& rhs) const noexcept { return equals(rhs); }
 
     /// Inequality operator.
-    bool operator!=(const char* rhs)    const throw() { return !equals(rhs); }
+    bool operator!=(const char* rhs)    const noexcept { return !equals(rhs); }
     /// Inequality operator.
-    bool operator!=(const fstring& rhs) const throw() { return !equals(rhs); }
+    bool operator!=(const fstring& rhs) const noexcept { return !equals(rhs); }
 
     /// Dump contents for debugging.
-    void debug_dump() const throw();
+    void debug_dump() const noexcept;
 
   private:
     void init_empty();
@@ -300,12 +300,12 @@ namespace rutz
 
   // operator ==
 
-  inline bool operator==(const char* lhs, const fstring& rhs) throw()
+  inline bool operator==(const char* lhs, const fstring& rhs) noexcept
   { return rhs.equals(lhs); }
 
   // operator !=
 
-  inline bool operator!=(const char* lhs, const fstring& rhs) throw()
+  inline bool operator!=(const char* lhs, const fstring& rhs) noexcept
   { return !rhs.equals(lhs); }
 
   ///////////////////////////////////////////////////////////
@@ -343,7 +343,7 @@ namespace rutz
   namespace debug
   {
     inline void eval (const char* what, int level, const char* where,
-                      int line_no, bool nl, rutz::fstring expr) throw()
+                      int line_no, bool nl, rutz::fstring expr) noexcept
     {
       eval(what, level, where, line_no, nl, expr.c_str());
     }

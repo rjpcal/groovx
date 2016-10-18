@@ -107,7 +107,8 @@ fstring rutz::sfmt(const char* fmt, ...)
 {
   va_list a;
   va_start(a, fmt);
-  try { const fstring result = rutz::vsfmt(fmt, a); }
+  fstring result;
+  try { result = rutz::vsfmt(fmt, a); }
   catch (...) { va_end(a); throw; }
   va_end(a);
   return result;

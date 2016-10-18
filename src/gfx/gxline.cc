@@ -92,7 +92,7 @@ GVX_TRACE("GxLine::GxLine");
   setFieldMap(GxLine::classFields());
 }
 
-GxLine::~GxLine() throw()
+GxLine::~GxLine() noexcept
 {
 GVX_TRACE("GxLine::~GxLine");
 }
