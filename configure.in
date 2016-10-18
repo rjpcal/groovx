@@ -127,7 +127,7 @@ AC_DEFINE(GVX_DEFAULT_REFVIS,[PUBLIC],
 case ${CXX}-${OS} in
    *g++*)
       CXXFLAGS="$CXXFLAGS -W -Wdeprecated -Wall"
-      CXXFLAGS="$CXXFLAGS -Wsign-promo -Wwrite-strings"
+      CXXFLAGS="$CXXFLAGS -Wsign-promo -Wwrite-strings -std=gnu++14"
       AC_MSG_CHECKING([for g++ version])
       GCC_VERSION=`$CXX -dumpversion`
       AC_MSG_RESULT($GCC_VERSION)

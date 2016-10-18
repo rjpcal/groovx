@@ -2925,7 +2925,7 @@ $as_echo "#define GVX_DEFAULT_REFVIS PUBLIC" >>confdefs.h
 case ${CXX}-${OS} in
    *g++*)
       CXXFLAGS="$CXXFLAGS -W -Wdeprecated -Wall"
-      CXXFLAGS="$CXXFLAGS -Wsign-promo -Wwrite-strings"
+      CXXFLAGS="$CXXFLAGS -Wsign-promo -Wwrite-strings -std=gnu++14"
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for g++ version" >&5
 $as_echo_n "checking for g++ version... " >&6; }
       GCC_VERSION=`$CXX -dumpversion`
