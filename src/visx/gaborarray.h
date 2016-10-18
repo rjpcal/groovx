@@ -96,18 +96,18 @@ public:
   /// Get GaborArray's fields.
   static const FieldMap& classFields();
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   void saveImage(const char* filename) const;
 
   void saveContourOnlyImage(const char* filename) const;
 
 protected:
-  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
+  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const override;
 
-  virtual void grRender(Gfx::Canvas& canvas) const;
+  virtual void grRender(Gfx::Canvas& canvas) const override;
 
 private:
   GaborArray(const GaborArray&);

@@ -61,19 +61,19 @@ public:
   /// Virtual destructor.
   virtual ~CloneFace() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Returns an array of Bezier control points for face outline.
-  virtual const double* getCtrlPnts() const;
+  virtual const double* getCtrlPnts() const override;
 
   /// Returns the aspect ratio of eye outline.
-  virtual double getEyeAspect() const;
+  virtual double getEyeAspect() const override;
 
   /** Returns the amount of vertical offset applied to all internal
       face features. */
-  virtual double getVertOffset() const;
+  virtual double getVertOffset() const override;
 
   /// Get CloneFace's fields.
   static const FieldMap& classFields();

@@ -304,13 +304,13 @@ namespace
 
     virtual ~group_element() noexcept {}
 
-    virtual void add_child(const char* name, el_ptr elp)
+    virtual void add_child(const char* name, el_ptr elp) override
     {
       m_elems[name] = elp;
     }
 
     virtual void trace(std::ostream& os,
-                       int depth, const char* name) const
+                       int depth, const char* name) const override
     {
       for (int i = 0; i < depth; ++i) os << "  ";
       os << name << "(object:" << m_type << "):\n";
@@ -324,55 +324,55 @@ namespace
         }
     }
 
-    virtual io::version_id input_version_id()
+    virtual io::version_id input_version_id() override
     {
       return m_version;
     }
 
-    virtual char read_char(const fstring& /*name*/) { GVX_ASSERT(0); return '\0'; }
+    virtual char read_char(const fstring& /*name*/) override { GVX_ASSERT(0); return '\0'; }
 
-    virtual int read_int(const fstring& name)
+    virtual int read_int(const fstring& name) override
     {
       el_ptr el = m_elems[name];
       int_element& ilp = element_cast<int_element>(el.get(), name, SRC_POS);
       return ilp.m_value;
     }
 
-    virtual bool read_bool(const fstring& name)
+    virtual bool read_bool(const fstring& name) override
     {
       el_ptr el = m_elems[name];
       bool_element& blp = element_cast<bool_element>(el.get(), name, SRC_POS);
       return blp.m_value;
     }
 
-    virtual double read_double(const fstring& name)
+    virtual double read_double(const fstring& name) override
     {
       el_ptr el = m_elems[name];
       double_element& dlp = element_cast<double_element>(el.get(), name, SRC_POS);
       return dlp.m_value;
     }
 
-    virtual void read_value_obj(const fstring& name, rutz::value& v)
+    virtual void read_value_obj(const fstring& name, rutz::value& v) override
     {
       el_ptr el = m_elems[name];
       value_element& vlp = element_cast<value_element>(el.get(), name, SRC_POS);
       v.set_string(vlp.m_value);
     }
 
-    virtual void read_byte_array(const fstring& name, rutz::byte_array& data)
+    virtual void read_byte_array(const fstring& name, rutz::byte_array& data) override
     {
       default_read_byte_array(name, data);
     }
 
-    virtual ref<io::serializable> read_object(const fstring& name)
+    virtual ref<io::serializable> read_object(const fstring& name) override
     {
       return read_weak_object(name);
     }
 
-    virtual soft_ref<io::serializable> read_weak_object(const fstring& name);
+    virtual soft_ref<io::serializable> read_weak_object(const fstring& name) override;
 
     virtual void read_owned_object(const fstring& name,
-                                 ref<io::serializable> obj)
+                                 ref<io::serializable> obj) override
     {
       el_ptr el = m_elems[name];
       group_element& glp = element_cast<group_element>(el.get(), name, SRC_POS);
@@ -380,14 +380,14 @@ namespace
     }
 
     virtual void read_base_class(const fstring& name,
-                                 ref<io::serializable> base_part)
+                                 ref<io::serializable> base_part) override
     {
       el_ptr el = m_elems[name];
       group_element& glp = element_cast<group_element>(el.get(), name, SRC_POS);
       glp.inflate(*base_part);
     }
 
-    virtual ref<io::serializable> read_root(io::serializable* /*root*/)
+    virtual ref<io::serializable> read_root(io::serializable* /*root*/) override
     {
       GVX_ASSERT(0); return ref<io::serializable>(static_cast<io::serializable*>(0));
     }
@@ -398,7 +398,7 @@ namespace
     }
 
   protected:
-    virtual fstring read_string_impl(const fstring& name)
+    virtual fstring read_string_impl(const fstring& name) override
     {
       el_ptr el = m_elems[name];
       string_element& slp = element_cast<string_element>(el.get(), name, SRC_POS);

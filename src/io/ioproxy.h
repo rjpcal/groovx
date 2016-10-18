@@ -67,16 +67,16 @@ public:
   static nub::ref<serializable> make(C* ref)
     { return nub::ref<serializable>( new proxy(ref), nub::PRIVATE ); }
 
-  virtual void read_from(io::reader& reader)
+  virtual void read_from(io::reader& reader) override
     { m_referand->C::read_from(reader); }
 
-  virtual void write_to(io::writer& writer) const
+  virtual void write_to(io::writer& writer) const override
     { m_referand->C::write_to(writer); }
 
-  virtual io::version_id class_version_id() const
+  virtual io::version_id class_version_id() const override
     { return m_referand->C::class_version_id(); }
 
-  virtual rutz::fstring obj_typename() const
+  virtual rutz::fstring obj_typename() const override
     { return rutz::demangled_name(typeid(C)); }
 
 private:
@@ -107,16 +107,16 @@ public:
   static nub::ref<const serializable> make(const C* ref)
     { return nub::ref<serializable>( new const_proxy(ref), nub::PRIVATE ); }
 
-  virtual void read_from(io::reader& reader)
+  virtual void read_from(io::reader& reader) override
     { m_referand->C::read_from(reader); }
 
-  virtual void write_to(io::writer& writer) const
+  virtual void write_to(io::writer& writer) const override
     { m_referand->C::write_to(writer); }
 
-  virtual io::version_id class_version_id() const
+  virtual io::version_id class_version_id() const override
     { return m_referand->C::class_version_id(); }
 
-  virtual rutz::fstring obj_typename() const
+  virtual rutz::fstring obj_typename() const override
     { return rutz::demangled_name(typeid(C)); }
 
 private:

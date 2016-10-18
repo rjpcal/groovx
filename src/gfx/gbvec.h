@@ -56,9 +56,9 @@ public:
   /// Get the underlying geom::vec2 value.
   const geom::vec2<T>& vec() const { return *this; }
 
-  virtual rutz::fstring value_typename() const;
+  virtual rutz::fstring value_typename() const override;
 
-  virtual const T* const_begin() const;
+  virtual const T* const_begin() const override;
 };
 
 /// GbVec3 is a field class for holding 3-D vectors/points/distances.
@@ -80,9 +80,9 @@ public:
   /// Get the underlying geom::vec3 value.
   const geom::vec3<T>& vec() const { return *this; }
 
-  virtual rutz::fstring value_typename() const;
+  virtual rutz::fstring value_typename() const override;
 
-  virtual const T* const_begin() const;
+  virtual const T* const_begin() const override;
 };
 
 #endif // !GROOVX_GFX_GBVEC_H_UTC20050626084023_DEFINED

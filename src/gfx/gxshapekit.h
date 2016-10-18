@@ -82,9 +82,9 @@ public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~GxShapeKit() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Get GxShapeKit's fields.
   static const FieldMap& classFields();
@@ -104,7 +104,7 @@ public:
       the scaling mode, alignment mode, and pixel border
       values. Subclasses of GxShapeKit should override
       grGetBoundingBox(), not getBoundingCube(). */
-  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const override;
 
   /** Subclasses must override this function to return the bounding
       box in GL coordinates for the object's onscreen image. */
@@ -222,7 +222,7 @@ public:
 
   /** This function draws the object according to the GrRenderMode
       selected with setRenderMode(). */
-  void draw(Gfx::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const override;
 
   /** This function must be overridden in derived classes to execute
       the actual drawing commands that render the object. */

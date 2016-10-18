@@ -55,8 +55,8 @@ public:
   /// Default creator.
   static output_file* make() { return new output_file; }
 
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Get the name of the file that will be written to.
   rutz::fstring get_filename() const;

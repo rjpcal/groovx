@@ -184,7 +184,7 @@ public:
   /// Read the value of the given object's pointed-to data member.
   virtual void readValueFrom(FieldContainer* obj,
                              io::reader& reader,
-                             const rutz::fstring& name) const
+                             const rutz::fstring& name) const override
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
@@ -194,7 +194,7 @@ public:
   /// Write the value of the given object's pointed-to data member.
   virtual void writeValueTo(const FieldContainer* obj,
                             io::writer& writer,
-                            const rutz::fstring& name) const
+                            const rutz::fstring& name) const override
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
@@ -239,7 +239,7 @@ public:
   /// Read the value of the given object's pointed-to data member.
   virtual void readValueFrom(FieldContainer* obj,
                              io::reader& reader,
-                             const rutz::fstring& name) const
+                             const rutz::fstring& name) const override
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
@@ -253,7 +253,7 @@ public:
   /// Write the value of the given object's pointed-to data member.
   virtual void writeValueTo(const FieldContainer* obj,
                             io::writer& writer,
-                            const rutz::fstring& name) const
+                            const rutz::fstring& name) const override
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
@@ -284,7 +284,7 @@ public:
 
   virtual void readValueFrom(FieldContainer* obj,
                              io::reader& reader,
-                             const rutz::fstring& name) const
+                             const rutz::fstring& name) const override
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
@@ -293,7 +293,7 @@ public:
 
   virtual void writeValueTo(const FieldContainer* obj,
                             io::writer& writer,
-                            const rutz::fstring& name) const
+                            const rutz::fstring& name) const override
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
@@ -326,7 +326,7 @@ public:
 
   virtual void readValueFrom(FieldContainer* obj,
                              io::reader& reader,
-                             const rutz::fstring& name) const
+                             const rutz::fstring& name) const override
   {
     if (itsSetter == 0) FieldAux::throwNotAllowed("read", SRC_POS);
 
@@ -341,7 +341,7 @@ public:
 
   virtual void writeValueTo(const FieldContainer* obj,
                             io::writer& writer,
-                            const rutz::fstring& name) const
+                            const rutz::fstring& name) const override
   {
     if (itsGetter == 0) FieldAux::throwNotAllowed("write", SRC_POS);
 

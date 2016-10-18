@@ -108,9 +108,9 @@ public:
   /// Virtual destructor.
   virtual ~EventResponseHdlr() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   ////////////////////////////
   // manipulators/accessors //
@@ -185,13 +185,13 @@ public:
   // Actions //
   /////////////
 
-  virtual void rhBeginTrial(nub::soft_ref<Toglet> widget, Trial& trial) const;
-  virtual void rhAbortTrial() const;
-  virtual void rhEndTrial() const;
-  virtual void rhHaltExpt() const;
+  virtual void rhBeginTrial(nub::soft_ref<Toglet> widget, Trial& trial) const override;
+  virtual void rhAbortTrial() const override;
+  virtual void rhEndTrial() const override;
+  virtual void rhHaltExpt() const override;
   virtual void rhAllowResponses(nub::soft_ref<Toglet> widget,
-                                Trial& trial) const;
-  virtual void rhDenyResponses() const;
+                                Trial& trial) const override;
+  virtual void rhDenyResponses() const override;
 
 private:
   EventResponseHdlr(const EventResponseHdlr&);

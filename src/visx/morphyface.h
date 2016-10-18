@@ -60,16 +60,16 @@ public:
   /// Virtual destructor.
   virtual ~MorphyFace () noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   ////////////////
   // properties //
   ////////////////
 
-  virtual int category() const { return itsMfaceCategory; }
-  virtual void setCategory(int val) { itsMfaceCategory = val; }
+  virtual int category() const override { return itsMfaceCategory; }
+  virtual void setCategory(int val) override { itsMfaceCategory = val; }
 
 private:
   /** The category of the face. The semantics of \a category are
@@ -148,9 +148,9 @@ public:
   static const FieldMap& classFields();
 
 protected:
-  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
+  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const override;
 
-  virtual void grRender(Gfx::Canvas& canvas) const;
+  virtual void grRender(Gfx::Canvas& canvas) const override;
 
 private:
   MorphyFace(const MorphyFace&);            // copy constructor not to be used

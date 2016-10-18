@@ -65,8 +65,8 @@ public:
 
   virtual ~ProcWrapper() noexcept;
 
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /** Redefine the code chunk with a new args and body, but keeping the same
       name as always. */

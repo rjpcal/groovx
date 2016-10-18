@@ -50,28 +50,28 @@ public:
   tcl::obj get_obj() const { return m_obj; }
 
   /// Store the \c char attribute \a val in association with the tag \a name.
-  virtual void write_char(const char* name, char val);
+  virtual void write_char(const char* name, char val) override;
 
   /// Store the \c int attribute \a val in association with the tag \a name.
-  virtual void write_int(const char* name, int val);
+  virtual void write_int(const char* name, int val) override;
 
   /// Store the \c bool attribute \a val in association with the tag \a name.
-  virtual void write_bool(const char* name, bool val);
+  virtual void write_bool(const char* name, bool val) override;
 
   /// Store the \c double attribute \a val in association with the tag \a name.
-  virtual void write_double(const char* name, double val);
+  virtual void write_double(const char* name, double val) override;
 
   /// Store the \c rutz::value attribute \a val in association with the tag \a name.
-  virtual void write_value_obj(const char* name, const rutz::value& v);
+  virtual void write_value_obj(const char* name, const rutz::value& v) override;
 
   /// Store the raw data array in association with the tag \a name.
   virtual void write_byte_array(const char* name,
                             const unsigned char* data,
-                            unsigned int length);
+                            unsigned int length) override;
 
   /// Store the \c io object \a val in association with the tag \a name.
   virtual void write_object(const char* name,
-                            nub::soft_ref<const io::serializable> obj);
+                            nub::soft_ref<const io::serializable> obj) override;
 
   /** Store the owned \c io object \a obj in association with the tag
       \a name. This function should only be used if \a obj is \b owned
@@ -79,7 +79,7 @@ public:
       obj. This allows the \c writer subclass to implement the storage
       of an owned object as a contained object. */
   virtual void write_owned_object(const char* name,
-                                  nub::ref<const io::serializable> obj);
+                                  nub::ref<const io::serializable> obj) override;
 
   /** Write the named base class using the io object \a obj, which
       should be arranged to point or refer to the appropriate base
@@ -87,17 +87,17 @@ public:
       functions must NOT call the fully derived versions. This effect
       can be best accomplished with an \c io::proxy. */
   virtual void write_base_class(const char* base_class_name,
-                                nub::ref<const io::serializable> base_part);
+                                nub::ref<const io::serializable> base_part) override;
 
   /** Store an entire object hierarchy, starting with the root object
       \a root. All objects and values referenced by \a root will be
       stored recursively, until there are no more remaining
       references. */
-  virtual void write_root(const io::serializable* root);
+  virtual void write_root(const io::serializable* root) override;
 
 protected:
   /// Store the C-style string (\c char*) attribute \a val in association with the tag \a name.
-  virtual void write_cstring(const char* name, const char* val);
+  virtual void write_cstring(const char* name, const char* val) override;
 
 private:
   tcl::obj m_obj;

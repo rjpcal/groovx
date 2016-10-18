@@ -65,8 +65,8 @@ public:
   /// Virtual destructor.
   virtual ~GxSeparator() noexcept;
 
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Index type to refer to child nodes.
   typedef unsigned int ChildId;
@@ -90,12 +90,12 @@ public:
 
   /** Returns an iterator to all the children recursively contained in
       this object. */
-  virtual rutz::fwd_iter<const nub::ref<GxNode> > deepChildren();
+  virtual rutz::fwd_iter<const nub::ref<GxNode> > deepChildren() override;
 
-  virtual bool contains(GxNode* other) const;
+  virtual bool contains(GxNode* other) const override;
 
   /// Apply all of the contained objects' transformations to the cube.
-  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const override;
 
   /// Query whether debug-mode drawing is turned on.
   bool getDebugMode() const;
@@ -104,7 +104,7 @@ public:
   void setDebugMode(bool b);
 
   /// Draw all of the contained objects on \a canvas.
-  virtual void draw(Gfx::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const override;
 
 private:
   GxSeparator(const GxSeparator&);

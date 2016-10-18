@@ -50,10 +50,10 @@ public:
     itsVal(v), itsMsec(m)
   {}
 
-  virtual rutz::fstring value_typename() const;
+  virtual rutz::fstring value_typename() const override;
 
-  virtual void print_to(std::ostream& os) const;
-  virtual void scan_from(std::istream& is);
+  virtual void print_to(std::ostream& os) const override;
+  virtual void scan_from(std::istream& is) override;
 
   bool shouldIgnore() const { return itsVal == IGNORE; }
 

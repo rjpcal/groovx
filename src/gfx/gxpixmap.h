@@ -71,9 +71,9 @@ public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~GxPixmap() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /////////////
   // actions //
@@ -185,9 +185,9 @@ public:
 
 protected:
   /// Implements the \c GxShapeKit rendering operation.
-  virtual void grRender(Gfx::Canvas& canvas) const;
+  virtual void grRender(Gfx::Canvas& canvas) const override;
 
-  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
+  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const override;
 
 private:
   GxPixmap(const GxPixmap&);

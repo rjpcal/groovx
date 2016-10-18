@@ -52,9 +52,9 @@ public:
   /// Get the underlying color value.
   const Gfx::RgbaColor& color() const { return *this; }
 
-  virtual rutz::fstring value_typename() const;
+  virtual rutz::fstring value_typename() const override;
 
-  virtual const float* const_begin() const;
+  virtual const float* const_begin() const override;
 };
 
 #endif // !GROOVX_GFX_GBCOLOR_H_UTC20050626084024_DEFINED

@@ -44,9 +44,6 @@ namespace rutz
   public:
     multi_value(int num);
 
-    /// Get a string describing the underlying native type.
-    virtual rutz::fstring value_typename() const = 0;
-
     virtual void print_to(std::ostream& os) const;
     virtual void scan_from(std::istream& is);
 

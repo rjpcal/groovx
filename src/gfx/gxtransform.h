@@ -69,9 +69,9 @@ public:
   /// Virtual destructor.
   virtual ~GxTransform() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
 
   /// The translation vector.
@@ -101,10 +101,10 @@ public:
   const geom::txform& getTxform() const;
 
   /// Apply our transformation to the bbox.
-  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const override;
 
   /// Translate, scale, and rotate.
-  virtual void draw(Gfx::Canvas&) const;
+  virtual void draw(Gfx::Canvas&) const override;
 
 private:
   GxTransform(const GxTransform&);

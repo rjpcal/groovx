@@ -51,18 +51,18 @@ namespace rutz
     array_value(const rutz::fstring& s) { set_string(s); }
     virtual ~array_value() {}
 
-    virtual rutz::fstring value_typename() const
+    virtual rutz::fstring value_typename() const override
     {
       return rutz::fstring("array_value");
     }
 
-    virtual void print_to(std::ostream& os) const
+    virtual void print_to(std::ostream& os) const override
     {
       for (unsigned int i = 0; i < m_array.size(); ++i)
         os << m_array[i] << "   ";
     }
 
-    virtual void scan_from(std::istream& is)
+    virtual void scan_from(std::istream& is) override
     {
       std::vector<T> newarray;
 

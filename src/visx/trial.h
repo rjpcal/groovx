@@ -74,9 +74,9 @@ public:
 
   virtual ~Trial () noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   static const FieldMap& classFields();
 
@@ -130,25 +130,25 @@ public:
   // Element interface
   //
 
-  virtual const nub::soft_ref<Toglet>& getWidget() const;
+  virtual const nub::soft_ref<Toglet>& getWidget() const override;
 
   /// returns some user-defined info about relationship between objects in trial
-  virtual int trialType() const;
+  virtual int trialType() const override;
 
-  virtual int lastResponse() const;
+  virtual int lastResponse() const override;
 
   /// Overridden from Element.
-  virtual rutz::fstring vxInfo() const;
+  virtual rutz::fstring vxInfo() const override;
 
-  virtual void vxRun(Element& parent);
+  virtual void vxRun(Element& parent) override;
 
-  virtual void vxHalt() const;
+  virtual void vxHalt() const override;
 
-  virtual void vxReturn(ChildStatus s);
+  virtual void vxReturn(ChildStatus s) override;
 
-  virtual void vxUndo();
+  virtual void vxUndo() override;
 
-  virtual void vxReset();
+  virtual void vxReset() override;
 
   /////////////
   // actions //

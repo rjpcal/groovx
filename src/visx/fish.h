@@ -83,9 +83,9 @@ public:
   /// Virtual destructor.
   virtual ~Fish() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Get Fish's fields.
   static const FieldMap& classFields();
@@ -97,9 +97,9 @@ public:
   // properties //
   ////////////////
 
-  virtual int category() const
+  virtual int category() const override
     { return itsFishCategory; }
-  virtual void setCategory(int val)
+  virtual void setCategory(int val) override
     { itsFishCategory = val; this->sigNodeChanged.emit(); }
 
 private:
@@ -143,9 +143,9 @@ private:
   /////////////
 
 protected:
-  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
+  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const override;
 
-  virtual void grRender(Gfx::Canvas& canvas) const;
+  virtual void grRender(Gfx::Canvas& canvas) const override;
 };
 
 #endif // !GROOVX_VISX_FISH_H_UTC20050626084015_DEFINED

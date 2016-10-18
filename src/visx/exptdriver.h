@@ -88,23 +88,23 @@ public:
   /// Virtual destructor.
   virtual ~ExptDriver() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   //
   // Element interface
   //
 
-  virtual const nub::soft_ref<Toglet>& getWidget() const;
+  virtual const nub::soft_ref<Toglet>& getWidget() const override;
 
-  virtual void vxRun(Element& parent);
+  virtual void vxRun(Element& parent) override;
 
   /// End the current trial normally, and move on to the next trial.
-  virtual void vxEndTrialHook();
+  virtual void vxEndTrialHook() override;
 
   /// Stop the experiment since all child elements are finished.
-  virtual void vxAllChildrenFinished();
+  virtual void vxAllChildrenFinished() override;
 
   //////////////////////////////
   // Accessors + Manipulators //

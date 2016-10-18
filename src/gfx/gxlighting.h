@@ -57,9 +57,9 @@ public:
   /// Virtual destructor.
   virtual ~GxLighting() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   ////////////
   // fields //
@@ -84,10 +84,10 @@ public:
   /////////////
 
   /// A no-op, since lighting doesn't actually draw anything itself.
-  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const override;
 
   /// Draw the sphere.
-  virtual void draw(Gfx::Canvas&) const;
+  virtual void draw(Gfx::Canvas&) const override;
 
 private:
   GxLighting(const GxLighting&);

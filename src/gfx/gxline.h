@@ -58,9 +58,9 @@ public:
   /// Virtual destructor.
   virtual ~GxLine() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   ////////////
   // fields //
@@ -85,10 +85,10 @@ public:
   /////////////
 
   /// Extend the bounding cube for this line.
-  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const override;
 
   /// Draw the line.
-  virtual void draw(Gfx::Canvas&) const;
+  virtual void draw(Gfx::Canvas&) const override;
 
 private:
   GxLine(const GxLine&);

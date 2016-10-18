@@ -57,17 +57,17 @@ public:
   /// Factory function.
   static GxColor* make() { return new GxColor; }
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Get GxColor's fields.
   static const FieldMap& classFields();
 
   /// This is a no-op since GxColor doesn't actually draw anything onscreen.
-  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const override;
 
-  virtual void draw(Gfx::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const override;
 };
 
 #endif // !GROOVX_GFX_GXCOLOR_H_UTC20050626084024_DEFINED

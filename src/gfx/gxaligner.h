@@ -97,12 +97,12 @@ public:
   /// Set the alignment mode.
   void setMode(Mode new_mode) { itsMode = new_mode; }
 
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
-  virtual void draw(Gfx::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const override;
 
-  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const override;
 
 private:
   void doAlignment(Gfx::Canvas& canvas,

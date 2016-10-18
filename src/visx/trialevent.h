@@ -79,8 +79,8 @@ public:
   /// Destructor cancels any pending callback to \c invoke().
   virtual ~TrialEvent() noexcept;
 
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Return the current requested delay time, in milliseconds.
   unsigned int getDelay() const { return itsRequestedDelay; }
@@ -175,7 +175,7 @@ public:
   typedef void (Trial::* CallbackType)();
 
   /// Overridden to return the typename that was passed to the constructor.
-  virtual rutz::fstring obj_typename() const;
+  virtual rutz::fstring obj_typename() const override;
 
   /// Make a new event bound to a given Trial member function.
   static TrialMemFuncEvent* make(CallbackType callback,
@@ -191,7 +191,7 @@ protected:
   /// Virtual destructor.
   virtual ~TrialMemFuncEvent() noexcept;
 
-  virtual void invoke(Trial& trial);
+  virtual void invoke(Trial& trial) override;
 
 private:
   CallbackType itsCallback;
@@ -245,14 +245,14 @@ protected:
   /// Virtual destructor.
   virtual ~FileWriteEvent() noexcept;
 
-  virtual void invoke(Trial& trial);
+  virtual void invoke(Trial& trial) override;
 
 public:
   /// Default creator.
   static FileWriteEvent* make() { return new FileWriteEvent; }
 
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Get the byte that will be written to the file.
   int getByte() const;
@@ -284,14 +284,14 @@ protected:
   /// Virtual destructor.
   virtual ~GenericEvent() noexcept;
 
-  virtual void invoke(Trial& trial);
+  virtual void invoke(Trial& trial) override;
 
 public:
   /// Default creator.
   static GenericEvent* make() { return new GenericEvent; }
 
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Get a string containing the Tcl callback script.
   rutz::fstring getCallback() const;
@@ -321,14 +321,14 @@ protected:
   /// Virtual destructor.
   virtual ~MultiEvent() noexcept;
 
-  virtual void invoke(Trial& trial);
+  virtual void invoke(Trial& trial) override;
 
 public:
   /// Default creator.
   static MultiEvent* make() { return new MultiEvent; }
 
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Returns an iterator to all the events in the sequence.
   rutz::fwd_iter<const nub::ref<TrialEvent> > getEvents() const;

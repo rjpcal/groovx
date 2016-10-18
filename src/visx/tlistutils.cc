@@ -241,19 +241,19 @@ private:
 public:
   MatlabTrialWriter(std::ostream& os) : itsOs(os) {}
 
-  virtual void write_char(const char*, char) {}
-  virtual void write_int(const char*, int) {}
-  virtual void write_bool(const char*, bool) {}
-  virtual void write_double(const char*, double) {}
-  virtual void write_value_obj(const char*, const rutz::value&) {}
-  virtual void write_cstring(const char*, const char*) {}
+  virtual void write_char(const char*, char) override {}
+  virtual void write_int(const char*, int) override {}
+  virtual void write_bool(const char*, bool) override {}
+  virtual void write_double(const char*, double) override {}
+  virtual void write_value_obj(const char*, const rutz::value&) override {}
+  virtual void write_cstring(const char*, const char*) override {}
 
   virtual void write_byte_array(const char*,
                             const unsigned char*,
-                            unsigned int) {}
+                            unsigned int) override {}
 
   virtual void write_object(const char*,
-                           nub::soft_ref<const io::serializable> obj)
+                           nub::soft_ref<const io::serializable> obj) override
   {
     GVX_TRACE("MatlabTrialWriter::write_object");
     if (!obj.is_valid())
@@ -269,20 +269,20 @@ public:
   }
 
   virtual void write_owned_object(const char* name,
-                                nub::ref<const io::serializable> obj)
+                                nub::ref<const io::serializable> obj) override
   {
     GVX_TRACE("MatlabTrialWriter::write_owned_object");
     write_object(name, obj);
   }
 
   virtual void write_base_class(const char*,
-                                nub::ref<const io::serializable> base_part)
+                                nub::ref<const io::serializable> base_part) override
   {
     GVX_TRACE("MatlabTrialWriter::write_base_class");
     base_part->write_to(*this);
   }
 
-  virtual void write_root(const io::serializable* root)
+  virtual void write_root(const io::serializable* root) override
   {
     GVX_TRACE("MatlabTrialWriter::write_root");
     root->write_to(*this);

@@ -61,9 +61,9 @@ public:
   /// Virtual destructor.
   virtual ~Face () noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   ////////////////
   // properties //
@@ -76,7 +76,7 @@ public:
   // accessors //
   ///////////////
 
-  virtual int category() const;
+  virtual int category() const override;
 
 protected:
   /// Returns an array of Bezier control points for face outline.
@@ -93,14 +93,14 @@ protected:
   //////////////////
 
 public:
-  virtual void setCategory(int val);
+  virtual void setCategory(int val) override;
 
 protected:
-  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
+  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const override;
 
   /** Reimplements the \c GxShapeKit pure virtual function. It renders a
       face with the appropriate parameters. */
-  virtual void grRender(Gfx::Canvas& canvas) const;
+  virtual void grRender(Gfx::Canvas& canvas) const override;
 
 private:
   /** The category of the face. The semantics of \a category are

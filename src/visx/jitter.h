@@ -51,9 +51,9 @@ public:
   /// Virtual destructor.
   virtual ~Jitter() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   //////////////////
   // manipulators //
@@ -76,7 +76,7 @@ public:
   /////////////
 
 public:
-  virtual void draw(Gfx::Canvas&) const;
+  virtual void draw(Gfx::Canvas&) const override;
 
 private:
   void rejitter() const;

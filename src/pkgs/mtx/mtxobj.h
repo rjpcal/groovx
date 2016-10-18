@@ -59,7 +59,7 @@ public:
 
   static MtxObj* make() { return new MtxObj(mtx::empty_mtx()); }
 
-  virtual rutz::fstring obj_typename() const { return "mtx"; }
+  virtual rutz::fstring obj_typename() const override { return "mtx"; }
 };
 
 #endif // !GROOVX_PKGS_MTX_MTXOBJ_H_UTC20050626084022_DEFINED

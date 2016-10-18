@@ -50,9 +50,9 @@ public:
 
   virtual ~TimingHandler() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   // Accessors + Manipulators
   int getAbortWait() const;

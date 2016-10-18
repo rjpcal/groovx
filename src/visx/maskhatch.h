@@ -58,9 +58,9 @@ public:
   /// Virtual destructor.
   virtual ~MaskHatch() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   static const FieldMap& classFields();
 
@@ -79,9 +79,9 @@ private:
   void update();
 
 protected:
-  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
+  virtual void grGetBoundingBox(Gfx::Bbox& bbox) const override;
 
-  virtual void grRender(Gfx::Canvas& canvas) const;
+  virtual void grRender(Gfx::Canvas& canvas) const override;
 };
 
 #endif // !GROOVX_VISX_MASKHATCH_H_UTC20050626084016_DEFINED

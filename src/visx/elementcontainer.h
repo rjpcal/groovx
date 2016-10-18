@@ -57,29 +57,29 @@ public:
   /// Virtual destructor.
   virtual ~ElementContainer() noexcept;
 
-  virtual void read_from(io::reader& reader);
+  virtual void read_from(io::reader& reader) override;
 
-  virtual void write_to(io::writer& writer) const;
+  virtual void write_to(io::writer& writer) const override;
 
   //
   // Element base interface
   //
 
   /// Returns the trial type of the current element.
-  virtual int trialType() const;
+  virtual int trialType() const override;
 
   /// Returns the last valid response.
   /** But note that "valid" does not necessarily mean "correct". */
-  virtual int lastResponse() const;
+  virtual int lastResponse() const override;
 
   /// Returns a string naming the current element, plus a count of completed elements.
-  virtual rutz::fstring vxInfo() const;
+  virtual rutz::fstring vxInfo() const override;
 
   /// Halt the current child element.
-  virtual void vxHalt() const;
+  virtual void vxHalt() const override;
 
   /// Delegates partially on to vxAllChildrenFinished().
-  virtual void vxReturn(ChildStatus s);
+  virtual void vxReturn(ChildStatus s) override;
 
   /// Undo the previous element.
   /** The state of the experiment is restored to what it was just prior to
@@ -88,10 +88,10 @@ public:
       and the response to the most recently successfully completed element
       is erased. After a call to vxUndo(), the next invocation of
       vxRun() will redo the element that was undone in the present command.*/
-  virtual void vxUndo();
+  virtual void vxUndo() override;
 
   /// Reset all of the contained child elements.
-  virtual void vxReset();
+  virtual void vxReset() override;
 
   //
   // Container interface

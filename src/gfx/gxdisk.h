@@ -54,9 +54,9 @@ public:
   /// Virtual destructor.
   virtual ~GxDisk() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   ////////////
   // fields //
@@ -78,10 +78,10 @@ public:
   /////////////
 
   /// Get the bounding cube for the cylinder.
-  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const override;
 
   /// Draw the cylinder.
-  virtual void draw(Gfx::Canvas&) const;
+  virtual void draw(Gfx::Canvas&) const override;
 
 private:
   GxDisk(const GxDisk&);

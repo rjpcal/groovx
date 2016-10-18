@@ -108,30 +108,30 @@ namespace
 
     virtual ~asw_writer() noexcept;
 
-    virtual void write_char(const char* name, char val);
-    virtual void write_int(const char* name, int val);
-    virtual void write_bool(const char* name, bool val);
-    virtual void write_double(const char* name, double val);
-    virtual void write_value_obj(const char* name, const rutz::value& v);
+    virtual void write_char(const char* name, char val) override;
+    virtual void write_int(const char* name, int val) override;
+    virtual void write_bool(const char* name, bool val) override;
+    virtual void write_double(const char* name, double val) override;
+    virtual void write_value_obj(const char* name, const rutz::value& v) override;
 
     virtual void write_byte_array(const char* name,
                                   const unsigned char* data,
-                                  unsigned int length)
+                                  unsigned int length) override
     { default_write_byte_array(name, data, length); }
 
     virtual void write_object(const char* name,
-                              nub::soft_ref<const io::serializable> obj);
+                              nub::soft_ref<const io::serializable> obj) override;
 
     virtual void write_owned_object(const char* name,
-                                    nub::ref<const io::serializable> obj);
+                                    nub::ref<const io::serializable> obj) override;
 
     virtual void write_base_class(const char* base_class_name,
-                                  nub::ref<const io::serializable> base_part);
+                                  nub::ref<const io::serializable> base_part) override;
 
-    virtual void write_root(const io::serializable* root);
+    virtual void write_root(const io::serializable* root) override;
 
   protected:
-    virtual void write_cstring(const char* name, const char* val);
+    virtual void write_cstring(const char* name, const char* val) override;
 
   private:
     shared_ptr<std::ostream>                           m_owned_stream;

@@ -48,31 +48,31 @@ namespace
   public:
     counting_writer() : m_count(0) {}
 
-    virtual void write_char(const char*, char)             { ++m_count; }
-    virtual void write_int(const char*, int)               { ++m_count; }
-    virtual void write_bool(const char*, bool)             { ++m_count; }
-    virtual void write_double(const char*, double)         { ++m_count; }
-    virtual void write_cstring(const char*, const char*)   { ++m_count; }
-    virtual void write_value_obj(const char*, const rutz::value&) { ++m_count; }
+    virtual void write_char(const char*, char) override             { ++m_count; }
+    virtual void write_int(const char*, int) override               { ++m_count; }
+    virtual void write_bool(const char*, bool) override             { ++m_count; }
+    virtual void write_double(const char*, double) override         { ++m_count; }
+    virtual void write_cstring(const char*, const char*) override   { ++m_count; }
+    virtual void write_value_obj(const char*, const rutz::value&) override { ++m_count; }
 
     virtual void write_byte_array(const char*,
                                   const unsigned char*,
-                                  unsigned int)
+                                  unsigned int) override
     { ++m_count; }
 
     virtual void write_object(const char*,
-                              soft_ref<const io::serializable>)
+                              soft_ref<const io::serializable>) override
     { ++m_count; }
 
     virtual void write_owned_object(const char*,
-                                    ref<const io::serializable>)
+                                    ref<const io::serializable>) override
     { ++m_count; }
 
     virtual void write_base_class(const char*,
-                                  ref<const io::serializable>)
+                                  ref<const io::serializable>) override
     { ++m_count; }
 
-    virtual void write_root(const io::serializable*) {}
+    virtual void write_root(const io::serializable*) override {}
 
     unsigned int get_count() const { return m_count; }
 

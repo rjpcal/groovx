@@ -61,17 +61,17 @@ private:
   int linePattern;
 
 public:
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Get GxDrawStyle's fields.
   static const FieldMap& classFields();
 
   /// A no-op since GxDrawStyle doesn't actually draw anything onscreen.
-  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const override;
 
-  virtual void draw(Gfx::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const override;
 };
 
 #endif // !GROOVX_GFX_GXDRAWSTYLE_H_UTC20050626084025_DEFINED

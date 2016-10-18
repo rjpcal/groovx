@@ -61,12 +61,12 @@ public:
   /// Change the gap between the child object and the boundary.
   void setPercentBorder(int pixels) { itsPercentBorder = pixels; }
 
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
-  virtual void draw(Gfx::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const override;
 
-  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const override;
 
 private:
   bool isItVisible;

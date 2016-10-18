@@ -75,15 +75,15 @@ public:
   /// Virtual destructor.
   virtual ~GxCache() noexcept;
 
-  io::version_id class_version_id() const;
+  virtual io::version_id class_version_id() const override;
 
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Draw using the current draw mode.
-  virtual void draw(Gfx::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const override;
 
-  virtual void getBoundingCube(Gfx::Bbox& bbox) const;
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const override;
 
   /// Invalidate any current cache.
   void invalidate() noexcept;

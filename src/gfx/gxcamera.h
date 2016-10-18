@@ -89,11 +89,11 @@ public:
   /// Get GxPerspectiveCamera's fields.
   static const FieldMap& classFields();
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
-  virtual void draw(Gfx::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const override;
 
 private:
   double itsFovY;
@@ -174,9 +174,9 @@ public:
   /// Get GxFixedScaleCamera's fields.
   static const FieldMap& classFields();
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Get the log-base-10 of the pixels-per-unit factor.
   double getLogPixelsPerUnit() const;
@@ -188,7 +188,7 @@ public:
   /// Set the pixels-per-unit factor.
   void setPixelsPerUnit(double s);
 
-  virtual void draw(Gfx::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const override;
 
 private:
   double itsPixelsPerUnit;
@@ -212,9 +212,9 @@ public:
   /// Get GxPsyphyCamera's fields.
   static const FieldMap& classFields();
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Get the degrees of visual angle corresponding to one OpenGL unit.
   double getUnitAngle() const { return itsDegreesPerUnit; }
@@ -226,7 +226,7 @@ public:
   /// Set the observer's viewing distance in inches.
   void setViewingDistIn(double inches);
 
-  virtual void draw(Gfx::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const override;
 
 private:
   double itsDegreesPerUnit;

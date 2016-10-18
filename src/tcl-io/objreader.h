@@ -51,44 +51,44 @@ public:
 
   /** Returns the serialization version id that was stored with the
       object currently being read. */
-  virtual io::version_id input_version_id();
+  virtual io::version_id input_version_id() override;
 
   /// Read the \c char attribute associated with the tag \a name.
-  virtual char read_char(const rutz::fstring& name);
+  virtual char read_char(const rutz::fstring& name) override;
 
   /// Read the \c int attribute associated with the tag \a name.
-  virtual int read_int(const rutz::fstring& name);
+  virtual int read_int(const rutz::fstring& name) override;
 
   /// Read the \c bool attribute associated with the tag \a name.
-  virtual bool read_bool(const rutz::fstring& name);
+  virtual bool read_bool(const rutz::fstring& name) override;
 
   /// Read the \c double attribute associated with the tag \a name.
-  virtual double read_double(const rutz::fstring& name);
+  virtual double read_double(const rutz::fstring& name) override;
 
   /// Read the \c rutz::value attribute associated with the tag \a name.
   virtual void read_value_obj(const rutz::fstring& name,
-                            rutz::value& v);
+                            rutz::value& v) override;
 
   /// Read the raw data array associated with the tag \a name.
   virtual void read_byte_array(const rutz::fstring& name,
-                           rutz::byte_array& data);
+                           rutz::byte_array& data) override;
 
   /** Get a \c nub::ref associated with the tag \a name. A new object
       of the appropriate type will be created and inserted into the \c
       nub::objectdb, if necessary. */
-  virtual nub::ref<io::serializable> read_object(const rutz::fstring& name);
+  virtual nub::ref<io::serializable> read_object(const rutz::fstring& name) override;
 
   /** Get a \c soft_ref associated with the tag \a name. If no such
       object exists, a null object is returned; otherwise, a new
       object of the appropriate type will be created and inserted into
       the \c nub::objectdb, if necessary. */
-  virtual nub::soft_ref<io::serializable> read_weak_object(const rutz::fstring& name);
+  virtual nub::soft_ref<io::serializable> read_weak_object(const rutz::fstring& name) override;
 
   /** Restore the state of the io object \a obj, associated with the
       tag \a name. The io::reader will not create a new object, but
       will use the io* provided here. */
   virtual void read_owned_object(const rutz::fstring& name,
-                                 nub::ref<io::serializable> obj);
+                                 nub::ref<io::serializable> obj) override;
 
   /** Read the named base class into the io object \a obj, which
       should be arranged to point or refer to the appropriate base
@@ -96,18 +96,18 @@ public:
       functions must NOT call the fully derived versions. This effect
       can be best accomplished with an \c io::proxy. */
   virtual void read_base_class(const rutz::fstring& base_class_name,
-                               nub::ref<io::serializable> base_part);
+                               nub::ref<io::serializable> base_part) override;
 
   /** Restore an entire object hierarchy, starting with the root
       object. If \a root is non-null, the function will use \a root as
       the root object. Otherwise the function will create a new root
       object. In either case, the function returns the object that was
       actually used as the root object. */
-  virtual nub::ref<io::serializable> read_root(io::serializable* root=0);
+  virtual nub::ref<io::serializable> read_root(io::serializable* root=0) override;
 
 protected:
   /// Read the string attribute associated with the tag \a name.
-  virtual rutz::fstring read_string_impl(const rutz::fstring& name);
+  virtual rutz::fstring read_string_impl(const rutz::fstring& name) override;
 
 private:
   const tcl::obj m_obj;

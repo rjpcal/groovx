@@ -71,26 +71,26 @@ public:
   /// Virtual destructor ensures correct destruction of subclasses.
   virtual ~Block() noexcept;
 
-  virtual io::version_id class_version_id() const;
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual io::version_id class_version_id() const override;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   //
   // Element interface
   //
 
-  virtual const nub::soft_ref<Toglet>& getWidget() const;
+  virtual const nub::soft_ref<Toglet>& getWidget() const override;
 
   /// Starts the current element.
   /** This will be called by vxReturn() as needed. */
-  virtual void vxRun(Element& parent);
+  virtual void vxRun(Element& parent) override;
 
   /// Prepares the Block to start the next element. */
-  virtual void vxEndTrialHook();
+  virtual void vxEndTrialHook() override;
 
 protected:
   /// Pass control back to the parent since all child elements are finished.
-  virtual void vxAllChildrenFinished();
+  virtual void vxAllChildrenFinished() override;
 
 private:
   Block(const Block&);

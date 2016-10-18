@@ -70,8 +70,8 @@ public:
 
   virtual ~Sound() noexcept;
 
-  virtual void read_from(io::reader& reader);
-  virtual void write_to(io::writer& writer) const;
+  virtual void read_from(io::reader& reader) override;
+  virtual void write_to(io::writer& writer) const override;
 
   /// Play the sound.
   /** This will load the sound file from disk if it has not yet been
