@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_IO_OBJREADER_CC_UTC20051108233806_DEFINED
-#define GROOVX_TCL_IO_OBJREADER_CC_UTC20051108233806_DEFINED
-
 #include "tcl-io/objreader.h"
 
 #include "io/io.h"
@@ -123,5 +120,3 @@ rutz::fstring tcl::obj_reader::read_string_impl(const rutz::fstring& /*name*/)
 {
   return tcl::convert_to<rutz::fstring>(m_obj);
 }
-
-#endif // !GROOVX_TCL_IO_OBJREADER_CC_UTC20051108233806DEFINED

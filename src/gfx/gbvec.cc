@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GBVEC_CC_UTC20050626084025_DEFINED
-#define GROOVX_GFX_GBVEC_CC_UTC20050626084025_DEFINED
-
 #include "gfx/gbvec.h"
 
 #include "rutz/fstring.h"
@@ -71,5 +68,3 @@ template class GbVec2<double>;
 
 template class GbVec3<int>;
 template class GbVec3<double>;
-
-#endif // !GROOVX_GFX_GBVEC_CC_UTC20050626084025_DEFINED

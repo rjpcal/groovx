@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_JITTER_CC_UTC20050626084016_DEFINED
-#define GROOVX_VISX_JITTER_CC_UTC20050626084016_DEFINED
-
 #include "visx/jitter.h"
 
 #include "geom/vec3.h"
@@ -141,5 +138,3 @@ GVX_TRACE("Jitter::draw");
   // Rotate
   canvas.rotate(rotationAxis, itsRotationAngle+itsRShift);
 }
-
-#endif // !GROOVX_VISX_JITTER_CC_UTC20050626084016_DEFINED

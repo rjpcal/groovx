@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_COMMAND_CC_UTC20050628162421_DEFINED
-#define GROOVX_TCL_COMMAND_CC_UTC20050628162421_DEFINED
-
 #include "tcl/command.h"
 
 #include "rutz/fstring.h"
@@ -203,5 +200,3 @@ void tcl::call_context::set_obj_result(const tcl::obj& obj)
 GVX_TRACE("tcl::call_context::set_obj_result");
   m_interp.set_result(obj);
 }
-
-#endif // !GROOVX_TCL_COMMAND_CC_UTC20050628162421_DEFINED

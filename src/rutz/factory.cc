@@ -31,9 +31,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_FACTORY_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_FACTORY_CC_UTC20050626084020_DEFINED
-
 #include "factory.h"
 
 #include "rutz/trace.h"
@@ -98,5 +95,3 @@ GVX_TRACE("rutz::factory_base::try_fallback");
   if (m_fallback.get() != 0)
     m_fallback->try_fallback(key);
 }
-
-#endif // !GROOVX_RUTZ_FACTORY_CC_UTC20050626084020_DEFINED

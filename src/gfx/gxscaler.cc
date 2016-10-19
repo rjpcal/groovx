@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXSCALER_CC_UTC20050626084023_DEFINED
-#define GROOVX_GFX_GXSCALER_CC_UTC20050626084023_DEFINED
-
 #include "gxscaler.h"
 
 #include "geom/box.h"
@@ -249,5 +246,3 @@ GVX_TRACE("GxScaler::getBoundingCube");
 
   dbg_dump(2, bbox.cube());
 }
-
-#endif // !GROOVX_GFX_GXSCALER_CC_UTC20050626084023_DEFINED

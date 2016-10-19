@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXMATERIAL_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_GXMATERIAL_CC_UTC20050626084024_DEFINED
-
 #include "gfx/gxmaterial.h"
 
 #include "gfx/glcanvas.h"
@@ -131,5 +128,3 @@ GVX_TRACE("GxMaterial::draw");
                      &ambientColor,
                      &shininess);
 }
-
-#endif // !GROOVX_GFX_GXMATERIAL_CC_UTC20050626084024_DEFINED

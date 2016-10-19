@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_BACKTRACEFORMAT_CC_UTC20050630214129_DEFINED
-#define GROOVX_RUTZ_BACKTRACEFORMAT_CC_UTC20050630214129_DEFINED
-
 #include "rutz/backtraceformat.h"
 
 #include "rutz/backtrace.h"
@@ -71,5 +68,3 @@ rutz::fstring rutz::format(const rutz::backtrace& bt)
 
   return rutz::fstring(result.str().c_str());
 }
-
-#endif // !GROOVX_RUTZ_BACKTRACEFORMAT_CC_UTC20050630214129DEFINED

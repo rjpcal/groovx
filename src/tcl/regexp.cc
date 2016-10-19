@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_REGEXP_CC_UTC20050628162420_DEFINED
-#define GROOVX_TCL_REGEXP_CC_UTC20050628162420_DEFINED
-
 #include "tcl/regexp.h"
 
 #include "rutz/error.h"
@@ -88,5 +85,3 @@ bool tcl::regexp::matches_string(const char* str)
 
   return false;
 }
-
-#endif // !GROOVX_TCL_REGEXP_CC_UTC20050628162420_DEFINED

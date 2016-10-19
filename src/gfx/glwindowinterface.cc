@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GLWINDOWINTERFACE_CC_UTC20050626084023_DEFINED
-#define GROOVX_GFX_GLWINDOWINTERFACE_CC_UTC20050626084023_DEFINED
-
 #include "glwindowinterface.h"
 
 #include "rutz/trace.h"
@@ -40,5 +37,3 @@ GlWindowInterface::~GlWindowInterface()
 {
 GVX_TRACE("GlWindowInterface::~GlWindowInterface");
 }
-
-#endif // !GROOVX_GFX_GLWINDOWINTERFACE_CC_UTC20050626084023_DEFINED

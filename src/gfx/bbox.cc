@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_BBOX_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_BBOX_CC_UTC20050626084024_DEFINED
-
 #include "bbox.h"
 
 #include "geom/box.h"
@@ -234,5 +231,3 @@ rectd Gfx::Bbox::rect() const
 GVX_TRACE("Gfx::Bbox::rect");
   return rep->cube.rect();
 }
-
-#endif // !GROOVX_GFX_BBOX_CC_UTC20050626084024_DEFINED

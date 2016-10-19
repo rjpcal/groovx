@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TK_WIDGET_CC_UTC20050628165845_DEFINED
-#define GROOVX_TK_WIDGET_CC_UTC20050628165845_DEFINED
-
 #include "tk/widget.h"
 
 #include "geom/vec2.h"
@@ -779,5 +776,3 @@ void tcl::TkWidget::hook()
   sigButtonPressed.connect(rep, &TkWidgImpl::dbgButtonPress);
   sigKeyPressed.connect(rep, &TkWidgImpl::dbgKeyPress);
 }
-
-#endif // !GROOVX_TK_WIDGET_CC_UTC20050628165845_DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXLINE_CC_UTC20050626084025_DEFINED
-#define GROOVX_GFX_GXLINE_CC_UTC20050626084025_DEFINED
-
 #include "gxline.h"
 
 #include "geom/box.h"
@@ -140,5 +137,3 @@ GVX_TRACE("GxLine::draw");
   canvas.vertex3(start.vec());
   canvas.vertex3(stop.vec());
 }
-
-#endif // !GROOVX_GFX_GXLINE_CC_UTC20050626084025_DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_IOUTIL_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_IOUTIL_CC_UTC20050626084021_DEFINED
-
 #include "io/ioutil.h"
 
 #include "io/asciistreamreader.h"
@@ -126,5 +123,3 @@ nub::ref<io::serializable> io::retrieve_asw(fstring fname)
   shared_ptr<io::reader> reader = io::make_asw_reader(fname.c_str());
   return reader->read_root();
 }
-
-#endif // !GROOVX_IO_IOUTIL_CC_UTC20050626084021_DEFINED

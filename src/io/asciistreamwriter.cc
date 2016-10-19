@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_ASCIISTREAMWRITER_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_ASCIISTREAMWRITER_CC_UTC20050626084021_DEFINED
-
 #include "io/asciistreamwriter.h"
 
 #include "io/attribcount.h"
@@ -364,5 +361,3 @@ shared_ptr<io::writer> io::make_asw_writer(const char* filename)
 {
   return rutz::make_shared(new asw_writer(filename));
 }
-
-#endif // !GROOVX_IO_ASCIISTREAMWRITER_CC_UTC20050626084021_DEFINED

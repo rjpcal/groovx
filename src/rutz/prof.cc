@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_PROF_CC_UTC20050630214713_DEFINED
-#define GROOVX_RUTZ_PROF_CC_UTC20050630214713_DEFINED
-
 #include "rutz/prof.h"
 
 #include "rutz/abort.h"
@@ -313,5 +310,3 @@ void rutz::prof::print_all_prof_data(std::ostream& os) noexcept
         all_profs()[i]->print_prof_data(os);
     }
 }
-
-#endif // !GROOVX_RUTZ_PROF_CC_UTC20050630214713DEFINED

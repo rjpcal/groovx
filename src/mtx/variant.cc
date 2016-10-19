@@ -9,11 +9,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_MTX_VARIANT_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_MTX_VARIANT_CC_UTC20050626084022_DEFINED
-
 #include "variant.h"
 
 dash::variant::~variant() {}
-
-#endif // !GROOVX_PKGS_MTX_VARIANT_CC_UTC20050626084022_DEFINED

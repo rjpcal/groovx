@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TRACERTCL_CC_UTC20050626084018_DEFINED
-#define GROOVX_TCL_TRACERTCL_CC_UTC20050626084018_DEFINED
-
 #include "tcl/tracertcl.h"
 
 #include "tcl/pkg.h"
@@ -47,5 +44,3 @@ void tcl::def_tracing(tcl::pkg* pkg, rutz::tracer& t)
   pkg->def( "traceToggle", "", bind_first(mem_func(&tracer::toggle), &t), SRC_POS );
   pkg->def( "traceStatus", "", bind_first(mem_func(&tracer::status), &t), SRC_POS );
 }
-
-#endif // !GROOVX_TCL_TRACERTCL_CC_UTC20050626084018_DEFINED

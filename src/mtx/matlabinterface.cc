@@ -10,9 +10,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_MTX_MATLABINTERFACE_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_MTX_MATLABINTERFACE_CC_UTC20050626084022_DEFINED
-
 #include "matlabinterface.h"
 
 #ifndef GVX_NO_MATLAB
@@ -77,5 +74,3 @@ GVX_TRACE("make_mxarray");
 }
 
 #endif // HAVE_MATLAB
-
-#endif // !GROOVX_PKGS_MTX_MATLABINTERFACE_CC_UTC20050626084022_DEFINED

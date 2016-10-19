@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TRIAL_CC_UTC20050626084015_DEFINED
-#define GROOVX_VISX_TRIAL_CC_UTC20050626084015_DEFINED
-
 #include "trial.h"
 
 #include "gfx/canvas.h"
@@ -57,7 +54,6 @@
 #include <sstream>
 #include <vector>
 
-#define GVX_DYNAMIC_TRACE_EXPR Trial::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
@@ -679,5 +675,3 @@ GVX_TRACE("Trial::trDenyResponses");
 
   rep->activeState->rh->rhDenyResponses();
 }
-
-#endif // !GROOVX_VISX_TRIAL_CC_UTC20050626084015_DEFINED

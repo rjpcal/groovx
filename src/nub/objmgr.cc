@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_OBJMGR_CC_UTC20050626084019_DEFINED
-#define GROOVX_NUB_OBJMGR_CC_UTC20050626084019_DEFINED
-
 #include "objmgr.h"
 
 #include "nub/objfactory.h"
@@ -50,5 +47,3 @@ nub::soft_ref<nub::object> nub::obj_mgr::new_obj(const rutz::fstring& type)
 GVX_TRACE("nub::obj_mgr::new_obj(const fstring&)");
   return soft_ref<object>(obj_factory::instance().new_checked_object(type));
 }
-
-#endif // !GROOVX_NUB_OBJMGR_CC_UTC20050626084019_DEFINED

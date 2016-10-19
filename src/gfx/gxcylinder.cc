@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXCYLINDER_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_GXCYLINDER_CC_UTC20050626084024_DEFINED
-
 #include "gxcylinder.h"
 
 #include "geom/box.h"
@@ -137,5 +134,3 @@ GVX_TRACE("GxCylinder::draw");
   canvas.drawCylinder(itsBase, itsTop, itsHeight,
                       itsSlices, itsStacks, itsFilled);
 }
-
-#endif // !GROOVX_GFX_GXCYLINDER_CC_UTC20050626084024_DEFINED

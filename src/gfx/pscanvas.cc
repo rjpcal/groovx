@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_PSCANVAS_CC_UTC20050626084023_DEFINED
-#define GROOVX_GFX_PSCANVAS_CC_UTC20050626084023_DEFINED
-
 #include "pscanvas.h"
 
 #include "geom/rect.h"
@@ -1147,5 +1144,3 @@ void Gfx::PSCanvas::flushOutput()
 GVX_TRACE("Gfx::PSCanvas::flushOutput");
   rep->itsFstream << std::flush;
 }
-
-#endif // !GROOVX_GFX_PSCANVAS_CC_UTC20050626084023_DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_HANDLE_CC_UTC20051116170110_DEFINED
-#define GROOVX_NUB_HANDLE_CC_UTC20051116170110_DEFINED
-
 #include "nub/handle.h"
 
 #include "rutz/demangle.h"
@@ -55,5 +52,3 @@ void nub::detail::throw_ref_unshareable(const std::type_info& info,
                                rutz::demangled_name(info)),
                     pos);
 }
-
-#endif // !GROOVX_NUB_HANDLE_CC_UTC20051116170110DEFINED

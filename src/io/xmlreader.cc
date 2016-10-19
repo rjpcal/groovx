@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_XMLREADER_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_XMLREADER_CC_UTC20050626084021_DEFINED
-
 #include "io/xmlreader.h"
 
 #include "io/reader.h"
@@ -602,5 +599,3 @@ GVX_TRACE("io::xml_debug");
   object_element& root = x.get_root();
   root.trace(std::cout, 0, "root");
 }
-
-#endif // !GROOVX_IO_XMLREADER_CC_UTC20050626084021_DEFINED

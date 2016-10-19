@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_SHARED_PTR_CC_UTC20070412044845_DEFINED
-#define GROOVX_RUTZ_SHARED_PTR_CC_UTC20070412044845_DEFINED
-
 #include "rutz/shared_ptr.h"
 
 namespace
@@ -57,5 +54,3 @@ void rutz::shared_ptr_aux::check_ptr(const void* p)
 /* Local Variables: */
 /* indent-tabs-mode: nil */
 /* End: */
-
-#endif // !GROOVX_RUTZ_SHARED_PTR_CC_UTC20070412044845DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_MORPHYFACE_CC_UTC20050626084017_DEFINED
-#define GROOVX_VISX_MORPHYFACE_CC_UTC20050626084017_DEFINED
-
 #include "visx/morphyface.h"
 
 #include "geom/bezier4.h"
@@ -528,5 +525,3 @@ GVX_TRACE("MorphyFace::grGetBoundingBox");
 
   bbox.drawRect(geom::rect<double>::ltrb(l,t,r,b));
 }
-
-#endif // !GROOVX_VISX_MORPHYFACE_CC_UTC20050626084017_DEFINED

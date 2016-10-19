@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXRASTERFONT_CC_UTC20050626084023_DEFINED
-#define GROOVX_GFX_GXRASTERFONT_CC_UTC20050626084023_DEFINED
-
 #include "gxrasterfont.h"
 
 #include "rutz/trace.h"
@@ -40,5 +37,3 @@ GxRasterFont::~GxRasterFont() noexcept
 {
 GVX_TRACE("GxRasterFont::~GxRasterFont");
 }
-
-#endif // !GROOVX_GFX_GXRASTERFONT_CC_UTC20050626084023_DEFINED

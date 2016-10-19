@@ -27,9 +27,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_OBJPKG_CC_UTC20050626084017_DEFINED
-#define GROOVX_TCL_OBJPKG_CC_UTC20050626084017_DEFINED
-
 #include "objpkg.h"
 
 #include "nub/objdb.h"
@@ -144,5 +141,3 @@ GVX_TRACE("tcl::def_basic_type_cmds");
   pkg->def( "sizeof", "",
             rutz::bind_first(get_sizeof, caster), src_pos, flags );
 }
-
-#endif // !GROOVX_TCL_OBJPKG_CC_UTC20050626084017_DEFINED

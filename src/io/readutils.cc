@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_READUTILS_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_READUTILS_CC_UTC20050626084021_DEFINED
-
 #include "io/readutils.h"
 
 #include "rutz/fstring.h"
@@ -49,5 +46,3 @@ fstring io::read_utils::make_seq_length_name(const fstring& seq_name)
 {
   return rutz::sfmt("%sCount", seq_name.c_str());
 }
-
-#endif // !GROOVX_IO_READUTILS_CC_UTC20050626084021_DEFINED

@@ -30,9 +30,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_TRACE_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_TRACE_CC_UTC20050626084020_DEFINED
-
 #include "rutz/trace.h"
 
 #include "rutz/backtrace.h"
@@ -160,5 +157,3 @@ rutz::trace::~trace() noexcept
   if (this->m_should_print_msg)
     print_out(this->m_prof.context_name());
 }
-
-#endif // !GROOVX_RUTZ_TRACE_CC_UTC20050626084020_DEFINED

@@ -28,14 +28,9 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_SCHEDULER_CC_UTC20050626084019_DEFINED
-#define GROOVX_NUB_SCHEDULER_CC_UTC20050626084019_DEFINED
-
 #include "scheduler.h"
 
 nub::timer_token::timer_token() {}
 nub::timer_token::~timer_token() noexcept {}
 
 nub::scheduler::~scheduler() noexcept {}
-
-#endif // !GROOVX_NUB_SCHEDULER_CC_UTC20050626084019_DEFINED

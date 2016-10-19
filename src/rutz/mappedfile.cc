@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_MAPPEDFILE_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_MAPPEDFILE_CC_UTC20050626084020_DEFINED
-
 #include "mappedfile.h"
 
 #include "rutz/error.h"
@@ -81,5 +78,3 @@ rutz::mapped_infile::~mapped_infile()
   munmap(m_mem, size_t(m_statbuf.st_size));
   close(m_fileno);
 }
-
-#endif // !GROOVX_RUTZ_MAPPEDFILE_CC_UTC20050626084020_DEFINED

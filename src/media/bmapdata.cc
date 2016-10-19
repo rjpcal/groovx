@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_MEDIA_BMAPDATA_CC_UTC20050626084018_DEFINED
-#define GROOVX_MEDIA_BMAPDATA_CC_UTC20050626084018_DEFINED
-
 #include "bmapdata.h"
 
 #include "geom/vec2.h"
@@ -473,5 +470,3 @@ GVX_TRACE("media::bmap_data::make_scrambled");
 
   return result;
 }
-
-#endif // !GROOVX_MEDIA_BMAPDATA_CC_UTC20050626084018_DEFINED

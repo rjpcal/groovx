@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_REFCOUNTED_CC_UTC20050626084018_DEFINED
-#define GROOVX_NUB_REFCOUNTED_CC_UTC20050626084018_DEFINED
-
 #include "refcounted.h"
 
 #include "rutz/error.h"
@@ -258,5 +255,3 @@ int nub::ref_counted::dbg_weak_ref_count() const noexcept
 {
   return m_ref_counts->m_weak.atomic_get();
 }
-
-#endif // !GROOVX_NUB_REFCOUNTED_CC_UTC20050626084018_DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TK_TCLPKG_WIDGET_CC_UTC20050628165845_DEFINED
-#define GROOVX_TK_TCLPKG_WIDGET_CC_UTC20050628165845_DEFINED
-
 #include "tk/tclpkg-widget.h"
 
 #include "tcl/objpkg.h"
@@ -74,5 +71,3 @@ GVX_TRACE("Tkwidget_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_TK_TCLPKG_WIDGET_CC_UTC20050628165845_DEFINED

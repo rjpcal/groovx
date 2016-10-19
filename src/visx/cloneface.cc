@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_CLONEFACE_CC_UTC20050626084017_DEFINED
-#define GROOVX_VISX_CLONEFACE_CC_UTC20050626084017_DEFINED
-
 #include "visx/cloneface.h"
 
 #include "io/ioproxy.h"
@@ -141,5 +138,3 @@ double CloneFace::getVertOffset() const
 GVX_TRACE("CloneFace::getVertOffset");
   return itsVertOffset;
 }
-
-#endif // !GROOVX_VISX_CLONEFACE_CC_UTC20050626084017_DEFINED

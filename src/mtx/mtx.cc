@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_MTX_MTX_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_MTX_MTX_CC_UTC20050626084022_DEFINED
-
 #include "mtx.h"
 
 #include "rutz/cstrstream.h"
@@ -1022,5 +1019,3 @@ mtx max(const mtx& m1, const mtx& m2)
 GVX_TRACE("max(mtx, mtx)");
   return binary_op(m1, m2, dash::max());
 }
-
-#endif // !GROOVX_PKGS_MTX_MTX_CC_UTC20050626084022_DEFINED

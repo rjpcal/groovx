@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GEOM_PROJECTION_CC_UTC20050626084023_DEFINED
-#define GROOVX_GEOM_PROJECTION_CC_UTC20050626084023_DEFINED
-
 #include "projection.h"
 
 #include "geom/rect.h"
@@ -75,5 +72,3 @@ GVX_TRACE("geom::project");
                viewport.bottom() + 0.5 * (s1.y()+1) * viewport.height(),
                0.5 * (s1.z()+1));
 }
-
-#endif // !GROOVX_GEOM_PROJECTION_CC_UTC20050626084023_DEFINED

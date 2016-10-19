@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TIMERSCHEDULER_CC_UTC20050628162421_DEFINED
-#define GROOVX_TCL_TIMERSCHEDULER_CC_UTC20050628162421_DEFINED
-
 #include "tcl/timerscheduler.h"
 
 #include "tcl/eventloop.h"
@@ -140,5 +137,3 @@ GVX_TRACE("tcl::timer_scheduler::schedule");
   return rutz::shared_ptr<nub::timer_token>
     (new tcl::timer_scheduler_token(msec, callback, clientdata));
 }
-
-#endif // !GROOVX_TCL_TIMERSCHEDULER_CC_UTC20050628162421_DEFINED

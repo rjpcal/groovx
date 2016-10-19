@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_WEAK_HANDLE_CC_UTC20051116165950_DEFINED
-#define GROOVX_NUB_WEAK_HANDLE_CC_UTC20051116165950_DEFINED
-
 #include "nub/weak_handle.h"
 
 #include "rutz/error.h"
@@ -46,5 +43,3 @@ void nub::detail::throw_soft_ref_invalid(const std::type_info& info,
                                rutz::demangled_name(info)),
                     pos);
 }
-
-#endif // !GROOVX_NUB_WEAK_HANDLE_CC_UTC20051116165950DEFINED

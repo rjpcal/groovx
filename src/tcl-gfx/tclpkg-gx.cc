@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_TCLPKG_GX_CC_UTC20050628170310_DEFINED
-#define GROOVX_GFX_TCLPKG_GX_CC_UTC20050628170310_DEFINED
-
 #include "tcl-gfx/tclpkg-gx.h"
 
 #include "geom/bezier4.h"
@@ -541,5 +538,3 @@ GVX_TRACE("Gxdisk_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_GFX_TCLPKG_GX_CC_UTC20050628170310_DEFINED

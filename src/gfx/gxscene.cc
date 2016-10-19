@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXSCENE_CC_UTC20050626084025_DEFINED
-#define GROOVX_GFX_GXSCENE_CC_UTC20050626084025_DEFINED
-
 #include "gxscene.h"
 
 #include "nub/scheduler.h"
@@ -212,5 +209,3 @@ GVX_TRACE("GxScene::animate");
       itsTimer.schedule(itsScheduler);
     }
 }
-
-#endif // !GROOVX_GFX_GXSCENE_CC_UTC20050626084025_DEFINED

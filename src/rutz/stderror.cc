@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_STDERROR_CC_UTC20050626084019_DEFINED
-#define GROOVX_RUTZ_STDERROR_CC_UTC20050626084019_DEFINED
-
 #include "rutz/stderror.h"
 
 #include "rutz/demangle.h"
@@ -46,5 +43,3 @@ void rutz::throw_bad_cast(const std::type_info& to,
                                rutz::demangled_name(to),
                                rutz::demangled_name(from)), pos);
 }
-
-#endif // !GROOVX_RUTZ_STDERROR_CC_UTC20050626084019_DEFINED

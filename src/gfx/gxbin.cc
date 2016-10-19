@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXBIN_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_GXBIN_CC_UTC20050626084024_DEFINED
-
 #include "gxbin.h"
 
 #include "gfx/gxemptynode.h"
@@ -49,5 +46,3 @@ void GxBin::setChild(const nub::ref<GxNode>& child)
   itsChild->sigNodeChanged.connect(this->sigNodeChanged.slot());
   this->sigNodeChanged.emit();
 }
-
-#endif // !GROOVX_GFX_GXBIN_CC_UTC20050626084024_DEFINED

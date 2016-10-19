@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXNODE_CC_UTC20050626084025_DEFINED
-#define GROOVX_GFX_GXNODE_CC_UTC20050626084025_DEFINED
-
 #include "gxnode.h"
 
 #include "geom/box.h"
@@ -115,5 +112,3 @@ GVX_TRACE("GxNode::undraw");
 
   canvas.clearColorBuffer(screen_box);
 }
-
-#endif // !GROOVX_GFX_GXNODE_CC_UTC20050626084025_DEFINED

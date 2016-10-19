@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_GABORARRAY_CC_UTC20050626084015_DEFINED
-#define GROOVX_VISX_GABORARRAY_CC_UTC20050626084015_DEFINED
-
 #include "gaborarray.h"
 
 #include "geom/geom.h"
@@ -668,5 +665,3 @@ GVX_TRACE("GaborArray::backgJitter");
         }
     }
 }
-
-#endif // !GROOVX_VISX_GABORARRAY_CC_UTC20050626084015_DEFINED

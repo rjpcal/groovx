@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_FIXPT_CC_UTC20050626084016_DEFINED
-#define GROOVX_VISX_FIXPT_CC_UTC20050626084016_DEFINED
-
 #include "visx/fixpt.h"
 
 #include "geom/vec2.h"
@@ -148,5 +145,3 @@ GVX_TRACE("FixPt::grRender");
     canvas.vertex2(geom::vec2<double>(itsLength/2.0, 0.0));
   }
 }
-
-#endif // !GROOVX_VISX_FIXPT_CC_UTC20050626084016_DEFINED

@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_ERROR_CONTEXT_CC_UTC20051118001411_DEFINED
-#define GROOVX_RUTZ_ERROR_CONTEXT_CC_UTC20051118001411_DEFINED
-
 #include "rutz/error_context.h"
 
 #include <new>
@@ -136,5 +133,3 @@ rutz::error_context_entry::~error_context_entry()
   if (m_context)
     m_context->remove_entry(this);
 }
-
-#endif // !GROOVX_RUTZ_ERROR_CONTEXT_CC_UTC20051118001411DEFINED

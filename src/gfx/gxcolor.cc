@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXCOLOR_CC_UTC20050626084025_DEFINED
-#define GROOVX_GFX_GXCOLOR_CC_UTC20050626084025_DEFINED
-
 #include "gfx/gxcolor.h"
 
 #include "gfx/canvas.h"
@@ -97,5 +94,3 @@ void GxColor::draw(Gfx::Canvas& canvas) const
 {
   canvas.setColor(rgbaColor);
 }
-
-#endif // !GROOVX_GFX_GXCOLOR_CC_UTC20050626084025_DEFINED

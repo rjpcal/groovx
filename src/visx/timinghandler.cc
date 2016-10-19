@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TIMINGHANDLER_CC_UTC20050626084016_DEFINED
-#define GROOVX_VISX_TIMINGHANDLER_CC_UTC20050626084016_DEFINED
-
 #include "timinghandler.h"
 
 #include "io/ioproxy.h"
@@ -147,5 +144,3 @@ void TimingHandler::setTimeout(int msec)
 {
   getEvent(FROM_START, timeout_start_id)->setDelay(msec);
 }
-
-#endif // !GROOVX_VISX_TIMINGHANDLER_CC_UTC20050626084016_DEFINED

@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_FONTSPEC_CC_UTC20051111225622_DEFINED
-#define GROOVX_GFX_FONTSPEC_CC_UTC20051111225622_DEFINED
-
 #include "gfx/fontspec.h"
 
 #include "rutz/fstring.h"
@@ -80,5 +77,3 @@ void parseFontSpec(const rutz::fstring& spec,
   *pxlsize = rutz::fstring(&vpxlsize[0]);
   *mods = rutz::fstring(&vmods[0]);
 }
-
-#endif // !GROOVX_GFX_FONTSPEC_CC_UTC20051111225622DEFINED

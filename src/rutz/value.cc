@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_VALUE_CC_UTC20050626084019_DEFINED
-#define GROOVX_RUTZ_VALUE_CC_UTC20050626084019_DEFINED
-
 #include "rutz/value.h"
 
 #include "rutz/cstrstream.h"
@@ -56,5 +53,3 @@ void rutz::value::set_string(rutz::fstring val)
   rutz::icstrstream ist(val.c_str());
   scan_from(ist);
 }
-
-#endif // !GROOVX_RUTZ_VALUE_CC_UTC20050626084019_DEFINED

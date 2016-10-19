@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_STDIOBUF_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_STDIOBUF_CC_UTC20050626084020_DEFINED
-
 #include "rutz/stdiobuf.h"
 
 #include "rutz/error.h"
@@ -191,5 +188,3 @@ int rutz::stdiobuf::flushoutput()
 #ifdef GVX_MISSING_IOSTREAM_INSTANTIATION
 template class std::basic_iostream<char>;
 #endif
-
-#endif // !GROOVX_RUTZ_STDIOBUF_CC_UTC20050626084020_DEFINED

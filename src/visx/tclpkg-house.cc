@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_HOUSE_CC_UTC20050628171008_DEFINED
-#define GROOVX_VISX_TCLPKG_HOUSE_CC_UTC20050628171008_DEFINED
-
 #include "visx/tclpkg-house.h"
 
 #include "tcl-io/fieldpkg.h"
@@ -53,5 +50,3 @@ GVX_TRACE("House_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_VISX_TCLPKG_HOUSE_CC_UTC20050628171008_DEFINED

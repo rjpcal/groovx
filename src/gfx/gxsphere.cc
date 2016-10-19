@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXSPHERE_CC_UTC20050626084025_DEFINED
-#define GROOVX_GFX_GXSPHERE_CC_UTC20050626084025_DEFINED
-
 #include "gfx/gxsphere.h"
 
 #include "geom/box.h"
@@ -130,5 +127,3 @@ GVX_TRACE("GxSphere::draw");
 
   canvas.drawSphere(itsRadius, itsSlices, itsStacks, itsFilled);
 }
-
-#endif // !GROOVX_GFX_GXSPHERE_CC_UTC20050626084025_DEFINED

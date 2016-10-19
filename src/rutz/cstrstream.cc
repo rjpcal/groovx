@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_CSTRSTREAM_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_CSTRSTREAM_CC_UTC20050626084020_DEFINED
-
 #include "cstrstream.h"
 
 #include <cstdio> // for EOF
@@ -103,5 +100,3 @@ rutz::icstrstream::icstrstream(const char* s)
 }
 
 rutz::icstrstream::~icstrstream() {}
-
-#endif // !GROOVX_RUTZ_CSTRSTREAM_CC_UTC20050626084020_DEFINED

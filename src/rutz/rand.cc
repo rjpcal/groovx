@@ -28,11 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_RAND_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_RAND_CC_UTC20050626084020_DEFINED
-
 #include "rand.h"
 
 unsigned long rutz::default_rand_seed = 0;
-
-#endif // !GROOVX_RUTZ_RAND_CC_UTC20050626084020_DEFINED

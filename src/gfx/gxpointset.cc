@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXPOINTSET_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_GXPOINTSET_CC_UTC20050626084024_DEFINED
-
 #include "gfx/gxpointset.h"
 
 #include "geom/box.h"
@@ -125,5 +122,3 @@ GVX_TRACE("GxPointSet::draw");
 
   canvas.end();
 }
-
-#endif // !GROOVX_GFX_GXPOINTSET_CC_UTC20050626084024_DEFINED

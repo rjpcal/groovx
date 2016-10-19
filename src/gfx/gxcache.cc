@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXCACHE_CC_UTC20050626084023_DEFINED
-#define GROOVX_GFX_GXCACHE_CC_UTC20050626084023_DEFINED
-
 #include "gxcache.h"
 
 #include "gfx/glcanvas.h"
@@ -145,5 +142,3 @@ GVX_TRACE("GxCache::setMode");
 
   itsMode = new_mode;
 }
-
-#endif // !GROOVX_GFX_GXCACHE_CC_UTC20050626084023_DEFINED

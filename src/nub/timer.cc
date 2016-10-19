@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_TIMER_CC_UTC20050626084019_DEFINED
-#define GROOVX_NUB_TIMER_CC_UTC20050626084019_DEFINED
-
 #include "timer.h"
 
 #include "rutz/error.h"
@@ -121,5 +118,3 @@ GVX_TRACE("nub::timer::dummy_callback");
 
   timer->sig_timeout.emit();
 }
-
-#endif // !GROOVX_NUB_TIMER_CC_UTC20050626084019_DEFINED

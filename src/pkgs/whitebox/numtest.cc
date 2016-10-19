@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_WHITEBOX_NUMTEST_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_WHITEBOX_NUMTEST_CC_UTC20050626084022_DEFINED
-
 #include "pkgs/whitebox/numtest.h"
 
 #include "mtx/mathspecial.h"
@@ -121,5 +118,3 @@ GVX_TRACE("Numtest_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_PKGS_WHITEBOX_NUMTEST_CC_UTC20050626084022_DEFINED

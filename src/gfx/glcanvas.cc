@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GLCANVAS_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_GLCANVAS_CC_UTC20050626084024_DEFINED
-
 #ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -1295,5 +1292,3 @@ void GLCanvas::material(const Gfx::RgbaColor* spec,
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-
-#endif // !GROOVX_GFX_GLCANVAS_CC_UTC20050626084024_DEFINED

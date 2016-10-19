@@ -31,9 +31,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_OUTPUTFILE_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_OUTPUTFILE_CC_UTC20050626084021_DEFINED
-
 #include "outputfile.h"
 
 #include "io/reader.h"
@@ -104,5 +101,3 @@ std::ostream& output_file::stream()
 
   return *m_stream;
 }
-
-#endif // !GROOVX_IO_OUTPUTFILE_CC_UTC20050626084021_DEFINED

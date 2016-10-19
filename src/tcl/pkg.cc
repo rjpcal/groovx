@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_PKG_CC_UTC20050628162420_DEFINED
-#define GROOVX_TCL_PKG_CC_UTC20050628162420_DEFINED
-
 #include "tcl/pkg.h"
 
 #include "tcl/command.h"
@@ -504,5 +501,3 @@ GVX_TRACE("tcl::pkg::finish_init");
 const char* const tcl::pkg::action_usage = "objref(s)";
 const char* const tcl::pkg::getter_usage = "objref(s)";
 const char* const tcl::pkg::setter_usage = "objref(s) new_value(s)";
-
-#endif // !GROOVX_TCL_PKG_CC_UTC20050628162420_DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_GABOR_CC_UTC20050626084017_DEFINED
-#define GROOVX_VISX_GABOR_CC_UTC20050626084017_DEFINED
-
 #include "visx/gabor.h"
 
 #include "geom/rect.h"
@@ -308,5 +305,3 @@ GVX_TRACE("Gabor::grRender");
   canvas.drawPixels(data, vec3d::zeros(),
                     vec2d(itsPointSize, itsPointSize));
 }
-
-#endif // !GROOVX_VISX_GABOR_CC_UTC20050626084017_DEFINED

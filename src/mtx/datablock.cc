@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_MTX_DATABLOCK_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_MTX_DATABLOCK_CC_UTC20050626084022_DEFINED
-
 #include "datablock.h"
 
 #include "rutz/error.h"
@@ -296,5 +293,3 @@ void data_ref_holder::swap(data_ref_holder& other)
 {
   std::swap(m_ref, other.m_ref);
 }
-
-#endif // !GROOVX_PKGS_MTX_DATABLOCK_CC_UTC20050626084022_DEFINED

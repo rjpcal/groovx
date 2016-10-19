@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_IOLEGACY_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_IOLEGACY_CC_UTC20050626084021_DEFINED
-
 #include "io/iolegacy.h"
 
 #include "nub/objmgr.h"
@@ -643,5 +640,3 @@ GVX_TRACE("io::legacy_writer::write_root");
                                                nub::STRONG,
                                                nub::PRIVATE));
 }
-
-#endif // !GROOVX_IO_IOLEGACY_CC_UTC20050626084021_DEFINED

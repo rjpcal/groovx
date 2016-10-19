@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_IO_OBJWRITER_CC_UTC20051108233856_DEFINED
-#define GROOVX_TCL_IO_OBJWRITER_CC_UTC20051108233856_DEFINED
-
 #include "tcl-io/objwriter.h"
 
 #include "io/io.h"
@@ -109,5 +106,3 @@ void tcl::obj_writer::write_cstring(const char* /*name*/, const char* val)
 {
   m_obj = tcl::convert_from(val);
 }
-
-#endif // !GROOVX_TCL_IO_OBJWRITER_CC_UTC20051108233856DEFINED

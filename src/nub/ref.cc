@@ -30,9 +30,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_REF_CC_UTC20051116170627_DEFINED
-#define GROOVX_NUB_REF_CC_UTC20051116170627_DEFINED
-
 #include "nub/ref.h"
 
 #include "nub/objdb.h"
@@ -89,5 +86,3 @@ void nub::detail::insert_item(nub::object* obj, ref_vis vis)
       GVX_PANIC("unknown ref_vis enum value");
     }
 }
-
-#endif // !GROOVX_NUB_REF_CC_UTC20051116170627DEFINED

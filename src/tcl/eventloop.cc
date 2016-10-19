@@ -31,9 +31,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_EVENTLOOP_CC_UTC20050628162420_DEFINED
-#define GROOVX_TCL_EVENTLOOP_CC_UTC20050628162420_DEFINED
-
 #include "tcl/eventloop.h"
 
 #include "tcl/interp.h"
@@ -709,5 +706,3 @@ rutz::fstring tcl::event_loop::command_line()
 GVX_TRACE("tcl::event_loop::command_line");
   return tcl::event_loop_impl::get()->command_line();
 }
-
-#endif // !GROOVX_TCL_EVENTLOOP_CC_UTC20050628162420_DEFINED

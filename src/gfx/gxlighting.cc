@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXLIGHTING_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_GXLIGHTING_CC_UTC20050626084024_DEFINED
-
 #include "gfx/gxlighting.h"
 
 #include "gfx/glcanvas.h"
@@ -148,5 +145,3 @@ GVX_TRACE("GxLighting::draw");
                   spotExponent,
                   spotCutoff);
 }
-
-#endif // !GROOVX_GFX_GXLIGHTING_CC_UTC20050626084024_DEFINED

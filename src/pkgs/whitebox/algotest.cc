@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_WHITEBOX_ALGOTEST_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_WHITEBOX_ALGOTEST_CC_UTC20050626084022_DEFINED
-
 #include "pkgs/whitebox/algotest.h"
 
 #include "rutz/algo.h"
@@ -118,5 +115,3 @@ GVX_TRACE("Algotest_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_PKGS_WHITEBOX_ALGOTEST_CC_UTC20050626084022_DEFINED

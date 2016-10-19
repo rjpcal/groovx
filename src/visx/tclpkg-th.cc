@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_TH_CC_UTC20050628171009_DEFINED
-#define GROOVX_VISX_TCLPKG_TH_CC_UTC20050628171009_DEFINED
-
 #include "visx/tclpkg-th.h"
 
 #include "nub/objfactory.h"
@@ -130,5 +127,3 @@ GVX_TRACE("Timinghandler_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_VISX_TCLPKG_TH_CC_UTC20050628171009_DEFINED

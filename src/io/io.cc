@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_IO_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_IO_CC_UTC20050626084021_DEFINED
-
 #include "io/io.h"
 
 #include "rutz/trace.h"
@@ -52,5 +49,3 @@ io::version_id io::serializable::class_version_id() const
 GVX_TRACE("io::serializable::class_version_id");
   return 0;
 }
-
-#endif // !GROOVX_IO_IO_CC_UTC20050626084021_DEFINED

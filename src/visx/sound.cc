@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_SOUND_CC_UTC20050626084015_DEFINED
-#define GROOVX_VISX_SOUND_CC_UTC20050626084015_DEFINED
-
 #include "sound.h"
 
 #include "io/reader.h"
@@ -175,5 +172,3 @@ const char* Sound::getFile() const
 GVX_TRACE("Sound::getFile");
   return itsFilename.c_str();
 }
-
-#endif // !GROOVX_VISX_SOUND_CC_UTC20050626084015_DEFINED

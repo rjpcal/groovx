@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_AGLWRAPPER_CC_UTC20051112002830_DEFINED
-#define GROOVX_GFX_AGLWRAPPER_CC_UTC20051112002830_DEFINED
-
 #ifdef GVX_GL_PLATFORM_AGL
 
 #pragma clang diagnostic push
@@ -315,5 +312,3 @@ GVX_TRACE("AglWrapper::swapBuffers");
 #pragma clang diagnostic pop
 
 #endif // GVX_GL_PLATFORM_AGL
-
-#endif // !GROOVX_GFX_AGLWRAPPER_CC_UTC20051112002830DEFINED

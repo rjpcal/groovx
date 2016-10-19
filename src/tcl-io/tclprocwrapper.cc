@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_IO_TCLPROCWRAPPER_CC_UTC20050712162004_DEFINED
-#define GROOVX_TCL_IO_TCLPROCWRAPPER_CC_UTC20050712162004_DEFINED
-
 #include "tcl-io/tclprocwrapper.h"
 
 #include "io/reader.h"
@@ -116,5 +113,3 @@ fstring tcl::ProcWrapper::fullSpec() const
 {
   return rutz::sfmt("{%s} {%s}", itsArgs.c_str(), itsBody.c_str());
 }
-
-#endif // !GROOVX_TCL_IO_TCLPROCWRAPPER_CC_UTC20050712162004_DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_DEBUG_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_DEBUG_CC_UTC20050626084020_DEFINED
-
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
@@ -227,5 +224,3 @@ void rutz::debug::set_global_level(int lev)
   for (int i = 0; i < MAX_KEYS; ++i)
     g_key_levels[i] = lev;
 }
-
-#endif // !GROOVX_RUTZ_DEBUG_CC_UTC20050626084020_DEFINED

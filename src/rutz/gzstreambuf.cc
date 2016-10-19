@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_GZSTREAMBUF_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_GZSTREAMBUF_CC_UTC20050626084020_DEFINED
-
 #include "rutz/gzstreambuf.h"
 
 #include "rutz/error.h"
@@ -289,5 +286,3 @@ shared_ptr<std::istream> rutz::igzopen(const fstring& filename,
 
 //    return 0;
 //  }
-
-#endif // !GROOVX_RUTZ_GZSTREAMBUF_CC_UTC20050626084020_DEFINED

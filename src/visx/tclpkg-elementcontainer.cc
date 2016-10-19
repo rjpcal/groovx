@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_ELEMENTCONTAINER_CC_UTC20050628171008_DEFINED
-#define GROOVX_VISX_TCLPKG_ELEMENTCONTAINER_CC_UTC20050628171008_DEFINED
-
 #include "visx/tclpkg-elementcontainer.h"
 
 #include "tcl/itertcl.h"
@@ -91,5 +88,3 @@ GVX_TRACE("Elementcontainer_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_VISX_TCLPKG_ELEMENTCONTAINER_CC_UTC20050628171008_DEFINED

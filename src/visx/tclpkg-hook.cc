@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_HOOK_CC_UTC20050628171008_DEFINED
-#define GROOVX_VISX_TCLPKG_HOOK_CC_UTC20050628171008_DEFINED
-
 #include "visx/tclpkg-hook.h"
 
 #include "tcl/pkg.h"
@@ -346,5 +343,3 @@ int Hook_Init(Tcl_Interp* interp)
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_VISX_TCLPKG_HOOK_CC_UTC20050628171008_DEFINED

@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_TIMEFORMAT_CC_UTC20050630221813_DEFINED
-#define GROOVX_RUTZ_TIMEFORMAT_CC_UTC20050630221813_DEFINED
-
 #include "rutz/timeformat.h"
 
 #include "rutz/fstring.h"
@@ -48,5 +45,3 @@ rutz::fstring rutz::format_time(const timeval& tval,
 
   return rutz::fstring(rutz::char_range(&buf[0], count));
 }
-
-#endif // !GROOVX_RUTZ_TIMEFORMAT_CC_UTC20050630221813DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_EXPT_CC_UTC20050628171008_DEFINED
-#define GROOVX_VISX_TCLPKG_EXPT_CC_UTC20050628171008_DEFINED
-
 #include "visx/tclpkg-expt.h"
 
 #include "nub/ref.h"
@@ -155,5 +152,3 @@ GVX_TRACE("Exptdriver_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_VISX_TCLPKG_EXPT_CC_UTC20050628171008_DEFINED

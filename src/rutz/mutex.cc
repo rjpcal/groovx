@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_MUTEX_CC_UTC20070330172547_DEFINED
-#define GROOVX_RUTZ_MUTEX_CC_UTC20070330172547_DEFINED
-
 #include "rutz/mutex.h"
 
 #include "rutz/abort.h"
@@ -53,5 +50,3 @@ void rutz::mutex_lock_class::unlock() noexcept
       m_mutex = 0;
     }
 }
-
-#endif // !GROOVX_RUTZ_MUTEX_CC_UTC20070330172547DEFINED

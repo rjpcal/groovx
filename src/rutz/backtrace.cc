@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_BACKTRACE_CC_UTC20050626084019_DEFINED
-#define GROOVX_RUTZ_BACKTRACE_CC_UTC20050626084019_DEFINED
-
 #include "rutz/backtrace.h"
 
 #include "rutz/abort.h"
@@ -175,5 +172,3 @@ void rutz::backtrace::print(std::ostream& os) const noexcept
 
   os << std::flush;
 }
-
-#endif // !GROOVX_RUTZ_BACKTRACE_CC_UTC20050626084019_DEFINED

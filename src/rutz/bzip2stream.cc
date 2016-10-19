@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_BZIP2STREAM_CC_UTC20060614220240_DEFINED
-#define GROOVX_RUTZ_BZIP2STREAM_CC_UTC20060614220240_DEFINED
-
 #include "rutz/bzip2stream.h"
 
 #include "rutz/error.h"
@@ -413,5 +410,3 @@ shared_ptr<std::istream> rutz::ibzip2open(const char* filename,
 {
   return ibzip2open(fstring(filename), flags);
 }
-
-#endif // !GROOVX_RUTZ_BZIP2STREAM_CC_UTC20060614220240DEFINED

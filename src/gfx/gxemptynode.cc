@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXEMPTYNODE_CC_UTC20050626084023_DEFINED
-#define GROOVX_GFX_GXEMPTYNODE_CC_UTC20050626084023_DEFINED
-
 #include "gxemptynode.h"
 
 GxEmptyNode::GxEmptyNode() {}
@@ -57,5 +54,3 @@ GxEmptyNode* GxEmptyNode::make()
 
   return p;
 }
-
-#endif // !GROOVX_GFX_GXEMPTYNODE_CC_UTC20050626084023_DEFINED

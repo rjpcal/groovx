@@ -30,9 +30,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_MEDIA_SOUNDREP_CC_UTC20050626084018_DEFINED
-#define GROOVX_MEDIA_SOUNDREP_CC_UTC20050626084018_DEFINED
-
 #include "soundrep.h"
 
 #include "rutz/ioerror.h"
@@ -57,5 +54,3 @@ GVX_TRACE("sound_rep::check_filename");
       throw rutz::filename_error(filename, SRC_POS);
     }
 }
-
-#endif // !GROOVX_MEDIA_SOUNDREP_CC_UTC20050626084018_DEFINED

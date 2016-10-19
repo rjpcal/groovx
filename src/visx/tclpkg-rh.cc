@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_RH_CC_UTC20050628171008_DEFINED
-#define GROOVX_VISX_TCLPKG_RH_CC_UTC20050628171008_DEFINED
-
 #include "visx/tclpkg-rh.h"
 
 #include "visx/tclpkg-rh.h"
@@ -259,5 +256,3 @@ GVX_TRACE("Serialrh_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_VISX_TCLPKG_RH_CC_UTC20050628171008_DEFINED

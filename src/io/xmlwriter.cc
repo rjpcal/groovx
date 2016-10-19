@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_XMLWRITER_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_XMLWRITER_CC_UTC20050626084021_DEFINED
-
 #include "io/xmlwriter.h"
 
 #include "io/io.h"
@@ -327,5 +324,3 @@ shared_ptr<io::writer> io::make_xml_writer(const char* filename)
 {
   return rutz::make_shared(new xml_writer(filename));
 }
-
-#endif // !GROOVX_IO_XMLWRITER_CC_UTC20050626084021_DEFINED

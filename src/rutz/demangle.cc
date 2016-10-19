@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_DEMANGLE_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_DEMANGLE_CC_UTC20050626084020_DEFINED
-
 #include "rutz/demangle.h"
 
 #if defined(GVX_NO_TYPENAME_MANGLING)
@@ -117,5 +114,3 @@ GVX_TRACE("rutz::demangled_name");
 
   return (*result.first).second.c_str();
 }
-
-#endif // !GROOVX_RUTZ_DEMANGLE_CC_UTC20050626084020_DEFINED

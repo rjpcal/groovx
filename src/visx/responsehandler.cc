@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_RESPONSEHANDLER_CC_UTC20050626084017_DEFINED
-#define GROOVX_VISX_RESPONSEHANDLER_CC_UTC20050626084017_DEFINED
-
 #include "visx/responsehandler.h"
 
 #include "rutz/trace.h"
@@ -51,5 +48,3 @@ ResponseHandler::~ResponseHandler() noexcept
 {
 GVX_TRACE("ResponseHandler::~ResponseHandler");
 }
-
-#endif // !GROOVX_VISX_RESPONSEHANDLER_CC_UTC20050626084017_DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_TRIALEVENT_CC_UTC20050628171009_DEFINED
-#define GROOVX_VISX_TCLPKG_TRIALEVENT_CC_UTC20050628171009_DEFINED
-
 #include "visx/tclpkg-trialevent.h"
 
 #include "io/outputfile.h"
@@ -172,5 +169,3 @@ GVX_TRACE("Multievent_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_VISX_TCLPKG_TRIALEVENT_CC_UTC20050628171009_DEFINED

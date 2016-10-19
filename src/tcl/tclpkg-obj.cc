@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLPKG_OBJ_CC_UTC20050628161246_DEFINED
-#define GROOVX_TCL_TCLPKG_OBJ_CC_UTC20050628161246_DEFINED
-
 #include "tcl/tclpkg-obj.h"
 
 #include "nub/objdb.h"
@@ -208,5 +205,3 @@ GVX_TRACE("Obj_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_TCL_TCLPKG_OBJ_CC_UTC20050628161246_DEFINED

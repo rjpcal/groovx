@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLPKG_MISC_CC_UTC20050628161246_DEFINED
-#define GROOVX_TCL_TCLPKG_MISC_CC_UTC20050628161246_DEFINED
-
 #include "tcl/tclpkg-misc.h"
 
 // this file contains the implementations for some simple Tcl
@@ -156,5 +153,3 @@ GVX_TRACE("Misc_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_TCL_TCLPKG_MISC_CC_UTC20050628161246_DEFINED

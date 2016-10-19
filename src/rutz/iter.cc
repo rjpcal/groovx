@@ -29,11 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_ITER_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_ITER_CC_UTC20050626084020_DEFINED
-
 #include "rutz/iter.h"
 
 const rutz::iter_end_t rutz::iter_end = {};
-
-#endif // !GROOVX_RUTZ_ITER_CC_UTC20050626084020_DEFINED

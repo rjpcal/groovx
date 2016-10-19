@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_INTERP_CC_UTC20050628162421_DEFINED
-#define GROOVX_TCL_INTERP_CC_UTC20050628162421_DEFINED
-
 #include "tcl/interp.h"
 
 #include "rutz/demangle.h"
@@ -548,5 +545,3 @@ GVX_TRACE("tcl::interpreter::delete_proc");
 
   eval(cmd_str);
 }
-
-#endif // !GROOVX_TCL_INTERP_CC_UTC20050628162421_DEFINED

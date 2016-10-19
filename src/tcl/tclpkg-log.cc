@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLPKG_LOG_CC_UTC20050628161246_DEFINED
-#define GROOVX_TCL_TCLPKG_LOG_CC_UTC20050628161246_DEFINED
-
 #include "tcl/tclpkg-log.h"
 
 #include "nub/log.h"
@@ -60,5 +57,3 @@ GVX_TRACE("Log_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_TCL_TCLPKG_LOG_CC_UTC20050628161246_DEFINED

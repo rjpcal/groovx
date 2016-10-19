@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TLISTUTILS_CC_UTC20050626084015_DEFINED
-#define GROOVX_VISX_TLISTUTILS_CC_UTC20050626084015_DEFINED
-
 #include "tlistutils.h"
 
 #include "geom/rect.h"
@@ -563,5 +560,3 @@ tcl::list TlistUtils::loadObjidFile(const char* objid_file,
 
   return result;
 }
-
-#endif // !GROOVX_VISX_TLISTUTILS_CC_UTC20050626084015_DEFINED

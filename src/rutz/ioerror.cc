@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_IOERROR_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_IOERROR_CC_UTC20050626084020_DEFINED
-
 #include "ioerror.h"
 
 #include "rutz/sfmt.h"
@@ -44,5 +41,3 @@ rutz::filename_error::filename_error(const char* str,
 {
 GVX_TRACE("rutz::filename_error::filename_error");
 }
-
-#endif // !GROOVX_RUTZ_IOERROR_CC_UTC20050626084020_DEFINED

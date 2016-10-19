@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_SERIALPORT_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_SERIALPORT_CC_UTC20050626084020_DEFINED
-
 #include "rutz/serialport.h"
 
 #ifdef HAVE_EXT_STDIO_FILEBUF_H
@@ -125,5 +122,3 @@ GVX_TRACE("rutz::serial_port::close");
     }
   return m_exit_status;
 }
-
-#endif // !GROOVX_RUTZ_SERIALPORT_CC_UTC20050626084020_DEFINED

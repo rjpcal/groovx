@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_TIME_CC_UTC20050626084019_DEFINED
-#define GROOVX_RUTZ_TIME_CC_UTC20050626084019_DEFINED
-
 #include "rutz/time.h"
 
 #include <sys/resource.h>
@@ -57,5 +54,3 @@ rutz::time rutz::time::sys_rusage() noexcept
   getrusage(RUSAGE_SELF, &ru);
   return rutz::time(ru.ru_stime);
 }
-
-#endif // !GROOVX_RUTZ_TIME_CC_UTC20050626084019_DEFINED

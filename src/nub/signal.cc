@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_SIGNAL_CC_UTC20050626084019_DEFINED
-#define GROOVX_NUB_SIGNAL_CC_UTC20050626084019_DEFINED
-
 #include "signal.h"
 
 #include "nub/ref.h"
@@ -237,5 +234,3 @@ nub::signal0::~signal0() noexcept
 {
 GVX_TRACE("nub::signal0::~signal0");
 }
-
-#endif // !GROOVX_NUB_SIGNAL_CC_UTC20050626084019_DEFINED

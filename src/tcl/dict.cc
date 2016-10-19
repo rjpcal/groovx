@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_DICT_CC_UTC20050628162420_DEFINED
-#define GROOVX_TCL_DICT_CC_UTC20050628162420_DEFINED
-
 #include "tcl/dict.h"
 
 #include "rutz/error.h"
@@ -121,5 +118,3 @@ GVX_TRACE("tcl::dict::do_get");
 }
 
 #endif // defined(HAVE_TCL_DICT)
-
-#endif // !GROOVX_TCL_DICT_CC_UTC20050628162420_DEFINED

@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_ASSOCARRAY_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_ASSOCARRAY_CC_UTC20050626084020_DEFINED
-
 #include "assocarray.h"
 
 #include "rutz/error.h"
@@ -173,5 +170,3 @@ GVX_TRACE("rutz::assoc_array_base::set_value_for_key");
   if (rep->kill_func != 0) rep->kill_func(ptr_slot);
   ptr_slot = ptr;
 }
-
-#endif // !GROOVX_RUTZ_ASSOCARRAY_CC_UTC20050626084020_DEFINED

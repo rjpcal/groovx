@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_COMMANDGROUP_CC_UTC20050628162421_DEFINED
-#define GROOVX_TCL_COMMANDGROUP_CC_UTC20050628162421_DEFINED
-
 #include "tcl/commandgroup.h"
 
 #include "tcl/command.h"
@@ -487,5 +484,3 @@ GVX_TRACE("tcl::command_group::invoke_raw");
 
   return TCL_ERROR;
 }
-
-#endif // !GROOVX_TCL_COMMANDGROUP_CC_UTC20050628162421_DEFINED

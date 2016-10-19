@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXBOUNDS_CC_UTC20050626084023_DEFINED
-#define GROOVX_GFX_GXBOUNDS_CC_UTC20050626084023_DEFINED
-
 #include "gxbounds.h"
 
 #include "geom/box.h"
@@ -138,5 +135,3 @@ GVX_TRACE("GxBounds::getBoundingCube");
 
   dbg_dump(2, bbox.cube());
 }
-
-#endif // !GROOVX_GFX_GXBOUNDS_CC_UTC20050626084023_DEFINED

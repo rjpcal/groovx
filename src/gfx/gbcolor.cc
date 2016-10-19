@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GBCOLOR_CC_UTC20050626084025_DEFINED
-#define GROOVX_GFX_GBCOLOR_CC_UTC20050626084025_DEFINED
-
 #include "gfx/gbcolor.h"
 
 #include "rutz/fstring.h"
@@ -62,5 +59,3 @@ const float* GbColor::const_begin() const
 {
   return Gfx::RgbaColor::data();
 }
-
-#endif // !GROOVX_GFX_GBCOLOR_CC_UTC20050626084025_DEFINED

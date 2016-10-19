@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_MEDIA_PNMPARSER_CC_UTC20050626084018_DEFINED
-#define GROOVX_MEDIA_PNMPARSER_CC_UTC20050626084018_DEFINED
-
 #include "pnmparser.h"
 
 #include "geom/vec2.h"
@@ -310,5 +307,3 @@ GVX_TRACE("media::load_pnm");
 
   data.swap(new_data);
 }
-
-#endif // !GROOVX_MEDIA_PNMPARSER_CC_UTC20050626084018_DEFINED

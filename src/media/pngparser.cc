@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_MEDIA_PNGPARSER_CC_UTC20050626084018_DEFINED
-#define GROOVX_MEDIA_PNGPARSER_CC_UTC20050626084018_DEFINED
-
 #include "pngparser.h"
 
 #ifndef HAVE_LIBPNG
@@ -368,5 +365,3 @@ GVX_TRACE("media::save_png");
 }
 
 #endif // HAVE_LIBPNG
-
-#endif // !GROOVX_MEDIA_PNGPARSER_CC_UTC20050626084018_DEFINED

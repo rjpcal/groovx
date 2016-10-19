@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_WHITEBOX_GEOMTEST_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_WHITEBOX_GEOMTEST_CC_UTC20050626084022_DEFINED
-
 #include "pkgs/whitebox/geomtest.h"
 
 #include "geom/txform.h"
@@ -95,5 +92,3 @@ GVX_TRACE("Geomtest_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_PKGS_WHITEBOX_GEOMTEST_CC_UTC20050626084022_DEFINED

@@ -30,9 +30,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_IO_TCLPKG_IO_CC_UTC20050712162004_DEFINED
-#define GROOVX_TCL_IO_TCLPKG_IO_CC_UTC20050712162004_DEFINED
-
 #include "tcl-io/tclpkg-io.h"
 
 #include "io/io.h"
@@ -174,5 +171,3 @@ GVX_TRACE("Outputfile_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_TCL_IO_TCLPKG_IO_CC_UTC20050712162004_DEFINED

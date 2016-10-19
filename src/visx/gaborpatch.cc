@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_GABORPATCH_CC_UTC20050626084015_DEFINED
-#define GROOVX_VISX_GABORPATCH_CC_UTC20050626084015_DEFINED
-
 #include "gaborpatch.h"
 
 #include <map>
@@ -147,5 +144,3 @@ double GaborPatch::compute(int x, int y) const
   const double gauss = exp(-dsqr);
   return sinus * gauss;
 }
-
-#endif // !GROOVX_VISX_GABORPATCH_CC_UTC20050626084015_DEFINED

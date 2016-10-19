@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXSEPARATOR_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_GXSEPARATOR_CC_UTC20050626084024_DEFINED
-
 #include "gxseparator.h"
 
 #include "geom/box.h"
@@ -367,5 +364,3 @@ GVX_TRACE("GxSeparator::draw");
         }
     }
 }
-
-#endif // !GROOVX_GFX_GXSEPARATOR_CC_UTC20050626084024_DEFINED

@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_ABORT_CC_UTC20050630222651_DEFINED
-#define GROOVX_RUTZ_ABORT_CC_UTC20050630222651_DEFINED
-
 #include "rutz/abort.h"
 
 #include <cstdlib>
@@ -43,5 +40,3 @@ void rutz::debug::abort_aux (const char* what, const char* where,
           where, line_no, what);
   abort();
 }
-
-#endif // !GROOVX_RUTZ_ABORT_CC_UTC20050630222651DEFINED

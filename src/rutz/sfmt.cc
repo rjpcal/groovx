@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_SFMT_CC_UTC20050705180246_DEFINED
-#define GROOVX_RUTZ_SFMT_CC_UTC20050705180246_DEFINED
-
 #include "rutz/sfmt.h"
 
 #include "rutz/compat_snprintf.h"
@@ -119,5 +116,3 @@ fstring rutz::sfmt(const char* fmt, ...)
   va_end(a);
   return result;
 }
-
-#endif // !GROOVX_RUTZ_SFMT_CC_UTC20050705180246DEFINED

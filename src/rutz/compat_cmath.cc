@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_COMPAT_CMATH_CC_UTC20060117021840_DEFINED
-#define GROOVX_RUTZ_COMPAT_CMATH_CC_UTC20060117021840_DEFINED
-
 #include "rutz/compat_cmath.h"
 
 #ifdef MISSING_M_PI
@@ -51,5 +48,3 @@ double rutz::compat_m_e()    { return m_e_value; }
 double rutz::compat_m_ln2()  { return m_ln2_value; }
 
 #endif
-
-#endif // !GROOVX_RUTZ_COMPAT_CMATH_CC_UTC20060117021840DEFINED

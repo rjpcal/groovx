@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_GL_CC_UTC20050628171008_DEFINED
-#define GROOVX_VISX_TCLPKG_GL_CC_UTC20050628171008_DEFINED
-
 #include "visx/tclpkg-gl.h"
 
 // This Tcl package provides some simple Tcl wrappers for C OpenGL
@@ -542,5 +539,3 @@ GVX_TRACE("Gl_Init");
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-
-#endif // !GROOVX_VISX_TCLPKG_GL_CC_UTC20050628171008_DEFINED

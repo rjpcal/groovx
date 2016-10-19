@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXDISK_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_GXDISK_CC_UTC20050626084024_DEFINED
-
 #include "gxdisk.h"
 
 #include "geom/box.h"
@@ -133,5 +130,3 @@ GVX_TRACE("GxDisk::draw");
   canvas.drawCircle(itsInnerRadius, itsOuterRadius, itsFilled,
                     itsNumSlices, itsNumLoops);
 }
-
-#endif // !GROOVX_GFX_GXDISK_CC_UTC20050626084024_DEFINED

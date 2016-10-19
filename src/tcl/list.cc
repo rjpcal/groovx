@@ -31,9 +31,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_LIST_CC_UTC20050628162420_DEFINED
-#define GROOVX_TCL_LIST_CC_UTC20050628162420_DEFINED
-
 #include "tcl/list.h"
 
 #include "rutz/error.h"
@@ -137,5 +134,3 @@ GVX_TRACE("tcl::list::get_obj_list_length");
 
   return static_cast<unsigned int>(len);
 }
-
-#endif // !GROOVX_TCL_LIST_CC_UTC20050628162420_DEFINED

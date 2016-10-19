@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_EXPTDRIVER_CC_UTC20050626084017_DEFINED
-#define GROOVX_VISX_EXPTDRIVER_CC_UTC20050626084017_DEFINED
-
 #include "visx/exptdriver.h"
 
 #include "io/ioproxy.h"
@@ -63,7 +60,6 @@
 #include <sys/stat.h> // for mode_t constants S_IRUSR etc.
 #include <unistd.h> // for sleep()
 
-#define GVX_DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
@@ -505,5 +501,3 @@ GVX_TRACE("ExptDriver::storeData");
 
   rep->addLogInfo("Experiment saved.");
 }
-
-#endif // !GROOVX_VISX_EXPTDRIVER_CC_UTC20050626084017_DEFINED

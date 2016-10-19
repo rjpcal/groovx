@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_MULTIVALUE_CC_UTC20050626084019_DEFINED
-#define GROOVX_RUTZ_MULTIVALUE_CC_UTC20050626084019_DEFINED
-
 #include "rutz/multivalue.h"
 
 #include "rutz/error.h"
@@ -97,5 +94,3 @@ GVX_TRACE("rutz::multi_value<T>::scan_from");
 template class rutz::multi_value<int>;
 template class rutz::multi_value<float>;
 template class rutz::multi_value<double>;
-
-#endif // !GROOVX_RUTZ_MULTIVALUE_CC_UTC20050626084019_DEFINED

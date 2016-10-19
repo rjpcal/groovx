@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXDRAWSTYLE_CC_UTC20050626084025_DEFINED
-#define GROOVX_GFX_GXDRAWSTYLE_CC_UTC20050626084025_DEFINED
-
 #include "gfx/gxdrawstyle.h"
 
 #include "gfx/canvas.h"
@@ -105,5 +102,3 @@ void GxDrawStyle::draw(Gfx::Canvas& canvas) const
   canvas.setLineWidth(lineWidth);
   canvas.setLineStipple(static_cast<unsigned short>(linePattern));
 }
-
-#endif // !GROOVX_GFX_GXDRAWSTYLE_CC_UTC20050626084025_DEFINED

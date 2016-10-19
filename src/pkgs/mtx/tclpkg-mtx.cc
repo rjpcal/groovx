@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_MTX_TCLPKG_MTX_CC_UTC20050628170148_DEFINED
-#define GROOVX_PKGS_MTX_TCLPKG_MTX_CC_UTC20050628170148_DEFINED
-
 #include "pkgs/mtx/tclpkg-mtx.h"
 
 #include "mtxobj.h"
@@ -67,5 +64,3 @@ GVX_TRACE("Mtx_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_PKGS_MTX_TCLPKG_MTX_CC_UTC20050628170148_DEFINED

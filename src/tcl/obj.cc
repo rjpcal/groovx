@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_OBJ_CC_UTC20050628162420_DEFINED
-#define GROOVX_TCL_OBJ_CC_UTC20050628162420_DEFINED
-
 #include "tcl/obj.h"
 
 #include <tcl.h>
@@ -74,5 +71,3 @@ void tcl::obj::decr_ref(Tcl_Obj* obj)
 {
   Tcl_DecrRefCount(obj);
 }
-
-#endif // !GROOVX_TCL_OBJ_CC_UTC20050628162420_DEFINED

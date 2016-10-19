@@ -30,9 +30,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_FIELDS_CC_UTC20051109000948_DEFINED
-#define GROOVX_IO_FIELDS_CC_UTC20051109000948_DEFINED
-
 #include "io/fields.h"
 
 #include "io/reader.h"
@@ -217,5 +214,3 @@ FieldContainer* FieldContainer::child() const
 GVX_TRACE("FieldContainer::child");
   return 0;
 }
-
-#endif // !GROOVX_IO_FIELDS_CC_UTC20051109000948DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXVECTORFONT_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_GXVECTORFONT_CC_UTC20050626084024_DEFINED
-
 #include "gxvectorfont.h"
 
 #include "geom/rect.h"
@@ -862,5 +859,3 @@ double GxVectorFont::vectorHeight() const
 GVX_TRACE("GxVectorFont::vectorHeight");
   return 8.0;
 }
-
-#endif // !GROOVX_GFX_GXVECTORFONT_CC_UTC20050626084024_DEFINED

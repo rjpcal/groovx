@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GLXOPTS_CC_UTC20050626084023_DEFINED
-#define GROOVX_GFX_GLXOPTS_CC_UTC20050626084023_DEFINED
-
 #include "glxopts.h"
 
 #include "rutz/trace.h"
@@ -73,5 +70,3 @@ GlxOpts::GlxOpts() :
 {
 GVX_TRACE("GlxOpts::GlxOpts");
 }
-
-#endif // !GROOVX_GFX_GLXOPTS_CC_UTC20050626084023_DEFINED

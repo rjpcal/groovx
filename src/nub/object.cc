@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_OBJECT_CC_UTC20050626084019_DEFINED
-#define GROOVX_NUB_OBJECT_CC_UTC20050626084019_DEFINED
-
 #include "object.h"
 
 #include "rutz/demangle.h"
@@ -79,5 +76,3 @@ rutz::fstring nub::object::unique_name() const
 GVX_TRACE("nub::object::unique_name");
   return rutz::sfmt("%s(%lu)", obj_typename().c_str(), id());
 }
-
-#endif // !GROOVX_NUB_OBJECT_CC_UTC20050626084019_DEFINED

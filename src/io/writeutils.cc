@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_WRITEUTILS_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_WRITEUTILS_CC_UTC20050626084021_DEFINED
-
 #include "io/writeutils.h"
 
 #include "io/readutils.h"
@@ -48,5 +45,3 @@ fstring io::write_utils::make_seq_length_name(const fstring& seq_name)
 {
   return read_utils::make_seq_length_name(seq_name);
 }
-
-#endif // !GROOVX_IO_WRITEUTILS_CC_UTC20050626084021_DEFINED

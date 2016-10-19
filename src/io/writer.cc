@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_WRITER_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_WRITER_CC_UTC20050626084021_DEFINED
-
 #include "io/writer.h"
 
 #include "rutz/base64.h"
@@ -100,5 +97,3 @@ GVX_TRACE("io::writer::default_write_byte_array");
 
   write_cstring(name, encoded.c_str());
 }
-
-#endif // !GROOVX_IO_WRITER_CC_UTC20050626084021_DEFINED

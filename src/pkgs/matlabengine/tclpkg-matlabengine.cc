@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_MATLABENGINE_TCLPKG_MATLABENGINE_CC_UTC20050628170029_DEFINED
-#define GROOVX_PKGS_MATLABENGINE_TCLPKG_MATLABENGINE_CC_UTC20050628170029_DEFINED
-
 #include "pkgs/matlabengine/tclpkg-matlabengine.h"
 
 #include "pkgs/mtx/mtxobj.h"
@@ -163,5 +160,3 @@ GVX_TRACE("Matlabengine_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_PKGS_MATLABENGINE_TCLPKG_MATLABENGINE_CC_UTC20050628170029_DEFINED

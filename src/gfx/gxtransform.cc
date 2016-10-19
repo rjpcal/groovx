@@ -31,9 +31,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXTRANSFORM_CC_UTC20050626084023_DEFINED
-#define GROOVX_GFX_GXTRANSFORM_CC_UTC20050626084023_DEFINED
-
 #include "gxtransform.h"
 
 #include "geom/box.h"
@@ -229,5 +226,3 @@ GVX_TRACE("GxTransform::draw");
       canvas.vertex3(geom::vec3<double>(0.0, 0.0,  d));
     }
 }
-
-#endif // !GROOVX_GFX_GXTRANSFORM_CC_UTC20050626084023_DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_PIPE_CC_UTC20050626084019_DEFINED
-#define GROOVX_RUTZ_PIPE_CC_UTC20050626084019_DEFINED
-
 #include "rutz/pipe.h"
 
 #include "rutz/error.h"
@@ -455,5 +452,3 @@ int rutz::bidir_pipe::exit_status() noexcept
   // OK, everything looks fine
   return 0;
 }
-
-#endif // !GROOVX_RUTZ_PIPE_CC_UTC20050626084019_DEFINED

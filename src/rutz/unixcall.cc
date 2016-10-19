@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_UNIXCALL_CC_UTC20050626084019_DEFINED
-#define GROOVX_RUTZ_UNIXCALL_CC_UTC20050626084019_DEFINED
-
 #include "unixcall.h"
 
 #include "rutz/arrays.h"
@@ -195,5 +192,3 @@ GVX_TRACE("rutz::unixcall::get_file_user_pid");
 
   return 0;
 }
-
-#endif // !GROOVX_RUTZ_UNIXCALL_CC_UTC20050626084019_DEFINED

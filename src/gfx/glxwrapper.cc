@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GLXWRAPPER_CC_UTC20051112001015_DEFINED
-#define GROOVX_GFX_GLXWRAPPER_CC_UTC20051112001015_DEFINED
-
 #ifdef GVX_GL_PLATFORM_GLX
 
 #include "gfx/glxwrapper.h"
@@ -321,5 +318,3 @@ void GlxWrapper::swapBuffers() const
 }
 
 #endif // GVX_GL_PLATFORM_GLX
-
-#endif // !GROOVX_GFX_GLXWRAPPER_CC_UTC20051112001015DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_MEDIA_IMGFILE_CC_UTC20050626084018_DEFINED
-#define GROOVX_MEDIA_IMGFILE_CC_UTC20050626084018_DEFINED
-
 #include "imgfile.h"
 
 #include "media/jpegparser.h"
@@ -195,5 +192,3 @@ void media::save_image(const char* filename,
 
   nub::log(rutz::sfmt("saved image file %s", filename));
 }
-
-#endif // !GROOVX_MEDIA_IMGFILE_CC_UTC20050626084018_DEFINED

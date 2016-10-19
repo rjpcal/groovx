@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_BASE64_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_BASE64_CC_UTC20050626084020_DEFINED
-
 #include "base64.h"
 
 #include "rutz/bytearray.h"
@@ -262,5 +259,3 @@ void rutz::base64_decode(const std::string& src,
 {
   base64_decode(src.c_str(), src.length(), dst);
 }
-
-#endif // !GROOVX_RUTZ_BASE64_CC_UTC20050626084020_DEFINED

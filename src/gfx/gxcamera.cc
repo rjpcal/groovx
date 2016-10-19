@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXCAMERA_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_GXCAMERA_CC_UTC20050626084024_DEFINED
-
 #include "gxcamera.h"
 
 #include "gfx/canvas.h"
@@ -354,5 +351,3 @@ GVX_TRACE("GxPsyphyCamera::draw");
 
   orthoFixed(canvas, width(), height(), pixels_per_unit);
 }
-
-#endif // !GROOVX_GFX_GXCAMERA_CC_UTC20050626084024_DEFINED

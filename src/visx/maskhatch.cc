@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_MASKHATCH_CC_UTC20050626084015_DEFINED
-#define GROOVX_VISX_MASKHATCH_CC_UTC20050626084015_DEFINED
-
 #include "visx/maskhatch.h"
 
 #include "geom/rect.h"
@@ -184,5 +181,3 @@ GVX_TRACE("MaskHatch::grRender");
   canvas.vertex2(vec2d(1.0, 0.0));
   canvas.vertex2(vec2d(1.0, 1.0));
 }
-
-#endif // !GROOVX_VISX_MASKHATCH_CC_UTC20050626084015_DEFINED

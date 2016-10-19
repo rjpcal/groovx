@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TRIALEVENT_CC_UTC20050626084017_DEFINED
-#define GROOVX_VISX_TRIALEVENT_CC_UTC20050626084017_DEFINED
-
 #include "visx/trialevent.h"
 
 #include "io/ioproxy.h"
@@ -430,5 +427,3 @@ void MultiEvent::clearEvents()
 GVX_TRACE("MultiEvent::clearEvents");
   itsEvents.clear();
 }
-
-#endif // !GROOVX_VISX_TRIALEVENT_CC_UTC20050626084017_DEFINED

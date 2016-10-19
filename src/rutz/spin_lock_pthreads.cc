@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_SPIN_LOCK_PTHREADS_CC_UTC20070905192104_DEFINED
-#define GROOVX_RUTZ_SPIN_LOCK_PTHREADS_CC_UTC20070905192104_DEFINED
-
 #ifdef HAVE_PTHREAD_SPINLOCK_T
 
 #include "rutz/spin_lock_pthreads.h"
@@ -59,5 +56,3 @@ rutz::spin_lock_pthreads::~spin_lock_pthreads()
 }
 
 #endif // HAVE_PTHREAD_SPINLOCK_T
-
-#endif // !GROOVX_RUTZ_SPIN_LOCK_PTHREADS_CC_UTC20070905192104DEFINED

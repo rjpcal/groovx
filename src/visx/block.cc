@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_BLOCK_CC_UTC20050626084016_DEFINED
-#define GROOVX_VISX_BLOCK_CC_UTC20050626084016_DEFINED
-
 #include "visx/block.h"
 
 #include "io/ioproxy.h"
@@ -45,7 +42,6 @@
 
 #include "rutz/fstring.h"
 
-#define GVX_DYNAMIC_TRACE_EXPR Block::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
@@ -157,5 +153,3 @@ GVX_TRACE("Block::vxAllChildrenFinished");
   GVX_ASSERT( p != 0 );
   p->vxReturn(CHILD_OK);
 }
-
-#endif // !GROOVX_VISX_BLOCK_CC_UTC20050626084016_DEFINED

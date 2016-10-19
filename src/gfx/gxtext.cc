@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXTEXT_CC_UTC20050626084025_DEFINED
-#define GROOVX_GFX_GXTEXT_CC_UTC20050626084025_DEFINED
-
 #include "gxtext.h"
 
 #include "gfx/canvas.h"
@@ -206,5 +203,3 @@ GVX_TRACE("GxText::grRender");
   canvas.setLineWidth(itsStrokeWidth);
   itsFont->drawText(itsText.c_str(), canvas);
 }
-
-#endif // !GROOVX_GFX_GXTEXT_CC_UTC20050626084025_DEFINED

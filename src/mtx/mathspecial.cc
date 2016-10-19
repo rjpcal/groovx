@@ -30,9 +30,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_MTX_MATHSPECIAL_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_MTX_MATHSPECIAL_CC_UTC20050626084022_DEFINED
-
 #include "mathspecial.h"
 
 #include "rutz/trace.h"
@@ -58,5 +55,3 @@ GVX_TRACE("dash::detail::gammaln_engine");
 
   return -tmp+log(2.5066282746310005*ser/xx);
 }
-
-#endif // !GROOVX_PKGS_MTX_MATHSPECIAL_CC_UTC20050626084022_DEFINED

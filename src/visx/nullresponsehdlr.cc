@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_NULLRESPONSEHDLR_CC_UTC20050626084016_DEFINED
-#define GROOVX_VISX_NULLRESPONSEHDLR_CC_UTC20050626084016_DEFINED
-
 #include "visx/nullresponsehdlr.h"
 
 #include "nub/ref.h"
@@ -96,5 +93,3 @@ void NullResponseHdlr::rhDenyResponses() const
 {
 GVX_TRACE("NullResponseHdlr::rhDenyResponses");
 }
-
-#endif // !GROOVX_VISX_NULLRESPONSEHDLR_CC_UTC20050626084016_DEFINED

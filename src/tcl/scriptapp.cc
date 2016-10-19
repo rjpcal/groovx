@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_SCRIPTAPP_CC_UTC20050628162421_DEFINED
-#define GROOVX_TCL_SCRIPTAPP_CC_UTC20050628162421_DEFINED
-
 #include "tcl/scriptapp.h"
 
 #include "nub/objfactory.h"
@@ -403,5 +400,3 @@ void tcl::script_app::run()
 
   tclmain.run();
 }
-
-#endif // !GROOVX_TCL_SCRIPTAPP_CC_UTC20050628162421_DEFINED

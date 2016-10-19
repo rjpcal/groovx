@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_HOUSE_CC_UTC20050626084015_DEFINED
-#define GROOVX_VISX_HOUSE_CC_UTC20050626084015_DEFINED
-
 #include "house.h"
 
 #include "geom/rect.h"
@@ -425,5 +422,3 @@ GVX_TRACE("House::grRender");
     drawChimney(canvas);
   }
 }
-
-#endif // !GROOVX_VISX_HOUSE_CC_UTC20050626084015_DEFINED

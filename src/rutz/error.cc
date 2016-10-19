@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_ERROR_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_ERROR_CC_UTC20050626084020_DEFINED
-
 #include "rutz/error.h"
 
 #include "rutz/backtrace.h"
@@ -171,5 +168,3 @@ void rutz::error::get_last_backtrace(rutz::backtrace& dst)
 
   dst = *g_last_backtrace;
 }
-
-#endif // !GROOVX_RUTZ_ERROR_CC_UTC20050626084020_DEFINED

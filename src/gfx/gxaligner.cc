@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXALIGNER_CC_UTC20050626084023_DEFINED
-#define GROOVX_GFX_GXALIGNER_CC_UTC20050626084023_DEFINED
-
 #include "gxaligner.h"
 
 #include "gfx/bbox.h"
@@ -135,5 +132,3 @@ GVX_TRACE("GxAligner::getBoundingCube");
 
   dbg_dump(2, bbox.cube());
 }
-
-#endif // !GROOVX_GFX_GXALIGNER_CC_UTC20050626084023_DEFINED

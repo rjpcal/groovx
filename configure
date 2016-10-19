@@ -3001,7 +3001,21 @@ fi
 rm -f conftest.err conftest.i conftest.$ac_ext
 
 if test "x$is_clang" = "xyes"; then
-   CXXFLAGS="$CXXFLAGS -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-global-constructors -Wno-exit-time-destructors -Wno-covered-switch-default -Wno-unused-macros -Wno-padded -Wno-weak-vtables -Wno-old-style-cast -Wno-weak-template-vtables -Wno-sign-conversion -Wno-double-promotion -Wno-float-equal -Wno-date-time -Wno-missing-prototypes"
+   CXXFLAGS="$CXXFLAGS -Weverything"
+   CXXFLAGS="$CXXFLAGS -Wno-c++98-compat"
+   CXXFLAGS="$CXXFLAGS -Wno-c++98-compat-pedantic"
+   CXXFLAGS="$CXXFLAGS -Wno-global-constructors"
+   CXXFLAGS="$CXXFLAGS -Wno-exit-time-destructors"
+   CXXFLAGS="$CXXFLAGS -Wno-covered-switch-default"
+   CXXFLAGS="$CXXFLAGS -Wno-padded"
+   CXXFLAGS="$CXXFLAGS -Wno-weak-vtables"
+   CXXFLAGS="$CXXFLAGS -Wno-old-style-cast"
+   CXXFLAGS="$CXXFLAGS -Wno-weak-template-vtables"
+   CXXFLAGS="$CXXFLAGS -Wno-sign-conversion"
+   CXXFLAGS="$CXXFLAGS -Wno-double-promotion"
+   CXXFLAGS="$CXXFLAGS -Wno-float-equal"
+   CXXFLAGS="$CXXFLAGS -Wno-date-time"
+   CXXFLAGS="$CXXFLAGS -Wno-missing-prototypes"
 fi
 
 

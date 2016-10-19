@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXFACTORY_CC_UTC20050706224913_DEFINED
-#define GROOVX_GFX_GXFACTORY_CC_UTC20050706224913_DEFINED
-
 #include "gfx/gxfactory.h"
 
 #include "gfx/gxrasterfont.h"
@@ -95,5 +92,3 @@ rutz::shared_ptr<GxFont> GxFactory::makeFont(const char* name_cstr)
   theFontMap.insert(MapType::value_type(name, font));
   return font;
 }
-
-#endif // !GROOVX_GFX_GXFACTORY_CC_UTC20050706224913DEFINED

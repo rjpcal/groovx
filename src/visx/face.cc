@@ -27,9 +27,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_FACE_CC_UTC20050626084016_DEFINED
-#define GROOVX_VISX_FACE_CC_UTC20050626084016_DEFINED
-
 #include "visx/face.h"
 
 #include "geom/vec3.h"
@@ -355,5 +352,3 @@ double Face::getVertOffset() const
 GVX_TRACE("Face::getVertOffset");
   return 0.0;
 }
-
-#endif // !GROOVX_VISX_FACE_CC_UTC20050626084016_DEFINED

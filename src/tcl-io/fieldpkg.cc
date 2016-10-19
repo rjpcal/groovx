@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_IO_FIELDPKG_CC_UTC20050712162004_DEFINED
-#define GROOVX_TCL_IO_FIELDPKG_CC_UTC20050712162004_DEFINED
-
 #include "tcl-io/fieldpkg.h"
 
 #include "io/fields.h"
@@ -169,5 +166,3 @@ GVX_TRACE("tcl::defAllFields");
   pkg->def_raw("allFields", tcl::arg_spec(1), "",
                FieldsLister(fieldmap, true), src_pos);
 }
-
-#endif // !GROOVX_TCL_IO_FIELDPKG_CC_UTC20050712162004_DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GEOM_TXFORM_CC_UTC20050626084023_DEFINED
-#define GROOVX_GEOM_TXFORM_CC_UTC20050626084023_DEFINED
-
 #include "txform.h"
 
 #include "geom/rect.h"
@@ -551,5 +548,3 @@ GVX_TRACE("geom::txform::debug_sse");
     }
   return result;
 }
-
-#endif // !GROOVX_GEOM_TXFORM_CC_UTC20050626084023_DEFINED

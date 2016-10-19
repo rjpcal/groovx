@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_TCLPKG_TOGLET_CC_UTC20050628170310_DEFINED
-#define GROOVX_GFX_TCLPKG_TOGLET_CC_UTC20050628170310_DEFINED
-
 #include "tcl-gfx/tclpkg-toglet.h"
 
 #include "gfx/glcanvas.h"
@@ -126,5 +123,3 @@ GVX_TRACE("Toglet_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_GFX_TCLPKG_TOGLET_CC_UTC20050628170310_DEFINED

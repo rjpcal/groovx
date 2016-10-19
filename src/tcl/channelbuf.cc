@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_CHANNELBUF_CC_UTC20050628162421_DEFINED
-#define GROOVX_TCL_CHANNELBUF_CC_UTC20050628162421_DEFINED
-
 #include "tcl/channelbuf.h"
 
 #include "rutz/error.h"
@@ -187,5 +184,3 @@ shared_ptr<std::istream> tcl::ichanopen(Tcl_Interp* interp,
     (new tcl_stream(interp, channame, std::ios::in|flags));
 }
 
-
-#endif // !GROOVX_TCL_CHANNELBUF_CC_UTC20050628162421_DEFINED

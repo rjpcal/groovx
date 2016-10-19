@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_LOG_CC_UTC20050626084019_DEFINED
-#define GROOVX_NUB_LOG_CC_UTC20050626084019_DEFINED
-
 #include "log.h"
 
 #include "nub/object.h"
@@ -183,5 +180,3 @@ GVX_TRACE("nub::log");
   if (s_log_fstream.get() != 0)
     log_impl(*s_log_fstream, msg);
 }
-
-#endif // !GROOVX_NUB_LOG_CC_UTC20050626084019_DEFINED

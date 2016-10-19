@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_TCLPKG_GTRACE_CC_UTC20050628161246_DEFINED
-#define GROOVX_TCL_TCLPKG_GTRACE_CC_UTC20050628161246_DEFINED
-
 #include "tcl/tclpkg-gtrace.h"
 
 #include "tcl/pkg.h"
@@ -107,5 +104,3 @@ GVX_TRACE("Prof_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_TCL_TCLPKG_GTRACE_CC_UTC20050628161246_DEFINED

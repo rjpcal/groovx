@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXSHAPEKIT_CC_UTC20050626084023_DEFINED
-#define GROOVX_GFX_GXSHAPEKIT_CC_UTC20050626084023_DEFINED
-
 #include "gfx/gxshapekit.h"
 
 #include "geom/box.h"
@@ -49,7 +46,6 @@
 
 #include "nub/volatileobject.h"
 
-#define GVX_DYNAMIC_TRACE_EXPR GxShapeKit::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
@@ -467,5 +463,3 @@ void GxShapeKit::setHeightFactor(double val)
 GVX_TRACE("GxShapeKit::setHeightFactor");
   rep->scaler->setHeightFactor(val);
 }
-
-#endif // !GROOVX_GFX_GXSHAPEKIT_CC_UTC20050626084023_DEFINED

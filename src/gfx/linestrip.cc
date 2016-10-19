@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_LINESTRIP_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_LINESTRIP_CC_UTC20050626084024_DEFINED
-
 #include "linestrip.h"
 
 #include "geom/bezier4.h"
@@ -215,5 +212,3 @@ GVX_TRACE("Gfx::LineStrip::drawJoinedLineStrip");
 
   canvas->end();
 }
-
-#endif // !GROOVX_GFX_LINESTRIP_CC_UTC20050626084024_DEFINED

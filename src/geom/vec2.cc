@@ -28,8 +28,3 @@
 // Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 //
 ///////////////////////////////////////////////////////////////////////
-
-#ifndef GROOVX_GEOM_VEC2_CC_UTC20050626084023_DEFINED
-#define GROOVX_GEOM_VEC2_CC_UTC20050626084023_DEFINED
-
-#endif // !GROOVX_GEOM_VEC2_CC_UTC20050626084023_DEFINED

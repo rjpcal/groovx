@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_VOLATILEOBJECT_CC_UTC20050626084018_DEFINED
-#define GROOVX_NUB_VOLATILEOBJECT_CC_UTC20050626084018_DEFINED
-
 #include "volatileobject.h"
 
 #include "rutz/trace.h"
@@ -52,5 +49,3 @@ void nub::volatile_object::destroy()
 GVX_TRACE("nub::volatile_object::destroy");
   delete this;
 }
-
-#endif // !GROOVX_NUB_VOLATILEOBJECT_CC_UTC20050626084018_DEFINED

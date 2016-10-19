@@ -29,8 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_FISH_CC_UTC20050626084016_DEFINED
-#define GROOVX_VISX_FISH_CC_UTC20050626084016_DEFINED
 #include "fish.h"
 
 #include "geom/rect.h"
@@ -53,7 +51,6 @@
 
 #include <fstream>
 
-#define GVX_DYNAMIC_TRACE_EXPR Fish::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
@@ -569,5 +566,3 @@ GVX_TRACE("Fish::grRender");
     }
 }
 
-
-#endif // !GROOVX_VISX_FISH_CC_UTC20050626084016_DEFINED

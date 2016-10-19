@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_WHITEBOX_TCLTIMERTEST_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_WHITEBOX_TCLTIMERTEST_CC_UTC20050626084022_DEFINED
-
 #include "pkgs/whitebox/tcltimertest.h"
 
 #include "nub/timer.h"
@@ -202,5 +199,3 @@ GVX_TRACE("Tcltimertest_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_PKGS_WHITEBOX_TCLTIMERTEST_CC_UTC20050626084022_DEFINED

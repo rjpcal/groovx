@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_GABOR_CC_UTC20050628171008_DEFINED
-#define GROOVX_VISX_TCLPKG_GABOR_CC_UTC20050628171008_DEFINED
-
 #include "visx/tclpkg-gabor.h"
 
 #include "tcl-io/fieldpkg.h"
@@ -71,5 +68,3 @@ GVX_TRACE("Gaborarray_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_VISX_TCLPKG_GABOR_CC_UTC20050628171008_DEFINED

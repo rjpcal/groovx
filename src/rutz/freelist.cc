@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_FREELIST_CC_UTC20050626084019_DEFINED
-#define GROOVX_RUTZ_FREELIST_CC_UTC20050626084019_DEFINED
-
 #include "rutz/freelist.h"
 
 #include "rutz/debug.h"
@@ -72,5 +69,3 @@ void rutz::free_list_base::release_free_nodes()
       ::operator delete(p);
     }
 }
-
-#endif // !GROOVX_RUTZ_FREELIST_CC_UTC20050626084019_DEFINED

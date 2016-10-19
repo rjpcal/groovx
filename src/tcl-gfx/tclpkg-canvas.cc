@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_TCLPKG_CANVAS_CC_UTC20050628170310_DEFINED
-#define GROOVX_GFX_TCLPKG_CANVAS_CC_UTC20050628170310_DEFINED
-
 #include "tcl-gfx/tclpkg-canvas.h"
 
 #include "gfx/canvas.h"
@@ -128,5 +125,3 @@ GVX_TRACE("Glcanvas_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_GFX_TCLPKG_CANVAS_CC_UTC20050628170310_DEFINED

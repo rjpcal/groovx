@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_FACE_CC_UTC20050628171008_DEFINED
-#define GROOVX_VISX_TCLPKG_FACE_CC_UTC20050628171008_DEFINED
-
 #include "visx/tclpkg-face.h"
 
 #include "tcl-io/fieldpkg.h"
@@ -67,5 +64,3 @@ GVX_TRACE("Cloneface_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_VISX_TCLPKG_FACE_CC_UTC20050628171008_DEFINED

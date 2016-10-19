@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_ASCIISTREAMREADER_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_ASCIISTREAMREADER_CC_UTC20050626084021_DEFINED
-
 #include "io/asciistreamreader.h"
 
 #include "io/io.h"
@@ -511,5 +508,3 @@ shared_ptr<io::reader> io::make_asw_reader(const char* filename)
 {
   return rutz::make_shared( new asw_reader(filename) );
 }
-
-#endif // !GROOVX_IO_ASCIISTREAMREADER_CC_UTC20050626084021_DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_TOGLET_CC_UTC20050626084024_DEFINED
-#define GROOVX_GFX_TOGLET_CC_UTC20050626084024_DEFINED
-
 #include "toglet.h"
 
 #include "gfx/glcanvas.h"
@@ -414,5 +411,3 @@ void Toglet::animate(unsigned int framesPerSecond)
   makeCurrent();
   rep->scene->animate(framesPerSecond);
 }
-
-#endif // !GROOVX_GFX_TOGLET_CC_UTC20050626084024_DEFINED

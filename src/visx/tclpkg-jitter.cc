@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_JITTER_CC_UTC20050628171008_DEFINED
-#define GROOVX_VISX_TCLPKG_JITTER_CC_UTC20050628171008_DEFINED
-
 #include "visx/tclpkg-jitter.h"
 
 #include "nub/objfactory.h"
@@ -60,5 +57,3 @@ GVX_TRACE("Jitter_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_VISX_TCLPKG_JITTER_CC_UTC20050628171008_DEFINED

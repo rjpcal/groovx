@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_ATTRIBCOUNT_CC_UTC20051112011609_DEFINED
-#define GROOVX_IO_ATTRIBCOUNT_CC_UTC20051112011609_DEFINED
-
 #include "io/attribcount.h"
 
 #include "io/writer.h"
@@ -88,5 +85,3 @@ GVX_TRACE("io::attrib_count");
   obj.write_to(counter);
   return counter.get_count();
 }
-
-#endif // !GROOVX_IO_ATTRIBCOUNT_CC_UTC20051112011609DEFINED

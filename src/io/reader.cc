@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_READER_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_READER_CC_UTC20050626084021_DEFINED
-
 #include "io/reader.h"
 
 #include "rutz/base64.h"
@@ -102,5 +99,3 @@ GVX_TRACE("io::reader::default_read_byte_array");
   rutz::base64_decode(encoded.c_str(), encoded.length(),
                       data);
 }
-
-#endif // !GROOVX_IO_READER_CC_UTC20050626084021_DEFINED

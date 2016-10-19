@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_SNAKE_CC_UTC20050626084015_DEFINED
-#define GROOVX_VISX_SNAKE_CC_UTC20050626084015_DEFINED
-
 #include "snake.h"
 
 #include "geom/geom.h"
@@ -490,5 +487,3 @@ GVX_TRACE("Snake::transformPath");
       itsElem[n].y() = new1.y() + a21*diffx + a22*diffy;
     }
 }
-
-#endif // !GROOVX_VISX_SNAKE_CC_UTC20050626084015_DEFINED

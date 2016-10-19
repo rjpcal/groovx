@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_OBJFACTORY_CC_UTC20050626084019_DEFINED
-#define GROOVX_NUB_OBJFACTORY_CC_UTC20050626084019_DEFINED
-
 #include "objfactory.h"
 
 namespace
@@ -52,5 +49,3 @@ nub::obj_factory& nub::obj_factory::instance()
     }
   return *s_instance;
 }
-
-#endif // !GROOVX_NUB_OBJFACTORY_CC_UTC20050626084019_DEFINED

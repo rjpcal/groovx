@@ -30,9 +30,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_RUTZ_FSTRING_CC_UTC20050626084020_DEFINED
-#define GROOVX_RUTZ_FSTRING_CC_UTC20050626084020_DEFINED
-
 #include "fstring.h"
 
 #include "rutz/algo.h"
@@ -423,5 +420,3 @@ fstring rutz::sconvert(unsigned long x) { NUM_CONVERT("%lu", x) }
 fstring rutz::sconvert(double x)        { NUM_CONVERT("%g", x) }
 
 #undef NUM_CONVERT
-
-#endif // !GROOVX_RUTZ_FSTRING_CC_UTC20050626084020_DEFINED

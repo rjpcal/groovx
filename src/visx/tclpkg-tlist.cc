@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_TLIST_CC_UTC20050628171009_DEFINED
-#define GROOVX_VISX_TCLPKG_TLIST_CC_UTC20050628171009_DEFINED
-
 #include "visx/tclpkg-tlist.h"
 
 #include "tcl/list.h"
@@ -80,5 +77,3 @@ GVX_TRACE("Tlist_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_VISX_TCLPKG_TLIST_CC_UTC20050628171009_DEFINED

@@ -32,9 +32,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_NUB_OBJDB_CC_UTC20050626084019_DEFINED
-#define GROOVX_NUB_OBJDB_CC_UTC20050626084019_DEFINED
-
 #include "objdb.h"
 
 #include "nub/object.h"
@@ -378,5 +375,3 @@ void nub::objectdb::insert_obj_weak(nub::object* obj)
 GVX_TRACE("nub::objectdb::insert_obj_weak");
   rep->insert_obj(obj, false);
 }
-
-#endif // !GROOVX_NUB_OBJDB_CC_UTC20050626084019_DEFINED

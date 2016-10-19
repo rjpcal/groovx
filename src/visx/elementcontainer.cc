@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_ELEMENTCONTAINER_CC_UTC20050626084017_DEFINED
-#define GROOVX_VISX_ELEMENTCONTAINER_CC_UTC20050626084017_DEFINED
-
 #include "visx/elementcontainer.h"
 
 #include "io/reader.h"
@@ -353,5 +350,3 @@ GVX_TRACE("ElementContainer::isComplete");
 
   return (rep->sequencePos >= rep->elements.size());
 }
-
-#endif // !GROOVX_VISX_ELEMENTCONTAINER_CC_UTC20050626084017_DEFINED

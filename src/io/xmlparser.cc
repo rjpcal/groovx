@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_IO_XMLPARSER_CC_UTC20050626084021_DEFINED
-#define GROOVX_IO_XMLPARSER_CC_UTC20050626084021_DEFINED
-
 #include "io/xmlparser.h"
 
 #include "rutz/error.h"
@@ -198,5 +195,3 @@ void Outliner::element_end(const char* el)
   --m_depth;
 }
 #endif
-
-#endif // !GROOVX_IO_XMLPARSER_CC_UTC20050626084021_DEFINED

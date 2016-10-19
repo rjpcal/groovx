@@ -29,11 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_GXFONT_CC_UTC20050626084025_DEFINED
-#define GROOVX_GFX_GXFONT_CC_UTC20050626084025_DEFINED
-
 #include "gxfont.h"
 
 GxFont::~GxFont() noexcept {}
-
-#endif // !GROOVX_GFX_GXFONT_CC_UTC20050626084025_DEFINED

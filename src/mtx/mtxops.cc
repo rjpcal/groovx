@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_MTX_MTXOPS_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_MTX_MTXOPS_CC_UTC20050626084022_DEFINED
-
 #include "mtxops.h"
 
 #include "mtx/arithfunctor.h"
@@ -98,5 +95,3 @@ mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
 
   return result;
 }
-
-#endif // !GROOVX_PKGS_MTX_MTXOPS_CC_UTC20050626084022_DEFINED

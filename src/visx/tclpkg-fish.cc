@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_TCLPKG_FISH_CC_UTC20050628171008_DEFINED
-#define GROOVX_VISX_TCLPKG_FISH_CC_UTC20050628171008_DEFINED
-
 #include "visx/tclpkg-fish.h"
 
 #include "nub/objfactory.h"
@@ -74,5 +71,3 @@ GVX_TRACE("Fish_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_VISX_TCLPKG_FISH_CC_UTC20050628171008_DEFINED

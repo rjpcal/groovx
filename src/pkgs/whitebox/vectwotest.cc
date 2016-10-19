@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_WHITEBOX_VECTWOTEST_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_WHITEBOX_VECTWOTEST_CC_UTC20050626084022_DEFINED
-
 #include "pkgs/whitebox/vectwotest.h"
 
 #include "geom/vec2.h"
@@ -135,5 +132,3 @@ GVX_TRACE("Vectwotest_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_PKGS_WHITEBOX_VECTWOTEST_CC_UTC20050626084022_DEFINED

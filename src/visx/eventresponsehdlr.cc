@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_VISX_EVENTRESPONSEHDLR_CC_UTC20050626084016_DEFINED
-#define GROOVX_VISX_EVENTRESPONSEHDLR_CC_UTC20050626084016_DEFINED
-
 #include "visx/eventresponsehdlr.h"
 
 #include "io/reader.h"
@@ -58,7 +55,6 @@
 #include "visx/response.h"
 #include "visx/trial.h"
 
-#define GVX_DYNAMIC_TRACE_EXPR EventResponseHdlr::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
@@ -476,5 +472,3 @@ void EventResponseHdlr::rhDenyResponses() const
 
   GVX_POSTCONDITION( rep->isInactive() );
 }
-
-#endif // !GROOVX_VISX_EVENTRESPONSEHDLR_CC_UTC20050626084016_DEFINED

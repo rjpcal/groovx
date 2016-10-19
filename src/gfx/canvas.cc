@@ -31,9 +31,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_GFX_CANVAS_CC_UTC20050626084025_DEFINED
-#define GROOVX_GFX_CANVAS_CC_UTC20050626084025_DEFINED
-
 #include "canvas.h"
 
 #include "gfx/rgbacolor.h"
@@ -260,5 +257,3 @@ void Gfx::Canvas::finishDrawing()
 {
 GVX_TRACE("Gfx::Canvas::finishDrawing");
 }
-
-#endif // !GROOVX_GFX_CANVAS_CC_UTC20050626084025_DEFINED

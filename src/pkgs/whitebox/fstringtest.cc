@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_PKGS_WHITEBOX_FSTRINGTEST_CC_UTC20050626084022_DEFINED
-#define GROOVX_PKGS_WHITEBOX_FSTRINGTEST_CC_UTC20050626084022_DEFINED
-
 #include "pkgs/whitebox/fstringtest.h"
 
 #include "tcl/pkg.h"
@@ -280,5 +277,3 @@ GVX_TRACE("Fstringtest_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-#endif // !GROOVX_PKGS_WHITEBOX_FSTRINGTEST_CC_UTC20050626084022_DEFINED

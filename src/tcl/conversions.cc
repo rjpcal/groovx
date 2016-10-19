@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_CONVERSIONS_CC_UTC20050628162420_DEFINED
-#define GROOVX_TCL_CONVERSIONS_CC_UTC20050628162420_DEFINED
-
 #include "tcl/conversions.h"
 
 #include "rutz/error.h"
@@ -383,5 +380,3 @@ GVX_TRACE("tcl::convert_from(const rutz::value&)");
 
   return Tcl_NewStringObj(val.get_string().c_str(), -1);
 }
-
-#endif // !GROOVX_TCL_CONVERSIONS_CC_UTC20050628162420_DEFINED

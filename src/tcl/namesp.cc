@@ -28,9 +28,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_NAMESP_CC_UTC20060218010119_DEFINED
-#define GROOVX_TCL_NAMESP_CC_UTC20060218010119_DEFINED
-
 #include "tcl/namesp.h"
 
 #include "tcl/interp.h"
@@ -133,5 +130,3 @@ tcl::list tcl::emu_namesp::get_export_list(tcl::interpreter& interp) const
 
   return exportlist;
 }
-
-#endif // !GROOVX_TCL_NAMESP_CC_UTC20060218010119DEFINED

@@ -29,9 +29,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROOVX_TCL_VECDISPATCH_CC_UTC20050628162420_DEFINED
-#define GROOVX_TCL_VECDISPATCH_CC_UTC20050628162420_DEFINED
-
 #include "tcl/vecdispatch.h"
 
 #include "tcl/command.h"
@@ -188,5 +185,3 @@ void tcl::use_vec_dispatch(tcl::command& cmd, unsigned int key_argn)
 {
   cmd.set_dispatcher(rutz::make_shared(new vec_dispatcher(key_argn)));
 }
-
-#endif // !GROOVX_TCL_VECDISPATCH_CC_UTC20050628162420_DEFINED
