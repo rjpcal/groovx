@@ -65,11 +65,10 @@ namespace
     const char* encoded1 =
       "VGhlIFF1aWNrIEJyb3duIEZveCBKdW1wZWQgT3ZlciBUaGUgTGF6eSBEb2c/";
 
-    rutz::byte_array buf;
     rutz::byte_array buf2;
 
-    rutz::base64_encode_string(decoded1, buf, 0);
-    TEST_REQUIRE_EQ(makeString(buf), encoded1);
+    const std::string buf = rutz::base64_encode_string(decoded1, 0);
+    TEST_REQUIRE_EQ(rutz::fstring(buf.c_str()), encoded1);
     rutz::base64_decode(buf, buf2);
     TEST_REQUIRE_EQ(makeString(buf2), decoded1);
   }
@@ -85,11 +84,10 @@ namespace
     const char* encoded2 =
       "VGhlIFF1aWNrIEJyb3duIEZveCBKdW1wZWQgT3ZlciBUaGUgTGF6eSBEb2c/IQ==";
 
-    rutz::byte_array buf;
     rutz::byte_array buf2;
 
-    rutz::base64_encode_string(decoded2, buf, 0);
-    TEST_REQUIRE_EQ(makeString(buf), encoded2);
+    const std::string buf = rutz::base64_encode_string(decoded2, 0);
+    TEST_REQUIRE_EQ(rutz::fstring(buf.c_str()), encoded2);
     rutz::base64_decode(buf, buf2);
     TEST_REQUIRE_EQ(makeString(buf2), decoded2);
   }
@@ -105,11 +103,10 @@ namespace
     const char* encoded3 =
       "VGhlIFF1aWNrIEJyb3duIEZveCBKdW1wZWQgT3ZlciBUaGUgTGF6eSBEb2c/IT8=";
 
-    rutz::byte_array buf;
     rutz::byte_array buf2;
 
-    rutz::base64_encode_string(decoded3, buf, 0);
-    TEST_REQUIRE_EQ(makeString(buf), encoded3);
+    const std::string buf = rutz::base64_encode_string(decoded3, 0);
+    TEST_REQUIRE_EQ(rutz::fstring(buf.c_str()), encoded3);
     rutz::base64_decode(buf, buf2);
     TEST_REQUIRE_EQ(makeString(buf2), decoded3);
   }
@@ -165,11 +162,10 @@ namespace
       "vnw34WTHbiM36OEGfoKBzLyZXXX31fX6pVxb0SNTEZmi5Wcp3gWA4za7mfnyvFMQgTIvaTRmwslj"
       "dA58DkrdbsG3CXh6TeEAuHGMQkFnb9EfahPp5XiLY4mMNEO88qYBkqOtv1uZX4Najszmt9E4/4E=";
 
-    rutz::byte_array buf;
     rutz::byte_array buf2;
 
-    rutz::base64_encode(&decoded4[0], 512, buf, 0);
-    TEST_REQUIRE_EQ(makeString(buf), encoded4);
+    const std::string buf = rutz::base64_encode(&decoded4[0], 512, 0);
+    TEST_REQUIRE_EQ(rutz::fstring(buf.c_str()), encoded4);
     rutz::base64_decode(buf, buf2);
     TEST_REQUIRE_EQ(memcmp(&buf2.vec[0], &decoded4[0], 512), 0);
   }
@@ -189,14 +185,13 @@ namespace
 
     for (unsigned int i = 0; i < SZ; ++i)
       {
-        decoded5.vec[i] = generator.idraw(256);
+        decoded5.vec[i] = (unsigned char)(generator.idraw(256));
       }
 
-    rutz::byte_array buf;
     rutz::byte_array buf2;
 
-    rutz::base64_encode(&decoded5.vec[0], SZ, buf, 0);
-    TEST_REQUIRE_EQ(buf.vec.size(), 4*((SZ+2)/3));
+    const std::string buf = rutz::base64_encode(&decoded5.vec[0], SZ, 0);
+    TEST_REQUIRE_EQ(buf.length(), 4*((SZ+2)/3));
     rutz::base64_decode(buf, buf2);
     TEST_REQUIRE_EQ(buf2.vec.size(), SZ);
     TEST_REQUIRE_EQ(memcmp(&buf2.vec[0], &decoded5.vec[0], SZ), 0);
@@ -218,18 +213,5 @@ GVX_TRACE("Basesixfourtest_Init");
 
   GVX_PKG_RETURN(pkg);
 }
-
-// Need these to avoid dyld errors on Mac OS X
-extern "C" int Basesixfourtest_SafeInit(Tcl_Interp*)
-{ return 1; }
-
-extern "C" int Basesixfourtest_Unload(Tcl_Interp* interp, int /*flags*/)
-{
-GVX_TRACE("Basesixfourtest_Unload");
-  return tcl::pkg::destroy_on_unload(interp, "Basesixfourtest");
-}
-
-extern "C" int Basesixfourtest_SafeUnload(Tcl_Interp*, int /*flags*/)
-{ return 1; }
 
 #endif // !GROOVX_PKGS_WHITEBOX_BASESIXFOURTEST_CC_UTC20050626084022_DEFINED

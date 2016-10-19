@@ -75,7 +75,7 @@ namespace FieldAux
   template <class C, class F>
   inline C& cast(F& p);
 
-  void throwNotAllowed(const char* what, const rutz::file_pos& pos);
+  [[noreturn]] void throwNotAllowed(const char* what, const rutz::file_pos& pos);
 }
 
 ///////////////////////////////////////////////////////////////////////

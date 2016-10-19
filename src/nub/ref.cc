@@ -84,6 +84,7 @@ void nub::detail::insert_item(nub::object* obj, ref_vis vis)
     case PUBLIC:    nub::objectdb::instance().insert_obj(obj); break;
     case PROTECTED: nub::objectdb::instance().insert_obj_weak(obj); break;
     case PRIVATE:   /* nothing */ break;
+    case DEFAULT:   /* DEFAULT already handled above */ GVX_ASSERT(0);
     default:
       GVX_PANIC("unknown ref_vis enum value");
     }

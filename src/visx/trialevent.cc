@@ -408,7 +408,7 @@ GVX_TRACE("MultiEvent::getEvents");
     (itsEvents.begin(), itsEvents.end());
 }
 
-unsigned int MultiEvent::addEvent(nub::ref<TrialEvent> event)
+size_t MultiEvent::addEvent(nub::ref<TrialEvent> event)
 {
 GVX_TRACE("MultiEvent::addEvent");
   itsEvents.push_back(event);

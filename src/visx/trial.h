@@ -97,7 +97,7 @@ public:
 
   rutz::fwd_iter<Response> responses() const;
 
-  unsigned int numResponses() const;
+  size_t numResponses() const;
 
   void clearResponses();
 

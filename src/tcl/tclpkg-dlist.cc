@@ -85,10 +85,6 @@ namespace
 
     return pow(result, 1.0/power) / double(c);
   }
-}
-
-namespace Dlist
-{
 
   //---------------------------------------------------------
   //
@@ -103,7 +99,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list choose(tcl::list source_list, tcl::list index_list)
+  tcl::list dlist_choose(tcl::list source_list, tcl::list index_list)
   {
     tcl::list result;
 
@@ -127,7 +123,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list cycle_left(tcl::list source_list, unsigned int n)
+  tcl::list dlist_cycle_left(tcl::list source_list, unsigned int n)
   {
     n = n % source_list.length();
 
@@ -155,14 +151,14 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list cycle_right(tcl::list source_list, unsigned int n)
+  tcl::list dlist_cycle_right(tcl::list source_list, unsigned int n)
   {
     n = n % source_list.length();
 
     if (n == 0)
       return source_list;
 
-    return cycle_left(source_list, source_list.length() - n);
+    return dlist_cycle_left(source_list, source_list.length() - n);
   }
 
   //---------------------------------------------------------
@@ -172,7 +168,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::obj index(tcl::list source_list, unsigned int n)
+  tcl::obj dlist_index(tcl::list source_list, unsigned int n)
   {
     return source_list.at(n);
   }
@@ -185,7 +181,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list not_(tcl::list source_list)
+  tcl::list dlist_not(tcl::list source_list)
   {
     tcl::obj one = tcl::convert_from<int>(1);
     tcl::obj zero = tcl::convert_from<int>(0);
@@ -211,7 +207,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list ones(unsigned int num_ones)
+  tcl::list dlist_ones(unsigned int num_ones)
   {
     tcl::list result;
     result.append(1, num_ones);
@@ -226,7 +222,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::obj pickone(tcl::list source_list)
+  tcl::obj dlist_pickone(tcl::list source_list)
   {
     if (source_list.length() == 0)
       {
@@ -243,7 +239,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list range(int begin, int end, int step)
+  tcl::list dlist_range(int begin, int end, int step)
   {
     tcl::list result;
 
@@ -276,7 +272,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list linspace(double begin, double end, unsigned int npts)
+  tcl::list dlist_linspace(double begin, double end, unsigned int npts)
   {
     tcl::list result;
 
@@ -287,7 +283,7 @@ namespace Dlist
 
     const double skip = (end - begin) / (npts - 1);
 
-    bool integer_mode = (skip == int(skip) && begin == int(begin));
+    bool integer_mode = (skip - int(skip) == 0.0) && (begin - int(begin) == 0.0);
 
     if (integer_mode)
       for (unsigned int i = 0; i < npts; ++i)
@@ -303,13 +299,13 @@ namespace Dlist
     return result;
   }
 
-  double perm_distance(tcl::list src)
+  double dlist_perm_distance(tcl::list src)
   {
     return perm_distance_aux(src.begin<unsigned int>(),
                              src.end<unsigned int>());
   }
 
-  double perm_distance2(tcl::list src, double power)
+  double dlist_perm_distance2(tcl::list src, double power)
   {
     return perm_distance2_aux(src.begin<unsigned int>(),
                               src.end<unsigned int>(),
@@ -330,7 +326,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list permute_maximal(unsigned int N)
+  tcl::list dlist_permute_maximal(unsigned int N)
   {
     if (N < 2)
       throw rutz::error("N must be at least 2 to make a permutation",
@@ -394,9 +390,9 @@ namespace Dlist
 
             tcl::list result;
 
-            for (unsigned int i = 0; i < slots.size(); ++i)
+            for (unsigned int k = 0; k < slots.size(); ++k)
               {
-                result.append(slots[i]);
+                result.append(slots[k]);
               }
 
             return result;
@@ -405,7 +401,6 @@ namespace Dlist
 
     throw rutz::error("permutation algorithm failed to converge",
                       SRC_POS);
-    return tcl::list(); // can't happen, but placate compiler
   }
 
   //---------------------------------------------------------
@@ -415,7 +410,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list permute_moveall(unsigned int N)
+  tcl::list dlist_permute_moveall(unsigned int N)
   {
     if (N < 2)
       throw rutz::error("N must be at least 2 to make a permutation", SRC_POS);
@@ -477,7 +472,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list rand(double min, double max, unsigned int N)
+  tcl::list dlist_rand(double min, double max, unsigned int N)
   {
     tcl::list result;
 
@@ -505,7 +500,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list repeat(tcl::list source_list, tcl::list times_list)
+  tcl::list dlist_repeat(tcl::list source_list, tcl::list times_list)
   {
     // find the minimum of the two lists' lengths
     unsigned int min_len = rutz::min(source_list.length(), times_list.length());
@@ -528,7 +523,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list reverse(tcl::list src)
+  tcl::list dlist_reverse(tcl::list src)
   {
     if (src.length() < 2)
       return src;
@@ -547,7 +542,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list select(tcl::list source_list, tcl::list flags_list)
+  tcl::list dlist_select(tcl::list source_list, tcl::list flags_list)
   {
     unsigned int src_len = source_list.length();
     unsigned int flg_len = flags_list.length();
@@ -579,7 +574,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list shuffle(tcl::list src, int seed)
+  tcl::list dlist_shuffle(tcl::list src, int seed)
   {
     rutz::fixed_block<tcl::obj> objs(src.begin<tcl::obj>(),
                                         src.end<tcl::obj>());
@@ -605,10 +600,10 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list shuffle_moveall(tcl::list src)
+  tcl::list dlist_shuffle_moveall(tcl::list src)
   {
-    tcl::list permutation = permute_moveall(src.length());
-    return Dlist::choose(src, permutation);
+    tcl::list permutation = dlist_permute_moveall(src.length());
+    return dlist_choose(src, permutation);
   }
 
   //---------------------------------------------------------
@@ -617,10 +612,10 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list shuffle_maximal(tcl::list src)
+  tcl::list dlist_shuffle_maximal(tcl::list src)
   {
-    tcl::list permutation = permute_maximal(src.length());
-    return Dlist::choose(src, permutation);
+    tcl::list permutation = dlist_permute_maximal(src.length());
+    return dlist_choose(src, permutation);
   }
 
   //---------------------------------------------------------
@@ -629,7 +624,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list slice(tcl::list src, unsigned int slice)
+  tcl::list dlist_slice(tcl::list src, unsigned int slice)
   {
     tcl::list result;
 
@@ -652,7 +647,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::obj sum(tcl::list source_list)
+  tcl::obj dlist_sum(tcl::list source_list)
   {
     int isum=0;
     double dsum=0.0;
@@ -694,7 +689,7 @@ namespace Dlist
   //
   //---------------------------------------------------------
 
-  tcl::list zeros(unsigned int num_zeros)
+  tcl::list dlist_zeros(unsigned int num_zeros)
   {
     tcl::list result;
     result.append(0, num_zeros);
@@ -702,7 +697,7 @@ namespace Dlist
     return result;
   }
 
-} // end namespace Dlist
+}
 
 
 extern "C"
@@ -712,31 +707,31 @@ GVX_TRACE("Dlist_Init");
 
   GVX_PKG_CREATE(pkg, interp, "dlist", "4.$Revision$");
 
-  pkg->def( "choose", "source_list index_list", &Dlist::choose, SRC_POS );
-  pkg->def( "cycle_left", "list n", &Dlist::cycle_left, SRC_POS );
-  pkg->def( "cycle_right", "list n", &Dlist::cycle_right, SRC_POS );
-  pkg->def( "index", "list index", &Dlist::index, SRC_POS );
-  pkg->def( "not", "list", &Dlist::not_, SRC_POS );
-  pkg->def( "ones", "num_ones", &Dlist::ones, SRC_POS );
-  pkg->def( "linspace", "begin end npts", &Dlist::linspace, SRC_POS );
-  pkg->def( "perm_distance", "list", &Dlist::perm_distance, SRC_POS );
-  pkg->def( "perm_distance2", "list power", &Dlist::perm_distance2, SRC_POS );
-  pkg->def( "permute_maximal", "N", &Dlist::permute_maximal, SRC_POS );
-  pkg->def( "permute_moveall", "N", &Dlist::permute_moveall, SRC_POS );
-  pkg->def( "pickone", "list", &Dlist::pickone, SRC_POS );
-  pkg->def( "rand", "min max N", &Dlist::rand, SRC_POS );
-  pkg->def( "range", "begin end ?step=1?", &Dlist::range, SRC_POS );
-  pkg->def( "range", "begin end", rutz::bind_last(&Dlist::range, 1), SRC_POS );
-  pkg->def( "repeat", "source_list times_list", &Dlist::repeat, SRC_POS );
-  pkg->def( "reverse", "list", &Dlist::reverse, SRC_POS );
-  pkg->def( "select", "source_list flags_list", &Dlist::select, SRC_POS );
-  pkg->def( "shuffle", "list ?seed=0?", &Dlist::shuffle, SRC_POS );
-  pkg->def( "shuffle", "list", rutz::bind_last(&Dlist::shuffle, 0), SRC_POS );
-  pkg->def( "shuffle_maximal", "list", &Dlist::shuffle_maximal, SRC_POS );
-  pkg->def( "shuffle_moveall", "list", &Dlist::shuffle_moveall, SRC_POS );
-  pkg->def( "slice", "list n", &Dlist::slice, SRC_POS );
-  pkg->def( "sum", "list", &Dlist::sum, SRC_POS );
-  pkg->def( "zeros", "num_zeros", &Dlist::zeros, SRC_POS );
+  pkg->def( "choose", "source_list index_list", &dlist_choose, SRC_POS );
+  pkg->def( "cycle_left", "list n", &dlist_cycle_left, SRC_POS );
+  pkg->def( "cycle_right", "list n", &dlist_cycle_right, SRC_POS );
+  pkg->def( "index", "list index", &dlist_index, SRC_POS );
+  pkg->def( "not", "list", &dlist_not, SRC_POS );
+  pkg->def( "ones", "num_ones", &dlist_ones, SRC_POS );
+  pkg->def( "linspace", "begin end npts", &dlist_linspace, SRC_POS );
+  pkg->def( "perm_distance", "list", &dlist_perm_distance, SRC_POS );
+  pkg->def( "perm_distance2", "list power", &dlist_perm_distance2, SRC_POS );
+  pkg->def( "permute_maximal", "N", &dlist_permute_maximal, SRC_POS );
+  pkg->def( "permute_moveall", "N", &dlist_permute_moveall, SRC_POS );
+  pkg->def( "pickone", "list", &dlist_pickone, SRC_POS );
+  pkg->def( "rand", "min max N", &dlist_rand, SRC_POS );
+  pkg->def( "range", "begin end ?step=1?", &dlist_range, SRC_POS );
+  pkg->def( "range", "begin end", rutz::bind_last(&dlist_range, 1), SRC_POS );
+  pkg->def( "repeat", "source_list times_list", &dlist_repeat, SRC_POS );
+  pkg->def( "reverse", "list", &dlist_reverse, SRC_POS );
+  pkg->def( "select", "source_list flags_list", &dlist_select, SRC_POS );
+  pkg->def( "shuffle", "list ?seed=0?", &dlist_shuffle, SRC_POS );
+  pkg->def( "shuffle", "list", rutz::bind_last(&dlist_shuffle, 0), SRC_POS );
+  pkg->def( "shuffle_maximal", "list", &dlist_shuffle_maximal, SRC_POS );
+  pkg->def( "shuffle_moveall", "list", &dlist_shuffle_moveall, SRC_POS );
+  pkg->def( "slice", "list n", &dlist_slice, SRC_POS );
+  pkg->def( "sum", "list", &dlist_sum, SRC_POS );
+  pkg->def( "zeros", "num_zeros", &dlist_zeros, SRC_POS );
 
   GVX_PKG_RETURN(pkg);
 }

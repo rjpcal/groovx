@@ -46,7 +46,7 @@ namespace rutz
 class rutz::stdiobuf : public std::streambuf
 {
 private:
-  int m_mode;
+  unsigned int m_mode;
   int m_filedes;
 
   stdiobuf(const stdiobuf&);
@@ -56,7 +56,7 @@ private:
   static const int s_pback_size = 4;
   char buffer[s_buf_size];
 
-  void init(int fd, int om, bool throw_exception);
+  void init(int fd, unsigned int om, bool throw_exception);
 
   int flushoutput();
 
@@ -65,13 +65,13 @@ public:
   /** The stdiobuf will NOT close the FILE on destruction, that is
       left up to the caller (since the caller must also have been the
       one to open the FILE object). */
-  stdiobuf(FILE* f, int om, bool throw_exception=false);
+  stdiobuf(FILE* f, unsigned int om, bool throw_exception=false);
 
   /// Create with a reference to a file descriptor.
   /** The stdiobuf will NOT close the descriptor on destruction, that
       is left up to the caller (since the caller must also have been
       the one to open the file descriptor). */
-  stdiobuf(int fd, int om, bool throw_exception=false);
+  stdiobuf(int fd, unsigned int om, bool throw_exception=false);
 
   /// Destructor flushes buffer, but DOES NOT CLOSE the file descriptor.
   ~stdiobuf() { close(); }
@@ -107,7 +107,7 @@ public:
   /** The stdiobuf will NOT close the FILE on destruction, that is
       left up to the caller (since the caller must also have been the
       one to open the FILE object). */
-  stdiostream(FILE* f, int om, bool throw_exception=false) :
+  stdiostream(FILE* f, unsigned int om, bool throw_exception=false) :
     std::iostream(0),
     m_buf(f, om, throw_exception)
   {
@@ -118,7 +118,7 @@ public:
   /** The stdiobuf will NOT close the descriptor on destruction, that
       is left up to the caller (since the caller must also have been
       the one to open the file descriptor). */
-  stdiostream(int fd, int om, bool throw_exception=false) :
+  stdiostream(int fd, unsigned int om, bool throw_exception=false) :
     std::iostream(0),
     m_buf(fd, om, throw_exception)
   {

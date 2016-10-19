@@ -67,12 +67,12 @@ namespace rutz
     rutz::fstring get_known_keys(const char* sep) const;
 
     /// Raise an exception reporting an unknown key.
-    void throw_for_key(const char* key,
-                       const rutz::file_pos& pos) const;
+    [[noreturn]] void throw_for_key(const char* key,
+                                    const rutz::file_pos& pos) const;
 
     /// Raise an exception reporting an unknown key.
-    void throw_for_key(const rutz::fstring& key,
-                       const rutz::file_pos& pos) const;
+    [[noreturn]] void throw_for_key(const rutz::fstring& key,
+                                    const rutz::file_pos& pos) const;
 
     /// Retrieve the object associated with the tag \a name.
     void* get_value_for_key(const rutz::fstring& name) const;

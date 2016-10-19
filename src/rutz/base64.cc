@@ -38,6 +38,7 @@
 #include "rutz/mappedfile.h"
 
 #include <cctype> // for isspace()
+#include <cstdint> // for uint8_t
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -71,29 +72,29 @@ namespace
     };
 }
 
-void rutz::base64_encode(const unsigned char* src,
-                         unsigned int src_len,
-                         rutz::byte_array& dst,
-                         unsigned int line_width)
+std::string rutz::base64_encode(const unsigned char* src,
+                                size_t src_len,
+                                unsigned int line_width)
 {
 GVX_TRACE("rutz::base64_encode");
-  dst.vec.resize(0);
 
-  if (src_len == 0) return;
+  std::string result;
 
-  unsigned int reserve_size = ((src_len+2)/3) * 4;
+  if (src_len == 0) return result;
+
+  size_t reserve_size = ((src_len+2)/3) * 4;
   if (line_width > 0)
     reserve_size += 2*(src_len/line_width + 2);
-  dst.vec.reserve(reserve_size);
+  result.reserve(reserve_size);
   int i = 0;
   unsigned int c = 0;
-  unsigned char dec3[3]; // three characters of decoded string
-  unsigned char enc4[4]; // four characters of encoded string
+  unsigned char dec3[3]; // three characters of decoded string (i.e. src input)
+  int enc4[4]; // four values of encoded string
 
   if (line_width > 0)
     {
-      dst.vec.push_back('\n');
-      dst.vec.push_back('\t');
+      result += '\n';
+      result += '\t';
     }
 
   const unsigned char* const stop = src + src_len;
@@ -119,7 +120,7 @@ GVX_TRACE("rutz::base64_encode");
           enc4[3] = dec3[2] & 0x3f;
 
           for (i = 0; i < 4; ++i)
-            dst.vec.push_back(base64_chars[enc4[i]]);
+            result += base64_chars[enc4[i]];
 
           i = 0;
 
@@ -128,8 +129,8 @@ GVX_TRACE("rutz::base64_encode");
           if (line_width > 0 && c > line_width)
             {
               c = 0;
-              dst.vec.push_back('\n');
-              dst.vec.push_back('\t');
+              result += '\n';
+              result += '\t';
             }
         }
     }
@@ -141,10 +142,10 @@ GVX_TRACE("rutz::base64_encode");
       enc4[0] = (dec3[0] & 0xfc) >> 2;
       enc4[1] = (dec3[0] & 0x03) << 4;
 
-      dst.vec.push_back(base64_chars[enc4[0]]);
-      dst.vec.push_back(base64_chars[enc4[1]]);
-      dst.vec.push_back('=');
-      dst.vec.push_back('=');
+      result += base64_chars[enc4[0]];
+      result += base64_chars[enc4[1]];
+      result += '=';
+      result += '=';
     }
   else if (i == 2)
     {
@@ -152,36 +153,34 @@ GVX_TRACE("rutz::base64_encode");
       enc4[1] = ((dec3[0] & 0x03) << 4) + ((dec3[1] & 0xf0) >> 4);
       enc4[2] = (dec3[1] & 0x0f) << 2;
 
-      dst.vec.push_back(base64_chars[enc4[0]]);
-      dst.vec.push_back(base64_chars[enc4[1]]);
-      dst.vec.push_back(base64_chars[enc4[2]]);
-      dst.vec.push_back('=');
+      result += base64_chars[enc4[0]];
+      result += base64_chars[enc4[1]];
+      result += base64_chars[enc4[2]];
+      result += '=';
     }
+
+  return result;
 }
 
-void rutz::base64_encode_string(const char* str,
-                                rutz::byte_array& dst,
-                                unsigned int line_width)
+std::string rutz::base64_encode_string(const char* str,
+                                       unsigned int line_width)
 {
-  rutz::base64_encode(reinterpret_cast<const unsigned char*>(str),
-                      strlen(str),
-                      dst,
-                      line_width);
+  return rutz::base64_encode(reinterpret_cast<const unsigned char*>(str),
+                             strlen(str),
+                             line_width);
 }
 
-void rutz::base64_encode_file(const char* filename,
-                              rutz::byte_array& dst,
-                              unsigned int line_width)
+std::string rutz::base64_encode_file(const char* filename,
+                                     unsigned int line_width)
 {
   rutz::mapped_infile m(filename);
-  rutz::base64_encode(static_cast<const unsigned char*>(m.memory()),
-                      m.length(),
-                      dst,
-                      line_width);
+  return rutz::base64_encode(static_cast<const unsigned char*>(m.memory()),
+                             size_t(m.length()),
+                             line_width);
 }
 
 void rutz::base64_decode(const char* src,
-                         unsigned int in_len,
+                         size_t in_len,
                          rutz::byte_array& dst)
 {
 GVX_TRACE("rutz::base64_decode");
@@ -199,13 +198,13 @@ GVX_TRACE("rutz::base64_decode");
       int n = base64_to_num2[static_cast<unsigned char>(*p)];
       if (n >= 0)
         {
-          enc4[i++] = n;
+          enc4[i++] = uint8_t(n);
 
           if (i == 4)
             {
-              dec3[0] = (enc4[0] << 2) + ((enc4[1] & 0x30) >> 4);
-              dec3[1] = ((enc4[1] & 0xf) << 4) + ((enc4[2] & 0x3c) >> 2);
-              dec3[2] = ((enc4[2] & 0x3) << 6) + enc4[3];
+              dec3[0] = uint8_t((enc4[0] << 2) + ((enc4[1] & 0x30) >> 4));
+              dec3[1] = uint8_t(((enc4[1] & 0xf) << 4) + ((enc4[2] & 0x3c) >> 2));
+              dec3[2] = uint8_t(((enc4[2] & 0x3) << 6) + enc4[3]);
 
               for (i = 0; i < 3; ++i)
                 dst.vec.push_back(dec3[i]);
@@ -233,7 +232,7 @@ GVX_TRACE("rutz::base64_decode");
       // extra 12 bits (2 chars) encoded
       // extra 8 bits (1 char) decoded
 
-      dec3[0] = (enc4[0] << 2) + ((enc4[1] & 0x30) >> 4);
+      dec3[0] = uint8_t((enc4[0] << 2) + ((enc4[1] & 0x30) >> 4));
 
       dst.vec.push_back(dec3[0]);
     }
@@ -242,8 +241,8 @@ GVX_TRACE("rutz::base64_decode");
     {
       // extra 18 bits (3 chars) encoded
       // extra 16 bits (2 chars) decoded
-      dec3[0] = (enc4[0] << 2) + ((enc4[1] & 0x30) >> 4);
-      dec3[1] = ((enc4[1] & 0xf) << 4) + ((enc4[2] & 0x3c) >> 2);
+      dec3[0] = uint8_t((enc4[0] << 2) + ((enc4[1] & 0x30) >> 4));
+      dec3[1] = uint8_t(((enc4[1] & 0xf) << 4) + ((enc4[2] & 0x3c) >> 2));
 
       dst.vec.push_back(dec3[0]);
       dst.vec.push_back(dec3[1]);
@@ -256,6 +255,12 @@ void rutz::base64_decode(const rutz::byte_array& src,
   base64_decode(reinterpret_cast<const char*>(&src.vec[0]),
                 src.vec.size(),
                 dst);
+}
+
+void rutz::base64_decode(const std::string& src,
+                         rutz::byte_array& dst)
+{
+  base64_decode(src.c_str(), src.length(), dst);
 }
 
 #endif // !GROOVX_RUTZ_BASE64_CC_UTC20050626084020_DEFINED

@@ -332,8 +332,8 @@ GVX_TRACE("House::grRender");
   const double max_dimension =
     (total_height > total_width) ? total_height : total_width;
 
-  Gfx::MatrixSaver msaver(canvas, "house");
-  Gfx::AttribSaver asaver(canvas);
+  Gfx::MatrixSaver msaver1(canvas, "house");
+  Gfx::AttribSaver asaver1(canvas);
 
   // Scale so that the larger dimension (of width and height)
   // extends across 1.0 units in world coordinates. The smaller

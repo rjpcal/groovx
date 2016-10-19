@@ -198,15 +198,15 @@ GVX_TRACE("Gfx::Canvas::drawNurbsCurve");
   const float* t = &knots[2];
   // t points to { 0, 0, 0.17, 0.33, 0.5, 0.67, 0.83, 1, 1 }
 
-  unsigned int nctrl = pts.size();
+  size_t nctrl = pts.size();
 
   GVX_ASSERT(nctrl > 4);
 
-  unsigned int nbz = nctrl - 3;
+  size_t nbz = nctrl - 3;
 
   rutz::dynamic_block<BezData> bz(nbz);
 
-  for (unsigned int k = 0; k < nbz; ++k)
+  for (size_t k = 0; k < nbz; ++k)
     {
       float d1 = t[k+3] - t[k+2]; // == 0 when k == nbz-1 (last iteration)
       float d2 = t[k+2] - t[k+1];

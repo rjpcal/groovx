@@ -158,7 +158,6 @@ namespace
 
     throw rutz::error(rutz::sfmt("invalid read/write mode '%s'", m),
                       SRC_POS);
-    return false; // "can't happen"
   }
 }
 

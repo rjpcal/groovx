@@ -659,7 +659,7 @@ public:
     itsFstream << t.x() << " " << t.y() << " ";
   }
 
-  void raiseError(const rutz::fstring& msg, const rutz::file_pos& pos)
+  [[noreturn]] void raiseError(const rutz::fstring& msg, const rutz::file_pos& pos)
   {
     throw rutz::error(rutz::sfmt("PSCanvas error: %s", msg.c_str()), pos);
   }
@@ -723,7 +723,6 @@ vec3d Gfx::PSCanvas::screenFromWorld3(const vec3d& /*world_pos*/) const
 GVX_TRACE("Gfx::PSCanvas::screenFromWorld3");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
-  return vec3d();
 }
 
 vec3d Gfx::PSCanvas::worldFromScreen3(const vec3d& /*screen_pos*/) const
@@ -731,7 +730,6 @@ vec3d Gfx::PSCanvas::worldFromScreen3(const vec3d& /*screen_pos*/) const
 GVX_TRACE("Gfx::PSCanvas::worldFromScreen3");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
-  return vec3d();
 }
 
 
@@ -740,7 +738,6 @@ recti Gfx::PSCanvas::getScreenViewport() const
 GVX_TRACE("Gfx::PSCanvas::getScreenViewport()");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
-  return recti();
 }
 
 

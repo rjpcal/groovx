@@ -74,10 +74,10 @@ io::read_version_error::read_version_error(const char* classname,
 
 io::reader::~reader() noexcept {}
 
-int io::reader::ensure_version_id(const char* name,
-                                  io::version_id lowest_supported_version,
-                                  const char* msg,
-                                  const rutz::file_pos& pos)
+io::version_id io::reader::ensure_version_id(const char* name,
+                                             io::version_id lowest_supported_version,
+                                             const char* msg,
+                                             const rutz::file_pos& pos)
 {
 GVX_TRACE("io::reader::ensure_version_id");
 

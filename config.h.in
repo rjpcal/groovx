@@ -16,9 +16,6 @@
    constructed? */
 #undef GVX_DEFAULT_REFVIS
 
-/* should Nub::RefCounted and Nub::Object have a no-throw destructor? */
-#undef GVX_DTOR_NOTHROW
-
 /* make operator new+delete protected to force factory functions? */
 #undef GVX_ENFORCE_FACTORY_FUNCTIONS
 

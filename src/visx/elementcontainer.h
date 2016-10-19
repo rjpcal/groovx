@@ -35,6 +35,8 @@
 
 #include "visx/element.h"
 
+#include <cstddef>
+
 namespace rutz
 {
   template <class T> class fwd_iter;
@@ -117,7 +119,7 @@ public:
   nub::soft_ref<Element> currentElement() const;
 
   /// Returns the total number of child elements in the container.
-  unsigned int numElements() const;
+  size_t numElements() const;
 
   /// Returns the number of elements that have been completed.
   /** This number will not include elements that have been aborted either

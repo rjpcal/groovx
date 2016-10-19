@@ -57,13 +57,10 @@ namespace
 
   struct Tuple4
   {
-    Tuple4() {}
-
     Tuple4(double a0, double a1, double a2, double a3)
     { arr[0] = a0; arr[1] = a1; arr[2] = a2; arr[3] = a3; }
 
     double  operator[](int i) const { return arr[i]; }
-    double& operator[](int i)       { return arr[i]; }
 
     double arr[4];
   };

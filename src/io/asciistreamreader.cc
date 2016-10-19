@@ -67,9 +67,9 @@ using io::attrib_map;
 
 namespace
 {
-  void throw_attr_error(const fstring& attrib_name,
-                        const fstring& attrib_value,
-                        const rutz::file_pos& pos)
+  [[noreturn]] void throw_attr_error(const fstring& attrib_name,
+                                     const fstring& attrib_value,
+                                     const rutz::file_pos& pos)
   {
     throw rutz::error(rutz::sfmt("error reading attribute '%s' "
                                  "with value '%s'",
@@ -128,7 +128,6 @@ namespace
                               "with buffer contents: %s",
                               ch2, &buffer[0]),
                    SRC_POS);
-                break;
               }
           }
       } // while loop

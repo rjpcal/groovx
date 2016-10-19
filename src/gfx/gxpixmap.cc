@@ -227,9 +227,10 @@ void GxPixmap::read_from(io::reader& reader)
 {
 GVX_TRACE("GxPixmap::read_from");
 
-  int svid = reader.ensure_version_id("GxPixmap", 4,
-                                      "Try cvs tag xml_conversion_20040526",
-                                      SRC_POS);
+  const io::version_id svid =
+    reader.ensure_version_id("GxPixmap", 4,
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   reader.read_value("filename", rep->itsFilename);
   reader.read_value("zoomX", rep->itsZoom.x());

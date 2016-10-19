@@ -108,16 +108,16 @@ private:
   int itsFishCategory;
 
   /// Controls the shape of the dorsal fin.
-  double* itsDorsalFinCoord;
+  float* itsDorsalFinCoord;
 
   /// Controls the shape of the tail fin.
-  double* itsTailFinCoord;
+  float* itsTailFinCoord;
 
   /// Controls the shape of the lower fin (one fin vs. two fins).
-  double* itsLowerFinCoord;
+  float* itsLowerFinCoord;
 
   /// Controls the shape of the mouth
-  double* itsMouthCoord;
+  float* itsMouthCoord;
 
   /// Selects the current part for editing.
   int itsCurrentPart;
@@ -136,7 +136,7 @@ private:
   int partsMask;
 
   /// Controls the degree of the current swimming stroke.
-  double swimStroke;
+  float swimStroke;
 
   /////////////
   // actions //

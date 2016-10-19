@@ -281,15 +281,4 @@ GVX_TRACE("Fstringtest_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-// Need these to avoid dyld errors on Mac OS X
-extern "C" int Fstringtest_SafeInit(Tcl_Interp*) { return 1; }
-
-extern "C" int Fstringtest_Unload(Tcl_Interp* interp, int /*flags*/)
-{
-GVX_TRACE("Fstringtest_Unload");
-  return tcl::pkg::destroy_on_unload(interp, "Fstringtest");
-}
-
-extern "C" int Fstringtest_SafeUnload(Tcl_Interp*, int /*flags*/) { return 1; }
-
 #endif // !GROOVX_PKGS_WHITEBOX_FSTRINGTEST_CC_UTC20050626084022_DEFINED

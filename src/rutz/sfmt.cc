@@ -38,6 +38,8 @@
 
 #include "rutz/debug.h"
 
+#include <vector>
+
 using rutz::fstring;
 
 fstring rutz::vsfmt(const char* fmt, va_list ap)
@@ -49,17 +51,21 @@ fstring rutz::vsfmt(const char* fmt, va_list ap)
       return fstring();
     }
 
-  size_t bufsize = 512;
+  const size_t initsize = 512;
+  std::vector<char> buf(initsize);
   while (1)
     {
-      // relying on a gcc extension to create stack arrays whose size
-      // is not a compile-time constant -- could also use alloca or
-      // std::vector here
-      char buf[bufsize];
 
       va_list apcopy;
       va_copy(apcopy, ap);
-      const int nchars = vsnprintf(&buf[0], bufsize, fmt, apcopy);
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+#endif
+      const int nchars = vsnprintf(&buf[0], buf.size(), fmt, apcopy);
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
       va_end(apcopy);
 
       if (nchars < 0)
@@ -70,32 +76,32 @@ fstring rutz::vsfmt(const char* fmt, va_list ap)
           char errbuf[1024];
           snprintf(&errbuf[0], sizeof(errbuf),
                    "vsnprintf failed with format string '%s' "
-                   "and bufsize %lu", fmt, (unsigned long) bufsize);
+                   "and bufsize %zu", fmt, buf.size());
           throw rutz::error(&errbuf[0], SRC_POS);
         }
-      else if (static_cast<size_t>(nchars) >= bufsize)
+      else if (static_cast<size_t>(nchars) >= buf.size())
         {
           // buffer was too small, so let's double the bufsize and try
           // again:
-          const size_t new_bufsize = bufsize * 2;
+          const size_t new_bufsize = buf.size() * 2;
           // make sure that we haven't overflow the unsigned int
           // size_t:
-          if (new_bufsize < bufsize)
+          if (new_bufsize < buf.size())
             {
               char errbuf[1024];
               snprintf(&errbuf[0], sizeof(errbuf),
                        "buffer size overflow with format string '%s' "
-                       "and bufsize %lu", fmt, (unsigned long) bufsize);
+                       "and bufsize %zu", fmt, buf.size());
               throw rutz::error(&errbuf[0], SRC_POS);
             }
 
-          bufsize = new_bufsize;
+          buf.resize(new_bufsize);
           continue;
         }
       else
         {
           // OK, the vsnprintf() succeeded:
-          return fstring(rutz::char_range(&buf[0], nchars));
+          return fstring(rutz::char_range(&buf[0], size_t(nchars)));
         }
     }
   // should never get here:

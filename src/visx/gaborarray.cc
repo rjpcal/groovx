@@ -262,7 +262,7 @@ GVX_TRACE("GaborArray::saveContourOnlyImage");
       if      (val < 128) { val = 0; }
       else if (val > 255) { val = 255; }
 
-      *bytes++ = val;
+      *bytes++ = (unsigned char)(val);
     }
 
   media::save_image(filename, *result);
@@ -494,7 +494,7 @@ GVX_TRACE("GaborArray::generateBmap");
       GVX_ASSERT(val >= 0);
       GVX_ASSERT(val <= 255);
 
-      *bytes++ = val;
+      *bytes++ = (unsigned char)(val);
     }
 
   if (clip)

@@ -46,7 +46,7 @@
 using rutz::fstring;
 using rutz::shared_ptr;
 
-rutz::gzstreambuf::gzstreambuf(const char* name, int om,
+rutz::gzstreambuf::gzstreambuf(const char* name, unsigned int om,
                                bool throw_exception)
   :
   m_opened(false),
@@ -121,8 +121,8 @@ GVX_TRACE("rutz::gzstreambuf::underflow");
   if (gptr() < egptr())
     return *gptr();
 
-  int numPutback = 0;
-  if (s_pback_size > 0)
+  off_t numPutback = 0;
+  if (s_pback_size > 0 && gptr() > eback())
     {
       // process size of putback area
       // -use number of characters read
@@ -134,7 +134,7 @@ GVX_TRACE("rutz::gzstreambuf::underflow");
       // copy up to four characters previously read into the putback
       // buffer (area of first four characters)
       std::memcpy (m_buf+(4-numPutback), gptr()-numPutback,
-                   numPutback);
+                   size_t(numPutback));
     }
 
   // read new characters
@@ -165,7 +165,7 @@ GVX_TRACE("rutz::gzstreambuf::overflow");
   if (c != EOF)
     {
       // insert the character into the buffer
-      *pptr() = c;
+      *pptr() = char(c);
       pbump(1);
     }
 
@@ -190,8 +190,9 @@ int rutz::gzstreambuf::flushoutput()
 {
   if (!(m_mode & std::ios::out) || !m_opened) return EOF;
 
-  int num = pptr()-pbase();
-  if ( gzwrite(m_gzfile, pbase(), num) != num )
+  int num = int(pptr()-pbase());
+  GVX_ASSERT(num >= 0);
+  if ( gzwrite(m_gzfile, pbase(), (unsigned int) num) != num )
     {
       return EOF;
     }

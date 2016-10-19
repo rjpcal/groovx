@@ -54,7 +54,7 @@ namespace
 
   // debug keys and guard mutex
   int             g_debug_next_key = 0;
-  unsigned char   g_key_levels[MAX_KEYS];
+  int             g_key_levels[MAX_KEYS];
   const char*     g_key_filenames[MAX_KEYS];
   pthread_mutex_t g_debug_keys_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -95,19 +95,19 @@ void rutz::debug::eval(const char* what, int level,     \
     }                                                   \
 }
 
-EVAL_IMPL(bool);
-EVAL_IMPL(char);
-EVAL_IMPL(unsigned char);
-EVAL_IMPL(short);
-EVAL_IMPL(unsigned short);
-EVAL_IMPL(int);
-EVAL_IMPL(unsigned int);
-EVAL_IMPL(long);
-EVAL_IMPL(unsigned long);
-EVAL_IMPL(float);
-EVAL_IMPL(double);
-EVAL_IMPL(const char*);
-EVAL_IMPL(void*);
+EVAL_IMPL(bool)
+EVAL_IMPL(char)
+EVAL_IMPL(unsigned char)
+EVAL_IMPL(short)
+EVAL_IMPL(unsigned short)
+EVAL_IMPL(int)
+EVAL_IMPL(unsigned int)
+EVAL_IMPL(long)
+EVAL_IMPL(unsigned long)
+EVAL_IMPL(float)
+EVAL_IMPL(double)
+EVAL_IMPL(const char*)
+EVAL_IMPL(void*)
 
 void rutz::debug::dump(const char* what, int level, const char* where, int line_no) noexcept
 {
@@ -225,7 +225,7 @@ void rutz::debug::set_global_level(int lev)
 {
   GVX_MUTEX_LOCK(&g_debug_keys_mutex);
   for (int i = 0; i < MAX_KEYS; ++i)
-    g_key_levels[i] = (unsigned char) lev;
+    g_key_levels[i] = lev;
 }
 
 #endif // !GROOVX_RUTZ_DEBUG_CC_UTC20050626084020_DEFINED

@@ -115,7 +115,7 @@ struct Fish::Part
   vec3f itsPt0;
   vec3f itsPt1;
 
-  double itsCoord;
+  float itsCoord;
 
   template <std::size_t N1, std::size_t N2>
   void reset(float const (&knots)[N1], vec3f const (&points)[N2])
@@ -124,7 +124,7 @@ struct Fish::Part
                     rutz::array_end(knots));
     itsCtrlPnts.assign(rutz::array_begin(points),
                        rutz::array_end(points));
-    itsCoord = 0.0;
+    itsCoord = 0.0f;
   }
 };
 
@@ -140,10 +140,10 @@ const FieldMap& Fish::classFields()
   static const Field FIELD_ARRAY[] =
   {
     Field("category", &Fish::itsFishCategory, 0, 0, 10, 1, Field::NEW_GROUP),
-    Field("dorsalFinCoord", &Fish::itsDorsalFinCoord, 0.0, -2.0, 2.0, 0.1),
-    Field("tailFinCoord", &Fish::itsTailFinCoord, 0.0, -2.0, 2.0, 0.1),
-    Field("lowerFinCoord", &Fish::itsLowerFinCoord, 0.0, -2.0, 2.0, 0.1),
-    Field("mouthCoord", &Fish::itsMouthCoord, 0.0, -2.0, 2.0, 0.1),
+    Field("dorsalFinCoord", &Fish::itsDorsalFinCoord, 0.0f, -2.0f, 2.0f, 0.1f),
+    Field("tailFinCoord", &Fish::itsTailFinCoord, 0.0f, -2.0f, 2.0f, 0.1f),
+    Field("lowerFinCoord", &Fish::itsLowerFinCoord, 0.0f, -2.0f, 2.0f, 0.1f),
+    Field("mouthCoord", &Fish::itsMouthCoord, 0.0f, -2.0f, 2.0f, 0.1f),
 
     Field("currentPart", &Fish::itsCurrentPart, 0, 0, 3, 1,
           Field::NEW_GROUP | Field::CHECKED | Field::TRANSIENT),
@@ -158,7 +158,7 @@ const FieldMap& Fish::classFields()
     Field("partsMask", &Fish::partsMask,
           0, 0, 15, 1, Field::TRANSIENT),
     Field("swimStroke", &Fish::swimStroke,
-          0.0, -1.0, 1.0, 0.1, Field::TRANSIENT)
+          0.0f, -1.0f, 1.0f, 0.1f, Field::TRANSIENT)
   };
 
   static FieldMap FISH_FIELDS(FIELD_ARRAY, &GxShapeKit::classFields());
@@ -226,61 +226,61 @@ GVX_TRACE("Fish::restoreToDefault");
 
   static const float knots[] =
   {
-    0.0, 0.0, 0.0, 0.0,
-    0.1667, 0.3333, 0.5000, 0.6667, 0.8333,
-    1.0, 1.0, 1.0, 1.0
+    0.0f, 0.0f, 0.0f, 0.0f,
+    0.1667f, 0.3333f, 0.5000f, 0.6667f, 0.8333f,
+    1.0f, 1.0f, 1.0f, 1.0f
   };
 
   static const vec3f DF_coefs[] =
   {
-    vec3f(-0.2856,  0.2915,  0.2856),
-    vec3f(-0.2140,  0.2866,  0.2140),
-    vec3f(-0.2176,  0.2863,  0.2176),
-    vec3f(-0.0735,  0.4670,  0.0735),
-    vec3f( 0.0168,  0.3913,  0.0168),
-    vec3f( 0.1101,  0.3071,  0.1101),
-    vec3f( 0.3049,  0.1048,  0.3049),
-    vec3f( 0.0953,  0.1800,  0.0953),
-    vec3f( 0.1597,  0.1538,  0.1597),
+    vec3f(-0.2856f,  0.2915f,  0.2856f),
+    vec3f(-0.2140f,  0.2866f,  0.2140f),
+    vec3f(-0.2176f,  0.2863f,  0.2176f),
+    vec3f(-0.0735f,  0.4670f,  0.0735f),
+    vec3f( 0.0168f,  0.3913f,  0.0168f),
+    vec3f( 0.1101f,  0.3071f,  0.1101f),
+    vec3f( 0.3049f,  0.1048f,  0.3049f),
+    vec3f( 0.0953f,  0.1800f,  0.0953f),
+    vec3f( 0.1597f,  0.1538f,  0.1597f),
   };
 
   static const vec3f TF_coefs[] =
   {
-    vec3f( 0.1597,  0.1538,  0.1597),
-    vec3f( 0.2992,  0.1016,  0.2992),
-    vec3f( 0.2864,  0.1044,  0.2864),
-    vec3f( 0.7837,  0.1590,  0.7837),
-    vec3f( 0.4247,  0.0155,  0.4247),
-    vec3f( 0.6362, -0.3203,  0.6362),
-    vec3f( 0.3379, -0.0706,  0.3379),
-    vec3f( 0.3137,  0.0049,  0.3137),
-    vec3f( 0.1573, -0.0401,  0.1573),
+    vec3f( 0.1597f,  0.1538f,  0.1597f),
+    vec3f( 0.2992f,  0.1016f,  0.2992f),
+    vec3f( 0.2864f,  0.1044f,  0.2864f),
+    vec3f( 0.7837f,  0.1590f,  0.7837f),
+    vec3f( 0.4247f,  0.0155f,  0.4247f),
+    vec3f( 0.6362f, -0.3203f,  0.6362f),
+    vec3f( 0.3379f, -0.0706f,  0.3379f),
+    vec3f( 0.3137f,  0.0049f,  0.3137f),
+    vec3f( 0.1573f, -0.0401f,  0.1573f),
   };
 
   static const vec3f LF_coefs[] =
   {
-    vec3f( 0.1573, -0.0401,  0.1573),
-    vec3f( 0.2494, -0.0294,  0.2494),
-    vec3f( 0.1822, -0.0877,  0.1822),
-    vec3f(-0.0208, -0.3236,  0.0208),
-    vec3f(-0.0632, -0.3412,  0.0632),
-    vec3f(-0.1749, -0.1120,  0.1749),
-    vec3f(-0.1260, -0.4172,  0.1260),
-    vec3f(-0.3242, -0.1818,  0.3242),
-    vec3f(-0.2844, -0.1840,  0.2844),
+    vec3f( 0.1573f, -0.0401f,  0.1573f),
+    vec3f( 0.2494f, -0.0294f,  0.2494f),
+    vec3f( 0.1822f, -0.0877f,  0.1822f),
+    vec3f(-0.0208f, -0.3236f,  0.0208f),
+    vec3f(-0.0632f, -0.3412f,  0.0632f),
+    vec3f(-0.1749f, -0.1120f,  0.1749f),
+    vec3f(-0.1260f, -0.4172f,  0.1260f),
+    vec3f(-0.3242f, -0.1818f,  0.3242f),
+    vec3f(-0.2844f, -0.1840f,  0.2844f),
   };
 
   static const vec3f MA_coefs[] =
   {
-    vec3f(-0.2844, -0.1840,  0.2844),
-    vec3f(-0.3492, -0.1834,  0.3492),
-    vec3f(-0.4554, -0.1489,  0.4554),
-    vec3f(-0.6135, -0.0410,  0.6135),
-    vec3f(-0.7018,  0.0346,  0.7018),
-    vec3f(-0.5693,  0.1147,  0.5693),
-    vec3f(-0.4507,  0.2227,  0.4507),
-    vec3f(-0.3393,  0.2737,  0.3393),
-    vec3f(-0.2856,  0.2915,  0.2856),
+    vec3f(-0.2844f, -0.1840f,  0.2844f),
+    vec3f(-0.3492f, -0.1834f,  0.3492f),
+    vec3f(-0.4554f, -0.1489f,  0.4554f),
+    vec3f(-0.6135f, -0.0410f,  0.6135f),
+    vec3f(-0.7018f,  0.0346f,  0.7018f),
+    vec3f(-0.5693f,  0.1147f,  0.5693f),
+    vec3f(-0.4507f,  0.2227f,  0.4507f),
+    vec3f(-0.3393f,  0.2737f,  0.3393f),
+    vec3f(-0.2856f,  0.2915f,  0.2856f),
   };
 
   itsParts[DF_0].reset(knots, DF_coefs);
@@ -289,20 +289,20 @@ GVX_TRACE("Fish::restoreToDefault");
   itsParts[MA_3].reset(knots, MA_coefs);
 
   itsParts[DF_0].itsBkpt = 6;
-  itsParts[DF_0].itsPt0.set(0.2380, 0.3416, 0.2380);
-  itsParts[DF_0].itsPt1.set(-0.0236, 0.2711, 0.0236);
+  itsParts[DF_0].itsPt0.set(0.2380f, 0.3416f, 0.2380f);
+  itsParts[DF_0].itsPt1.set(-0.0236f, 0.2711f, 0.0236f);
 
   itsParts[TF_1].itsBkpt = 5;
-  itsParts[TF_1].itsPt0.set(0.6514, -0.0305, 0.6514);
-  itsParts[TF_1].itsPt1.set(0.2433, 0.0523, 0.2433);
+  itsParts[TF_1].itsPt0.set(0.6514f, -0.0305f, 0.6514f);
+  itsParts[TF_1].itsPt1.set(0.2433f, 0.0523f, 0.2433f);
 
   itsParts[LF_2].itsBkpt = 6;
-  itsParts[LF_2].itsPt0.set(-0.2121, 0.0083, 0.2121);
-  itsParts[LF_2].itsPt1.set(-0.1192, -0.2925, 0.1192);
+  itsParts[LF_2].itsPt0.set(-0.2121f, 0.0083f, 0.2121f);
+  itsParts[LF_2].itsPt1.set(-0.1192f, -0.2925f, 0.1192f);
 
   itsParts[MA_3].itsBkpt = 5;
-  itsParts[MA_3].itsPt0.set(-0.7015, 0.1584, 0.7015);
-  itsParts[MA_3].itsPt1.set(-0.7022, -0.1054, 0.7022);
+  itsParts[MA_3].itsPt0.set(-0.7015f, 0.1584f, 0.7015f);
+  itsParts[MA_3].itsPt1.set(-0.7022f, -0.1054f, 0.7022f);
 }
 
 io::version_id Fish::class_version_id() const
@@ -508,8 +508,8 @@ GVX_TRACE("Fish::grRender");
       // Set the coefficients at the break point to a linear sum of
       // the two corresponding endpoints
 
-      float alpha = 0.5*(1-itsParts[i].itsCoord);
-      float beta  = 0.5*(1+itsParts[i].itsCoord);
+      float alpha = 0.5f*(1-itsParts[i].itsCoord);
+      float beta  = 0.5f*(1+itsParts[i].itsCoord);
 
       vec3f pt = itsParts[i].itsPt0 * alpha + itsParts[i].itsPt1 * beta;
 
@@ -529,7 +529,7 @@ GVX_TRACE("Fish::grRender");
 
       if (showControlPoints)
         {
-          if (0)
+          if (/* DISABLES CODE*/ (0))
             {
               // This version (using GL_POINTS) doesn't seem to work
               // properly with Mesa under Linux; the problem is that
@@ -541,9 +541,9 @@ GVX_TRACE("Fish::grRender");
               canvas.setPointSize(4.0);
 
               Gfx::PointsBlock block(canvas);
-              for (unsigned int i = 0; i < ctrlpnts.size(); ++i)
+              for (unsigned int p = 0; p < ctrlpnts.size(); ++p)
                 {
-                  canvas.vertex3(vec3d(ctrlpnts[i]));
+                  canvas.vertex3(vec3d(ctrlpnts[p]));
                 }
             }
           else
@@ -551,11 +551,11 @@ GVX_TRACE("Fish::grRender");
               Gfx::AttribSaver saver(canvas);
               canvas.setPolygonFill(true);
               geom::rect<double> rect;
-              for (unsigned int i = 0; i < ctrlpnts.size(); ++i)
+              for (unsigned int p = 0; p < ctrlpnts.size(); ++p)
                 {
                   Gfx::MatrixSaver msaver(canvas);
-                  canvas.translate(vec3d(0.0, 0.0, ctrlpnts[i].z()));
-                  rect.set_lbwh(ctrlpnts[i].x(), ctrlpnts[i].y(),
+                  canvas.translate(vec3d(0.0, 0.0, ctrlpnts[p].z()));
+                  rect.set_lbwh(ctrlpnts[p].x(), ctrlpnts[p].y(),
                                 0.03, 0.03);
                   canvas.drawRect(rect);
                 }

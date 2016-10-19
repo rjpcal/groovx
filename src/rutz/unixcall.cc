@@ -54,7 +54,7 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  void throwErrno(const char* where, const rutz::file_pos& pos)
+  [[noreturn]] void throwErrno(const char* where, const rutz::file_pos& pos)
   {
     throw rutz::error(rutz::sfmt("in \"%s\": %s", where,
                                  ::strerror(errno)), pos);

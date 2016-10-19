@@ -265,7 +265,7 @@ GVX_TRACE("Face::grRender");
             canvas.scale(pupil_scale);
 
             {
-              Gfx::AttribSaver asaver(canvas);
+              Gfx::AttribSaver asaver2(canvas);
               if (isItFilled)
                 canvas.swapForeBack();
 

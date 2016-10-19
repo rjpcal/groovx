@@ -38,6 +38,8 @@
 
 #include "rutz/trace.h"
 
+#include <limits>
+
 namespace
 {
   size_t TOTAL = 0;
@@ -123,8 +125,10 @@ GVX_TRACE("genericUpdateStringProc");
 
   GVX_ASSERT(objPtr->bytes == 0);
 
+  GVX_ASSERT(strlen(objPtr->bytes) < std::numeric_limits<int>::max());
+
   objPtr->bytes = gobj->asString();
-  objPtr->length = strlen(objPtr->bytes);
+  objPtr->length = int(strlen(objPtr->bytes));
 }
 
 int genericSetFromAnyProc(Tcl_Interp* interp, Tcl_Obj* /*objPtr*/)
@@ -299,7 +303,7 @@ namespace
 
     for (int y = 0; y < SIZE; ++y)
       for (int x = 0; x < SIZE; ++x)
-        *bytes++ = (x*y) % 256;
+        *bytes++ = (unsigned char)((x*y) % 256);
 
     glRasterPos3d(2.56, 2.56, 0.0);
 

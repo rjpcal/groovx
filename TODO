@@ -6,6 +6,11 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (18-Oct-2016) Use nullptr where appropriate
+
+* (18-Oct-2016) Get rid of all the duplicated overflow() and underflow() code
+  For instance ingzstreambuf, channel_buf, ...
+
 * (21-Nov-2002) Need a better way to pass enums to/from Tcl
 
   Who uses the various link*() functions now?

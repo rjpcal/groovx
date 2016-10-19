@@ -71,7 +71,7 @@ public:
   ///////////////
 
   nub::ref<TrialEvent> getEvent(TimePoint time_point,
-                                unsigned int index) const;
+                                size_t index) const;
 
   /** Returns the elapsed time in milliseconds since the start of the
       current trial */
@@ -81,10 +81,10 @@ public:
   // manipulators //
   //////////////////
 
-  unsigned int addEvent(nub::ref<TrialEvent> event,
-                        TimePoint time_point);
-  unsigned int addEventByName(const char* event_type,
-                              TimePoint time_point, int msec_delay);
+  size_t addEvent(nub::ref<TrialEvent> event,
+                  TimePoint time_point);
+  size_t addEventByName(const char* event_type,
+                        TimePoint time_point, int msec_delay);
 
   /////////////
   // actions //

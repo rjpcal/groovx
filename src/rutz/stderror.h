@@ -42,9 +42,9 @@ namespace rutz
 {
   struct file_pos;
 
-  void throw_bad_cast(const std::type_info& to,
-                      const std::type_info& from,
-                      const rutz::file_pos& pos);
+  [[noreturn]] void throw_bad_cast(const std::type_info& to,
+                                   const std::type_info& from,
+                                   const rutz::file_pos& pos);
 }
 
 #endif // !GROOVX_RUTZ_STDERROR_H_UTC20050626084019_DEFINED

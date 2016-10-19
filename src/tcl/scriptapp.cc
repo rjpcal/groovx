@@ -69,13 +69,13 @@ namespace
         return out;
       }
 
-    unsigned int midlen = totallen - strlen(pfx) - strlen(sfx);
+    const unsigned int midlen = (unsigned int)(totallen - strlen(pfx) - strlen(sfx));
 
     std::string out(pfx);
 
     if (txt.length() < midlen)
       {
-        int c = midlen - txt.length();
+        int c = int(midlen - txt.length());
         while (--c >= 0)
           { if (c % 2) txt += ' '; else out += ' '; }
       }
@@ -91,7 +91,7 @@ namespace
                          const std::string& s)
   {
     GVX_ASSERT(strlen(pfx) + strlen(sfx) < totallen);
-    unsigned int len = totallen - strlen(pfx) - strlen(sfx);
+    unsigned int len = (unsigned int)(totallen - strlen(pfx) - strlen(sfx));
 
     std::istringstream strm(s);
     std::string out;
@@ -178,7 +178,7 @@ namespace
     tcl::pkg::lookup(tcl::event_loop::interp(), type.c_str());
   }
 
-  void sig_handler(int signum)
+  [[noreturn]] void sig_handler(int signum)
   {
     switch (signum)
       {

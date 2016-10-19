@@ -151,7 +151,7 @@ public:
 
     void rhHaltExpt() { ignore(); }
 
-    void handleResponse(EventResponseHdlr::Impl* rep, const char* event_info)
+    void handleResponse(EventResponseHdlr::Impl* rep_, const char* event_info)
     {
       Response theResponse;
 
@@ -161,10 +161,10 @@ public:
 
       theResponse.setVal(Response::INVALID_VALUE);
 
-      if ( !rep->itsResponseProc->isNoop() )
+      if ( !rep_->itsResponseProc->isNoop() )
         {
           try {
-            theResponse.setVal(rep->itsResponseProc->call<int>(event_info));
+            theResponse.setVal(rep_->itsResponseProc->call<int>(event_info));
           } catch (...) {}
         }
 
@@ -173,18 +173,18 @@ public:
       if (theResponse.shouldIgnore())
         return;
 
-      if (++itsResponseCount >= rep->itsMaxResponses)
+      if (++itsResponseCount >= rep_->itsMaxResponses)
         ignore();
 
       if ( !theResponse.is_valid() )
         {
-          if ( rep->itsAbortInvalidResponses )
+          if ( rep_->itsAbortInvalidResponses )
             itsTrial.trAbortTrial();
         }
       else
         {
           itsTrial.trProcessResponse(theResponse);
-          rep->itsFeedbackMap.giveFeedback(rep->itsInterp, theResponse.val());
+          rep_->itsFeedbackMap.giveFeedback(rep_->itsInterp, theResponse.val());
         }
     }
   };

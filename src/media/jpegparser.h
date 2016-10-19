@@ -36,8 +36,10 @@ namespace media
 {
   class bmap_data;
 
+#ifdef HAVE_LIBJPEG
   /// Load \a data in JPEG format from the file \a filename.
   void load_jpeg(const char* filename, media::bmap_data& data);
+#endif
 }
 
 #endif // !GROOVX_MEDIA_JPEGPARSER_H_UTC20050626084018_DEFINED

@@ -75,11 +75,11 @@ public:
       is no less than the \a lowest_supported_version. Returns the \a
       actual_version. If this test fails, a write_version_error will
       be thrown.*/
-  int ensure_output_version_id(const char* name,
-                               io::version_id actual_version,
-                               io::version_id lowest_supported_version,
-                               const char* msg,
-                               const rutz::file_pos& pos);
+  io::version_id ensure_output_version_id(const char* name,
+                                          io::version_id actual_version,
+                                          io::version_id lowest_supported_version,
+                                          const char* msg,
+                                          const rutz::file_pos& pos);
 
   /// Store the \c char attribute \a val in association with the tag \a name.
   virtual void write_char(const char* name, char val) = 0;
@@ -117,10 +117,10 @@ public:
   { write_int(name, val); }
 
   void write_value(const char* name, unsigned int val)
-  { write_int(name, val); }
+  { write_int(name, int(val)); } // FIXME truncates
 
   void write_value(const char* name, unsigned long val)
-  { write_int(name, val); }
+  { write_int(name, int(val)); } // FIXME truncates
 
   void write_value(const char* name, bool val)
   { write_bool(name, val); }

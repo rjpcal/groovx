@@ -31,28 +31,31 @@
 #ifndef GROOVX_RUTZ_BASE64_H_UTC20050626084019_DEFINED
 #define GROOVX_RUTZ_BASE64_H_UTC20050626084019_DEFINED
 
+#include <cstddef>
+#include <string>
+
 namespace rutz
 {
   struct byte_array;
 
-  void base64_encode(const unsigned char* src,
-                     unsigned int src_len,
-                     rutz::byte_array& dst,
-                     unsigned int line_width = 0);
-
-  void base64_encode_string(const char* str,
-                            rutz::byte_array& dst,
+  std::string base64_encode(const unsigned char* src,
+                            size_t src_len,
                             unsigned int line_width = 0);
 
-  void base64_encode_file(const char* src_filename,
-                          rutz::byte_array& dst,
-                          unsigned int line_width = 0);
+  std::string base64_encode_string(const char* str,
+                                   unsigned int line_width = 0);
+
+  std::string base64_encode_file(const char* src_filename,
+                                 unsigned int line_width = 0);
 
   void base64_decode(const char* src,
-                     unsigned int in_len,
+                     size_t in_len,
                      rutz::byte_array& dst);
 
   void base64_decode(const rutz::byte_array& src,
+                     rutz::byte_array& dst);
+
+  void base64_decode(const std::string& src,
                      rutz::byte_array& dst);
 }
 

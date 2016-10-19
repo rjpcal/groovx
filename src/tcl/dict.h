@@ -74,7 +74,7 @@ public:
   {
     m_obj = other.m_obj;
     return *this;
-  };
+  }
 
   template <class T>
   void put(const char* key, const T& val)

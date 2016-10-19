@@ -103,26 +103,30 @@ namespace geom
       set_polar_rad(length(), geom::deg2rad(degrees));
     }
 
-    void rotate_deg(double degrees)
+    void rotate_deg(const double degrees)
     {
-      // FIXME should use a real sin(),cos() rotation matrix here?
+      set_theta_deg(theta_deg() + degrees);
+    }
+
+    void rotate_deg(int degrees)
+    {
       degrees = geom::deg_n180_180(degrees);
-      if (degrees == 0.0)
+      if (degrees == 0)
         {
           return;
         }
-      else if (degrees == 90.0)
+      else if (degrees == 90)
         {
           double old_x = xx;
           xx = -yy;
           yy = old_x;
         }
-      else if (degrees == 180.0)
+      else if (degrees == 180)
         {
           xx = -xx;
           yy = -yy;
         }
-      else if (degrees == -90.0)
+      else if (degrees == -90)
         {
           double old_x = xx;
           xx = yy;

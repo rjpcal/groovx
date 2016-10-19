@@ -81,7 +81,7 @@ namespace
 
 namespace range_checking
 {
-  void raise_exception(const fstring& msg, const char* f, int ln);
+  [[noreturn]] void raise_exception(const fstring& msg, const char* f, int ln);
 }
 
 void range_checking::raise_exception(const fstring& msg,

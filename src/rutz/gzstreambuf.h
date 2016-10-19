@@ -49,7 +49,7 @@ namespace rutz
   {
   private:
     bool m_opened;
-    int m_mode;
+    unsigned int m_mode;
     gzFile m_gzfile;
 
     gzstreambuf(const gzstreambuf&);
@@ -62,7 +62,7 @@ namespace rutz
     int flushoutput();
 
   public:
-    gzstreambuf(const char* name, int om, bool throw_exception=false);
+    gzstreambuf(const char* name, unsigned int om, bool throw_exception=false);
     ~gzstreambuf() { close(); }
 
     bool is_open() { return m_opened; }

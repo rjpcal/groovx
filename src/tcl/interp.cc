@@ -78,7 +78,7 @@ namespace
 
           throw rutz::error(msg, where);
         }
-        break;
+
       case tcl::IGNORE_ERROR:
         return false;
       }
@@ -250,7 +250,7 @@ GVX_TRACE("tcl::interpreter::eval_objv");
     throw rutz::error("Tcl_Interp* was null "
                       "in tcl::interpreter::eval", SRC_POS);
 
-  if ( Tcl_EvalObjv(this->intp(), objv.length(), objv.elements(),
+  if ( Tcl_EvalObjv(this->intp(), int(objv.length()), objv.elements(),
                     TCL_EVAL_GLOBAL) == TCL_OK )
     return true;
 

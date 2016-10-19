@@ -40,6 +40,8 @@
 #include "rutz/error.h"
 #include "rutz/iter.h"
 
+#include <cstddef>
+
 namespace nub
 {
   class object;
@@ -127,7 +129,7 @@ public:
   //
 
   /// Returns the number of valid objects in the database.
-  int count() const noexcept;
+  size_t count() const noexcept;
 
   /// Returns true if 'id' is a valid uid.
   bool is_valid_uid(nub::uid id) const noexcept;

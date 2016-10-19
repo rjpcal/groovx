@@ -67,7 +67,7 @@ late_warnings=""
 # adding "-g -O2".
 
 if test "${CXXFLAGS+set}" != "set" ; then
-    CXXFLAGS=""
+    CXXFLAGS="-fPIC"
 fi
 
 ##########################################################################
@@ -119,8 +119,6 @@ LDFLAGS="$LDFLAGS -L${BUILD}/compat/lib"
 
 AC_DEFINE(GVX_ENFORCE_FACTORY_FUNCTIONS,1,
 	  [make operator new+delete protected to force factory functions?])
-AC_DEFINE(GVX_DTOR_NOTHROW,[throw()],
-	  [should Nub::RefCounted and Nub::Object have a no-throw destructor?])
 AC_DEFINE(GVX_DEFAULT_REFVIS,[PUBLIC],
 	  [initial default RefVis to use when Nub::Ref and Nub::SoftRef objects are constructed?])
 
@@ -191,6 +189,21 @@ case ${CXX}-${OS} in
       ;;
 esac
 
+is_clang=no
+AC_MSG_CHECKING([if this is clang])
+AC_PREPROC_IFELSE([AC_LANG_SOURCE([[
+#ifndef __clang__
+#error this is not clang
+#endif
+]])],
+[AC_MSG_RESULT(yes);
+ is_clang=yes],
+[AC_MSG_RESULT(no)])
+
+if test "x$is_clang" = "xyes"; then
+   CXXFLAGS="$CXXFLAGS -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-global-constructors -Wno-exit-time-destructors -Wno-covered-switch-default -Wno-unused-macros -Wno-padded -Wno-weak-vtables -Wno-old-style-cast -Wno-weak-template-vtables -Wno-sign-conversion -Wno-double-promotion -Wno-float-equal -Wno-date-time -Wno-missing-prototypes"
+fi
+
 AC_SUBST(SHLIB_CMD)
 AC_SUBST(STATLIB_CMD)
 
@@ -232,7 +245,7 @@ case $OS in
       STATLIB_EXT=a
       AC_DEFINE(GVX_ESD_WORKAROUND,1,[Darwin esd workaround])
       # The /sw/lib and /sw/include directories are managed by Fink
-      CPPFLAGS="$CPPFLAGS -I/sw/include"
+      CPPFLAGS="$CPPFLAGS -isystem /sw/include"
 
       # At one point we had -lcc_dynamic in $LDFLAGS but as of Mac OSX
       # 10.4.9 (Intel) this seems to be no longer necessary -- anyway,
@@ -433,14 +446,25 @@ AC_MSG_RESULT([$CXXCPP])
 case $windowsystem in
    x11)
       AC_PATH_XTRA
+      AC_MSG_CHECKING([for special path to X11 includes])
+      if test "x$x_includes" != "x"; then
+      	 CPPFLAGS="$CPPFLAGS -isystem $x_includes"
+	 AC_MSG_RESULT([$x_includes])
+      else
+	 AC_MSG_RESULT(none)
+      fi
+      AC_MSG_CHECKING([for special path to X11 libraries])
+      if test "x$x_libraries" != "x"; then
+      	 LDFLAGS="$LDFLAGS -L$x_libraries"
+	 AC_MSG_RESULT([$x_libraries])
+      else
+	 AC_MSG_RESULT([none])
+      fi
       ;;
    aqua)
       # nothing
       ;;
 esac
-
-CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-LDFLAGS="$LDFLAGS $X_LIBS"
 
 AC_CHECK_HEADERS([limits iosfwd iostream istream ostream fstream sstream \
 		  streambuf ios ext/stdio_filebuf.h cxxabi.h \
@@ -551,7 +575,7 @@ case $windowsystem in
       # tcl.h, tk.h, etc. in with_tcltk rather than in the standard system
       # location
 
-      CPPFLAGS="-I${with_tcltk}/include $CPPFLAGS"
+      CPPFLAGS="-isystem ${with_tcltk}/include $CPPFLAGS"
 
       if test $need_rpath = yes; then
          LDFLAGS="$LDFLAGS -Wl,-rpath,${with_tcltk}/lib"
@@ -574,7 +598,7 @@ case $windowsystem in
       TCL_SRC_DIR=`sh -c ". ${with_tcltk}/lib/tclConfig.sh ; echo \\$TCL_SRC_DIR"`
       TK_SRC_DIR=`sh -c ". ${with_tcltk}/lib/tkConfig.sh ; echo \\$TK_SRC_DIR"`
 
-      CPPFLAGS="-I$TCL_SRC_DIR/generic -I$TK_SRC_DIR/generic $CPPFLAGS"
+      CPPFLAGS="-isystem $TCL_SRC_DIR/generic -isystem $TK_SRC_DIR/generic $CPPFLAGS"
 
       AC_MSG_RESULT([tcl ($TCL_VERSION), tk ($TK_VERSION)])
 
@@ -582,10 +606,10 @@ case $windowsystem in
       ;;
    aqua)
       AC_DEFINE(GVX_AQUA_TK,1,[use Mac OS X aqua port of Tk])
-      CPPFLAGS="-I${with_tcltk}/Tcl.framework/Headers $CPPFLAGS"
-      CPPFLAGS="-I${with_tcltk}/Tcl.framework/PrivateHeaders $CPPFLAGS"
-      CPPFLAGS="-I${with_tcltk}/Tk.framework/Headers $CPPFLAGS"
-      CPPFLAGS="-I${with_tcltk}/Tk.framework/PrivateHeaders $CPPFLAGS"
+      CPPFLAGS="-isystem ${with_tcltk}/Tcl.framework/Headers $CPPFLAGS"
+      CPPFLAGS="-isystem ${with_tcltk}/Tcl.framework/PrivateHeaders $CPPFLAGS"
+      CPPFLAGS="-isystem ${with_tcltk}/Tk.framework/Headers $CPPFLAGS"
+      CPPFLAGS="-isystem ${with_tcltk}/Tk.framework/PrivateHeaders $CPPFLAGS"
       LIBS="$LIBS -F${with_tcltk} -framework Tk -framework Tcl"
       ;;
    *)
@@ -619,7 +643,7 @@ if test -d $with_matlab; then
    esac
    AC_MSG_RESULT($matlab_arch)
 
-   CPPFLAGS="$CPPFLAGS -I${with_matlab}/extern/include"
+   CPPFLAGS="$CPPFLAGS -isystem ${with_matlab}/extern/include"
    #for old matlab (<= r12): matlab_lib=${with_matlab}/extern/lib/${matlab_arch}
    matlab_lib=${with_matlab}/bin/${matlab_arch}
    LDFLAGS="$LDFLAGS -L${matlab_lib}"

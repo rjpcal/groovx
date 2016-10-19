@@ -56,6 +56,7 @@
 #include "rutz/iter.h"
 #include "rutz/sfmt.h"
 
+#include "visx/response.h"
 #include "visx/trial.h"
 
 #include <fstream>
@@ -70,7 +71,7 @@ namespace
 {
   nub::uid doCreatePreview(const geom::rect<double>& world_viewport,
                            nub::uid* objids,
-                           unsigned int objids_size,
+                           size_t objids_size,
                            int num_cols_hint = -1,
                            bool text_labels = true)
   {
@@ -222,13 +223,20 @@ GVX_TRACE("TlistUtils::writeIncidenceMatrix");
        itr.is_valid();
        ++itr)
     {
-      // Use this to make sure we don't round down when we should round up.
-      double fudge = 0.0001;
-
-      int num_zeros =
-        int( (1.0 - itr->avgResponse()) * itr->numResponses() + fudge );
-
-      int num_ones = itr->numResponses() - num_zeros;
+      size_t num_zeros = 0;
+      size_t num_ones = 0;
+      size_t num_other = 0;
+      for (rutz::fwd_iter<Response> rpitr(itr->responses());
+           rpitr.is_valid();
+           ++itr)
+        {
+          switch (rpitr->val())
+            {
+            case 0: ++num_zeros; break;
+            case 1: ++num_ones; break;
+            default: ++num_other; break;
+            }
+        }
 
       ofs << num_zeros << "  " << num_ones << std::endl;
     }

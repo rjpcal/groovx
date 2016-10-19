@@ -334,7 +334,7 @@ public:
   rutz::fwd_iter<const nub::ref<TrialEvent> > getEvents() const;
 
   /// Add a new event and return its index in the sequence.
-  unsigned int addEvent(nub::ref<TrialEvent> event);
+  size_t addEvent(nub::ref<TrialEvent> event);
 
   /// Erase the event at the given index.
   void eraseEventAt(unsigned int index);

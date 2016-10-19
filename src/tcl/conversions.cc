@@ -305,7 +305,7 @@ tcl::obj tcl::help_convert<unsigned long>::to_tcl(unsigned long val)
 {
 GVX_TRACE("tcl::convert_from(unsigned long)");
 
-  long sval(val);
+  const long sval = long(val);
 
   if (sval < 0)
     throw rutz::error("signed/unsigned conversion failed", SRC_POS);
@@ -324,12 +324,12 @@ tcl::obj tcl::help_convert<unsigned int>::to_tcl(unsigned int val)
 {
 GVX_TRACE("tcl::convert_from(unsigned int)");
 
-  int sval(val);
+  const long sval = long(val);
 
   if (sval < 0)
     throw rutz::error("signed/unsigned conversion failed", SRC_POS);
 
-  return Tcl_NewIntObj(sval);
+  return Tcl_NewLongObj(sval);
 }
 
 tcl::obj tcl::help_convert<unsigned char>::to_tcl(unsigned char val)
@@ -357,7 +357,7 @@ tcl::obj tcl::help_convert<float>::to_tcl(float val)
 {
 GVX_TRACE("tcl::convert_from(float)");
 
-  return Tcl_NewDoubleObj(val);
+  return Tcl_NewDoubleObj(double(val));
 }
 
 tcl::obj tcl::help_convert<const char*>::to_tcl(const char* val)
@@ -371,7 +371,10 @@ tcl::obj tcl::help_convert<rutz::fstring>::to_tcl(const rutz::fstring& val)
 {
 GVX_TRACE("tcl::convert_from(const fstring&)");
 
-  return Tcl_NewStringObj(val.c_str(), val.length());
+  if (val.length() > std::numeric_limits<int>::max())
+    throw rutz::error("string too long to store in tcl string object", SRC_POS);
+
+  return Tcl_NewStringObj(val.c_str(), int(val.length()));
 }
 
 tcl::obj tcl::help_convert<rutz::value>::to_tcl(const rutz::value& val)

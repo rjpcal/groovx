@@ -50,7 +50,6 @@ namespace rutz
     // the 1st argument (fmt) as the format string, and the 2nd and
     // subsequent arguments as the printf-style parameters
     __attribute__((format(__printf__, 1, 2)));
-  ;
 }
 
 #endif // !GROOVX_RUTZ_SFMT_H_UTC20050705180238DEFINED

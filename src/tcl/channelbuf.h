@@ -51,7 +51,7 @@ namespace tcl
   private:
     bool opened;
     bool owned;
-    int mode;
+    unsigned int mode;
     Tcl_Interp* m_interp;
     Tcl_Channel chan;
 
@@ -65,7 +65,7 @@ namespace tcl
     int flushoutput();
 
   public:
-    channel_buf(Tcl_Interp* interp, const char* channame, int om);
+    channel_buf(Tcl_Interp* interp, const char* channame, unsigned int om);
     ~channel_buf() { close(); }
 
     bool is_open() { return opened; }

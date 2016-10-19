@@ -47,7 +47,7 @@ namespace rutz
 class rutz::imembuf : public std::streambuf
 {
 private:
-  unsigned int m_len;
+  size_t m_len;
   const char* m_buf;
   char* m_owned_mem;
 
@@ -59,7 +59,7 @@ public:
   imembuf(const char* s);
 
   /// Create using the given char array and length as the input buffer.
-  imembuf(const char* s, unsigned int len);
+  imembuf(const char* s, size_t len);
 
   void make_owning();
 
@@ -82,7 +82,12 @@ public:
   imemstream(const char* s);
 
   /// Construct using the given char array and length as the input buffer.
-  imemstream(const char* s, unsigned int len);
+  imemstream(const char* s, size_t len);
+
+  virtual ~imemstream();
+
+  imemstream(const imemstream&) = delete;
+  imemstream& operator=(const imemstream&) = delete;
 };
 
 /// An input stream class based on imembuf that makes a private copy.
@@ -93,6 +98,11 @@ private:
 public:
   /// Construct using the given char array as the input buffer.
   icstrstream(const char* s);
+
+  virtual ~icstrstream();
+
+  icstrstream(const icstrstream&) = delete;
+  icstrstream& operator=(const icstrstream&) = delete;
 };
 
 #endif // !GROOVX_RUTZ_CSTRSTREAM_H_UTC20050626084019_DEFINED

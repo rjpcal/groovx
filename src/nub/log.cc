@@ -111,12 +111,12 @@ GVX_TRACE("nub::logging::add_scope");
 void nub::logging::remove_scope(const fstring& name)
 {
 GVX_TRACE("nub::logging::remove_scope");
-  for (int i = int(scopes.size()); i > 0; /* decr in loop body */)
+  for (size_t i = scopes.size(); i > 0; /* decr in loop body */)
     {
       --i;
       if (scopes.at(i).m_name == name)
         {
-          scopes.erase(scopes.begin() + i);
+          scopes.erase(scopes.begin() + off_t(i));
 
           // Return immediately, since this function is intended to remove
           // at most one scope from the stack of scopes.

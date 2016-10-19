@@ -99,7 +99,7 @@ rutz::string_rep::~string_rep() noexcept
 GVX_TRACE("rutz::string_rep::~string_rep");
 
   delete [] m_text;
-  m_text = (char*)0xdeadbeef;
+  m_text = reinterpret_cast<char*>(0xdeadbeef);
 }
 
 rutz::string_rep* rutz::string_rep::make(std::size_t length,
@@ -134,8 +134,8 @@ rutz::string_rep* rutz::string_rep::readsome_from_stream(std::istream& is, unsig
 
   if (count > 0)
     {
-      unsigned int numread = is.readsome(result->m_text, count);
-      result->uniq_set_length(numread); // includes add_terminator()
+      std::streamsize numread = is.readsome(result->m_text, count);
+      result->uniq_set_length(size_t(numread)); // includes add_terminator()
     }
 
   return result;
@@ -320,7 +320,7 @@ GVX_TRACE("rutz::fstring::ends_with");
   if (ext.length() > this->length())
     return false;
 
-  unsigned int skip = this->length() - ext.length();
+  unsigned long skip = this->length() - ext.length();
 
   return ext.equals(this->c_str() + skip);
 }
@@ -387,7 +387,7 @@ GVX_TRACE("rutz::fstring::readsome");
 void rutz::fstring::write(std::ostream& os) const
 {
 GVX_TRACE("rutz::fstring::write");
-  os.write(c_str(), length());
+  os.write(c_str(), std::streamsize(length()));
 }
 
 void rutz::fstring::readline(std::istream& is, char eol)

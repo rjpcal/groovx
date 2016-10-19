@@ -68,7 +68,7 @@ public:
       pretty-printed with line-wrapping. Also, empty lines in msg will
       be replaced with a line of hashes ("#####...etc."); to get an
       empty line with no hashes, just pass a line with some invisible
-      whitespace (e.g. " \n"). */
+      whitespace. */
   void splash(const char* msg) { m_splashmsg = msg; }
 
   /// Specify a directory that should be searched for pkg libraries.

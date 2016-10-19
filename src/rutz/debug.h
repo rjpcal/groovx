@@ -53,11 +53,11 @@ namespace rutz {namespace debug
 
   void start_newline () noexcept;
 
-  void panic_aux         (const char* what, const char* where, int line_no) noexcept;
-  void assert_aux        (const char* what, const char* where, int line_no) noexcept;
-  void precondition_aux  (const char* what, const char* where, int line_no) noexcept;
-  void postcondition_aux (const char* what, const char* where, int line_no) noexcept;
-  void invariant_aux     (const char* what, const char* where, int line_no) noexcept;
+  [[noreturn]] void panic_aux         (const char* what, const char* where, int line_no) noexcept;
+  [[noreturn]] void assert_aux        (const char* what, const char* where, int line_no) noexcept;
+  [[noreturn]] void precondition_aux  (const char* what, const char* where, int line_no) noexcept;
+  [[noreturn]] void postcondition_aux (const char* what, const char* where, int line_no) noexcept;
+  [[noreturn]] void invariant_aux     (const char* what, const char* where, int line_no) noexcept;
 
   /// Allocate a debug key for the given filename
   int create_key(const char* filename);

@@ -43,7 +43,7 @@
 GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
-void rutz::stdiobuf::init(int fd, int om, bool throw_exception)
+void rutz::stdiobuf::init(int fd, unsigned int om, bool throw_exception)
 {
 GVX_TRACE("rutz::stdiobuf::init");
   m_filedes = fd;
@@ -66,14 +66,14 @@ GVX_TRACE("rutz::stdiobuf::init");
         buffer+s_buf_size-1);
 }
 
-rutz::stdiobuf::stdiobuf(FILE* f, int om, bool throw_exception) :
+rutz::stdiobuf::stdiobuf(FILE* f, unsigned int om, bool throw_exception) :
   m_mode(0), m_filedes(-1)
 {
 GVX_TRACE("rutz::stdiobuf::stdiobuf(FILE*)");
   init(fileno(f), om, throw_exception);
 }
 
-rutz::stdiobuf::stdiobuf(int fd, int om, bool throw_exception) :
+rutz::stdiobuf::stdiobuf(int fd, unsigned int om, bool throw_exception) :
   m_mode(0), m_filedes(-1)
 {
 GVX_TRACE("rutz::stdiobuf::stdiobuf(int)");
@@ -101,8 +101,8 @@ GVX_TRACE("rutz::stdiobuf::underflow");
   if (gptr() < egptr())
     return *gptr();
 
-  int numPutback = 0;
-  if (s_pback_size > 0)
+  off_t numPutback = 0;
+  if (s_pback_size > 0 && gptr() > eback())
     {
       // process size of putback area
       // -use number of characters read
@@ -114,13 +114,13 @@ GVX_TRACE("rutz::stdiobuf::underflow");
       // copy up to four characters previously read into the putback
       // buffer (area of first four characters)
       std::memcpy (buffer+(4-numPutback), gptr()-numPutback,
-                   numPutback);
+                   size_t(numPutback));
     }
 
   // read new characters
-  const int num = ::read(m_filedes,
-                         buffer+s_pback_size,
-                         s_buf_size-s_pback_size);
+  const ssize_t num = ::read(m_filedes,
+                             buffer+s_pback_size,
+                             s_buf_size-s_pback_size);
 
   if (num <= 0)
     return EOF;
@@ -146,7 +146,7 @@ GVX_TRACE("rutz::stdiobuf::overflow");
   if (c != EOF)
     {
       // insert the character into the buffer
-      *pptr() = c;
+      *pptr() = char(c);
       pbump(1);
     }
 
@@ -171,9 +171,9 @@ int rutz::stdiobuf::flushoutput()
 {
   if (!(m_mode & std::ios::out) || !is_open()) return EOF;
 
-  const int num = pptr()-pbase();
+  const int num = int(pptr()-pbase());
 
-  if ( ::write(m_filedes, pbase(), num) == -1 )
+  if ( ::write(m_filedes, pbase(), size_t(num)) == -1 )
     {
       return EOF;
     }

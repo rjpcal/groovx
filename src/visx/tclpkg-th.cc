@@ -47,8 +47,8 @@
 
 namespace
 {
-  unsigned int addNewEvent(nub::ref<TimingHdlr> th, const char* event_type,
-                           int msec, TimingHdlr::TimePoint time_point)
+  size_t addNewEvent(nub::ref<TimingHdlr> th, const char* event_type,
+                     int msec, TimingHdlr::TimePoint time_point)
   {
     return th->addEventByName(event_type, time_point, msec);
   }

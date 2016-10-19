@@ -33,6 +33,8 @@
 #ifndef GROOVX_MEDIA_BMAPDATA_H_UTC20050626084018_DEFINED
 #define GROOVX_MEDIA_BMAPDATA_H_UTC20050626084018_DEFINED
 
+#include <cstddef> // size_t
+
 namespace rutz
 {
   template <class T> class shared_ptr;
@@ -154,7 +156,7 @@ namespace media
     /// Returns the number of bytes used by the bitmap data.
     /** Some of these bytes may be 'filler bytes' needed to meet the
         storage alignment requirements. */
-    unsigned int byte_count() const;
+    size_t byte_count() const;
 
     /// Returns the number of bytes used per image row in the bitmap data.
     unsigned int bytes_per_row() const;

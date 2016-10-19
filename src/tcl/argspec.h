@@ -68,8 +68,8 @@ namespace tcl
       m_is_exact(ex)
     {}
 
-    arg_spec& min(int nmin) { m_argc_min = nmin; return *this; }
-    arg_spec& max(int nmax) { m_argc_max = nmax; return *this; }
+    arg_spec& min(unsigned int nmin) { m_argc_min = nmin; return *this; }
+    arg_spec& max(unsigned int nmax) { m_argc_max = nmax; return *this; }
     arg_spec& exact(bool ex) { m_is_exact = ex; return *this; }
 
     arg_spec& nolimit()

@@ -68,11 +68,11 @@ private:
   int abs(int x) { return x & 0x7fffffff; }
   static double max() { return 2147483648.0 /* == 0x80000000u */; }
 
-  int idraw() { return randx = randx * 0x41c64e6d + 0x3039; }
+  int idraw() { randx = randx * 0x41c64e6d + 0x3039; return int(randx&0x7fffffff); }
 
 public:
-  urand(long s = 0) : randx(s) {}
-  void seed(long s) { randx = s; }
+  urand(unsigned long s = 0) : randx(s) {}
+  void seed(unsigned long s) { randx = s; }
 
   /// Uniform random distribution in the interval [0.0:1.0[
   double fdraw()
@@ -118,7 +118,7 @@ private:
 
 public:
   /// Construct with a given min/max range and an initial seed (default 0).
-  urand_irange(int lo, int hi, long s = 0)
+  urand_irange(int lo, int hi, unsigned long s = 0)
     : m_generator(s), m_min(lo), m_max(hi)
   {}
 
@@ -136,12 +136,12 @@ private:
 
 public:
   /// Construct with a given min/max range and an initial seed (default 0).
-  urand_frange(double lo, double hi, long s = 0)
+  urand_frange(double lo, double hi, unsigned long s = 0)
     : m_generator(s), m_min(lo), m_max(hi)
   {}
 
   /// Construct with a range [0.0:1.0[ and an initial seed (default 0).
-  urand_frange(long s = 0)
+  urand_frange(unsigned long s = 0)
     : m_generator(s), m_min(0.0), m_max(1.0)
   {}
 

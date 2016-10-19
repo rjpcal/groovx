@@ -44,6 +44,7 @@
 #include <cstdlib>
 #include <new>
 #include <pthread.h>
+#include <vector>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -144,7 +145,7 @@ const char* rutz::error::what() const noexcept
         + m_msg.length()
         + 1;
 
-      char buf[len];
+      std::vector<char> buf(len);
 
       if (snprintf(&buf[0], len, "at %s:%d:\n%s",
                    m_file_pos.m_file_name,

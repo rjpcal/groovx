@@ -132,21 +132,14 @@ public:
 
   static MatlabEngine* make() { return new MatlabEngine; }
 
-  void noSupport()
+  const char* evalString(const char*)
   {
     throw rutz::error("matlab is not supported in this build", SRC_POS);
   }
 
-  const char* evalString(const char*)
-  {
-    noSupport();
-    return "can't happen";
-  }
-
   nub::ref<MtxObj> getMtx(const char*)
   {
-    noSupport();
-    return nub::ref<MtxObj>(new MtxObj(mtx::empty_mtx()));
+    throw rutz::error("matlab is not supported in this build", SRC_POS);
   }
 };
 

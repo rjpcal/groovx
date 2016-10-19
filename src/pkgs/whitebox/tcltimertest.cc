@@ -203,17 +203,4 @@ GVX_TRACE("Tcltimertest_Init");
   GVX_PKG_RETURN(pkg);
 }
 
-// Need these to avoid dyld errors on Mac OS X
-extern "C" int Tcltimertest_SafeInit(Tcl_Interp*)
-{ return 1; }
-
-extern "C" int Tcltimertest_Unload(Tcl_Interp* interp, int /*flags*/)
-{
-GVX_TRACE("Tcltimertest_Unload");
-  return tcl::pkg::destroy_on_unload(interp, "Tcltimertest");
-}
-
-extern "C" int Tcltimertest_SafeUnload(Tcl_Interp*, int /*flags*/)
-{ return 1; }
-
 #endif // !GROOVX_PKGS_WHITEBOX_TCLTIMERTEST_CC_UTC20050626084022_DEFINED

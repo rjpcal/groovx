@@ -68,8 +68,8 @@ public:
 
   virtual ~GxShapeKitNode() noexcept {}
 
-  virtual void read_from(io::reader& /*reader*/) {};
-  virtual void write_to(io::writer& /*writer*/) const {};
+  virtual void read_from(io::reader& /*reader*/) {}
+  virtual void write_to(io::writer& /*writer*/) const {}
 
   virtual void draw(Gfx::Canvas& canvas) const
   { itsObj->grRender(canvas); }
@@ -191,7 +191,7 @@ void GxShapeKit::read_from(io::reader& reader)
 {
 GVX_TRACE("GxShapeKit::read_from");
 
-  const int svid =
+  const io::version_id svid =
     reader.ensure_version_id("GxShapeKit", 3,
                              "Try groovx0.8a7", SRC_POS);
 

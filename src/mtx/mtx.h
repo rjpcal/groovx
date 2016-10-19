@@ -458,7 +458,7 @@ public:
 
   unsigned int rowgap() const { return m_rowstride - mrows(); }
 
-  int offset_from_start(int row, int col) const
+  ptrdiff_t offset_from_start(int row, int col) const
   {
     // Strictly speaking, the only valid offsets are those that pass
     // RC_in_half_open(), but in order to allow "one-past-the-end"
@@ -470,13 +470,13 @@ public:
     return row + (col*m_rowstride);
   }
 
-  int offset_from_start(int elem) const
+  ptrdiff_t offset_from_start(int elem) const
   { return offset_from_start(elem%mrows(), elem/mrows()); }
 
-  int offset_from_storage(int row, int col) const
+  ptrdiff_t offset_from_storage(int row, int col) const
   { return m_offset + offset_from_start(row, col); }
 
-  int offset_from_storage(int elem) const
+  ptrdiff_t offset_from_storage(int elem) const
   { return m_offset + offset_from_start(elem); }
 
 private:
@@ -711,13 +711,13 @@ public:
   const mtx_shape& shape() const { return specs().shape(); }
   const mtx_specs& specs() const { return *this; }
 
-  const double& at(int i) const
+  const double& at(ptrdiff_t i) const
   {
     RC_less(i+offset(), m_data.storage_length());
     return m_data.storage()[i+offset()];
   }
 
-  double& at_nc(int i)
+  double& at_nc(ptrdiff_t i)
   {
     RC_less(i+offset(), m_data.storage_length());
     return m_data.storage_nc()[i+offset()];

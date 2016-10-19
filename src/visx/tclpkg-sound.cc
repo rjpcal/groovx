@@ -75,12 +75,14 @@ GVX_TRACE("Sound_Init");
 
   nub::ref<Sound> ok_sound(Sound::makeFrom(ok_file.c_str()));
   Sound::setOkSound(ok_sound);
-  OK = ok_sound.id();
+  GVX_ASSERT(ok_sound.id() < std::numeric_limits<int>::max());
+  OK = int(ok_sound.id());
   pkg->link_var_const("Sound::ok", OK);
 
   nub::ref<Sound> err_sound(Sound::makeFrom(err_file.c_str()));
   Sound::setErrSound(err_sound);
-  ERR = err_sound.id();
+  GVX_ASSERT(err_sound.id() < std::numeric_limits<int>::max());
+  ERR = int(err_sound.id());
   pkg->link_var_const("Sound::err", ERR);
 
   GVX_PKG_RETURN(pkg);

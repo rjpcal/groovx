@@ -173,7 +173,7 @@ namespace
     void write_string_type(const char* name, const char* val)
     {
       std::string escaped_val(val);
-      int val_length = escaped_val.length();
+      const size_t val_length = escaped_val.length();
       add_escapes(escaped_val);
 
       m_buf << "cstring "

@@ -212,7 +212,7 @@ namespace
 
     dbg_eval(3, width); dbg_eval_nl(3, height);
 
-    const int row_bytes = png_get_rowbytes(m_png_ptr, m_info_ptr);
+    const size_t row_bytes = png_get_rowbytes(m_png_ptr, m_info_ptr);
 
     dbg_eval_nl(3, row_bytes);
 
@@ -220,7 +220,7 @@ namespace
 
     dbg_eval_nl(3, nchannels);
 
-    GVX_ASSERT(row_bytes == width*nchannels);
+    GVX_ASSERT(row_bytes == size_t(width*nchannels));
 
     media::bmap_data new_data(geom::vec2<int>(width, height),
                               nchannels*8, // bits_per_pixel
@@ -294,7 +294,6 @@ namespace
         throw rutz::error(rutz::sfmt("invalid bits_per_pixel value: %d",
                                      data.bits_per_pixel()), SRC_POS);
       }
-    return 0; // can't happen, but placate compiler
   }
 
   void png_writer::write(const char* filename,

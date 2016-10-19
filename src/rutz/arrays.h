@@ -441,7 +441,7 @@ namespace rutz
     template <class RandomAccessIterator>
     void assign(RandomAccessIterator start, RandomAccessIterator finish)
     {
-      int num = finish-start;
+      ptrdiff_t num = finish-start;
       if (num < 0)
         {
           resize(0);

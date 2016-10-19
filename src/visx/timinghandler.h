@@ -35,6 +35,8 @@
 
 #include "visx/timinghdlr.h"
 
+#include <cstddef>
+
 //  #######################################################
 //  =======================================================
 
@@ -66,10 +68,10 @@ public:
   void setTimeout(int msec);
 
 private:
-  unsigned int stimdur_start_id;
-  unsigned int timeout_start_id;
-  unsigned int iti_response_id;
-  unsigned int abortwait_abort_id;
+  size_t stimdur_start_id;
+  size_t timeout_start_id;
+  size_t iti_response_id;
+  size_t abortwait_abort_id;
 };
 
 #endif // !GROOVX_VISX_TIMINGHANDLER_H_UTC20050626084015_DEFINED

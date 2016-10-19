@@ -34,17 +34,7 @@
 
 #include "jpegparser.h"
 
-#ifndef HAVE_LIBJPEG
-
-#include "rutz/error.h"
-
-void media::load_jpeg(const char* /*filename*/, media::bmap_data& /*data*/)
-{
-  throw rutz::error("jpeg image files are not supported in this build",
-                    SRC_POS);
-}
-
-#else
+#ifdef HAVE_LIBJPEG
 
 #include "geom/vec2.h"
 

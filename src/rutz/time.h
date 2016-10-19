@@ -61,15 +61,15 @@ public:
   }
 
   /// Construct with given seconds+microseconds values.
-  time(unsigned long s, long us) noexcept : m_timeval()
+  time(time_t s, suseconds_t us) noexcept : m_timeval()
   {
     reset(s, us);
   }
 
   explicit time(double ss) noexcept : m_timeval()
   {
-    const unsigned long s = (unsigned long)(ss);
-    const long us = long((ss - s) * 1000000);
+    const time_t s = time_t(ss);
+    const suseconds_t us = suseconds_t((ss - s) * 1000000);
     reset(s, us);
   }
 
@@ -93,7 +93,7 @@ public:
   { return rutz::time::user_rusage() + rutz::time::sys_rusage(); }
 
   /// Reset to given seconds+microseconds values.
-  void reset(unsigned long s = 0, long us = 0) noexcept
+  void reset(time_t s = 0, suseconds_t us = 0) noexcept
   {
     m_timeval.tv_sec = s;
     m_timeval.tv_usec = us;

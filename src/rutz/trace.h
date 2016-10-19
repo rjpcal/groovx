@@ -101,9 +101,9 @@ public:
 private:
   rutz::prof&  m_prof;
   rutz::time   m_start;
+  rutz::prof::timing_mode  m_timing_mode; ///< Store this in case somebody changes the timing mode before we finish
   const bool   m_should_print_msg;
   const bool   m_should_pop;
-  rutz::prof::timing_mode  m_timing_mode; ///< Store this in case somebody changes the timing mode before we finish
 };
 
 #ifndef GVX_TRACE_EXPR

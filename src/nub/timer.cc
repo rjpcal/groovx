@@ -81,9 +81,9 @@ GVX_TRACE("nub::timer::schedule");
   // Note that the returned token might be null for one reason or
   // another (e.g. if the scheduler decides to run the callback
   // immediately rather than scheduling a deferred callback).
-  m_token = m_scheduler->schedule(m_msec_delay,
-                                    dummy_callback,
-                                    static_cast<void*>(this));
+  m_token = m_scheduler->schedule(int(m_msec_delay),
+                                  dummy_callback,
+                                  static_cast<void*>(this));
 }
 
 void nub::timer::cancel()

@@ -347,7 +347,7 @@ GVX_TRACE("Trial::responses");
     (rep->responses.begin(), rep->responses.end());
 }
 
-unsigned int Trial::numResponses() const
+size_t Trial::numResponses() const
   { return rep->responses.size(); }
 
 void Trial::clearResponses()

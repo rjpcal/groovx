@@ -59,7 +59,7 @@ public:
 
   static tcl::interpreter& interp();
 
-  static void run();
+  [[noreturn]] static void run();
 
   /// Get the application's number of command-line arguments.
   static int argc();

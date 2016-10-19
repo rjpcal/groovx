@@ -45,8 +45,8 @@ namespace nub
   {
     template <class T, class unref_policy> class handle;
 
-    void throw_ref_null(const std::type_info& info, const rutz::file_pos& pos);
-    void throw_ref_unshareable(const std::type_info& msg, const rutz::file_pos& pos);
+    [[noreturn]] void throw_ref_null(const std::type_info& info, const rutz::file_pos& pos);
+    [[noreturn]] void throw_ref_unshareable(const std::type_info& msg, const rutz::file_pos& pos);
   }
 }
 

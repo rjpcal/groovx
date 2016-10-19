@@ -471,12 +471,12 @@ void GLCanvas::swapForeBack()
 GVX_TRACE("GLCanvas::swapForeBack");
   if ( this->isRgba() )
     {
-      GLdouble foreground[4];
-      GLdouble background[4];
-      glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
-      glGetDoublev(GL_COLOR_CLEAR_VALUE, &background[0]);
+      GLfloat foreground[4];
+      GLfloat background[4];
+      glGetFloatv(GL_CURRENT_COLOR, &foreground[0]);
+      glGetFloatv(GL_COLOR_CLEAR_VALUE, &background[0]);
 
-      glColor4d(background[0],
+      glColor4f(background[0],
                 background[1],
                 background[2],
                 foreground[3]); // <-- note we keep the foreground alpha value
@@ -514,13 +514,13 @@ void GLCanvas::setPointSize(double size)
 {
 GVX_TRACE("GLCanvas::setPointSize");
 
-  glPointSize(size);
+  glPointSize(GLfloat(size));
 }
 
 void GLCanvas::setLineWidth(double width)
 {
 GVX_TRACE("GLCanvas::setLineWidth");
-  glLineWidth(width);
+  glLineWidth(GLfloat(width));
 }
 
 void GLCanvas::setLineStipple(unsigned short bit_pattern)
@@ -710,8 +710,8 @@ GVX_TRACE("GLCanvas::rasterPos");
       glRasterPos3d(safe_world.x(), safe_world.y(), safe_world.z());
 
       glBitmap(0, 0, 0.0f, 0.0f,
-               screen_pos.x()-safe_screen.x(),
-               screen_pos.y()-safe_screen.y(),
+               GLfloat(screen_pos.x()-safe_screen.x()),
+               GLfloat(screen_pos.y()-safe_screen.y()),
                static_cast<const GLubyte*>(0));
     }
 
@@ -732,7 +732,7 @@ GVX_TRACE("GLCanvas::drawPixels");
 
   rasterPos(world_pos);
 
-  glPixelZoom(zoom.x(), zoom.y());
+  glPixelZoom(GLfloat(zoom.x()), GLfloat(zoom.y()));
 
   glPixelStorei(GL_UNPACK_ALIGNMENT, data.byte_alignment());
 
@@ -1246,8 +1246,8 @@ GVX_TRACE("GLCanvas::light");
 
   if (posi != 0)
     {
-      const GLfloat w = (attenuation == 0.0) ? 0.0 : 1.0;
-      const GLfloat m = (attenuation == 0.0) ? 1.0 : (1.0/attenuation);
+      const GLfloat w = (attenuation == 0.0) ? 0.0f : 1.0f;
+      const GLfloat m = (attenuation == 0.0) ? 1.0f : GLfloat(1.0/attenuation);
 
       const GLfloat fposition[] = { GLfloat(m*posi->x()), GLfloat(m*posi->y()), GLfloat(m*posi->z()), w };
       glLightfv(GL_LIGHT0+lightnum, GL_POSITION, fposition);
@@ -1258,8 +1258,8 @@ GVX_TRACE("GLCanvas::light");
       const GLfloat fdirection[] = { (GLfloat) sdir->x(), (GLfloat) sdir->y(), (GLfloat) sdir->z(), 0.0 };
 
       glLightfv(GL_LIGHT0+lightnum, GL_SPOT_DIRECTION, fdirection);
-      glLightf(GL_LIGHT0+lightnum, GL_SPOT_EXPONENT, spotExponent);
-      glLightf(GL_LIGHT0+lightnum, GL_SPOT_CUTOFF, spotCutoff);
+      glLightf(GL_LIGHT0+lightnum, GL_SPOT_EXPONENT, GLfloat(spotExponent));
+      glLightf(GL_LIGHT0+lightnum, GL_SPOT_CUTOFF, GLfloat(spotCutoff));
     }
 }
 
@@ -1289,7 +1289,7 @@ void GLCanvas::material(const Gfx::RgbaColor* spec,
     }
 
   if (shininess != 0)
-    glMaterialf(GL_FRONT, GL_SHININESS, *shininess);
+    glMaterialf(GL_FRONT, GL_SHININESS, GLfloat(*shininess));
 }
 
 #ifdef __clang__

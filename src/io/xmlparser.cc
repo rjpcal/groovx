@@ -119,7 +119,7 @@ GVX_TRACE("io::xml_parser::parse");
       // very strangely I wasn't able to get things to work using a
       // readsome() approach here...
       m_stream.read(static_cast<char*>(buf), m_buf_size);
-      const int len = m_stream.gcount();
+      const size_t len = m_stream.gcount();
       if (!m_stream.eof() && m_stream.fail())
         {
           throw rutz::error("read error in io::xml_parser::parse()",
@@ -139,10 +139,11 @@ GVX_TRACE("io::xml_parser::parse");
           dbg_eval_nl(3, done);
         }
 
+      GVX_ASSERT(len < std::numeric_limits<int>::max());
+
       // alternate: use XML_Parse(m_parser, m_buf, len, done) if we have
       // our own memory buffer
-      if (XML_ParseBuffer(m_parser, len, done)
-          != XML_STATUS_OK)
+      if (XML_ParseBuffer(m_parser, int(len), done) != XML_STATUS_OK)
         {
           throw rutz::error
             (rutz::sfmt("xml parse error at input line %d:\n%s",

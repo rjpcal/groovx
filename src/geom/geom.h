@@ -47,6 +47,14 @@ namespace geom
     return radians * 180.0/M_PI;
   }
 
+  inline int deg_n180_180(int degrees)
+  {
+    while (degrees > 180) { degrees -= 360; }
+    while (degrees <= -180) { degrees += 360; }
+
+    return degrees;
+  }
+
   inline double deg_n180_180(double degrees)
   {
     while (degrees > 180.0) { degrees -= 360.0; }

@@ -106,7 +106,7 @@ public:
     return bytes_ptr() + offset * bytes_per_row();
   }
 
-  unsigned int byte_count() const { return m_bytes.size(); }
+  size_t byte_count() const { return m_bytes.size(); }
 
   geom::vec2<int>                    m_size;
   int                                m_bits_per_pixel;
@@ -170,7 +170,7 @@ GVX_TRACE("media::bmap_data::bytes_sum");
 
   update_if_needed();
   long int sum = 0;
-  unsigned int c = byte_count();
+  size_t c = byte_count();
   unsigned char* m_bytes = rep->bytes_ptr();
   while (c > 0)
     {
@@ -223,7 +223,7 @@ GVX_TRACE("media::bmap_data::byte_alignment");
   return rep->m_byte_alignment;
 }
 
-unsigned int media::bmap_data::byte_count() const
+size_t media::bmap_data::byte_count() const
 {
 GVX_TRACE("media::bmap_data::byte_count");
   update_if_needed();
@@ -251,7 +251,7 @@ void media::bmap_data::flip_contrast()
 GVX_TRACE("media::bmap_data::flip_contrast");
   update_if_needed();
 
-  unsigned int num_bytes = rep->m_bytes.size();
+  size_t num_bytes = rep->m_bytes.size();
 
   // In this case we want to flip each bit
   if (rep->m_bits_per_pixel == 1)
@@ -279,8 +279,8 @@ void media::bmap_data::flip_vertical()
 GVX_TRACE("media::bmap_data::flip_vertical");
   update_if_needed();
 
-  int bytes_per_row = rep->bytes_per_row();
-  int num_bytes = rep->byte_count();
+  const int bytes_per_row = rep->bytes_per_row();
+  const size_t num_bytes = rep->byte_count();
 
   rutz::dynamic_block<unsigned char> new_bytes(num_bytes);
 

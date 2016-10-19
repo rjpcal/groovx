@@ -110,7 +110,7 @@ GVX_TRACE("ElementContainer::write_to");
                                     rep->elements.end());
 
   writer.write_value("randSeed", rep->randSeed);
-  writer.write_value("curTrialSeqdx", rep->sequencePos);
+  writer.write_value("curTrialSeqdx", int(rep->sequencePos));
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -148,7 +148,7 @@ rutz::fstring ElementContainer::vxInfo() const
 GVX_TRACE("ElementContainer::vxInfo");
   if (isComplete()) return rutz::fstring("complete");
 
-  return rutz::sfmt("current element %s, completed %u of %u",
+  return rutz::sfmt("current element %s, completed %u of %zu",
                     currentElement()->unique_name().c_str(),
                     numCompleted(),
                     numElements());
@@ -323,7 +323,7 @@ GVX_TRACE("ElementContainer::currentElement");
   return rep->elements.at(rep->sequencePos);
 }
 
-unsigned int ElementContainer::numElements() const
+size_t ElementContainer::numElements() const
 {
 GVX_TRACE("ElementContainer::numElements");
   return rep->elements.size();

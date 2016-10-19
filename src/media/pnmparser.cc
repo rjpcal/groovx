@@ -88,10 +88,10 @@ namespace
   {
     GVX_TRACE("parse_pbm_mode_1");
 
-    int position = 0;
+    size_t position = 0;
     int val = 0;
 
-    const int byte_count = data.byte_count();
+    const size_t byte_count = data.byte_count();
 
     while (is.peek() != EOF && position < byte_count)
       {
@@ -111,10 +111,10 @@ namespace
 
     const double scale = 255.0/double(max_grey);
 
-    int position = 0;
+    size_t position = 0;
     int val = 0;
 
-    const int byte_count = data.byte_count();
+    const size_t byte_count = data.byte_count();
 
     while (is.peek() != EOF && position < byte_count)
       {
@@ -140,7 +140,7 @@ namespace
         || mode == 4)
       {
         is.read(reinterpret_cast<char*>(data.bytes_ptr()), data.byte_count());
-        unsigned int numread = is.gcount();
+        size_t numread = is.gcount();
         if (numread < data.byte_count())
           throw rutz::error("stream underflow in parse_pbm_mode_456", SRC_POS);
       }

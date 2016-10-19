@@ -76,10 +76,10 @@ public:
       is no less than the \a lowest_supported_version. Returns the
       actual version. If this test fails, an exception will be
       thrown. */
-  int ensure_version_id(const char* name,
-                        io::version_id lowest_supported_version,
-                        const char* msg,
-                        const rutz::file_pos& pos);
+  io::version_id ensure_version_id(const char* name,
+                                   io::version_id lowest_supported_version,
+                                   const char* msg,
+                                   const rutz::file_pos& pos);
 
   /** Returns the serialization version id that was stored with the
       object currently being read. */
@@ -128,6 +128,9 @@ public:
 
   void read_value(const rutz::fstring& name, bool& ret)
   { ret = read_bool(name); }
+
+  void read_value(const rutz::fstring& name, float& ret)
+  { double d = read_double(name); ret = float(d); }
 
   void read_value(const rutz::fstring& name, double& ret)
   { ret = read_double(name); }

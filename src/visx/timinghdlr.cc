@@ -215,7 +215,7 @@ GVX_TRACE("TimingHdlr::write_to");
 ///////////////
 
 nub::ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point,
-                                          unsigned int index) const
+                                          size_t index) const
 {
 GVX_TRACE("TimingHdlr::getEvent");
   return rep->eventsAt(time_point).at(index);
@@ -231,8 +231,8 @@ GVX_TRACE("TimingHdlr::getElapsedMsec");
 // manipulators //
 //////////////////
 
-unsigned int TimingHdlr::addEvent(nub::ref<TrialEvent> event_item,
-                                  TimePoint time_point)
+size_t TimingHdlr::addEvent(nub::ref<TrialEvent> event_item,
+                            TimePoint time_point)
 {
 GVX_TRACE("TimingHdlr::addEvent");
 
@@ -241,8 +241,8 @@ GVX_TRACE("TimingHdlr::addEvent");
   return events.size() - 1;
 }
 
-unsigned int TimingHdlr::addEventByName(const char* event_type,
-                                        TimePoint timepoint, int msec_delay)
+size_t TimingHdlr::addEventByName(const char* event_type,
+                                  TimePoint timepoint, int msec_delay)
 {
 GVX_TRACE("TimingHdlr::addEventByName");
 

@@ -120,12 +120,12 @@ namespace rutz
 
   struct char_range
   {
-    char_range(const char* t, unsigned int n) : text(t), len(n) {}
+    char_range(const char* t, size_t n) : text(t), len(n) {}
 
     // default copy, dtor, assignment OK
 
     const char*  const text;
-    unsigned int const len;
+    size_t       const len;
   };
 
   ///////////////////////////////////////////////////////////

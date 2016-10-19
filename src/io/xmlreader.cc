@@ -70,8 +70,8 @@ using nub::soft_ref;
 
 namespace
 {
-  void invalid_attr(const char* attname, const char* eltype,
-                    const char* elname, const rutz::file_pos& pos)
+  [[noreturn]] void invalid_attr(const char* attname, const char* eltype,
+                                 const char* elname, const rutz::file_pos& pos)
   {
     throw rutz::error(rutz::sfmt("invalid '%s' attribute for <%s> "
                                  "element with name: %s",

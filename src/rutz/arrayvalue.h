@@ -75,7 +75,7 @@ namespace rutz
       m_array.swap(newarray);
     }
 
-    unsigned int array_size() const { return m_array.size(); }
+    size_t array_size() const { return m_array.size(); }
 
     T& array_at(unsigned int i)       { return m_array[i]; }
     const T& array_at(unsigned int i) const { return m_array[i]; }

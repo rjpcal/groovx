@@ -35,6 +35,8 @@
 
 #include "gfx/gxnode.h"
 
+#include <cstddef>
+
 namespace nub
 {
   template <class T> class ref;
@@ -69,7 +71,7 @@ public:
   virtual void write_to(io::writer& writer) const override;
 
   /// Index type to refer to child nodes.
-  typedef unsigned int ChildId;
+  typedef size_t ChildId;
 
   /// Add the given child node, and return its index.
   ChildId addChild(nub::ref<GxNode> item);
@@ -81,7 +83,7 @@ public:
   void removeChild(nub::ref<GxNode> item);
 
   /// Get the number of child nodes.
-  unsigned int numChildren() const;
+  size_t numChildren() const;
   /// Get the child node at the given index.
   nub::ref<GxNode> getChild(ChildId index) const;
 

@@ -42,7 +42,7 @@
 #include "rutz/trace.h"
 
 tcl::channel_buf::channel_buf(Tcl_Interp* interp,
-                            const char* channame, int /*om*/) :
+                            const char* channame, unsigned int /*om*/) :
   opened(false), owned(false), mode(0), m_interp(interp), chan(0)
 {
   int origmode = 0;
@@ -71,7 +71,7 @@ GVX_TRACE("tcl::channel_buf::underflow");
   if (gptr() < egptr())
     return *gptr();
 
-  int num_putback = 0;
+  off_t num_putback = 0;
   if (s_pback_size > 0)
     {
       // process size of putback area
@@ -84,7 +84,7 @@ GVX_TRACE("tcl::channel_buf::underflow");
       // copy up to four characters previously read into the putback
       // buffer (area of first four characters)
       std::memcpy (m_buffer+(4-num_putback), gptr()-num_putback,
-                   num_putback);
+                   size_t(num_putback));
     }
 
   // read new characters
@@ -116,7 +116,7 @@ GVX_TRACE("tcl::channel_buf::overflow");
   if (c != EOF)
     {
       // insert the character into the buffer
-      *pptr() = c;
+      *pptr() = char(c);
       pbump(1);
     }
 
@@ -141,7 +141,7 @@ int tcl::channel_buf::flushoutput()
 {
   if (!(mode & std::ios::out) || !opened) return EOF;
 
-  int num = pptr()-pbase();
+  int num = int(pptr() - pbase());
   if ( Tcl_Write(chan, pbase(), num) != num )
     {
       return EOF;

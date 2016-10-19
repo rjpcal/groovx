@@ -46,7 +46,7 @@ namespace nub
   {
     template <class T> class weak_handle;
 
-    void throw_soft_ref_invalid(const std::type_info& info, const rutz::file_pos& pos);
+    [[noreturn]] void throw_soft_ref_invalid(const std::type_info& info, const rutz::file_pos& pos);
   }
 }
 

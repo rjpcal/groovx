@@ -220,7 +220,7 @@ GVX_TRACE("GxSeparator::removeChild");
     }
 }
 
-unsigned int GxSeparator::numChildren() const
+size_t GxSeparator::numChildren() const
 {
 GVX_TRACE("GxSeparator::numChildren");
   return rep->children.size();
@@ -232,7 +232,7 @@ GVX_TRACE("GxSeparator::getChild");
   if (index >= rep->children.size())
     {
       throw rutz::error(rutz::sfmt("GxSeparator has no child with "
-                                   "index '%u'", index), SRC_POS);
+                                   "index '%zu'", index), SRC_POS);
     }
 
   return rep->children[index];

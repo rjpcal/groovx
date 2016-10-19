@@ -45,7 +45,7 @@ rutz::imembuf::imembuf(const char* s) :
        const_cast<char*>(m_buf) + m_len);
 }
 
-rutz::imembuf::imembuf(const char* s, unsigned int len) :
+rutz::imembuf::imembuf(const char* s, size_t len) :
   m_len(len),
   m_buf(s),
   m_owned_mem(0)
@@ -88,10 +88,12 @@ rutz::imemstream::imemstream(const char* s)
   std::istream(&m_buf), m_buf(s)
 {}
 
-rutz::imemstream::imemstream(const char* s, unsigned int len)
+rutz::imemstream::imemstream(const char* s, size_t len)
   :
   std::istream(&m_buf), m_buf(s, len)
 {}
+
+rutz::imemstream::~imemstream() {}
 
 rutz::icstrstream::icstrstream(const char* s)
   :
@@ -99,5 +101,7 @@ rutz::icstrstream::icstrstream(const char* s)
 {
   m_buf.make_owning();
 }
+
+rutz::icstrstream::~icstrstream() {}
 
 #endif // !GROOVX_RUTZ_CSTRSTREAM_CC_UTC20050626084020_DEFINED

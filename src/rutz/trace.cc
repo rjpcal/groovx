@@ -122,9 +122,9 @@ rutz::trace::trace(prof& p, bool use_msg) noexcept
   :
   m_prof(p),
   m_start(),
+  m_timing_mode(rutz::prof::get_timing_mode()),
   m_should_print_msg(g_do_global_trace || use_msg),
-  m_should_pop(rutz::backtrace::current().push(&p)),
-  m_timing_mode(rutz::prof::get_timing_mode())
+  m_should_pop(rutz::backtrace::current().push(&p))
 {
   if (this->m_should_print_msg)
     print_in(this->m_prof.context_name());

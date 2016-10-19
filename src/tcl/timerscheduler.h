@@ -48,7 +48,7 @@ public:
   virtual rutz::shared_ptr<nub::timer_token>
   schedule(int msec,
            void (*callback)(void*),
-           void* clientdata);
+           void* clientdata) override;
 };
 
 #endif // !GROOVX_TCL_TIMERSCHEDULER_H_UTC20050628162421_DEFINED

@@ -33,8 +33,8 @@
 
 namespace rutz { namespace debug {
   /// Helper function called frmo the GVX_ABORT() macro.
-  void abort_aux (const char* what, const char* where,
-                  int line_no) noexcept;
+  [[noreturn]] void abort_aux (const char* what, const char* where,
+                               int line_no) noexcept;
 }}
 
 /// Print a message and then abort().

@@ -105,7 +105,7 @@ private:
 
   int history_next();
 
-  void do_prompt(const char* text, unsigned int length);
+  void do_prompt(const char* text, size_t length);
 
   enum prompt_type { FULL, PARTIAL };
 
@@ -143,7 +143,7 @@ public:
 
   tcl::interpreter& interp() { return m_interp; }
 
-  void run();
+  [[noreturn]] void run();
 
   int argc() const { return m_argc; }
 
@@ -263,9 +263,9 @@ GVX_TRACE("tcl::event_loop_impl::history_next");
 
 void tcl::event_loop_impl::do_prompt(const char* text,
 #ifdef GVX_WITH_READLINE
-                             unsigned int /*length*/
+                             size_t /*length*/
 #else
-                             unsigned int length
+                             size_t length
 #endif
                              )
 {
@@ -273,19 +273,22 @@ GVX_TRACE("tcl::event_loop_impl::do_prompt");
 
   rutz::fstring color_prompt = text;
 
+#if defined(GVX_WITH_READLINE) && defined(RL_PROMPT_START_IGNORE)
   if (isatty(1))
     {
-#if defined(GVX_WITH_READLINE) && defined(RL_PROMPT_START_IGNORE)
       color_prompt = rutz::sfmt("%c\033[1;32m%c%s%c\033[0m%c",
                                 RL_PROMPT_START_IGNORE,
                                 RL_PROMPT_END_IGNORE,
                                 text,
                                 RL_PROMPT_START_IGNORE,
                                 RL_PROMPT_END_IGNORE);
-#else
-      color_prompt = rutz::sfmt("\033[1;32m%s\033[0m", text);
-#endif
     }
+#else
+  if (isatty(1))
+    {
+      color_prompt = rutz::sfmt("\033[1;32m%s\033[0m", text);
+    }
+#endif
 
 #ifdef GVX_WITH_READLINE
   rl_callback_handler_install(color_prompt.c_str(),

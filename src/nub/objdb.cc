@@ -101,7 +101,7 @@ public:
       return is_valid_itr(itr);
     }
 
-  int count() const noexcept
+  size_t count() const noexcept
     { return m_obj_map.size(); }
 
   void release(nub::uid id)
@@ -196,7 +196,7 @@ public:
           GVX_ASSERT( (*existing_site).second.get() == ptr );
         }
 
-      const int new_id = ptr->id();
+      const nub::uid new_id = ptr->id();
 
       m_obj_map.insert
         (map_type::value_type
@@ -315,7 +315,7 @@ GVX_TRACE("nub::objectdb::~objectdb");
   delete rep;
 }
 
-int nub::objectdb::count() const noexcept
+size_t nub::objectdb::count() const noexcept
 {
 GVX_TRACE("nub::objectdb::count");
 

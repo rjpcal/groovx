@@ -65,7 +65,7 @@ rutz::mapped_infile::mapped_infile(const char* filename)
                         SRC_POS);
     }
 
-  m_mem = mmap(0, m_statbuf.st_size,
+  m_mem = mmap(0, size_t(m_statbuf.st_size),
                PROT_READ, MAP_PRIVATE, m_fileno, 0);
 
   if (m_mem == (void*)-1)
@@ -78,7 +78,7 @@ rutz::mapped_infile::mapped_infile(const char* filename)
 
 rutz::mapped_infile::~mapped_infile()
 {
-  munmap(m_mem, m_statbuf.st_size);
+  munmap(m_mem, size_t(m_statbuf.st_size));
   close(m_fileno);
 }
 

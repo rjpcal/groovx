@@ -75,11 +75,11 @@ io::write_version_error::write_version_error(const char* classname,
 
 io::writer::~writer () noexcept {}
 
-int io::writer::ensure_output_version_id(const char* name,
-                                     io::version_id actual_version,
-                                     io::version_id lowest_supported_version,
-                                     const char* msg,
-                                     const rutz::file_pos& pos)
+io::version_id io::writer::ensure_output_version_id(const char* name,
+                                                    io::version_id actual_version,
+                                                    io::version_id lowest_supported_version,
+                                                    const char* msg,
+                                                    const rutz::file_pos& pos)
 {
   if (actual_version < lowest_supported_version)
     throw io::write_version_error(name, actual_version,
@@ -96,13 +96,9 @@ void io::writer::default_write_byte_array(const char* name,
 {
 GVX_TRACE("io::writer::default_write_byte_array");
 
-  rutz::byte_array encoded;
+  const std::string encoded = rutz::base64_encode(data, length, 60);
 
-  rutz::base64_encode(data, length, encoded, 60);
-
-  encoded.vec.push_back('\0');
-
-  write_cstring(name, reinterpret_cast<char*>(&encoded.vec[0]));
+  write_cstring(name, encoded.c_str());
 }
 
 #endif // !GROOVX_IO_WRITER_CC_UTC20050626084021_DEFINED
