@@ -55,6 +55,7 @@
 #include "visx/response.h"
 #include "visx/trial.h"
 
+#define GVX_TRACE_EXPR EventResponseHdlr::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER

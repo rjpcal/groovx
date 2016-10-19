@@ -54,6 +54,7 @@
 #include <sstream>
 #include <vector>
 
+#define GVX_TRACE_EXPR Trial::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER

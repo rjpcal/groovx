@@ -60,6 +60,7 @@
 #include <sys/stat.h> // for mode_t constants S_IRUSR etc.
 #include <unistd.h> // for sleep()
 
+#define GVX_TRACE_EXPR ExptDriver::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER

@@ -46,6 +46,7 @@
 
 #include "nub/volatileobject.h"
 
+#define GVX_TRACE_EXPR GxShapeKit::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER

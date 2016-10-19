@@ -42,6 +42,7 @@
 
 #include "rutz/fstring.h"
 
+#define GVX_TRACE_EXPR Block::tracer.status()
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
