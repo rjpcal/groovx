@@ -137,10 +137,11 @@ const char* rutz::error::what() const noexcept
       // rutz/sfmt.cc and rutz/error.cc
 
       const size_t len =
-        strlen(m_file_pos.m_file_name)
-        + 2 + size_t(ceil(log10(m_file_pos.m_line_no)))
+        6 // "at ::\n"
+        + strlen(m_file_pos.m_file_name)
+        + size_t(ceil(log10(m_file_pos.m_line_no)))
         + m_msg.length()
-        + 1;
+        + 1; // null terminator
 
       std::vector<char> buf(len);
 

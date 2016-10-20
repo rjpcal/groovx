@@ -2978,8 +2978,8 @@ $as_echo "$as_me: WARNING: unknown CXX-OS pair ${CXX}-${OS}" >&2;}
 esac
 
 is_clang=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if this is clang" >&5
-$as_echo_n "checking if this is clang... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if $CXX is clang" >&5
+$as_echo_n "checking if $CXX is clang... " >&6; }
 
 
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext

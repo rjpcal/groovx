@@ -190,7 +190,7 @@ case ${CXX}-${OS} in
 esac
 
 is_clang=no
-AC_MSG_CHECKING([if this is clang])
+AC_MSG_CHECKING([if $CXX is clang])
 AC_PREPROC_IFELSE([AC_LANG_SOURCE([[
 #ifndef __clang__
 #error this is not clang
