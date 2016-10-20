@@ -527,7 +527,8 @@ showpid:
 
 # Generate TAGS file based on all source files
 TAGS: $(ALL_SRCS) README.md TODO TUTORIAL doc/groovx.dxy
-	etags $^ -o $@
+	@echo running etags
+	@etags $^ -o $@
 
 svn_keywords:
 	@for f in $(ALL_SRCS); do \
