@@ -404,13 +404,13 @@ GVX_TRACE("Gxshapekit_Init");
 namespace
 {
   void scramble1(nub::ref<GxPixmap> pixmap,
-                 int numsubcols, int numsubrows)
+                 unsigned int numsubcols, unsigned int numsubrows)
   {
     pixmap->scramble(numsubcols, numsubrows, 0);
   }
 
   void scramble2(nub::ref<GxPixmap> pixmap,
-                 int numsubcols, int numsubrows, int seed)
+                 unsigned int numsubcols, unsigned int numsubrows, unsigned long seed)
   {
     pixmap->scramble(numsubcols, numsubrows, seed);
   }

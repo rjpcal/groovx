@@ -84,7 +84,7 @@ public:
   size_t addEvent(nub::ref<TrialEvent> event,
                   TimePoint time_point);
   size_t addEventByName(const char* event_type,
-                        TimePoint time_point, int msec_delay);
+                        TimePoint time_point, unsigned int msec_delay);
 
   /////////////
   // actions //

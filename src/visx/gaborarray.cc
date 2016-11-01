@@ -59,6 +59,7 @@ GVX_DBG_REGISTER
 #include "rutz/trace.h"
 
 using geom::vec2i;
+using geom::vec2st;
 using geom::vec2d;
 using geom::vec3d;
 
@@ -89,33 +90,33 @@ namespace
 }
 
 GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
-                       int foregNumber, double foregSpacing,
-                       int sizeX, int sizeY,
+                       size_t foregNumber, double foregSpacing,
+                       size_t sizeX, size_t sizeY,
                        double gridSpacing,
                        double minSpacing)
   :
-  itsForegSeed(0),
+  itsForegSeed(0u),
   itsForegNumber(foregNumber),
   itsForegSpacing(foregSpacing),
   itsForegPosX(0),
   itsForegPosY(0),
 
-  itsBackgSeed(0),
+  itsBackgSeed(0u),
   itsSizeX(sizeX),
   itsSizeY(sizeY),
   itsGridSpacing(gridSpacing),
   itsMinSpacing(minSpacing),
   itsFillResolution(15.0),
 
-  itsThetaSeed(0),
-  itsPhaseSeed(0),
+  itsThetaSeed(0u),
+  itsPhaseSeed(0u),
   itsThetaJitter(0.0),
   itsGaborPeriod(gaborPeriod),
   itsGaborSigma(gaborSigma),
-  itsContrastSeed(0),
+  itsContrastSeed(0u),
   itsContrastJitter(0.0),
 
-  itsTotalNumber(0),
+  itsTotalNumber(0u),
   itsArray(MAX_GABOR_NUMBER),
   itsBmap(),
 
@@ -134,33 +135,33 @@ const FieldMap& GaborArray::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("foregSeed", &GaborArray::itsForegSeed, 0, 0, 20000, 1,
+    Field("foregSeed", &GaborArray::itsForegSeed, 0u, 0u, 20000u, 1u,
           Field::NEW_GROUP),
-    Field("foregNumber", &GaborArray::itsForegNumber, 24, 1, 100, 1),
+    Field("foregNumber", &GaborArray::itsForegNumber, 24u, 1u, 100u, 1u),
     Field("foregSpacing", &GaborArray::itsForegSpacing,
           45.0, 1.0, 100.0, 1.0),
     Field("foregPosX", &GaborArray::itsForegPosX, 0, -2048, 2048, 1),
     Field("foregPosY", &GaborArray::itsForegPosY, 0, -2048, 2048, 1),
 
-    Field("backgSeed", &GaborArray::itsBackgSeed, 0, 0, 20000, 1),
-    Field("sizeX", &GaborArray::itsSizeX, 512, 16, 2048, 16),
-    Field("sizeY", &GaborArray::itsSizeY, 512, 16, 2048, 16),
+    Field("backgSeed", &GaborArray::itsBackgSeed, 0u, 0u, 20000u, 1u),
+    Field("sizeX", &GaborArray::itsSizeX, 512u, 16u, 2048u, 16u),
+    Field("sizeY", &GaborArray::itsSizeY, 512u, 16u, 2048u, 16u),
     Field("gridSpacing", &GaborArray::itsGridSpacing, 48., 1., 200., 1.),
     Field("minSpacing", &GaborArray::itsMinSpacing, 36., 1., 200., 1.),
     Field("fillResolution", &GaborArray::itsFillResolution, 15., 1., 50., 1.),
 
-    Field("thetaSeed", &GaborArray::itsThetaSeed, 0, 0, 20000, 1),
-    Field("phaseSeed", &GaborArray::itsPhaseSeed, 0, 0, 20000, 1),
+    Field("thetaSeed", &GaborArray::itsThetaSeed, 0u, 0u, 20000u, 1u),
+    Field("phaseSeed", &GaborArray::itsPhaseSeed, 0u, 0u, 20000u, 1u),
     Field("thetaJitter", &GaborArray::itsThetaJitter, 0.0, 0.0, 1.0, 0.01),
     Field("gaborPeriod", &GaborArray::itsGaborPeriod, 15.0, 1.0, 50.0, 1.0),
     Field("gaborSigma", &GaborArray::itsGaborSigma, 7.5, 0.5, 25.0, 0.5),
-    Field("contrastSeed", &GaborArray::itsContrastSeed, 0, 0, 20000, 1),
+    Field("contrastSeed", &GaborArray::itsContrastSeed, 0u, 0u, 20000u, 1u),
     Field("contrastJitter", &GaborArray::itsContrastJitter, 0.0, 0.0, 2.0, 0.01),
 
     Field("dumpingFrames", &GaborArray::itsDumpingFrames,
           false, false, true, true, Field::BOOLEAN | Field::TRANSIENT),
     Field("frameDumpPeriod", &GaborArray::itsFrameDumpPeriod,
-          20, 1, 100, 1, Field::TRANSIENT),
+          20u, 1u, 100u, 1u, Field::TRANSIENT),
   };
 
   static FieldMap GABORARRAY_FIELDS(FIELD_ARRAY, &GxShapeKit::classFields());
@@ -207,22 +208,22 @@ GVX_TRACE("GaborArray::saveContourOnlyImage");
 
   updateForeg();
 
-  const int npix = itsSizeX*itsSizeY;
+  const size_t npix = itsSizeX*itsSizeY;
 
   rutz::fixed_block<double> win(npix);
 
-  for (int i = 0; i < npix; ++i)
+  for (size_t i = 0; i < npix; ++i)
     win[i] = 0.0;
 
-  for (int i = 0; i < itsTotalNumber; ++i)
+  for (size_t i = 0; i < itsTotalNumber; ++i)
     {
       if (itsArray[i].type != GaborArrayElement::CONTOUR)
         continue;
 
       const double theta = geom::rad_0_2pi(itsArray[i].theta + M_PI_2);
 
-      const int xcenter = int(itsArray[i].pos.x() + itsSizeX / 2.0 + 0.5);
-      const int ycenter = int(itsArray[i].pos.y() + itsSizeY / 2.0 + 0.5);
+      const size_t xcenter = size_t(itsArray[i].pos.x() + itsSizeX / 2.0 + 0.5);
+      const size_t ycenter = size_t(itsArray[i].pos.y() + itsSizeY / 2.0 + 0.5);
 
       const double period = 1.5*itsForegSpacing;
 
@@ -231,26 +232,28 @@ GVX_TRACE("GaborArray::saveContourOnlyImage");
                            theta, 0.0);
 
       // bottom left:
-      const int x0 = xcenter - p.size() / 2;
-      const int y0 = ycenter - p.size() / 2;
+      GVX_ASSERT(xcenter > p.size() / 2);
+      GVX_ASSERT(ycenter > p.size() / 2);
+      const size_t x0 = xcenter - p.size() / 2;
+      const size_t y0 = ycenter - p.size() / 2;
       // top right:
-      const int x1 = x0 + p.size();
-      const int y1 = y0 + p.size();
+      const size_t x1 = x0 + p.size();
+      const size_t y1 = y0 + p.size();
 
-      for (int y = y0; y < y1; ++y)
-        for (int x = x0; x < x1; ++x)
+      for (size_t y = y0; y < y1; ++y)
+        for (size_t x = x0; x < x1; ++x)
           {
-            if (x >= 0 && x < itsSizeX && y >=0 && y < itsSizeY)
+            if (x < itsSizeX && y < itsSizeY)
               win[x+y*itsSizeX] += p.at(x-x0, y-y0);
           }
     }
 
   shared_ptr<media::bmap_data> result
-    (new media::bmap_data(vec2i(itsSizeX, itsSizeY), 8, 1));
+    (new media::bmap_data(vec2st(itsSizeX, itsSizeY), 8, 1));
 
   unsigned char* bytes = result->bytes_ptr();
 
-  for (int k = 0; k < npix; ++k)
+  for (size_t k = 0; k < npix; ++k)
     {
       int val = int(win[k]*255);
 
@@ -270,7 +273,7 @@ void GaborArray::grGetBoundingBox(Bbox& bbox) const
 GVX_TRACE("GaborArray::grGetBoundingBox");
 
   bbox.drawScreenRect(vec3d::zeros(),
-                      vec2i(itsSizeX, itsSizeY),
+                      vec2st(itsSizeX, itsSizeY),
                       vec2d::ones());
 }
 
@@ -294,14 +297,14 @@ GVX_TRACE("GaborArray::updateForeg");
       && itsForegPosY.ok())
     return;
 
-  itsTotalNumber = 0;
+  itsTotalNumber = 0u;
 
   rutz::urand urand(itsForegSeed);
 
   Snake snake(itsForegNumber, itsForegSpacing, urand);
 
   // pull in elements from the snake
-  for (int n = 0; n < itsForegNumber; ++n)
+  for (size_t n = 0; n < itsForegNumber; ++n)
     {
       GaborArrayElement e = snake.getElement(n);
       e.pos.x() += itsForegPosX;
@@ -351,18 +354,18 @@ GVX_TRACE("GaborArray::updateBackg");
       backgFill();
     }
 
-  int insideNumber = itsForegNumber;
+  size_t insideNumber = itsForegNumber;
 
-  for (int n = 0; n < itsTotalNumber; ++n)
+  for (size_t n = 0; n < itsTotalNumber; ++n)
     {
       if (itsArray[n].type == GaborArrayElement::CONTOUR)
         continue;
 
       bool inside = true;
 
-      for (int i = 0; i < itsForegNumber; ++i)
+      for (size_t i = 0; i < itsForegNumber; ++i)
         {
-          const int j = (i+1) % itsForegNumber;
+          const size_t j = (i+1) % itsForegNumber;
 
           // This is the vector perpendicular to the line connecting
           // contour nodes i and j
@@ -388,7 +391,7 @@ GVX_TRACE("GaborArray::updateBackg");
         }
     }
 
-  printf(" FOREG_NUMBER %d    PATCH_NUMBER %d    TOTAL_NUMBER %d\n",
+  printf(" FOREG_NUMBER %zu    PATCH_NUMBER %zu    TOTAL_NUMBER %zu\n",
          itsForegNumber.val, insideNumber, itsTotalNumber);
 
   itsBackgSeed.save();
@@ -405,18 +408,18 @@ shared_ptr<media::bmap_data> GaborArray::generateBmap(bool doTagLast) const
 {
 GVX_TRACE("GaborArray::generateBmap");
 
-  const int npix = itsSizeX*itsSizeY;
+  const size_t npix = itsSizeX*itsSizeY;
 
   rutz::fixed_block<double> win(npix);
 
-  for (int i = 0; i < npix; ++i)
+  for (size_t i = 0; i < npix; ++i)
     win[i] = 0.0;
 
   rutz::urand thetas(itsThetaSeed);
   rutz::urand phases(itsPhaseSeed);
   rutz::urand contrasts(itsContrastSeed);
 
-  for (int i = 0; i < itsTotalNumber; ++i)
+  for (size_t i = 0; i < itsTotalNumber; ++i)
     {
       const double phi   = 2 * M_PI * phases.fdraw();
 //       const double phi = 0.0;
@@ -429,26 +432,28 @@ GVX_TRACE("GaborArray::generateBmap");
                           (itsArray[i].theta + M_PI_2))
         : rand_theta;
 
-      const int xcenter = int(itsArray[i].pos.x() + itsSizeX / 2.0 + 0.5);
-      const int ycenter = int(itsArray[i].pos.y() + itsSizeY / 2.0 + 0.5);
+      const size_t xcenter = size_t(itsArray[i].pos.x() + itsSizeX / 2.0 + 0.5);
+      const size_t ycenter = size_t(itsArray[i].pos.y() + itsSizeY / 2.0 + 0.5);
 
       const GaborPatch& p =
         GaborPatch::lookup(itsGaborSigma, 2*M_PI/itsGaborPeriod,
                            theta, phi);
 
       // bottom left:
-      const int x0 = xcenter - p.size() / 2;
-      const int y0 = ycenter - p.size() / 2;
+      GVX_ASSERT(xcenter > p.size() / 2);
+      GVX_ASSERT(ycenter > p.size() / 2);
+      const size_t x0 = xcenter - p.size() / 2;
+      const size_t y0 = ycenter - p.size() / 2;
       // top right:
-      const int x1 = x0 + p.size();
-      const int y1 = y0 + p.size();
+      const size_t x1 = x0 + p.size();
+      const size_t y1 = y0 + p.size();
 
       const double contrast = exp(-itsContrastJitter * contrasts.fdraw());
 
-      for (int y = y0; y < y1; ++y)
-        for (int x = x0; x < x1; ++x)
+      for (size_t y = y0; y < y1; ++y)
+        for (size_t x = x0; x < x1; ++x)
           {
-            if (x >= 0 && x < itsSizeX && y >=0 && y < itsSizeY)
+            if (x < itsSizeX && y < itsSizeY)
               win[x+y*itsSizeX] += contrast * p.at(x-x0, y-y0);
           }
 
@@ -457,10 +462,10 @@ GVX_TRACE("GaborArray::generateBmap");
           const double outer = 0.4 * p.size();
           const double inner = outer - 3;
 
-          for (int y = y0; y < y1; ++y)
-            for (int x = x0; x < x1; ++x)
+          for (size_t y = y0; y < y1; ++y)
+            for (size_t x = x0; x < x1; ++x)
               {
-                if (x >= 0 && x < itsSizeX && y >=0 && y < itsSizeY)
+                if (x < itsSizeX && y < itsSizeY)
                   {
                     const double r = sqrt((x-xcenter)*(x-xcenter) +
                                           (y-ycenter)*(y-ycenter));
@@ -475,13 +480,13 @@ GVX_TRACE("GaborArray::generateBmap");
     }
 
   shared_ptr<media::bmap_data> result
-    (new media::bmap_data(vec2i(itsSizeX, itsSizeY), 8, 1));
+    (new media::bmap_data(vec2st(itsSizeX, itsSizeY), 8, 1));
 
   unsigned char* bytes = result->bytes_ptr();
 
   bool clip = false;
 
-  for (int k = 0; k < npix; ++k)
+  for (size_t k = 0; k < npix; ++k)
     {
       int val = int((win[k]+1.0)/2.0*255);
 
@@ -537,7 +542,7 @@ GVX_TRACE("GaborArray::update");
 
 bool GaborArray::tryPush(const GaborArrayElement& e) const
 {
-  if (tooClose(e.pos, -1)) return false;
+  if (tooClose(e.pos, size_t(-1))) return false;
 
   if (itsTotalNumber >= MAX_GABOR_NUMBER)
     {
@@ -560,11 +565,11 @@ bool GaborArray::tryPush(const GaborArrayElement& e) const
   return true;
 }
 
-bool GaborArray::tooClose(const vec2d& v, int except) const
+bool GaborArray::tooClose(const vec2d& v, size_t except) const
 {
   double minSpacingSqr = itsMinSpacing*itsMinSpacing;
 
-  for (int n = 0; n < itsTotalNumber; ++n)
+  for (size_t n = 0; n < itsTotalNumber; ++n)
     {
       const double dx = itsArray[n].pos.x() - v.x();
       const double dy = itsArray[n].pos.y() - v.y();
@@ -621,7 +626,7 @@ GVX_TRACE("GaborArray::backgFill");
       }
 
   const double spacing = sqrt(2.0*itsSizeX*itsSizeY/(sqrt(3.0)*itsTotalNumber));
-  printf(" %d elements, ave spacing %f\n", itsTotalNumber, spacing);
+  printf(" %zu elements, ave spacing %f\n", itsTotalNumber, spacing);
 }
 
 void GaborArray::backgJitter(rutz::urand& urand) const
@@ -630,14 +635,14 @@ GVX_TRACE("GaborArray::backgJitter");
 
   const double jitter = (itsMinSpacing/16.0);
 
-  const int backgroundIters = 1000;
+  const unsigned int backgroundIters = 1000u;
 
   const double halfX = 0.5 * itsSizeX;
   const double halfY = 0.5 * itsSizeY;
 
-  for (int niter = 0; niter < backgroundIters; ++niter)
+  for (unsigned int niter = 0; niter < backgroundIters; ++niter)
     {
-      for (int n = 0; n < itsTotalNumber; ++n)
+      for (size_t n = 0; n < itsTotalNumber; ++n)
         {
           if (itsArray[n].type == GaborArrayElement::CONTOUR)
             continue;

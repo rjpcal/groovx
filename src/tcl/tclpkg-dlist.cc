@@ -571,7 +571,7 @@ namespace
   //
   //---------------------------------------------------------
 
-  tcl::list dlist_shuffle(tcl::list src, int seed)
+  tcl::list dlist_shuffle(tcl::list src, unsigned long seed)
   {
     rutz::fixed_block<tcl::obj> objs(src.begin<tcl::obj>(),
                                         src.end<tcl::obj>());
@@ -723,7 +723,7 @@ GVX_TRACE("Dlist_Init");
   pkg->def( "reverse", "list", &dlist_reverse, SRC_POS );
   pkg->def( "select", "source_list flags_list", &dlist_select, SRC_POS );
   pkg->def( "shuffle", "list ?seed=0?", &dlist_shuffle, SRC_POS );
-  pkg->def( "shuffle", "list", rutz::bind_last(&dlist_shuffle, 0), SRC_POS );
+  pkg->def( "shuffle", "list", rutz::bind_last(&dlist_shuffle, 0u), SRC_POS );
   pkg->def( "shuffle_maximal", "list", &dlist_shuffle_maximal, SRC_POS );
   pkg->def( "shuffle_moveall", "list", &dlist_shuffle_moveall, SRC_POS );
   pkg->def( "slice", "list n", &dlist_slice, SRC_POS );

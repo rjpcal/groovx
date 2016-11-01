@@ -812,8 +812,8 @@ GVX_TRACE("GxVectorFont::listBase");
 void GxVectorFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
 {
 GVX_TRACE("GxVectorFont::bboxOf");
-  int longest = 0;
-  int current = 0;
+  unsigned int longest = 0;
+  unsigned int current = 0;
   int lines = 1;
   const char* p = text;
 

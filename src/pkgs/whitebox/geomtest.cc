@@ -47,7 +47,7 @@ namespace
   double sum_square(const txform& t)
   {
     double result=0.0;
-    for (int i = 0; i < 16; ++i)
+    for (size_t i = 0; i < 16; ++i)
       result += (t[i] * t[i]);
     return result;
   }
@@ -55,7 +55,7 @@ namespace
   txform operator-(const txform& t1, const txform& t2)
   {
     txform r = txform::no_init();
-    for (int i = 0; i < 16; ++i)
+    for (size_t i = 0; i < 16; ++i)
       r[i] = t1[i] - t2[i];
     return r;
   }

@@ -374,7 +374,7 @@ GVX_TRACE("Trial::avgRespTime");
       sum += ii->msec();
 
       dbg_eval(3, sum);
-      dbg_eval_nl(3, sum/rep->responses.size());
+      dbg_eval_nl(3, size_t(sum)/rep->responses.size());
     }
   return (rep->responses.size() > 0) ? double(sum)/rep->responses.size() : 0.0;
 }

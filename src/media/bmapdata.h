@@ -94,9 +94,9 @@ namespace media
     bmap_data();
 
     /// Construct with the given image data specifications.
-    bmap_data(const geom::vec2<int>& dims,
-              int bits_per_pixel,
-              int byte_alignment);
+    bmap_data(const geom::vec2<size_t>& dims,
+              unsigned int bits_per_pixel,
+              unsigned int byte_alignment);
 
     /// Copy constructor.
     bmap_data(const bmap_data& other);
@@ -124,34 +124,34 @@ namespace media
     /// Returns a pointer to the beginning of the specified row.
     /** This takes into account whether the current row_order is
         TOP_FIRST or BOTTOM_FIRST. */
-    unsigned char* row_ptr(unsigned int row) const;
+    unsigned char* row_ptr(size_t row) const;
 
     /// Returns a checksum of all the bytes in the image data.
     long int bytes_sum() const;
 
     /// Returns the bitmap's width in pixels.
-    int width() const;
+    size_t width() const;
 
     /// Returns the bitmap's height in pixels.
-    int height() const;
+    size_t height() const;
 
     /// Returns the bitmap's size (x-width, y-height) in pixels.
-    geom::vec2<int> size() const;
+    geom::vec2<size_t> size() const;
 
     /// Returns the number of bits used per pixel in the bitmap.
-    int bits_per_pixel() const;
+    unsigned int bits_per_pixel() const;
 
     /// Returns the number of bits used per each pixel component.
     /** This differs from bits_per_pixel() if each pixel contains
         multiple components (e.g. as in an RGB image): the
         bits_per_component() might be 8 while the bits_per_pixel()
         would be 24. */
-    int bits_per_component() const;
+    unsigned int bits_per_component() const;
 
     /// Returns the byte alignment of the bitmap data.
     /** Each image row in the data will begin on a multiple of this
         number of bytes. */
-    int byte_alignment() const;
+    unsigned int byte_alignment() const;
 
     /// Returns the number of bytes used by the bitmap data.
     /** Some of these bytes may be 'filler bytes' needed to meet the
@@ -159,7 +159,7 @@ namespace media
     size_t byte_count() const;
 
     /// Returns the number of bytes used per image row in the bitmap data.
-    unsigned int bytes_per_row() const;
+    size_t bytes_per_row() const;
 
     /// Get the current row order.
     row_order get_row_order() const;
@@ -203,8 +203,8 @@ namespace media
 
     /// Generate a new image from scrambled subparts of the current image.
     rutz::shared_ptr<bmap_data>
-    make_scrambled(int numsubcols, int numsubrows,
-                   int seed,
+    make_scrambled(unsigned int numsubcols, unsigned int numsubrows,
+                   unsigned long seed,
                    bool allow_move_subparts = true,
                    bool allow_flip_left_right = true,
                    bool allow_flip_top_bottom = true) const;

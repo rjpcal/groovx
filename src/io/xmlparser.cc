@@ -72,7 +72,7 @@ GVX_TRACE("io::xml_parser::~xml_parser");
   XML_ParserFree(m_parser);
 }
 
-void io::xml_parser::character_data(const char* /*text*/, int /*length*/)
+void io::xml_parser::character_data(const char* /*text*/, size_t /*length*/)
 {
 GVX_TRACE("io::xml_parser::character_data");
 }
@@ -98,7 +98,8 @@ void io::xml_parser::c_character_data(void* data, const char* text, int length)
 GVX_TRACE("io::xml_parser::c_character_data");
   io::xml_parser* p = static_cast<io::xml_parser*>(data);
   GVX_ASSERT(p != 0);
-  p->character_data(text, length);
+  GVX_ASSERT(length >= 0);
+  p->character_data(text, size_t(length));
 }
 
 void io::xml_parser::parse()
@@ -116,7 +117,7 @@ GVX_TRACE("io::xml_parser::parse");
       // very strangely I wasn't able to get things to work using a
       // readsome() approach here...
       m_stream.read(static_cast<char*>(buf), m_buf_size);
-      const size_t len = m_stream.gcount();
+      const ssize_t len = m_stream.gcount();
       if (!m_stream.eof() && m_stream.fail())
         {
           throw rutz::error("read error in io::xml_parser::parse()",

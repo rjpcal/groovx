@@ -239,7 +239,7 @@ GVX_TRACE("TimingHdlr::addEvent");
 }
 
 size_t TimingHdlr::addEventByName(const char* event_type,
-                                  TimePoint timepoint, int msec_delay)
+                                  TimePoint timepoint, unsigned int msec_delay)
 {
 GVX_TRACE("TimingHdlr::addEventByName");
 

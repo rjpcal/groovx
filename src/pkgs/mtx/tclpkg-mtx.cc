@@ -55,9 +55,9 @@ GVX_TRACE("Mtx_Init");
   pkg->def_setter<MtxObj, const char*>("scan", &MtxObj::scan_string,
                                        SRC_POS);
 
-  pkg->def_getter<MtxObj, int>("mrows", &mtx::mrows, SRC_POS);
-  pkg->def_getter<MtxObj, int>("ncols", &mtx::ncols, SRC_POS);
-  pkg->def_getter<MtxObj, int>("nelems", &mtx::nelems, SRC_POS);
+  pkg->def_getter<MtxObj, size_t>("mrows", &mtx::mrows, SRC_POS);
+  pkg->def_getter<MtxObj, size_t>("ncols", &mtx::ncols, SRC_POS);
+  pkg->def_getter<MtxObj, size_t>("nelems", &mtx::nelems, SRC_POS);
 
   nub::obj_factory::instance().register_creator(&MtxObj::make);
   nub::obj_factory::instance().register_alias("MtxObj", "mtx");

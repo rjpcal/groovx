@@ -324,7 +324,7 @@ GVX_TRACE("TkWidgImpl::keyEventProc");
 
   // Turn off (temporarily) any ControlMask so that we get a more
   // sensible output from XLookupString().
-  ev->state &= ~ControlMask;
+  ev->state &= (unsigned int)(~ControlMask);
 
   char buf[32];
 #if defined(GVX_GL_PLATFORM_GLX)

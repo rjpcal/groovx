@@ -175,7 +175,7 @@ namespace
 
     rutz::urand generator(rutz::default_rand_seed);
 
-    const unsigned int SZ = 65530 + generator.idraw(5);
+    const unsigned int SZ = (unsigned int)(65530 + generator.idraw(5));
 
     rutz::byte_array decoded5;
     decoded5.vec.resize(SZ);

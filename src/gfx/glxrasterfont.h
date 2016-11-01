@@ -117,8 +117,8 @@ GVX_TRACE("GlxRasterFont::GlxRasterFont");
 
   dbg_eval_nl(2, itsFontInfo->fid);
 
-  const int first = itsFontInfo->min_char_or_byte2; dbg_eval(2, first);
-  const int last = itsFontInfo->max_char_or_byte2;  dbg_eval(2, last);
+  const unsigned int first = itsFontInfo->min_char_or_byte2; dbg_eval(2, first);
+  const unsigned int last = itsFontInfo->max_char_or_byte2;  dbg_eval(2, last);
 
   itsListCount = last-first+1;
   itsListBase = GLCanvas::genLists( last+1 );
@@ -133,8 +133,8 @@ GVX_TRACE("GlxRasterFont::GlxRasterFont");
     }
 
   glXUseXFont(itsFontInfo->fid,
-              first,
-              itsListCount,
+              static_cast<int>(first),
+              static_cast<int>(itsListCount),
               static_cast<int>(itsListBase+first));
 
 #if 0

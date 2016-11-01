@@ -39,7 +39,7 @@
 
 #include "rutz/trace.h"
 
-mtx rand_mtx(int mrows, int ncols)
+mtx rand_mtx(size_t mrows, size_t ncols)
 {
 GVX_TRACE("rand_mtx");
 
@@ -70,8 +70,8 @@ GVX_TRACE("squared");
   return result;
 }
 
-mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
-            int* ppadtop, int* ppadleft)
+mtx zeropad(const mtx& src, size_t new_mrows, size_t new_ncols,
+            size_t* ppadtop, size_t* ppadleft)
 {
   GVX_TRACE("zeropad");
 
@@ -81,13 +81,13 @@ mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
 
   mtx result = mtx::zeros(new_mrows, new_ncols);
 
-  const int padtop =  (new_mrows - src.mrows() + 1) / 2;
-  const int padleft = (new_ncols - src.ncols() + 1) / 2;
+  const size_t padtop =  (new_mrows - src.mrows() + 1) / 2;
+  const size_t padleft = (new_ncols - src.ncols() + 1) / 2;
 
   if (ppadtop) *ppadtop = padtop;
   if (ppadleft) *ppadleft = padleft;
 
-  for (int col = 0; col < src.ncols(); ++col)
+  for (size_t col = 0; col < src.ncols(); ++col)
     {
       result.column(col + padleft)(range_n(padtop, src.mrows()))
         = src.column(col);

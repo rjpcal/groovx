@@ -54,7 +54,7 @@ protected:
   virtual void element_end(const char* el) = 0;
 
   /// Default is no-op; override if needed.
-  virtual void character_data(const char* text, int length);
+  virtual void character_data(const char* text, size_t length);
 
 private:
   xml_parser(const xml_parser&);

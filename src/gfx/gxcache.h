@@ -97,7 +97,7 @@ public:
 private:
   Mode itsMode;
 
-  mutable int itsDisplayList;
+  mutable unsigned int itsDisplayList;
   mutable nub::soft_ref<GLCanvas> itsCanvas;
 };
 

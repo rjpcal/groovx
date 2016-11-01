@@ -66,7 +66,7 @@ using rutz::fstring;
 
 namespace
 {
-  int dummy_int=0; // We need a dummy int to attach various CPtrField's
+  unsigned int dummy_int=0; // We need a dummy int to attach various CPtrField's
 
   const io::version_id FISH_SVID = 4;
 
@@ -109,7 +109,7 @@ struct Fish::Part
   // Each endpoint is associated with a breakpoint. This is described
   // in this structure as well as the x and y coordinates of the two
   // points which define the boundaries of the endpoint line
-  int itsBkpt;
+  unsigned int itsBkpt;
   vec3f itsPt0;
   vec3f itsPt1;
 
@@ -146,7 +146,7 @@ const FieldMap& Fish::classFields()
     Field("currentPart", &Fish::itsCurrentPart, 0, 0, 3, 1,
           Field::NEW_GROUP | Field::CHECKED | Field::TRANSIENT),
 
-    Field("currentPartBkpt", &Fish::itsCurrentPartBkpt, 1, 1, 10, 1,
+    Field("currentPartBkpt", &Fish::itsCurrentPartBkpt, 1u, 1u, 10u, 1u,
           Field::TRANSIENT),
 
     Field("inColor", &Fish::inColor,
@@ -344,8 +344,6 @@ GVX_TRACE("Fish::updatePtrs");
 void Fish::readSplineFile(const char* splinefile)
 {
 GVX_TRACE("Fish::readSplineFile");
-  size_t i, j;
-  int k, splnb;
   fstring dummy;
 
   // read in the spline knots and coefficient
@@ -356,48 +354,42 @@ GVX_TRACE("Fish::readSplineFile");
                                    splinefile), SRC_POS);
     }
 
-  for(i = 0; i < 4; ++i)
+  for (size_t i = 0; i < 4; ++i)
     {
-      int dummy_order;
+      int dummy_order, splnb;
 
       // spline number and order
       ifs >> dummy >> splnb >> dummy >> dummy_order;
 
       // number of knots
-      int nknots;
+      size_t nknots;
       ifs >> dummy >> nknots;
 
       // allocate space and read in the successive knots
       itsParts[i].itsKnots.resize(nknots);
-      for (j = 0; j < itsParts[i].itsKnots.size(); ++j)
+      for (size_t j = 0; j < itsParts[i].itsKnots.size(); ++j)
         {
           ifs >> itsParts[i].itsKnots[j];
         }
 
       // number of coefficients
-      int ncoefs;
+      size_t ncoefs;
       ifs >> dummy >> ncoefs;
 
       // allocate space and read in the successive coefficients
       itsParts[i].itsCtrlPnts.resize(ncoefs);
-      {
-        for (k = 0; k < ncoefs; ++k)
-          {
-            ifs >> itsParts[i].itsCtrlPnts[k].x();
-          }
-      }
-      {
-        for (k = 0; k < ncoefs; ++k)
-          {
-            ifs >> itsParts[i].itsCtrlPnts[k].y();
-          }
-      }
-      {
-        for (k = 0; k < ncoefs; ++k)
-          {
-            itsParts[i].itsCtrlPnts[k].z() = 0.0;
-          }
-      }
+      for (size_t k = 0; k < ncoefs; ++k)
+        {
+          ifs >> itsParts[i].itsCtrlPnts[k].x();
+        }
+      for (size_t k = 0; k < ncoefs; ++k)
+        {
+          ifs >> itsParts[i].itsCtrlPnts[k].y();
+        }
+      for (size_t k = 0; k < ncoefs; ++k)
+        {
+          itsParts[i].itsCtrlPnts[k].z() = 0.0;
+        }
 
       if (ifs.fail())
         {
@@ -407,7 +399,7 @@ GVX_TRACE("Fish::readSplineFile");
     }
 
 
-  for(i = 0; i < 4; ++i)
+  for (size_t i = 0; i < 4; ++i)
     {
       int which = 0;
 

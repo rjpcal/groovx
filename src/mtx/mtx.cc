@@ -240,7 +240,7 @@ namespace
   struct val_index
   {
     double val;
-    unsigned int index;
+    size_t index;
 
     val_index(double v=0.0) : val(v) {}
 
@@ -254,7 +254,7 @@ GVX_TRACE("slice::get_sort_order");
 
   std::vector<val_index> buf(this->begin(), this->end());
 
-  for (unsigned int i = 0; i < buf.size(); ++i)
+  for (size_t i = 0; i < buf.size(); ++i)
     {
       buf[i].index = i;
     }
@@ -263,7 +263,7 @@ GVX_TRACE("slice::get_sort_order");
 
   mtx index = mtx::uninitialized(1, this->nelems());
 
-  for (int i = 0; i < nelems(); ++i)
+  for (size_t i = 0; i < nelems(); ++i)
     {
       GVX_ASSERT(buf[i].index < static_cast<unsigned int>(nelems()));
       index.at(0,i) = buf[i].index;
@@ -301,8 +301,8 @@ GVX_TRACE("slice::reorder");
 
   mtx neworder = mtx::uninitialized(this->nelems(), 1);
 
-  for (int i = 0; i < nelems(); ++i)
-    neworder.at(i,0) = (*this)[int(index.at(i,0))];
+  for (size_t i = 0; i < nelems(); ++i)
+    neworder.at(i,0) = (*this)[size_t(index.at(i,0))];
 
   *this = neworder.column(0);
 }
@@ -364,7 +364,7 @@ GVX_TRACE("slice::operator=(const mtx&)");
   if (m_nelems != other.nelems())
     throw rutz::error("dimension mismatch in slice::operator=", SRC_POS);
 
-  int i = 0;
+  size_t i = 0;
   for (mtx_iter lhs = begin_nc(); lhs.has_more(); ++lhs, ++i)
     *lhs = other.at(i);
 
@@ -385,7 +385,7 @@ GVX_TRACE("mtx_specs::as_shape");
     {
       const fstring msg =
         rutz::sfmt("as_shape(): dimension mismatch: "
-                   "current nelems == %d; requested %dx%d",
+                   "current nelems == %zu; requested %zux%zu",
                    nelems(), s.mrows(), s.ncols());
       throw rutz::error(msg, SRC_POS);
     }
@@ -403,8 +403,6 @@ GVX_TRACE("mtx_specs::as_shape");
 void mtx_specs::select_rows(const row_index_range& rng)
 {
 GVX_TRACE("mtx_specs::select_rows");
-  if (rng.begin() < 0)
-    throw rutz::error("select_rows(): row index must be >= 0", SRC_POS);
 
   if (rng.count() <= 0)
     throw rutz::error("select_rows(): number of rows must be > 0", SRC_POS);
@@ -419,8 +417,6 @@ GVX_TRACE("mtx_specs::select_rows");
 void mtx_specs::select_cols(const col_index_range& rng)
 {
 GVX_TRACE("mtx_specs::select_cols");
-  if (rng.begin() < 0)
-    throw rutz::error("select_cols(): column index must be >= 0", SRC_POS);
 
   if (rng.count() <= 0)
     throw rutz::error("select_cols(): number of columns must be > 0", SRC_POS);
@@ -458,7 +454,7 @@ mtx_base<Data>::mtx_base(mtx_base&& other) :
 {}
 
 template <class Data>
-mtx_base<Data>::mtx_base(int mrows, int ncols, const Data& data) :
+mtx_base<Data>::mtx_base(size_t mrows, size_t ncols, const Data& data) :
   mtx_specs(mrows, ncols),
   m_data(data)
 {}
@@ -514,7 +510,7 @@ GVX_TRACE("sub_mtx_ref::operator=(const mtx&)");
 //
 ///////////////////////////////////////////////////////////////////////
 
-mtx mtx::colmaj_copy_of(const double* data, int mrows, int ncols)
+mtx mtx::colmaj_copy_of(const double* data, size_t mrows, size_t ncols)
 {
 GVX_TRACE("mtx::colmaj_copy_of");
 
@@ -523,7 +519,7 @@ GVX_TRACE("mtx::colmaj_copy_of");
                          mrows, ncols, COPY));
 }
 
-mtx mtx::colmaj_borrow_from(double* data, int mrows, int ncols)
+mtx mtx::colmaj_borrow_from(double* data, size_t mrows, size_t ncols)
 {
 GVX_TRACE("mtx::colmaj_borrow_from");
 
@@ -531,7 +527,7 @@ GVX_TRACE("mtx::colmaj_borrow_from");
              data_holder(data, mrows, ncols, BORROW));
 }
 
-mtx mtx::colmaj_refer_to(double* data, int mrows, int ncols)
+mtx mtx::colmaj_refer_to(double* data, size_t mrows, size_t ncols)
 {
 GVX_TRACE("mtx::colmaj_refer_to");
 
@@ -554,8 +550,8 @@ mtx mtx::from_stream(std::istream& s)
 GVX_TRACE("mtx::from_stream");
 
   fstring buf;
-  int mrows = -1;
-  int ncols = -1;
+  size_t mrows = 0;
+  size_t ncols = 0;
 
   s >> buf;
   if (buf != "mrows")
@@ -565,7 +561,7 @@ GVX_TRACE("mtx::from_stream");
                       SRC_POS);
 
   s >> mrows;
-  if (mrows < 0)
+  if (!s)
     throw rutz::error("parse error while scanning mtx "
                       "from stream: expected mrows>=0", SRC_POS);
 
@@ -577,14 +573,14 @@ GVX_TRACE("mtx::from_stream");
                       SRC_POS);
 
   s >> ncols;
-  if (ncols < 0)
+  if (!s)
     throw rutz::error("parse error while scanning mtx "
                       "from stream: expected ncols>=0", SRC_POS);
 
   mtx result = mtx::zeros(mrows, ncols);
 
-  for (int r = 0; r < mrows; ++r)
-    for (int c = 0; c < ncols; ++c)
+  for (size_t r = 0; r < mrows; ++r)
+    for (size_t c = 0; c < ncols; ++c)
       {
         if (s.eof())
           throw rutz::error("premature EOF while scanning mtx "
@@ -629,7 +625,7 @@ GVX_TRACE("mtx::mtx");
 
 mtx::~mtx() {}
 
-void mtx::resize(int mrows_new, int ncols_new)
+void mtx::resize(size_t mrows_new, size_t ncols_new)
 {
 GVX_TRACE("mtx::resize");
   if (mrows() == mrows_new && ncols() == ncols_new)
@@ -666,10 +662,10 @@ namespace
       s << '[' << mtx_name << "] ";
 
     s << "mrows " << m.mrows() << " ncols " << m.ncols();
-    for(int i = 0; i < m.mrows(); ++i)
+    for(size_t i = 0; i < m.mrows(); ++i)
       {
         s << '\n';
-        for(int j = 0; j < m.ncols(); ++j)
+        for(size_t j = 0; j < m.ncols(); ++j)
           s << ' '
             << std::setw(18)
             << std::setprecision(17)
@@ -735,8 +731,8 @@ GVX_TRACE("mtx::reorder_rows");
 
   mtx neworder = mtx::uninitialized(this->shape());
 
-  for (int r = 0; r < mrows(); ++r)
-    neworder.row(r) = row(int(index.at(r,0)));
+  for (size_t r = 0; r < mrows(); ++r)
+    neworder.row(r) = row(size_t(index.at(r,0)));
 
   *this = neworder;
 }
@@ -753,13 +749,13 @@ GVX_TRACE("mtx::reorder_columns");
 
   mtx neworder = mtx::uninitialized(this->shape());
 
-  for (int c = 0; c < ncols(); ++c)
-    neworder.column(c) = column(int(index.at(c,0)));
+  for (size_t c = 0; c < ncols(); ++c)
+    neworder.column(c) = column(size_t(index.at(c,0)));
 
   *this = neworder;
 }
 
-void mtx::swap_columns(int c1, int c2)
+void mtx::swap_columns(size_t c1, size_t c2)
 {
 GVX_TRACE("mtx::swap_columns");
 
@@ -776,7 +772,7 @@ GVX_TRACE("mtx::mean_row");
 
   mtx_iter resiter = res.row(0).begin_nc();
 
-  for (int c = 0; c < ncols(); ++c, ++resiter)
+  for (size_t c = 0; c < ncols(); ++c, ++resiter)
     *resiter = column(c).mean();
 
   return res;
@@ -790,7 +786,7 @@ GVX_TRACE("mtx::mean_column");
 
   mtx_iter resiter = res.column(0).begin_nc();
 
-  for (int r = 0; r < mrows(); ++r, ++resiter)
+  for (size_t r = 0; r < mrows(); ++r, ++resiter)
     *resiter = row(r).mean();
 
   return res;
@@ -853,7 +849,7 @@ GVX_TRACE("mtx::operator+=(const mtx&)");
     throw rutz::error("dimension mismatch in mtx::operator+=",
                       SRC_POS);
 
-  for (int i = 0; i < ncols(); ++i)
+  for (size_t i = 0; i < ncols(); ++i)
     column(i) += other.column(i);
 
   return *this;
@@ -866,7 +862,7 @@ GVX_TRACE("mtx::operator-=(const mtx&)");
     throw rutz::error("dimension mismatch in mtx::operator-=",
                       SRC_POS);
 
-  for (int i = 0; i < ncols(); ++i)
+  for (size_t i = 0; i < ncols(); ++i)
     column(i) -= other.column(i);
 
   return *this;
@@ -877,7 +873,7 @@ bool mtx::operator==(const mtx& other) const
 GVX_TRACE("mtx::operator==(const mtx&)");
   if ( (mrows() != other.mrows()) || (ncols() != other.ncols()) )
     return false;
-  for (int c = 0; c < ncols(); ++c)
+  for (size_t c = 0; c < ncols(); ++c)
     if ( column(c) != other.column(c) ) return false;
   return true;
 }
@@ -905,7 +901,7 @@ GVX_TRACE("mtx::VMmul_assign");
 
   mtx_iter result_itr = result.begin_nc();
 
-  for (int col = 0; col < mtx.ncols(); ++col, ++result_itr)
+  for (size_t col = 0; col < mtx.ncols(); ++col, ++result_itr)
     *result_itr = inner_product(veciter, mtx.column_iter(col));
 }
 
@@ -917,13 +913,13 @@ GVX_TRACE("mtx::assign_MMmul");
     throw rutz::error("dimension mismatch in mtx::VMmul_assign",
                       SRC_POS);
 
-  for (int n = 0; n < mrows(); ++n)
+  for (size_t n = 0; n < mrows(); ++n)
     {
       mtx_iter row_element = this->row_iter(n);
 
       mtx_const_iter veciter = m1.row_iter(n);
 
-      for (int col = 0; col < m2.ncols(); ++col, ++row_element)
+      for (size_t col = 0; col < m2.ncols(); ++col, ++row_element)
         *row_element = inner_product(veciter, m2.column_iter(col));
     }
 }

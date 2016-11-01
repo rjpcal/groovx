@@ -45,7 +45,7 @@
 namespace
 {
   void addElementIds(nub::ref<ElementContainer> container,
-                     tcl::list trial_ids, int repeat)
+                     tcl::list trial_ids, unsigned int repeat)
   {
     for (tcl::list::iterator<nub::uid>
            itr = trial_ids.begin<nub::uid>(),
@@ -69,11 +69,11 @@ GVX_TRACE("Elementcontainer_Init");
 
   pkg->def("addElement", "objref element_id",
            rutz::bind_last(rutz::mem_func
-                           (&ElementContainer::addElement), 1),
+                           (&ElementContainer::addElement), 1u),
            SRC_POS);
 
   pkg->def("addElements", "objref element_id(s)",
-           rutz::bind_last(&addElementIds, 1), SRC_POS);
+           rutz::bind_last(&addElementIds, 1u), SRC_POS);
 
   pkg->def("addElements", "objref element_id(s) repeat=1",
            &addElementIds, SRC_POS);

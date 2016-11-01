@@ -46,6 +46,7 @@ using geom::recti;
 using geom::rectd;
 using geom::txform;
 using geom::vec2i;
+using geom::vec2st;
 using geom::vec2d;
 using geom::vec3i;
 using geom::vec3d;
@@ -200,10 +201,10 @@ GVX_TRACE("Gfx::Bbox::drawBox");
 }
 
 void Gfx::Bbox::drawScreenRect(const vec3d& lower_left,
-                               const vec2i& size,
+                               const vec2st& size,
                                const vec2d& zoom)
 {
-  const recti screen_rect = recti::lbwh(vec2i::zeros(), size * zoom);
+  const recti screen_rect = recti::lbwh(vec2i::zeros(), vec2i(size * zoom));
 
   drawScreenRect(lower_left, screen_rect);
 }

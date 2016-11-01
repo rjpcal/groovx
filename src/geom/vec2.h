@@ -35,6 +35,7 @@
 #include "geom/geom.h"
 
 #include <cmath>
+#include <cstddef> // size_t
 
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
@@ -232,6 +233,7 @@ namespace geom
   }
 
   typedef vec2<int> vec2i;
+  typedef vec2<size_t> vec2st;
   typedef vec2<float> vec2f;
   typedef vec2<double> vec2d;
 

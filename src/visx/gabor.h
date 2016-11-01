@@ -138,7 +138,7 @@ private:
 
   /** Number of rectangle subdivisions per OpenGL unit (note that this
       applies only when the colorMode is \a BW_DITHER_RECT). */
-  int itsResolution;
+  unsigned int itsResolution;
 
   /** The size of the points used when \a colorMode is either \a
       GRAYSCALE or \a BW_DITHER_POINT. */

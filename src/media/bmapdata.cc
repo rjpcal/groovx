@@ -58,7 +58,7 @@ using rutz::shared_ptr;
 class media::bmap_data::impl
 {
 public:
-  impl(const geom::vec2<int>& ex, int bits_per_pixel, int byte_alignment) :
+  impl(const geom::vec2<size_t>& ex, unsigned int bits_per_pixel, unsigned int byte_alignment) :
     m_size(ex),
     m_bits_per_pixel(bits_per_pixel),
     m_byte_alignment(byte_alignment),
@@ -71,11 +71,11 @@ public:
 
     // If m_size.x() is 0, this is still OK, since -1/8 --> -1, so the
     // whole thing goes to 0
-    int bytes_per_row = (m_size.x()*bits_per_pixel - 1)/8 + 1;
+    const size_t bytes_per_row = (m_size.x()*bits_per_pixel + 7)/8;
 
     GVX_ASSERT(bytes_per_row >= 0);
 
-    unsigned int num_bytes = bytes_per_row * m_size.y();
+    const size_t num_bytes = bytes_per_row * m_size.y();
 
     m_bytes.resize( num_bytes );
   }
@@ -88,12 +88,14 @@ public:
   // called at least once per public API call.
   unsigned char* bytes_ptr() { return &(m_bytes[0]); }
 
-  unsigned int bytes_per_row() const
-  { return ( (m_size.x()*m_bits_per_pixel - 1)/8 + 1 ); }
+  size_t bytes_per_row() const
+  { return ( (m_size.x()*m_bits_per_pixel + 7)/8 ); }
 
-  unsigned char* row_ptr(unsigned int row)
+  unsigned char* row_ptr(size_t row)
   {
-    const unsigned int offset =
+    GVX_ASSERT(row < m_size.y());
+
+    const size_t offset =
       (m_row_order == TOP_FIRST)
       ?
       row
@@ -105,9 +107,9 @@ public:
 
   size_t byte_count() const { return m_bytes.size(); }
 
-  geom::vec2<int>                    m_size;
-  int                                m_bits_per_pixel;
-  int                                m_byte_alignment;
+  geom::vec2<size_t>                 m_size;
+  unsigned int                       m_bits_per_pixel;
+  unsigned int                       m_byte_alignment;
   rutz::dynamic_block<unsigned char> m_bytes;
   row_order                          m_row_order;
   mutable shared_ptr<update_func>    m_updater;
@@ -122,13 +124,13 @@ public:
 media::bmap_data::update_func::~update_func() {}
 
 media::bmap_data::bmap_data() :
-  rep(new impl(geom::vec2<int>(0, 0), 1, 1))
+  rep(new impl(geom::vec2<size_t>(0, 0), 1, 1))
 {
 GVX_TRACE("media::bmap_data::bmap_data");
 }
 
-media::bmap_data::bmap_data(const geom::vec2<int>& m_size,
-                            int bits_per_pixel, int byte_alignment) :
+media::bmap_data::bmap_data(const geom::vec2<size_t>& m_size,
+                            unsigned int bits_per_pixel, unsigned int byte_alignment) :
   rep(new impl(m_size, bits_per_pixel, byte_alignment))
 {
 GVX_TRACE("media::bmap_data::bmap_data");
@@ -152,7 +154,7 @@ GVX_TRACE("media::bmap_data::bytes_ptr");
   return rep->bytes_ptr();
 }
 
-unsigned char* media::bmap_data::row_ptr(unsigned int row) const
+unsigned char* media::bmap_data::row_ptr(size_t row) const
 {
 GVX_TRACE("media::bmap_data::row_ptr");
 
@@ -176,35 +178,35 @@ GVX_TRACE("media::bmap_data::bytes_sum");
   return sum;
 }
 
-int media::bmap_data::width() const
+size_t media::bmap_data::width() const
 {
 GVX_TRACE("media::bmap_data::width");
   update_if_needed();
   return rep->m_size.x();
 }
 
-int media::bmap_data::height() const
+size_t media::bmap_data::height() const
 {
 GVX_TRACE("media::bmap_data::height");
   update_if_needed();
   return rep->m_size.y();
 }
 
-geom::vec2<int> media::bmap_data::size() const
+geom::vec2<size_t> media::bmap_data::size() const
 {
 GVX_TRACE("media::bmap_data::size");
   update_if_needed();
   return rep->m_size;
 }
 
-int media::bmap_data::bits_per_pixel() const
+unsigned int media::bmap_data::bits_per_pixel() const
 {
 GVX_TRACE("media::bmap_data::bits_per_pixel");
   update_if_needed();
   return rep->m_bits_per_pixel;
 }
 
-int media::bmap_data::bits_per_component() const
+unsigned int media::bmap_data::bits_per_component() const
 {
 GVX_TRACE("media::bmap_data::bits_per_component");
   update_if_needed();
@@ -213,7 +215,7 @@ GVX_TRACE("media::bmap_data::bits_per_component");
     : 1;
 }
 
-int media::bmap_data::byte_alignment() const
+unsigned int media::bmap_data::byte_alignment() const
 {
 GVX_TRACE("media::bmap_data::byte_alignment");
   update_if_needed();
@@ -230,7 +232,7 @@ GVX_TRACE("media::bmap_data::byte_count");
   return rep->byte_count();
 }
 
-unsigned int media::bmap_data::bytes_per_row() const
+size_t media::bmap_data::bytes_per_row() const
 {
 GVX_TRACE("media::bmap_data::bytes_per_row");
   update_if_needed();
@@ -276,14 +278,14 @@ void media::bmap_data::flip_vertical()
 GVX_TRACE("media::bmap_data::flip_vertical");
   update_if_needed();
 
-  const int bytes_per_row = rep->bytes_per_row();
+  const size_t bytes_per_row = rep->bytes_per_row();
   const size_t num_bytes = rep->byte_count();
 
   rutz::dynamic_block<unsigned char> new_bytes(num_bytes);
 
-  for (int row = 0; row < rep->m_size.y(); ++row)
+  for (size_t row = 0; row < rep->m_size.y(); ++row)
     {
-      int new_row = (rep->m_size.y()-1)-row;
+      size_t new_row = (rep->m_size.y()-1)-row;
       memcpy(static_cast<void*> (&(new_bytes   [new_row * bytes_per_row])),
              static_cast<void*> (&(rep->m_bytes[row     * bytes_per_row])),
              bytes_per_row);
@@ -350,7 +352,9 @@ void media::bmap_data::specify_row_order(row_order order) const
 }
 
 shared_ptr<media::bmap_data>
-media::bmap_data::make_scrambled(int nsubimg_x, int nsubimg_y, int seed,
+media::bmap_data::make_scrambled(unsigned int nsubimg_x,
+                                 unsigned int nsubimg_y,
+                                 unsigned long seed,
                                  bool allow_move_subparts,
                                  bool allow_flip_left_right,
                                  bool allow_flip_top_bottom) const
@@ -374,10 +378,10 @@ GVX_TRACE("media::bmap_data::make_scrambled");
                           this->bits_per_pixel(),
                           this->byte_alignment()));
 
-  const int npos = nsubimg_x * nsubimg_y;
+  const unsigned int npos = nsubimg_x * nsubimg_y;
 
-  rutz::fixed_block<int> newpos(npos);
-  for (int i = 0; i < npos; ++i)
+  rutz::fixed_block<unsigned int> newpos(npos);
+  for (unsigned int i = 0; i < npos; ++i)
     {
       newpos[i] = i;
     }
@@ -395,29 +399,29 @@ GVX_TRACE("media::bmap_data::make_scrambled");
                                    rep->m_bits_per_pixel), SRC_POS);
     }
 
-  const int bytes_per_pixel = rep->m_bits_per_pixel/8;
+  const size_t bytes_per_pixel = rep->m_bits_per_pixel/8;
 
-  const int size_subimg_x = result->width() / nsubimg_x * bytes_per_pixel;
-  const int size_subimg_y = result->height() / nsubimg_y;
+  const size_t size_subimg_x = result->width() / nsubimg_x * bytes_per_pixel;
+  const size_t size_subimg_y = result->height() / nsubimg_y;
 
-  for (int i = 0; i < npos; ++i)
+  for (unsigned int i = 0; i < npos; ++i)
     {
       const bool fliplr = allow_flip_left_right && generator.booldraw();
       const bool fliptb = allow_flip_top_bottom && generator.booldraw();
 
-      const int src_subimg_y = i / nsubimg_x;
-      const int src_subimg_x = i % nsubimg_x;
+      const size_t src_subimg_y = i / nsubimg_x;
+      const size_t src_subimg_x = i % nsubimg_x;
 
-      const int src_fullimg_y = src_subimg_y * size_subimg_y;
-      const int src_fullimg_x = src_subimg_x * size_subimg_x;
+      const size_t src_fullimg_y = src_subimg_y * size_subimg_y;
+      const size_t src_fullimg_x = src_subimg_x * size_subimg_x;
 
-      const int dst_subimg_y = newpos[i] / nsubimg_x;
-      const int dst_subimg_x = newpos[i] % nsubimg_x;
+      const size_t dst_subimg_y = newpos[i] / nsubimg_x;
+      const size_t dst_subimg_x = newpos[i] % nsubimg_x;
 
-      const int dst_fullimg_y = dst_subimg_y * size_subimg_y;
-      const int dst_fullimg_x = dst_subimg_x * size_subimg_x;
+      const size_t dst_fullimg_y = dst_subimg_y * size_subimg_y;
+      const size_t dst_fullimg_x = dst_subimg_x * size_subimg_x;
 
-      for (int y = 0; y < size_subimg_y; ++y)
+      for (unsigned int y = 0; y < size_subimg_y; ++y)
         {
           // NOTE: I tried hand-optimizing all this stuff to avoid
           // calls to row_ptr()... basically optimizing all the math
@@ -434,7 +438,7 @@ GVX_TRACE("media::bmap_data::make_scrambled");
           const unsigned char* src =
             rep->row_ptr(src_fullimg_y+y) + src_fullimg_x;
 
-          const unsigned int dst_row =
+          const size_t dst_row =
             fliptb
             ? dst_fullimg_y+size_subimg_y-1-y
             : dst_fullimg_y+y;

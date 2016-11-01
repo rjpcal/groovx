@@ -105,42 +105,42 @@ GVX_TRACE("TimingHandler::write_to");
   writer.write_base_class("TimingHdlr", io::make_const_proxy<TimingHdlr>(this));
 }
 
-int TimingHandler::getAbortWait() const
+unsigned int TimingHandler::getAbortWait() const
 {
   return getEvent(FROM_ABORT, abortwait_abort_id)->getDelay();
 }
 
-int TimingHandler::getInterTrialInterval() const
+unsigned int TimingHandler::getInterTrialInterval() const
 {
   return getEvent(FROM_RESPONSE, iti_response_id)->getDelay();
 }
 
-int TimingHandler::getStimDur() const
+unsigned int TimingHandler::getStimDur() const
 {
   return getEvent(FROM_START, stimdur_start_id)->getDelay();
 }
 
-int TimingHandler::getTimeout() const
+unsigned int TimingHandler::getTimeout() const
 {
   return getEvent(FROM_START, timeout_start_id)->getDelay();
 }
 
-void TimingHandler::setAbortWait(int msec)
+void TimingHandler::setAbortWait(unsigned int msec)
 {
   getEvent(FROM_ABORT, abortwait_abort_id)->setDelay(msec);
 }
 
-void TimingHandler::setInterTrialInterval(int msec)
+void TimingHandler::setInterTrialInterval(unsigned int msec)
 {
   getEvent(FROM_RESPONSE, iti_response_id)->setDelay(msec);
 }
 
-void TimingHandler::setStimDur(int msec)
+void TimingHandler::setStimDur(unsigned int msec)
 {
   getEvent(FROM_START, stimdur_start_id)->setDelay(msec);
 }
 
-void TimingHandler::setTimeout(int msec)
+void TimingHandler::setTimeout(unsigned int msec)
 {
   getEvent(FROM_START, timeout_start_id)->setDelay(msec);
 }

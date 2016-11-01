@@ -123,7 +123,7 @@ private:
   int itsCurrentPart;
 
   /// Controls the breakpoint referred to by the current end point.
-  int* itsCurrentPartBkpt;
+  unsigned int* itsCurrentPartBkpt;
 
   /** Controls whether the different parts of the fish will be
       rendered in different colors. */

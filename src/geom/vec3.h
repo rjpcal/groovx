@@ -148,6 +148,7 @@ namespace geom
   };
 
   typedef vec3<int> vec3i;
+  typedef vec3<size_t> vec3st;
   typedef vec3<float> vec3f;
   typedef vec3<double> vec3d;
 

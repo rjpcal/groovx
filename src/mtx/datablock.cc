@@ -54,13 +54,13 @@ namespace
   class shared_data_block : public data_block
   {
   public:
-    shared_data_block(int length);
+    shared_data_block(size_t length);
     virtual ~shared_data_block();
 
     virtual bool is_unique() const { return refcount() <= 1; }
   };
 
-  shared_data_block::shared_data_block(int length) :
+  shared_data_block::shared_data_block(size_t length) :
     data_block(new double[length], length)
   {
     GVX_TRACE("shared_data_block::shared_data_block");
@@ -77,7 +77,7 @@ namespace
   class borrowed_data_block : public data_block
   {
   public:
-    borrowed_data_block(double* borrowed_data, unsigned int length) :
+    borrowed_data_block(double* borrowed_data, size_t length) :
       data_block(borrowed_data, length)
     {}
 
@@ -91,7 +91,7 @@ namespace
   class referred_data_block : public data_block
   {
   public:
-    referred_data_block(double* referred_data, unsigned int length) :
+    referred_data_block(double* referred_data, size_t length) :
       data_block(referred_data, length)
     {}
 
@@ -122,7 +122,7 @@ GVX_TRACE("data_block::operator delete");
   fs_free_list = (FreeNode*)space;
 }
 
-data_block::data_block(double* data, unsigned int len) :
+data_block::data_block(double* data, size_t len) :
   m_refcount(0),
   m_storage(data),
   m_length(len)
@@ -148,7 +148,7 @@ GVX_TRACE("data_block::get_empty_data_block");
   return empty_rep;
 }
 
-data_block* data_block::make_data_copy(const double* data, int data_length)
+data_block* data_block::make_data_copy(const double* data, size_t data_length)
 {
 GVX_TRACE("data_block::make_data_copy");
   if (data == 0)
@@ -161,7 +161,7 @@ GVX_TRACE("data_block::make_data_copy");
   return p;
 }
 
-data_block* data_block::make_zeros(int length)
+data_block* data_block::make_zeros(size_t length)
 {
 GVX_TRACE("data_block::make_zeros");
   if (length <= 0)
@@ -173,7 +173,7 @@ GVX_TRACE("data_block::make_zeros");
   return p;
 }
 
-data_block* data_block::make_uninitialized(int length)
+data_block* data_block::make_uninitialized(size_t length)
 {
 GVX_TRACE("data_block::make_uninitialized");
   if (length <= 0)
@@ -182,20 +182,20 @@ GVX_TRACE("data_block::make_uninitialized");
   return new shared_data_block(length);
 }
 
-data_block* data_block::make_borrowed(double* data, int data_length)
+data_block* data_block::make_borrowed(double* data, size_t data_length)
 {
 GVX_TRACE("data_block::make_borrowed");
   return new borrowed_data_block(data, data_length);
 }
 
-data_block* data_block::make_referred(double* data, int data_length)
+data_block* data_block::make_referred(double* data, size_t data_length)
 {
 GVX_TRACE("data_block::make_referred");
   return new referred_data_block(data, data_length);
 }
 
 data_block* data_block::make(double* data,
-                             int mrows, int ncols,
+                             size_t mrows, size_t ncols,
                              mtx_policies::storage_policy s)
 {
   switch (s)
@@ -214,7 +214,7 @@ data_block* data_block::make(double* data,
   return data_block::make_data_copy(data, mrows*ncols);
 }
 
-data_block* data_block::make(int mrows, int ncols,
+data_block* data_block::make(size_t mrows, size_t ncols,
                              mtx_policies::init_policy p)
 {
   if (p == mtx_policies::ZEROS)
@@ -249,13 +249,13 @@ void data_block::make_unique(data_block*& rep)
 //
 ///////////////////////////////////////////////////////////////////////
 
-data_holder::data_holder(double* data, int mrows, int ncols, storage_policy s) :
+data_holder::data_holder(double* data, size_t mrows, size_t ncols, storage_policy s) :
   m_data(data_block::make(data, mrows, ncols, s))
 {
   m_data->incr_refcount();
 }
 
-data_holder::data_holder(int mrows, int ncols, init_policy p) :
+data_holder::data_holder(size_t mrows, size_t ncols, init_policy p) :
   m_data(data_block::make(mrows, ncols, p))
 {
   m_data->incr_refcount();

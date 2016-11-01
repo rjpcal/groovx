@@ -121,10 +121,10 @@ public:
   { ret = read_int(name); }
 
   void read_value(const rutz::fstring& name, unsigned int& ret)
-  { ret = read_int(name); }
+  { ret = (unsigned int)(read_int(name)); }
 
   void read_value(const rutz::fstring& name, unsigned long& ret)
-  { ret = read_int(name); }
+  { ret = (unsigned long)(read_int(name)); }
 
   void read_value(const rutz::fstring& name, bool& ret)
   { ret = read_bool(name); }

@@ -134,7 +134,7 @@ public:
   ///////////////
 
   /// Get the image's size (x-width, y-height) in pixels.
-  geom::vec2<int> size() const;
+  geom::vec2<size_t> size() const;
 
   /// Get the (x,y) factors by which the bitmap will be scaled.
   geom::vec2<double> getZoom() const;
@@ -167,7 +167,7 @@ public:
   void setZoom(geom::vec2<double> zoom);
 
   /// Zoom to a given size.
-  void zoomTo(geom::vec2<int> sz);
+  void zoomTo(geom::vec2<size_t> sz);
 
   /// Change whether zooming will be used.
   void setUsingZoom(bool val);
@@ -178,7 +178,8 @@ public:
   /// Change whether the image will be rendered as a 1-bit bitmap.
   void setAsBitmap(bool val);
 
-  void scramble(int numsubcols, int numsubrows, int seed,
+  void scramble(unsigned int numsubcols, unsigned int numsubrows,
+                unsigned long seed,
                 bool allowMoveSubparts = true,
                 bool allowFlipLeftRight = true,
                 bool allowFlipTopBottom = true);

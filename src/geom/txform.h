@@ -33,6 +33,8 @@
 #ifndef GROOVX_GEOM_TXFORM_H_UTC20050626084022_DEFINED
 #define GROOVX_GEOM_TXFORM_H_UTC20050626084022_DEFINED
 
+#include <cstddef> // size_t
+
 namespace geom
 {
   template <class V> class rect;
@@ -94,8 +96,8 @@ namespace geom
 
     void set_col_major_data(const double* data);
 
-    double  operator[](unsigned int i) const { return m_mtx[i]; }
-    double& operator[](unsigned int i)       { return m_mtx[i]; }
+    double  operator[](size_t i) const { return m_mtx[i]; }
+    double& operator[](size_t i)       { return m_mtx[i]; }
 
     void debug_dump() const;
 

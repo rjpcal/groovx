@@ -126,8 +126,8 @@ GVX_TRACE("TrialEvent::schedule");
 
   if (itsRequestedDelay > 0)
     actual_request =
-      rutz::max(int(itsRequestedDelay) + int(itsEstimatedOffset),
-                int(minimum_msec));
+      rutz::max(itsRequestedDelay + (unsigned int)(itsEstimatedOffset),
+                minimum_msec);
 
   itsTimer.set_delay_msec(actual_request);
   itsTimer.schedule(s);

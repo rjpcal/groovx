@@ -72,6 +72,7 @@ using geom::recti;
 using geom::rectd;
 using geom::txform;
 using geom::vec2i;
+using geom::vec2st;
 using geom::vec2d;
 using geom::vec3i;
 using geom::vec3d;
@@ -454,7 +455,7 @@ GVX_TRACE("GLCanvas::setClearColor");
 void GLCanvas::setColorIndex(unsigned int index)
 {
 GVX_TRACE("GLCanvas::setColorIndex");
-  glIndexi(index);
+  glIndexi(GLint(index));
 }
 
 void GLCanvas::setClearColorIndex(unsigned int index)
@@ -731,18 +732,20 @@ GVX_TRACE("GLCanvas::drawPixels");
 
   glPixelZoom(GLfloat(zoom.x()), GLfloat(zoom.y()));
 
-  glPixelStorei(GL_UNPACK_ALIGNMENT, data.byte_alignment());
+  glPixelStorei(GL_UNPACK_ALIGNMENT, GLint(data.byte_alignment()));
 
   if (data.bits_per_pixel() == 32)
     {
       GVX_TRACE("GLCanvas::drawPixels[32]");
-      glDrawPixels(data.width(), data.height(), GL_RGBA, GL_UNSIGNED_BYTE,
+      glDrawPixels(GLsizei(data.width()), GLsizei(data.height()),
+                   GL_RGBA, GL_UNSIGNED_BYTE,
                    static_cast<GLvoid*>(data.bytes_ptr()));
     }
   else if (data.bits_per_pixel() == 24)
     {
       GVX_TRACE("GLCanvas::drawPixels[24]");
-      glDrawPixels(data.width(), data.height(), GL_RGB, GL_UNSIGNED_BYTE,
+      glDrawPixels(GLsizei(data.width()), GLsizei(data.height()),
+                   GL_RGB, GL_UNSIGNED_BYTE,
                    static_cast<GLvoid*>(data.bytes_ptr()));
     }
   else if (data.bits_per_pixel() == 8)
@@ -750,13 +753,13 @@ GVX_TRACE("GLCanvas::drawPixels");
       GVX_TRACE("GLCanvas::drawPixels[8]");
       if (isRgba())
         {
-          glDrawPixels(data.width(), data.height(),
+          glDrawPixels(GLsizei(data.width()), GLsizei(data.height()),
                        GL_LUMINANCE, GL_UNSIGNED_BYTE,
                        static_cast<GLvoid*>(data.bytes_ptr()));
         }
       else
         {
-          glDrawPixels(data.width(), data.height(),
+          glDrawPixels(GLsizei(data.width()), GLsizei(data.height()),
                        GL_COLOR_INDEX, GL_UNSIGNED_BYTE,
                        static_cast<GLvoid*>(data.bytes_ptr()));
         }
@@ -776,7 +779,7 @@ GVX_TRACE("GLCanvas::drawPixels");
           glPixelMapfv(GL_PIXEL_MAP_I_TO_A, 2, simplemap);
         }
 
-      glDrawPixels(data.width(), data.height(), GL_COLOR_INDEX,
+      glDrawPixels(GLsizei(data.width()), GLsizei(data.height()), GL_COLOR_INDEX,
                    GL_BITMAP, static_cast<GLvoid*>(data.bytes_ptr()));
 #else
 
@@ -807,9 +810,9 @@ GVX_TRACE("GLCanvas::drawPixels");
           ++sptr;
         }
 
-      glPixelStorei(GL_UNPACK_ALIGNMENT, unpacked.byte_alignment());
+      glPixelStorei(GL_UNPACK_ALIGNMENT, GLint(unpacked.byte_alignment()));
 
-      glDrawPixels(unpacked.width(), unpacked.height(),
+      glDrawPixels(GLsizei(unpacked.width()), GLsizei(unpacked.height()),
                    GL_LUMINANCE, GL_UNSIGNED_BYTE,
                    static_cast<GLvoid*>(unpacked.bytes_ptr()));
 #endif
@@ -825,7 +828,7 @@ GVX_TRACE("GLCanvas::drawBitmap");
 
   rasterPos(world_pos);
 
-  glBitmap(data.width(), data.height(), 0.0, 0.0, 0.0, 0.0,
+  glBitmap(GLsizei(data.width()), GLsizei(data.height()), 0.0, 0.0, 0.0, 0.0,
            static_cast<GLubyte*>(data.bytes_ptr()));
 }
 
@@ -841,9 +844,9 @@ GVX_TRACE("GLCanvas::grabPixels");
   // are still in RGBA mode, so glReadPixels() will return one byte
   // per color component (i.e. 24 bits per pixel) regardless of the
   // actual color buffer depth.
-  const int bmap_bits_per_pixel = isRgba() ? 24 : 8;
+  const unsigned int bmap_bits_per_pixel = isRgba() ? 24 : 8;
 
-  media::bmap_data new_data(bounds.size(),
+  media::bmap_data new_data(vec2st(bounds.size()),
                             bmap_bits_per_pixel, pixel_alignment);
 
   glPixelStorei(GL_PACK_ALIGNMENT, pixel_alignment);
@@ -908,7 +911,7 @@ GVX_TRACE("GLCanvas::drawCircle");
     throw rutz::error("couldn't allocate GLUquadric object", SRC_POS);
 
   gluQuadricDrawStyle(qobj, fill ? GLU_FILL : GLU_SILHOUETTE);
-  gluDisk(qobj, inner_radius, outer_radius, slices, loops);
+  gluDisk(qobj, inner_radius, outer_radius, GLint(slices), GLint(loops));
   gluDeleteQuadric(qobj);
 }
 
@@ -999,7 +1002,7 @@ GVX_TRACE("GLCanvas::drawBezierFill4");
           4,                    // order (i.e. number of control points)
           points[0].data());
 
-  glMapGrid1d(subdivisions, 0.0, 1.0);
+  glMapGrid1d(GLint(subdivisions), 0.0, 1.0);
 
   glBegin(GL_TRIANGLE_FAN);
   vertex3(center);
@@ -1162,10 +1165,10 @@ GVX_TRACE("GLCanvas::finishDrawing");
   glFinish();
 }
 
-int GLCanvas::genLists(int num)
+unsigned int GLCanvas::genLists(unsigned int num)
 {
 GVX_TRACE("GLCanvas::genLists");
-  const int i = glGenLists(num);
+  const unsigned int i = glGenLists(GLsizei(num));
 
   if (i == 0)
     throw rutz::error("Couldn't allocate GL display list", SRC_POS);
@@ -1173,13 +1176,13 @@ GVX_TRACE("GLCanvas::genLists");
   return i;
 }
 
-void GLCanvas::deleteLists(int start, int num)
+void GLCanvas::deleteLists(unsigned int start, unsigned int num)
 {
 GVX_TRACE("GLCanvas::deleteLists");
-  glDeleteLists(start, num);
+  glDeleteLists(start, GLsizei(num));
 }
 
-void GLCanvas::newList(int i, bool do_execute)
+void GLCanvas::newList(unsigned int i, bool do_execute)
 {
 GVX_TRACE("GLCanvas::newList");
 
@@ -1195,19 +1198,19 @@ GVX_TRACE("GLCanvas::endList");
   glEndList();
 }
 
-bool GLCanvas::isList(int i)
+bool GLCanvas::isList(unsigned int i)
 {
 GVX_TRACE("GLCanvas::isList");
   return i != 0 && glIsList(i) == GL_TRUE;
 }
 
-void GLCanvas::callList(int i)
+void GLCanvas::callList(unsigned int i)
 {
 GVX_TRACE("GLCanvas::callList");
   glCallList(i);
 }
 
-void GLCanvas::light(int lightnum,
+void GLCanvas::light(unsigned int lightnum,
                      const Gfx::RgbaColor* spec,
                      const Gfx::RgbaColor* diff,
                      const Gfx::RgbaColor* ambi,

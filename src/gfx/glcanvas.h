@@ -200,21 +200,21 @@ public:
 
   /// Create space for a consecutive sequence of \a num display lists.
   /** The index of the first display list is returned. */
-  static int genLists(int num);
+  static unsigned int genLists(unsigned int num);
   /// Deallocate \a num display lists starting with the one given by \a start.
-  static void deleteLists(int start, int num);
+  static void deleteLists(unsigned int start, unsigned int num);
   /// Start recording the display list given by \a i.
   /** Optionally execute the commands at the same time if \a do_execute is true. */
-  void newList(int i, bool do_execute);
+  void newList(unsigned int i, bool do_execute);
   /// Stop recording display list commands.
   void endList();
   /// Check if the given index refers to a valid display list.
-  bool isList(int i);
+  bool isList(unsigned int i);
   /// Trigger the commands recorded in the given display list.
-  void callList(int i);
+  void callList(unsigned int i);
 
   /// Specify colors and positions associated with a light source.
-  void light(int lightnum,
+  void light(unsigned int lightnum,
              const Gfx::RgbaColor* specular,
              const Gfx::RgbaColor* diffuse,
              const Gfx::RgbaColor* ambient,

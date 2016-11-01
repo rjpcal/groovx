@@ -32,9 +32,11 @@
 #ifndef GROOVX_PKGS_MTX_MTXOPS_H_UTC20050626084022_DEFINED
 #define GROOVX_PKGS_MTX_MTXOPS_H_UTC20050626084022_DEFINED
 
+#include <cstddef> // size_t
+
 class mtx;
 
-mtx rand_mtx(int mrows, int ncols);
+mtx rand_mtx(size_t mrows, size_t ncols);
 
 mtx squared(const mtx& src);
 

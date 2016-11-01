@@ -60,7 +60,7 @@ public:
 
   std::vector<ref<Element> > elements;
 
-  int randSeed;                 // Random seed used to create element sequence
+  unsigned long randSeed;       // Random seed used to create element sequence
   unsigned int sequencePos;     // Index of the current element
                                 // Also functions as # of completed elements
 };
@@ -277,19 +277,19 @@ GVX_TRACE("ElementContainer::addElement");
     }
 }
 
-void ElementContainer::setRandSeed(int s)
+void ElementContainer::setRandSeed(unsigned long s)
 {
 GVX_TRACE("ElementContainer::setRandSeed");
   rep->randSeed = s;
 }
 
-int ElementContainer::getRandSeed() const
+unsigned long ElementContainer::getRandSeed() const
 {
 GVX_TRACE("ElementContainer::getRandSeed");
   return rep->randSeed;
 }
 
-void ElementContainer::shuffle(int seed)
+void ElementContainer::shuffle(unsigned long seed)
 {
 GVX_TRACE("ElementContainer::shuffle");
 

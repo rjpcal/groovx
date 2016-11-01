@@ -67,12 +67,12 @@ public:
   static const GaborPatch& lookup(double sigma, double omega,
                                   double theta, double phi);
 
-  int size() const { return itsSize; }
+  size_t size() const { return itsSize; }
 
   /// Returns the gabor patch value at the given coordinates.
   /** If the patch has been cached, then we just lookup the value out of
       memory, otherwise we compute it. */
-  double at(int x, int y) const
+  double at(size_t x, size_t y) const
   {
     return (itsData != 0)
       ? itsData[x + y*itsSize]
@@ -89,10 +89,10 @@ private:
   GaborPatch(const GaborPatch&);
   GaborPatch& operator=(const GaborPatch&);
 
-  double compute(int x, int y) const;
+  double compute(size_t x, size_t y) const;
 
   const GaborSpec itsSpec;
-  const int itsSize;
+  const size_t itsSize;
   const double itsCenter;
   const double itsCosTheta;
   const double itsSinTheta;

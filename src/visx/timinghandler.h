@@ -57,15 +57,15 @@ public:
   virtual void write_to(io::writer& writer) const override;
 
   // Accessors + Manipulators
-  int getAbortWait() const;
-  int getInterTrialInterval() const;
-  int getStimDur() const;
-  int getTimeout() const;
+  unsigned int getAbortWait() const;
+  unsigned int getInterTrialInterval() const;
+  unsigned int getStimDur() const;
+  unsigned int getTimeout() const;
 
-  void setAbortWait(int msec);
-  void setInterTrialInterval(int msec);
-  void setStimDur(int msec);
-  void setTimeout(int msec);
+  void setAbortWait(unsigned int msec);
+  void setInterTrialInterval(unsigned int msec);
+  void setStimDur(unsigned int msec);
+  void setTimeout(unsigned int msec);
 
 private:
   size_t stimdur_start_id;

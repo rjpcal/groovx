@@ -194,7 +194,7 @@ namespace rutz
 
     /// Construct by copying from a given iterator range.
     template <class Itr>
-    fixed_block(Itr itr, Itr end) : N(end-itr), data(new T[N])
+    fixed_block(Itr itr, Itr end) : N(size_t(end-itr)), data(new T[N])
     {
       assign(itr, end);
     }
@@ -447,7 +447,7 @@ namespace rutz
           resize(0);
           return;
         }
-      resize(num);
+      resize(size_t(num));
       iterator ii = begin();
       while (start != finish)
         {

@@ -84,8 +84,8 @@ class GaborArray : public GxShapeKit
 {
 public:
   GaborArray(double gaborPeriod = 15.0, double gaborSigma = 7.5,
-             int foregNumber = 24, double foregSpacing = 45.0,
-             int sizeX = 512, int sizeY = 512,
+             size_t foregNumber = 24u, double foregSpacing = 45.0,
+             size_t sizeX = 512u, size_t sizeY = 512u,
              double gridSpacing = 48.0,
              double minSpacing = 36.0);
 
@@ -120,33 +120,33 @@ private:
   void updateBmap() const;
   void update() const;
   bool tryPush(const GaborArrayElement& e) const;
-  bool tooClose(const geom::vec2<double>& v, int except) const;
+  bool tooClose(const geom::vec2<double>& v, size_t except) const;
   void backgHexGrid() const;
   void backgFill() const;
   void backgJitter(rutz::urand& urand) const;
 
-  Cached<int> itsForegSeed;
-  Cached<int> itsForegNumber;
+  Cached<unsigned long> itsForegSeed;
+  Cached<size_t> itsForegNumber;
   Cached<double> itsForegSpacing;
   Cached<int> itsForegPosX;
   Cached<int> itsForegPosY;
 
-  Cached<int> itsBackgSeed;
-  Cached<int> itsSizeX;
-  Cached<int> itsSizeY;
+  Cached<unsigned long> itsBackgSeed;
+  Cached<size_t> itsSizeX;
+  Cached<size_t> itsSizeY;
   Cached<double> itsGridSpacing;
   Cached<double> itsMinSpacing;
   Cached<double> itsFillResolution;
 
-  Cached<int> itsThetaSeed;
-  Cached<int> itsPhaseSeed;
+  Cached<unsigned long> itsThetaSeed;
+  Cached<unsigned long> itsPhaseSeed;
   Cached<double> itsThetaJitter;
   Cached<double> itsGaborPeriod;
   Cached<double> itsGaborSigma;
-  Cached<int> itsContrastSeed;
+  Cached<unsigned long> itsContrastSeed;
   Cached<double> itsContrastJitter;
 
-  mutable int itsTotalNumber;
+  mutable size_t itsTotalNumber;
   mutable rutz::fixed_block<GaborArrayElement> itsArray;
   mutable rutz::shared_ptr<media::bmap_data> itsBmap;
 

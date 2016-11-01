@@ -103,14 +103,14 @@ public:
   void addElement(nub::ref<Element> element, unsigned int repeat = 1);
 
   /// Set the random seed for shuffling child elements.
-  void setRandSeed(int s);
+  void setRandSeed(unsigned long s);
 
   /// Get the current random seed used for shuffling child elements.
-  int getRandSeed() const;
+  unsigned long getRandSeed() const;
 
   /// Randomly permute the sequence of elements.
   /** @param seed used as the random seed for the shuffle. */
-  void shuffle(int seed=0);
+  void shuffle(unsigned long seed=0);
 
   /// Clear the container of all its contained elements.
   void clearElements();

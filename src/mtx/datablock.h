@@ -61,12 +61,12 @@ private:
 
 protected:
   double* const m_storage;        ///< Pointer to the actual storage.
-  unsigned int const m_length;    ///< Allocated length of the storage.
+  size_t const m_length;          ///< Allocated length of the storage.
 
   /// Construct with a given data array and length.
   /** No copy is made of the data array here; the data_block object will
       point directly to the given array. */
-  data_block(double* data, unsigned int len);
+  data_block(double* data, size_t len);
 
   /// Virtual destructor.
   virtual ~data_block();
@@ -82,30 +82,30 @@ protected:
 
 public:
   /// Return a new shared data_block whose contents are all set to zero.
-  static data_block* make_zeros(int length);
+  static data_block* make_zeros(size_t length);
 
   /// Return a new shared data_block whose contents are uninitialized
   /** I.e. contents not zero-set as in make_zeros(). */
-  static data_block* make_uninitialized(int length);
+  static data_block* make_uninitialized(size_t length);
 
   /// Make a copy of the given data array.
-  static data_block* make_data_copy(const double* data, int data_length);
+  static data_block* make_data_copy(const double* data, size_t data_length);
 
   /// The 'data' are borrowed, but are never considered unique.
   /** Therefore, attempts to make_unique() will always duplicate the
       data. */
-  static data_block* make_borrowed(double* data, int data_length);
+  static data_block* make_borrowed(double* data, size_t data_length);
 
   /// The 'data' are borrowed, as in make_borrowed(), but...
   /** Uniqueness is determined by the reference count, so it is
       possible to write to the data through the data_block. */
-  static data_block* make_referred(double* data, int data_length);
+  static data_block* make_referred(double* data, size_t data_length);
 
   static data_block* make(double* data,
-                          int mrows, int ncols,
+                          size_t mrows, size_t ncols,
                           mtx_policies::storage_policy s);
 
-  static data_block* make(int mrows, int ncols,
+  static data_block* make(size_t mrows, size_t ncols,
                           mtx_policies::init_policy p);
 
   /// Make the given data_block have a unique copy of its data, copying if needed.
@@ -128,7 +128,7 @@ public:
         double* data_nc()       { return m_storage; }
 
   /// Get the length of the data array.
-  unsigned int  length()  const { return m_length; }
+        size_t  length()  const { return m_length; }
 };
 
 
@@ -140,10 +140,10 @@ class data_holder : public mtx_policies
 {
 public:
   /// Construct with a data array, dimensions, and storage policy.
-  data_holder(double* data, int mrows, int ncols, storage_policy s);
+  data_holder(double* data, size_t mrows, size_t ncols, storage_policy s);
 
   /// Construct empty with dimensions and an init policy.
-  data_holder(int mrows, int ncols, init_policy p);
+  data_holder(size_t mrows, size_t ncols, init_policy p);
 
   /// Generic construction from a data_block.
   data_holder(data_block* d);
@@ -167,7 +167,7 @@ public:
   double* storage_nc() { make_unique(); return m_data->data_nc(); }
 
   /// Get the allocated length of underlying data array.
-  int storage_length() const { return m_data->length(); }
+  size_t storage_length() const { return m_data->length(); }
 
 private:
   data_holder& operator=(const data_holder&); // not allowed
@@ -205,7 +205,7 @@ public:
   double* storage_nc() { return m_ref->storage_nc(); }
 
   /// Get the allocated length of underlying data array.
-  int storage_length() const { return m_ref->storage_length(); }
+  size_t storage_length() const { return m_ref->storage_length(); }
 
 private:
 

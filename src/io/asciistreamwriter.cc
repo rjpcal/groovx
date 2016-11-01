@@ -252,7 +252,7 @@ namespace
   GVX_TRACE("asw_writer::write_object");
 
     fstring type = "NULL";
-    nub::uid id = 0;
+    int id = 0;
 
     if (obj.is_valid())
       {

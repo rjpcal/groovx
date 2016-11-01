@@ -107,15 +107,15 @@ namespace range_checking
 class index_range
 {
 private:
-  const int m_first;
-  const int m_count;
+  const size_t m_first;
+  const size_t m_count;
 
 public:
-  index_range(int first, int count) : m_first(first), m_count(count) {}
+  index_range(size_t first, size_t count) : m_first(first), m_count(count) {}
 
-  int begin() const { return m_first; }
-  int end() const { return m_first+m_count; }
-  int count() const { return m_count; }
+  size_t begin() const { return m_first; }
+  size_t end() const { return m_first+m_count; }
+  size_t count() const { return m_count; }
 };
 
 /// A range class for row ranges only.
@@ -123,7 +123,7 @@ class row_index_range : public index_range
 {
 public:
   /// Construct with first+count.
-  row_index_range(int first, int count) : index_range(first, count) {}
+  row_index_range(size_t first, size_t count) : index_range(first, count) {}
 };
 
 /// A range class for column ranges only.
@@ -131,20 +131,20 @@ class col_index_range : public index_range
 {
 public:
   /// Construct with first+count.
-  col_index_range(int first, int count) : index_range(first, count) {}
+  col_index_range(size_t first, size_t count) : index_range(first, count) {}
 };
 
-inline index_range range(int i) { return index_range(i, 1); }
-inline index_range range(int begin, int end) { return index_range(begin, end-begin); }
-inline index_range range_n(int begin, int count) { return index_range(begin, count); }
+inline index_range range(size_t i) { return index_range(i, 1); }
+inline index_range range(size_t begin, size_t end) { return index_range(begin, end-begin); }
+inline index_range range_n(size_t begin, size_t count) { return index_range(begin, count); }
 
-inline row_index_range row_range(int r) { return row_index_range(r, 1); }
-inline row_index_range row_range(int begin, int end) { return row_index_range(begin, end-begin); }
-inline row_index_range row_range_n(int begin, int count) { return row_index_range(begin, count); }
+inline row_index_range row_range(size_t r) { return row_index_range(r, 1); }
+inline row_index_range row_range(size_t begin, size_t end) { return row_index_range(begin, end-begin); }
+inline row_index_range row_range_n(size_t begin, size_t count) { return row_index_range(begin, count); }
 
-inline col_index_range col_range(int c) { return col_index_range(c, 1); }
-inline col_index_range col_range(int begin, int end) { return col_index_range(begin, end-begin); }
-inline col_index_range col_range_n(int begin, int count) { return col_index_range(begin, count); }
+inline col_index_range col_range(size_t c) { return col_index_range(c, 1); }
+inline col_index_range col_range(size_t begin, size_t end) { return col_index_range(begin, end-begin); }
+inline col_index_range col_range_n(size_t begin, size_t count) { return col_index_range(begin, count); }
 
 
 
@@ -163,7 +163,7 @@ class stride_iterator_base
 {
 private:
   T* data;
-  int stride;
+  size_t stride;
   T* stop;
 
 protected:
@@ -174,7 +174,7 @@ protected:
   friend class mtx;
   template <class U> friend class stride_iterator_base;
 
-  stride_iterator_base(T* d, int str, int n) :
+  stride_iterator_base(T* d, size_t str, size_t n) :
     data(d), stride(str), stop(data+str*n) {}
 
 public:
@@ -213,7 +213,7 @@ public:
   bool operator>=(const stride_iterator_base& other) const { return data >= other.data; }
 
   difference_type operator-(const stride_iterator_base& other) const
-    { return (data - other.data) / stride; }
+    { return (data - other.data) / difference_type(stride); }
 
   // Increment/Decrement
 
@@ -223,8 +223,8 @@ public:
   stride_iterator_base operator++(int) { stride_iterator_base cpy(*this); data += stride; return cpy; }
   stride_iterator_base operator--(int) { stride_iterator_base cpy(*this); data -= stride; return cpy; }
 
-  stride_iterator_base& operator+=(int x) { data += x*stride; return *this; }
-  stride_iterator_base& operator-=(int x) { data -= x*stride; return *this; }
+  stride_iterator_base& operator+=(int x) { data += x*int(stride); return *this; }
+  stride_iterator_base& operator-=(int x) { data -= x*int(stride); return *this; }
 
   stride_iterator_base operator+(int x) const { stride_iterator_base res(*this); res += x; return res; }
   stride_iterator_base operator-(int x) const { stride_iterator_base res(*this); res -= x; return res; }
@@ -242,9 +242,9 @@ class slice
 {
 private:
   data_holder&          m_data_source;
-  ptrdiff_t    const    m_offset;
-  int          const    m_stride;
-  int          const    m_nelems;
+  size_t       const    m_offset;
+  size_t       const    m_stride;
+  size_t       const    m_nelems;
 
   const double* data_start() const
     { return m_data_source.storage() + m_offset; }
@@ -252,12 +252,12 @@ private:
   double* data_start_nc()
     { return m_data_source.storage_nc() + m_offset; }
 
-  ptrdiff_t data_offset(int i) const { return m_stride*i; }
-  const double* address(int i) const { return data_start() + data_offset(i); }
+  size_t data_offset(size_t i) const { return m_stride*i; }
+  const double* address(size_t i) const { return data_start() + data_offset(i); }
 
-  ptrdiff_t storage_offset(int i) const { return m_offset + m_stride*i; }
+  size_t storage_offset(size_t i) const { return m_offset + m_stride*i; }
 
-  slice(const data_holder& src, ptrdiff_t offset, int s, int n)
+  slice(const data_holder& src, size_t offset, size_t s, size_t n)
     :
     // by doing this const_cast, slice is promising to uphold the const
     // correctness of the data_holder
@@ -286,13 +286,13 @@ public:
   // Data access
   //
 
-  double operator[](int i) const
+  double operator[](size_t i) const
   {
     RC_in_half_open(i, 0, m_nelems);
     return *(address(i));
   }
 
-  int nelems() const { return m_nelems; }
+  size_t nelems() const { return m_nelems; }
 
   slice operator()(const index_range& rng) const;
 
@@ -382,18 +382,18 @@ public:
 class mtx_shape
 {
 public:
-  mtx_shape(int mr, int nc) : m_mrows(mr), m_ncols(nc) {}
+  mtx_shape(size_t mr, size_t nc) : m_mrows(mr), m_ncols(nc) {}
 
-  int mrows() const { return m_mrows; }
-  int ncols() const { return m_ncols; }
+  size_t mrows() const { return m_mrows; }
+  size_t ncols() const { return m_ncols; }
 
-  int max_dim() const { return (m_mrows > m_ncols) ? m_mrows : m_ncols; }
+  size_t max_dim() const { return (m_mrows > m_ncols) ? m_mrows : m_ncols; }
 
-  int nelems() const { return m_mrows*m_ncols; }
+  size_t nelems() const { return m_mrows*m_ncols; }
 
 private:
-  int m_mrows;
-  int m_ncols;
+  size_t m_mrows;
+  size_t m_ncols;
 };
 
 
@@ -412,7 +412,7 @@ public:
     m_offset(0)
   {}
 
-  mtx_specs(int mrows, int ncols) :
+  mtx_specs(size_t mrows, size_t ncols) :
     m_shape(mrows, ncols),
     m_rowstride(mrows),
     m_offset(0)
@@ -428,7 +428,7 @@ public:
 
   mtx_specs as_shape(const mtx_shape& s) const;
 
-  mtx_specs as_shape(int mr, int nc) const { return as_shape(mtx_shape(mr,nc)); }
+  mtx_specs as_shape(size_t mr, size_t nc) const { return as_shape(mtx_shape(mr,nc)); }
 
   void select_rows(const row_index_range& rng);
   void select_cols(const col_index_range& rng);
@@ -445,20 +445,20 @@ public:
 
   const mtx_shape& shape() const { return m_shape; }
 
-  ptrdiff_t offset() const { return m_offset; }
+  size_t offset() const { return m_offset; }
 
-  int max_dim() const { return m_shape.max_dim(); }
-  int nelems() const { return mrows()*ncols(); }
+  size_t max_dim() const { return m_shape.max_dim(); }
+  size_t nelems() const { return mrows()*ncols(); }
 
-  int mrows() const { return m_shape.mrows(); }
-  int rowstride() const { return m_rowstride; }
+  size_t mrows() const { return m_shape.mrows(); }
+  size_t rowstride() const { return m_rowstride; }
 
-  int ncols() const { return m_shape.ncols(); }
-  int colstride() const { return m_colstride; }
+  size_t ncols() const { return m_shape.ncols(); }
+  size_t colstride() const { return m_colstride; }
 
-  unsigned int rowgap() const { return m_rowstride - mrows(); }
+  size_t rowgap() const { return m_rowstride - mrows(); }
 
-  ptrdiff_t offset_from_start(int row, int col) const
+  size_t offset_from_start(size_t row, size_t col) const
   {
     // Strictly speaking, the only valid offsets are those that pass
     // RC_in_half_open(), but in order to allow "one-past-the-end"
@@ -470,20 +470,20 @@ public:
     return row + (col*m_rowstride);
   }
 
-  ptrdiff_t offset_from_start(int elem) const
+  size_t offset_from_start(size_t elem) const
   { return offset_from_start(elem%mrows(), elem/mrows()); }
 
-  ptrdiff_t offset_from_storage(int row, int col) const
+  size_t offset_from_storage(size_t row, size_t col) const
   { return m_offset + offset_from_start(row, col); }
 
-  ptrdiff_t offset_from_storage(int elem) const
+  size_t offset_from_storage(size_t elem) const
   { return m_offset + offset_from_start(elem); }
 
 private:
   mtx_shape m_shape;
-  int m_rowstride;
-  static const int m_colstride = 1;
-  ptrdiff_t m_offset;
+  size_t m_rowstride;
+  static const size_t m_colstride = 1;
+  size_t m_offset;
 };
 
 
@@ -501,10 +501,10 @@ template <class M, class T>
 class index_iterator_base
 {
   M* m_src;
-  int m_index;
+  size_t m_index;
 
 public:
-  index_iterator_base(M* m, int e) : m_src(m), m_index(e) {}
+  index_iterator_base(M* m, size_t e) : m_src(m), m_index(e) {}
 
   typedef std::random_access_iterator_tag iterator_category;
 
@@ -522,10 +522,10 @@ private:
   // non-const M types, so that we can call either at() or at_nc()
   // as appropriate.
   template <class MM>
-  static reference get_at(MM* m, int e) { return m->at_nc(e); }
+  static reference get_at(MM* m, size_t e) { return m->at_nc(e); }
 
   template <class MM>
-  static reference get_at(const MM* m, int e) { return m->at(e); }
+  static reference get_at(const MM* m, size_t e) { return m->at(e); }
 
 public:
   reference operator*() const { return get_at(m_src, m_index); }
@@ -564,8 +564,8 @@ public:
 template <class T>
 class colmaj_iterator_base
 {
-  int m_rowgap;
-  int m_rowstride;
+  size_t m_rowgap;
+  size_t m_rowstride;
   T* m_ptr;
   T* m_current_end;
 
@@ -578,7 +578,7 @@ public:
   typedef T*           pointer;
   typedef T&           reference;
 
-  colmaj_iterator_base(int rg, int rs, T* ptr) :
+  colmaj_iterator_base(size_t rg, size_t rs, T* ptr) :
     m_rowgap(rg),
     m_rowstride(rs),
     m_ptr(ptr),
@@ -612,7 +612,7 @@ public:
 template <class T>
 class rowmaj_iterator_base
 {
-  int m_stride;
+  size_t m_stride;
   T* m_current_start;
   T* m_ptr;
   T* m_current_end;
@@ -626,7 +626,7 @@ public:
   typedef T*           pointer;
   typedef T&           reference;
 
-  rowmaj_iterator_base(int s, int ncols, T* ptr) :
+  rowmaj_iterator_base(size_t s, size_t ncols, T* ptr) :
     m_stride(s),
     m_current_start(ptr),
     m_ptr(ptr),
@@ -673,34 +673,34 @@ protected:
   mtx_base(const mtx_base& other);
   mtx_base(mtx_base&& other);
 
-  mtx_base(int mrows, int ncols, const Data& data);
+  mtx_base(size_t mrows, size_t ncols, const Data& data);
 
   mtx_base(const mtx_specs& specs, const Data& data);
 
   ~mtx_base();
 
-  ptrdiff_t offset_from_storage(int r, int c) const
+  size_t offset_from_storage(size_t r, size_t c) const
   { return RCR_leq(mtx_specs::offset_from_storage(r, c), m_data.storage_length()); }
 
-  double* address_nc(int row, int col)
+  double* address_nc(size_t row, size_t col)
   { return m_data.storage_nc() + offset_from_storage(row, col); }
 
-  const double* address(int row, int col) const
+  const double* address(size_t row, size_t col) const
   { return m_data.storage() + offset_from_storage(row, col); }
 
-  // Does the same thing as address_nc(), but doesn't range-check, since
+  // Does the same thing as offset_from_storage(), but doesn't range-check, since
   // this result is assumed to be some kind of "one-past-the-end" offset.
-  ptrdiff_t end_offset_from_storage(int r, int c) const
+  size_t end_offset_from_storage(size_t r, size_t c) const
   { return mtx_specs::offset_from_storage(r, c); }
 
   // Does the same thing as address_nc(), but doesn't range-check, since
   // this result is assumed to be some kind of "one-past-the-end" address.
-  double* end_address_nc(int row, int col)
+  double* end_address_nc(size_t row, size_t col)
   { return m_data.storage_nc() + end_offset_from_storage(row, col); }
 
   // Does the same thing as address(), but doesn't range-check, since
   // this result is assumed to be some kind of "one-past-the-end" address.
-  const double* end_address(int row, int col) const
+  const double* end_address(size_t row, size_t col) const
   { return m_data.storage() + end_offset_from_storage(row, col); }
 
   const double* storage() const { return m_data.storage(); }
@@ -711,13 +711,13 @@ public:
   const mtx_shape& shape() const { return specs().shape(); }
   const mtx_specs& specs() const { return *this; }
 
-  const double& at(ptrdiff_t i) const
+  const double& at(size_t i) const
   {
     RC_less(i+offset(), m_data.storage_length());
     return m_data.storage()[i+offset()];
   }
 
-  double& at_nc(ptrdiff_t i)
+  double& at_nc(size_t i)
   {
     RC_less(i+offset(), m_data.storage_length());
     return m_data.storage_nc()[i+offset()];
@@ -727,7 +727,7 @@ public:
   void apply(F func)
   {
     double* p = m_data.storage_nc() + offset();
-    unsigned int gap = rowgap();
+    size_t gap = rowgap();
 
     if (gap == 0)
       {
@@ -737,9 +737,9 @@ public:
       }
     else
       {
-        for (int c = 0; c < ncols(); ++c)
+        for (size_t c = 0; c < ncols(); ++c)
           {
-            for (int r = 0; r < mrows(); ++r)
+            for (size_t r = 0; r < mrows(); ++r)
               {
                 *p = func(*p);
                 ++p;
@@ -850,22 +850,22 @@ public:
   {}
 
   /// Set up a mtx with a storage policy of COPY.
-  static mtx colmaj_copy_of(const double* data, int mrows, int ncols);
+  static mtx colmaj_copy_of(const double* data, size_t mrows, size_t ncols);
 
   /// Set up a mtx with a storage_policy of BORROW.
-  static mtx colmaj_borrow_from(double* data, int mrows, int ncols);
+  static mtx colmaj_borrow_from(double* data, size_t mrows, size_t ncols);
 
   /// Set up a mtx with a storage_policy of REFER.
-  static mtx colmaj_refer_to(double* data, int mrows, int ncols);
+  static mtx colmaj_refer_to(double* data, size_t mrows, size_t ncols);
 
   static mtx zeros(const mtx_shape& s);
 
   static mtx uninitialized(const mtx_shape& s);
 
-  static mtx zeros(int mrows, int ncols)
+  static mtx zeros(size_t mrows, size_t ncols)
   { return zeros(mtx_shape(mrows, ncols)); }
 
-  static mtx uninitialized(int mrows, int ncols)
+  static mtx uninitialized(size_t mrows, size_t ncols)
   { return uninitialized(mtx_shape(mrows, ncols)); }
 
   static mtx from_stream(std::istream& s);
@@ -889,7 +889,7 @@ public:
   // the mtx to the specified dimensions; its only advantage over just
   // declaring a new mtx is that it will avoid a deallocate/allocate
   // cycle if the new dimensions are the same as the current dimensions.
-  void resize(int mrows_new, int ncols_new);
+  void resize(size_t mrows_new, size_t ncols_new);
 
   /** Makes sure that the data are in contiguous storage; if called on a
       submatrix, contig() will make a new matrix of the proper size and copy
@@ -931,16 +931,16 @@ public:
   // Data access
   //
 
-  double& at(int row, int col)
+  double& at(size_t row, size_t col)
     { return Base::at_nc(offset_from_start(row, col)); }
 
-  const double& at(int row, int col) const
+  const double& at(size_t row, size_t col) const
     { return Base::at(offset_from_start(row, col)); }
 
-  double& at(int elem)
+  double& at(size_t elem)
     { return Base::at_nc(offset_from_start(elem)); }
 
-  const double& at(int elem) const
+  const double& at(size_t elem) const
     { return Base::at(offset_from_start(elem)); }
 
   bool same_size(const mtx& x) const
@@ -994,16 +994,16 @@ public:
   mtx as_shape(const mtx_shape& s) const
   { return mtx(this->specs().as_shape(s), this->m_data); }
 
-  mtx as_shape(int mr, int nc) const
+  mtx as_shape(size_t mr, size_t nc) const
   { return mtx(this->specs().as_shape(mr, nc), this->m_data); }
 
-  slice row(int r) const
+  slice row(size_t r) const
     { return slice(this->m_data, offset_from_storage(r,0), rowstride(), ncols()); }
 
-  mtx_iter row_iter(int r)
+  mtx_iter row_iter(size_t r)
     { return mtx_iter(address_nc(r,0), rowstride(), ncols()); }
 
-  mtx_const_iter row_iter(int r) const
+  mtx_const_iter row_iter(size_t r) const
     { return mtx_const_iter(address(r,0), rowstride(), ncols()); }
 
   mtx as_row() const { return as_shape(1, nelems()); }
@@ -1012,20 +1012,20 @@ public:
 
 
 
-  slice column(int c) const
+  slice column(size_t c) const
     { return slice(this->m_data, offset_from_storage(0,c), colstride(), mrows()); }
 
-  mtx_iter column_iter(int c)
+  mtx_iter column_iter(size_t c)
     { return mtx_iter(address_nc(0,c), colstride(), mrows()); }
 
-  mtx_const_iter column_iter(int c) const
+  mtx_const_iter column_iter(size_t c) const
     { return mtx_const_iter(address(0,c), colstride(), mrows()); }
 
   mtx as_column() const { return as_shape(nelems(), 1); }
 
   void reorder_columns(const mtx& index);
 
-  void swap_columns(int c1, int c2);
+  void swap_columns(size_t c1, size_t c2);
 
 
   //

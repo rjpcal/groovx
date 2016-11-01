@@ -36,6 +36,8 @@
 
 #include "rutz/arrays.h"
 
+#include <cstddef> // size_t
+
 namespace rutz
 {
   class urand;
@@ -63,33 +65,31 @@ struct GaborArrayElement
 class Snake
 {
 public:
-  Snake(int l, double spacing, rutz::urand& urand);
+  Snake(size_t l, double spacing, rutz::urand& urand);
   ~Snake();
 
-  GaborArrayElement getElement(int n) const;
+  GaborArrayElement getElement(size_t n) const;
 
 private:
-  const int itsLength;
+  const size_t itsLength;
   rutz::fixed_block<geom::vec2<double> > itsElem;
 
-  geom::vec2<double>& elem(int i)
+  geom::vec2<double>& elem(size_t i)
   {
     i = i % itsLength;
-    if (i < 0) i += itsLength;
     return itsElem[i];
   }
 
-  const geom::vec2<double>& elem(int i) const
+  const geom::vec2<double>& elem(size_t i) const
   {
     i = i % itsLength;
-    if (i < 0) i += itsLength;
     return itsElem[i];
   }
 
   // Returns true if jiggling converged
   bool jiggle(rutz::urand& urand);
-  void transformPath(int i1, const geom::vec2<double>& new1,
-                     int i2, const geom::vec2<double>& new2);
+  void transformPath(size_t i1, const geom::vec2<double>& new1,
+                     size_t i2, const geom::vec2<double>& new2);
 };
 
 #endif // !GROOVX_VISX_SNAKE_H_UTC20050626084016_DEFINED

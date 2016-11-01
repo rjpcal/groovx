@@ -211,7 +211,7 @@ tcl::script_app::script_app(const char* appname,
   :
   m_appname(appname),
   m_script_argc(0),
-  m_script_argv(new char*[argc_+1]),
+  m_script_argv(new char*[size_t(argc_+1)]),
   m_minimal(false),
   m_nowindow(false),
   m_splashmsg(),

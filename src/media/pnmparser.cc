@@ -51,7 +51,7 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  int mode_for_bit_depth(int depth)
+  int mode_for_bit_depth(unsigned int depth)
   {
     switch (depth)
       {
@@ -60,13 +60,13 @@ namespace
       case 24: return 6; // RGB
       }
 
-    throw rutz::error(rutz::sfmt("invalid PNM bit depth value: %d",
+    throw rutz::error(rutz::sfmt("invalid PNM bit depth value: %u",
                                  depth), SRC_POS);
 
     GVX_ASSERT(0); return 0; // can't get here
   }
 
-  int bit_depth_for_mode(int mode)
+  unsigned int bit_depth_for_mode(int mode)
   {
     switch (mode)
       {
@@ -136,9 +136,9 @@ namespace
     if (max_grey == 255 // the most common case
         || mode == 4)
       {
-        is.read(reinterpret_cast<char*>(data.bytes_ptr()), data.byte_count());
-        size_t numread = is.gcount();
-        if (numread < data.byte_count())
+        is.read(reinterpret_cast<char*>(data.bytes_ptr()), ssize_t(data.byte_count()));
+        ssize_t numread = is.gcount();
+        if (numread < ssize_t(data.byte_count()))
           throw rutz::error("stream underflow in parse_pbm_mode_456", SRC_POS);
       }
     else
@@ -213,9 +213,9 @@ GVX_TRACE("media::save_pnm");
 
   os << '\n';
 
-  for (int row = 0; row < data.height(); ++row)
+  for (size_t row = 0; row < data.height(); ++row)
     os.write(reinterpret_cast<const char*>(data.row_ptr(row)),
-             data.bytes_per_row());
+             ssize_t(data.bytes_per_row()));
 }
 
 void media::load_pnm(const char* filename, media::bmap_data& data)
@@ -253,7 +253,7 @@ GVX_TRACE("media::load_pnm");
   is >> mode;
   dbg_eval_nl(3, mode);
 
-  const int bit_depth = bit_depth_for_mode(mode);
+  const unsigned int bit_depth = bit_depth_for_mode(mode);
 
   while ( isspace(is.peek()) )
     {
@@ -264,7 +264,7 @@ GVX_TRACE("media::load_pnm");
       is.ignore(1000, '\n');
     }
 
-  geom::vec2<int> extent;
+  geom::vec2<size_t> extent;
 
   is >> extent.x();
   is >> extent.y();

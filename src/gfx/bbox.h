@@ -33,6 +33,8 @@
 #ifndef GROOVX_GFX_BBOX_H_UTC20050626084025_DEFINED
 #define GROOVX_GFX_BBOX_H_UTC20050626084025_DEFINED
 
+#include <cstddef> // size_t
+
 namespace geom
 {
   template <class V> class box;
@@ -75,7 +77,7 @@ public:
   void drawBox(const geom::box<double>& box);
 
   void drawScreenRect(const geom::vec3<double>& lower_left,
-                      const geom::vec2<int>& size,
+                      const geom::vec2<size_t>& size,
                       const geom::vec2<double>& zoom);
 
   void drawScreenRect(const geom::vec3<double>& lower_left,

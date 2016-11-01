@@ -112,7 +112,7 @@ namespace
                         SRC_POS);
     }
 
-    virtual void character_data(const char* /*text*/, int /*len*/) { }
+    virtual void character_data(const char* /*text*/, size_t /*len*/) { }
 
     virtual void trace(std::ostream& os,
                        int depth, const char* name) const = 0;
@@ -198,13 +198,13 @@ namespace
     virtual ~string_element() {}
 
     virtual void trace(std::ostream& os,
-                       int depth, const char* name) const
+                       int depth, const char* name) const override
     {
       for (int i = 0; i < depth; ++i) os << "  ";
       os << name << "(string) value=" << m_value << "\n";
     }
 
-    virtual void character_data(const char* text, int len)
+    virtual void character_data(const char* text, size_t len) override
     {
       m_value.append(text, len);
     }
@@ -238,18 +238,20 @@ namespace
     objref_element(const char** attr, const char* eltype, const char* name,
                   shared_ptr<io::object_map> objmap) :
       m_type(""),
-      m_id(-1),
+      m_id(0),
       m_objects(objmap)
     {
-      m_id = atoi(find_attr(attr, "id", eltype, name, SRC_POS));
-      m_type = find_attr(attr, "type", eltype, name, SRC_POS);
+      const int id = atoi(find_attr(attr, "id", eltype, name, SRC_POS));
 
-      if (m_id < 0)
+      if (id < 0)
         {
           invalid_attr("id", eltype, name, SRC_POS);
         }
 
-      GVX_ASSERT(m_id >= 0);
+      GVX_ASSERT(id >= 0);
+      m_id = nub::uid(id);
+
+      m_type = find_attr(attr, "type", eltype, name, SRC_POS);
 
       if (m_type.empty())
         {
@@ -277,7 +279,7 @@ namespace
     }
 
     fstring m_type;
-    int m_id;
+    nub::uid m_id;
     shared_ptr<io::object_map> m_objects;
   };
 
@@ -515,9 +517,9 @@ namespace
     }
 
   protected:
-    virtual void element_start(const char* el, const char** attr);
-    virtual void element_end(const char* el);
-    virtual void character_data(const char* text, int length);
+    virtual void element_start(const char* el, const char** attr) override;
+    virtual void element_end(const char* el) override;
+    virtual void character_data(const char* text, size_t length) override;
 
   private:
     el_ptr m_root;
@@ -568,7 +570,7 @@ namespace
     --m_depth;
   }
 
-  void tree_builder::character_data(const char* text, int length)
+  void tree_builder::character_data(const char* text, size_t length)
   {
     GVX_ASSERT(m_stack.size() > 0);
     GVX_ASSERT(m_stack.back().get() != 0);

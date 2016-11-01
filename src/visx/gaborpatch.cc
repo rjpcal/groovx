@@ -75,7 +75,7 @@ bool GaborSpec::operator<(const GaborSpec& x) const
 GaborPatch::GaborPatch(const GaborSpec& spec)
   :
   itsSpec      ( spec ),
-  itsSize      ( int(8*spec.sigma + 0.5) ),
+  itsSize      ( size_t(8*spec.sigma + 0.5) ),
   itsCenter    ( itsSize/2.0 + 0.5 ),
   itsCosTheta  ( cos(spec.theta) ),
   itsSinTheta  ( sin(spec.theta) ),
@@ -122,14 +122,14 @@ void GaborPatch::fillCache()
 
       double* ptr = itsData;
 
-      for (int y = 0; y < itsSize; ++y)
-        for (int x = 0; x < itsSize; ++x)
+      for (size_t y = 0; y < itsSize; ++y)
+        for (size_t x = 0; x < itsSize; ++x)
           *ptr++ = compute(x, y);
     }
 }
 
 
-double GaborPatch::compute(int x, int y) const
+double GaborPatch::compute(size_t x, size_t y) const
 {
   const double fy = y - itsCenter;
   const double fx = x - itsCenter;

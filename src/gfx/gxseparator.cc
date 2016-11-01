@@ -175,7 +175,7 @@ GVX_TRACE("GxSeparator::insertChild");
   if (at_index > rep->children.size())
     at_index = rep->children.size();
 
-  rep->children.insert(rep->children.begin()+at_index, item);
+  rep->children.insert(rep->children.begin()+long(at_index), item);
 
   item->sigNodeChanged.connect(this->sigNodeChanged.slot());
 
@@ -189,7 +189,7 @@ GVX_TRACE("GxSeparator::removeChildAt");
     {
       rep->children[index]->sigNodeChanged
         .disconnect(this->sigNodeChanged.slot());
-      rep->children.erase(rep->children.begin()+index);
+      rep->children.erase(rep->children.begin()+long(index));
 
       this->sigNodeChanged.emit();
     }

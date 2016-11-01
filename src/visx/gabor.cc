@@ -55,6 +55,7 @@
 GVX_DBG_REGISTER
 
 using geom::vec2i;
+using geom::vec2st;
 using geom::vec2d;
 using geom::vec3d;
 
@@ -78,12 +79,12 @@ const FieldMap& Gabor::classFields()
           &Gabor::getLogContrast, &Gabor::setLogContrast,
           0.0, -3.0, 0.0, 0.1, Field::TRANSIENT),
     Field("spatialFreq", &Gabor::itsSpatialFreq, 3.5, 0.5, 10.0, 0.5),
-    Field("phase", &Gabor::itsPhase, 0, 0, 359, 1),
-    Field("drift", &Gabor::itsDrift, 0, 0, 359, 1, Field::TRANSIENT),
+    Field("phase", &Gabor::itsPhase, 0u, 0u, 359u, 1u),
+    Field("drift", &Gabor::itsDrift, 0u, 0u, 359u, 1u, Field::TRANSIENT),
     Field("sigma", &Gabor::itsSigma, 0.15, 0.025, 0.5, 0.025),
     Field("aspectRatio", &Gabor::itsAspectRatio, 1.0, 0.1, 10.0, 0.1),
     Field("orientation", &Gabor::itsOrientation, 0, -180, 179, 1),
-    Field("resolution", &Gabor::itsResolution, 60, 5, 500, 1),
+    Field("resolution", &Gabor::itsResolution, 60u, 5u, 500u, 1u),
     Field("pointSize", &Gabor::itsPointSize, 1, 1, 25, 1),
     Field("fgTint", Field::ValueType(), &Gabor::itsFgTint,
            "1.0 1.0 1.0 1.0", "0.0 0.0 0.0 0.0", "1.0 1.0 1.0 1.0",
@@ -184,7 +185,7 @@ void Gabor::grGetBoundingBox(Gfx::Bbox& bbox) const
 GVX_TRACE("Gabor::grGetBoundingBox");
 
   bbox.drawScreenRect(vec3d::zeros(),
-                      vec2i::ones() * itsResolution,
+                      vec2st::ones() * itsResolution,
                       vec2d::ones() * itsPointSize);
 }
 
@@ -219,9 +220,9 @@ GVX_TRACE("Gabor::getBmapData");
 
   const double res_step = 1.0/itsResolution;
 
-  const vec2i size(itsResolution, itsResolution);
+  const vec2st size(itsResolution, itsResolution);
 
-  const int bits_per_pixel = (itsColorMode == GRAYSCALE) ? 32 : 8;
+  const unsigned int bits_per_pixel = (itsColorMode == GRAYSCALE) ? 32u : 8u;
 
   media::bmap_data data(size, bits_per_pixel, 1);
 
@@ -231,11 +232,11 @@ GVX_TRACE("Gabor::getBmapData");
 
   ubyte* bytes_end = bytes + data.byte_count();
 
-  for (int y_pos = 0; y_pos < itsResolution; ++y_pos)
+  for (unsigned int y_pos = 0; y_pos < itsResolution; ++y_pos)
     {
       const double unrotated_y = y_pos*res_step - 0.5;
 
-      for (int x_pos = 0; x_pos < itsResolution; ++x_pos)
+      for (unsigned int x_pos = 0; x_pos < itsResolution; ++x_pos)
         {
           const double unrotated_x = x_pos*res_step - 0.5;
 

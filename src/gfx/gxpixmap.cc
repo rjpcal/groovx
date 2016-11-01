@@ -441,7 +441,7 @@ GVX_TRACE("GxPixmap::grGetBoundingBox");
                       getZoom());
 }
 
-geom::vec2<int> GxPixmap::size() const
+geom::vec2<size_t> GxPixmap::size() const
   { return rep->itsData.size(); }
 
 geom::vec2<double> GxPixmap::getZoom() const
@@ -481,12 +481,12 @@ GVX_TRACE("GxPixmap::setZoom");
   rep->itsZoom = zoom; this->sigNodeChanged.emit();
 }
 
-void GxPixmap::zoomTo(geom::vec2<int> sz)
+void GxPixmap::zoomTo(geom::vec2<size_t> sz)
 {
 GVX_TRACE("GxPixmap::zoomTo");
-  double x_ratio = double(sz.x()) / rep->itsData.width();
-  double y_ratio = double(sz.y()) / rep->itsData.height();
-  double ratio = rutz::min(x_ratio, y_ratio);
+  const double x_ratio = double(sz.x()) / rep->itsData.width();
+  const double y_ratio = double(sz.y()) / rep->itsData.height();
+  const double ratio = rutz::min(x_ratio, y_ratio);
   setUsingZoom(true);
   setZoom(geom::vec2<double>(ratio, ratio));
 }
@@ -521,7 +521,8 @@ GVX_TRACE("GxPixmap::setAsBitmap");
   this->sigNodeChanged.emit();
 }
 
-void GxPixmap::scramble(int numsubcols, int numsubrows, int seed,
+void GxPixmap::scramble(unsigned int numsubcols, unsigned int numsubrows,
+                        unsigned long seed,
                         bool allowMoveSubparts,
                         bool allowFlipLeftRight,
                         bool allowFlipTopBottom)

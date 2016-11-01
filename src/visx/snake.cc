@@ -62,23 +62,23 @@ namespace
     double arr[4];
   };
 
-  void pickRandom4(int length, int i[], rutz::urand& urand)
+  void pickRandom4(int length, size_t i[], rutz::urand& urand)
   {
-    i[0] = i[1] = i[2] = i[3] = urand.idraw(length);
+    i[0] = i[1] = i[2] = i[3] = size_t(urand.idraw(length));
 
     while (i[1] == i[0])
     {
-      i[1] = urand.idraw(length);
+      i[1] = size_t(urand.idraw(length));
     }
 
     while (i[2] == i[0] || i[2] == i[1])
     {
-      i[2] = urand.idraw(length);
+      i[2] = size_t(urand.idraw(length));
     }
 
     while (i[3] == i[0] || i[3] == i[1] || i[3] == i[2])
     {
-      i[3] = urand.idraw(length);
+      i[3] = size_t(urand.idraw(length));
     }
 
     std::sort(i, i+4);
@@ -248,7 +248,7 @@ namespace
   }
 }
 
-Snake::Snake(int l, double spacing, rutz::urand& urand) :
+Snake::Snake(size_t l, double spacing, rutz::urand& urand) :
   itsLength(l),
   itsElem(itsLength)
 {
@@ -258,7 +258,7 @@ GVX_TRACE("Snake::Snake");
 
   const double alpha_start = 2 * M_PI * urand.fdraw();
 
-  for (int n = 0; n < itsLength; ++n)
+  for (size_t n = 0; n < itsLength; ++n)
     {
       const double alpha = alpha_start + 2 * M_PI * n / itsLength;
 
@@ -280,12 +280,12 @@ GVX_TRACE("Snake::Snake");
   // Now reset so that the center of the ring is at the origin
   vec2d c;
 
-  for (int n = 0; n < itsLength; ++n)
+  for (size_t n = 0; n < itsLength; ++n)
     c += itsElem[n];
 
   c /= itsLength;
 
-  for (int n = 0; n < itsLength; ++n)
+  for (size_t n = 0; n < itsLength; ++n)
     itsElem[n] -= c;
 }
 
@@ -294,7 +294,7 @@ Snake::~Snake()
 GVX_TRACE("Snake::~Snake");
 }
 
-GaborArrayElement Snake::getElement(int n) const
+GaborArrayElement Snake::getElement(size_t n) const
 {
 GVX_TRACE("Snake::getElement");
 
@@ -347,8 +347,8 @@ bool Snake::jiggle(rutz::urand& urand)
 {
 GVX_TRACE("Snake::jiggle");
 
-  int i[4];
-  pickRandom4(itsLength, i, urand);
+  size_t i[4];
+  pickRandom4(int(itsLength), i, urand);
 
   const vec2d old_pos[4] =
     {
@@ -425,8 +425,8 @@ GVX_TRACE("Snake::jiggle");
   return didConverge;
 }
 
-void Snake::transformPath(int i1, const vec2d& new1,
-                          int i2, const vec2d& new2)
+void Snake::transformPath(size_t i1, const vec2d& new1,
+                          size_t i2, const vec2d& new2)
 {
 GVX_TRACE("Snake::transformPath");
 
@@ -472,7 +472,7 @@ GVX_TRACE("Snake::transformPath");
   const double a22 =   ratio_d * cos_diff_a;
 
   // Loop over all the nodes in between the nodes given by i1 and i2
-  for (int n = (i1+1)%itsLength; n != i2; n = (n+1)%itsLength)
+  for (size_t n = (i1+1)%itsLength; n != i2; n = (n+1)%itsLength)
     {
       /*                                              */
       /*   x'      c1       a11   a12     x - b1      */

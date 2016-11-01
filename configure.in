@@ -211,7 +211,6 @@ if test "x$is_clang" = "xyes"; then
    CXXFLAGS="$CXXFLAGS -Wno-weak-vtables"
    CXXFLAGS="$CXXFLAGS -Wno-old-style-cast"
    CXXFLAGS="$CXXFLAGS -Wno-weak-template-vtables"
-   CXXFLAGS="$CXXFLAGS -Wno-sign-conversion"
    CXXFLAGS="$CXXFLAGS -Wno-double-promotion"
    CXXFLAGS="$CXXFLAGS -Wno-float-equal"
    CXXFLAGS="$CXXFLAGS -Wno-date-time"

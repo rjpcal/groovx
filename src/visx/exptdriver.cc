@@ -138,7 +138,7 @@ public:
 
   std::string infoLog;
 
-  int autosavePeriod;
+  unsigned int autosavePeriod;
 
   nub::ref<tcl::ProcWrapper> doWhenComplete;
 
@@ -316,13 +316,13 @@ GVX_TRACE("ExptDriver::claimLogFile");
                 rep->fileTimestamp.c_str()));
 }
 
-int ExptDriver::getAutosavePeriod() const
+unsigned int ExptDriver::getAutosavePeriod() const
 {
 GVX_TRACE("ExptDriver::getAutosavePeriod");
   return rep->autosavePeriod;
 }
 
-void ExptDriver::setAutosavePeriod(int period)
+void ExptDriver::setAutosavePeriod(unsigned int period)
 {
 GVX_TRACE("ExptDriver::setAutosavePeriod");
   rep->autosavePeriod = period;

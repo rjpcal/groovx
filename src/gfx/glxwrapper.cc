@@ -309,7 +309,7 @@ GVX_TRACE("GlxWrapper::isDoubleBuffered");
 unsigned int GlxWrapper::bitsPerPixel() const
 {
 GVX_TRACE("GlxWrapper::bitsPerPixel");
-  return itsVisInfo->depth;
+ return (unsigned int)(itsVisInfo->depth);
 }
 
 void GlxWrapper::swapBuffers() const

@@ -43,7 +43,7 @@ namespace
 {
   void testPrint()
   {
-    for (int i = 1; i <= 10; ++i)
+    for (size_t i = 1; i <= 10; ++i)
       {
         const mtx m1 = rand_mtx(i, i);
 

@@ -204,8 +204,8 @@ namespace
 
     // These calls must come after read_update_info, so that we get values
     // that reflect any transformations
-    const int width = png_get_image_width(m_png_ptr, m_info_ptr);
-    const int height = png_get_image_height(m_png_ptr, m_info_ptr);
+    const png_uint_32 width = png_get_image_width(m_png_ptr, m_info_ptr);
+    const png_uint_32 height = png_get_image_height(m_png_ptr, m_info_ptr);
 
     dbg_eval(3, width); dbg_eval_nl(3, height);
 
@@ -213,19 +213,19 @@ namespace
 
     dbg_eval_nl(3, row_bytes);
 
-    const int nchannels = png_get_channels(m_png_ptr, m_info_ptr);
+    const unsigned int nchannels = png_get_channels(m_png_ptr, m_info_ptr);
 
     dbg_eval_nl(3, nchannels);
 
     GVX_ASSERT(row_bytes == size_t(width*nchannels));
 
-    media::bmap_data new_data(geom::vec2<int>(width, height),
+    media::bmap_data new_data(geom::vec2<size_t>(width, height),
                               nchannels*8, // bits_per_pixel
                               1); // byte_alignment
 
     rutz::fixed_block<png_bytep> row_pointers(height);
 
-    for (int i = 0; i < height; ++i)
+    for (png_uint_32 i = 0; i < height; ++i)
       {
         row_pointers[i] = (png_bytep) (new_data.row_ptr(i));
       }
@@ -322,8 +322,9 @@ namespace
     png_set_compression_level(m_png_ptr, 7);
 
     png_set_IHDR(m_png_ptr, m_info_ptr,
-                 data.width(), data.height(),
-                 data.bits_per_component(),
+                 png_uint_32(data.width()),
+                 png_uint_32(data.height()),
+                 int(data.bits_per_component()),
                  get_color_type(data),
                  PNG_INTERLACE_NONE,
                  PNG_COMPRESSION_TYPE_DEFAULT,
@@ -331,11 +332,11 @@ namespace
 
     png_write_info(m_png_ptr, m_info_ptr);
 
-    const int height = data.height();
+    const png_uint_32 height = png_uint_32(data.height());
 
     rutz::fixed_block<png_bytep> row_pointers(height);
 
-    for (int i = 0; i < height; ++i)
+    for (png_uint_32 i = 0; i < height; ++i)
       {
         row_pointers[i] = static_cast<png_bytep>(data.row_ptr(i));
       }

@@ -539,10 +539,13 @@ tcl::list TlistUtils::loadObjidFile(const char* objid_file,
       ref<Trial> trial(Trial::make());
       ref<GxSeparator> sep(GxSeparator::make());
 
-      int objn = 0;
-      int posn = 0;
+      size_t objn = 0;
+      size_t posn = 0;
       while (ist >> objn)
         {
+          if (objn <= 0)
+            throw rutz::error(rutz::sfmt("bad objn %zu", objn), SRC_POS);
+
           sep->addChild(makeSepPair(ref<GxNode>(posids[posn]),
                                     ref<GxNode>(objids[objn-1])));
           ++posn;
