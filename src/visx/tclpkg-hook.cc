@@ -62,7 +62,7 @@ void operator delete(void* space)
 
 namespace HookTcl
 {
-  size_t memUsage() { return TOTAL; }
+  inline size_t memUsage() { return TOTAL; }
 }
 
 #include "rutz/debug.h"
@@ -84,6 +84,8 @@ public:
 };
 
 extern Tcl_ObjType genericObjType;
+
+namespace {
 
 void genericFreeInternalRepProc(Tcl_Obj* objPtr)
 {
@@ -134,6 +136,8 @@ GVX_TRACE("genericSetFromAnyProc");
 
   Tcl_AppendResult(interp, "can't convert to generic object type", 0);
   return TCL_ERROR;
+}
+
 }
 
 Tcl_ObjType genericObjType =

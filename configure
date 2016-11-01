@@ -3014,7 +3014,6 @@ if test "x$is_clang" = "xyes"; then
    CXXFLAGS="$CXXFLAGS -Wno-double-promotion"
    CXXFLAGS="$CXXFLAGS -Wno-float-equal"
    CXXFLAGS="$CXXFLAGS -Wno-date-time"
-   CXXFLAGS="$CXXFLAGS -Wno-missing-prototypes"
 fi
 
 
@@ -3389,11 +3388,9 @@ if ac_fn_cxx_try_compile "$LINENO"; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 else
-
-$as_echo "#define GVX_BROKEN_TEMPLATE_FUNCTIONS 1" >>confdefs.h
-
- { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; };
+ as_fn_error $? "$CXX is broken; can't take address of template functions" "$LINENO" 5
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 

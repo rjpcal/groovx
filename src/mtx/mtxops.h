@@ -40,7 +40,7 @@ mtx rand_mtx(size_t mrows, size_t ncols);
 
 mtx squared(const mtx& src);
 
-mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
-            int* ppadtop=0, int* ppadleft=0);
+mtx zeropad(const mtx& src, size_t new_mrows, size_t new_ncols,
+            size_t* ppadtop=0, size_t* ppadleft=0);
 
 #endif // !GROOVX_PKGS_MTX_MTXOPS_H_UTC20050626084022_DEFINED

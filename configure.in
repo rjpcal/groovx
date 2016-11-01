@@ -214,7 +214,6 @@ if test "x$is_clang" = "xyes"; then
    CXXFLAGS="$CXXFLAGS -Wno-double-promotion"
    CXXFLAGS="$CXXFLAGS -Wno-float-equal"
    CXXFLAGS="$CXXFLAGS -Wno-date-time"
-   CXXFLAGS="$CXXFLAGS -Wno-missing-prototypes"
 fi
 
 AC_SUBST(SHLIB_CMD)
@@ -386,8 +385,8 @@ template <class F> void bar(F) {}
 ]],
 [[bar(Q::foo<int>); bar(Q::foo<double>);]])],
 [AC_MSG_RESULT(yes)],
-[AC_DEFINE(GVX_BROKEN_TEMPLATE_FUNCTIONS,1,[can take address of template funtions?])
- AC_MSG_RESULT(no)])
+[AC_MSG_RESULT(no);
+ AC_MSG_ERROR([$CXX is broken; can't take address of template functions])])
 
 ### Check c++ name mangling
 

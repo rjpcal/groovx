@@ -73,21 +73,21 @@
 
 #include "rutz/trace.h"
 
-namespace GxTcl
+namespace
 {
-  bool contains(nub::ref<GxNode> item, nub::ref<GxNode> other)
+  bool gxtcl_contains(nub::ref<GxNode> item, nub::ref<GxNode> other)
   {
     return item->contains(other.get());
   }
 
-  void savePS(nub::ref<GxNode> item, const char* filename)
+  void gxtcl_savePS(nub::ref<GxNode> item, const char* filename)
   {
     Gfx::PSCanvas canvas(filename);
 
     item->draw(canvas);
   }
 
-  void addChildren(nub::ref<GxSeparator> sep, tcl::list objs)
+  void gxtcl_addChildren(nub::ref<GxSeparator> sep, tcl::list objs)
   {
     tcl::list::iterator<nub::ref<GxNode> >
       itr = objs.begin<nub::ref<GxNode> >(),
@@ -100,19 +100,19 @@ namespace GxTcl
       }
   }
 
-  void removeAllChildren(nub::ref<GxSeparator> sep)
+  void gxtcl_removeAllChildren(nub::ref<GxSeparator> sep)
   {
     while (sep->numChildren() > 0)
       sep->removeChildAt(0);
   }
 
-  geom::rect<double> boundingBox(nub::ref<GxNode> obj,
-                                 nub::soft_ref<Gfx::Canvas> canvas)
+  geom::rect<double> gxtcl_boundingBox(nub::ref<GxNode> obj,
+                                       nub::soft_ref<Gfx::Canvas> canvas)
   {
     return obj->getBoundingBox(*canvas);
   }
 
-  rutz::fstring gxsepFields()
+  rutz::fstring gxtcl_gxsepFields()
   {
     static rutz::fstring result =
       "{addChildren 0 10 1 {NEW_GROUP STRING NO_GET}} "
@@ -125,16 +125,16 @@ namespace GxTcl
   // This is gone for now because the bitmap cache node is gone from
   // GxShapeKit, but we can resurrect a cleaner saveBitmap() function
   // pretty easily, just by captuing the screen bounds into a
-  // meida::bmap_data object and then saving that.
+  // media::bmap_data object and then saving that.
 #if 0
-  void saveBitmap(nub::ref<GxNode> obj, const char* filename)
+  void gxtcl_saveBitmap(nub::ref<GxNode> obj, const char* filename)
   {
     obj->saveBitmapCache(Gfx::Canvas::current(), filename);
   }
 #endif
 
-  tcl::list bezier4(double p1, double p2, double p3, double p4,
-                    unsigned int N)
+  tcl::list gxtcl_bezier4(double p1, double p2, double p3, double p4,
+                          unsigned int N)
   {
     GVX_TRACE("<gxtcl.cc>::bezier4");
 
@@ -164,7 +164,7 @@ GVX_TRACE("Gx_Init");
 
   GVX_PKG_CREATE(pkg, interp, "Gx", "4.$Revision$");
 
-  pkg->def( "bezier4", "p1 p2 p3 p4 N", &GxTcl::bezier4, SRC_POS );
+  pkg->def( "bezier4", "p1 p2 p3 p4 N", &gxtcl_bezier4, SRC_POS );
 
   GVX_PKG_RETURN(pkg);
 }
@@ -178,10 +178,10 @@ GVX_TRACE("Gxnode_Init");
   pkg->inherit_pkg("io");
   tcl::def_basic_type_cmds<GxNode>(pkg, SRC_POS);
 
-  pkg->def( "contains", "objref other_id", &GxTcl::contains, SRC_POS );
+  pkg->def( "contains", "objref other_id", &gxtcl_contains, SRC_POS );
   pkg->def_vec("deepChildren", "objref(s)", &GxNode::deepChildren, 1, SRC_POS);
-  pkg->def_vec("boundingBox", "objref(s) canvas", &GxTcl::boundingBox, 1, SRC_POS);
-  pkg->def( "savePS", "objref filename", &GxTcl::savePS, SRC_POS );
+  pkg->def_vec("boundingBox", "objref(s) canvas", &gxtcl_boundingBox, 1, SRC_POS);
+  pkg->def( "savePS", "objref filename", &gxtcl_savePS, SRC_POS );
 
   GVX_PKG_RETURN(pkg);
 }
@@ -195,18 +195,18 @@ GVX_TRACE("Gxseparator_Init");
   pkg->inherit_pkg("GxNode");
   tcl::def_basic_type_cmds<GxSeparator>(pkg, SRC_POS);
 
-  pkg->def( "fields", "", &GxTcl::gxsepFields, SRC_POS );
-  pkg->def( "allFields", "", &GxTcl::gxsepFields, SRC_POS );
+  pkg->def( "fields", "", &gxtcl_gxsepFields, SRC_POS );
+  pkg->def( "allFields", "", &gxtcl_gxsepFields, SRC_POS );
 
   pkg->def( "addChild", "objref child_objref", &GxSeparator::addChild, SRC_POS );
-  pkg->def( "addChildren", "objref children_objref(s)", &GxTcl::addChildren, SRC_POS );
+  pkg->def( "addChildren", "objref children_objref(s)", &gxtcl_addChildren, SRC_POS );
   pkg->def_getter("children", &GxSeparator::children, SRC_POS);
   pkg->def_get_set("debugMode",
                    &GxSeparator::getDebugMode,
                    &GxSeparator::setDebugMode,
                    SRC_POS);
   pkg->def_getter("numChildren", &GxSeparator::numChildren, SRC_POS);
-  pkg->def("removeAllChildren", "sep_id(s)", &GxTcl::removeAllChildren, SRC_POS);
+  pkg->def("removeAllChildren", "sep_id(s)", &gxtcl_removeAllChildren, SRC_POS);
   pkg->def("removeChildAt", "sep_id(s) child_indices", &GxSeparator::removeChildAt, SRC_POS);
   pkg->def("removeChild","sep_id(s) child_id(s)", &GxSeparator::removeChild, SRC_POS);
   nub::obj_factory::instance().register_creator(&GxSeparator::make);
@@ -378,7 +378,7 @@ GVX_TRACE("Gxshapekit_Init");
   tcl::defFieldContainer<GxShapeKit>(pkg, SRC_POS);
 
 #if 0
-  pkg->def_vec( "saveBitmap", "objref(s) filename(s)", &GxTcl::saveBitmap, 1, SRC_POS );
+  pkg->def_vec( "saveBitmap", "objref(s) filename(s)", &gxtcl_saveBitmap, 1, SRC_POS );
 #endif
 
   pkg->def_get_set("category", &GxShapeKit::category, &GxShapeKit::setCategory, SRC_POS);

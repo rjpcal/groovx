@@ -83,12 +83,10 @@ namespace GLTcl
   tcl::list lineInfo();
 
   // Just converts to char from unsigned char
-  const char* getString(GLenum name)
+  inline const char* getString(GLenum name)
   {
     return reinterpret_cast<const char*>(glGetString(name));
   }
-
-#define NAMEVAL(x) #x, x
 
   // The point of this struct and the associated std::map is so that
   // we can figure out how many values we should try to retrieve from
@@ -104,50 +102,7 @@ namespace GLTcl
 
   static std::map<GLenum, const AttribInfo*> theAttribMap;
 
-  void loadGet(tcl::pkg* pkg)
-  {
-    static const AttribInfo theAttribs[] =
-    {
-      { NAMEVAL(GL_ACCUM_CLEAR_VALUE), 4 },
-      { NAMEVAL(GL_ACCUM_ALPHA_BITS), 1 },
-      { NAMEVAL(GL_ACCUM_BLUE_BITS), 1 },
-      { NAMEVAL(GL_ACCUM_GREEN_BITS), 1 },
-      { NAMEVAL(GL_ACCUM_RED_BITS), 1 },
-      { NAMEVAL(GL_ALPHA_BITS), 1 },
-      { NAMEVAL(GL_BLUE_BITS), 1 },
-      { NAMEVAL(GL_COLOR_CLEAR_VALUE), 4 },
-      { NAMEVAL(GL_CURRENT_COLOR), 4 },
-      { NAMEVAL(GL_CURRENT_INDEX), 1 },
-      { NAMEVAL(GL_DEPTH_BITS), 1 },
-      { NAMEVAL(GL_DEPTH_CLEAR_VALUE), 1 },
-      { NAMEVAL(GL_INDEX_BITS), 1 },
-      { NAMEVAL(GL_INDEX_CLEAR_VALUE), 1 },
-      { NAMEVAL(GL_GREEN_BITS), 1 },
-      { NAMEVAL(GL_LINE_WIDTH), 1 },
-      { NAMEVAL(GL_LINE_WIDTH_GRANULARITY), 1 },
-      { NAMEVAL(GL_LINE_WIDTH_RANGE), 2 },
-      { NAMEVAL(GL_LIST_BASE), 1 },
-      { NAMEVAL(GL_LIST_INDEX), 1 },
-      { NAMEVAL(GL_MATRIX_MODE), 1 },
-      { NAMEVAL(GL_MODELVIEW_MATRIX), 16 },
-      { NAMEVAL(GL_POLYGON_MODE), 2 },
-      { NAMEVAL(GL_PROJECTION_MATRIX), 16 },
-      { NAMEVAL(GL_RED_BITS), 1 },
-      { NAMEVAL(GL_RGBA_MODE), 1 },
-      { NAMEVAL(GL_SUBPIXEL_BITS), 1 },
-      { NAMEVAL(GL_STENCIL_BITS), 1 },
-      { NAMEVAL(GL_STENCIL_CLEAR_VALUE), 1 },
-      { NAMEVAL(GL_VIEWPORT), 4 },
-    };
-
-    int num_params = sizeof(theAttribs) / sizeof(AttribInfo);
-    for (int i = 0; i < num_params; ++i)
-      {
-        pkg->link_var_copy(theAttribs[i].param_name,
-                           static_cast<int>(theAttribs[i].param_tag));
-        theAttribMap[theAttribs[i].param_tag] = &(theAttribs[i]);
-      }
-  }
+  void loadGet(tcl::pkg* pkg);
 
   struct NameVal
   {
@@ -155,130 +110,19 @@ namespace GLTcl
     int val;
   };
 
-  void loadEnums(tcl::pkg* pkg)
-  {
-    NameVal theEnums [] =
-    {
-      // for glBegin
-      { NAMEVAL(GL_POINTS) },
-      { NAMEVAL(GL_LINES) },
-      { NAMEVAL(GL_LINE_STRIP) },
-      { NAMEVAL(GL_LINE_LOOP) },
-      { NAMEVAL(GL_TRIANGLES) },
-      { NAMEVAL(GL_TRIANGLE_STRIP) },
-      { NAMEVAL(GL_TRIANGLE_FAN) },
-      { NAMEVAL(GL_QUADS) },
-      { NAMEVAL(GL_QUAD_STRIP) },
-      { NAMEVAL(GL_POLYGON) },
+  void loadEnums(tcl::pkg* pkg);
 
-      // for glBlendFunc
-      { NAMEVAL(GL_ZERO) },
-      { NAMEVAL(GL_ONE) },
-      { NAMEVAL(GL_DST_COLOR) },
-      { NAMEVAL(GL_ONE_MINUS_DST_COLOR) },
-      { NAMEVAL(GL_SRC_COLOR) },
-      { NAMEVAL(GL_ONE_MINUS_SRC_COLOR) },
-      { NAMEVAL(GL_SRC_ALPHA) },
-      { NAMEVAL(GL_ONE_MINUS_SRC_ALPHA) },
-      { NAMEVAL(GL_DST_ALPHA) },
-      { NAMEVAL(GL_ONE_MINUS_DST_ALPHA) },
-      { NAMEVAL(GL_SRC_ALPHA_SATURATE) },
-
-      // for glClear
-      { NAMEVAL(GL_COLOR_BUFFER_BIT) },
-      { NAMEVAL(GL_DEPTH_BUFFER_BIT) },
-      { NAMEVAL(GL_ACCUM_BUFFER_BIT) },
-      { NAMEVAL(GL_STENCIL_BUFFER_BIT) },
-
-      // for glDrawBuffer
-      { NAMEVAL(GL_NONE) },
-      { NAMEVAL(GL_FRONT_LEFT) },
-      { NAMEVAL(GL_FRONT_RIGHT) },
-      { NAMEVAL(GL_BACK_LEFT) },
-      { NAMEVAL(GL_BACK_RIGHT) },
-      { NAMEVAL(GL_FRONT) },
-      { NAMEVAL(GL_BACK) },
-      { NAMEVAL(GL_LEFT) },
-      { NAMEVAL(GL_RIGHT) },
-      { NAMEVAL(GL_FRONT_AND_BACK) },
-
-      // for glEnable/glDisable
-      { NAMEVAL(GL_ALPHA_TEST) },
-      { NAMEVAL(GL_BLEND) },
-      { NAMEVAL(GL_FOG) },
-      { NAMEVAL(GL_LIGHTING) },
-      { NAMEVAL(GL_LINE_STIPPLE) },
-      { NAMEVAL(GL_POLYGON_STIPPLE) },
-      { NAMEVAL(GL_CULL_FACE) },
-      { NAMEVAL(GL_INDEX_LOGIC_OP) },
-      { NAMEVAL(GL_COLOR_LOGIC_OP) },
-      { NAMEVAL(GL_DITHER) },
-      { NAMEVAL(GL_STENCIL_TEST) },
-      { NAMEVAL(GL_DEPTH_TEST) },
-      { NAMEVAL(GL_MAP1_VERTEX_3) },
-      { NAMEVAL(GL_MAP1_VERTEX_4) },
-      { NAMEVAL(GL_MAP1_COLOR_4) },
-      { NAMEVAL(GL_MAP1_INDEX) },
-      { NAMEVAL(GL_MAP1_NORMAL) },
-      { NAMEVAL(GL_POINT_SMOOTH) },
-      { NAMEVAL(GL_LINE_SMOOTH) },
-      { NAMEVAL(GL_POLYGON_SMOOTH) },
-      { NAMEVAL(GL_SCISSOR_TEST) },
-      { NAMEVAL(GL_COLOR_MATERIAL) },
-      { NAMEVAL(GL_NORMALIZE) },
-      { NAMEVAL(GL_AUTO_NORMAL) },
-      { NAMEVAL(GL_VERTEX_ARRAY) },
-      { NAMEVAL(GL_NORMAL_ARRAY) },
-      { NAMEVAL(GL_COLOR_ARRAY) },
-      { NAMEVAL(GL_INDEX_ARRAY) },
-      { NAMEVAL(GL_TEXTURE_COORD_ARRAY) },
-      { NAMEVAL(GL_EDGE_FLAG_ARRAY) },
-      { NAMEVAL(GL_POLYGON_OFFSET_POINT) },
-      { NAMEVAL(GL_POLYGON_OFFSET_LINE) },
-      { NAMEVAL(GL_POLYGON_OFFSET_FILL) },
-#ifdef GVX_GL_PLATFORM_GLX
-      { NAMEVAL(GL_RESCALE_NORMAL_EXT) },
-#endif
-
-      // for glMatrixMode
-      { NAMEVAL(GL_MODELVIEW) },
-      { NAMEVAL(GL_PROJECTION) },
-      { NAMEVAL(GL_TEXTURE) },
-
-      // for glNewList
-      { NAMEVAL(GL_COMPILE) },
-      { NAMEVAL(GL_COMPILE_AND_EXECUTE) },
-
-      // for glPolygonMode
-      { NAMEVAL(GL_POINT) },
-      { NAMEVAL(GL_LINE) },
-      { NAMEVAL(GL_FILL) },
-    };
-
-    int num_enums = sizeof(theEnums) / sizeof(NameVal);
-    for (int i = 0; i < num_enums; ++i)
-      {
-        pkg->link_var_copy(theEnums[i].name, theEnums[i].val);
-      }
-  }
-
-#undef NAMEVAL
-
-  void extractValues(GLenum tag, GLboolean* vals_out)
+  inline void extractValues(GLenum tag, GLboolean* vals_out)
   { glGetBooleanv(tag, vals_out); }
 
-  void extractValues(GLenum tag, GLdouble* vals_out)
+  inline void extractValues(GLenum tag, GLdouble* vals_out)
   { glGetDoublev(tag, vals_out); }
 
-  void extractValues(GLenum tag, GLint* vals_out)
+  inline void extractValues(GLenum tag, GLint* vals_out)
   { glGetIntegerv(tag, vals_out); }
 
   template <class T>
-  tcl::list get(GLenum param_tag
-#ifdef GVX_BROKEN_TEMPLATE_FUNCTIONS
-                , T* /*dummy*/=0
-#endif
-                )
+  inline tcl::list get(GLenum param_tag)
   {
     const AttribInfo* theInfo = theAttribMap[param_tag];
     if ( theInfo == 0 )
@@ -292,17 +136,6 @@ namespace GLTcl
     result.append_range(theVals.begin(), theVals.end());
     return result;
   }
-
-#ifdef GVX_BROKEN_TEMPLATE_FUNCTIONS
-  tcl::list getBoolean(GLenum param_tag)
-  { return get<GLboolean>(param_tag, (GLboolean*) 0); }
-
-  tcl::list getDouble(GLenum param_tag)
-  { return get<GLdouble>(param_tag, (GLdouble*) 0); }
-
-  tcl::list getInt(GLenum param_tag)
-  { return get<GLint>(param_tag, (GLint*) 0); }
-#endif
 }
 
 //---------------------------------------------------------------------
@@ -452,6 +285,175 @@ tcl::list GLTcl::lineInfo()
 
 //--------------------------------------------------------------------
 //
+// GLTcl::loadGet
+//
+//--------------------------------------------------------------------
+
+void GLTcl::loadGet(tcl::pkg* pkg)
+{
+
+#define GLTCL_NAMEVAL(x) #x, x
+  static const AttribInfo theAttribs[] =
+    {
+      { GLTCL_NAMEVAL(GL_ACCUM_CLEAR_VALUE), 4 },
+      { GLTCL_NAMEVAL(GL_ACCUM_ALPHA_BITS), 1 },
+      { GLTCL_NAMEVAL(GL_ACCUM_BLUE_BITS), 1 },
+      { GLTCL_NAMEVAL(GL_ACCUM_GREEN_BITS), 1 },
+      { GLTCL_NAMEVAL(GL_ACCUM_RED_BITS), 1 },
+      { GLTCL_NAMEVAL(GL_ALPHA_BITS), 1 },
+      { GLTCL_NAMEVAL(GL_BLUE_BITS), 1 },
+      { GLTCL_NAMEVAL(GL_COLOR_CLEAR_VALUE), 4 },
+      { GLTCL_NAMEVAL(GL_CURRENT_COLOR), 4 },
+      { GLTCL_NAMEVAL(GL_CURRENT_INDEX), 1 },
+      { GLTCL_NAMEVAL(GL_DEPTH_BITS), 1 },
+      { GLTCL_NAMEVAL(GL_DEPTH_CLEAR_VALUE), 1 },
+      { GLTCL_NAMEVAL(GL_INDEX_BITS), 1 },
+      { GLTCL_NAMEVAL(GL_INDEX_CLEAR_VALUE), 1 },
+      { GLTCL_NAMEVAL(GL_GREEN_BITS), 1 },
+      { GLTCL_NAMEVAL(GL_LINE_WIDTH), 1 },
+      { GLTCL_NAMEVAL(GL_LINE_WIDTH_GRANULARITY), 1 },
+      { GLTCL_NAMEVAL(GL_LINE_WIDTH_RANGE), 2 },
+      { GLTCL_NAMEVAL(GL_LIST_BASE), 1 },
+      { GLTCL_NAMEVAL(GL_LIST_INDEX), 1 },
+      { GLTCL_NAMEVAL(GL_MATRIX_MODE), 1 },
+      { GLTCL_NAMEVAL(GL_MODELVIEW_MATRIX), 16 },
+      { GLTCL_NAMEVAL(GL_POLYGON_MODE), 2 },
+      { GLTCL_NAMEVAL(GL_PROJECTION_MATRIX), 16 },
+      { GLTCL_NAMEVAL(GL_RED_BITS), 1 },
+      { GLTCL_NAMEVAL(GL_RGBA_MODE), 1 },
+      { GLTCL_NAMEVAL(GL_SUBPIXEL_BITS), 1 },
+      { GLTCL_NAMEVAL(GL_STENCIL_BITS), 1 },
+      { GLTCL_NAMEVAL(GL_STENCIL_CLEAR_VALUE), 1 },
+      { GLTCL_NAMEVAL(GL_VIEWPORT), 4 },
+    };
+#undef GLTCL_NAMEVAL
+
+  int num_params = sizeof(theAttribs) / sizeof(AttribInfo);
+  for (int i = 0; i < num_params; ++i)
+    {
+      pkg->link_var_copy(theAttribs[i].param_name,
+                         static_cast<int>(theAttribs[i].param_tag));
+      theAttribMap[theAttribs[i].param_tag] = &(theAttribs[i]);
+    }
+}
+
+//--------------------------------------------------------------------
+//
+// GLTcl::loadEnums
+//
+//--------------------------------------------------------------------
+
+void GLTcl::loadEnums(tcl::pkg* pkg)
+{
+#define GLTCL_NAMEVAL(x) #x, x
+  NameVal theEnums [] =
+    {
+      // for glBegin
+      { GLTCL_NAMEVAL(GL_POINTS) },
+      { GLTCL_NAMEVAL(GL_LINES) },
+      { GLTCL_NAMEVAL(GL_LINE_STRIP) },
+      { GLTCL_NAMEVAL(GL_LINE_LOOP) },
+      { GLTCL_NAMEVAL(GL_TRIANGLES) },
+      { GLTCL_NAMEVAL(GL_TRIANGLE_STRIP) },
+      { GLTCL_NAMEVAL(GL_TRIANGLE_FAN) },
+      { GLTCL_NAMEVAL(GL_QUADS) },
+      { GLTCL_NAMEVAL(GL_QUAD_STRIP) },
+      { GLTCL_NAMEVAL(GL_POLYGON) },
+
+      // for glBlendFunc
+      { GLTCL_NAMEVAL(GL_ZERO) },
+      { GLTCL_NAMEVAL(GL_ONE) },
+      { GLTCL_NAMEVAL(GL_DST_COLOR) },
+      { GLTCL_NAMEVAL(GL_ONE_MINUS_DST_COLOR) },
+      { GLTCL_NAMEVAL(GL_SRC_COLOR) },
+      { GLTCL_NAMEVAL(GL_ONE_MINUS_SRC_COLOR) },
+      { GLTCL_NAMEVAL(GL_SRC_ALPHA) },
+      { GLTCL_NAMEVAL(GL_ONE_MINUS_SRC_ALPHA) },
+      { GLTCL_NAMEVAL(GL_DST_ALPHA) },
+      { GLTCL_NAMEVAL(GL_ONE_MINUS_DST_ALPHA) },
+      { GLTCL_NAMEVAL(GL_SRC_ALPHA_SATURATE) },
+
+      // for glClear
+      { GLTCL_NAMEVAL(GL_COLOR_BUFFER_BIT) },
+      { GLTCL_NAMEVAL(GL_DEPTH_BUFFER_BIT) },
+      { GLTCL_NAMEVAL(GL_ACCUM_BUFFER_BIT) },
+      { GLTCL_NAMEVAL(GL_STENCIL_BUFFER_BIT) },
+
+      // for glDrawBuffer
+      { GLTCL_NAMEVAL(GL_NONE) },
+      { GLTCL_NAMEVAL(GL_FRONT_LEFT) },
+      { GLTCL_NAMEVAL(GL_FRONT_RIGHT) },
+      { GLTCL_NAMEVAL(GL_BACK_LEFT) },
+      { GLTCL_NAMEVAL(GL_BACK_RIGHT) },
+      { GLTCL_NAMEVAL(GL_FRONT) },
+      { GLTCL_NAMEVAL(GL_BACK) },
+      { GLTCL_NAMEVAL(GL_LEFT) },
+      { GLTCL_NAMEVAL(GL_RIGHT) },
+      { GLTCL_NAMEVAL(GL_FRONT_AND_BACK) },
+
+      // for glEnable/glDisable
+      { GLTCL_NAMEVAL(GL_ALPHA_TEST) },
+      { GLTCL_NAMEVAL(GL_BLEND) },
+      { GLTCL_NAMEVAL(GL_FOG) },
+      { GLTCL_NAMEVAL(GL_LIGHTING) },
+      { GLTCL_NAMEVAL(GL_LINE_STIPPLE) },
+      { GLTCL_NAMEVAL(GL_POLYGON_STIPPLE) },
+      { GLTCL_NAMEVAL(GL_CULL_FACE) },
+      { GLTCL_NAMEVAL(GL_INDEX_LOGIC_OP) },
+      { GLTCL_NAMEVAL(GL_COLOR_LOGIC_OP) },
+      { GLTCL_NAMEVAL(GL_DITHER) },
+      { GLTCL_NAMEVAL(GL_STENCIL_TEST) },
+      { GLTCL_NAMEVAL(GL_DEPTH_TEST) },
+      { GLTCL_NAMEVAL(GL_MAP1_VERTEX_3) },
+      { GLTCL_NAMEVAL(GL_MAP1_VERTEX_4) },
+      { GLTCL_NAMEVAL(GL_MAP1_COLOR_4) },
+      { GLTCL_NAMEVAL(GL_MAP1_INDEX) },
+      { GLTCL_NAMEVAL(GL_MAP1_NORMAL) },
+      { GLTCL_NAMEVAL(GL_POINT_SMOOTH) },
+      { GLTCL_NAMEVAL(GL_LINE_SMOOTH) },
+      { GLTCL_NAMEVAL(GL_POLYGON_SMOOTH) },
+      { GLTCL_NAMEVAL(GL_SCISSOR_TEST) },
+      { GLTCL_NAMEVAL(GL_COLOR_MATERIAL) },
+      { GLTCL_NAMEVAL(GL_NORMALIZE) },
+      { GLTCL_NAMEVAL(GL_AUTO_NORMAL) },
+      { GLTCL_NAMEVAL(GL_VERTEX_ARRAY) },
+      { GLTCL_NAMEVAL(GL_NORMAL_ARRAY) },
+      { GLTCL_NAMEVAL(GL_COLOR_ARRAY) },
+      { GLTCL_NAMEVAL(GL_INDEX_ARRAY) },
+      { GLTCL_NAMEVAL(GL_TEXTURE_COORD_ARRAY) },
+      { GLTCL_NAMEVAL(GL_EDGE_FLAG_ARRAY) },
+      { GLTCL_NAMEVAL(GL_POLYGON_OFFSET_POINT) },
+      { GLTCL_NAMEVAL(GL_POLYGON_OFFSET_LINE) },
+      { GLTCL_NAMEVAL(GL_POLYGON_OFFSET_FILL) },
+#ifdef GVX_GL_PLATFORM_GLX
+      { GLTCL_NAMEVAL(GL_RESCALE_NORMAL_EXT) },
+#endif
+
+      // for glMatrixMode
+      { GLTCL_NAMEVAL(GL_MODELVIEW) },
+      { GLTCL_NAMEVAL(GL_PROJECTION) },
+      { GLTCL_NAMEVAL(GL_TEXTURE) },
+
+      // for glNewList
+      { GLTCL_NAMEVAL(GL_COMPILE) },
+      { GLTCL_NAMEVAL(GL_COMPILE_AND_EXECUTE) },
+
+      // for glPolygonMode
+      { GLTCL_NAMEVAL(GL_POINT) },
+      { GLTCL_NAMEVAL(GL_LINE) },
+      { GLTCL_NAMEVAL(GL_FILL) },
+    };
+#undef GLTCL_NAMEVAL
+
+  int num_enums = sizeof(theEnums) / sizeof(NameVal);
+  for (int i = 0; i < num_enums; ++i)
+    {
+      pkg->link_var_copy(theEnums[i].name, theEnums[i].val);
+    }
+}
+
+//--------------------------------------------------------------------
+//
 // Gltcl_Init --
 //
 //--------------------------------------------------------------------
@@ -518,15 +520,9 @@ GVX_TRACE("Gl_Init");
   pkg->def( "::gluPerspective", "field_of_view_y aspect zNear zFar",
             gluPerspective, SRC_POS );
 
-#ifndef GVX_BROKEN_TEMPLATE_FUNCTIONS
   pkg->def( "::glGetBoolean", "param_name", GLTcl::get<GLboolean>, SRC_POS );
   pkg->def( "::glGetDouble", "param_name", GLTcl::get<GLdouble>, SRC_POS );
   pkg->def( "::glGetInteger", "param_name", GLTcl::get<GLint>, SRC_POS );
-#else
-  pkg->def( "::glGetBoolean", "param_name", GLTcl::getBoolean, SRC_POS );
-  pkg->def( "::glGetDouble", "param_name", GLTcl::getDouble, SRC_POS );
-  pkg->def( "::glGetInteger", "param_name", GLTcl::getInt, SRC_POS );
-#endif
 
   pkg->def( "::antialias", "on_off", GLTcl::antialias, SRC_POS );
   pkg->def( "::drawOneLine", "x1 y1 x2 y2", GLTcl::drawOneLine, SRC_POS );

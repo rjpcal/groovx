@@ -46,7 +46,7 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-namespace tcl
+namespace
 {
   tcl::obj getField(const Field& field,
                     nub::ref<FieldContainer> item)
@@ -82,13 +82,11 @@ namespace tcl
 
     void operator()(tcl::call_context& ctx);
   };
-}
 
-
-void tcl::FieldsLister::operator()(tcl::call_context& ctx)
-{
-GVX_TRACE("tcl::FieldsLister::operator()");
-  if (!isItInited)
+  void FieldsLister::operator()(tcl::call_context& ctx)
+  {
+  GVX_TRACE("tcl::FieldsLister::operator()");
+    if (!isItInited)
     {
       for (const FieldMap* fmap = &itsFields;
            fmap != 0;
@@ -125,7 +123,8 @@ GVX_TRACE("tcl::FieldsLister::operator()");
       isItInited = true;
     }
 
-  ctx.set_result(itsFieldList);
+    ctx.set_result(itsFieldList);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
