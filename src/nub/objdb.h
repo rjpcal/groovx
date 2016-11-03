@@ -106,7 +106,7 @@ public:
 
     void advance_to_valid()
     {
-      while (!m_itr.at_end() && (dynamic_cast<T*>(*m_itr)==0))
+      while (!m_itr.at_end() && (dynamic_cast<T*>(*m_itr)== nullptr))
         ++m_itr;
     }
 

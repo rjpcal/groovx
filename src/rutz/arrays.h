@@ -286,15 +286,15 @@ namespace rutz
     {
       if (pn->atomic_decr_test_zero())
         {
-          delete [] px; px = 0;
-          delete pn;    pn = 0;
+          delete [] px; px = nullptr;
+          delete pn;    pn = nullptr;
         }
     }
 
     /// Assignment oeprator.
     shared_array& operator=(const shared_array& r)
     {
-      if (pn != r.pn) // Q: why not px != r.px? A: fails when both px == 0
+      if (pn != r.pn) // Q: why not px != r.px? A: fails when both px == nullptr
         shared_array(r).swap(*this);
       return *this;
     }

@@ -97,7 +97,7 @@ GVX_TRACE("GaborPatch::lookup");
 
   GaborPatch*& patch = theMap[spec];
 
-  if (patch == 0)
+  if (patch == nullptr)
     {
       patch = new GaborPatch(spec);
       patch->fillCache();
@@ -116,7 +116,7 @@ const GaborPatch& GaborPatch::lookup(double sigma, double omega,
 
 void GaborPatch::fillCache()
 {
-  if (itsData == 0)
+  if (itsData == nullptr)
     {
       itsData = new double[itsSize*itsSize];
 

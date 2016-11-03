@@ -50,8 +50,8 @@ namespace rutz
       :
       m_q(new entry[n == 0 ? 1 : n]),
       m_q_size(n == 0 ? 1 : n),
-      m_front(0),
-      m_back(0)
+      m_front(nullptr),
+      m_back(nullptr)
     {}
 
     ~circular_queue()
@@ -65,7 +65,7 @@ namespace rutz
     /// Returns true of the pop succeeded
     bool pop_front(T& dest)
     {
-      if (m_q[m_front].valid.atomic_get() == 0)
+      if (m_q[m_front].valid.atomic_get() == nullptr)
         // the queue is empty right now:
         return false;
 
@@ -84,7 +84,7 @@ namespace rutz
     /// Returns true if the push succeeded
     bool push_back(const T& val)
     {
-      if (m_q[m_back].valid.atomic_get() != 0)
+      if (m_q[m_back].valid.atomic_get() != nullptr)
         // we don't have any space in the queue for another entry
         // right now:
         return false;

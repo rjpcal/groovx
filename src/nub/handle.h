@@ -60,7 +60,7 @@ class nub::detail::handle
 public:
   explicit handle(T* master) : m_master(master)
   {
-    if (master == 0)
+    if (master == nullptr)
       throw_ref_null(typeid(T), SRC_POS);
 
     if (master->is_not_shareable())

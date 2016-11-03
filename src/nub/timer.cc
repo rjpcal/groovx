@@ -41,8 +41,8 @@ using rutz::shared_ptr;
 nub::timer::timer(unsigned int msec, bool repeat)
   :
   sig_timeout(),
-  m_scheduler(0),
-  m_token(0),
+  m_scheduler(nullptr),
+  m_token(nullptr),
   m_msec_delay(msec),
   m_is_repeating(repeat),
   m_stopwatch()
@@ -57,7 +57,7 @@ void nub::timer::schedule(rutz::shared_ptr<nub::scheduler> scheduler)
 {
 GVX_TRACE("nub::timer::schedule");
 
-  GVX_PRECONDITION(scheduler.get() != 0);
+  GVX_PRECONDITION(scheduler.get() != nullptr);
 
   if (m_msec_delay == 0 && m_is_repeating == true)
     {
@@ -87,7 +87,7 @@ void nub::timer::cancel()
 {
 GVX_TRACE("nub::timer::cancel");
 
-  m_token.reset(0);
+  m_token.reset(nullptr);
 }
 
 void nub::timer::dummy_callback(void* clientdata)
@@ -95,9 +95,9 @@ void nub::timer::dummy_callback(void* clientdata)
 GVX_TRACE("nub::timer::dummy_callback");
   nub::timer* timer = static_cast<nub::timer*>(clientdata);
 
-  GVX_ASSERT(timer != 0);
+  GVX_ASSERT(timer != nullptr);
 
-  timer->m_token.reset(0);
+  timer->m_token.reset(nullptr);
 
   dbg_eval_nl(3, timer->m_stopwatch.elapsed().msec());
 
@@ -112,7 +112,7 @@ GVX_TRACE("nub::timer::dummy_callback");
       // infinite loop
       GVX_ASSERT(timer->m_msec_delay != 0);
 
-      if (timer->m_scheduler.get() != 0)
+      if (timer->m_scheduler.get() != nullptr)
         timer->schedule(timer->m_scheduler);
     }
 

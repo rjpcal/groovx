@@ -74,10 +74,10 @@ namespace
   {
   public:
     png_parser() :
-      m_file(0),
-      m_png_ptr(0),
-      m_info_ptr(0),
-      m_end_ptr(0)
+      m_file(nullptr),
+      m_png_ptr(nullptr),
+      m_info_ptr(nullptr),
+      m_end_ptr(nullptr)
     {}
 
     ~png_parser() { close(); }
@@ -99,17 +99,17 @@ namespace
   void png_parser::close()
   {
     GVX_TRACE("png_parser::close");
-    if (m_png_ptr != 0)
+    if (m_png_ptr != nullptr)
       {
         png_destroy_read_struct(m_png_ptr ? &m_png_ptr : 0,
                                 m_info_ptr ? &m_info_ptr : 0,
                                 m_end_ptr ? &m_end_ptr : 0);
       }
 
-    if (m_file != 0)
+    if (m_file != nullptr)
       {
         fclose(m_file);
-        m_file = 0;
+        m_file = nullptr;
       }
   }
 
@@ -117,7 +117,7 @@ namespace
   {
     GVX_TRACE("png_parser::parse");
     m_file = fopen(filename, "rb");
-    if (m_file == 0)
+    if (m_file == nullptr)
       {
         throw rutz::error("couldn't open file for png reading", SRC_POS);
       }
@@ -139,19 +139,19 @@ namespace
       }
 
     m_png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-    if (m_png_ptr == 0)
+    if (m_png_ptr == nullptr)
       throw rutz::error("PNG library couldn't create read_struct",
                         SRC_POS);
 
     m_info_ptr = png_create_info_struct(m_png_ptr);
-    if (m_info_ptr == 0)
+    if (m_info_ptr == nullptr)
       {
         throw rutz::error("PNG library couldn't create info_struct",
                           SRC_POS);
       }
 
     m_end_ptr = png_create_info_struct(m_png_ptr);
-    if (m_end_ptr == 0)
+    if (m_end_ptr == nullptr)
       {
         throw rutz::error("PNG library couldn't create end info_struct",
                           SRC_POS);
@@ -243,9 +243,9 @@ namespace
   {
   public:
     png_writer() :
-      m_file(0),
-      m_png_ptr(0),
-      m_info_ptr(0)
+      m_file(nullptr),
+      m_png_ptr(nullptr),
+      m_info_ptr(nullptr)
     {}
 
     ~png_writer() { close(); }
@@ -266,16 +266,16 @@ namespace
   void png_writer::close()
   {
     GVX_TRACE("png_writer::close");
-    if (m_png_ptr != 0)
+    if (m_png_ptr != nullptr)
       {
         png_destroy_write_struct(m_png_ptr ? &m_png_ptr : 0,
                                  m_info_ptr ? &m_info_ptr : 0);
       }
 
-    if (m_file != 0)
+    if (m_file != nullptr)
       {
         fclose(m_file);
-        m_file = 0;
+        m_file = nullptr;
       }
   }
 
@@ -299,19 +299,19 @@ namespace
     GVX_TRACE("png_writer::write");
 
     m_file = fopen(filename, "wb");
-    if (m_file == 0)
+    if (m_file == nullptr)
       {
         throw rutz::error(rutz::sfmt("couldn't open file '%s' for "
                                      "png writing", filename), SRC_POS);
       }
 
     m_png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-    if (m_png_ptr == 0)
+    if (m_png_ptr == nullptr)
       throw rutz::error("PNG library couldn't create write_struct",
                         SRC_POS);
 
     m_info_ptr = png_create_info_struct(m_png_ptr);
-    if (m_info_ptr == 0)
+    if (m_info_ptr == nullptr)
       {
         throw rutz::error("PNG library couldn't create info_struct",
                           SRC_POS);

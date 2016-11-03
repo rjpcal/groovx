@@ -57,7 +57,7 @@ GVX_TRACE("tcl::help_convert<tcl::list>::to_tcl");
 
 tcl::list::list() :
   m_list_obj(Tcl_NewListObj(0,0)),
-  m_elements(0),
+  m_elements(nullptr),
   m_length(0)
 {
 GVX_TRACE("tcl::list::list");
@@ -66,7 +66,7 @@ GVX_TRACE("tcl::list::list");
 
 tcl::list::list(const tcl::obj& x) :
   m_list_obj(x),
-  m_elements(0),
+  m_elements(nullptr),
   m_length(0)
 {
 GVX_TRACE("tcl::list::list");

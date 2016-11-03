@@ -43,7 +43,7 @@ rutz::mapped_infile::mapped_infile(const char* filename)
   :
   m_statbuf(),
   m_fileno(0),
-  m_mem(0)
+  m_mem(nullptr)
 {
   errno = 0;
 

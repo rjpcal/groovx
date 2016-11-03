@@ -35,7 +35,7 @@
 rutz::imembuf::imembuf(const char* s) :
   m_len(strlen(s)),
   m_buf(s),
-  m_owned_mem(0)
+  m_owned_mem(nullptr)
 {
   setg(const_cast<char*>(m_buf),
        const_cast<char*>(m_buf),
@@ -45,7 +45,7 @@ rutz::imembuf::imembuf(const char* s) :
 rutz::imembuf::imembuf(const char* s, size_t len) :
   m_len(len),
   m_buf(s),
-  m_owned_mem(0)
+  m_owned_mem(nullptr)
 {
   setg(const_cast<char*>(m_buf),
        const_cast<char*>(m_buf),
@@ -54,11 +54,11 @@ rutz::imembuf::imembuf(const char* s, size_t len) :
 
 void rutz::imembuf::make_owning()
 {
-  if (m_owned_mem == 0)
+  if (m_owned_mem == nullptr)
     {
       m_owned_mem = new char[m_len+1];
       memcpy(m_owned_mem, m_buf, m_len+1);
-      m_buf = 0;
+      m_buf = nullptr;
       setg(m_owned_mem, m_owned_mem, m_owned_mem + m_len);
     }
 }

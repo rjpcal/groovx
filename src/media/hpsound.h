@@ -62,7 +62,7 @@ namespace media
     SBucket* m_sbucket;
     SBPlayParams m_play_params;
 
-    static Audio* s_audio = 0;
+    static Audio* s_audio = nullptr;
 
     static bool init_sound();
     static void close_sound();
@@ -71,10 +71,10 @@ namespace media
 
 }
 
-Audio* media::hp_audio_sound_rep::s_audio = 0;
+Audio* media::hp_audio_sound_rep::s_audio = nullptr;
 
 media::hp_audio_sound_rep::hp_audio_sound_rep(const char* filename) :
-  m_sbucket(0),
+  m_sbucket(nullptr),
   m_play_params()
 {
 GVX_TRACE("hp_audio_sound_rep::hp_audio_sound_rep");
@@ -100,16 +100,16 @@ GVX_TRACE("hp_audio_sound_rep::hp_audio_sound_rep");
   AudioAttributes attribs;
 
   m_sbucket = ALoadAFile(s_audio, const_cast<char *>(filename),
-                         file_format, attr_mask, &attribs, NULL);
+                         file_format, attr_mask, &attribs, nullptr);
 }
 
 media::hp_audio_sound_rep::~hp_audio_sound_rep() noexcept
 {
 GVX_TRACE("hp_audio_sound_rep::~hp_audio_sound_rep");
-  if ( s_audio != 0 )
+  if ( s_audio != nullptr )
     {
       if (m_sbucket)
-        ADestroySBucket( s_audio, m_sbucket, NULL );
+        ADestroySBucket( s_audio, m_sbucket, nullptr );
     }
 }
 
@@ -121,14 +121,14 @@ GVX_TRACE("hp_audio_sound_rep::play");
     throw rutz::error("invalid audio server connection", SRC_POS);
 
   if (m_sbucket)
-    ATransID xid = APlaySBucket( s_audio, m_sbucket, &m_play_params, NULL );
+    ATransID xid = APlaySBucket( s_audio, m_sbucket, &m_play_params, nullptr );
 }
 
 bool media::hp_audio_sound_rep::init_sound()
 {
 GVX_TRACE("hp_audio_sound_rep::init_sound");
 
-  if (s_audio != 0) return true;
+  if (s_audio != nullptr) return true;
 
   ASetErrorHandler(&error_handler);
 
@@ -136,18 +136,18 @@ GVX_TRACE("hp_audio_sound_rep::init_sound");
 
   // Open an audio connection to the default audio server, then
   // check to make sure connection succeeded. If the connection
-  // fails, 'audio' is set to NULL.
+  // fails, 'audio' is set to nullptr.
   const char* server_name = "";
   long status = 0;
   s_audio = AOpenAudio( const_cast<char*>(server_name), &status );
   if ( status != 0 )
     {
-      s_audio = NULL;
+      s_audio = nullptr;
       retval = false;
     }
   else
     {
-      ASetCloseDownMode( s_audio, AKeepTransactions, NULL );
+      ASetCloseDownMode( s_audio, AKeepTransactions, nullptr );
       retval = true;
     }
 
@@ -159,7 +159,7 @@ void media::hp_audio_sound_rep::close_sound()
 GVX_TRACE("hp_audio_sound_rep::close_sound");
   if ( s_audio )
     {
-      ACloseAudio( s_audio, NULL );
+      ACloseAudio( s_audio, nullptr );
       s_audio = 0;
     }
 }

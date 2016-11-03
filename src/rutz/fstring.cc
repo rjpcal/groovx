@@ -66,7 +66,7 @@ namespace
 void* rutz::string_rep::operator new(size_t bytes)
 {
   GVX_MUTEX_LOCK(&g_rep_list_mutex);
-  if (g_rep_list == 0) g_rep_list = new rutz::free_list<rutz::string_rep>;
+  if (g_rep_list == nullptr) g_rep_list = new rutz::free_list<rutz::string_rep>;
   return g_rep_list->allocate(bytes);
 }
 
@@ -196,7 +196,7 @@ void rutz::string_rep::uniq_set_length(std::size_t len) noexcept
 void rutz::string_rep::uniq_append(std::size_t len, const char* txt)
 {
   GVX_PRECONDITION(m_refcount.atomic_get() <= 1);
-  GVX_PRECONDITION(txt != 0);
+  GVX_PRECONDITION(txt != nullptr);
 
   if (m_length + len + 1 <= m_capacity)
     {
@@ -236,7 +236,7 @@ void rutz::string_rep::uniq_realloc(std::size_t capac)
 void rutz::fstring::init_empty()
 {
 GVX_TRACE("rutz::fstring::init_empty");
-  GVX_PRECONDITION(m_rep == 0);
+  GVX_PRECONDITION(m_rep == nullptr);
 
   m_rep = string_rep::make(0, 0);
 
@@ -246,7 +246,7 @@ GVX_TRACE("rutz::fstring::init_empty");
 void rutz::fstring::init_range(char_range r)
 {
 GVX_TRACE("rutz::fstring::init_range");
-  GVX_PRECONDITION(m_rep == 0);
+  GVX_PRECONDITION(m_rep == nullptr);
 
   m_rep = string_rep::make(r.len, r.text);
 

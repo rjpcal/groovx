@@ -52,7 +52,7 @@ namespace
     fstring s;
     TEST_REQUIRE(s.is_empty());
     TEST_REQUIRE(s.length() == 0);
-    TEST_REQUIRE(s.c_str() != 0);
+    TEST_REQUIRE(s.c_str() != nullptr);
     TEST_REQUIRE(s.c_str()[0] == '\0');
   }
 
@@ -61,7 +61,7 @@ namespace
     fstring s("hello world!");
     TEST_REQUIRE(!s.is_empty());
     TEST_REQUIRE(s.length() == 12);
-    TEST_REQUIRE(s.c_str() != 0);
+    TEST_REQUIRE(s.c_str() != nullptr);
     TEST_REQUIRE(s.c_str()[s.length()] == '\0');
     TEST_REQUIRE(std::strlen(s.c_str()) == s.length());
     TEST_REQUIRE(std::strcmp(s.c_str(), "hello world!") == 0);

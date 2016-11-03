@@ -74,7 +74,7 @@ public:
       memory, otherwise we compute it. */
   double at(size_t x, size_t y) const
   {
-    return (itsData != 0)
+    return (itsData != nullptr)
       ? itsData[x + y*itsSize]
       : compute(x, y);
   }

@@ -77,7 +77,7 @@ public:
   ~interpreter() noexcept;
 
   // Interpreter
-  bool is_valid() const noexcept { return m_interp != 0; }
+  bool is_valid() const noexcept { return m_interp != nullptr; }
 
   /// Get the interpreter (if valid), otherwise throw an exception.
   Tcl_Interp* intp() const;

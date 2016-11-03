@@ -134,7 +134,7 @@ pid_t rutz::unixcall::get_file_user_pid(const char* fname)
 GVX_TRACE("rutz::unixcall::get_file_user_pid");
   DIR* const proc_dir = opendir("/proc");
 
-  if (proc_dir == 0)
+  if (proc_dir == nullptr)
     return 0;
 
   struct stat target_statbuf;
@@ -143,11 +143,11 @@ GVX_TRACE("rutz::unixcall::get_file_user_pid");
 
   const pid_t my_pid = getpid();
 
-  struct dirent* proc_dent = 0;
+  struct dirent* proc_dent = nullptr;
 
-  while ((proc_dent = readdir(proc_dir)) != 0)
+  while ((proc_dent = readdir(proc_dir)) != nullptr)
     {
-      if (proc_dent == 0)
+      if (proc_dent == nullptr)
         break;
 
       if (!isdigit(proc_dent->d_name[0]))
@@ -163,12 +163,12 @@ GVX_TRACE("rutz::unixcall::get_file_user_pid");
 
       DIR* const fd_dir = opendir(fd_dirname.c_str());
 
-      if (fd_dir == 0)
+      if (fd_dir == nullptr)
         continue;
 
-      struct dirent* fd_dent = 0;
+      struct dirent* fd_dent = nullptr;
 
-      while ((fd_dent = readdir(fd_dir)) != 0)
+      while ((fd_dent = readdir(fd_dir)) != nullptr)
         {
           if (!isdigit(fd_dent->d_name[0]))
             continue;

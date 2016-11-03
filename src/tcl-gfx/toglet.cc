@@ -103,7 +103,7 @@ public:
   Impl(Toglet* p);
   ~Impl() noexcept
   {
-    if (scene != 0)       scene->destroy();
+    if (scene != nullptr)  scene->destroy();
     if (canvas.is_valid()) canvas->destroy();
   }
 };
@@ -211,7 +211,7 @@ GVX_TRACE("Toglet::Toglet");
   // require that "rep" be initialized. If we do this window set up in
   // Impl's constructor, then it won't have returned yet, and so our
   // "rep" variable won't be pointing anywhere meaningful (will be
-  // either NULL or garbage).
+  // either nullptr or garbage).
 
   Tk_GeometryRequest(rep->tkWin, DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 
@@ -319,8 +319,8 @@ void Toglet::reshapeCallback(int width, int height)
 {
 GVX_TRACE("Toglet::reshapeCallback");
 
-  GVX_ASSERT(rep->glx.get() != 0);
-  GVX_ASSERT(rep->scene != 0);
+  GVX_ASSERT(rep->glx.get() != nullptr);
+  GVX_ASSERT(rep->scene != nullptr);
 
   makeCurrent();
   rep->glx->onReshape(width, height);

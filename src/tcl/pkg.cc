@@ -189,7 +189,7 @@ tcl::pkg::impl::impl(Tcl_Interp* intp,
   init_status(TCL_OK),
   owned_ints(),
   owned_doubles(),
-  on_exit(0)
+  on_exit(nullptr)
 {
 GVX_TRACE("tcl::pkg::impl::impl");
 }
@@ -197,13 +197,13 @@ GVX_TRACE("tcl::pkg::impl::impl");
 tcl::pkg::impl::~impl() noexcept
 {
 GVX_TRACE("tcl::pkg::impl::~impl");
-  if (on_exit != 0)
+  if (on_exit != nullptr)
     on_exit();
 }
 
 tcl::pkg::pkg(Tcl_Interp* interp,
               const char* name, const char* version) :
-  rep(0)
+  rep(nullptr)
 {
 GVX_TRACE("tcl::pkg::pkg");
 
@@ -234,7 +234,7 @@ GVX_TRACE("tcl::pkg::~pkg");
       Tcl_Namespace* namesp =
         Tcl_FindNamespace(rep->interp.intp(), rep->namesp_name.c_str(),
                           0, TCL_GLOBAL_ONLY);
-      if (namesp != 0)
+      if (namesp != nullptr)
         Tcl_DeleteNamespace(namesp);
 #endif
     }
@@ -257,7 +257,7 @@ int tcl::pkg::destroy_on_unload(Tcl_Interp* intp, const char* pkgname)
 GVX_TRACE("tcl::pkg::destroy_on_unload");
   tcl::interpreter interp(intp);
   tcl::pkg* pkg = tcl::pkg::lookup(interp, pkgname);
-  if (pkg != 0)
+  if (pkg != nullptr)
     {
       delete pkg;
       return 1; // TCL_OK
@@ -271,7 +271,7 @@ tcl::pkg* tcl::pkg::lookup(tcl::interpreter& interp, const char* name,
 {
 GVX_TRACE("tcl::pkg::lookup");
 
-  void* clientdata = 0;
+  void* clientdata = nullptr;
 
   const string clean_name = make_clean_pkg_name(name);
 
@@ -283,7 +283,7 @@ GVX_TRACE("tcl::pkg::lookup");
 
   interp.set_result(saveresult);
 
-  if (ver != 0)
+  if (ver != nullptr)
     {
       tcl::pkg* result = static_cast<tcl::pkg*>(clientdata);
 
@@ -352,7 +352,7 @@ GVX_TRACE("tcl::pkg::inherit_pkg");
 
   tcl::pkg* other = lookup(rep->interp, name, version);
 
-  if (other == 0)
+  if (other == nullptr)
     throw rutz::error(rutz::sfmt("no tcl::pkg named '%s'", name),
                       SRC_POS);
 

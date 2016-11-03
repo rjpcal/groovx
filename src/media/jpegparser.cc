@@ -61,7 +61,7 @@ namespace
     GVX_TRACE("<jpegparser.cc>::cleanup");
 
     jpeg_aux* aux = static_cast<jpeg_aux*>(cinfo->client_data);
-    if (aux->infile != 0)
+    if (aux->infile != nullptr)
       fclose(aux->infile);
     jpeg_destroy_decompress(cinfo);
   }
@@ -107,7 +107,7 @@ GVX_TRACE("media::load_jpeg");
   jpeg_error_mgr jerr;
 
   jpeg_aux aux;
-  aux.infile = 0;
+  aux.infile = nullptr;
   aux.jmp_state = &state;
   cinfo.client_data = static_cast<void*>(&aux);
 
@@ -119,7 +119,7 @@ GVX_TRACE("media::load_jpeg");
   // 2. Specify the source of the compressed data (i.e., the input file)
   aux.infile = fopen(filename, "rb");
 
-  if (aux.infile == 0)
+  if (aux.infile == nullptr)
     {
       throw rutz::error(rutz::sfmt("couldn't open '%s' for reading",
                                    filename), SRC_POS);

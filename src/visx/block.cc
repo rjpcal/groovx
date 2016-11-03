@@ -119,7 +119,7 @@ GVX_TRACE("Block::write_to");
 const nub::soft_ref<Toglet>& Block::getWidget() const
 {
 GVX_TRACE("Block::getWidget");
-  GVX_PRECONDITION( itsParent != 0 );
+  GVX_PRECONDITION( itsParent != nullptr );
   return itsParent->getWidget();
 }
 
@@ -140,7 +140,7 @@ void Block::vxEndTrialHook()
 {
 GVX_TRACE("Block::vxEndTrialHook");
 
-  if (itsParent != 0)
+  if (itsParent != nullptr)
     itsParent->vxEndTrialHook();
 }
 
@@ -150,7 +150,7 @@ GVX_TRACE("Block::vxAllChildrenFinished");
 
   // Release our current parent, then pass control onto it.
   Element* p = itsParent;
-  itsParent = 0;
-  GVX_ASSERT( p != 0 );
+  itsParent = nullptr;
+  GVX_ASSERT( p != nullptr );
   p->vxReturn(CHILD_OK);
 }

@@ -206,7 +206,7 @@ GVX_TRACE("xml_writer::write_object");
 
   if (obj.is_valid())
     {
-      GVX_ASSERT(dynamic_cast<const io::serializable*>(obj.get()) != 0);
+      GVX_ASSERT(dynamic_cast<const io::serializable*>(obj.get()) != nullptr);
 
       if (already_written(obj))
         {

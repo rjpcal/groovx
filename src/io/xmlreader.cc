@@ -80,7 +80,7 @@ namespace
                         const char* eltype, const char* elname,
                         const rutz::file_pos& pos)
   {
-    for (int i = 0; attr[i] != 0; i += 2)
+    for (int i = 0; attr[i] != nullptr; i += 2)
       {
         if (strcmp(attr[i], attname) == 0)
           return attr[i+1];
@@ -126,12 +126,12 @@ namespace
   T& element_cast(xml_element* elp, const fstring& name,
                  const rutz::file_pos& pos)
   {
-    if (elp == 0)
+    if (elp == nullptr)
       throw rutz::error(rutz::sfmt("no element with name: %s",
                                    name.c_str()),
                         SRC_POS);
     T* t = dynamic_cast<T*>(elp);
-    if (t == 0)
+    if (t == nullptr)
       throw rutz::error(rutz::sfmt("wrong element type; expected %s, got %s",
                                    rutz::demangled_name(typeid(T)),
                                    rutz::demangled_name(typeid(*elp))),
@@ -508,7 +508,7 @@ namespace
 
     object_element& get_root() const
     {
-      if (m_root.get() == 0)
+      if (m_root.get() == nullptr)
         {
           throw rutz::error("no root element found", SRC_POS);
         }
@@ -539,7 +539,7 @@ namespace
 
     const char* name = find_attr(attr, "name", el, "(noname)", SRC_POS);
 
-    GVX_ASSERT(name != 0);
+    GVX_ASSERT(name != nullptr);
 
     el_ptr elp = make_element(el, attr, name, m_objects);
 
@@ -564,7 +564,7 @@ namespace
   {
     --m_end_count;
     GVX_ASSERT(m_stack.size() > 0);
-    GVX_ASSERT(m_stack.back().get() != 0);
+    GVX_ASSERT(m_stack.back().get() != nullptr);
     m_stack.back()->finish();
     m_stack.pop_back();
     --m_depth;
@@ -573,7 +573,7 @@ namespace
   void tree_builder::character_data(const char* text, size_t length)
   {
     GVX_ASSERT(m_stack.size() > 0);
-    GVX_ASSERT(m_stack.back().get() != 0);
+    GVX_ASSERT(m_stack.back().get() != nullptr);
     m_stack.back()->character_data(text, length);
   }
 

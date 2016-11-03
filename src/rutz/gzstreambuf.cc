@@ -48,7 +48,7 @@ rutz::gzstreambuf::gzstreambuf(const char* name, unsigned int om,
   :
   m_opened(false),
   m_mode(0),
-  m_gzfile(0)
+  m_gzfile(nullptr)
 {
   // no append nor read/write mode
   if ( (om & std::ios::ate) || (om & std::ios::app)
@@ -79,7 +79,7 @@ rutz::gzstreambuf::gzstreambuf(const char* name, unsigned int om,
 
       m_gzfile = gzopen(name,fmode);
 
-      if (m_gzfile != NULL)
+      if (m_gzfile != nullptr)
         {
           m_opened = true;
           m_mode = om;

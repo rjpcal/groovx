@@ -33,7 +33,7 @@
 
 namespace
 {
-  nub::obj_factory* s_instance = 0;
+  nub::obj_factory* s_instance = nullptr;
 }
 
 nub::obj_factory::obj_factory() :
@@ -43,7 +43,7 @@ nub::obj_factory::~obj_factory() noexcept {}
 
 nub::obj_factory& nub::obj_factory::instance()
 {
-  if (s_instance == 0)
+  if (s_instance == nullptr)
     {
       s_instance = new obj_factory;
     }

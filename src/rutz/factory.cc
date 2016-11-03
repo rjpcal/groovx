@@ -48,7 +48,7 @@ namespace
 
     virtual void try_fallback(const rutz::fstring& key) const
     {
-      if (m_func != 0)
+      if (m_func != nullptr)
         (*m_func)(key);
     }
 
@@ -92,6 +92,6 @@ void rutz::factory_base::try_fallback(const rutz::fstring& key) const
 {
 GVX_TRACE("rutz::factory_base::try_fallback");
 
-  if (m_fallback.get() != 0)
+  if (m_fallback.get() != nullptr)
     m_fallback->try_fallback(key);
 }

@@ -195,7 +195,7 @@ GVX_TRACE("Fish::Fish");
 
   setFieldMap(Fish::classFields());
 
-  if (splinefile != 0 && coordfile != 0)
+  if (splinefile != nullptr && coordfile != nullptr)
     {
       readSplineFile(splinefile);
       readCoordFile(coordfile, index);

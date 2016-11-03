@@ -44,7 +44,7 @@ tcl::channel_buf::channel_buf(Tcl_Interp* interp,
 {
   int origmode = 0;
   chan = Tcl_GetChannel(interp, channame, &origmode);
-  if (chan == 0)
+  if (chan == nullptr)
     {
       throw rutz::error(rutz::sfmt("no channel named '%s'",
                                    channame), SRC_POS);

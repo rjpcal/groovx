@@ -88,7 +88,7 @@ void tcl::timer_scheduler_token::c_callback(void* token) noexcept
 {
   timer_scheduler_token* tok = static_cast<timer_scheduler_token*>(token);
 
-  GVX_ASSERT(tok != 0);
+  GVX_ASSERT(tok != nullptr);
 
   try
     {

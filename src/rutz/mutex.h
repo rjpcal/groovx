@@ -55,7 +55,7 @@ public:
     this->unlock();
   }
 
-  bool is_locked() const noexcept { return m_mutex != 0; }
+  bool is_locked() const noexcept { return m_mutex != nullptr; }
 
   void unlock() noexcept;
 

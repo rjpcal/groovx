@@ -393,7 +393,7 @@ namespace
           {
             rootid = id;
 
-            if (given_root != 0)
+            if (given_root != nullptr)
               m_objects.add_object_for_id
                 (rootid, ref<io::serializable>(given_root));
 

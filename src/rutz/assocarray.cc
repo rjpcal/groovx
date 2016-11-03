@@ -108,7 +108,7 @@ get_known_keys(const char* sep) const
        ii != rep->values.end();
        ++ii)
     {
-      if (ii->second != 0)
+      if (ii->second != nullptr)
         {
           if (!first) result << sep;
 
@@ -144,8 +144,8 @@ GVX_TRACE("rutz::assoc_array_base::clear");
        ii != rep->values.end();
        ++ii)
     {
-      if (rep->kill_func != 0) rep->kill_func(ii->second);
-      ii->second = 0;
+      if (rep->kill_func != nullptr) rep->kill_func(ii->second);
+      ii->second = nullptr;
     }
 
   delete rep;
@@ -167,6 +167,6 @@ void rutz::assoc_array_base::set_value_for_key(const char* key, void* ptr)
 GVX_TRACE("rutz::assoc_array_base::set_value_for_key");
   rutz::fstring skey(key);
   void*& ptr_slot = rep->values[skey];
-  if (rep->kill_func != 0) rep->kill_func(ptr_slot);
+  if (rep->kill_func != nullptr) rep->kill_func(ptr_slot);
   ptr_slot = ptr;
 }

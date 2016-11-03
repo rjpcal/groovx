@@ -83,7 +83,7 @@ namespace
 
         io::legacy_reader reader(ifs);
 
-        ref<io::serializable> obj(reader.read_root(0));
+        ref<io::serializable> obj(reader.read_root(nullptr));
 
         result.append(obj.id());
 

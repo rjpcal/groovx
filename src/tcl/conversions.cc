@@ -98,7 +98,7 @@ GVX_TRACE("tcl::help_convert<int>::from_tcl");
 
   static const Tcl_ObjType* const int_type = Tcl_GetObjType("int");
 
-  GVX_ASSERT(int_type != 0);
+  GVX_ASSERT(int_type != nullptr);
 
   safe_unshared_obj safeobj(obj, int_type);
 
@@ -135,7 +135,7 @@ GVX_TRACE("tcl::help_convert<long>::from_tcl");
 
   static const Tcl_ObjType* const int_type = Tcl_GetObjType("int");
 
-  GVX_ASSERT(int_type != 0);
+  GVX_ASSERT(int_type != nullptr);
 
   safe_unshared_obj safeobj(obj, int_type);
 
@@ -192,7 +192,7 @@ GVX_TRACE("tcl::help_convert<longlong>::from_tcl");
 
   static const Tcl_ObjType* const wide_int_type = Tcl_GetObjType("wideInt");
 
-  GVX_ASSERT(wide_int_type != 0);
+  GVX_ASSERT(wide_int_type != nullptr);
 
   safe_unshared_obj safeobj(obj, wide_int_type);
 
@@ -217,7 +217,7 @@ GVX_TRACE("tcl::help_convert<bool>::from_tcl");
 
   static const Tcl_ObjType* const boolean_type = Tcl_GetObjType("boolean");
 
-  GVX_ASSERT(boolean_type != 0);
+  GVX_ASSERT(boolean_type != nullptr);
 
   safe_unshared_obj safeobj(obj, boolean_type);
 
@@ -237,7 +237,7 @@ GVX_TRACE("tcl::help_convert<double>::from_tcl");
 
   static const Tcl_ObjType* const double_type = Tcl_GetObjType("double");
 
-  GVX_ASSERT(double_type != 0);
+  GVX_ASSERT(double_type != nullptr);
 
   safe_unshared_obj safeobj(obj, double_type);
 

@@ -183,7 +183,7 @@ int tcl::command_group::impl::c_invoke_callback(
 {
   command_group* c = static_cast<command_group*>(clientdata);
 
-  GVX_ASSERT(c != 0);
+  GVX_ASSERT(c != nullptr);
   GVX_ASSERT(interp == c->rep->interp.intp());
 
 #ifdef REAL_BACKTRACE
@@ -211,7 +211,7 @@ void tcl::command_group::impl::c_delete_callback(
 {
 GVX_TRACE("tcl::command_group::impl::c_delete_callback");
   command_group* c = static_cast<command_group*>(clientdata);
-  GVX_ASSERT(c != 0);
+  GVX_ASSERT(c != nullptr);
   delete c;
 }
 
@@ -220,7 +220,7 @@ void tcl::command_group::impl::c_exit_callback(
 {
 GVX_TRACE("tcl::command_group::c_exit_callback");
   command_group* c = static_cast<command_group*>(clientdata);
-  GVX_ASSERT(c != 0);
+  GVX_ASSERT(c != nullptr);
   Tcl_DeleteCommandFromToken(c->rep->interp.intp(), c->rep->cmd_token);
 }
 
@@ -359,10 +359,10 @@ GVX_TRACE("tcl::command_group::make");
   command_group* group =
     tcl::command_group::lookup(interp, cmd_name);
 
-  if (group == 0)
+  if (group == nullptr)
     group = new command_group(interp, cmd_name, src_pos);
 
-  GVX_ASSERT(group != 0);
+  GVX_ASSERT(group != nullptr);
 
   shared_ptr<tcl::command> cmd(new tcl::command(callback, usage, spec));
 

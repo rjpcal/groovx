@@ -132,7 +132,7 @@ GVX_TRACE("GxLighting::draw");
 
   GLCanvas* glcanvas = dynamic_cast<GLCanvas*>(&canvas);
 
-  if (glcanvas == 0)
+  if (glcanvas == nullptr)
     throw rutz::error("can't use GxLighting with non-OpenGL canvas", SRC_POS);
 
   glcanvas->light(0,

@@ -182,7 +182,7 @@ public:
 
   void insert_obj(nub::object* ptr, bool strong)
     {
-      GVX_PRECONDITION(ptr != 0);
+      GVX_PRECONDITION(ptr != nullptr);
 
       // Check if the object is already in the map
       map_type::iterator existing_site = m_obj_map.find(ptr->id());
@@ -221,7 +221,7 @@ namespace
         {
           if (m_iter == m_end)
             {
-              m_obj = 0;
+              m_obj = nullptr;
               return;
             }
 
@@ -239,7 +239,7 @@ namespace
     }
 
     iter_impl(map_type& m, map_type::iterator itr) :
-      m_map(m), m_iter(itr), m_obj(0), m_end(m.end())
+      m_map(m), m_iter(itr), m_obj(nullptr), m_end(m.end())
     {
       advance_to_valid();
     }
@@ -284,8 +284,8 @@ namespace
 
 nub::objectdb& nub::objectdb::instance()
 {
-  static nub::objectdb* instance = 0;
-  if (instance == 0)
+  static nub::objectdb* instance = nullptr;
+  if (instance == nullptr)
     {
       instance = new nub::objectdb;
     }

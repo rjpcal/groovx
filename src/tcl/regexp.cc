@@ -45,7 +45,7 @@ namespace
   Tcl_RegExp get_checked_regexp(const tcl::obj& patrn)
   {
     const int flags = 0;
-    // OK to pass Tcl_Interp*==0
+    // OK to pass Tcl_Interp*== nullptr
     Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patrn.get(), flags);
     if (!regexp)
       {
@@ -65,7 +65,7 @@ bool tcl::regexp::matches_string(const char* str)
 
   Tcl_RegExp regexp = get_checked_regexp(m_pattern);
 
-  // OK to pass Tcl_Interp*==0
+  // OK to pass Tcl_Interp*== nullptr
   int regex_result = Tcl_RegExpExec(0, regexp, str, str);
 
   switch (regex_result)

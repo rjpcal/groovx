@@ -89,7 +89,7 @@ namespace
     if (!isItInited)
     {
       for (const FieldMap* fmap = &itsFields;
-           fmap != 0;
+           fmap != nullptr;
            fmap = isItRecursive ? fmap->parent() : 0)
         {
           for (FieldMap::Iterator itr(fmap->ioFields()); itr.is_valid(); ++itr)
@@ -151,7 +151,7 @@ void tcl::defAllFields(tcl::pkg* pkg, const FieldMap& fieldmap,
 {
 GVX_TRACE("tcl::defAllFields");
 
-  for (const FieldMap* fmap = &fieldmap; fmap != 0; fmap = fmap->parent())
+  for (const FieldMap* fmap = &fieldmap; fmap != nullptr; fmap = fmap->parent())
     {
       for (FieldMap::Iterator itr(fmap->ioFields()); itr.is_valid(); ++itr)
         {

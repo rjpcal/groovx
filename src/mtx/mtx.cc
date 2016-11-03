@@ -608,8 +608,8 @@ GVX_TRACE("mtx::from_string");
 const mtx& mtx::empty_mtx()
 {
 GVX_TRACE("mtx::empty_mtx");
-  static mtx* m = 0;
-  if (m == 0)
+  static mtx* m = nullptr;
+  if (m == nullptr)
     {
       m = new mtx(mtx::zeros(0,0));
     }
@@ -658,7 +658,7 @@ namespace
                   const char* mtx_name,
                   bool trailing_newline)
   {
-    if (mtx_name != 0 && mtx_name[0] != '\0')
+    if (mtx_name != nullptr && mtx_name[0] != '\0')
       s << '[' << mtx_name << "] ";
 
     s << "mrows " << m.mrows() << " ncols " << m.ncols();

@@ -136,7 +136,7 @@ GVX_TRACE("media::esd_sound_rep::esd_sound_rep");
   AFfilehandle audiofile = afOpenFile(filename, "r",
                                       static_cast<AFfilesetup>(0));
 
-  if (audiofile == 0)
+  if (audiofile == nullptr)
     {
       if (last_error.error == true)
         throw rutz::error(last_error.what(), SRC_POS);
@@ -175,9 +175,9 @@ void media::esd_sound_rep::play()
   last_error.reset();
 
   // open the audio file
-  const AFfilehandle in_file = afOpenFile(fname, "rb", NULL);
+  const AFfilehandle in_file = afOpenFile(fname, "rb", nullptr);
 
-  if (in_file == 0)
+  if (in_file == nullptr)
     {
       if (last_error.error == true)
         throw rutz::error(last_error.what(), SRC_POS);
@@ -240,7 +240,7 @@ void media::esd_sound_rep::play()
   const int out_rate = int(in_rate);
 
   // connect to server
-  const int out_sock = esd_play_stream(out_format, out_rate, NULL, fname);
+  const int out_sock = esd_play_stream(out_format, out_rate, nullptr, fname);
 
   if (out_sock <= 0)
     {
@@ -270,7 +270,7 @@ void media::esd_sound_rep::play()
         throw rutz::error(last_error.what(), SRC_POS);
 
 #ifdef DEBUG_SAMPLES
-      if (fout != 0)
+      if (fout != nullptr)
         for (int i = 0; i < frames_read; ++i)
           {
             int val = 0;
@@ -289,13 +289,13 @@ void media::esd_sound_rep::play()
     }
 
 #ifdef DEBUG_SAMPLES
-  if (fout != 0)
+  if (fout != nullptr)
     fclose(fout);
 #endif
 
   // close up and go home
   close(out_sock);
-  if (afCloseFile(in_file) != 0)
+  if (afCloseFile(in_file) != nullptr)
     {
       if (last_error.error == true)
         throw rutz::error(last_error.what(), SRC_POS);

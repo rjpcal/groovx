@@ -51,7 +51,7 @@ namespace
   int v0 = 0;
   int v1 = 0;
   int v2 = 0;
-  nub::timer* tp1 = 0;
+  nub::timer* tp1 = nullptr;
 
   void v0_callback()
   {
@@ -61,7 +61,7 @@ namespace
   void v1_callback()
   {
     v1 -= 1;
-    GVX_ASSERT(tp1 != 0);
+    GVX_ASSERT(tp1 != nullptr);
     if (v1 < -3) tp1->cancel();
   }
 
@@ -123,7 +123,7 @@ namespace
     TEST_REQUIRE_EQ(v0, 1);
     TEST_REQUIRE_EQ(v1, -4);
 
-    tp1 = 0;
+    tp1 = nullptr;
   }
 
   void testTimerCancel()

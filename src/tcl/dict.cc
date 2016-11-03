@@ -103,13 +103,13 @@ tcl::obj tcl::dict::do_get(const char* key) const
 {
 GVX_TRACE("tcl::dict::do_get");
 
-  Tcl_Obj* dest = 0;
+  Tcl_Obj* dest = nullptr;
 
   tcl::obj key_obj = tcl::convert_from(key);
 
   if (Tcl_DictObjGet(0, m_obj.get(), key_obj.get(), &dest) == TCL_OK)
     {
-      if (dest != 0)
+      if (dest != nullptr)
         return tcl::obj(dest);
     }
 

@@ -62,7 +62,7 @@ public:
   bool is_repeating() const { return m_is_repeating; }
   void set_repeating(bool repeat) { m_is_repeating = repeat; }
 
-  bool is_pending() const { return m_token.get() != 0; }
+  bool is_pending() const { return m_token.get() != nullptr; }
 
   double elapsed_msec() const { return m_stopwatch.elapsed().msec(); }
 

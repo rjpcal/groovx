@@ -104,7 +104,7 @@ GVX_TRACE("genericDupInternalRepProc");
   GenericObj* gobj =
     static_cast<GenericObj*>(srcPtr->internalRep.otherValuePtr);
 
-  if (dupPtr->typePtr != 0 && dupPtr->typePtr->freeIntRepProc != 0)
+  if (dupPtr->typePtr != nullptr && dupPtr->typePtr->freeIntRepProc != nullptr)
     {
       dupPtr->typePtr->freeIntRepProc(dupPtr);
     }
@@ -120,7 +120,7 @@ GVX_TRACE("genericUpdateStringProc");
   GenericObj* gobj =
     static_cast<GenericObj*>(objPtr->internalRep.otherValuePtr);
 
-  GVX_ASSERT(gobj != 0);
+  GVX_ASSERT(gobj != nullptr);
 
   GVX_ASSERT(objPtr->bytes == 0);
 
@@ -180,7 +180,7 @@ public:
 
     int v = atoi(strrep);
 
-    if (objPtr->typePtr != 0 && objPtr->typePtr->freeIntRepProc != 0)
+    if (objPtr->typePtr != nullptr && objPtr->typePtr->freeIntRepProc != nullptr)
       {
         objPtr->typePtr->freeIntRepProc(objPtr);
       }

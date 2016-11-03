@@ -77,13 +77,13 @@ media::irix_audio_sound_rep::irix_audio_sound_rep(const char* filename) :
 {
 GVX_TRACE("media::irix_audio_sound_rep::irix_audio_sound_rep");
 
-  if (m_audio_config == 0)
+  if (m_audio_config == nullptr)
     throw rutz::error("error creating an ALconfig "
                       "while creating Sound", SRC_POS);
 
   sound_rep::check_filename(filename);
 
-  // Open filename as an audio file for reading. We pass a NULL
+  // Open filename as an audio file for reading. We pass a nullptr
   // AFfilesetup to indicate that file setup parameters should be
   // taken from the file itself.
   AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
@@ -165,7 +165,7 @@ GVX_TRACE("media::irix_audio_sound_rep::irix_audio_sound_rep");
 media::irix_audio_sound_rep::~irix_audio_sound_rep() noexcept
 {
 GVX_TRACE("media::irix_audio_sound_rep::~irix_audio_sound_rep");
-  if (m_audio_config != 0)
+  if (m_audio_config != nullptr)
     {
       alFreeConfig(m_audio_config);
     }
@@ -174,7 +174,7 @@ GVX_TRACE("media::irix_audio_sound_rep::~irix_audio_sound_rep");
 void media::irix_audio_sound_rep::play()
 {
 GVX_TRACE("media::irix_audio_sound_rep::play");
-  if (m_samples.size() == 0) return;
+  if (m_samples.size() == nullptr) return;
 
   ALport audio_port = alOpenPort("Sound::play", "w", m_audio_config);
   dbg_eval_nl(3, (void*) audio_port);

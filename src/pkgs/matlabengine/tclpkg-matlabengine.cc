@@ -62,9 +62,9 @@ protected:
   MatlabEngine() :
     itsEngine(engOpen("matlab -nosplash")),
     itsBufSize(512),
-    itsBuf(0)
+    itsBuf(nullptr)
   {
-    if (itsEngine == 0)
+    if (itsEngine == nullptr)
       {
         throw rutz::error("couldn't open MATLAB engine", SRC_POS);
       }
@@ -91,7 +91,7 @@ public:
   nub::ref<MtxObj> getMtx(const char* name)
   {
     mxArray* arr = engGetVariable(itsEngine, name);
-    if (arr == 0)
+    if (arr == nullptr)
       {
         throw rutz::error(rutz::sfmt("no such MATLAB variable: '%s'",
                                      name), SRC_POS);

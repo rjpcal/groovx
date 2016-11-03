@@ -132,7 +132,7 @@ public:
       itsBindingScript(script),
       itsResponseCount(0)
     {
-      GVX_PRECONDITION((erh != 0) && (widget.is_valid()));
+      GVX_PRECONDITION((erh != nullptr) && (widget.is_valid()));
       attend();
     }
 
@@ -199,10 +199,10 @@ public:
                                    itsEventSequence, script));
   }
 
-  void becomeInactive() const { itsState.reset(0); }
+  void becomeInactive() const { itsState.reset(nullptr); }
 
-  bool isActive() const   { return itsState.get() != 0; }
-  bool isInactive() const { return itsState.get() == 0; }
+  bool isActive() const   { return itsState.get() != nullptr; }
+  bool isInactive() const { return itsState.get() == nullptr; }
 
   static void handleResponseCallback(nub::ref<EventResponseHdlr> erh,
                                      const char* event_info)
@@ -254,7 +254,7 @@ rutz::tracer EventResponseHdlr::tracer;
 
 EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner) :
   itsOwner(owner),
-  itsState(0),
+  itsState(nullptr),
   itsInterp(tcl::event_loop::interp()),
   itsCallbackName(uniqCmdName("handler")),
   itsFeedbackMap(),
@@ -277,7 +277,7 @@ GVX_TRACE("EventResponseHdlr::Impl::~Impl");
   // force the destructor to run now, rather than after ~Impl()
   // finishes, so that the reference to *this in ActiveState does
   // not become invalid
-  itsState.reset(0);
+  itsState.reset(nullptr);
 }
 
 

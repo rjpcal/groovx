@@ -328,7 +328,7 @@ public:
                              io::reader& reader,
                              const rutz::fstring& name) const override
   {
-    if (itsSetter == 0) FieldAux::throwNotAllowed("read", SRC_POS);
+    if (itsSetter == nullptr) FieldAux::throwNotAllowed("read", SRC_POS);
 
     C& cobj = FieldAux::cast<C>(*obj);
 
@@ -343,7 +343,7 @@ public:
                             io::writer& writer,
                             const rutz::fstring& name) const override
   {
-    if (itsGetter == 0) FieldAux::throwNotAllowed("write", SRC_POS);
+    if (itsGetter == nullptr) FieldAux::throwNotAllowed("write", SRC_POS);
 
     const C& cobj = FieldAux::cast<const C>(*obj);
 
@@ -558,7 +558,7 @@ public:
   /// Construct from a sequence of Field objects.
   FieldMap(const Field* begin, const Field* end,
            const FieldMap* parent=0) :
-    rep(0)
+    rep(nullptr)
   {
     init(begin, end, parent);
   }
@@ -566,7 +566,7 @@ public:
   /// Construct from an array of Field objects.
   template<unsigned int N>
   FieldMap(Field const (&array)[N], const FieldMap* parent=0) :
-    rep(0)
+    rep(nullptr)
   {
     init(&array[0], &array[0]+N, parent);
   }
@@ -656,10 +656,10 @@ inline C& FieldAux::cast(F& p)
 {
   C* result = dynamic_cast<C*>(&p);
 
-  if (result == 0)
+  if (result == nullptr)
     {
       F* child = p.child();
-      if (child != 0)
+      if (child != nullptr)
         result = &(FieldAux::cast<C>(*child));
       else
         rutz::throw_bad_cast(typeid(C), typeid(F), SRC_POS);

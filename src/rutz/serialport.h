@@ -55,7 +55,7 @@ public:
   /// Returns the exit status of closing its stream
   int close();
 
-  bool is_closed() const { return (m_stream != 0); }
+  bool is_closed() const { return (m_stream != nullptr); }
 
   int exit_status() const { return m_exit_status; }
 

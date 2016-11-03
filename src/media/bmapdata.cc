@@ -318,7 +318,7 @@ GVX_TRACE("media::bmap_data::queue_update");
 void media::bmap_data::update_if_needed() const
 {
 GVX_TRACE("media::bmap_data::update_if_needed");
-  if (rep->m_updater.get() != 0)
+  if (rep->m_updater.get() != nullptr)
     {
       shared_ptr<update_func> tmp_updater(rep->m_updater);
 

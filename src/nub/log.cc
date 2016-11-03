@@ -167,7 +167,7 @@ GVX_TRACE("nub::log");
   if (s_copy_to_stdout)
     log_impl(std::cout, msg);
 
-  if (s_log_fstream.get() != 0)
+  if (s_log_fstream.get() != nullptr)
     log_impl(*s_log_fstream, msg);
 }
 
@@ -177,6 +177,6 @@ GVX_TRACE("nub::log");
   if (s_copy_to_stdout)
     log_impl(std::cout, msg);
 
-  if (s_log_fstream.get() != 0)
+  if (s_log_fstream.get() != nullptr)
     log_impl(*s_log_fstream, msg);
 }

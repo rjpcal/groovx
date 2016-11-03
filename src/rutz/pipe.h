@@ -62,7 +62,7 @@ public:
 
   int close();
 
-  bool is_closed() const { return (m_file == 0) || !m_stream.is_open(); }
+  bool is_closed() const { return (m_file == nullptr) || !m_stream.is_open(); }
 
   int exit_status() const { return m_exit_status; }
 
@@ -135,13 +135,13 @@ public:
   /// Set up a pipe to a child process with the given argv array.
   /** The mode should be "r" if the parent is reading, and "w" if the
       parent is writing. NOTE that the argv array MUST be
-      NULL-terminated! */
+      nullptr-terminated! */
   exec_pipe(const char* m, char* const* argv);
 
   /// Set up a pipe to a child process with the given list of args.
   /** The mode should be "r" if the parent is reading, and "w" if the
       parent is writing. NOTE that the variable length argument list
-      MUST NULL-terminated! */
+      MUST be nullptr-terminated! */
   exec_pipe(const char* m, const char* argv0, ...);
 
   /// Destructor cleans up child process and the pipe's file descriptors.
@@ -172,11 +172,11 @@ public:
   bidir_pipe();
 
   /// Set up a pipe to a child process with the given argv array.
-  /** BE SURE the argv array is NULL-terminated! */
+  /** BE SURE the argv array is nullptr-terminated! */
   bidir_pipe(char* const* argv);
 
   /// Set up a pipe to a child process with the given list of args.
-  /** BE SURE the variable-length argument list is NULL-terminated!
+  /** BE SURE the variable-length argument list is nullptr-terminated!
 
       A private copy will be made of all the arguments, so it is safe
       to pass const strings here (such as the result of str.c_str()
@@ -194,7 +194,7 @@ public:
       \code
       rutz::bidir_pipe prog;
       prog.block_child_signals();
-      prog.init("progname", "arg1", "arg2", NULL);
+      prog.init("progname", "arg1", "arg2", nullptr);
       \endcode
 
       This functionality is useful if the parent process is already
@@ -208,11 +208,11 @@ public:
   void block_child_sigint();
 
   /// Core code for starting the child process.
-  /** NOTE the argv array must be NULL-terminated! */
+  /** NOTE the argv array must be nullptr-terminated! */
   void init(char* const* argv);
 
   /// Core code for starting the child process.
-  /** BE SURE the variable-length argument list is NULL-terminated! */
+  /** BE SURE the variable-length argument list is nullptr-terminated! */
   void init(const char* argv0, ...);
 
   /// Get the stream that is receiving input from the child process.

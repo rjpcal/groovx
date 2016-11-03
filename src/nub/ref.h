@@ -67,7 +67,7 @@ namespace nub
     {
       nub::object* obj = get_checked_item(id);
       T* t = dynamic_cast<T*>(obj);
-      if (t == 0)
+      if (t == nullptr)
         rutz::throw_bad_cast(typeid(T), typeid(nub::object), SRC_POS);
       return t;
     }
@@ -188,7 +188,7 @@ nub::ref<To> dyn_cast(nub::ref<Fr> p)
 {
   Fr* f = p.get();
   To* t = dynamic_cast<To*>(f);
-  if (t == 0)
+  if (t == nullptr)
     rutz::throw_bad_cast(typeid(To), typeid(Fr), SRC_POS);
   return nub::ref<To>(t);
 }
@@ -312,7 +312,7 @@ inline nub::soft_ref<To> dyn_cast(nub::soft_ref<Fr> p)
     {
       Fr* f = p.get();
       To* t = dynamic_cast<To*>(f);
-      if (t == 0)
+      if (t == nullptr)
         rutz::throw_bad_cast(typeid(To), typeid(Fr), SRC_POS);
       return nub::soft_ref<To>(t);
     }
@@ -334,7 +334,7 @@ inline nub::soft_ref<To> dyn_cast_weak(nub::soft_ref<Fr> p)
     {
       Fr* f = p.get();
       To* t = dynamic_cast<To*>(f);
-      if (t == 0)
+      if (t == nullptr)
         return nub::soft_ref<To>(); // return a null soft_ref
       return nub::soft_ref<To>(t);
     }
@@ -354,7 +354,7 @@ inline nub::soft_ref<To> dyn_cast_weak(nub::ref<Fr> p)
 {
   Fr* f = p.get();
   To* t = dynamic_cast<To*>(f);
-  if (t == 0)
+  if (t == nullptr)
     return nub::soft_ref<To>(); // return a null soft_ref
   return nub::soft_ref<To>(t);
 }

@@ -49,8 +49,8 @@ GVX_DBG_REGISTER
 
 rutz::serial_port::serial_port(const char* serial_device) :
   m_filedes(::open(serial_device, O_RDONLY|O_NOCTTY|O_NONBLOCK)),
-  m_filebuf(0),
-  m_stream(0),
+  m_filebuf(nullptr),
+  m_stream(nullptr),
   m_exit_status(0)
 {
 GVX_TRACE("rutz::serial_port::serial_port");
@@ -113,10 +113,10 @@ GVX_TRACE("rutz::serial_port::close");
   if ( !is_closed() )
     {
       delete m_stream;
-      m_stream = 0;
+      m_stream = nullptr;
 
       delete m_filebuf;
-      m_filebuf = 0;
+      m_filebuf = nullptr;
 
       m_exit_status = ::close(m_filedes);
     }

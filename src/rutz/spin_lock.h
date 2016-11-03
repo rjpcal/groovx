@@ -71,7 +71,7 @@ public:
   {
     if (m_spin_lock)
       m_spin_lock->unlock();
-    m_spin_lock = 0;
+    m_spin_lock = nullptr;
   }
 };
 

@@ -89,7 +89,7 @@ rutz::backtrace& rutz::backtrace::current() noexcept
 
   void* const ptr = pthread_getspecific(current_backtrace_key);
 
-  if (ptr != 0)
+  if (ptr != nullptr)
     {
       return *(static_cast<rutz::backtrace*>(ptr));
     }
@@ -97,7 +97,7 @@ rutz::backtrace& rutz::backtrace::current() noexcept
   // else...
   rutz::backtrace* const bt = new (std::nothrow) rutz::backtrace;
 
-  if (bt == 0)
+  if (bt == nullptr)
     GVX_ABORT("memory allocation failed");
 
   pthread_setspecific(current_backtrace_key,

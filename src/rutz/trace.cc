@@ -150,7 +150,7 @@ rutz::trace::~trace() noexcept
       rutz::backtrace& c = rutz::backtrace::current();
       c.pop();
       rutz::prof* parent = c.top();
-      if (parent != 0)
+      if (parent != nullptr)
         parent->add_child_time(elapsed);
     }
 

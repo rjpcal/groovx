@@ -187,9 +187,9 @@ namespace
 }
 
 AglWrapper::AglWrapper(GlxOpts& opts) :
-  itsPixFormat(0),
-  itsContext(0),
-  itsDrawable(0)
+  itsPixFormat(nullptr),
+  itsContext(nullptr),
+  itsDrawable(nullptr)
 {
 GVX_TRACE("AglWrapper::AglWrapper");
 
@@ -197,15 +197,15 @@ GVX_TRACE("AglWrapper::AglWrapper");
 
   itsPixFormat = aglCreatePixelFormat(attribs.get());
 
-  if (itsPixFormat == 0)
+  if (itsPixFormat == nullptr)
     throw rutz::error("couldn't choose Apple-OpenGL pixel format",
                       SRC_POS);
 
-  AGLContext share = 0;
+  AGLContext share = nullptr;
 
   itsContext = aglCreateContext(itsPixFormat, share);
 
-  if (itsContext == 0)
+  if (itsContext == nullptr)
     throw rutz::error("couldn't create Apple-OpenGL graphics context",
                       SRC_POS);
 }
@@ -221,10 +221,10 @@ AglWrapper::~AglWrapper()
 GVX_TRACE("AglWrapper::~AglWrapper");
 
   aglDestroyPixelFormat(itsPixFormat);
-  itsPixFormat = 0;
+  itsPixFormat = nullptr;
 
   aglDestroyContext(itsContext);
-  itsContext = 0;
+  itsContext = nullptr;
 }
 
 bool AglWrapper::isDirect() const
@@ -275,7 +275,7 @@ void AglWrapper::makeCurrent()
 {
 GVX_TRACE("AglWrapper::makeCurrent");
 
-  GVX_ASSERT(itsDrawable != 0);
+  GVX_ASSERT(itsDrawable != nullptr);
 
   int status1 = aglSetDrawable(itsContext, itsDrawable);
 

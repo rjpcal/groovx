@@ -52,7 +52,7 @@ namespace
 
   bool            g_pdata_print_at_exit = false;
   std::string     g_pdata_fname = "prof.out";
-  FILE*           g_pdata_file = 0;
+  FILE*           g_pdata_file = nullptr;
   pthread_once_t  g_pdata_file_once = PTHREAD_ONCE_INIT;
   pthread_mutex_t g_pdata_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -61,7 +61,7 @@ namespace
     if (g_pdata_fname.length() > 0)
       g_pdata_file = fopen(g_pdata_fname.c_str(), "w");
 
-    if (g_pdata_file == 0)
+    if (g_pdata_file == nullptr)
       {
         fprintf(stderr,
                 "couldn't open profile file '%s' for writing\n",
@@ -75,7 +75,7 @@ namespace
 
   typedef rutz::static_stack<rutz::prof*, 2048> prof_list;
 
-  prof_list*      g_prof_list = 0;
+  prof_list*      g_prof_list = nullptr;
   pthread_once_t  g_prof_list_once = PTHREAD_ONCE_INIT;
   pthread_mutex_t g_prof_list_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -95,7 +95,7 @@ namespace
 
     g_prof_list = new (std::nothrow) prof_list;
 
-    if (g_prof_list == 0)
+    if (g_prof_list == nullptr)
       GVX_ABORT("memory allocation failed");
   }
 
@@ -150,7 +150,7 @@ rutz::prof::~prof() noexcept
 
       GVX_MUTEX_LOCK(&g_pdata_mutex);
 
-      if (g_pdata_file != 0)
+      if (g_pdata_file != nullptr)
         {
           print_prof_data(g_pdata_file);
         }
@@ -216,7 +216,7 @@ double rutz::prof::avg_self_time() const noexcept
 
 void rutz::prof::print_prof_data(FILE* file) const noexcept
 {
-  if (file == 0)
+  if (file == nullptr)
     GVX_ABORT("FILE* was null");
 
   const double total_elapsed_usec =
@@ -263,7 +263,7 @@ void rutz::prof::prof_summary_file_name(const char* fname)
 {
   GVX_MUTEX_LOCK(&g_pdata_mutex);
 
-  if (fname == 0)
+  if (fname == nullptr)
     fname = "";
 
   g_pdata_fname = fname;

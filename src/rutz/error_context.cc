@@ -66,7 +66,7 @@ namespace
 
     void* const ptr = pthread_getspecific(current_context_key);
 
-    if (ptr != 0)
+    if (ptr != nullptr)
       {
         return static_cast<rutz::error_context*>(ptr);
       }
@@ -74,7 +74,7 @@ namespace
     // else...
     rutz::error_context* const c = new (std::nothrow) rutz::error_context;
 
-    if (c == 0)
+    if (c == nullptr)
       GVX_ABORT("memory allocation failed");
 
     pthread_setspecific(current_context_key,
@@ -125,7 +125,7 @@ rutz::error_context_entry::error_context_entry(const rutz::fstring& msg)
   m_context(get_current_context())
 {
   if (!m_context->add_entry(this))
-    m_context = 0;
+    m_context = nullptr;
 }
 
 rutz::error_context_entry::~error_context_entry()

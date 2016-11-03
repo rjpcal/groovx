@@ -263,7 +263,7 @@ GLCanvas::~GLCanvas() noexcept
 {
 GVX_TRACE("GLCanvas::~GLCanvas");
   delete rep;
-  rep = 0;
+  rep = nullptr;
 }
 
 void GLCanvas::makeCurrent()
@@ -907,7 +907,7 @@ GVX_TRACE("GLCanvas::drawCircle");
 
   GLUquadricObj* qobj = gluNewQuadric();
 
-  if (qobj == 0)
+  if (qobj == nullptr)
     throw rutz::error("couldn't allocate GLUquadric object", SRC_POS);
 
   gluQuadricDrawStyle(qobj, fill ? GLU_FILL : GLU_SILHOUETTE);
@@ -923,7 +923,7 @@ GVX_TRACE("GLCanvas::drawCylinder");
 
   GLUquadric* qobj = gluNewQuadric();
 
-  if (qobj == 0)
+  if (qobj == nullptr)
     throw rutz::error("couldn't allocate GLUquadric object", SRC_POS);
 
   gluQuadricDrawStyle(qobj, fill ? GLU_FILL : GLU_LINE);
@@ -938,7 +938,7 @@ GVX_TRACE("GLCanvas::drawSphere");
 
   GLUquadric* qobj = gluNewQuadric();
 
-  if (qobj == 0)
+  if (qobj == nullptr)
     throw rutz::error("couldn't allocate GLUquadric object", SRC_POS);
 
   gluQuadricDrawStyle(qobj, fill ? GLU_FILL : GLU_LINE);
@@ -1226,25 +1226,25 @@ GVX_TRACE("GLCanvas::light");
   glEnable(GL_LIGHT0+lightnum);
   glEnable(GL_DEPTH_TEST);
 
-  if (spec != 0)
+  if (spec != nullptr)
     {
       const GLfloat fspecular[] = { spec->r(), spec->g(), spec->b(), spec->a() };
       glLightfv(GL_LIGHT0+lightnum, GL_SPECULAR, fspecular);
     }
 
-  if (diff != 0)
+  if (diff != nullptr)
     {
       const GLfloat fdiffuse[] = { diff->r(), diff->g(), diff->b(), diff->a() };
       glLightfv(GL_LIGHT0+lightnum, GL_DIFFUSE, fdiffuse);
     }
 
-  if (ambi != 0)
+  if (ambi != nullptr)
     {
       const GLfloat fambient[] =  { ambi->r(), ambi->g(), ambi->b(), ambi->a() };
       glLightfv(GL_LIGHT0+lightnum, GL_AMBIENT, fambient);
     }
 
-  if (posi != 0)
+  if (posi != nullptr)
     {
       const GLfloat w = (attenuation == 0.0) ? 0.0f : 1.0f;
       const GLfloat m = (attenuation == 0.0) ? 1.0f : GLfloat(1.0/attenuation);
@@ -1253,7 +1253,7 @@ GVX_TRACE("GLCanvas::light");
       glLightfv(GL_LIGHT0+lightnum, GL_POSITION, fposition);
     }
 
-  if (sdir != 0)
+  if (sdir != nullptr)
     {
       const GLfloat fdirection[] = { (GLfloat) sdir->x(), (GLfloat) sdir->y(), (GLfloat) sdir->z(), 0.0 };
 
@@ -1270,25 +1270,25 @@ void GLCanvas::material(const Gfx::RgbaColor* spec,
 {
   glEnable(GL_DEPTH_TEST);
 
-  if (spec != 0)
+  if (spec != nullptr)
     {
       const GLfloat specular[] = { spec->r(), spec->g(), spec->b(), spec->a() };
       glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
     }
 
-  if (diff != 0)
+  if (diff != nullptr)
     {
       const GLfloat diffuse[] =  { diff->r(), diff->g(), diff->b(), diff->a() };
       glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
     }
 
-  if (ambi != 0)
+  if (ambi != nullptr)
     {
       const GLfloat ambient[] =  { ambi->r(), ambi->g(), ambi->b(), ambi->a() };
       glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
     }
 
-  if (shininess != 0)
+  if (shininess != nullptr)
     glMaterialf(GL_FRONT, GL_SHININESS, GLfloat(*shininess));
 }
 

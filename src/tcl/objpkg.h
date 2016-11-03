@@ -89,7 +89,7 @@ namespace tcl
 
     virtual bool is_my_type(const nub::object* obj) const
     {
-      return (obj != 0 && dynamic_cast<const C*>(obj) != 0);
+      return (obj != nullptr && dynamic_cast<const C*>(obj) != nullptr);
     }
   };
 
@@ -109,7 +109,7 @@ namespace tcl
     const char* origName =
       nub::obj_factory::instance().register_creator(&C::make);
 
-    if (alias_name != 0)
+    if (alias_name != nullptr)
       nub::obj_factory::instance().register_alias(origName, alias_name);
   }
 }

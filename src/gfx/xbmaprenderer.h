@@ -128,7 +128,7 @@ GVX_TRACE("XBmapRenderer::doRender");
                                data.byte_alignment()*8, /* bitmap_pad */
                                0); /* bytes_per_line */
 
-  if (image == NULL)
+  if (image == nullptr)
     {
       throw rutz::error("couldn't create an XImage", SRC_POS);
     }

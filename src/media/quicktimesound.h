@@ -88,7 +88,7 @@ GVX_TRACE("media::quicktime_sound_rep::quicktime_sound_rep");
   FSSpec spec;
 
   err = FSGetCatalogInfo(&ref, kFSCatInfoNone,
-                         NULL, NULL, &spec, NULL);
+                         nullptr, nullptr, &spec, nullptr);
 
   if (noErr != err)
     throw rutz::error(rutz::sfmt("error in FSGetCatalogInfo: %d", int(err)),

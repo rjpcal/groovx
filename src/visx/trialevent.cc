@@ -69,7 +69,7 @@ using rutz::fstring;
 TrialEvent::TrialEvent(unsigned int msec) :
   itsTimer(msec, false),
   itsRequestedDelay(msec),
-  itsTrial(0),
+  itsTrial(nullptr),
   itsEstimatedOffset(0.0),
   itsTotalOffset(0.0),
   itsTotalError(0.0),
@@ -169,7 +169,7 @@ GVX_TRACE("TrialEvent::invokeTemplate");
     moving_average_ratio  * error;
 
   // Do the actual event callback.
-  if ( itsTrial != 0 )
+  if ( itsTrial != nullptr )
     {
       invoke(*itsTrial);
     }

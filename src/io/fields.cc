@@ -96,7 +96,7 @@ public:
 void FieldMap::init(const Field* begin, const Field* end,
                     const FieldMap* parent)
 {
-  GVX_ASSERT(rep == 0);
+  GVX_ASSERT(rep == nullptr);
   rep = new Impl(begin, end, parent);
 }
 
@@ -107,8 +107,8 @@ FieldMap::~FieldMap()
 
 const FieldMap* FieldMap::emptyFieldMap()
 {
-  static const FieldMap* emptyMap = 0;
-  if (emptyMap == 0)
+  static const FieldMap* emptyMap = nullptr;
+  if (emptyMap == nullptr)
     emptyMap = new FieldMap(static_cast<Field*>(0),
                             static_cast<Field*>(0),
                             static_cast<FieldMap*>(0));
@@ -117,7 +117,7 @@ const FieldMap* FieldMap::emptyFieldMap()
 
 bool FieldMap::hasParent() const noexcept
 {
-  return (rep->parent != 0);
+  return (rep->parent != nullptr);
 }
 
 const FieldMap* FieldMap::parent() const noexcept

@@ -87,7 +87,7 @@ GVX_TRACE("WindowSystem::winInfo[glx]");
       int actual_format_return = 0;
       unsigned long nitems_return = 0;
       unsigned long bytes_after_return = 0;
-      unsigned char* prop_return = 0;
+      unsigned char* prop_return = nullptr;
 
       XGetWindowProperty(dpy, Tk_WindowId(tkWin),
                          atoms[i],
@@ -255,13 +255,13 @@ TkWidgImpl::TkWidgImpl(tcl::TkWidget* o, tcl::interpreter& p,
                                 Tk_MainWindow(interp.intp()),
                                 const_cast<char*>(pathname),
                                 topLevel ? (char*) "" : (char*) 0)),
-  cursor(0),
+  cursor(nullptr),
   updatePending(false),
   shutdownRequested(false)
 {
 GVX_TRACE("TkWidgImpl::TkWidgImpl");
 
-  if (tkWin == 0)
+  if (tkWin == nullptr)
     {
       throw rutz::error("TkWidget couldn't create Tk_Window", SRC_POS);
     }
@@ -277,7 +277,7 @@ TkWidgImpl::~TkWidgImpl() noexcept
 {
 GVX_TRACE("TkWidgImpl::~TkWidgImpl");
 
-  if (cursor != 0)
+  if (cursor != nullptr)
     Tk_FreeCursor(Tk_Display(tkWin), cursor);
 
   Tk_DeleteEventHandler(tkWin, EVENT_MASK,
@@ -542,13 +542,13 @@ tcl::interpreter& tcl::TkWidget::interp() const
 
 Tk_Window tcl::TkWidget::tkWin() const
 {
-  GVX_ASSERT(rep->tkWin != 0);
+  GVX_ASSERT(rep->tkWin != nullptr);
   return rep->tkWin;
 }
 
 const char* tcl::TkWidget::pathname() const
 {
-  GVX_ASSERT(rep->tkWin != 0);
+  GVX_ASSERT(rep->tkWin != nullptr);
   return Tk_PathName(rep->tkWin);
 }
 
@@ -556,7 +556,7 @@ double tcl::TkWidget::pixelsPerInch() const
 {
 GVX_TRACE("tcl::TkWidget::pixelsPerInch");
 
-  GVX_ASSERT(rep->tkWin != 0);
+  GVX_ASSERT(rep->tkWin != nullptr);
 
   Screen* scr = Tk_Screen(rep->tkWin);
   const int screen_pixel_width = WidthOfScreen(scr);
@@ -573,13 +573,13 @@ GVX_TRACE("tcl::TkWidget::pixelsPerInch");
 void tcl::TkWidget::setCursor(const char* cursor_spec)
 {
 GVX_TRACE("tcl::TkWidget::setCursor");
-  if (cursor_spec == 0 || *cursor_spec == '\0')
+  if (cursor_spec == nullptr || *cursor_spec == '\0')
     {
       // Empty string means to unset the cursor
-      if (rep->cursor != 0)
+      if (rep->cursor != nullptr)
         Tk_FreeCursor(Tk_Display(rep->tkWin), rep->cursor);
 
-      rep->cursor = 0;
+      rep->cursor = nullptr;
 
       Tk_UndefineCursor(rep->tkWin);
     }
@@ -588,14 +588,14 @@ GVX_TRACE("tcl::TkWidget::setCursor");
       Tk_Cursor new_cursor = Tk_GetCursor(rep->interp.intp(),
                                           rep->tkWin, cursor_spec);
 
-      if (new_cursor == 0)
+      if (new_cursor == nullptr)
         {
           throw rutz::error(rutz::sfmt("couldn't set cursor to '%s'",
                                        cursor_spec), SRC_POS);
         }
 
       // OK, creating the new cursor succeeded, now free the old one
-      if (rep->cursor != 0)
+      if (rep->cursor != nullptr)
         Tk_FreeCursor(Tk_Display(rep->tkWin), rep->cursor);
 
       rep->cursor = new_cursor;
@@ -607,7 +607,7 @@ GVX_TRACE("tcl::TkWidget::setCursor");
 const char* tcl::TkWidget::getCursor() const
 {
 GVX_TRACE("tcl::TkWidget::getCursor");
-  return rep->cursor == 0
+  return rep->cursor == nullptr
     ? ""
     : Tk_NameOfCursor(Tk_Display(rep->tkWin), rep->cursor);
 }
@@ -751,7 +751,7 @@ GVX_TRACE("tcl::TkWidget::loseFocus");
   while (!Tk_IsTopLevel(toplev))
     {
       toplev = Tk_Parent(toplev);
-      GVX_ASSERT(toplev != 0);
+      GVX_ASSERT(toplev != nullptr);
     }
 
   const char* pathname = Tk_PathName(toplev);

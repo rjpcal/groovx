@@ -49,7 +49,7 @@ namespace
     FreeNode* next;
   };
 
-  FreeNode* fs_free_list = 0;
+  FreeNode* fs_free_list = nullptr;
 
   class shared_data_block : public data_block
   {
@@ -107,7 +107,7 @@ void* data_block::operator new(size_t bytes)
 GVX_TRACE("data_block::operator new");
 
   GVX_ASSERT(bytes == sizeof(data_block));
-  if (fs_free_list == 0)
+  if (fs_free_list == nullptr)
     return ::operator new(bytes);
   FreeNode* node = fs_free_list;
   fs_free_list = fs_free_list->next;
@@ -138,8 +138,8 @@ GVX_TRACE("data_block::~data_block");
 data_block* data_block::get_empty_data_block()
 {
 GVX_TRACE("data_block::get_empty_data_block");
-  static data_block* empty_rep = 0;
-  if (empty_rep == 0)
+  static data_block* empty_rep = nullptr;
+  if (empty_rep == nullptr)
     {
       empty_rep = new shared_data_block(0);
       empty_rep->incr_refcount();
@@ -151,7 +151,7 @@ GVX_TRACE("data_block::get_empty_data_block");
 data_block* data_block::make_data_copy(const double* data, size_t data_length)
 {
 GVX_TRACE("data_block::make_data_copy");
-  if (data == 0)
+  if (data == nullptr)
     return get_empty_data_block();
 
   data_block* p = new shared_data_block(data_length);

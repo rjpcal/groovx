@@ -157,7 +157,7 @@ private:
 
   void update() const
     {
-      if (m_elements==0)
+      if (m_elements== nullptr)
         split();
     }
 

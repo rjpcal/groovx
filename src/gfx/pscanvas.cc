@@ -95,7 +95,7 @@ public:
   Impl(const char* filename) :
     itsFstream(filename),
     itsStates(),
-    itsPrimPtr(0),
+    itsPrimPtr(nullptr),
     itsSpanFirst(true),
     itsSpanX(),
     itsSpanY()
@@ -116,7 +116,7 @@ public:
 
     const char* username = getenv("USER");
 
-    if (username != 0)
+    if (username != nullptr)
       itsFstream << "%%For: " << username << "\n";
 
     itsFstream << "%%Pages: 1\n"
@@ -398,7 +398,7 @@ public:
   void gsave(const char* comment)
   {
     indent(); itsFstream << "gsave";
-    if (comment != 0 && comment[0] != '\0')
+    if (comment != nullptr && comment[0] != '\0')
       itsFstream << " % " << comment;
     itsFstream << '\n';
     itsStates.push_back(current_state());
@@ -663,11 +663,11 @@ public:
 
   void beginPrimitive(Primitive* ptr, const char* comment)
   {
-    if (itsPrimPtr != 0)
+    if (itsPrimPtr != nullptr)
       raiseError("in beginPrimitive, already in graphics primitive",
                  SRC_POS);
 
-    if (comment != 0 && comment[0] != '\0')
+    if (comment != nullptr && comment[0] != '\0')
       {
         indent(); itsFstream << "% " << comment << " (begin)\n";
       }
@@ -678,14 +678,14 @@ public:
 
   void endPrimitive()
   {
-    if (itsPrimPtr == 0)
+    if (itsPrimPtr == nullptr)
       {
         raiseError("called endPrimitive outside graphics primitive",
                    SRC_POS);
       }
 
     itsPrimPtr->end(this);
-    itsPrimPtr = 0;
+    itsPrimPtr = nullptr;
   }
 };
 
@@ -1110,7 +1110,7 @@ void Gfx::PSCanvas::vertex3(const vec3d& v)
 {
 GVX_TRACE("Gfx::PSCanvas::vertex3");
 
-  if (rep->itsPrimPtr == 0)
+  if (rep->itsPrimPtr == nullptr)
     {
       rep->raiseError("called vertex() outside graphics primitive",
                       SRC_POS);

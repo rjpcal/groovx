@@ -45,7 +45,7 @@ GVX_DBG_REGISTER
 namespace
 {
   // For caching the latest subject of GlxWrapper::makeCurrent()
-  const GlxWrapper* currentGlxWrapper = 0;
+  const GlxWrapper* currentGlxWrapper = nullptr;
 
   // Builds a formatted data array for constructing a GLX context.
   class AttribList
@@ -184,8 +184,8 @@ namespace
 
 GlxWrapper::GlxWrapper(Display* dpy, GlxOpts& opts, GlxWrapper* share) :
   itsDisplay(dpy),
-  itsVisInfo(0),
-  itsContext(0),
+  itsVisInfo(nullptr),
+  itsContext(nullptr),
   itsCurrentWin(0)
 {
 GVX_TRACE("GlxWrapper::GlxWrapper");
@@ -215,7 +215,7 @@ GVX_TRACE("GlxWrapper::GlxWrapper");
 
   // If we had requested single-buffering, then now try for
   // double-buffering, since that can emulate single-buffering
-  if (itsVisInfo == 0)
+  if (itsVisInfo == nullptr)
     {
       attribs.doubleBuffer();
       itsVisInfo = glXChooseVisual(itsDisplay,
@@ -224,7 +224,7 @@ GVX_TRACE("GlxWrapper::GlxWrapper");
     }
 
   // If we still didn't get a matching visual, then bail out
-  if (itsVisInfo == 0)
+  if (itsVisInfo == nullptr)
     {
       throw rutz::error("couldn't find a matching visual", SRC_POS);
     }
@@ -240,7 +240,7 @@ GVX_TRACE("GlxWrapper::GlxWrapper");
 
   dbg_eval_nl(3, itsContext);
 
-  if (itsContext == 0)
+  if (itsContext == nullptr)
     {
       throw rutz::error("could not create GL rendering context", SRC_POS);
     }

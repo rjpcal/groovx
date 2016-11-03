@@ -89,12 +89,12 @@ public:
 
   bool is_valid() const noexcept
   {
-    if (m_counts == 0) // implies we are using strong ref's
+    if (m_counts == nullptr) // implies we are using strong ref's
       {
-        return (m_master != 0);
+        return (m_master != nullptr);
       }
 
-    // else... (m_counts != 0) implies we are using weak ref's
+    // else... (m_counts != nullptr) implies we are using weak ref's
 
     return m_counts->is_owner_alive();
   }
@@ -125,7 +125,8 @@ private:
         else          m_master->decr_ref_count();
       }
 
-    m_counts = 0; m_master = 0;
+    m_counts = nullptr;
+    m_master = nullptr;
   }
 
   void ensure_valid() const

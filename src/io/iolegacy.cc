@@ -345,7 +345,7 @@ GVX_TRACE("io::legacy_reader::read_base_class");
 ref<io::serializable> io::legacy_reader::read_root(io::serializable* given_root)
 {
 GVX_TRACE("io::legacy_reader::read_root");
-  if (given_root == 0)
+  if (given_root == nullptr)
     {
       return read_object("root_object");
     }

@@ -50,7 +50,7 @@ private:
 public:
   //! Construct with an initial value of 0.
   mutex_atomic_int() : x(0)
-  { pthread_mutex_init(&mut, NULL); }
+  { pthread_mutex_init(&mut, nullptr); }
 
   //! Get the maximum representable value
   static int max_value() { return std::numeric_limits<int>::max(); }

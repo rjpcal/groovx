@@ -88,7 +88,7 @@ namespace dummy_namespace_to_avoid_gcc411_bug_trial_cc
       th(t),
       status(Element::CHILD_OK)
     {
-      GVX_PRECONDITION(parent != 0);
+      GVX_PRECONDITION(parent != nullptr);
       nub::logging::add_obj_scope(*trial);
     }
 
@@ -131,7 +131,7 @@ public:
     rh(),
     th(),
     info(),
-    activeState(0)
+    activeState(nullptr)
   {}
 
   Trial* owner;
@@ -153,7 +153,7 @@ public:
 
   rutz::scoped_ptr<ActiveState> activeState;
 
-  bool isActive() const { return activeState.get() != 0; }
+  bool isActive() const { return activeState.get() != nullptr; }
 
   void becomeActive(Element* parent, soft_ref<Toglet> widget)
   {
@@ -162,7 +162,7 @@ public:
 
   void becomeInactive()
   {
-    activeState.reset(0);
+    activeState.reset(nullptr);
   }
 
   void installCurrentNode() const

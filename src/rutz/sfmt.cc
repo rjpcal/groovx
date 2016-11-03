@@ -43,7 +43,7 @@ fstring rutz::vsfmt(const char* fmt, va_list ap)
 {
   // if we have a null pointer or an empty string, then just return an
   // empty fstring
-  if (fmt == 0 || fmt[0] == '\0')
+  if (fmt == nullptr || fmt[0] == '\0')
     {
       return fstring();
     }

@@ -73,7 +73,7 @@ namespace
     tcl::command_group* cmd =
       tcl::command_group::lookup_original(ctx.interp(), name);
 
-    if (cmd == 0)
+    if (cmd == nullptr)
       throw rutz::error("no such tcl::command_group", SRC_POS);
 
     return rutz::sfmt("%s resolves to %s\n%s",

@@ -198,7 +198,7 @@ void tcl::script_app::init_in_macro_only()
 void tcl::script_app::handle_exception_in_macro_only
                                          (const std::exception* e)
 {
-  if (e != 0)
+  if (e != nullptr)
     std::cerr << "caught in main: ("
               << rutz::demangled_name(typeid(*e))
               << "): " << e->what() << '\n';
@@ -216,7 +216,7 @@ tcl::script_app::script_app(const char* appname,
   m_nowindow(false),
   m_splashmsg(),
   m_pkgdir(),
-  m_pkgs(0),
+  m_pkgs(nullptr),
   m_exitcode(0)
 {
   // We are going to take a quick pass over the command-line args here
@@ -337,7 +337,7 @@ void tcl::script_app::run()
   const rutz::time rs2 = rutz::time::sys_rusage();
   const rutz::time wc2 = rutz::time::wall_clock_now();
 
-  for (const package_info* pkg = m_pkgs; pkg->name != 0; ++pkg)
+  for (const package_info* pkg = m_pkgs; pkg->name != nullptr; ++pkg)
     {
       Tcl_StaticPackage(static_cast<Tcl_Interp*>(0),
                         // (Tcl_Interp*) 0 means this package
@@ -356,7 +356,7 @@ void tcl::script_app::run()
 
   if (!m_minimal)
     {
-      for (const package_info* pkg = m_pkgs; pkg->name != 0; ++pkg)
+      for (const package_info* pkg = m_pkgs; pkg->name != nullptr; ++pkg)
         {
           if (m_nowindow && pkg->requires_gui)
             continue;
@@ -364,7 +364,7 @@ void tcl::script_app::run()
           const char* ver =
             Tcl_PkgRequire(interp.intp(), pkg->name, pkg->version, 0);
 
-          if (ver == 0)
+          if (ver == nullptr)
             {
               std::cerr << "initialization error (package '"
                         << pkg->name << "'):\n";

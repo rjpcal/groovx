@@ -138,7 +138,7 @@ GVX_TRACE("Sound::play");
 
   forceLoad();
 
-  if (itsRep.get() != 0)
+  if (itsRep.get() != nullptr)
     itsRep->play();
 }
 
@@ -146,7 +146,7 @@ void Sound::forceLoad()
 {
 GVX_TRACE("Sound::forceLoad");
   // check if we have a valid filename without a corresponding valid rep
-  if (itsRep.get() == 0 && !itsFilename.is_empty())
+  if (itsRep.get() == nullptr && !itsFilename.is_empty())
     itsRep.reset(new sound_rep_t(itsFilename.c_str()));
 }
 
@@ -154,7 +154,7 @@ void Sound::setFile(const char* filename)
 {
 GVX_TRACE("Sound::setFile");
 
-  if (filename == 0)
+  if (filename == nullptr)
     filename = "";
 
   if (itsFilename != filename)

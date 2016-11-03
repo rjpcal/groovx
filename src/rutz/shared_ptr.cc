@@ -45,7 +45,7 @@ rutz::shared_ptr_aux::set_check_function(rutz::shared_ptr_aux::ptr_check_functio
 
 void rutz::shared_ptr_aux::check_ptr(const void* p)
 {
-  if (g_function != 0)
+  if (g_function != nullptr)
     (*g_function)(p);
 }
 

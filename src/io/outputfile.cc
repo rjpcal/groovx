@@ -91,7 +91,7 @@ void output_file::set_filename(rutz::fstring fname)
 
 bool output_file::has_stream() const
 {
-  return (m_stream.get() != 0 && !m_stream->fail());
+  return (m_stream.get() != nullptr && !m_stream->fail());
 }
 
 std::ostream& output_file::stream()

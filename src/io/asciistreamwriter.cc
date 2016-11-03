@@ -256,7 +256,7 @@ namespace
 
     if (obj.is_valid())
       {
-        GVX_ASSERT(dynamic_cast<const io::serializable*>(obj.get()) != 0);
+        GVX_ASSERT(dynamic_cast<const io::serializable*>(obj.get()) != nullptr);
 
         type = obj->obj_typename();
         id = m_id_map.get(obj->id());

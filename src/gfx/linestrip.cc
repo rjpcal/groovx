@@ -46,7 +46,7 @@ using geom::vec2d;
 using geom::vec3d;
 
 Gfx::LineStrip::LineStrip() :
-  canvas(0),
+  canvas(nullptr),
   pts(0),
   width(1.0),
   join(false),
@@ -76,7 +76,7 @@ GVX_TRACE("Gfx::LineStrip::begin");
       throw rutz::error("LineStrip::end() not called before LineStrip::begin()", SRC_POS);
     }
 
-  GVX_ASSERT(canvas == 0);
+  GVX_ASSERT(canvas == nullptr);
 
   canvas = &c;
   width = w;
@@ -113,14 +113,14 @@ GVX_TRACE("Gfx::LineStrip::end");
 
   if (pts.size() == 0) return;
 
-  GVX_ASSERT(canvas != 0);
+  GVX_ASSERT(canvas != nullptr);
 
   if (join)
     drawJoinedLineStrip();
   else
     drawSimpleLineStrip();
 
-  canvas = 0;
+  canvas = nullptr;
   pts.clear();
 }
 

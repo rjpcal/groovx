@@ -153,8 +153,8 @@ namespace
     :
     m_opened(false),
     m_mode(0),
-    m_file(0),
-    m_bzfile(0)
+    m_file(nullptr),
+    m_bzfile(nullptr)
   {
     // no append nor read/write mode
     if ( (om & std::ios::ate) || (om & std::ios::app)
@@ -168,7 +168,7 @@ namespace
           {
             m_file = fopen(name, "rb");
 
-            if (m_file == 0)
+            if (m_file == nullptr)
               throw error(sfmt("couldn't open file '%s' for reading",
                                name), SRC_POS);
 
@@ -179,7 +179,7 @@ namespace
                                       /*unused_memory*/ 0,
                                       /*nunused*/ 0);
 
-            if (m_bzfile == 0)
+            if (m_bzfile == nullptr)
               {
                 fclose(m_file);
 
@@ -195,7 +195,7 @@ namespace
           {
             m_file = fopen(name, "wb");
 
-            if (m_file == 0)
+            if (m_file == nullptr)
               throw error(sfmt("couldn't open file '%s' for writing",
                                name), SRC_POS);
 
@@ -205,7 +205,7 @@ namespace
                                        /*verbosity*/ 0,
                                        /*workFactor*/ 30);
 
-            if (m_bzfile == 0)
+            if (m_bzfile == nullptr)
               {
                 fclose(m_file);
 
@@ -216,7 +216,7 @@ namespace
             setp(m_buf, m_buf+(s_buf_size-1));
           }
 
-        if (m_bzfile != NULL)
+        if (m_bzfile != nullptr)
           {
             m_opened = true;
             m_mode = om;

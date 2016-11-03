@@ -184,7 +184,7 @@ namespace rutz
         creator = m_map.get_ptr_for_key(key);
       }
 
-      if (creator == 0)
+      if (creator == nullptr)
         {
           // note that we must call try_fallback() with our mutex
           // UN-locked because the intention is that the fallback
@@ -249,7 +249,7 @@ namespace rutz
     {
       GVX_MUTEX_LOCK(&m_mutex);
 
-      if (key == 0)
+      if (key == nullptr)
         key = rutz::demangled_name
           (typeid(typename rutz::type_traits<derived_t>::pointee_t));
 
@@ -269,7 +269,7 @@ namespace rutz
       rutz::creator_base<base_t>* creator =
         m_map.get_ptr_for_key(orig_key);
 
-      if (creator != 0)
+      if (creator != nullptr)
         {
           m_map.set_ptr_for_key(alias_key, creator->clone());
         }
@@ -278,7 +278,7 @@ namespace rutz
     /// Query whether a given key is a valid, known key in the factory.
     bool is_valid_key(const char* key) const
     {
-      return (this->find_creator(key) != 0);
+      return (this->find_creator(key) != nullptr);
     }
 
     /// Get a list of known keys, separated by sep.
@@ -296,7 +296,7 @@ namespace rutz
     {
       rutz::creator_base<base_t>* creator = this->find_creator(type);
 
-      if (creator == 0) return base_t();
+      if (creator == nullptr) return base_t();
 
       return creator->create();
     }
@@ -308,7 +308,7 @@ namespace rutz
     {
       rutz::creator_base<base_t>* creator = this->find_creator(type);
 
-      if (creator == 0)
+      if (creator == nullptr)
         {
           GVX_MUTEX_LOCK(&m_mutex);
 

@@ -124,7 +124,7 @@ public:
       share the pointee as if they were two normal shared_ptr onto it
       (even though ptr and other are shared_ptr of different
       types). If the dynamic_cast fails then ptr will point to
-      NULL. Typical usage of this is to recover an expected derived
+      nullptr. Typical usage of this is to recover an expected derived
       class from a base class: for example, <PRE>
 
       // get our visual cortex from Brain. Brain provides a getVC()
@@ -139,7 +139,7 @@ public:
       shared_ptr<VisualCortexEyeMvt> vcem;
       vcem.dynCastFrom(vcx);
 
-      // vcem points to NULL unless the pointee of vcx could be
+      // vcem points to nullptr unless the pointee of vcx could be
       // dynamic_cast'ed to vcem's type.
       if (vcem.isValid()) {
       // yes, indeed we are running a VisualCortexEyeMvt
@@ -171,10 +171,10 @@ public:
   inline T* get() const noexcept { return px; }
 
   //! Query whether the pointee is non-null.
-  bool is_valid() const noexcept { return px != 0; }
+  bool is_valid() const noexcept { return px != nullptr; }
 
   //! Query whether the pointee is non-null.
-  bool is_invalid() const noexcept { return px == 0; }
+  bool is_invalid() const noexcept { return px == nullptr; }
 
   //! Query how many shared_ptr's are sharing the pointee.
   inline int use_count() const noexcept { return pn->atomic_get(); }
@@ -258,7 +258,7 @@ namespace rutz
 // ######################################################################
 template <class T> inline
 rutz::shared_ptr<T>::shared_ptr(T* p) :
-  px(p), pn(0)
+  px(p), pn(nullptr)
 {
 #if defined(GVX_MEM_DEBUG)
   // Only call check_ptr() if GVX_MEM_DEBUG has been defined, because
@@ -294,8 +294,8 @@ rutz::shared_ptr<T>::~shared_ptr()
 {
   if (pn->atomic_decr_test_zero())
     {
-      delete px; px = 0;
-      delete pn; pn = 0;
+      delete px; px = nullptr;
+      delete pn; pn = nullptr;
     }
 }
 
@@ -337,14 +337,14 @@ rutz::shared_ptr<T>::dyn_cast_from(const rutz::shared_ptr<TT>& r)
   // simulate a destroy:
   if (pn->atomic_decr_test_zero())
     {
-      delete px; px = 0;
-      delete pn; pn = 0;
+      delete px; px = nullptr;
+      delete pn; pn = nullptr;
     }
 
   // first do the dynamic_cast so we can test whether it succeeded:
   T* const new_px = dynamic_cast<T*>(r.px);
 
-  if (new_px == 0 && r.px != 0)
+  if (new_px == nullptr && r.px != nullptr)
     {
       // the cast failed, so we set up a new ref count (NOTE: we DON'T
       // want to share the ref count in this case, because the

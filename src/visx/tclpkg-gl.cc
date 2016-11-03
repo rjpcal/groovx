@@ -125,7 +125,7 @@ namespace GLTcl
   inline tcl::list get(GLenum param_tag)
   {
     const AttribInfo* theInfo = theAttribMap[param_tag];
-    if ( theInfo == 0 )
+    if ( theInfo == nullptr )
       {
         throw rutz::error("invalid or unsupported enumerant", SRC_POS);
       }

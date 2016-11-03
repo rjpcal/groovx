@@ -85,7 +85,7 @@ public:
     responseEvents(),
     abortEvents(),
     timer(),
-    trial(0)
+    trial(nullptr)
     {}
 
   rutz::shared_ptr<nub::scheduler> scheduler;
@@ -270,7 +270,7 @@ void TimingHdlr::Impl::scheduleAll(EventGroup& events,
                                    Trial* trial)
 {
 GVX_TRACE("TimingHdlr::Impl::scheduleAll");
-  GVX_PRECONDITION(trial != 0);
+  GVX_PRECONDITION(trial != nullptr);
 
   // In order to ensure that events get scheduled in the proper order,
   // even if the whole event loop is getting bogged down, we do two

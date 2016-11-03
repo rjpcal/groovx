@@ -47,6 +47,6 @@ void rutz::mutex_lock_class::unlock() noexcept
   if (m_mutex)
     {
       pthread_mutex_unlock(m_mutex);
-      m_mutex = 0;
+      m_mutex = nullptr;
     }
 }

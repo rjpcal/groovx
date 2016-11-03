@@ -263,7 +263,7 @@ public:
     GVX_TRACE("MatlabTrialWriter::write_object");
     if (!obj.is_valid())
       return;
-    if (dynamic_cast<const GxShapeKit*>(obj.get()) != 0)
+    if (dynamic_cast<const GxShapeKit*>(obj.get()) != nullptr)
       {
         itsOs << obj->id() << ' ';
       }

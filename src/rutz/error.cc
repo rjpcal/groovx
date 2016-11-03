@@ -49,7 +49,7 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  rutz::backtrace* g_last_backtrace = 0;
+  rutz::backtrace* g_last_backtrace = nullptr;
   pthread_mutex_t  g_last_backtrace_mutex = PTHREAD_MUTEX_INITIALIZER;
 }
 
@@ -67,7 +67,7 @@ GVX_TRACE("rutz::error::error()");
   {
     GVX_MUTEX_LOCK(&g_last_backtrace_mutex);
 
-    if (g_last_backtrace == 0)
+    if (g_last_backtrace == nullptr)
       g_last_backtrace = new rutz::backtrace(*m_backtrace);
     else
       *g_last_backtrace = *m_backtrace;
@@ -94,7 +94,7 @@ GVX_TRACE("rutz::error::error(fstring)");
   {
     GVX_MUTEX_LOCK(&g_last_backtrace_mutex);
 
-    if (g_last_backtrace == 0)
+    if (g_last_backtrace == nullptr)
       g_last_backtrace = new rutz::backtrace(*m_backtrace);
     else
       *g_last_backtrace = *m_backtrace;
@@ -111,13 +111,13 @@ rutz::error::error(const rutz::error& other) noexcept :
   m_msg(other.m_msg),
   m_context(other.m_context),
   m_file_pos(other.m_file_pos),
-  m_backtrace(0)
+  m_backtrace(nullptr)
 {
 GVX_TRACE("rutz::error::error(copy)");
 
   dbg_dump(4, m_msg);
 
-  if (other.m_backtrace != 0)
+  if (other.m_backtrace != nullptr)
     m_backtrace =
       new (std::nothrow) rutz::backtrace(*other.m_backtrace);
 }
@@ -164,7 +164,7 @@ void rutz::error::get_last_backtrace(rutz::backtrace& dst)
 {
   GVX_MUTEX_LOCK(&g_last_backtrace_mutex);
 
-  if (g_last_backtrace == 0)
+  if (g_last_backtrace == nullptr)
     g_last_backtrace = new rutz::backtrace();
 
   dst = *g_last_backtrace;

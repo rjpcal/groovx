@@ -83,19 +83,19 @@ private:
 };
 
 GlxRasterFont::GlxRasterFont(const char* fontname) :
-  itsFontInfo(0),
+  itsFontInfo(nullptr),
   itsFontName(fontname ? fontname : "fixed"),
   itsListBase(0),
   itsListCount(0)
 {
 GVX_TRACE("GlxRasterFont::GlxRasterFont");
 
-  static Display* dpy = 0;
+  static Display* dpy = nullptr;
 
-  if (dpy == 0)
+  if (dpy == nullptr)
     {
       dpy = XOpenDisplay(getenv("DISPLAY"));
-      if (dpy == 0)
+      if (dpy == nullptr)
         throw rutz::error("couldn't open X server connection", SRC_POS);
     }
 
@@ -108,7 +108,7 @@ GVX_TRACE("GlxRasterFont::GlxRasterFont");
 
   dbg_eval_nl(2, itsFontInfo);
 
-  if (itsFontInfo == 0)
+  if (itsFontInfo == nullptr)
     {
       throw rutz::error(rutz::sfmt("couldn't load X font '%s'",
                                    xname.c_str()),
@@ -128,7 +128,7 @@ GVX_TRACE("GlxRasterFont::GlxRasterFont");
 
   if (itsListBase==0)
     {
-      XFreeFontInfo(NULL, itsFontInfo, 1);
+      XFreeFontInfo(nullptr, itsFontInfo, 1);
       throw rutz::error("couldn't allocate GL display lists", SRC_POS);
     }
 
@@ -154,7 +154,7 @@ GlxRasterFont::~GlxRasterFont() noexcept
 GVX_TRACE("GlxRasterFont::~GlxRasterFont");
 
   GLCanvas::deleteLists(itsListBase, itsListCount);
-  XFreeFontInfo(NULL, itsFontInfo, 1);
+  XFreeFontInfo(nullptr, itsFontInfo, 1);
 }
 
 rutz::fstring GlxRasterFont::pickXFont(const char* spec)

@@ -51,7 +51,7 @@ namespace
     std::vector<size_t> offsets;
     size_t totalchars = 0;
     for (const char* arg = argv0;
-         arg != 0;
+         arg != nullptr;
          arg = va_arg(a, char*))
       {
         args.push_back(arg);
@@ -62,7 +62,7 @@ namespace
 
     void* mem = malloc(totalchars + (args.size() + 1) * sizeof(char*));
 
-    if (mem == 0)
+    if (mem == nullptr)
       throw rutz::error("memory allocation failed", SRC_POS);
 
     char** const ptrs = static_cast<char**>(mem);
@@ -101,7 +101,7 @@ int rutz::shell_pipe::close()
     {
       m_stream.close();
       m_exit_status = pclose(m_file);
-      m_file = 0;
+      m_file = nullptr;
     }
   return m_exit_status;
 }
@@ -146,7 +146,7 @@ namespace
 {
   bool is_read_mode(const char* m)
   {
-    if (m == 0) throw rutz::error("invalid read/write mode", SRC_POS);
+    if (m == nullptr) throw rutz::error("invalid read/write mode", SRC_POS);
     switch (m[0])
       {
       case 'r': return true;
@@ -179,7 +179,7 @@ void rutz::exec_pipe::init(char* const* argv)
                                   std::ios::out|std::ios::binary);
         }
 
-      if (m_stream == 0)
+      if (m_stream == nullptr)
         throw rutz::error("couldn't open stream in parent process", SRC_POS);
     }
   else // in child
@@ -221,7 +221,7 @@ rutz::exec_pipe::exec_pipe(const char* m, char* const* argv) :
   m_parent_is_reader(is_read_mode(m)),
   m_fds(),
   m_child(),
-  m_stream(0)
+  m_stream(nullptr)
 {
   this->init(argv);
 }
@@ -230,7 +230,7 @@ rutz::exec_pipe::exec_pipe(const char* m, const char* argv0, ...) :
   m_parent_is_reader(is_read_mode(m)),
   m_fds(),
   m_child(),
-  m_stream(0)
+  m_stream(nullptr)
 {
   va_list a;
   va_start(a, argv0);
@@ -250,13 +250,13 @@ rutz::exec_pipe::~exec_pipe() noexcept
 
 std::iostream& rutz::exec_pipe::stream() noexcept
 {
-  GVX_ASSERT(m_stream != 0);
+  GVX_ASSERT(m_stream != nullptr);
   return *m_stream;
 }
 
 void rutz::exec_pipe::close()
 {
-  if (m_stream != 0)
+  if (m_stream != nullptr)
     {
       m_stream->close();
       m_fds.close_reader();
@@ -282,8 +282,8 @@ rutz::bidir_pipe::bidir_pipe() :
   m_in_pipe(),
   m_out_pipe(),
   m_child(),
-  m_in_stream(0),
-  m_out_stream(0),
+  m_in_stream(nullptr),
+  m_out_stream(nullptr),
   m_block_child_sigint(true)
 {
   // user must call init() before using the bidir_pipe's streams
@@ -293,8 +293,8 @@ rutz::bidir_pipe::bidir_pipe(char* const* argv) :
   m_in_pipe(),
   m_out_pipe(),
   m_child(),
-  m_in_stream(0),
-  m_out_stream(0),
+  m_in_stream(nullptr),
+  m_out_stream(nullptr),
   m_block_child_sigint(true)
 {
   this->init(argv);
@@ -304,8 +304,8 @@ rutz::bidir_pipe::bidir_pipe(const char* argv0, ...) :
   m_in_pipe(),
   m_out_pipe(),
   m_child(),
-  m_in_stream(0),
-  m_out_stream(0),
+  m_in_stream(nullptr),
+  m_out_stream(nullptr),
   m_block_child_sigint(true)
 {
   va_list a;
@@ -343,7 +343,7 @@ void rutz::bidir_pipe::init(char* const* argv)
         new rutz::stdiostream(m_in_pipe.reader(),
                               std::ios::in|std::ios::binary);
 
-      if (m_in_stream == 0)
+      if (m_in_stream == nullptr)
         throw rutz::error("couldn't open input stream in parent process",
                           SRC_POS);
 
@@ -353,7 +353,7 @@ void rutz::bidir_pipe::init(char* const* argv)
         new rutz::stdiostream(m_out_pipe.writer(),
                               std::ios::out|std::ios::binary);
 
-      if (m_out_stream == 0)
+      if (m_out_stream == nullptr)
         throw rutz::error("couldn't open input stream in parent process",
                           SRC_POS);
     }
@@ -407,19 +407,19 @@ void rutz::bidir_pipe::init(const char* argv0, ...)
 
 std::iostream& rutz::bidir_pipe::in_stream() noexcept
 {
-  GVX_ASSERT(m_in_stream != 0);
+  GVX_ASSERT(m_in_stream != nullptr);
   return *m_in_stream;
 }
 
 std::iostream& rutz::bidir_pipe::out_stream() noexcept
 {
-  GVX_ASSERT(m_out_stream != 0);
+  GVX_ASSERT(m_out_stream != nullptr);
   return *m_out_stream;
 }
 
 void rutz::bidir_pipe::close_in()
 {
-  if (m_in_stream != 0)
+  if (m_in_stream != nullptr)
     {
       m_in_stream->close();
     }
@@ -430,7 +430,7 @@ void rutz::bidir_pipe::close_in()
 
 void rutz::bidir_pipe::close_out()
 {
-  if (m_out_stream != 0)
+  if (m_out_stream != nullptr)
     {
       m_out_stream->close();
     }

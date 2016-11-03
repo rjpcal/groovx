@@ -53,7 +53,7 @@ io::xml_parser::xml_parser(std::istream& is, int bufsize) :
   m_buf_size(bufsize)
 {
 GVX_TRACE("io::xml_parser::xml_parser");
-  if (m_parser == 0)
+  if (m_parser == nullptr)
     {
       throw rutz::error("couldn't allocate memory for XML_Parser",
                         SRC_POS);
@@ -81,7 +81,7 @@ void io::xml_parser::c_element_start(void* data, const char* el, const char** at
 {
 GVX_TRACE("io::xml_parser::c_element_start");
   io::xml_parser* p = static_cast<io::xml_parser*>(data);
-  GVX_ASSERT(p != 0);
+  GVX_ASSERT(p != nullptr);
   p->element_start(el, attr);
 }
 
@@ -89,7 +89,7 @@ void io::xml_parser::c_element_end(void* data, const char* el)
 {
 GVX_TRACE("io::xml_parser::c_element_end");
   io::xml_parser* p = static_cast<io::xml_parser*>(data);
-  GVX_ASSERT(p != 0);
+  GVX_ASSERT(p != nullptr);
   p->element_end(el);
 }
 
@@ -97,7 +97,7 @@ void io::xml_parser::c_character_data(void* data, const char* text, int length)
 {
 GVX_TRACE("io::xml_parser::c_character_data");
   io::xml_parser* p = static_cast<io::xml_parser*>(data);
-  GVX_ASSERT(p != 0);
+  GVX_ASSERT(p != nullptr);
   GVX_ASSERT(length >= 0);
   p->character_data(text, size_t(length));
 }
@@ -108,7 +108,7 @@ GVX_TRACE("io::xml_parser::parse");
   while (1)
     {
       void* const buf = XML_GetBuffer(m_parser, m_buf_size);
-      if (buf == 0)
+      if (buf == nullptr)
         {
           throw rutz::error("couldn't get buffer in io::xml_parser::parse()",
                             SRC_POS);

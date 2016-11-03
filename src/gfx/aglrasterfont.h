@@ -163,7 +163,7 @@ AglRasterFont::~AglRasterFont() noexcept
 {
 GVX_TRACE("AglRasterFont::~AglRasterFont");
 
-  if (aglGetCurrentContext() != 0)
+  if (aglGetCurrentContext() != nullptr)
     {
       GLCanvas::deleteLists(itsListBase, itsListCount);
     }
@@ -231,7 +231,7 @@ GVX_TRACE("AglRasterFont::pickAppleFont");
 
       result.fontID = getFontId(family);
 
-      result.face = 0;
+      result.face = nullptr;
 
       if (strcmp(weight, "bold") == 0)
         result.face |= bold;
@@ -265,7 +265,7 @@ GVX_TRACE("AglRasterFont::pickAppleFont");
       if (!pxlsize.is_empty())
         result.size = atoi(pxlsize.c_str());
 
-      result.face = 0;
+      result.face = nullptr;
 
       const char* mod = mods.c_str();
 
@@ -330,21 +330,21 @@ GVX_TRACE("AglRasterFont::bboxOf");
   CGrafPtr saveWorld;
   GDHandle saveDevice;
 
-  static GWorldPtr gWorld = NULL;
+  static GWorldPtr gWorld = nullptr;
 
-  if (gWorld == 0)
+  if (gWorld == nullptr)
     {
       Rect rect = {0, 0, 1, 1};
       SetFractEnable(0);
 
-      if (NewGWorld(&gWorld, 0, &rect, NULL, NULL, 0) != noErr)
+      if (NewGWorld(&gWorld, 0, &rect, nullptr, nullptr, 0) != noErr)
         {
           throw rutz::error("NewGWorld failed", SRC_POS);
         }
     }
 
   GetGWorld(&saveWorld, &saveDevice);
-  SetGWorld(gWorld, NULL);
+  SetGWorld(gWorld, nullptr);
 
   TextFont(itsFontSpec.fontID);
   TextFace(itsFontSpec.face);

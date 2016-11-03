@@ -119,7 +119,7 @@ private:
 public:
   static void create(int argc, char** argv, bool nowindow)
   {
-    GVX_ASSERT(s_event_loop_impl == 0);
+    GVX_ASSERT(s_event_loop_impl == nullptr);
 
     s_event_loop_impl = new event_loop_impl(argc, argv, nowindow);
     Tcl_CreateExitHandler(c_exit_handler, static_cast<void*>(0));
@@ -127,7 +127,7 @@ public:
 
   static event_loop_impl* get()
   {
-    if (s_event_loop_impl == 0)
+    if (s_event_loop_impl == nullptr)
       {
         throw rutz::error("no tcl::event_loop object has yet been created",
                           SRC_POS);
@@ -153,7 +153,7 @@ public:
 #endif
 };
 
-tcl::event_loop_impl* tcl::event_loop_impl::s_event_loop_impl = 0;
+tcl::event_loop_impl* tcl::event_loop_impl::s_event_loop_impl = nullptr;
 
 //---------------------------------------------------------------------
 //
@@ -165,9 +165,9 @@ tcl::event_loop_impl::event_loop_impl(int argc, char** argv, bool nowindow) :
   m_argc(argc),
   m_argv(const_cast<const char**>(argv)),
   m_interp(Tcl_CreateInterp()),
-  m_startup_filename(0),
-  m_argv0(0),
-  m_stdin_chan(0),
+  m_startup_filename(nullptr),
+  m_argv0(nullptr),
+  m_stdin_chan(nullptr),
   m_command(),
   m_got_partial(false),
   m_is_interactive(isatty(0)),
@@ -342,7 +342,7 @@ GVX_TRACE("tcl::event_loop_impl::readline_line_complete");
 
   rl_callback_handler_remove();
 
-  get()->handle_line(line, line == 0 ? -1 : int(strlen(line)));
+  get()->handle_line(line, line == nullptr ? -1 : int(strlen(line)));
 }
 
 #endif
@@ -416,7 +416,7 @@ GVX_TRACE("tcl::event_loop_impl::handle_line");
       return;
     }
 
-  GVX_ASSERT(line != 0);
+  GVX_ASSERT(line != nullptr);
 
   m_command += line;
   m_command += "\n";
@@ -464,12 +464,12 @@ GVX_TRACE("tcl::event_loop_impl::eval_command");
   bool should_display_result = false;
 
 #ifdef GVX_WITH_READLINE
-  char* expansion = 0;
+  char* expansion = nullptr;
   const int status =
     history_expand(const_cast<char*>(m_command.c_str()), &expansion);
 #else
   const char* expansion = m_command.data();
-  const int status = 0;
+  const int status = nullptr;
 #endif
 
   dbg_eval_nl(3, m_command.c_str());
@@ -600,7 +600,7 @@ GVX_TRACE("tcl::event_loop_impl::run");
    * Invoke the script specified on the command line, if any.
    */
 
-  if (m_startup_filename != NULL)
+  if (m_startup_filename != nullptr)
     {
       m_interp.reset_result();
       bool success = m_interp.eval_file(m_startup_filename);

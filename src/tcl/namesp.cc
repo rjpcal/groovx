@@ -48,13 +48,13 @@ tcl::native_namesp::native_namesp(Tcl_Namespace* ns)
 
 tcl::native_namesp::native_namesp(tcl::interpreter& interp, const char* name)
   :
-  m_ns(0)
+  m_ns(nullptr)
 {
   m_ns =
     Tcl_FindNamespace(interp.intp(), name,
                       0 /* namespaceContextPtr*/, TCL_GLOBAL_ONLY);
 
-  if (m_ns == 0)
+  if (m_ns == nullptr)
     {
       m_ns = Tcl_CreateNamespace(interp.intp(),
                                  name,
@@ -62,7 +62,7 @@ tcl::native_namesp::native_namesp(tcl::interpreter& interp, const char* name)
                                  0 /*delete_proc*/);
     }
 
-  GVX_ASSERT(m_ns != 0);
+  GVX_ASSERT(m_ns != nullptr);
 }
 
 tcl::native_namesp tcl::native_namesp::lookup(tcl::interpreter& interp,
@@ -71,7 +71,7 @@ tcl::native_namesp tcl::native_namesp::lookup(tcl::interpreter& interp,
   Tcl_Namespace* const ns =
     Tcl_FindNamespace(interp.intp(), name, 0, TCL_GLOBAL_ONLY);
 
-  if (ns == 0)
+  if (ns == nullptr)
     throw rutz::error(rutz::sfmt("no Tcl namespace '%s;", name),
                       SRC_POS);
 

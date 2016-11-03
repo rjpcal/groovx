@@ -159,14 +159,14 @@ namespace rutz
 
     /// Construct by copying from a C-style null-terminated char array.
     fstring(const char* s) :
-      m_rep(0)
+      m_rep(nullptr)
     {
       init_range(char_range(s, s ? strlen(s) : 0));
     }
 
     /// Construct from a character range (pointer plus length).
     explicit fstring(char_range r) :
-      m_rep(0)
+      m_rep(nullptr)
     {
       init_range(r);
     }

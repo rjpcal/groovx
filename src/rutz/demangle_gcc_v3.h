@@ -83,7 +83,7 @@ namespace
 
     if (status == 0)
       {
-        GVX_ASSERT(demangled != 0);
+        GVX_ASSERT(demangled != nullptr);
         return std::string(demangled);
       }
 

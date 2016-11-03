@@ -94,7 +94,7 @@ tcl::interpreter::interpreter(Tcl_Interp* interp) :
   m_interp(interp)
 {
 GVX_TRACE("tcl::interpreter::interpreter");
-  if (interp == 0)
+  if (interp == nullptr)
     throw rutz::error("tried to make tcl::interpreter "
                       "with a null Tcl_Interp*", SRC_POS);
 
@@ -107,7 +107,7 @@ tcl::interpreter::interpreter(const tcl::interpreter& other) noexcept :
 {
 GVX_TRACE("tcl::interpreter::interpreter(const interpreter&)");
 
-  if (m_interp != 0)
+  if (m_interp != nullptr)
     {
       Tcl_CallWhenDeleted(m_interp, c_interp_delete_proc,
                           static_cast<void*>(this));
@@ -118,7 +118,7 @@ tcl::interpreter::~interpreter() noexcept
 {
 GVX_TRACE("tcl::interpreter::~interpreter");
 
-  if (m_interp != 0)
+  if (m_interp != nullptr)
     Tcl_DontCallWhenDeleted(m_interp, c_interp_delete_proc,
                             static_cast<void*>(this));
 }
@@ -131,7 +131,7 @@ GVX_TRACE("tcl::interpreter::~interpreter");
 
 Tcl_Interp* tcl::interpreter::intp() const
 {
-  if (m_interp == 0)
+  if (m_interp == nullptr)
     throw rutz::error("tcl::interpreter doesn't have a valid Tcl_Interp*",
                       SRC_POS);
 
@@ -142,23 +142,23 @@ bool tcl::interpreter::is_deleted() const noexcept
 {
 GVX_TRACE("tcl::interpreter::is_deleted");
 
-  return (m_interp == 0) || Tcl_InterpDeleted(m_interp);
+  return (m_interp == nullptr) || Tcl_InterpDeleted(m_interp);
 }
 
 void tcl::interpreter::forget_interp() noexcept
 {
 GVX_TRACE("tcl::interpreter::forget_interp");
-  m_interp = 0;
+  m_interp = nullptr;
 }
 
 void tcl::interpreter::destroy() noexcept
 {
 GVX_TRACE("tcl::interpreter::destroy");
 
-  if (m_interp != 0)
+  if (m_interp != nullptr)
     {
       Tcl_DeleteInterp(m_interp);
-      m_interp = 0;
+      m_interp = nullptr;
     }
 }
 
@@ -349,7 +349,7 @@ GVX_TRACE("tcl::interpreter::get_obj_global_var");
                                const_cast<char*>(name2),
                                TCL_GLOBAL_ONLY|TCL_LEAVE_ERR_MSG);
 
-  if (obj == 0)
+  if (obj == nullptr)
     {
       throw rutz::error(rutz::sfmt("couldn't get global variable '%s'",
                                    name1), SRC_POS);
@@ -424,10 +424,10 @@ GVX_TRACE("tcl::interpreter::handle_live_exception");
             rutz::sfmt("%s caught at %s:%d:\n%s%s",
                        rutz::demangled_name(typeid(err)),
                        pos.m_file_name, pos.m_line_no,
-                       ((where != 0 && where[0] != '\0')
+                       ((where != nullptr && where[0] != '\0')
                         ? rutz::sfmt("%s: ", where).c_str()
                         : ""),
-                       ((what != 0 && what[0] != '\0')
+                       ((what != nullptr && what[0] != '\0')
                         ? rutz::sfmt("%s ", what).c_str()
                         : ""));
 
@@ -443,7 +443,7 @@ GVX_TRACE("tcl::interpreter::handle_live_exception");
           const fstring msg =
             rutz::sfmt("exception of unknown type caught at %s:%d\n%s",
                        pos.m_file_name, pos.m_line_no,
-                       ((where != 0 && where[0] != '\0')
+                       ((where != nullptr && where[0] != '\0')
                         ? where
                         : ""));
 
@@ -521,7 +521,7 @@ void tcl::interpreter::create_proc(const char* namesp, const char* proc_name,
 {
 GVX_TRACE("tcl::interpreter::create_proc");
 
-  if (namesp == 0 || (*namesp == '\0'))
+  if (namesp == nullptr || (*namesp == '\0'))
     {
       namesp = "::";
     }
@@ -540,7 +540,7 @@ GVX_TRACE("tcl::interpreter::delete_proc");
   // by renaming to the empty string "", we delete the Tcl proc
   const fstring cmd_str =
     rutz::sfmt("rename %s::%s \"\"",
-               ((namesp != 0) && (*namesp != '\0')) ? namesp : "",
+               ((namesp != nullptr) && (*namesp != '\0')) ? namesp : "",
                proc_name);
 
   eval(cmd_str);

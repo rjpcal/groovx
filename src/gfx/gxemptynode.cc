@@ -44,9 +44,9 @@ void GxEmptyNode::draw(Gfx::Canvas&) const {}
 
 GxEmptyNode* GxEmptyNode::make()
 {
-  static GxEmptyNode* p = 0;
+  static GxEmptyNode* p = nullptr;
 
-  if (p == 0)
+  if (p == nullptr)
     {
       p = new GxEmptyNode;
       p->incr_ref_count();
