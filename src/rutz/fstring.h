@@ -33,9 +33,9 @@
 #ifndef GROOVX_RUTZ_FSTRING_H_UTC20050626084021_DEFINED
 #define GROOVX_RUTZ_FSTRING_H_UTC20050626084021_DEFINED
 
-#include "rutz/atomic.h"
 #include "rutz/debug.h"
 
+#include <atomic>
 #include <cstddef>
 #include <cstring>
 #include <iosfwd>
@@ -64,11 +64,11 @@ namespace rutz
 
     static string_rep* readline_from_stream(std::istream& is, char eol = '\n');
 
-    void incr_ref_count() noexcept { m_refcount.atomic_incr(); }
+    void incr_ref_count() noexcept { ++m_refcount; }
 
     int decr_ref_count() noexcept
     {
-      const int c = m_refcount.atomic_decr_return();
+      const int c = --m_refcount;
       if (c <= 0)
         delete this;
       return c;
@@ -111,7 +111,7 @@ namespace rutz
     string_rep(const string_rep& other); // not implemented
     string_rep& operator=(const string_rep& other); // not implemented
 
-    rutz::atomic_int_t m_refcount;
+    std::atomic<int> m_refcount;
 
     std::size_t m_capacity;
     std::size_t m_length;

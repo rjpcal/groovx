@@ -31,8 +31,7 @@
 #ifndef GROOVX_RUTZ_CIRCULAR_QUEUE_H_UTC20061005174345_DEFINED
 #define GROOVX_RUTZ_CIRCULAR_QUEUE_H_UTC20061005174345_DEFINED
 
-#include "rutz/atomic.h"
-
+#include <atomic>
 #include <cstddef> // for size_t
 
 namespace rutz
@@ -65,14 +64,14 @@ namespace rutz
     /// Returns true of the pop succeeded
     bool pop_front(T& dest)
     {
-      if (m_q[m_front].valid.atomic_get() == nullptr)
+      if (m_q[m_front].valid.load() == false)
         // the queue is empty right now:
         return false;
 
       dest = m_q[m_front].value;
 
       m_q[m_front].value = T();
-      m_q[m_front].valid.atomic_set(0);
+      m_q[m_front].valid.store(false);
       if (m_front+1 == m_q_size)
         m_front = 0;
       else
@@ -84,13 +83,13 @@ namespace rutz
     /// Returns true if the push succeeded
     bool push_back(const T& val)
     {
-      if (m_q[m_back].valid.atomic_get() != nullptr)
+      if (m_q[m_back].valid.load() == true)
         // we don't have any space in the queue for another entry
         // right now:
         return false;
 
       m_q[m_back].value = val;
-      m_q[m_back].valid.atomic_set(1);
+      m_q[m_back].valid.store(true);
       if (m_back+1 == m_q_size)
         m_back = 0;
       else
@@ -105,10 +104,10 @@ namespace rutz
 
     struct entry
     {
-      entry() : value(), valid() {}
+      entry() : value(), valid(false) {}
 
       T value;
-      rutz::atomic_int_t valid;
+      std::atomic<bool> valid;
     };
 
     entry* const m_q;

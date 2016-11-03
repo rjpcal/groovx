@@ -31,8 +31,10 @@
 #ifndef GROOVX_RUTZ_SHARED_PTR_H_UTC20070412044942_DEFINED
 #define GROOVX_RUTZ_SHARED_PTR_H_UTC20070412044942_DEFINED
 
-#include "rutz/atomic.h"
 #include "rutz/traits.h"
+
+#include <atomic>
+#include <utility>
 
 /// Auxiliary helper namespace used in implementing shared_ptr.
 namespace rutz
@@ -177,7 +179,7 @@ public:
   bool is_invalid() const noexcept { return px == nullptr; }
 
   //! Query how many shared_ptr's are sharing the pointee.
-  inline int use_count() const noexcept { return pn->atomic_get(); }
+  inline int use_count() const noexcept { return pn->load(); }
 
   //! Query whether the shared_ptr is the unique owner of its pointee.
   inline bool unique() const noexcept { return use_count() == 1; }
@@ -187,7 +189,7 @@ public:
 
 private:
   T*                   px; // pointee
-  rutz::atomic_int_t*  pn; // reference count with atomic incr/decr operations
+  std::atomic<int>*    pn; // reference count with atomic incr/decr operations
 
   template<class TT> friend class shared_ptr;
 };
@@ -276,7 +278,7 @@ rutz::shared_ptr<T>::shared_ptr(T* p) :
 #endif
 
   // prevent leak if new throws:
-  try { pn = new rutz::atomic_int_t; pn->atomic_set(1); }
+  try { pn = new std::atomic<int>(1); }
   catch (...) { delete p; throw; }
 }
 
@@ -285,14 +287,14 @@ template <class T> inline
 rutz::shared_ptr<T>::shared_ptr(const shared_ptr<T>& r) noexcept :
   px(r.px), pn(r.pn)
 {
-  pn->atomic_incr();
+  ++*pn;
 }
 
 // ######################################################################
 template <class T> inline
 rutz::shared_ptr<T>::~shared_ptr()
 {
-  if (pn->atomic_decr_test_zero())
+  if (--*pn == 0)
     {
       delete px; px = nullptr;
       delete pn; pn = nullptr;
@@ -314,7 +316,7 @@ template<class TT> inline
 rutz::shared_ptr<T>::shared_ptr(const rutz::shared_ptr<TT>& r) noexcept :
   px(r.px), pn(r.pn)
 {
-  pn->atomic_incr();
+  ++*pn;
 }
 
 // ######################################################################
@@ -335,7 +337,7 @@ rutz::shared_ptr<T>::dyn_cast_from(const rutz::shared_ptr<TT>& r)
 {
   // if we are already initialized to something (and we always are),
   // simulate a destroy:
-  if (pn->atomic_decr_test_zero())
+  if (--*pn == 0)
     {
       delete px; px = nullptr;
       delete pn; pn = nullptr;
@@ -351,7 +353,7 @@ rutz::shared_ptr<T>::dyn_cast_from(const rutz::shared_ptr<TT>& r)
       // original shared_ptr and this shared_ptr will be pointing to
       // DIFFERENT objects -- the original has a valid pointer but we
       // have a null pointer):
-      pn = new rutz::atomic_int_t; pn->atomic_set(1);
+      pn = new std::atomic<int>(1);
     }
   else
     {
@@ -359,7 +361,7 @@ rutz::shared_ptr<T>::dyn_cast_from(const rutz::shared_ptr<TT>& r)
       pn = r.pn;
 
       // increase it to account for our existence:
-      pn->atomic_incr();
+      ++*pn;
 
       // share ownership of the original pointee:
       px = new_px;
@@ -378,8 +380,8 @@ void rutz::shared_ptr<T>::reset(T* p)
 template <class T> inline
 void rutz::shared_ptr<T>::swap(shared_ptr<T>& that) noexcept
 {
-  T* that_px = that.px; that.px = this->px; this->px = that_px;
-  rutz::atomic_int_t* that_pn = that.pn; that.pn = this->pn; this->pn = that_pn;
+  std::swap(this->px, that.px);
+  std::swap(this->pn, that.pn);
 }
 
 // ######################################################################

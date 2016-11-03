@@ -6,7 +6,7 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (18-Oct-2016) Use nullptr where appropriate
+* (02-Nov-2016) Use std::chrono
 
 * (18-Oct-2016) Get rid of all the duplicated overflow() and underflow() code
   For instance ingzstreambuf, channel_buf, ...

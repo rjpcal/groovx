@@ -33,8 +33,7 @@
 #ifndef GROOVX_NUB_REFCOUNTED_H_UTC20050626084018_DEFINED
 #define GROOVX_NUB_REFCOUNTED_H_UTC20050626084018_DEFINED
 
-#include "rutz/atomic.h"
-
+#include <atomic>
 #include <cstdlib>
 
 namespace nub
@@ -90,8 +89,8 @@ private:
   int release_strong() noexcept;
   void release_strong_no_delete() noexcept;
 
-  rutz::atomic_int_t m_strong;
-  rutz::atomic_int_t m_weak;
+  std::atomic<int> m_strong;
+  std::atomic<int> m_weak;
   bool m_owner_alive;
   bool m_volatile;
 };

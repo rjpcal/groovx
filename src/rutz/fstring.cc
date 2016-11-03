@@ -78,13 +78,11 @@ void rutz::string_rep::operator delete(void* space)
 
 rutz::string_rep::string_rep(std::size_t len, const char* txt,
                              std::size_t capac) :
-  m_refcount(),
+  m_refcount(0),
   m_capacity(rutz::max(len+1, capac)),
   m_length(0),
   m_text(new char[m_capacity])
 {
-  m_refcount.atomic_set(0);
-
   if (txt)
     uniq_append(len, txt);
   else
@@ -158,7 +156,7 @@ rutz::string_rep* rutz::string_rep::readline_from_stream(std::istream& is, char 
 void rutz::string_rep::debug_dump() const noexcept
 {
   dbg_eval_nl(0, (const void*)this);
-  dbg_eval_nl(0, m_refcount.atomic_get());
+  dbg_eval_nl(0, m_refcount.load());
   dbg_eval_nl(0, m_length);
   dbg_eval_nl(0, (void*)m_text);
   dbg_eval_nl(0, m_text);
@@ -187,7 +185,7 @@ void rutz::string_rep::add_terminator() noexcept
 
 void rutz::string_rep::uniq_set_length(std::size_t len) noexcept
 {
-  GVX_PRECONDITION(m_refcount.atomic_get() <= 1);
+  GVX_PRECONDITION(m_refcount.load() <= 1);
   GVX_PRECONDITION(len+1 < m_capacity);
   m_length = len;
   add_terminator();
@@ -195,7 +193,7 @@ void rutz::string_rep::uniq_set_length(std::size_t len) noexcept
 
 void rutz::string_rep::uniq_append(std::size_t len, const char* txt)
 {
-  GVX_PRECONDITION(m_refcount.atomic_get() <= 1);
+  GVX_PRECONDITION(m_refcount.load() <= 1);
   GVX_PRECONDITION(txt != nullptr);
 
   if (m_length + len + 1 <= m_capacity)
@@ -216,7 +214,7 @@ void rutz::string_rep::uniq_append(std::size_t len, const char* txt)
 
 void rutz::string_rep::uniq_realloc(std::size_t capac)
 {
-  GVX_PRECONDITION(m_refcount.atomic_get() <= 1);
+  GVX_PRECONDITION(m_refcount.load() <= 1);
 
   rutz::string_rep new_rep(rutz::max(m_capacity*2 + 32, capac), 0);
 

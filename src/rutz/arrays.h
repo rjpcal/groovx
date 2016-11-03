@@ -34,8 +34,8 @@
 #define GROOVX_RUTZ_ARRAYS_H_UTC20050626084020_DEFINED
 
 #include "rutz/algo.h"
-#include "rutz/atomic.h"
 
+#include <atomic>
 #include <cstddef>
 
 namespace rutz
@@ -273,18 +273,18 @@ namespace rutz
         exception, the pointed-to array will be destroyed. */
     explicit shared_array(T* p =0) : px(p)
     {
-      try { pn = new rutz::atomic_int_t; pn->atomic_set(1); }
+      try { pn = new std::atomic<int>(1); }
       catch (...) { delete [] p; throw; }  // don't leak p if new throws
     }
 
     /// Copy constructor.
     shared_array(const shared_array& r) noexcept : px(r.px), pn(r.pn)
-    { pn->atomic_incr(); }
+    { ++*pn; }
 
     /// Destructor.
     ~shared_array()
     {
-      if (pn->atomic_decr_test_zero())
+      if (--*pn == 0)
         {
           delete [] px; px = nullptr;
           delete pn;    pn = nullptr;
@@ -313,7 +313,7 @@ namespace rutz
     T& operator[](std::size_t i) const noexcept { return px[i]; }
 
     /// Get the reference count of the shared array.
-    long use_count() const             noexcept { return pn->atomic_get(); }
+    int use_count() const              noexcept { return pn->load(); }
 
     /// Query whether the shared array is uniquely owned (i.e. refcount == 1).
     bool unique() const                noexcept { return use_count() == 1; }
@@ -324,7 +324,7 @@ namespace rutz
 
   private:
     T*                   px;     // contained pointer
-    rutz::atomic_int_t*  pn;     // ptr to reference counter
+    std::atomic<int>*    pn;     // ptr to reference counter
   };  // shared_array
 
   /// Equality for shared_array; returns true if both have the same pointee.
