@@ -67,7 +67,7 @@ namespace
 #include "rutz/trace.h"
 
 #include <map>
-#include <pthread.h>
+#include <mutex>
 #include <string>
 
 namespace
@@ -77,8 +77,8 @@ namespace
   //   (2) gcc libstdc++ doesn't allow copying of type_info objects
   typedef std::map<std::string, std::string> cache_type;
   cache_type* g_name_cache = nullptr;
-  pthread_once_t g_name_cache_init_once = PTHREAD_ONCE_INIT;
-  pthread_mutex_t g_name_cache_mutex = PTHREAD_MUTEX_INITIALIZER;
+  std::once_flag g_name_cache_init_once;
+  std::mutex g_name_cache_mutex;
 
   void name_cache_init()
   {
@@ -91,12 +91,12 @@ const char* rutz::demangled_name(const std::type_info& info)
 {
 GVX_TRACE("rutz::demangled_name");
 
-  pthread_once(&g_name_cache_init_once, &name_cache_init);
+  std::call_once(g_name_cache_init_once, name_cache_init);
   GVX_ASSERT(g_name_cache != nullptr);
 
   const std::string mangled = info.name();
 
-  GVX_MUTEX_LOCK(&g_name_cache_mutex);
+  GVX_MUTEX_LOCK(g_name_cache_mutex);
 
   cache_type::iterator itr = g_name_cache->find(mangled);
 

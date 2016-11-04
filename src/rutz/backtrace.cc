@@ -36,25 +36,6 @@
 
 #include <cstdio>  // for fprintf()
 #include <ostream>
-#include <pthread.h>
-
-namespace
-{
-  // thread-local storage (see rutz::backtrace::current() below)
-  pthread_key_t current_backtrace_key;
-  pthread_once_t current_backtrace_key_once = PTHREAD_ONCE_INIT;
-
-  void current_backtrace_destroy(void* bt)
-  {
-    delete static_cast<rutz::backtrace*>(bt);
-  }
-
-  void current_backtrace_key_alloc()
-  {
-    pthread_key_create(&current_backtrace_key,
-                       &current_backtrace_destroy);
-  }
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -81,29 +62,16 @@ rutz::backtrace::~backtrace() noexcept
 
 rutz::backtrace& rutz::backtrace::current() noexcept
 {
-  // we need one backtrace per thread, so we use pthreads thread-local
-  // storage to set up that association
+  thread_local static rutz::backtrace* current_backtrace = nullptr;
 
-  pthread_once(&current_backtrace_key_once,
-               &current_backtrace_key_alloc);
-
-  void* const ptr = pthread_getspecific(current_backtrace_key);
-
-  if (ptr != nullptr)
+  if (!current_backtrace)
     {
-      return *(static_cast<rutz::backtrace*>(ptr));
+      current_backtrace = new (std::nothrow) rutz::backtrace;
+      if (!current_backtrace)
+        GVX_ABORT("memory allocation failed");
     }
 
-  // else...
-  rutz::backtrace* const bt = new (std::nothrow) rutz::backtrace;
-
-  if (bt == nullptr)
-    GVX_ABORT("memory allocation failed");
-
-  pthread_setspecific(current_backtrace_key,
-                      static_cast<void*>(bt));
-
-  return *bt;
+  return *current_backtrace;
 }
 
 bool rutz::backtrace::push(rutz::prof* p) noexcept

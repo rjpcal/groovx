@@ -31,52 +31,12 @@
 #ifndef GROOVX_RUTZ_MUTEX_H_UTC20050913161502_DEFINED
 #define GROOVX_RUTZ_MUTEX_H_UTC20050913161502_DEFINED
 
-#include <pthread.h>
-
-namespace rutz
-{
-  class mutex_lock_class;
-  class mutex_unlocker;
-}
-
-//! Quick mutex locking class
-/** Use this when we don't want to use bare pthread_mutex_lock() and
-    pthread_mutex_unlock() calls, because they aren't
-    exception-safe. Use the GVX_MUTEX_LOCK() macro to create a local
-    temporary lock object. */
-class rutz::mutex_lock_class
-{
-public:
-  /// Throws an exception if pthread_mutex_lock() fails
-  mutex_lock_class(pthread_mutex_t* mut = 0);
-
-  ~mutex_lock_class() noexcept
-  {
-    this->unlock();
-  }
-
-  bool is_locked() const noexcept { return m_mutex != nullptr; }
-
-  void unlock() noexcept;
-
-  void swap(mutex_lock_class& that) noexcept
-  {
-    pthread_mutex_t* const this_mutex = this->m_mutex;
-    this->m_mutex = that.m_mutex;
-    that.m_mutex = this_mutex;
-  }
-
-private:
-  pthread_mutex_t* m_mutex;
-
-  mutex_lock_class(const mutex_lock_class&); // not implemented
-  mutex_lock_class& operator=(const mutex_lock_class&); // not implemented
-};
+#include <mutex>
 
 #define GVX_MUTEX_CONCAT2(x,y) x##y
 #define GVX_MUTEX_CONCAT(x,y) GVX_MUTEX_CONCAT2(x,y)
 
-#define GVX_MUTEX_LOCK(x) \
-  ::rutz::mutex_lock_class GVX_MUTEX_CONCAT(anonymous_lock,__LINE__) (x)
+#define GVX_MUTEX_LOCK(mut) \
+  std::lock_guard<decltype(mut)> GVX_MUTEX_CONCAT(anonymous_lock,__LINE__) (mut)
 
 #endif // !GROOVX_RUTZ_MUTEX_H_UTC20050913161502DEFINED

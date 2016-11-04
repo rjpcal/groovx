@@ -41,7 +41,6 @@
 #include <cstring>
 #include <istream>
 #include <ostream>
-#include <pthread.h>
 
 #ifndef GVX_NO_PROF
 #define GVX_NO_PROF
@@ -60,19 +59,19 @@ GVX_DBG_REGISTER
 namespace
 {
   rutz::free_list<rutz::string_rep>* g_rep_list;
-  pthread_mutex_t g_rep_list_mutex = PTHREAD_MUTEX_INITIALIZER;
+  std::mutex g_rep_list_mutex;
 }
 
 void* rutz::string_rep::operator new(size_t bytes)
 {
-  GVX_MUTEX_LOCK(&g_rep_list_mutex);
+  GVX_MUTEX_LOCK(g_rep_list_mutex);
   if (g_rep_list == nullptr) g_rep_list = new rutz::free_list<rutz::string_rep>;
   return g_rep_list->allocate(bytes);
 }
 
 void rutz::string_rep::operator delete(void* space)
 {
-  GVX_MUTEX_LOCK(&g_rep_list_mutex);
+  GVX_MUTEX_LOCK(g_rep_list_mutex);
   g_rep_list->deallocate(space);
 }
 

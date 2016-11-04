@@ -31,7 +31,6 @@
 #include "rutz/error_context.h"
 
 #include <new>
-#include <pthread.h>
 #include <sstream>
 
 #include "rutz/debug.h"
@@ -42,45 +41,20 @@ namespace
   // FIXME this "thread-local singleton" code is duplicated here and
   // in rutz/backtrace.cc; can we abstract out the common code?
 
-  // thread-local storage (see rutz::error_context::current() below)
-  pthread_key_t current_context_key;
-  pthread_once_t current_context_key_once = PTHREAD_ONCE_INIT;
-
-  void current_context_destroy(void* bt)
-  {
-    delete static_cast<rutz::error_context*>(bt);
-  }
-
-  void current_context_key_alloc()
-  {
-    pthread_key_create(&current_context_key,
-                       &current_context_destroy);
-  }
-
   // returns a mutable object (but note that
   // rutz::error_context::current() returns a const object)
   rutz::error_context* get_current_context()
   {
-    pthread_once(&current_context_key_once,
-                 &current_context_key_alloc);
+    static thread_local rutz::error_context* current_context = nullptr;
 
-    void* const ptr = pthread_getspecific(current_context_key);
-
-    if (ptr != nullptr)
+    if (!current_context)
       {
-        return static_cast<rutz::error_context*>(ptr);
+        current_context = new (std::nothrow) rutz::error_context;
+        if (!current_context)
+          GVX_ABORT("memory allocation failed");
       }
 
-    // else...
-    rutz::error_context* const c = new (std::nothrow) rutz::error_context;
-
-    if (c == nullptr)
-      GVX_ABORT("memory allocation failed");
-
-    pthread_setspecific(current_context_key,
-                        static_cast<void*>(c));
-
-    return c;
+    return current_context;
   }
 }
 

@@ -41,7 +41,6 @@
 #include <iomanip>
 #include <new> // for std::nothrow
 #include <ostream>
-#include <pthread.h>
 #include <string>
 
 namespace
@@ -53,8 +52,8 @@ namespace
   bool            g_pdata_print_at_exit = false;
   std::string     g_pdata_fname = "prof.out";
   FILE*           g_pdata_file = nullptr;
-  pthread_once_t  g_pdata_file_once = PTHREAD_ONCE_INIT;
-  pthread_mutex_t g_pdata_mutex = PTHREAD_MUTEX_INITIALIZER;
+  std::once_flag  g_pdata_file_once;
+  std::mutex      g_pdata_mutex;
 
   void open_pdata_file()
   {
@@ -76,8 +75,8 @@ namespace
   typedef rutz::static_stack<rutz::prof*, 2048> prof_list;
 
   prof_list*      g_prof_list = nullptr;
-  pthread_once_t  g_prof_list_once = PTHREAD_ONCE_INIT;
-  pthread_mutex_t g_prof_list_mutex = PTHREAD_MUTEX_INITIALIZER;
+  std::once_flag  g_prof_list_once;
+  std::mutex      g_prof_list_mutex;
 
   void initialize_prof_list()
   {
@@ -101,7 +100,7 @@ namespace
 
   prof_list& all_profs() noexcept
   {
-    pthread_once(&g_prof_list_once, &initialize_prof_list);
+    std::call_once(g_prof_list_once, initialize_prof_list);
 
     return *g_prof_list;
   }
@@ -111,7 +110,7 @@ namespace
   //
 
   rutz::time     g_start;
-  pthread_once_t g_start_once = PTHREAD_ONCE_INIT;
+  std::once_flag g_start_once;
 
   void initialize_start_time()
   {
@@ -135,20 +134,20 @@ rutz::prof::prof(const char* s, const char* fname, int lineno)  noexcept:
   reset();
 
   {
-    GVX_MUTEX_LOCK(&g_prof_list_mutex);
+    GVX_MUTEX_LOCK(g_prof_list_mutex);
     all_profs().push(this);
   }
 
-  pthread_once(&g_start_once, &initialize_start_time);
+  std::call_once(g_start_once, initialize_start_time);
 }
 
 rutz::prof::~prof() noexcept
 {
   if (g_pdata_print_at_exit)
     {
-      pthread_once(&g_pdata_file_once, &open_pdata_file);
+      std::call_once(g_pdata_file_once, open_pdata_file);
 
-      GVX_MUTEX_LOCK(&g_pdata_mutex);
+      GVX_MUTEX_LOCK(g_pdata_mutex);
 
       if (g_pdata_file != nullptr)
         {
@@ -261,7 +260,7 @@ void rutz::prof::print_at_exit(bool yes_or_no) noexcept
 
 void rutz::prof::prof_summary_file_name(const char* fname)
 {
-  GVX_MUTEX_LOCK(&g_pdata_mutex);
+  GVX_MUTEX_LOCK(g_pdata_mutex);
 
   if (fname == nullptr)
     fname = "";
@@ -271,7 +270,7 @@ void rutz::prof::prof_summary_file_name(const char* fname)
 
 void rutz::prof::reset_all_prof_data() noexcept
 {
-  GVX_MUTEX_LOCK(&g_prof_list_mutex);
+  GVX_MUTEX_LOCK(g_prof_list_mutex);
   std::for_each(all_profs().begin(), all_profs().end(),
                 std::mem_fun(&rutz::prof::reset));
 }
@@ -287,7 +286,7 @@ namespace
 
 void rutz::prof::print_all_prof_data(FILE* file) noexcept
 {
-  GVX_MUTEX_LOCK(&g_prof_list_mutex);
+  GVX_MUTEX_LOCK(g_prof_list_mutex);
   std::stable_sort(all_profs().begin(), all_profs().end(),
                    compare_total_time);
 
@@ -300,7 +299,7 @@ void rutz::prof::print_all_prof_data(FILE* file) noexcept
 
 void rutz::prof::print_all_prof_data(std::ostream& os) noexcept
 {
-  GVX_MUTEX_LOCK(&g_prof_list_mutex);
+  GVX_MUTEX_LOCK(g_prof_list_mutex);
   std::stable_sort(all_profs().begin(), all_profs().end(),
                    compare_total_time);
 

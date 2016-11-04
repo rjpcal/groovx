@@ -93,7 +93,7 @@ namespace rutz
 
     ~string_rep() noexcept;
 
-    // To be called once via pthread_once()
+    // To be called once via std::call_once()
     static void initialize_empty_rep();
 
     // Member functions whose names are prefixed with "uniq_" require

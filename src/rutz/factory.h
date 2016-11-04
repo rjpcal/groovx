@@ -170,7 +170,7 @@ namespace rutz
   private:
     rutz::factory_base                               m_base;
     rutz::assoc_array<rutz::creator_base<base_t> >   m_map;
-    mutable pthread_mutex_t                          m_mutex;
+    mutable std::mutex                               m_mutex;
 
   protected:
     /// Find a creator for the given key; otherwise return null.
@@ -180,7 +180,7 @@ namespace rutz
       rutz::creator_base<base_t>* creator = 0;
 
       {
-        GVX_MUTEX_LOCK(&m_mutex);
+        GVX_MUTEX_LOCK(m_mutex);
         creator = m_map.get_ptr_for_key(key);
       }
 
@@ -195,7 +195,7 @@ namespace rutz
           m_base.try_fallback(key);
 
           {
-            GVX_MUTEX_LOCK(&m_mutex);
+            GVX_MUTEX_LOCK(m_mutex);
             creator = m_map.get_ptr_for_key(key);
           }
         }
@@ -216,15 +216,11 @@ namespace rutz
     */
     factory(const char* keydescr = "object type", bool nocase = false)
       : m_base(), m_map(keydescr, nocase), m_mutex()
-    {
-      pthread_mutex_init(&m_mutex, nullptr);
-    }
+    {}
 
     /// Virtual no-throw destructor.
     virtual ~factory() noexcept
-    {
-      pthread_mutex_destroy(&m_mutex);
-    }
+    {}
 
     /// Registers a creation object with the factory.
     /** The function returns the actual key that was paired with the
@@ -232,7 +228,7 @@ namespace rutz
     const char* register_creator(rutz::creator_base<base_t>* creator,
                                  const char* name)
     {
-      GVX_MUTEX_LOCK(&m_mutex);
+      GVX_MUTEX_LOCK(m_mutex);
 
       m_map.set_ptr_for_key(name, creator);
 
@@ -247,7 +243,7 @@ namespace rutz
     const char* register_creator(derived_t (*func) (),
                                  const char* key = 0)
     {
-      GVX_MUTEX_LOCK(&m_mutex);
+      GVX_MUTEX_LOCK(m_mutex);
 
       if (key == nullptr)
         key = rutz::demangled_name
@@ -264,7 +260,7 @@ namespace rutz
         for the original key. */
     void register_alias(const char* orig_key, const char* alias_key)
     {
-      GVX_MUTEX_LOCK(&m_mutex);
+      GVX_MUTEX_LOCK(m_mutex);
 
       rutz::creator_base<base_t>* creator =
         m_map.get_ptr_for_key(orig_key);
@@ -284,7 +280,7 @@ namespace rutz
     /// Get a list of known keys, separated by sep.
     rutz::fstring get_known_keys(const char* sep) const
     {
-      GVX_MUTEX_LOCK(&m_mutex);
+      GVX_MUTEX_LOCK(m_mutex);
 
       return m_map.get_known_keys(sep);
     }
@@ -310,7 +306,7 @@ namespace rutz
 
       if (creator == nullptr)
         {
-          GVX_MUTEX_LOCK(&m_mutex);
+          GVX_MUTEX_LOCK(m_mutex);
 
           m_map.throw_for_key(type, SRC_POS);
         }
@@ -321,7 +317,7 @@ namespace rutz
     /// Change the fallback object.
     void set_fallback(rutz::shared_ptr<factory_fallback> f)
     {
-      GVX_MUTEX_LOCK(&m_mutex);
+      GVX_MUTEX_LOCK(m_mutex);
 
       m_base.set_fallback(f);
     }
@@ -329,7 +325,7 @@ namespace rutz
     /// Change the fallback function.
     void set_fallback(fallback_t* fptr)
     {
-      GVX_MUTEX_LOCK(&m_mutex);
+      GVX_MUTEX_LOCK(m_mutex);
 
       m_base.set_fallback(fptr);
     }
