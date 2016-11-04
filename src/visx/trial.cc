@@ -42,7 +42,6 @@
 
 #include "rutz/fstring.h"
 #include "rutz/iter.h"
-#include "rutz/scopedptr.h"
 #include "rutz/sfmt.h"
 
 #include "tcl-gfx/toglet.h"
@@ -51,6 +50,7 @@
 #include "visx/responsehandler.h"
 #include "visx/timinghdlr.h"
 
+#include <memory>
 #include <sstream>
 #include <vector>
 
@@ -151,7 +151,7 @@ public:
 
   fstring info;
 
-  rutz::scoped_ptr<ActiveState> activeState;
+  std::unique_ptr<ActiveState> activeState;
 
   bool isActive() const { return activeState.get() != nullptr; }
 

@@ -47,13 +47,14 @@
 #include "rutz/fileposition.h"
 #include "rutz/fstring.h"
 #include "rutz/shared_ptr.h"
-#include "rutz/scopedptr.h"
 #include "rutz/sfmt.h"
 
 #include "visx/feedbackmap.h"
 #include "visx/sound.h"
 #include "visx/response.h"
 #include "visx/trial.h"
+
+#include <memory>
 
 #define GVX_TRACE_EXPR EventResponseHdlr::tracer.status()
 #include "rutz/trace.h"
@@ -219,7 +220,7 @@ public:
 
   EventResponseHdlr* itsOwner;
 
-  mutable rutz::scoped_ptr<ActiveState> itsState;
+  mutable std::unique_ptr<ActiveState> itsState;
 
   tcl::interpreter itsInterp;
 
