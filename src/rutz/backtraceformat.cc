@@ -31,7 +31,6 @@
 #include "rutz/backtraceformat.h"
 
 #include "rutz/backtrace.h"
-#include "rutz/compat_snprintf.h"
 #include "rutz/fstring.h"
 #include "rutz/trace.h" // for rutz::prof
 
