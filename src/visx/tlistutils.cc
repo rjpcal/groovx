@@ -47,7 +47,6 @@
 
 #include "tcl/list.h"
 
-#include "rutz/arrays.h"
 #include "rutz/cstrstream.h"
 #include "rutz/error.h"
 #include "rutz/iter.h"
@@ -67,7 +66,7 @@ using nub::ref;
 namespace
 {
   nub::uid doCreatePreview(const geom::rect<double>& world_viewport,
-                           nub::uid* objids,
+                           const nub::uid* objids,
                            size_t objids_size,
                            int num_cols_hint = -1,
                            bool text_labels = true)
@@ -325,7 +324,7 @@ nub::uid TlistUtils::createPreview(tcl::list objid_list,
                                    int num_cols_hint = -1,
                                    bool text_labels = true)
 {
-  rutz::fixed_block<nub::uid> objids(objid_list.begin<nub::uid>(),
+  const std::vector<nub::uid> objids(objid_list.begin<nub::uid>(),
                                      objid_list.end<nub::uid>());
 
   return doCreatePreview(world_viewport,
@@ -443,7 +442,7 @@ tcl::list TlistUtils::dealTriads(tcl::list objid_list, nub::uid posid1,
     {2, 1, 0}
   };
 
-  rutz::fixed_block<nub::uid> objids(objid_list.begin<nub::uid>(),
+  const std::vector<nub::uid> objids(objid_list.begin<nub::uid>(),
                                      objid_list.end<nub::uid>());
 
   nub::uid base_triad[3];
@@ -504,10 +503,10 @@ tcl::list TlistUtils::loadObjidFile(const char* objid_file,
   // whether we will read only num_lines lines from the stream.
   bool read_to_eof = (num_lines < 0);
 
-  rutz::fixed_block<nub::uid> objids(objid_list.begin<nub::uid>(),
+  const std::vector<nub::uid> objids(objid_list.begin<nub::uid>(),
                                      objid_list.end<nub::uid>());
 
-  rutz::fixed_block<nub::uid> posids(posid_list.begin<nub::uid>(),
+  const std::vector<nub::uid> posids(posid_list.begin<nub::uid>(),
                                      posid_list.end<nub::uid>());
 
   std::ifstream ifs(objid_file);

@@ -34,7 +34,6 @@
 
 #include "media/soundrep.h"
 
-#include "rutz/arrays.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
@@ -42,6 +41,7 @@
 #include <dmedia/audio.h>
 #include <dmedia/audiofile.h>
 #include <unistd.h>
+#include <vector>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -64,7 +64,7 @@ namespace media
 
   private:
     ALconfig m_audio_config;
-    rutz::dynamic_block<unsigned char> m_samples;
+    std::vector<unsigned char> m_samples;
     AFframecount m_frame_count;
   };
 
@@ -174,7 +174,7 @@ GVX_TRACE("media::irix_audio_sound_rep::~irix_audio_sound_rep");
 void media::irix_audio_sound_rep::play()
 {
 GVX_TRACE("media::irix_audio_sound_rep::play");
-  if (m_samples.size() == nullptr) return;
+  if (m_samples.size() == 0) return;
 
   ALport audio_port = alOpenPort("Sound::play", "w", m_audio_config);
   dbg_eval_nl(3, (void*) audio_port);

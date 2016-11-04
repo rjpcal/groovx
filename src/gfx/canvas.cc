@@ -39,8 +39,9 @@
 #include "geom/box.h"
 #include "geom/vec3.h"
 
-#include "rutz/arrays.h"
 #include "rutz/error.h"
+
+#include <vector>
 
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
@@ -187,21 +188,18 @@ GVX_TRACE("Gfx::Canvas::drawBezierFill4");
 }
 
 void Gfx::Canvas::drawNurbsCurve
-  (const rutz::dynamic_block<float>& knots,
-   const rutz::dynamic_block<geom::vec3<float> >& pts)
+ (const float* knots, const geom::vec3<float>* pts, const size_t npts)
 {
 GVX_TRACE("Gfx::Canvas::drawNurbsCurve");
 
   const float* t = &knots[2];
   // t points to { 0, 0, 0.17, 0.33, 0.5, 0.67, 0.83, 1, 1 }
 
-  size_t nctrl = pts.size();
+  GVX_ASSERT(npts > 4);
 
-  GVX_ASSERT(nctrl > 4);
+  const size_t nbz = npts - 3;
 
-  size_t nbz = nctrl - 3;
-
-  rutz::dynamic_block<BezData> bz(nbz);
+  std::vector<BezData> bz(nbz);
 
   for (size_t k = 0; k < nbz; ++k)
     {

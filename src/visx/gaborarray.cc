@@ -210,7 +210,7 @@ GVX_TRACE("GaborArray::saveContourOnlyImage");
 
   const size_t npix = itsSizeX*itsSizeY;
 
-  rutz::fixed_block<double> win(npix);
+  std::vector<double> win(npix);
 
   for (size_t i = 0; i < npix; ++i)
     win[i] = 0.0;
@@ -410,7 +410,7 @@ GVX_TRACE("GaborArray::generateBmap");
 
   const size_t npix = itsSizeX*itsSizeY;
 
-  rutz::fixed_block<double> win(npix);
+  std::vector<double> win(npix);
 
   for (size_t i = 0; i < npix; ++i)
     win[i] = 0.0;

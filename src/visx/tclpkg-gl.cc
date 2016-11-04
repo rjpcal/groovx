@@ -44,11 +44,11 @@
 #include "tcl/list.h"
 #include "tcl/pkg.h"
 
-#include "rutz/arrays.h"
 #include "rutz/error.h"
 
 #include <cmath>                // for sqrt() in drawThickLine
 #include <map>
+#include <vector>
 
 #if defined(GVX_GL_PLATFORM_GLX)
 #  include <GL/gl.h>
@@ -130,7 +130,7 @@ namespace GLTcl
         throw rutz::error("invalid or unsupported enumerant", SRC_POS);
       }
 
-    rutz::fixed_block<T> theVals(theInfo->num_values);
+    std::vector<T> theVals(theInfo->num_values);
     extractValues(theInfo->param_tag, &(theVals[0]));
     tcl::list result;
     result.append_range(theVals.begin(), theVals.end());
@@ -146,8 +146,8 @@ namespace GLTcl
 
 void GLTcl::loadMatrix(nub::soft_ref<GLCanvas> canvas, tcl::list entries)
 {
-  rutz::fixed_block<GLdouble> matrix(entries.begin<GLdouble>(),
-                                     entries.end<GLdouble>());
+  std::vector<GLdouble> matrix(entries.begin<GLdouble>(),
+                               entries.end<GLdouble>());
 
   if (matrix.size() != 16)
     {

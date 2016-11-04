@@ -39,6 +39,8 @@
 
 #include "rutz/shared_ptr.h"
 
+#include <iterator>
+
 namespace tcl
 {
   class list;
@@ -210,6 +212,12 @@ public:
   iterator_base operator++(int)
     { iterator_base temp(*this); ++m_index; return temp; }
 
+  iterator_base& operator+=(difference_type x)
+    { m_index = (unsigned int)(difference_type(m_index) + x); return *this; }
+
+  iterator_base& operator-=(difference_type x)
+    { m_index = (unsigned int)(difference_type(m_index) - x); return *this; }
+
   difference_type operator-(const iterator_base& other) const
     {
       if (this->m_index > other.m_index)
@@ -269,6 +277,9 @@ public:
     iterator_base(x, start_pos), m_current() {}
 
   typedef T value_type;
+  typedef const T* pointer;
+  typedef const T& reference;
+  typedef std::random_access_iterator_tag iterator_category;
 
   const T& operator*() const
   {

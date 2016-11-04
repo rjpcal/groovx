@@ -39,7 +39,6 @@
 #include "tcl/pkg.h"
 
 #include "rutz/algo.h"
-#include "rutz/arrays.h"
 #include "rutz/error.h"
 #include "rutz/rand.h"
 
@@ -49,6 +48,7 @@ GVX_DBG_REGISTER
 
 #include <algorithm> // for std::random_shuffle
 #include <cmath>
+#include <vector>
 
 // Helper functions
 namespace
@@ -339,7 +339,7 @@ namespace
 
     maxdist -= 0.0001;
 
-    rutz::fixed_block<unsigned int> slots(N);
+    std::vector<unsigned int> slots(N);
 
     for (unsigned int i = 0; i < slots.size()-1; ++i)
       slots[i] = i+1;
@@ -412,11 +412,11 @@ namespace
     if (N < 2)
       throw rutz::error("N must be at least 2 to make a permutation", SRC_POS);
 
-    rutz::fixed_block<bool> used(N);
+    std::vector<bool> used(N);
     for (unsigned int i = 0; i < N; ++i)
       used[i] = false;
 
-    rutz::fixed_block<unsigned int> slots(N);
+    std::vector<unsigned int> slots(N);
 
     // fill slots[0] ... slots[N-2]
     for (unsigned int i = 0; i < N-1; ++i)
@@ -573,8 +573,7 @@ namespace
 
   tcl::list dlist_shuffle(tcl::list src, unsigned long seed)
   {
-    rutz::fixed_block<tcl::obj> objs(src.begin<tcl::obj>(),
-                                        src.end<tcl::obj>());
+    std::vector<tcl::obj> objs(src.begin<tcl::obj>(), src.end<tcl::obj>());
 
     rutz::urand generator(seed);
 

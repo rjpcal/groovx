@@ -34,7 +34,6 @@
 #include "geom/vec2.h"
 
 #include "rutz/algo.h"
-#include "rutz/arrays.h"
 #include "rutz/error.h"
 #include "rutz/rand.h"
 #include "rutz/sfmt.h"
@@ -42,6 +41,7 @@
 
 #include <algorithm>
 #include <cstring>              // for memcpy
+#include <vector>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -110,7 +110,7 @@ public:
   geom::vec2<size_t>                 m_size;
   unsigned int                       m_bits_per_pixel;
   unsigned int                       m_byte_alignment;
-  rutz::dynamic_block<unsigned char> m_bytes;
+  std::vector<unsigned char>         m_bytes;
   row_order                          m_row_order;
   mutable shared_ptr<update_func>    m_updater;
 };
@@ -281,7 +281,7 @@ GVX_TRACE("media::bmap_data::flip_vertical");
   const size_t bytes_per_row = rep->bytes_per_row();
   const size_t num_bytes = rep->byte_count();
 
-  rutz::dynamic_block<unsigned char> new_bytes(num_bytes);
+  std::vector<unsigned char> new_bytes(num_bytes);
 
   for (size_t row = 0; row < rep->m_size.y(); ++row)
     {
@@ -380,7 +380,7 @@ GVX_TRACE("media::bmap_data::make_scrambled");
 
   const unsigned int npos = nsubimg_x * nsubimg_y;
 
-  rutz::fixed_block<unsigned int> newpos(npos);
+  std::vector<unsigned int> newpos(npos);
   for (unsigned int i = 0; i < npos; ++i)
     {
       newpos[i] = i;

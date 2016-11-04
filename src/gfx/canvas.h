@@ -41,7 +41,6 @@ namespace rutz
 {
   struct file_pos;
   class fstring;
-  template <class T> class dynamic_block;
 }
 
 namespace geom
@@ -344,8 +343,8 @@ public:
       Bezier curve components, and then draws those with
       drawBezier4(). */
   virtual void drawNurbsCurve
-    (const rutz::dynamic_block<float>& knots,
-     const rutz::dynamic_block<geom::vec3<float> >& pts);
+    (const float* knots,
+     const geom::vec3<float>* pts, size_t npts);
 
   virtual void beginPoints(const char* comment="") = 0;         ///< Start a series of points vertices.
   virtual void beginLines(const char* comment="") = 0;          ///< Start a set of lines.

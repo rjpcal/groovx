@@ -31,7 +31,6 @@
 
 #include "unixcall.h"
 
-#include "rutz/arrays.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
@@ -44,6 +43,7 @@
 #include <dirent.h> // for ::opendir(), ::readdir()
 #include <sys/stat.h> // for ::chmod(), ::stat()
 #include <unistd.h> // for ::getcwd() (POSIX)
+#include <vector>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -111,7 +111,7 @@ GVX_TRACE("rutz::unixcall::getcwd");
   ErrnoSaver saver;
 
   const int INIT_SIZE = 256;
-  rutz::dynamic_block<char> buf(INIT_SIZE);
+  std::vector<char> buf(INIT_SIZE);
 
   while ( ::getcwd(&buf[0], buf.size()) == 0 )
     {

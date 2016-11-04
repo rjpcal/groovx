@@ -34,9 +34,8 @@
 
 #include "geom/vec2.h"
 
-#include "rutz/arrays.h"
-
 #include <cstddef> // size_t
+#include <vector>
 
 namespace rutz
 {
@@ -72,7 +71,7 @@ public:
 
 private:
   const size_t itsLength;
-  rutz::fixed_block<geom::vec2<double> > itsElem;
+  std::vector<geom::vec2<double> > itsElem;
 
   geom::vec2<double>& elem(size_t i)
   {

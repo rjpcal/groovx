@@ -33,9 +33,9 @@
 #define GROOVX_GEOM_BEZIER_H_UTC20050626084023_DEFINED
 
 #include "rutz/algo.h"
-#include "rutz/arrays.h"
 
 #include <cmath>
+#include <vector>
 
 namespace geom
 {
@@ -49,15 +49,15 @@ namespace geom
   class bezier
   {
   private:
-    rutz::dynamic_block<double> m_ctrl;      // control points
+    std::vector<double> m_ctrl;      // control points
 
     // coefficients of the Bezier polynomial
     // p(u) = c0[0] + c0[1]*u + c0[2]*u^2 + c0[3]*u^3
-    rutz::dynamic_block<double> m_c0;
+    std::vector<double> m_c0;
 
     // coefficients of the derivative polynomial
     // p'(u) = c1[0] + c1[1]*u + c1[2]*u^2
-    rutz::dynamic_block<double> m_c1;
+    std::vector<double> m_c1;
 
     double m_arg_min;  // value of u in [0,1] which gives the minimum
     double m_arg_max;  // value of u in [0,1] which gives the maximum
@@ -92,10 +92,12 @@ namespace geom
         will be examined when searching for the extrema. If extrema_res
         is < 0 (the default value), a default number of subdivisions
         will be used. */
-    bezier(const rutz::dynamic_block<double>& RR, int extrema_res=-1);
+    template <class Itr>
+    bezier(Itr begin, Itr end, int extrema_res=-1);
 
     /// Reset the control points,
-    void set_control_points(const rutz::dynamic_block<double>& RR,
+    template <class Itr>
+    void set_control_points(Itr begin, Itr end,
                             int extrema_res=-1);
 
 
@@ -120,7 +122,8 @@ namespace geom
 //  #######################################################
 //  =======================================================
 
-geom::bezier::bezier(const rutz::dynamic_block<double>& RR,
+template <class Itr>
+geom::bezier::bezier(Itr begin, Itr end,
                      int extrema_res) :
   m_ctrl(),
   m_c0(),
@@ -130,14 +133,13 @@ geom::bezier::bezier(const rutz::dynamic_block<double>& RR,
   m_val_min(0.0),
   m_val_max(0.0)
 {
-  set_control_points(RR, extrema_res);
+  set_control_points(begin, end, extrema_res);
 }
 
-void geom::bezier::set_control_points
-  (const rutz::dynamic_block<double>& RR,
-   int extrema_res)
+template <class Itr>
+void geom::bezier::set_control_points(Itr begin, Itr end, int extrema_res)
 {
-  m_ctrl = RR;
+  m_ctrl.assign(begin, end);
   m_c0.resize(RR.size());
   m_c1.resize(RR.size()-1);
 

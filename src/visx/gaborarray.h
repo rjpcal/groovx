@@ -37,8 +37,9 @@
 
 #include "gfx/gbvec.h"
 
-#include "rutz/arrays.h"
 #include "rutz/shared_ptr.h"
+
+#include <vector>
 
 struct GaborArrayElement;
 class Snake;
@@ -147,7 +148,7 @@ private:
   Cached<double> itsContrastJitter;
 
   mutable size_t itsTotalNumber;
-  mutable rutz::fixed_block<GaborArrayElement> itsArray;
+  mutable std::vector<GaborArrayElement> itsArray;
   mutable rutz::shared_ptr<media::bmap_data> itsBmap;
 
   bool itsDumpingFrames;

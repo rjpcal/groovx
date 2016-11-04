@@ -44,12 +44,12 @@
 
 #include "nub/ref.h"
 
-#include "rutz/arrays.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
 
 #include <fstream>
+#include <vector>
 
 #define GVX_TRACE_EXPR Fish::tracer.status()
 #include "rutz/trace.h"
@@ -100,9 +100,9 @@ struct Fish::Part
     itsCoord(0.0)
   {}
 
-  rutz::dynamic_block<float> itsKnots;
+  std::vector<float> itsKnots;
 
-  rutz::dynamic_block<vec3f> itsCtrlPnts;
+  std::vector<vec3f> itsCtrlPnts;
 
   // -- end points --
 
@@ -118,10 +118,8 @@ struct Fish::Part
   template <std::size_t N1, std::size_t N2>
   void reset(float const (&knots)[N1], vec3f const (&points)[N2])
   {
-    itsKnots.assign(rutz::array_begin(knots),
-                    rutz::array_end(knots));
-    itsCtrlPnts.assign(rutz::array_begin(points),
-                       rutz::array_end(points));
+    itsKnots.assign(&knots[0], &knots[N1]);
+    itsCtrlPnts.assign(&points[0], &points[N2]);
     itsCoord = 0.0f;
   }
 };
@@ -493,7 +491,7 @@ GVX_TRACE("Fish::grRender");
       if (inColor)
         canvas.setColor(colors[i]);
 
-      rutz::dynamic_block<vec3f> ctrlpnts(itsParts[i].itsCtrlPnts);
+      std::vector<vec3f> ctrlpnts(itsParts[i].itsCtrlPnts);
 
       // Set the coefficients at the break point to a linear sum of
       // the two corresponding endpoints
@@ -515,7 +513,7 @@ GVX_TRACE("Fish::grRender");
             ctrlpnts[j].z() * ctrlpnts[j].z() * swimStroke;
         }
 
-      canvas.drawNurbsCurve(itsParts[i].itsKnots, ctrlpnts);
+      canvas.drawNurbsCurve(&itsParts[i].itsKnots[0], &ctrlpnts[0], ctrlpnts.size());
 
       if (showControlPoints)
         {

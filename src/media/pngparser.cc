@@ -53,12 +53,12 @@ void media::save_png(const char* /*filename*/, const media::bmap_data& /*data*/)
 
 #include "media/bmapdata.h"
 
-#include "rutz/arrays.h"
 #include "rutz/error.h"
 #include "rutz/sfmt.h"
 
 #include <cstdio>
 #include <png.h>
+#include <vector>
 
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
@@ -223,7 +223,7 @@ namespace
                               nchannels*8, // bits_per_pixel
                               1); // byte_alignment
 
-    rutz::fixed_block<png_bytep> row_pointers(height);
+    std::vector<png_bytep> row_pointers(height);
 
     for (png_uint_32 i = 0; i < height; ++i)
       {
@@ -334,7 +334,7 @@ namespace
 
     const png_uint_32 height = png_uint_32(data.height());
 
-    rutz::fixed_block<png_bytep> row_pointers(height);
+    std::vector<png_bytep> row_pointers(height);
 
     for (png_uint_32 i = 0; i < height; ++i)
       {

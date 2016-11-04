@@ -37,7 +37,6 @@
 
 #include "nub/ref.h"
 
-#include "rutz/arrays.h"
 #include "rutz/fstring.h"
 #include "rutz/gzstreambuf.h"
 #include "rutz/value.h"
