@@ -102,8 +102,7 @@ public:
                             rutz::value& v) = 0;
 
   /// Read the raw data array associated with the tag \a name.
-  virtual void read_byte_array(const rutz::fstring& name,
-                           rutz::byte_array& data) = 0;
+  virtual rutz::byte_array read_byte_array(const rutz::fstring& name) = 0;
 
   /** @name Overloaded read functions
 
@@ -180,7 +179,7 @@ protected:
   virtual rutz::fstring read_string_impl(const rutz::fstring& name) = 0;
 
   /// Base64 implementation of read_byte_array() for use by subclasses.
-  void default_read_byte_array(const rutz::fstring& name, rutz::byte_array& data);
+  rutz::byte_array default_read_byte_array(const rutz::fstring& name);
 };
 
 #endif // !GROOVX_IO_READER_H_UTC20050626084021_DEFINED

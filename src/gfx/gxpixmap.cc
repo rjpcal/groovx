@@ -250,8 +250,7 @@ GVX_TRACE("GxPixmap::read_from");
   if (svid >= 5)
     {
 #if 0
-      rutz::byte_array imgdata;
-      reader.read_byte_array("image", imgdata);
+      rutz::byte_array imgdata = reader.read_byte_array("image");
       if (imgdata.vec.size() > 0)
         {
           rutz::imemstream s(reinterpret_cast<const char*>(&imgdata.vec[0]),

@@ -37,6 +37,7 @@
 
 #include "nub/ref.h"
 
+#include "rutz/bytearray.h"
 #include "rutz/demangle.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
@@ -358,9 +359,9 @@ namespace
       v.set_string(vlp.m_value);
     }
 
-    virtual void read_byte_array(const fstring& name, rutz::byte_array& data) override
+    virtual rutz::byte_array read_byte_array(const fstring& name) override
     {
-      default_read_byte_array(name, data);
+      return default_read_byte_array(name);
     }
 
     virtual ref<io::serializable> read_object(const fstring& name) override

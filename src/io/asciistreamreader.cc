@@ -38,6 +38,7 @@
 
 #include "nub/ref.h"
 
+#include "rutz/bytearray.h"
 #include "rutz/cstrstream.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
@@ -148,8 +149,8 @@ namespace
     virtual double read_double(const fstring& name) override;
     virtual void read_value_obj(const fstring& name, rutz::value& v) override;
 
-    virtual void read_byte_array(const fstring& name, rutz::byte_array& data) override
-    { default_read_byte_array(name, data); }
+    virtual rutz::byte_array read_byte_array(const fstring& name) override
+    { return default_read_byte_array(name); }
 
     virtual nub::ref<io::serializable> read_object(const fstring& name) override;
     virtual nub::soft_ref<io::serializable>

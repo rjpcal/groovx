@@ -37,6 +37,8 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "rutz/bytearray.h"
+
 #include <iosfwd>
 
 namespace io
@@ -63,8 +65,8 @@ public:
   virtual double read_double(const rutz::fstring& name) override;
   virtual void read_value_obj(const rutz::fstring& name, rutz::value& v) override;
 
-  virtual void read_byte_array(const rutz::fstring& name, rutz::byte_array& data) override
-  { default_read_byte_array(name, data); }
+  virtual rutz::byte_array read_byte_array(const rutz::fstring& name) override
+  { return default_read_byte_array(name); }
 
   virtual nub::ref    <io::serializable>      read_object(const rutz::fstring& name) override;
   virtual nub::soft_ref<io::serializable> read_weak_object(const rutz::fstring& name) override;

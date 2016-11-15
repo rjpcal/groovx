@@ -70,8 +70,7 @@ public:
                             rutz::value& v) override;
 
   /// Read the raw data array associated with the tag \a name.
-  virtual void read_byte_array(const rutz::fstring& name,
-                           rutz::byte_array& data) override;
+  virtual rutz::byte_array read_byte_array(const rutz::fstring& name) override;
 
   /** Get a \c nub::ref associated with the tag \a name. A new object
       of the appropriate type will be created and inserted into the \c

@@ -32,6 +32,7 @@
 
 #include "io/io.h"
 #include "nub/ref.h"
+#include "rutz/bytearray.h"
 #include "rutz/error.h"
 #include "rutz/trace.h"
 #include "rutz/value.h"
@@ -80,10 +81,9 @@ void tcl::obj_reader::read_value_obj(const rutz::fstring& /*name*/,
   v.set_string(tcl::convert_to<rutz::fstring>(m_obj));
 }
 
-void tcl::obj_reader::read_byte_array(const rutz::fstring& name,
-                                      rutz::byte_array& data)
+rutz::byte_array tcl::obj_reader::read_byte_array(const rutz::fstring& name)
 {
-  this->default_read_byte_array(name, data);
+  return this->default_read_byte_array(name);
 }
 
 nub::ref<io::serializable>

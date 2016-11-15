@@ -48,15 +48,12 @@ namespace rutz
   std::string base64_encode_file(const char* src_filename,
                                  unsigned int line_width = 0);
 
-  void base64_decode(const char* src,
-                     size_t in_len,
-                     rutz::byte_array& dst);
+  rutz::byte_array base64_decode(const char* src,
+                                 size_t in_len);
 
-  void base64_decode(const rutz::byte_array& src,
-                     rutz::byte_array& dst);
+  rutz::byte_array base64_decode(const rutz::byte_array& src);
 
-  void base64_decode(const std::string& src,
-                     rutz::byte_array& dst);
+  rutz::byte_array base64_decode(const std::string& src);
 }
 
 #endif // !GROOVX_RUTZ_BASE64_H_UTC20050626084019_DEFINED

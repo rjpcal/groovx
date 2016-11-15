@@ -176,12 +176,10 @@ std::string rutz::base64_encode_file(const char* filename,
                              line_width);
 }
 
-void rutz::base64_decode(const char* src,
-                         size_t in_len,
-                         rutz::byte_array& dst)
+rutz::byte_array rutz::base64_decode(const char* src, size_t in_len)
 {
 GVX_TRACE("rutz::base64_decode");
-  dst.vec.resize(0);
+  rutz::byte_array dst;
   dst.vec.reserve((in_len / 4) * 3);
 
   int i = 0;
@@ -244,18 +242,17 @@ GVX_TRACE("rutz::base64_decode");
       dst.vec.push_back(dec3[0]);
       dst.vec.push_back(dec3[1]);
     }
+
+  return dst;
 }
 
-void rutz::base64_decode(const rutz::byte_array& src,
-                         rutz::byte_array& dst)
+rutz::byte_array rutz::base64_decode(const rutz::byte_array& src)
 {
-  base64_decode(reinterpret_cast<const char*>(&src.vec[0]),
-                src.vec.size(),
-                dst);
+  return base64_decode(reinterpret_cast<const char*>(&src.vec[0]),
+                       src.vec.size());
 }
 
-void rutz::base64_decode(const std::string& src,
-                         rutz::byte_array& dst)
+rutz::byte_array rutz::base64_decode(const std::string& src)
 {
-  base64_decode(src.c_str(), src.length(), dst);
+  return base64_decode(src.c_str(), src.length());
 }

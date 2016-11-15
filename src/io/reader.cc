@@ -90,12 +90,10 @@ GVX_TRACE("io::reader::ensure_version_id");
   return actual_version;
 }
 
-void io::reader::default_read_byte_array(const rutz::fstring& name,
-                                    rutz::byte_array& data)
+rutz::byte_array io::reader::default_read_byte_array(const rutz::fstring& name)
 {
 GVX_TRACE("io::reader::default_read_byte_array");
 
   rutz::fstring encoded = read_string_impl(name);
-  rutz::base64_decode(encoded.c_str(), encoded.length(),
-                      data);
+  return rutz::base64_decode(encoded.c_str(), encoded.length());
 }
