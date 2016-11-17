@@ -231,21 +231,24 @@ GVX_TRACE("GaborArray::saveContourOnlyImage");
         GaborPatch::lookup(itsForegSpacing/2.0, 2*M_PI/period,
                            theta, 0.0);
 
+      const size_t ps = p.size();
+
       // bottom left:
-      GVX_ASSERT(xcenter > p.size() / 2);
-      GVX_ASSERT(ycenter > p.size() / 2);
-      const size_t x0 = xcenter - p.size() / 2;
-      const size_t y0 = ycenter - p.size() / 2;
+      const size_t x0 = std::max(xcenter, ps / 2) - ps / 2;
+      const size_t y0 = std::max(ycenter, ps / 2) - ps / 2;
       // top right:
-      const size_t x1 = x0 + p.size();
-      const size_t y1 = y0 + p.size();
+      const size_t x1 = std::min(itsSizeX.val, xcenter + ps - ps / 2);
+      const size_t y1 = std::min(itsSizeY.val, ycenter + ps - ps / 2);
 
       for (size_t y = y0; y < y1; ++y)
-        for (size_t x = x0; x < x1; ++x)
-          {
-            if (x < itsSizeX && y < itsSizeY)
-              win[x+y*itsSizeX] += p.at(x-x0, y-y0);
-          }
+        {
+          const size_t py = y + ps/2 - ycenter;
+          for (size_t x = x0; x < x1; ++x)
+            {
+              const size_t px = x + ps/2 - xcenter;
+              win[x+y*itsSizeX] += p.at(px, py);
+            }
+        }
     }
 
   shared_ptr<media::bmap_data> result
@@ -422,8 +425,6 @@ GVX_TRACE("GaborArray::generateBmap");
   for (size_t i = 0; i < itsTotalNumber; ++i)
     {
       const double phi   = 2 * M_PI * phases.fdraw();
-//       const double phi = 0.0;
-
       const double rand_theta = 2*M_PI * thetas.fdraw();
 
       const double theta =
@@ -439,23 +440,26 @@ GVX_TRACE("GaborArray::generateBmap");
         GaborPatch::lookup(itsGaborSigma, 2*M_PI/itsGaborPeriod,
                            theta, phi);
 
+      const size_t ps = p.size();
+
       // bottom left:
-      GVX_ASSERT(xcenter > p.size() / 2);
-      GVX_ASSERT(ycenter > p.size() / 2);
-      const size_t x0 = xcenter - p.size() / 2;
-      const size_t y0 = ycenter - p.size() / 2;
+      const size_t x0 = std::max(xcenter, ps / 2) - ps / 2;
+      const size_t y0 = std::max(ycenter, ps / 2) - ps / 2;
       // top right:
-      const size_t x1 = x0 + p.size();
-      const size_t y1 = y0 + p.size();
+      const size_t x1 = std::min(itsSizeX.val, xcenter + ps - ps / 2);
+      const size_t y1 = std::min(itsSizeY.val, ycenter + ps - ps / 2);
 
       const double contrast = exp(-itsContrastJitter * contrasts.fdraw());
 
       for (size_t y = y0; y < y1; ++y)
-        for (size_t x = x0; x < x1; ++x)
-          {
-            if (x < itsSizeX && y < itsSizeY)
-              win[x+y*itsSizeX] += contrast * p.at(x-x0, y-y0);
-          }
+        {
+          const size_t py = y + ps/2 - ycenter;
+          for (size_t x = x0; x < x1; ++x)
+            {
+              const size_t px = x + ps/2 - xcenter;
+              win[x+y*itsSizeX] += contrast * p.at(px, py);
+            }
+        }
 
       if (doTagLast && i == (itsTotalNumber-1))
         {
@@ -465,15 +469,12 @@ GVX_TRACE("GaborArray::generateBmap");
           for (size_t y = y0; y < y1; ++y)
             for (size_t x = x0; x < x1; ++x)
               {
-                if (x < itsSizeX && y < itsSizeY)
-                  {
-                    const double r = sqrt((x-xcenter)*(x-xcenter) +
-                                          (y-ycenter)*(y-ycenter));
+                const double r = sqrt((x-xcenter)*(x-xcenter) +
+                                      (y-ycenter)*(y-ycenter));
 
-                    if (r >= inner && r <= outer)
-                      {
-                        win[x+y*itsSizeX] = 1.0;
-                      }
+                if (r >= inner && r <= outer)
+                  {
+                    win[x+y*itsSizeX] = 1.0;
                   }
               }
         }
