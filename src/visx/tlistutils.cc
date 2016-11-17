@@ -66,8 +66,7 @@ using nub::ref;
 namespace
 {
   nub::uid doCreatePreview(const geom::rect<double>& world_viewport,
-                           const nub::uid* objids,
-                           size_t objids_size,
+                           const std::vector<nub::uid>& objids,
                            int num_cols_hint = -1,
                            bool text_labels = true)
   {
@@ -80,7 +79,7 @@ namespace
     const double world_height = world_viewport.height();
 
     const double window_area = world_width*world_height;
-    const double parcel_area = window_area/objids_size;
+    const double parcel_area = window_area/objids.size();
     const double raw_parcel_side = sqrt(parcel_area);
 
     const int num_cols = num_cols_hint > 0
@@ -93,12 +92,12 @@ namespace
     int x_step = -1;
     int y_step = 0;
 
-    for (size_t i = 0; i < objids_size; ++i)
+    for (const nub::uid objid: objids)
       {
         ++x_step;
         if (x_step == num_cols) { x_step = 0; ++y_step; }
 
-        ref<GxShapeKit> obj(objids[i]);
+        ref<GxShapeKit> obj(objid);
 
         obj->setAlignmentMode(GxAligner::CENTER_ON_CENTER);
         obj->setBBVisibility(true);
@@ -120,7 +119,7 @@ namespace
         if (text_labels)
           {
             ref<GxText> label(GxText::make());
-            label->setText(rutz::sfmt("%lu", objids[i]));
+            label->setText(rutz::sfmt("%lu", objid));
             label->setAlignmentMode(GxAligner::CENTER_ON_CENTER);
             label->setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
             label->setHeight(0.1);
@@ -328,7 +327,7 @@ nub::uid TlistUtils::createPreview(tcl::list objid_list,
                                      objid_list.end<nub::uid>());
 
   return doCreatePreview(world_viewport,
-                         &objids[0], objids.size(),
+                         objids,
                          num_cols_hint, text_labels);
 }
 

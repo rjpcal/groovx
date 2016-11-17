@@ -354,11 +354,9 @@ double Trial::avgResponse() const
 {
 GVX_TRACE("Trial::avgResponse");
   int sum = 0;
-  for (std::vector<Response>::const_iterator ii = rep->responses.begin();
-       ii != rep->responses.end();
-       ++ii)
+  for (const Response& r: rep->responses)
     {
-      sum += ii->val();
+      sum += r.val();
     }
   return (rep->responses.size() > 0) ? double(sum)/rep->responses.size() : 0.0;
 }
@@ -367,11 +365,9 @@ double Trial::avgRespTime() const
 {
 GVX_TRACE("Trial::avgRespTime");
   int sum = 0;
-  for (std::vector<Response>::const_iterator ii = rep->responses.begin();
-       ii != rep->responses.end();
-       ++ii)
+  for (const Response& r: rep->responses)
     {
-      sum += ii->msec();
+      sum += r.msec();
 
       dbg_eval(3, sum);
       dbg_eval_nl(3, size_t(sum)/rep->responses.size());
@@ -429,13 +425,9 @@ GVX_TRACE("Trial::stdInfo");
   std::ostringstream objids;
   std::ostringstream cats;
 
-  for (Impl::GxNodes::const_iterator
-         ii = rep->gxNodes.begin(),
-         end = rep->gxNodes.end();
-       ii != end;
-       ++ii)
+  for (const ref<GxNode>& node: rep->gxNodes)
     {
-      for (rutz::fwd_iter<const ref<GxNode> > tr((*ii)->deepChildren());
+      for (rutz::fwd_iter<const ref<GxNode> > tr(node->deepChildren());
            tr.is_valid();
            tr.next())
         {
