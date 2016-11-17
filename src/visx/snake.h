@@ -73,16 +73,24 @@ private:
   const size_t itsLength;
   std::vector<geom::vec2<double> > itsElem;
 
-  geom::vec2<double>& elem(size_t i)
+  size_t adjust_index(size_t b, int offset) const
   {
-    i = i % itsLength;
-    return itsElem[i];
+    if (offset > 0)
+      return (b + size_t(offset)) % itsLength;
+    // else
+    while (b < size_t(-offset))
+      b += itsLength;
+    return (b - size_t(-offset)) % itsLength;
   }
 
-  const geom::vec2<double>& elem(size_t i) const
+  geom::vec2<double>& elem(size_t b, int offset)
   {
-    i = i % itsLength;
-    return itsElem[i];
+    return itsElem[adjust_index(b, offset)];
+  }
+
+  const geom::vec2<double>& elem(size_t b, int offset) const
+  {
+    return itsElem[adjust_index(b, offset)];
   }
 
   // Returns true if jiggling converged

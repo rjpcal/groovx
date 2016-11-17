@@ -303,9 +303,9 @@ GVX_TRACE("Snake::getElement");
   GaborArrayElement result;
 
   result.type = GaborArrayElement::CONTOUR;
-  result.pos.x() = 0.5 * (elem(n).x() + elem(n+1).x());
-  result.pos.y() = 0.5 * (elem(n).y() + elem(n+1).y());
-  result.theta = geom::rad_0_2pi(-elem(n).angle_to(elem(n+1)));
+  result.pos.x() = 0.5 * (elem(n,0).x() + elem(n,+1).x());
+  result.pos.y() = 0.5 * (elem(n,0).y() + elem(n,+1).y());
+  result.theta = geom::rad_0_2pi(-elem(n,0).angle_to(elem(n,+1)));
 
   return result;
 }
@@ -359,10 +359,10 @@ GVX_TRACE("Snake::jiggle");
   const Tuple4 old_alpha = getAlphas(old_theta);
 
   const Tuple4 old_delta
-    (geom::rad_npi_pi(elem(i[0]).angle_to(elem(i[0]+1)) - elem(i[0]-1).angle_to(elem(i[0]))),
-     geom::rad_npi_pi(elem(i[1]).angle_to(elem(i[1]+1)) - elem(i[1]-1).angle_to(elem(i[1]))),
-     geom::rad_npi_pi(elem(i[2]).angle_to(elem(i[2]+1)) - elem(i[2]-1).angle_to(elem(i[2]))),
-     geom::rad_npi_pi(elem(i[3]).angle_to(elem(i[3]+1)) - elem(i[3]-1).angle_to(elem(i[3]))));
+    (geom::rad_npi_pi(elem(i[0],0).angle_to(elem(i[0],+1)) - elem(i[0],-1).angle_to(elem(i[0],0))),
+     geom::rad_npi_pi(elem(i[1],0).angle_to(elem(i[1],+1)) - elem(i[1],-1).angle_to(elem(i[1],0))),
+     geom::rad_npi_pi(elem(i[2],0).angle_to(elem(i[2],+1)) - elem(i[2],-1).angle_to(elem(i[2],0))),
+     geom::rad_npi_pi(elem(i[3],0).angle_to(elem(i[3],+1)) - elem(i[3],-1).angle_to(elem(i[3],0))));
 
   vec2d new_pos[4];
 
