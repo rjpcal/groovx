@@ -133,6 +133,20 @@ public:
   template <class T>
   iterator<T> end(T* /*dummy*/=0);
 
+  template <class T>
+  class view
+  {
+    tcl::list& m_self;
+  public:
+    view(tcl::list& s) : m_self(s) {}
+
+    iterator<T> begin();
+    iterator<T> end();
+  };
+
+  template <class T>
+  view<T> view_of() { return view<T>(*this); }
+
   /// A back-insert iterator for tcl::list.
   class appender
   {
@@ -313,6 +327,17 @@ template <class T>
 inline tcl::list::iterator<T> tcl::list::end(T* /*dummy*/)
 {
   return iterator<T>(*this, iterator_base::END);
+}
+
+template <class T>
+inline tcl::list::iterator<T> tcl::list::view<T>::begin()
+{
+  return iterator<T>(m_self, iterator_base::BEGIN);
+}
+template <class T>
+inline tcl::list::iterator<T> tcl::list::view<T>::end()
+{
+  return iterator<T>(m_self, iterator_base::END);
 }
 
 #endif // !GROOVX_TCL_LIST_H_UTC20050628162420_DEFINED

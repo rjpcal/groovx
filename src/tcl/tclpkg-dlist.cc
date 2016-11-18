@@ -100,10 +100,8 @@ namespace
   {
     tcl::list result;
 
-    for (unsigned int i = 0; i < index_list.length(); ++i)
+    for (const unsigned int index: index_list.view_of<unsigned int>())
       {
-        unsigned int index = index_list.get<unsigned int>(i);
-
         // use that int as an index into source list, getting the
         // corresponding list element and appending it to the output list
         result.append(source_list.at(index));
@@ -180,13 +178,13 @@ namespace
 
   tcl::list dlist_not(tcl::list source_list)
   {
-    tcl::obj one = tcl::convert_from<int>(1);
-    tcl::obj zero = tcl::convert_from<int>(0);
+    const tcl::obj one = tcl::convert_from<int>(1);
+    const tcl::obj zero = tcl::convert_from<int>(0);
     tcl::list result;
 
-    for (unsigned int i = 0; i < source_list.length(); ++i)
+    for (const int i: source_list.view_of<int>())
       {
-        if ( source_list.get<int>(i) == 0 )
+        if ( i == 0 )
           result.append(one);
         else
           result.append(zero);
