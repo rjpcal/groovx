@@ -61,11 +61,11 @@ public:
   virtual ~Element() noexcept;
 
   /// Status type for child to tell its parent how it ended.
-  enum ChildStatus
+  enum class ChildStatus
     {
-      CHILD_OK,
-      CHILD_ABORTED,
-      CHILD_REPEAT
+      OK,
+      ABORTED,
+      REPEAT
     };
 
   /// Return the Widget in which the experiment is running.

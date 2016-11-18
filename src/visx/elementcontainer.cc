@@ -167,12 +167,12 @@ GVX_TRACE("ExptDriver::vxReturn");
 
   switch (s)
     {
-    case Element::CHILD_OK:
+    case Element::ChildStatus::OK:
       // Move on to the next element.
       ++rep->sequencePos;
       break;
 
-    case Element::CHILD_REPEAT:
+    case Element::ChildStatus::REPEAT:
       {
         // Add a repeat of the current element to the sequence and reshuffle
         addElement(currentElement(), 1);
@@ -184,7 +184,7 @@ GVX_TRACE("ExptDriver::vxReturn");
       }
       break;
 
-    case Element::CHILD_ABORTED:
+    case Element::ChildStatus::ABORTED:
       {
         // Remember the element that we are about to abort so we can
         // store it at the end of the sequence.

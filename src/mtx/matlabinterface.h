@@ -22,12 +22,12 @@
 class mtx;
 
 mtx make_mtx(mxArray* a,
-             mtx_policies::storage_policy s = mtx_policies::COPY);
+             mtx_policies::storage_policy s = storage_policy::COPY);
 
 /** With a const mxArray*, only BORROW or COPY are allowed as storage
     policies, in order to preserve const-correctness. */
 mtx make_mtx(const mxArray* a,
-             mtx_policies::storage_policy s = mtx_policies::COPY);
+             mtx_policies::storage_policy s = storage_policy::COPY);
 
 mxArray* make_mxarray(const mtx& m);
 

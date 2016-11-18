@@ -204,16 +204,16 @@ protected:
 public:
   typedef int difference_type;
 
-  enum position { BEGIN, END };
+  enum class position { BEGIN, END };
 
-  iterator_base(const list& owner, position start_pos = BEGIN) :
+  iterator_base(const list& owner, position start_pos = position::BEGIN) :
     m_list_obj(owner),
-    m_index(start_pos == BEGIN ? 0 : owner.length())
+    m_index(start_pos == position::BEGIN ? 0 : owner.length())
   {}
 
-  iterator_base(Tcl_Obj* x, position start_pos = BEGIN) :
+  iterator_base(Tcl_Obj* x, position start_pos = position::BEGIN) :
     m_list_obj(x),
-    m_index(start_pos == BEGIN ? 0 : m_list_obj.length())
+    m_index(start_pos == position::BEGIN ? 0 : m_list_obj.length())
   {}
 
   // default copy-constructor, assignment operator OK
@@ -284,10 +284,10 @@ class tcl::list::iterator : public tcl::list::iterator_base
   mutable rutz::shared_ptr<const T> m_current;
 
 public:
-  iterator(const list& owner, position start_pos = BEGIN) :
+  iterator(const list& owner, position start_pos = position::BEGIN) :
     iterator_base(owner, start_pos), m_current() {}
 
-  iterator(Tcl_Obj* x, position start_pos = BEGIN) :
+  iterator(Tcl_Obj* x, position start_pos = position::BEGIN) :
     iterator_base(x, start_pos), m_current() {}
 
   typedef T value_type;
@@ -320,24 +320,24 @@ inline T tcl::list::get(unsigned int index, T* /*dummy*/) const
 template <class T>
 inline tcl::list::iterator<T> tcl::list::begin(T* /*dummy*/)
 {
-  return iterator<T>(*this, iterator_base::BEGIN);
+  return iterator<T>(*this, iterator_base::position::BEGIN);
 }
 
 template <class T>
 inline tcl::list::iterator<T> tcl::list::end(T* /*dummy*/)
 {
-  return iterator<T>(*this, iterator_base::END);
+  return iterator<T>(*this, iterator_base::position::END);
 }
 
 template <class T>
 inline tcl::list::iterator<T> tcl::list::view<T>::begin()
 {
-  return iterator<T>(m_self, iterator_base::BEGIN);
+  return iterator<T>(m_self, iterator_base::position::BEGIN);
 }
 template <class T>
 inline tcl::list::iterator<T> tcl::list::view<T>::end()
 {
-  return iterator<T>(m_self, iterator_base::END);
+  return iterator<T>(m_self, iterator_base::position::END);
 }
 
 #endif // !GROOVX_TCL_LIST_H_UTC20050628162420_DEFINED

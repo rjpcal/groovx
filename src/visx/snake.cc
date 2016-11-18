@@ -301,7 +301,7 @@ GVX_TRACE("Snake::getElement");
 
   GaborArrayElement result;
 
-  result.type = GaborArrayElement::CONTOUR;
+  result.type = GaborArrayElement::Type::CONTOUR;
   result.pos.x() = 0.5 * (elem(n,0).x() + elem(n,+1).x());
   result.pos.y() = 0.5 * (elem(n,0).y() + elem(n,+1).y());
   result.theta = geom::rad_0_2pi(-elem(n,0).angle_to(elem(n,+1)));

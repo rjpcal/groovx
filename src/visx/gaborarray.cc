@@ -211,7 +211,7 @@ GVX_TRACE("GaborArray::saveContourOnlyImage");
 
   for (const auto& elem: itsArray)
     {
-      if (elem.type != GaborArrayElement::CONTOUR)
+      if (elem.type != GaborArrayElement::Type::CONTOUR)
         continue;
 
       const double theta = geom::rad_0_2pi(elem.theta + M_PI_2);
@@ -355,7 +355,7 @@ GVX_TRACE("GaborArray::updateBackg");
 
   for (auto& bgelem: itsArray)
     {
-      if (bgelem.type == GaborArrayElement::CONTOUR)
+      if (bgelem.type == GaborArrayElement::Type::CONTOUR)
         continue;
 
       bool inside = true;
@@ -383,7 +383,7 @@ GVX_TRACE("GaborArray::updateBackg");
 
       if (inside)
         {
-          bgelem.type = GaborArrayElement::INSIDE;
+          bgelem.type = GaborArrayElement::Type::INSIDE;
           ++insideNumber;
         }
     }
@@ -419,7 +419,7 @@ GVX_TRACE("GaborArray::generateBmap");
       const double rand_theta = 2*M_PI * thetas.fdraw();
 
       const double theta =
-        (itsArray[i].type == GaborArrayElement::CONTOUR)
+        (itsArray[i].type == GaborArrayElement::Type::CONTOUR)
         ? geom::rad_0_2pi(itsThetaJitter * (rand_theta - M_PI) +
                           (itsArray[i].theta + M_PI_2))
         : rand_theta;
@@ -591,7 +591,7 @@ GVX_TRACE("GaborArray::backgHexGrid");
 
       for (int i = 0; i < nx; ++i, x += dx)
         {
-          tryPush(GaborArrayElement(x, y, 0.0, GaborArrayElement::OUTSIDE));
+          tryPush(GaborArrayElement(x, y, 0.0, GaborArrayElement::Type::OUTSIDE));
         }
     }
 }
@@ -608,7 +608,7 @@ GVX_TRACE("GaborArray::backgFill");
   for (double x = -halfX; x <= halfX; x += dx)
     for (double y = -halfY; y <= halfY; y += dx)
       {
-        tryPush(GaborArrayElement(x, y, 0.0, GaborArrayElement::OUTSIDE));
+        tryPush(GaborArrayElement(x, y, 0.0, GaborArrayElement::Type::OUTSIDE));
       }
 
   const double spacing = sqrt(2.0*itsSizeX*itsSizeY/(sqrt(3.0)*itsArray.size()));
@@ -630,7 +630,7 @@ GVX_TRACE("GaborArray::backgJitter");
     {
       for (size_t n = 0; n < itsArray.size(); ++n)
         {
-          if (itsArray[n].type == GaborArrayElement::CONTOUR)
+          if (itsArray[n].type == GaborArrayElement::Type::CONTOUR)
             continue;
 
           vec2d v;

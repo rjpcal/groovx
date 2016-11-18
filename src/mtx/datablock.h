@@ -40,11 +40,8 @@
 //  =======================================================
 /// Aggregation of initialization and storage policy enums.
 
-struct mtx_policies
-{
-  enum init_policy { ZEROS, NO_INIT };
-  enum storage_policy { COPY, BORROW, REFER };
-};
+enum class init_policy { ZEROS, NO_INIT };
+enum class storage_policy { COPY, BORROW, REFER };
 
 
 /// Base class for holding ref-counted arrays of floating-point data.
@@ -103,10 +100,10 @@ public:
 
   static data_block* make(double* data,
                           size_t mrows, size_t ncols,
-                          mtx_policies::storage_policy s);
+                          storage_policy s);
 
   static data_block* make(size_t mrows, size_t ncols,
-                          mtx_policies::init_policy p);
+                          init_policy p);
 
   /// Make the given data_block have a unique copy of its data, copying if needed.
   static void make_unique(data_block*& rep);
@@ -136,7 +133,7 @@ public:
 //  =======================================================
 /// data_holder enforces the ref-counting semantics of data_block
 
-class data_holder : public mtx_policies
+class data_holder
 {
 public:
   /// Construct with a data array, dimensions, and storage policy.
@@ -180,7 +177,7 @@ private:
 //  =======================================================
 /// data_ref_holder acts like a reference to a data_holder
 
-class data_ref_holder : public mtx_policies
+class data_ref_holder
 {
 public:
   /// Construct with a pointee.

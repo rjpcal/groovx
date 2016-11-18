@@ -52,7 +52,7 @@ namespace
   class AttribList
   {
   private:
-    enum { MAXSIZE = 1000 };
+    static constexpr int MAXSIZE = 1000;
 
     void push(GLint v)
     {

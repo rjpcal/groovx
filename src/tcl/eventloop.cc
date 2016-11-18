@@ -104,7 +104,7 @@ private:
 
   void do_prompt(const char* text, size_t length);
 
-  enum prompt_type { FULL, PARTIAL };
+  enum class prompt_type { FULL, PARTIAL };
 
   void prompt(prompt_type t);
 
@@ -309,7 +309,7 @@ void tcl::event_loop_impl::prompt(tcl::event_loop_impl::prompt_type t)
 {
 GVX_TRACE("tcl::event_loop_impl::prompt");
 
-  if (t == PARTIAL)
+  if (t == prompt_type::PARTIAL)
     {
       do_prompt("", 0);
     }
@@ -436,7 +436,7 @@ GVX_TRACE("tcl::event_loop_impl::handle_line");
 
   if (m_is_interactive)
     {
-      prompt(m_got_partial ? PARTIAL : FULL);
+      prompt(m_got_partial ? prompt_type::PARTIAL : prompt_type::FULL);
     }
 
   m_interp.reset_result();
@@ -634,7 +634,7 @@ GVX_TRACE("tcl::event_loop_impl::run");
         }
       if (m_is_interactive)
         {
-          this->prompt(FULL);
+          this->prompt(prompt_type::FULL);
         }
     }
 

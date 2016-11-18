@@ -81,7 +81,7 @@ namespace rutz
     :
     public func_args<R>
   {
-    enum { num_args = 0 };
+    static constexpr int num_args = 0;
   };
 
   /// Specialization for free functions with 1 argument.
@@ -90,7 +90,7 @@ namespace rutz
     :
     public func_args<R, P1>
   {
-    enum { num_args = 1 };
+    static constexpr int num_args = 1;
   };
 
   /// Specialization for free functions with 2 arguments.
@@ -99,7 +99,7 @@ namespace rutz
     :
     public func_args<R, P1, P2>
   {
-    enum { num_args = 2 };
+    static constexpr int num_args = 2;
   };
 
   /// Specialization for free functions with 3 arguments.
@@ -108,7 +108,7 @@ namespace rutz
     :
     public func_args<R, P1, P2, P3>
   {
-    enum { num_args = 3 };
+    static constexpr int num_args = 3;
   };
 
   /// Specialization for free functions with 4 arguments.
@@ -117,7 +117,7 @@ namespace rutz
     :
     public func_args<R, P1, P2, P3, P4>
   {
-    enum { num_args = 4 };
+    static constexpr int num_args = 4;
   };
 
   /// Specialization for free functions with 5 arguments.
@@ -126,7 +126,7 @@ namespace rutz
     :
     public func_args<R, P1, P2, P3, P4, P5>
   {
-    enum { num_args = 5 };
+    static constexpr int num_args = 5;
   };
 
   /// Specialization for free functions with 6 arguments.
@@ -136,7 +136,7 @@ namespace rutz
     :
     public func_args<R, P1, P2, P3, P3, P4, P5, P6>
   {
-    enum { num_args = 6 };
+    static constexpr int num_args = 6;
   };
 
   //  =======================================================
@@ -154,7 +154,7 @@ namespace rutz
     :
     public func_args<R, null_t>
   {
-    enum { num_args = 1 };
+    static constexpr int num_args = 1;
     typedef C class_t;
   };
 
@@ -164,7 +164,7 @@ namespace rutz
     :
     public func_args<R, null_t>
   {
-    enum { num_args = 1 };
+    static constexpr int num_args = 1;
     typedef C class_t;
   };
 
@@ -174,7 +174,7 @@ namespace rutz
     :
     public func_args<R, null_t, P1>
   {
-    enum { num_args = 2 };
+    static constexpr int num_args = 2;
     typedef C class_t;
   };
 
@@ -184,7 +184,7 @@ namespace rutz
     :
     public func_args<R, null_t, P1>
   {
-    enum { num_args = 2 };
+    static constexpr int num_args = 2;
     typedef C class_t;
   };
 
@@ -194,7 +194,7 @@ namespace rutz
     :
     public func_args<R, null_t, P1, P2>
   {
-    enum { num_args = 3 };
+    static constexpr int num_args = 3;
     typedef C class_t;
   };
 
@@ -204,7 +204,7 @@ namespace rutz
     :
     public func_args<R, null_t, P1, P2>
   {
-    enum { num_args = 3 };
+    static constexpr int num_args = 3;
     typedef C class_t;
   };
 
@@ -214,7 +214,7 @@ namespace rutz
     :
     public func_args<R, null_t, P1, P2, P3>
   {
-    enum { num_args = 4 };
+    static constexpr int num_args = 4;
     typedef C class_t;
   };
 
@@ -224,7 +224,7 @@ namespace rutz
     :
     public func_args<R, null_t, P1, P2, P3>
   {
-    enum { num_args = 4 };
+    static constexpr int num_args = 4;
     typedef C class_t;
   };
 
@@ -234,7 +234,7 @@ namespace rutz
     :
     public func_args<R, null_t, P1, P2, P3, P4>
   {
-    enum { num_args = 5 };
+    static constexpr int num_args = 5;
     typedef C class_t;
   };
 
@@ -244,7 +244,7 @@ namespace rutz
     :
     public func_args<R, null_t, P1, P2, P3, P4>
   {
-    enum { num_args = 5 };
+    static constexpr int num_args = 5;
     typedef C class_t;
   };
 
@@ -255,7 +255,7 @@ namespace rutz
     :
     public func_args<R, null_t, P1, P2, P3, P4, P5>
   {
-    enum { num_args = 6 };
+    static constexpr int num_args = 6;
     typedef C class_t;
   };
 
@@ -266,7 +266,7 @@ namespace rutz
     :
     public func_args<R, null_t, P1, P2, P3, P4, P5>
   {
-    enum { num_args = 6 };
+    static constexpr int num_args = 6;
     typedef C class_t;
   };
 
@@ -277,7 +277,7 @@ namespace rutz
     :
     public func_args<R, null_t, P1, P2, P3, P4, P5, P6>
   {
-    enum { num_args = 7 };
+    static constexpr int num_args = 7;
     typedef C class_t;
   };
 
@@ -288,7 +288,7 @@ namespace rutz
     :
     public func_args<R, null_t, P1, P2, P3, P4, P5, P6>
   {
-    enum { num_args = 7 };
+    static constexpr int num_args = 7;
     typedef C class_t;
   };
 
@@ -531,7 +531,7 @@ namespace rutz
   template <class base_functor, class bound_t>
   struct func_traits<bound_first<base_functor, bound_t> >
   {
-    enum { num_args = (func_traits<base_functor>::num_args-1) };
+    static constexpr int num_args = func_traits<base_functor>::num_args-1;
 
     typedef typename func_traits<base_functor>::retn_t   retn_t;
     typedef typename func_traits<base_functor>::arg2_t   arg1_t;
@@ -644,7 +644,7 @@ namespace rutz
   template <class base_functor, class bound_t>
   struct func_traits<bound_last<base_functor, bound_t> >
   {
-    enum { num_args = (func_traits<base_functor>::num_args-1) };
+    static constexpr int num_args = func_traits<base_functor>::num_args-1;
 
     typedef typename func_traits<base_functor>::retn_t   retn_t;
     typedef typename func_traits<base_functor>::arg1_t   arg1_t;

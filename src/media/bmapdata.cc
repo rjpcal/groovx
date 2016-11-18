@@ -63,7 +63,7 @@ public:
     m_bits_per_pixel(bits_per_pixel),
     m_byte_alignment(byte_alignment),
     m_bytes(),
-    m_row_order(TOP_FIRST),
+    m_row_order(row_order::TOP_FIRST),
     m_updater()
   {
     GVX_PRECONDITION(m_size.x() >= 0);
@@ -96,7 +96,7 @@ public:
     GVX_ASSERT(row < m_size.y());
 
     const size_t offset =
-      (m_row_order == TOP_FIRST)
+      (m_row_order == row_order::TOP_FIRST)
       ?
       row
       :

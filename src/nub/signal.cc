@@ -202,7 +202,7 @@ void nub::signal_base::do_disconnect(nub::soft_ref<nub::slot_base> slot)
 GVX_TRACE("nub::signal_base::do_disconnect");
   if (!slot.is_valid()) return;
 
-  rep->slots.remove(slot_ref(slot.get(), nub::PRIVATE));
+  rep->slots.remove(slot_ref(slot.get(), nub::ref_vis::PRIVATE));
 
   dbg_eval_nl(3, rep->slots.size());
 }
@@ -212,7 +212,7 @@ void nub::signal_base::do_connect(nub::soft_ref<nub::slot_base> slot)
 GVX_TRACE("nub::signal_base::do_connect");
   if (!slot.is_valid()) return;
 
-  rep->slots.push_back(slot_ref(slot.get(), nub::PRIVATE));
+  rep->slots.push_back(slot_ref(slot.get(), nub::ref_vis::PRIVATE));
 
   dbg_eval_nl(3, rep->slots.size());
 }

@@ -152,5 +152,5 @@ GVX_TRACE("Block::vxAllChildrenFinished");
   Element* p = itsParent;
   itsParent = nullptr;
   GVX_ASSERT( p != nullptr );
-  p->vxReturn(CHILD_OK);
+  p->vxReturn(ChildStatus::OK);
 }

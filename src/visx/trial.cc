@@ -86,7 +86,7 @@ namespace dummy_namespace_to_avoid_gcc411_bug_trial_cc
       widget(w),
       rh(r),
       th(t),
-      status(Element::CHILD_OK)
+      status(Element::ChildStatus::OK)
     {
       GVX_PRECONDITION(parent != nullptr);
       nub::logging::add_obj_scope(*trial);
@@ -496,7 +496,7 @@ GVX_TRACE("Trial::trAbortTrial");
 
   nub::log("trAbortTrial");
 
-  rep->activeState->status = CHILD_ABORTED;
+  rep->activeState->status = ChildStatus::ABORTED;
   rep->activeState->rh->rhAbortTrial();
   rep->activeState->th->thAbortTrial();
 }
@@ -569,7 +569,7 @@ GVX_TRACE("Trial::trProcessResponse");
   // kindly repeat this trial
   if (!response.matchesCorrectValue(rep->correctResponse))
     {
-      rep->activeState->status = CHILD_REPEAT;
+      rep->activeState->status = ChildStatus::REPEAT;
     }
 }
 

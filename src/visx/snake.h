@@ -44,7 +44,7 @@ namespace rutz
 
 struct GaborArrayElement
 {
-  enum Type { OUTSIDE, INSIDE, CONTOUR };
+  enum class Type { OUTSIDE, INSIDE, CONTOUR };
 
   GaborArrayElement() {}
 

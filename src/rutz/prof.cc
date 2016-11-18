@@ -124,7 +124,7 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-rutz::prof::timing_mode rutz::prof::s_timing_mode = rutz::prof::RUSAGE;
+rutz::prof::timing_mode rutz::prof::s_timing_mode = rutz::prof::timing_mode::RUSAGE;
 
 rutz::prof::prof(const char* s, const char* fname, int lineno)  noexcept:
   m_context_name(s),

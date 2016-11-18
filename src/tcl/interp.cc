@@ -62,7 +62,7 @@ namespace
   {
     switch (strategy)
       {
-      case tcl::THROW_ERROR:
+      case tcl::error_strategy::THROW:
         {
           const fstring msg =
             rutz::sfmt("error while evaluating %s:\n%s",
@@ -76,7 +76,7 @@ namespace
           throw rutz::error(msg, where);
         }
 
-      case tcl::IGNORE_ERROR:
+      case tcl::error_strategy::IGNORE:
         return false;
       }
 

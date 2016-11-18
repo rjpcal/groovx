@@ -196,17 +196,17 @@ GVX_TRACE("data_block::make_referred");
 
 data_block* data_block::make(double* data,
                              size_t mrows, size_t ncols,
-                             mtx_policies::storage_policy s)
+                             storage_policy s)
 {
   switch (s)
     {
-    case mtx_policies::BORROW:
+    case storage_policy::BORROW:
       return data_block::make_borrowed(data, mrows*ncols);
 
-    case mtx_policies::REFER:
+    case storage_policy::REFER:
       return data_block::make_referred(data, mrows*ncols);
 
-    case mtx_policies::COPY:
+    case storage_policy::COPY:
     default:
       break;
     }
@@ -215,9 +215,9 @@ data_block* data_block::make(double* data,
 }
 
 data_block* data_block::make(size_t mrows, size_t ncols,
-                             mtx_policies::init_policy p)
+                             init_policy p)
 {
-  if (p == mtx_policies::ZEROS)
+  if (p == init_policy::ZEROS)
     return data_block::make_zeros(mrows*ncols);
   // else...
   return data_block::make_uninitialized(mrows*ncols);

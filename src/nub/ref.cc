@@ -46,7 +46,7 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  nub::ref_vis default_vis = nub::GVX_DEFAULT_REFVIS;
+  nub::ref_vis default_vis = nub::ref_vis::GVX_DEFAULT_REFVIS;
 }
 
 nub::ref_vis nub::get_default_ref_vis()
@@ -71,17 +71,17 @@ nub::object* nub::detail::get_checked_item(nub::uid id)
 
 void nub::detail::insert_item(nub::object* obj, ref_vis vis)
 {
-  if (vis == DEFAULT)
+  if (vis == ref_vis::DEFAULT)
     {
       vis = default_vis;
     }
 
   switch (vis)
     {
-    case PUBLIC:    nub::objectdb::instance().insert_obj(obj); break;
-    case PROTECTED: nub::objectdb::instance().insert_obj_weak(obj); break;
-    case PRIVATE:   /* nothing */ break;
-    case DEFAULT:   /* DEFAULT already handled above */ GVX_ASSERT(0);
+    case ref_vis::PUBLIC:    nub::objectdb::instance().insert_obj(obj); break;
+    case ref_vis::PROTECTED: nub::objectdb::instance().insert_obj_weak(obj); break;
+    case ref_vis::PRIVATE:   /* nothing */ break;
+    case ref_vis::DEFAULT:   /* DEFAULT already handled above */ GVX_ASSERT(0);
     default:
       GVX_PANIC("unknown ref_vis enum value");
     }

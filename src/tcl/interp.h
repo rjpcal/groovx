@@ -53,10 +53,10 @@ namespace tcl
   class list;
 
   /// Different error-handling strategies for tcl::interpreter::eval().
-  enum error_strategy
+  enum class error_strategy
     {
-      THROW_ERROR,
-      IGNORE_ERROR
+      THROW,
+      IGNORE
     };
 }
 
@@ -93,32 +93,32 @@ public:
   bool eval_boolean_expr(const tcl::obj& obj) const;
 
   /// Evaluates code.
-  /** If strategy is THROW_ERROR, then an exception is thrown if the
-      evaluation produces an error. If strategy is IGNORE_ERROR, then
+  /** If strategy is THROW, then an exception is thrown if the
+      evaluation produces an error. If strategy is IGNORE, then
       a return value of true indicates a successful evaluation, and a
       return value of false indicates an error during evaluation. */
-  bool eval(const char* code, error_strategy strategy = THROW_ERROR);
+  bool eval(const char* code, error_strategy strategy = error_strategy::THROW);
 
   /// Evaluates code.
-  /** If strategy is THROW_ERROR, then an exception is thrown if the
-      evaluation produces an error. If strategy is IGNORE_ERROR, then
+  /** If strategy is THROW, then an exception is thrown if the
+      evaluation produces an error. If strategy is IGNORE, then
       a return value of true indicates a successful evaluation, and a
       return value of false indicates an error during evaluation. */
-  bool eval(const rutz::fstring& code, error_strategy strategy = THROW_ERROR);
+  bool eval(const rutz::fstring& code, error_strategy strategy = error_strategy::THROW);
 
   /// Evaluates code.
-  /** If strategy is THROW_ERROR, then an exception is thrown if the
-      evaluation produces an error. If strategy is IGNORE_ERROR, then
+  /** If strategy is THROW, then an exception is thrown if the
+      evaluation produces an error. If strategy is IGNORE, then
       a return value of true indicates a successful evaluation, and a
       return value of false indicates an error during evaluation. */
-  bool eval(const tcl::obj& code, error_strategy strategy = THROW_ERROR);
+  bool eval(const tcl::obj& code, error_strategy strategy = error_strategy::THROW);
 
   /// Evaluates code using Tcl_EvalObjv(), exploiting the fact that the object is already a list.
-  /** If strategy is THROW_ERROR, then an exception is thrown if the
-      evaluation produces an error. If strategy is IGNORE_ERROR, then
+  /** If strategy is THROW, then an exception is thrown if the
+      evaluation produces an error. If strategy is IGNORE, then
       a return value of true indicates a successful evaluation, and a
       return value of false indicates an error during evaluation. */
-  bool eval_objv(const tcl::list& objv, error_strategy strategy = THROW_ERROR);
+  bool eval_objv(const tcl::list& objv, error_strategy strategy = error_strategy::THROW);
 
   /// Evaluate the tcl code in the named file.
   /** Returns true on success, or false on failure. */

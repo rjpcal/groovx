@@ -91,7 +91,7 @@ public:
   ~prof() noexcept;
 
   /// Different types of timing.
-  enum timing_mode
+  enum class timing_mode
     {
       WALLCLOCK, ///< Track elapsed wall-clock time.
       RUSAGE     ///< Track elpased user+sys rusage.
@@ -110,10 +110,10 @@ public:
   {
     switch (mode)
       {
-      case rutz::prof::RUSAGE:
+      case rutz::prof::timing_mode::RUSAGE:
         return (rutz::time::user_rusage() + rutz::time::sys_rusage());
 
-      case rutz::prof::WALLCLOCK:
+      case rutz::prof::timing_mode::WALLCLOCK:
       default:
         return rutz::time::wall_clock_now();
       }

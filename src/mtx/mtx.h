@@ -660,7 +660,7 @@ public:
 /// mtx_base class has shared infrastructure for mtx and sub_mtx_ref
 
 template <class Data>
-class mtx_base : public mtx_specs, public mtx_policies
+class mtx_base : public mtx_specs
 {
 private:
   mtx_base& operator=(const mtx_base& other); // not allowed

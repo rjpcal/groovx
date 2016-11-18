@@ -126,7 +126,7 @@ namespace nub
     MF m_mem_func;
 
     slot_adapter_mem_func0(C* obj, MF mf) :
-      m_object(obj, nub::WEAK, nub::PRIVATE), m_mem_func(mf) {}
+      m_object(obj, nub::ref_type::WEAK, nub::ref_vis::PRIVATE), m_mem_func(mf) {}
 
     virtual ~slot_adapter_mem_func0() noexcept {}
 
@@ -148,8 +148,8 @@ namespace nub
   {
     return nub::soft_ref<slot0>
       (slot_adapter_mem_func0<C, MF>::make(obj, mf),
-       nub::STRONG,
-       nub::PRIVATE);
+       nub::ref_type::STRONG,
+       nub::ref_vis::PRIVATE);
   }
 
   //  #######################################################
@@ -230,7 +230,7 @@ namespace nub
     MF m_mem_func;
 
     slot_adapter_mem_func1(C* obj, MF mf) :
-      m_object(obj, nub::WEAK, nub::PRIVATE), m_mem_func(mf) {}
+      m_object(obj, nub::ref_type::WEAK, nub::ref_vis::PRIVATE), m_mem_func(mf) {}
 
     virtual ~slot_adapter_mem_func1() noexcept {}
 
@@ -253,8 +253,8 @@ namespace nub
   {
     return nub::soft_ref<slot1<P1> >
       (slot_adapter_mem_func1<P1, C, MF>::make(obj, mf),
-       nub::STRONG,
-       nub::PRIVATE);
+       nub::ref_type::STRONG,
+       nub::ref_vis::PRIVATE);
   }
 
 
@@ -288,8 +288,8 @@ namespace nub
   {
     return nub::soft_ref<slot1<P1> >
       (slot_adapter_free_func1<P1, FF>::make(f),
-       nub::STRONG,
-       nub::PRIVATE);
+       nub::ref_type::STRONG,
+       nub::ref_vis::PRIVATE);
   }
 
 

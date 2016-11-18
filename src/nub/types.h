@@ -33,9 +33,9 @@
 
 namespace nub
 {
-  enum ref_type { WEAK, STRONG };
+  enum class ref_type { WEAK, STRONG };
 
-  enum ref_vis
+  enum class ref_vis
     {
       DEFAULT,   //! equivalent to result of get_default_ref_vis()
       PRIVATE,   //! nub::objectdb gets no reference to the object

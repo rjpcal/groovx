@@ -197,7 +197,7 @@ public:
 
       m_obj_map.insert
         (map_type::value_type
-         (new_id, obj_ref(ptr, strong ? nub::STRONG : nub::WEAK)));
+         (new_id, obj_ref(ptr, strong ? nub::ref_type::STRONG : nub::ref_type::WEAK)));
     }
 };
 

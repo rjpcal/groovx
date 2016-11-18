@@ -726,7 +726,7 @@ void GLCanvas::drawPixels(const media::bmap_data& data,
 {
 GVX_TRACE("GLCanvas::drawPixels");
 
-  data.set_row_order(media::bmap_data::BOTTOM_FIRST);
+  data.set_row_order(media::bmap_data::row_order::BOTTOM_FIRST);
 
   rasterPos(world_pos);
 
@@ -824,7 +824,7 @@ void GLCanvas::drawBitmap(const media::bmap_data& data,
 {
 GVX_TRACE("GLCanvas::drawBitmap");
 
-  data.set_row_order(media::bmap_data::BOTTOM_FIRST);
+  data.set_row_order(media::bmap_data::row_order::BOTTOM_FIRST);
 
   rasterPos(world_pos);
 
@@ -861,7 +861,7 @@ GVX_TRACE("GLCanvas::grabPixels");
   }
   glPopAttrib();
 
-  new_data.specify_row_order(media::bmap_data::BOTTOM_FIRST);
+  new_data.specify_row_order(media::bmap_data::row_order::BOTTOM_FIRST);
 
   data_out.swap(new_data);
 }

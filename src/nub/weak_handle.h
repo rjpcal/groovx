@@ -60,7 +60,7 @@ class nub::detail::weak_handle
 private:
   static nub::ref_counts* get_counts(T* master, ref_type tp) noexcept
   {
-    return (master && (tp == WEAK || master->is_not_shareable())) ?
+    return (master && (tp == ref_type::WEAK || master->is_not_shareable())) ?
       master->get_counts() : 0;
   }
 
@@ -104,7 +104,7 @@ public:
 
   ref_type get_ref_type() const noexcept
   {
-    return (m_master && !m_counts) ? STRONG : WEAK;
+    return (m_master && !m_counts) ? ref_type::STRONG : ref_type::WEAK;
   }
 
 private:

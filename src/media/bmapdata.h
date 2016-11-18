@@ -78,7 +78,7 @@ namespace media
     };
 
     /// Specifies the order in which the rows are physically arranged in memory.
-    enum row_order
+    enum class row_order
       {
         TOP_FIRST,
         BOTTOM_FIRST

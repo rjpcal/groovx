@@ -238,16 +238,16 @@ void Gfx::Canvas::begin(Gfx::Canvas::VertexStyle s, const char* comment)
 {
   switch (s)
     {
-    case POINTS:         beginPoints(comment); break;
-    case LINES:          beginLines(comment); break;
-    case LINE_STRIP:     beginLineStrip(comment); break;
-    case LINE_LOOP:      beginLineLoop(comment); break;
-    case TRIANGLES:      beginTriangles(comment); break;
-    case TRIANGLE_STRIP: beginTriangleStrip(comment); break;
-    case TRIANGLE_FAN:   beginTriangleFan(comment); break;
-    case QUADS:          beginQuads(comment); break;
-    case QUAD_STRIP:     beginQuadStrip(comment); break;
-    case POLYGON:        beginPolygon(comment); break;
+    case VertexStyle::POINTS:         beginPoints(comment); break;
+    case VertexStyle::LINES:          beginLines(comment); break;
+    case VertexStyle::LINE_STRIP:     beginLineStrip(comment); break;
+    case VertexStyle::LINE_LOOP:      beginLineLoop(comment); break;
+    case VertexStyle::TRIANGLES:      beginTriangles(comment); break;
+    case VertexStyle::TRIANGLE_STRIP: beginTriangleStrip(comment); break;
+    case VertexStyle::TRIANGLE_FAN:   beginTriangleFan(comment); break;
+    case VertexStyle::QUADS:          beginQuads(comment); break;
+    case VertexStyle::QUAD_STRIP:     beginQuadStrip(comment); break;
+    case VertexStyle::POLYGON:        beginPolygon(comment); break;
     }
 }
 

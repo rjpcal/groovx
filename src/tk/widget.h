@@ -47,7 +47,7 @@ namespace tcl
   class interpreter;
   class TkWidget;
 
-  enum EventStatus { HANDLED, NOT_HANDLED };
+  enum class EventStatus { HANDLED, NOT_HANDLED };
 
   /// A mouse button-press event.
   struct ButtonPressEvent

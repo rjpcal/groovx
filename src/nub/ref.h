@@ -144,7 +144,7 @@ public:
   explicit ref(nub::uid i)
     : m_handle(detail::get_casted_item<T>(i)) {}
 
-  explicit ref(T* ptr, ref_vis vis = DEFAULT) :
+  explicit ref(T* ptr, ref_vis vis = ref_vis::DEFAULT) :
     m_handle(ptr)
   {
     detail::insert_item(ptr, vis);
@@ -232,9 +232,9 @@ private:
   mutable detail::weak_handle<T> m_handle;
 
 public:
-  soft_ref() : m_handle(0, STRONG) {}
+  soft_ref() : m_handle(0, ref_type::STRONG) {}
 
-  explicit soft_ref(nub::uid i, ref_type tp = STRONG)
+  explicit soft_ref(nub::uid i, ref_type tp = ref_type::STRONG)
     :
     m_handle(detail::is_valid_uid(i) ?
              detail::get_casted_item<T>(i) : 0,
@@ -242,7 +242,7 @@ public:
   {}
 
   explicit soft_ref(T* master,
-                    ref_type tp = STRONG, ref_vis vis = DEFAULT)
+                    ref_type tp = ref_type::STRONG, ref_vis vis = ref_vis::DEFAULT)
     :
     m_handle(master,tp)
   {
@@ -254,10 +254,10 @@ public:
 
   template <class U>
   soft_ref(const soft_ref<U>& other) :
-    m_handle(other.is_valid() ? other.get() : 0, STRONG) {}
+    m_handle(other.is_valid() ? other.get() : 0, ref_type::STRONG) {}
 
   template <class U>
-  soft_ref(const ref<U>& other) : m_handle(other.get(), STRONG) {}
+  soft_ref(const ref<U>& other) : m_handle(other.get(), ref_type::STRONG) {}
 
   // Default destructor, copy constructor, operator=() are fine
 

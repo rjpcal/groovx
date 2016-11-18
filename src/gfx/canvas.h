@@ -358,7 +358,7 @@ public:
   virtual void beginPolygon(const char* comment="") = 0;        ///< Start a convex polygon.
 
   /// Symbolic tags for the vertex-series specified by the begin*() functions.
-  enum VertexStyle
+  enum class VertexStyle
     {
       // NOTE: Don't change these numeric values since they are
       // required for compatibility of serialized object dumps

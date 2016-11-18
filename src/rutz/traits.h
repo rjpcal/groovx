@@ -33,6 +33,8 @@
 #ifndef GROOVX_RUTZ_TRAITS_H_UTC20050626084021_DEFINED
 #define GROOVX_RUTZ_TRAITS_H_UTC20050626084021_DEFINED
 
+#include <cstddef>
+
 namespace rutz
 {
   /// Basic type traits class.
@@ -97,12 +99,8 @@ namespace rutz
   template <class sub, class super>
   struct is_sub_super
   {
-    enum { sz = sizeof(type_match<super>::foo(static_cast<sub*>(0))) };
-
-    enum
-      {
-        result = ((sz == sizeof(traits::yes_type)) ? 1 : 0)
-      };
+    static constexpr size_t sz = sizeof(type_match<super>::foo(static_cast<sub*>(0)));
+    static constexpr int result = ((sz == sizeof(traits::yes_type)) ? 1 : 0);
   };
 
   /// Remove const/volative qualifiers
@@ -115,11 +113,8 @@ namespace rutz
   template <typename T>
   struct is_class
   {
-    enum
-      {
-        value = (sizeof(is_class_tester<T>(0))
-                 == sizeof(traits::yes_type))
-      };
+    static constexpr bool value =
+      (sizeof(is_class_tester<T>(0)) == sizeof(traits::yes_type));
   };
 
   /// Helper struct for telling whether T is a polymorphic type or not.
@@ -152,13 +147,13 @@ namespace rutz
       char padding[256];
     };
 
-    enum { value = (sizeof(d2) == sizeof(d1)) };
+    static constexpr bool value = (sizeof(d2) == sizeof(d1));
   };
 
   template <class T>
   struct is_polymorphic_imp2
   {
-    enum { value = false };
+    static constexpr bool value = false;
   };
 
   template <bool is_class>
@@ -188,7 +183,7 @@ namespace rutz
     typedef is_polymorphic_selector<is_class<T>::value> selector;
     typedef typename selector::template rebind<T> binder;
     typedef typename binder::type imp_type;
-    enum { value = imp_type::value };
+    static constexpr bool value = imp_type::value;
   };
 
   template <class T, bool polymorphic = is_polymorphic<T>::value >

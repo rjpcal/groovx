@@ -19,6 +19,8 @@
     gltcl.cc theAttribMap
     soundtcl.cc
 
+    gxpointset.cc has Gfx::Canvas::VertexStyle expsed as an int Field
+
   Maybe the simplest way is this. Make a big ugly global associative
   array of enum names. Buyer beware of name clashes. Then we have the
   string->int translators look for a string in the biguglyarray if the

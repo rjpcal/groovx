@@ -327,7 +327,7 @@ tcl::command_group* tcl::command_group::lookup_original(
 GVX_TRACE("tcl::command_group::lookup_original");
 
   const fstring script = rutz::sfmt("namespace origin %s", name);
-  if (interp.eval(script, tcl::IGNORE_ERROR) == false)
+  if (interp.eval(script, tcl::error_strategy::IGNORE) == false)
     {
       return 0;
     }

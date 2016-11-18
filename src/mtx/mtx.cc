@@ -516,7 +516,7 @@ GVX_TRACE("mtx::colmaj_copy_of");
 
   return mtx(mtx_shape(mrows, ncols),
              data_holder(const_cast<double*>(data),
-                         mrows, ncols, COPY));
+                         mrows, ncols, storage_policy::COPY));
 }
 
 mtx mtx::colmaj_borrow_from(double* data, size_t mrows, size_t ncols)
@@ -524,7 +524,7 @@ mtx mtx::colmaj_borrow_from(double* data, size_t mrows, size_t ncols)
 GVX_TRACE("mtx::colmaj_borrow_from");
 
   return mtx(mtx_shape(mrows, ncols),
-             data_holder(data, mrows, ncols, BORROW));
+             data_holder(data, mrows, ncols, storage_policy::BORROW));
 }
 
 mtx mtx::colmaj_refer_to(double* data, size_t mrows, size_t ncols)
@@ -532,17 +532,17 @@ mtx mtx::colmaj_refer_to(double* data, size_t mrows, size_t ncols)
 GVX_TRACE("mtx::colmaj_refer_to");
 
   return mtx(mtx_shape(mrows, ncols),
-             data_holder(data, mrows, ncols, REFER));
+             data_holder(data, mrows, ncols, storage_policy::REFER));
 }
 
 mtx mtx::zeros(const mtx_shape& s)
 {
-  return mtx(s, data_holder(s.mrows(), s.ncols(), ZEROS));
+  return mtx(s, data_holder(s.mrows(), s.ncols(), init_policy::ZEROS));
 }
 
 mtx mtx::uninitialized(const mtx_shape& s)
 {
-  return mtx(s, data_holder(s.mrows(), s.ncols(), NO_INIT));
+  return mtx(s, data_holder(s.mrows(), s.ncols(), init_policy::NO_INIT));
 }
 
 mtx mtx::from_stream(std::istream& s)
@@ -617,7 +617,7 @@ GVX_TRACE("mtx::empty_mtx");
 }
 
 mtx::mtx(const slice& s) :
-  Base(s.nelems(), 1, data_holder(s.nelems(), 1, NO_INIT))
+  Base(s.nelems(), 1, data_holder(s.nelems(), 1, init_policy::NO_INIT))
 {
 GVX_TRACE("mtx::mtx");
   std::copy(s.begin(), s.end(), this->colmaj_begin_nc());

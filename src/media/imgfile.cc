@@ -65,7 +65,7 @@ namespace
     return fstring(&result[0]);
   }
 
-  enum image_file_type
+  enum class image_file_type
     {
       UNKNOWN,
       JPEG,
@@ -89,23 +89,23 @@ namespace
         || lowername.ends_with(".ppm.gz")
         || lowername.ends_with(".pnm.gz"))
       {
-        return PNM;
+        return image_file_type::PNM;
       }
     else if (lowername.ends_with(".png"))
       {
-        return PNG;
+        return image_file_type::PNG;
       }
     else if (lowername.ends_with(".jpg")
              || lowername.ends_with(".jpeg"))
       {
-        return JPEG;
+        return image_file_type::JPEG;
       }
     else if (lowername.ends_with(".gif"))
       {
-        return GIF;
+        return image_file_type::GIF;
       }
     // else...
-    return UNKNOWN;
+    return image_file_type::UNKNOWN;
   }
 
 #if defined(GVX_GIFTOPNM_PROG) || defined(GVX_ANYTOPNM_PROG)
@@ -145,19 +145,19 @@ GVX_TRACE("media::load_image");
 
   switch (get_image_file_type(filename))
     {
-    case PNM:  media::load_pnm(filename, data); break;
-    case PNG:  media::load_png(filename, data); break;
+    case image_file_type::PNM:  media::load_pnm(filename, data); break;
+    case image_file_type::PNG:  media::load_png(filename, data); break;
 #ifdef HAVE_LIBJPEG
-    case JPEG: media::load_jpeg(filename, data); break;
+    case image_file_type::JPEG: media::load_jpeg(filename, data); break;
 #else
-    case JPEG: // fall through
+    case image_file_type::JPEG: // fall through
 #endif
 #ifdef GVX_GIFTOPNM_PROG
-    case GIF:  pipe_load(GVX_GIFTOPNM_PROG, filename, data); break;
+    case image_file_type::GIF:  pipe_load(GVX_GIFTOPNM_PROG, filename, data); break;
 #else
-    case GIF:  // fall through
+    case image_file_type::GIF:  // fall through
 #endif
-    case UNKNOWN: // fall through
+    case image_file_type::UNKNOWN: // fall through
     default:
 #ifdef GVX_ANYTOPNM_PROG
       // A fallback to try to read just about any image type, given
@@ -180,11 +180,11 @@ void media::save_image(const char* filename,
 {
   switch (get_image_file_type(filename))
     {
-    case PNM:  media::save_pnm(filename, data); break;
-    case PNG:  media::save_png(filename, data); break;
-    case JPEG: // fall through
-    case GIF: // fall through
-    case UNKNOWN: // fall through
+    case image_file_type::PNM:  media::save_pnm(filename, data); break;
+    case image_file_type::PNG:  media::save_png(filename, data); break;
+    case image_file_type::JPEG: // fall through
+    case image_file_type::GIF: // fall through
+    case image_file_type::UNKNOWN: // fall through
     default:
       throw rutz::error(rutz::sfmt("unknown file format: %s", filename),
                         SRC_POS);

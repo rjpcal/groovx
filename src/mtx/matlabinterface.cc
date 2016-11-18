@@ -39,7 +39,7 @@ namespace
       throw rutz::error("cannot construct a mtx "
                         "with a non-'double' mxArray", SRC_POS);
 
-    if (s != mtx_policies::BORROW && s != mtx_policies::COPY)
+    if (s != storage_policy::BORROW && s != storage_policy::COPY)
       throw rutz::error("cannot construct a mtx from a const mxArray* "
                         "unless the storage_policy is COPY or BORROW",
                         SRC_POS);
