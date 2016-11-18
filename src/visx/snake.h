@@ -64,23 +64,22 @@ struct GaborArrayElement
 class Snake
 {
 public:
-  Snake(size_t l, double spacing, rutz::urand& urand);
+  Snake(size_t length, double spacing, rutz::urand& urand);
   ~Snake();
 
   GaborArrayElement getElement(size_t n) const;
 
 private:
-  const size_t itsLength;
   std::vector<geom::vec2<double> > itsElem;
 
   size_t adjust_index(size_t b, int offset) const
   {
     if (offset > 0)
-      return (b + size_t(offset)) % itsLength;
+      return (b + size_t(offset)) % itsElem.size();
     // else
     while (b < size_t(-offset))
-      b += itsLength;
-    return (b - size_t(-offset)) % itsLength;
+      b += itsElem.size();
+    return (b - size_t(-offset)) % itsElem.size();
   }
 
   geom::vec2<double>& elem(size_t b, int offset)

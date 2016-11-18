@@ -248,19 +248,18 @@ namespace
   }
 }
 
-Snake::Snake(size_t l, double spacing, rutz::urand& urand) :
-  itsLength(l),
-  itsElem(itsLength)
+Snake::Snake(size_t length, double spacing, rutz::urand& urand) :
+  itsElem(length)
 {
 GVX_TRACE("Snake::Snake");
 
-  const double radius = (itsLength * spacing) / (2*M_PI);
+  const double radius = (itsElem.size() * spacing) / (2*M_PI);
 
   const double alpha_start = 2 * M_PI * urand.fdraw();
 
-  for (size_t n = 0; n < itsLength; ++n)
+  for (size_t n = 0; n < itsElem.size(); ++n)
     {
-      const double alpha = alpha_start + 2 * M_PI * n / itsLength;
+      const double alpha = alpha_start + 2 * M_PI * n / itsElem.size();
 
       itsElem[n].set_polar_rad(radius, -alpha);
     }
@@ -280,13 +279,13 @@ GVX_TRACE("Snake::Snake");
   // Now reset so that the center of the ring is at the origin
   vec2d c;
 
-  for (size_t n = 0; n < itsLength; ++n)
-    c += itsElem[n];
+  for (const auto& e: itsElem)
+    c += e;
 
-  c /= itsLength;
+  c /= itsElem.size();
 
-  for (size_t n = 0; n < itsLength; ++n)
-    itsElem[n] -= c;
+  for (auto& e: itsElem)
+    e -= c;
 }
 
 Snake::~Snake()
@@ -298,7 +297,7 @@ GaborArrayElement Snake::getElement(size_t n) const
 {
 GVX_TRACE("Snake::getElement");
 
-  GVX_ASSERT(n < itsLength);
+  GVX_ASSERT(n < itsElem.size());
 
   GaborArrayElement result;
 
@@ -348,7 +347,7 @@ bool Snake::jiggle(rutz::urand& urand)
 GVX_TRACE("Snake::jiggle");
 
   size_t i[4];
-  pickRandom4(int(itsLength), i, urand);
+  pickRandom4(int(itsElem.size()), i, urand);
 
   const vec2d old_pos[4] =
     {
@@ -472,7 +471,7 @@ GVX_TRACE("Snake::transformPath");
   const double a22 =   ratio_d * cos_diff_a;
 
   // Loop over all the nodes in between the nodes given by i1 and i2
-  for (size_t n = (i1+1)%itsLength; n != i2; n = (n+1)%itsLength)
+  for (size_t n = (i1+1)%itsElem.size(); n != i2; n = (n+1)%itsElem.size())
     {
       /*                                              */
       /*   x'      c1       a11   a12     x - b1      */

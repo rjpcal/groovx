@@ -47,13 +47,9 @@ namespace
   void addElementIds(nub::ref<ElementContainer> container,
                      tcl::list trial_ids, unsigned int repeat)
   {
-    for (tcl::list::iterator<nub::uid>
-           itr = trial_ids.begin<nub::uid>(),
-           end = trial_ids.end<nub::uid>();
-         itr != end;
-         ++itr)
+    for (const nub::uid objid: trial_ids.view_of<nub::uid>())
       {
-        container->addElement(nub::ref<Element>(*itr), repeat);
+        container->addElement(nub::ref<Element>(objid), repeat);
       }
   }
 }

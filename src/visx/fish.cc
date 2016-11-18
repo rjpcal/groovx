@@ -365,9 +365,9 @@ GVX_TRACE("Fish::readSplineFile");
 
       // allocate space and read in the successive knots
       itsParts[i].itsKnots.resize(nknots);
-      for (size_t j = 0; j < itsParts[i].itsKnots.size(); ++j)
+      for (auto& knot: itsParts[i].itsKnots)
         {
-          ifs >> itsParts[i].itsKnots[j];
+          ifs >> knot;
         }
 
       // number of coefficients
@@ -376,17 +376,17 @@ GVX_TRACE("Fish::readSplineFile");
 
       // allocate space and read in the successive coefficients
       itsParts[i].itsCtrlPnts.resize(ncoefs);
-      for (size_t k = 0; k < ncoefs; ++k)
+      for (auto& pnt: itsParts[i].itsCtrlPnts)
         {
-          ifs >> itsParts[i].itsCtrlPnts[k].x();
+          ifs >> pnt.x();
         }
-      for (size_t k = 0; k < ncoefs; ++k)
+      for (auto& pnt: itsParts[i].itsCtrlPnts)
         {
-          ifs >> itsParts[i].itsCtrlPnts[k].y();
+          ifs >> pnt.y();
         }
-      for (size_t k = 0; k < ncoefs; ++k)
+      for (auto& pnt: itsParts[i].itsCtrlPnts)
         {
-          itsParts[i].itsCtrlPnts[k].z() = 0.0;
+          pnt.z() = 0.0;
         }
 
       if (ifs.fail())
@@ -507,10 +507,9 @@ GVX_TRACE("Fish::grRender");
       if (bkpt < ctrlpnts.size())
         ctrlpnts[bkpt] = pt;
 
-      for (unsigned int j = 0; j < ctrlpnts.size(); ++j)
+      for (auto& p: ctrlpnts)
         {
-          ctrlpnts[j].z() =
-            ctrlpnts[j].z() * ctrlpnts[j].z() * swimStroke;
+          p.z() = p.z() * p.z() * swimStroke;
         }
 
       canvas.drawNurbsCurve(&itsParts[i].itsKnots[0], &ctrlpnts[0], ctrlpnts.size());
@@ -529,9 +528,9 @@ GVX_TRACE("Fish::grRender");
               canvas.setPointSize(4.0);
 
               Gfx::PointsBlock block(canvas);
-              for (unsigned int p = 0; p < ctrlpnts.size(); ++p)
+              for (const auto& p: ctrlpnts)
                 {
-                  canvas.vertex3(vec3d(ctrlpnts[p]));
+                  canvas.vertex3(vec3d(p));
                 }
             }
           else
@@ -539,12 +538,11 @@ GVX_TRACE("Fish::grRender");
               Gfx::AttribSaver saver(canvas);
               canvas.setPolygonFill(true);
               geom::rect<double> rect;
-              for (unsigned int p = 0; p < ctrlpnts.size(); ++p)
+              for (const auto& p: ctrlpnts)
                 {
                   Gfx::MatrixSaver msaver(canvas);
-                  canvas.translate(vec3d(0.0, 0.0, ctrlpnts[p].z()));
-                  rect.set_lbwh(ctrlpnts[p].x(), ctrlpnts[p].y(),
-                                0.03, 0.03);
+                  canvas.translate(vec3d(0.0, 0.0, p.z()));
+                  rect.set_lbwh(p.x(), p.y(), 0.03, 0.03);
                   canvas.drawRect(rect);
                 }
             }

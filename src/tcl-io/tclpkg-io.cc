@@ -108,13 +108,9 @@ namespace
     io::legacy_writer writer(ofs, use_bases);
     writer.use_pretty_print(false);
 
-    for (tcl::list::iterator<ref<io::serializable> >
-           itr = objids.begin<ref<io::serializable> >(),
-           end = objids.end<ref<io::serializable> >();
-         itr != end;
-         ++itr)
+    for (const auto& r: objids.view_of<ref<io::serializable>>())
       {
-        writer.write_root((*itr).get());
+        writer.write_root(r.get());
       }
   }
 }

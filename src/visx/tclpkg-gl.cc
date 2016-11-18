@@ -328,12 +328,11 @@ void GLTcl::loadGet(tcl::pkg* pkg)
     };
 #undef GLTCL_NAMEVAL
 
-  int num_params = sizeof(theAttribs) / sizeof(AttribInfo);
-  for (int i = 0; i < num_params; ++i)
+  for (const auto& attr: theAttribs)
     {
-      pkg->link_var_copy(theAttribs[i].param_name,
-                         static_cast<int>(theAttribs[i].param_tag));
-      theAttribMap[theAttribs[i].param_tag] = &(theAttribs[i]);
+      pkg->link_var_copy(attr.param_name,
+                         static_cast<int>(attr.param_tag));
+      theAttribMap[attr.param_tag] = &attr;
     }
 }
 
@@ -445,10 +444,9 @@ void GLTcl::loadEnums(tcl::pkg* pkg)
     };
 #undef GLTCL_NAMEVAL
 
-  int num_enums = sizeof(theEnums) / sizeof(NameVal);
-  for (int i = 0; i < num_enums; ++i)
+  for (const auto& e: theEnums)
     {
-      pkg->link_var_copy(theEnums[i].name, theEnums[i].val);
+      pkg->link_var_copy(e.name, e.val);
     }
 }
 

@@ -147,7 +147,6 @@ private:
   Cached<unsigned long> itsContrastSeed;
   Cached<double> itsContrastJitter;
 
-  mutable size_t itsTotalNumber;
   mutable std::vector<GaborArrayElement> itsArray;
   mutable rutz::shared_ptr<media::bmap_data> itsBmap;
 

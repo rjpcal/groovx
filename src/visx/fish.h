@@ -53,7 +53,7 @@ private:
   Fish& operator=(const Fish&);
 
   struct Part;
-  Part* itsParts;
+  Part* const itsParts;
 
   void restoreToDefault();
 

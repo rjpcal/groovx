@@ -283,23 +283,22 @@ GVX_TRACE("TimingHdlr::Impl::scheduleAll");
 
   unsigned int minimum_delay = 0;
 
-  for (size_t i = 0; i < events.size(); ++i)
+  for (const nub::ref<TrialEvent>& ev: events)
     {
-      unsigned int scheduled_delay =
-        events[i]->schedule(s, *trial, minimum_delay);
+      unsigned int scheduled_delay = ev->schedule(s, *trial, minimum_delay);
       minimum_delay = scheduled_delay+1;
 
       nub::log(rutz::sfmt("scheduled @ %u: %s", scheduled_delay,
-                          events[i]->unique_name().c_str()));
+                          ev->unique_name().c_str()));
     }
 }
 
 void TimingHdlr::Impl::cancelAll(EventGroup& events)
 {
 GVX_TRACE("TimingHdlr::Impl::cancelAll");
-  for (size_t i = 0; i < events.size(); ++i)
+  for (const nub::ref<TrialEvent>& ev: events)
     {
-      events[i]->cancel();
+      ev->cancel();
     }
 }
 

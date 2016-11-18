@@ -346,19 +346,15 @@ tcl::list TlistUtils::dealSingles(tcl::list objids, nub::uid posid)
 
   ref<GxNode> pos(posid);
 
-  for (tcl::list::iterator<nub::uid>
-         itr = objids.begin<nub::uid>(),
-         end = objids.end<nub::uid>();
-       itr != end;
-       ++itr)
+  for (const nub::uid objid: objids.view_of<nub::uid>())
     {
-      ref<GxNode> obj(*itr);
+      ref<GxNode> obj(objid);
 
       ref<Trial> trial(Trial::make());
 
       trial->addNode(makeSepPair(pos, obj));
 
-      nub::soft_ref<GxShapeKit> sk(*itr);
+      nub::soft_ref<GxShapeKit> sk(objid);
       if (sk.is_valid())
         trial->setType(sk->category());
 
@@ -381,26 +377,18 @@ tcl::list TlistUtils::dealPairs(tcl::list objids1, tcl::list objids2,
   ref<GxNode> pos1(posid1);
   ref<GxNode> pos2(posid2);
 
-  for (tcl::list::iterator<nub::uid>
-         itr1 = objids1.begin<nub::uid>(),
-         end1 = objids1.end<nub::uid>();
-       itr1 != end1;
-       ++itr1)
+  for (const nub::uid objid1: objids1.view_of<nub::uid>())
     {
-      ref<GxSeparator> sep1(makeSepPair(pos1, ref<GxNode>(*itr1)));
+      ref<GxSeparator> sep1(makeSepPair(pos1, ref<GxNode>(objid1)));
 
-      for (tcl::list::iterator<nub::uid>
-             itr2 = objids2.begin<nub::uid>(),
-             end2 = objids2.end<nub::uid>();
-           itr2 != end2;
-           ++itr2)
+      for (const nub::uid objid2: objids2.view_of<nub::uid>())
         {
-          ref<GxSeparator> sep2(makeSepPair(pos2, ref<GxNode>(*itr2)));
+          ref<GxSeparator> sep2(makeSepPair(pos2, ref<GxNode>(objid2)));
 
           ref<Trial> trial(Trial::make());
 
           trial->addNode(makeSepPair(sep1, sep2));
-          trial->setType(*itr1 == *itr2);
+          trial->setType(objid1 == objid2);
 
           result.append(trial.id());
         }
@@ -418,8 +406,7 @@ tcl::list TlistUtils::dealPairs(tcl::list objids1, tcl::list objids2,
 tcl::list TlistUtils::dealTriads(tcl::list objid_list, nub::uid posid1,
                                  nub::uid posid2, nub::uid posid3)
 {
-  const unsigned int NUM_PERMS = 18;
-  static int permutations[NUM_PERMS][3] =
+  static const int permutations[][3] =
   {
     {0, 0, 1},
     {0, 0, 2},
@@ -461,20 +448,20 @@ tcl::list TlistUtils::dealTriads(tcl::list objid_list, nub::uid posid1,
               base_triad[2] = objids[k];
 
               // loops over p,e run through all permutations
-              for (unsigned int p = 0; p < NUM_PERMS; ++p)
+              for (auto perm: permutations)
                 {
                   ref<GxSeparator> sep(GxSeparator::make());
 
                   sep->addChild(makeSepPair(
-                      ref<GxNode>(base_triad[permutations[p][0]]),
+                      ref<GxNode>(base_triad[perm[0]]),
                       ref<GxNode>(posid1)));
 
                   sep->addChild(makeSepPair(
-                      ref<GxNode>(base_triad[permutations[p][1]]),
+                      ref<GxNode>(base_triad[perm[1]]),
                       ref<GxNode>(posid2)));
 
                   sep->addChild(makeSepPair(
-                      ref<GxNode>(base_triad[permutations[p][2]]),
+                      ref<GxNode>(base_triad[perm[2]]),
                       ref<GxNode>(posid3)));
 
                   ref<Trial> trial(Trial::make());
