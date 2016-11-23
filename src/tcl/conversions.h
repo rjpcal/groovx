@@ -35,6 +35,8 @@
 #include "rutz/traits.h"
 #include "tcl/obj.h"
 
+#include <type_traits>
+
 typedef struct Tcl_Obj Tcl_Obj;
 
 namespace rutz
@@ -148,9 +150,12 @@ namespace tcl
   /// Convert a native c++ object to a tcl::obj.
   /** Will select a matching help_convert<T>::to_tcl() specialization. */
   template <class T>
-  inline tcl::obj convert_from(const T& val)
+  inline tcl::obj convert_from(T&& val)
   {
-    return help_convert<T>::to_tcl(val);
+    return help_convert<
+      typename std::remove_cv<
+        typename std::remove_reference<T>::type>::type
+      >::to_tcl(std::forward<T>(val));
   }
 }
 

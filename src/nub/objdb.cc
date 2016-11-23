@@ -296,8 +296,8 @@ nub::objectdb::iterator nub::objectdb::objects() const
 {
 GVX_TRACE("nub::objectdb::children");
 
- return shared_ptr<nub::objectdb::iterator::ifx_t>
-   (new iter_impl(rep->m_obj_map, rep->m_obj_map.begin()));
+ return iterator(std::unique_ptr<nub::objectdb::iterator::ifx_t>
+                 (new iter_impl(rep->m_obj_map, rep->m_obj_map.begin())));
 }
 
 nub::objectdb::objectdb() :

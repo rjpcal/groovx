@@ -47,7 +47,7 @@ namespace tcl
       return rutz::fwd_iter<T>(l.template begin<T>(), l.template end<T>());
     }
 
-    static tcl::obj to_tcl( rutz::fwd_iter<T> iter )
+    static tcl::obj to_tcl( rutz::fwd_iter<T>&& iter )
     {
       tcl::list result;
       while ( !iter.at_end() )

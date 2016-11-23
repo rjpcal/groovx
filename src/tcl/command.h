@@ -208,9 +208,9 @@ public:
 
   /// Return satisfactorily with the result \a t of type \c T.
   template <class T>
-  void set_result(T t)
+  void set_result(T&& t)
     {
-      set_obj_result(tcl::convert_from(t));
+      set_obj_result(tcl::convert_from(std::forward<T>(t)));
     }
 
   /// Get the raw objv array.

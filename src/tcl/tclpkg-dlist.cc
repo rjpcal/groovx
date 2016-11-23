@@ -671,9 +671,9 @@ namespace
       }
 
     if ( !seen_double )
-      return tcl::convert_from<int>(isum);
+      return tcl::convert_from(isum);
     else
-      return tcl::convert_from<double>(dsum);
+      return tcl::convert_from(dsum);
   }
 
   //---------------------------------------------------------

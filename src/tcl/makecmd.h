@@ -354,7 +354,7 @@ namespace tcl
   protected:
     virtual void invoke(tcl::call_context& ctx)
     {
-      R res(m_held_func(ctx)); ctx.set_result(res);
+      R res(m_held_func(ctx)); ctx.set_result(std::move(res));
     }
 
   private:

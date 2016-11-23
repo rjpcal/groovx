@@ -75,26 +75,22 @@ namespace rutz
   template <class T, class ifx_t>
   class concrete_iter
   {
-    std::shared_ptr<ifx_t> rep;
-
-    void make_unique()
-    {
-      if ( !rep.unique() )
-        {
-          rep.reset( rep->clone() );
-        }
-    }
+    std::unique_ptr<ifx_t> rep;
 
   public:
-    concrete_iter(const concrete_iter& other) : rep(other.rep) {}
+    concrete_iter(const concrete_iter&) = delete;
+    concrete_iter(concrete_iter&&) = default;
 
-    concrete_iter(std::shared_ptr<ifx_t> impl)      : rep(impl) {}
+    concrete_iter& operator=(const concrete_iter&) = delete;
+    concrete_iter& operator=(concrete_iter&&) = default;
+
+    concrete_iter(std::unique_ptr<ifx_t>&& impl)      : rep(std::move(impl)) {}
 
     // Default assigment-oper OK
 
-    void next()                     { make_unique(); rep->next(); }
-    void prev()                     { make_unique(); rep->prev(); }
-    void step(int n)                { make_unique(); rep->step(n); }
+    void next()                     { rep->next(); }
+    void prev()                     { rep->prev(); }
+    void step(int n)                { rep->step(n); }
     concrete_iter& operator++()     { next(); return *this; }
     concrete_iter operator++(int)   { concrete_iter c(*this); next(); return c; }
     concrete_iter& operator--()     { prev(); return *this; }
@@ -183,10 +179,10 @@ namespace rutz
     public concrete_iter<T, fwd_iter_ifx<T> >
   {
     template <class It>
-    std::shared_ptr<fwd_iter_ifx<T> >
+    std::unique_ptr<fwd_iter_ifx<T> >
     adapt(It iter, It end)
     {
-      return std::make_shared<fwd_iter_adapter<It, T>>(iter, end);
+      return std::make_unique<fwd_iter_adapter<It, T>>(iter, end);
     }
 
   public:
@@ -195,7 +191,7 @@ namespace rutz
 
     fwd_iter(const base_t& other) : base_t(other) {}
 
-    fwd_iter(std::shared_ptr<ifx_t> impl) : base_t(impl) {}
+    fwd_iter(std::unique_ptr<ifx_t>&& impl) : base_t(std::move(impl)) {}
 
     template <class It>
     fwd_iter(It iter, It end) : base_t(adapt(iter, end)) {}
@@ -260,10 +256,10 @@ namespace rutz
     public concrete_iter<T, bidir_iter_ifx<T> >
   {
     template <class It>
-    std::shared_ptr<bidir_iter_ifx<T> >
+    std::unique_ptr<bidir_iter_ifx<T> >
     adapt(It iter, It end)
     {
-      return std::make_shared<bidir_iter_adapter<It, T>>(iter, end);
+      return std::make_unique<bidir_iter_adapter<It, T>>(iter, end);
     }
 
   public:
@@ -272,7 +268,7 @@ namespace rutz
 
     bidir_iter(const base_t& other) : base_t(other) {}
 
-    bidir_iter(std::shared_ptr<ifx_t> impl) : base_t(impl) {}
+    bidir_iter(std::unique_ptr<ifx_t>&& impl) : base_t(impl) {}
 
     template <class It>
     bidir_iter(It iter, It end) : base_t(adapt(iter, end)) {}
@@ -350,10 +346,10 @@ namespace rutz
     public concrete_iter<T, rxs_iter_ifx<T> >
   {
     template <class It>
-    std::shared_ptr<rxs_iter_ifx<T> >
+    std::unique_ptr<rxs_iter_ifx<T> >
     adapt(It iter, It end)
     {
-      return std::make_shared<rxs_iter_adapter<It, T>>(iter, end);
+      return std::make_unique<rxs_iter_adapter<It, T>>(iter, end);
     }
 
   public:
@@ -362,7 +358,7 @@ namespace rutz
 
     rxs_iter(const base_t& other) : base_t(other) {}
 
-    rxs_iter(std::shared_ptr<ifx_t> impl) : base_t(impl) {}
+    rxs_iter(std::unique_ptr<ifx_t>&& impl) : base_t(impl) {}
 
     template <class It>
     rxs_iter(It iter, It end) : base_t(adapt(iter, end)) {}

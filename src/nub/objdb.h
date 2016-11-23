@@ -111,7 +111,7 @@ public:
     }
 
   public:
-    casting_iterator(const iterator& begin) : m_itr(begin)
+    casting_iterator(iterator&& begin) : m_itr(std::move(begin))
     { advance_to_valid(); }
 
     casting_iterator& operator++() { ++m_itr; advance_to_valid(); return *this; }

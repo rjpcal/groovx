@@ -86,7 +86,7 @@ rutz::fwd_iter<const nub::ref<GxNode> > GxNode::deepChildren()
 GVX_TRACE("GxNode::deepChildren");
 
   return rutz::fwd_iter<const nub::ref<GxNode> >
-    (shared_ptr<GxNodeIter>(new GxNodeIter(this)));
+    (std::make_unique<GxNodeIter>(this));
 }
 
 geom::rect<double> GxNode::getBoundingBox(Gfx::Canvas& canvas) const

@@ -290,7 +290,7 @@ rutz::fwd_iter<const nub::ref<GxNode> > GxSeparator::deepChildren()
 GVX_TRACE("GxSeparator::deepChildren");
 
   return rutz::fwd_iter<const nub::ref<GxNode> >
-    (shared_ptr<GxSepIter>(new GxSepIter(this)));
+    (std::make_unique<GxSepIter>(this));
 }
 
 bool GxSeparator::contains(GxNode* other) const
