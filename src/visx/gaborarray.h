@@ -34,19 +34,15 @@
 #define GROOVX_VISX_GABORARRAY_H_UTC20050626084016_DEFINED
 
 #include "gfx/gxshapekit.h"
-
 #include "gfx/gbvec.h"
+
+#include "media/bmapdata.h"
 
 #include <memory>
 #include <vector>
 
 struct GaborArrayElement;
 class Snake;
-
-namespace media
-{
-  class bmap_data;
-}
 
 namespace rutz
 {
@@ -113,7 +109,7 @@ private:
   GaborArray(const GaborArray&);
   GaborArray& operator=(const GaborArray&);
 
-  std::unique_ptr<media::bmap_data> generateBmap(bool doTagLast = false) const;
+  media::bmap_data generateBmap(bool doTagLast = false) const;
 
   void updateForeg() const;
   void updateBackg() const;
@@ -147,7 +143,7 @@ private:
   Cached<double> itsContrastJitter;
 
   mutable std::vector<GaborArrayElement> itsArray;
-  mutable std::unique_ptr<media::bmap_data> itsBmap;
+  mutable media::bmap_data itsBmap;
 
   bool itsDumpingFrames;
   unsigned int itsFrameDumpPeriod;

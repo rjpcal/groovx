@@ -529,13 +529,13 @@ void GxPixmap::scramble(unsigned int numsubcols, unsigned int numsubrows,
 {
 GVX_TRACE("GxPixmap::scramble");
 
-  std::unique_ptr<media::bmap_data> newdata =
+  media::bmap_data newdata =
     rep->itsData.make_scrambled(numsubcols, numsubrows, seed,
                                 allowMoveSubparts,
                                 allowFlipLeftRight,
                                 allowFlipTopBottom);
 
-  rep->itsData.swap(*newdata);
+  rep->itsData.swap(newdata);
 
   this->sigNodeChanged.emit();
 }

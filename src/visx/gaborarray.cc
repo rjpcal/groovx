@@ -196,7 +196,7 @@ GVX_TRACE("GaborArray::saveImage");
 
   update();
 
-  media::save_image(filename, *itsBmap);
+  media::save_image(filename, itsBmap);
 }
 
 void GaborArray::saveContourOnlyImage(const char* filename) const
@@ -245,10 +245,9 @@ GVX_TRACE("GaborArray::saveContourOnlyImage");
         }
     }
 
-  unique_ptr<media::bmap_data> result
-    (std::make_unique<media::bmap_data>(vec2st(itsSizeX, itsSizeY), 8, 1));
+  media::bmap_data result(vec2st(itsSizeX, itsSizeY), 8, 1);
 
-  unsigned char* bytes = result->bytes_ptr();
+  unsigned char* bytes = result.bytes_ptr();
 
   for (size_t k = 0; k < npix; ++k)
     {
@@ -262,7 +261,7 @@ GVX_TRACE("GaborArray::saveContourOnlyImage");
       *bytes++ = (unsigned char)(val);
     }
 
-  media::save_image(filename, *result);
+  media::save_image(filename, result);
 }
 
 void GaborArray::grGetBoundingBox(Bbox& bbox) const
@@ -280,7 +279,7 @@ GVX_TRACE("GaborArray::grRender");
 
   update();
 
-  canvas.drawPixels(*itsBmap, vec3d::zeros(), vec2d::ones());
+  canvas.drawPixels(itsBmap, vec3d::zeros(), vec2d::ones());
 }
 
 void GaborArray::updateForeg() const
@@ -401,7 +400,7 @@ GVX_TRACE("GaborArray::updateBackg");
   itsThetaSeed.touch(); // to force a redo in updateBmap()
 }
 
-unique_ptr<media::bmap_data> GaborArray::generateBmap(bool doTagLast) const
+media::bmap_data GaborArray::generateBmap(bool doTagLast) const
 {
 GVX_TRACE("GaborArray::generateBmap");
 
@@ -471,10 +470,9 @@ GVX_TRACE("GaborArray::generateBmap");
         }
     }
 
-  unique_ptr<media::bmap_data> result
-    (std::make_unique<media::bmap_data>(vec2st(itsSizeX, itsSizeY), 8, 1));
+  media::bmap_data result(vec2st(itsSizeX, itsSizeY), 8, 1);
 
-  unsigned char* bytes = result->bytes_ptr();
+  unsigned char* bytes = result.bytes_ptr();
 
   bool clip = false;
 
@@ -542,10 +540,10 @@ bool GaborArray::tryPush(const GaborArrayElement& e) const
   // quite so quickly in the resulting movie
   if (itsDumpingFrames)
     {
-      unique_ptr<media::bmap_data> bmap = generateBmap(true);
+      const media::bmap_data bmap = generateBmap(true);
 
-      dumpFrame(*bmap);
-      dumpFrame(*bmap);
+      dumpFrame(bmap);
+      dumpFrame(bmap);
     }
 
   return true;
@@ -651,8 +649,8 @@ GVX_TRACE("GaborArray::backgJitter");
       if (itsDumpingFrames &&
           niter % itsFrameDumpPeriod == 0)
         {
-          unique_ptr<media::bmap_data> bmap = generateBmap(true);
-          dumpFrame(*bmap);
+          const media::bmap_data bmap = generateBmap(true);
+          dumpFrame(bmap);
         }
     }
 }

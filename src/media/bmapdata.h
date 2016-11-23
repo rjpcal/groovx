@@ -95,13 +95,23 @@ namespace media
               unsigned int byte_alignment);
 
     /// Copy constructor.
-    bmap_data(const bmap_data& other);
+    explicit bmap_data(const bmap_data& that);
 
-    /// Assignment operator
-    bmap_data& operator=(const bmap_data& other)
+    /// Copy assignment operator
+    bmap_data& operator=(const bmap_data& that) = delete;
+
+    /// Move constructor
+    bmap_data(bmap_data&& that)
+      :
+      rep(that.rep)
     {
-      bmap_data copy(other);
-      this->swap(copy);
+      that.rep = nullptr;
+    }
+
+    /// Move assignment operator
+    bmap_data& operator=(bmap_data&& that)
+    {
+      this->swap(that);
       return *this;
     }
 
@@ -198,12 +208,11 @@ namespace media
     void specify_row_order(row_order order) const;
 
     /// Generate a new image from scrambled subparts of the current image.
-    std::unique_ptr<bmap_data>
-    make_scrambled(unsigned int numsubcols, unsigned int numsubrows,
-                   unsigned long seed,
-                   bool allow_move_subparts = true,
-                   bool allow_flip_left_right = true,
-                   bool allow_flip_top_bottom = true) const;
+    bmap_data make_scrambled(unsigned int numsubcols, unsigned int numsubrows,
+                             unsigned long seed,
+                             bool allow_move_subparts = true,
+                             bool allow_flip_left_right = true,
+                             bool allow_flip_top_bottom = true) const;
 
   private:
     class impl;
