@@ -63,8 +63,7 @@ public:
     m_bits_per_pixel(bits_per_pixel),
     m_byte_alignment(byte_alignment),
     m_bytes(),
-    m_row_order(row_order::TOP_FIRST),
-    m_updater()
+    m_row_order(row_order::TOP_FIRST)
   {
     GVX_PRECONDITION(m_size.x() >= 0);
     GVX_PRECONDITION(m_size.y() >= 0);
@@ -82,10 +81,6 @@ public:
 
   // default copy-ctor and assn-oper OK
 
-  // These are "fast" versions of the public interface that don't call
-  // update_if_needed() before returning data. Therefore it is the
-  // caller's responsibility to make sure update_if_needed() has been
-  // called at least once per public API call.
   unsigned char* bytes_ptr() { return &(m_bytes[0]); }
 
   size_t bytes_per_row() const
@@ -112,7 +107,6 @@ public:
   unsigned int                       m_byte_alignment;
   std::vector<unsigned char>         m_bytes;
   row_order                          m_row_order;
-  mutable shared_ptr<update_func>    m_updater;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -120,8 +114,6 @@ public:
 // media::bmap_data member definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-media::bmap_data::update_func::~update_func() {}
 
 media::bmap_data::bmap_data() :
   rep(new impl(geom::vec2<size_t>(0, 0), 1, 1))
@@ -150,15 +142,12 @@ media::bmap_data::~bmap_data()
 unsigned char* media::bmap_data::bytes_ptr() const
 {
 GVX_TRACE("media::bmap_data::bytes_ptr");
-  update_if_needed();
   return rep->bytes_ptr();
 }
 
 unsigned char* media::bmap_data::row_ptr(size_t row) const
 {
 GVX_TRACE("media::bmap_data::row_ptr");
-
-  update_if_needed();
 
   return rep->row_ptr(row);
 }
@@ -167,7 +156,6 @@ long int media::bmap_data::bytes_sum() const
 {
 GVX_TRACE("media::bmap_data::bytes_sum");
 
-  update_if_needed();
   long int sum = 0;
   size_t c = byte_count();
   unsigned char* m_bytes = rep->bytes_ptr();
@@ -181,35 +169,30 @@ GVX_TRACE("media::bmap_data::bytes_sum");
 size_t media::bmap_data::width() const
 {
 GVX_TRACE("media::bmap_data::width");
-  update_if_needed();
   return rep->m_size.x();
 }
 
 size_t media::bmap_data::height() const
 {
 GVX_TRACE("media::bmap_data::height");
-  update_if_needed();
   return rep->m_size.y();
 }
 
 geom::vec2<size_t> media::bmap_data::size() const
 {
 GVX_TRACE("media::bmap_data::size");
-  update_if_needed();
   return rep->m_size;
 }
 
 unsigned int media::bmap_data::bits_per_pixel() const
 {
 GVX_TRACE("media::bmap_data::bits_per_pixel");
-  update_if_needed();
   return rep->m_bits_per_pixel;
 }
 
 unsigned int media::bmap_data::bits_per_component() const
 {
 GVX_TRACE("media::bmap_data::bits_per_component");
-  update_if_needed();
   return rep->m_bits_per_pixel > 1
     ? 8
     : 1;
@@ -218,14 +201,12 @@ GVX_TRACE("media::bmap_data::bits_per_component");
 unsigned int media::bmap_data::byte_alignment() const
 {
 GVX_TRACE("media::bmap_data::byte_alignment");
-  update_if_needed();
   return rep->m_byte_alignment;
 }
 
 size_t media::bmap_data::byte_count() const
 {
 GVX_TRACE("media::bmap_data::byte_count");
-  update_if_needed();
 
   GVX_ASSERT(rep->m_bytes.size() == rep->bytes_per_row() * rep->m_size.y());
 
@@ -235,7 +216,6 @@ GVX_TRACE("media::bmap_data::byte_count");
 size_t media::bmap_data::bytes_per_row() const
 {
 GVX_TRACE("media::bmap_data::bytes_per_row");
-  update_if_needed();
   return rep->bytes_per_row();
 }
 
@@ -248,7 +228,6 @@ media::bmap_data::get_row_order() const
 void media::bmap_data::flip_contrast()
 {
 GVX_TRACE("media::bmap_data::flip_contrast");
-  update_if_needed();
 
   size_t num_bytes = rep->m_bytes.size();
 
@@ -276,7 +255,6 @@ GVX_TRACE("media::bmap_data::flip_contrast");
 void media::bmap_data::flip_vertical()
 {
 GVX_TRACE("media::bmap_data::flip_vertical");
-  update_if_needed();
 
   const size_t bytes_per_row = rep->bytes_per_row();
   const size_t num_bytes = rep->byte_count();
@@ -309,28 +287,6 @@ GVX_TRACE("media::bmap_data::swap");
   rutz::swap2(rep, other.rep);
 }
 
-void media::bmap_data::queue_update(shared_ptr<update_func> updater) const
-{
-GVX_TRACE("media::bmap_data::queue_update");
-  rep->m_updater = updater;
-}
-
-void media::bmap_data::update_if_needed() const
-{
-GVX_TRACE("media::bmap_data::update_if_needed");
-  if (rep->m_updater.get() != nullptr)
-    {
-      bmap_data result = rep->m_updater->update();
-      const_cast<media::bmap_data*>(this)->swap(result);
-    }
-}
-
-void media::bmap_data::clear_queued_update() const
-{
-GVX_TRACE("media::bmap_data::clear_queued_update");
-  rep->m_updater.reset();
-}
-
 void media::bmap_data::set_row_order(row_order order) const
 {
   if (order != rep->m_row_order)
@@ -354,8 +310,6 @@ media::bmap_data::make_scrambled(unsigned int nsubimg_x,
                                  bool allow_flip_top_bottom) const
 {
 GVX_TRACE("media::bmap_data::make_scrambled");
-
-  update_if_needed();
 
   if ( width() % nsubimg_x != 0 )
     {

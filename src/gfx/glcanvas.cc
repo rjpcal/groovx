@@ -832,8 +832,7 @@ GVX_TRACE("GLCanvas::drawBitmap");
            static_cast<GLubyte*>(data.bytes_ptr()));
 }
 
-void GLCanvas::grabPixels(const recti& bounds,
-                          media::bmap_data& data_out)
+media::bmap_data GLCanvas::grabPixels(const recti& bounds)
 {
 GVX_TRACE("GLCanvas::grabPixels");
 
@@ -846,8 +845,8 @@ GVX_TRACE("GLCanvas::grabPixels");
   // actual color buffer depth.
   const unsigned int bmap_bits_per_pixel = isRgba() ? 24 : 8;
 
-  media::bmap_data new_data(vec2st(bounds.size()),
-                            bmap_bits_per_pixel, pixel_alignment);
+  media::bmap_data result(vec2st(bounds.size()),
+                          bmap_bits_per_pixel, pixel_alignment);
 
   glPixelStorei(GL_PACK_ALIGNMENT, pixel_alignment);
 
@@ -857,13 +856,13 @@ GVX_TRACE("GLCanvas::grabPixels");
     glReadPixels(bounds.left(), bounds.bottom(),
                  bounds.width(), bounds.height(),
                  (isRgba() ? GL_RGB : GL_COLOR_INDEX),
-                 GL_UNSIGNED_BYTE, new_data.bytes_ptr());
+                 GL_UNSIGNED_BYTE, result.bytes_ptr());
   }
   glPopAttrib();
 
-  new_data.specify_row_order(media::bmap_data::row_order::BOTTOM_FIRST);
+  result.specify_row_order(media::bmap_data::row_order::BOTTOM_FIRST);
 
-  data_out.swap(new_data);
+  return result;
 }
 
 void GLCanvas::clearColorBuffer()

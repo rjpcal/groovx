@@ -48,12 +48,7 @@ namespace media
    *
    * \c media::bmap_data handles the low-level details of manipulating
    * bitmap data. It keeps track of the width, height, bits-per-pixel,
-   * and storage alignemnt requirements of a chunk of image data. In
-   * addition, \c media::bmap_data provides for lazy updates via the
-   * \c update_func class. Clients may subclass \c update_func to
-   * implement \c update_func::update(), then pass this type of object
-   * to \c queue_update(). Then the \c update() function will be
-   * called only when the bitmap data need to be accessed.
+   * and storage alignment requirements of a chunk of image data.
    *
    **/
   ///////////////////////////////////////////////////////////
@@ -61,17 +56,6 @@ namespace media
   class bmap_data
   {
   public:
-    /// Nested class in allows \c bmap_data objects to be updated lazily.
-    class update_func
-    {
-    public:
-      /// Virtual destructor ensures correct destruction of subclasses.
-      virtual ~update_func();
-
-      /** To be overridden by subclasses to provide a way to update the
-          \c bmap_data. */
-      virtual bmap_data update() = 0;
-    };
 
     /// Specifies the order in which the rows are physically arranged in memory.
     enum class row_order
@@ -187,17 +171,6 @@ namespace media
 
     /// Swaps the internal representation with that of \a other.
     void swap(bmap_data& other);
-
-    /// Queues the update given by \a updater.
-    /** The \c update() function will be called only when the bitmap
-        data must be accessed. */
-    void queue_update(std::shared_ptr<update_func> updater) const;
-
-    /// Forces any pending update to be called.
-    void update_if_needed() const;
-
-    /// Cancels any pending update.
-    void clear_queued_update() const;
 
     /// Set the row order, swapping rows around in memory if necessary.
     /** This is a logical "const" operation since the image being

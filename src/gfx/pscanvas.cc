@@ -947,7 +947,7 @@ GVX_TRACE("Gfx::PSCanvas::drawBitmap");
   rep->raiseError("not implemented", SRC_POS);
 }
 
-void Gfx::PSCanvas::grabPixels(const recti&, media::bmap_data&)
+media::bmap_data Gfx::PSCanvas::grabPixels(const recti&)
 {
 GVX_TRACE("Gfx::PSCanvas::grabPixels");
   rep->raiseError("grabPixels not possible in PostScript canvas",

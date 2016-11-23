@@ -137,8 +137,7 @@ public:
   virtual void drawBitmap(const media::bmap_data& data,
                           const geom::vec3<double>& world_pos);
 
-  virtual void grabPixels(const geom::rect<int>& bounds,
-                          media::bmap_data& data_out);
+  virtual media::bmap_data grabPixels(const geom::rect<int>& bounds);
 
   virtual void clearColorBuffer();
   virtual void clearColorBuffer(const geom::rect<int>& screen_rect);

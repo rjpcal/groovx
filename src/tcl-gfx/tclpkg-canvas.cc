@@ -62,11 +62,9 @@ namespace
   long int pixelCheckSum(nub::soft_ref<GLCanvas> canvas,
                          int x, int y, int w, int h)
   {
-    media::bmap_data data;
-
     const geom::rect<int> bounds = geom::rect<int>().set_lbwh(x, y, w, h);
 
-    canvas->grabPixels(bounds, data);
+    media::bmap_data data = canvas->grabPixels(bounds);
 
     return data.bytes_sum();
   }

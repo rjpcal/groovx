@@ -69,66 +69,6 @@ namespace
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ImageUpdater class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-class ImageUpdater : public media::bmap_data::update_func
-{
-public:
-  ImageUpdater(const fstring& filename,
-               fstring& owner_filename,
-               bool contrast, bool vertical) :
-    itsFilename(filename),
-    itsOwnerFilename(owner_filename),
-    itsFlipContrast(contrast),
-    itsFlipVertical(vertical)
-  {
-    // If the first character of the new filename is '.', then we
-    // assume it is a temp file, and therefore we don't save this
-    // filename in itsOwnerFilename.
-    if ( itsFilename.c_str()[0] != '.' )
-      {
-        itsOwnerFilename = itsFilename;
-      }
-    else
-      {
-        itsOwnerFilename = "";
-      }
-  }
-
-  virtual media::bmap_data update();
-
-private:
-  fstring itsFilename;
-  fstring& itsOwnerFilename;
-  bool itsFlipContrast;
-  bool itsFlipVertical;
-};
-
-media::bmap_data ImageUpdater::update()
-{
-GVX_TRACE("ImageUpdater::update");
-
-  try
-    {
-      media::bmap_data result = media::load_image(itsFilename.c_str());
-      if (itsFlipContrast) { result.flip_contrast(); }
-      if (itsFlipVertical) { result.flip_vertical(); }
-      return result;
-    }
-  // If there was an error while reading the file, it means we should
-  // forget about itsOwnerFilename
-  catch (...)
-    {
-      itsOwnerFilename = "";
-      throw;
-    }
-
-}
-
-///////////////////////////////////////////////////////////////////////
-//
 // GxPixmapImpl class definition
 //
 ///////////////////////////////////////////////////////////////////////
@@ -144,7 +84,8 @@ public:
     itsContrastFlip(false),
     itsVerticalFlip(false),
     itsPurgeable(false),
-    itsAsBitmap(false)
+    itsAsBitmap(false),
+    itsUpdateQueued(false)
   {}
 
   fstring itsFilename;
@@ -155,16 +96,12 @@ public:
   bool itsVerticalFlip;
   bool itsPurgeable;
   bool itsAsBitmap;
+  bool itsUpdateQueued;
 
   void queueImage(const char* filename)
   {
-    std::shared_ptr<media::bmap_data::update_func> updater
-      (std::make_shared<ImageUpdater>(filename,
-                                      itsFilename,
-                                      itsContrastFlip,
-                                      itsVerticalFlip));
-
-    itsData.queue_update(updater);
+    itsFilename = filename;
+    itsUpdateQueued = true;
   }
 
   void purge()
@@ -180,8 +117,50 @@ public:
 
         itsData.clear();
 
-        queueImage(itsFilename.c_str());
+        itsUpdateQueued = true;
       }
+  }
+
+  void clearData()
+  {
+    itsData.clear();
+    itsUpdateQueued = false;
+  }
+
+  void setData(media::bmap_data&& d)
+  {
+    itsData = std::move(d);
+    itsUpdateQueued = false;
+  }
+
+  media::bmap_data& fetchData()
+  {
+    if (itsUpdateQueued)
+      {
+        itsUpdateQueued = false;
+
+        try
+          {
+            itsData = media::load_image(itsFilename.c_str());
+            if (itsContrastFlip) { itsData.flip_contrast(); }
+            if (itsVerticalFlip) { itsData.flip_vertical(); }
+            // If the first character of the new filename is '.', then
+            // we assume it is a temp file, and therefore we don't
+            // save this filename.
+            if (itsFilename.c_str()[0] == '.')
+              {
+                itsFilename = "";
+              }
+          }
+        // If there was an error while reading the file, it means we should
+        // forget about itsFilename
+        catch (...)
+          {
+            itsFilename = "";
+            throw;
+          }
+      }
+    return itsData;
   }
 
 private:
@@ -240,13 +219,11 @@ GVX_TRACE("GxPixmap::read_from");
   reader.read_value("purgeable", rep->itsPurgeable);
   reader.read_value("asBitmap", rep->itsAsBitmap);
 
-  if ( rep->itsFilename.is_empty() )
+  rep->clearData();
+
+  if ( !rep->itsFilename.is_empty() )
     {
-      rep->itsData.clear();
-    }
-  else
-    {
-      queueImage(rep->itsFilename.c_str());
+      rep->itsUpdateQueued = true;
     }
 
   if (svid >= 5)
@@ -257,7 +234,7 @@ GVX_TRACE("GxPixmap::read_from");
         {
           rutz::imemstream s(reinterpret_cast<const char*>(&imgdata.vec[0]),
                              imgdata.vec.size());
-          media::load_pnm(s, rep->itsData);
+          rep->setData(media::load_pnm(s));
         }
 #endif
     }
@@ -306,7 +283,7 @@ void GxPixmap::loadImage(const char* filename)
 {
 GVX_TRACE("GxPixmap::loadImage");
 
-  rep->itsData = media::load_image(filename);
+  rep->setData(media::load_image(filename));
 
   rep->itsFilename = filename;
 
@@ -317,7 +294,7 @@ void GxPixmap::loadImageStream(std::istream& ist)
 {
 GVX_TRACE("GxPixmap::loadImageStream");
 
-  rep->itsData = media::load_pnm(ist);
+  rep->setData(media::load_pnm(ist));
   rep->itsFilename = "";
   this->sigNodeChanged.emit();
 }
@@ -326,7 +303,7 @@ void GxPixmap::reload()
 {
 GVX_TRACE("GxPixmap::reload");
 
-  rep->itsData = media::load_image(rep->itsFilename.c_str());
+  rep->setData(media::load_image(rep->itsFilename.c_str()));
 
   this->sigNodeChanged.emit();
 }
@@ -344,7 +321,7 @@ void GxPixmap::saveImage(const char* filename) const
 {
 GVX_TRACE("GxPixmap::saveImage");
 
-  media::save_image(filename, rep->itsData);
+  media::save_image(filename, rep->fetchData());
 }
 
 void GxPixmap::grabScreenRect(nub::soft_ref<Gfx::Canvas> canvas,
@@ -352,7 +329,7 @@ void GxPixmap::grabScreenRect(nub::soft_ref<Gfx::Canvas> canvas,
 {
 GVX_TRACE("GxPixmap::grabScreenRect");
 
-  canvas->grabPixels(rect, rep->itsData);
+  rep->setData(canvas->grabPixels(rect));
 
   rep->itsFilename = "";
 
@@ -391,7 +368,7 @@ GVX_TRACE("GxPixmap::flipContrast");
   // Toggle itsContrastFlip so we keep track of whether the number of
   // flips has been even or odd.
   rep->itsContrastFlip = !(rep->itsContrastFlip);
-  rep->itsData.flip_contrast();
+  rep->fetchData().flip_contrast();
 
   this->sigNodeChanged.emit();
 }
@@ -401,7 +378,7 @@ void GxPixmap::flipVertical()
 GVX_TRACE("GxPixmap::flipVertical");
 
   rep->itsVerticalFlip = !(rep->itsVerticalFlip);
-  rep->itsData.flip_vertical();
+  rep->fetchData().flip_vertical();
 
   this->sigNodeChanged.emit();
 }
@@ -412,13 +389,13 @@ GVX_TRACE("GxPixmap::grRender");
 
   const vec3d world_pos = vec3d::zeros();
 
-  if (rep->itsData.bits_per_pixel() == 1 && rep->itsAsBitmap)
+  if (rep->fetchData().bits_per_pixel() == 1 && rep->itsAsBitmap)
     {
-      canvas.drawBitmap(rep->itsData, world_pos);
+      canvas.drawBitmap(rep->fetchData(), world_pos);
     }
   else
     {
-      canvas.drawPixels(rep->itsData, world_pos, getZoom());
+      canvas.drawPixels(rep->fetchData(), world_pos, getZoom());
     }
 
   if (isPurgeable())
@@ -443,7 +420,7 @@ GVX_TRACE("GxPixmap::grGetBoundingBox");
 }
 
 geom::vec2<size_t> GxPixmap::size() const
-  { return rep->itsData.size(); }
+  { return rep->fetchData().size(); }
 
 geom::vec2<double> GxPixmap::getZoom() const
   { return rep->itsUsingZoom ? rep->itsZoom : defaultZoom; }
@@ -464,7 +441,7 @@ GVX_TRACE("GxPixmap::getAsBitmap");
 }
 
 long int GxPixmap::checkSum() const
-  { return rep->itsData.bytes_sum(); }
+  { return rep->fetchData().bytes_sum(); }
 
 //////////////////
 // manipulators //
@@ -479,8 +456,8 @@ GVX_TRACE("GxPixmap::setZoom");
 void GxPixmap::zoomTo(geom::vec2<size_t> sz)
 {
 GVX_TRACE("GxPixmap::zoomTo");
-  const double x_ratio = double(sz.x()) / rep->itsData.width();
-  const double y_ratio = double(sz.y()) / rep->itsData.height();
+  const double x_ratio = double(sz.x()) / rep->fetchData().width();
+  const double y_ratio = double(sz.y()) / rep->fetchData().height();
   const double ratio = rutz::min(x_ratio, y_ratio);
   setUsingZoom(true);
   setZoom(geom::vec2<double>(ratio, ratio));
@@ -525,12 +502,12 @@ void GxPixmap::scramble(unsigned int numsubcols, unsigned int numsubrows,
 GVX_TRACE("GxPixmap::scramble");
 
   media::bmap_data newdata =
-    rep->itsData.make_scrambled(numsubcols, numsubrows, seed,
-                                allowMoveSubparts,
-                                allowFlipLeftRight,
-                                allowFlipTopBottom);
+    rep->fetchData().make_scrambled(numsubcols, numsubrows, seed,
+                                    allowMoveSubparts,
+                                    allowFlipLeftRight,
+                                    allowFlipTopBottom);
 
-  rep->itsData.swap(newdata);
+  rep->setData(std::move(newdata));
 
   this->sigNodeChanged.emit();
 }

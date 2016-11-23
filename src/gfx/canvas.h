@@ -292,8 +292,7 @@ public:
                           const geom::vec3<double>& world_pos) = 0;
 
   /// Read pixel data from the screen rect \a bounds into \a data_out.
-  virtual void grabPixels(const geom::rect<int>& bounds,
-                          media::bmap_data& data_out) = 0;
+  virtual media::bmap_data grabPixels(const geom::rect<int>& bounds) = 0;
 
   /// Clear the color buffer to the clear color.
   virtual void clearColorBuffer() = 0;

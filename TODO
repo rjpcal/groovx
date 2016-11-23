@@ -8,8 +8,6 @@
 
 * (23-Nov-2016) Make concrete_iter work with normal iterator pair semantics
 
-* (23-Nov-2016) Clean GxPixmap / bmap_data queue update logic
-
 * (02-Nov-2016) Use std::chrono
 
 * (18-Oct-2016) Get rid of all the duplicated overflow() and underflow() code
