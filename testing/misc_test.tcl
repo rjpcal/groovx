@@ -37,7 +37,7 @@ test "::srand" "too few args" {
 } {wrong \# args: should be}
 test "::srand" "normal use" {
     srand 10
-    expr [rand 0 1] == 0.138649044093
+    expr int([rand 0 1] * 10000000000) == 1386490440
 } {^1$}
 test "::srand" "error from non-numeric input" {
     srand junk
