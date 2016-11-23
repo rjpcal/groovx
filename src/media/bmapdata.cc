@@ -373,10 +373,9 @@ GVX_TRACE("media::bmap_data::make_scrambled");
       throw rutz::error("not an evenly divisible width", SRC_POS);
     }
 
-  media::bmap_data result
-    (std::make_unique<media::bmap_data>(this->size(),
-                                        this->bits_per_pixel(),
-                                        this->byte_alignment()));
+  media::bmap_data result(this->size(),
+                          this->bits_per_pixel(),
+                          this->byte_alignment());
 
   const unsigned int npos = nsubimg_x * nsubimg_y;
 
