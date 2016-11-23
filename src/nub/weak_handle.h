@@ -35,10 +35,10 @@
 #include "nub/refcounted.h"
 #include "nub/types.h"
 
-#include "rutz/algo.h"         // for rutz::swap2()
 #include "rutz/fileposition.h" // for SRC_POS macro
 
 #include <typeinfo>
+#include <utility>             // for std::swap()
 
 namespace nub
 {
@@ -137,8 +137,8 @@ private:
 
   void swap(weak_handle& other) noexcept
   {
-    rutz::swap2(m_master, other.m_master);
-    rutz::swap2(m_counts, other.m_counts);
+    std::swap(m_master, other.m_master);
+    std::swap(m_counts, other.m_counts);
   }
 
   // In order to avoid storing a separate bool indicating whether we

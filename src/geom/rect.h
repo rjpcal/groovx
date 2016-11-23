@@ -35,8 +35,10 @@
 #include "geom/span.h"
 #include "geom/vec2.h"
 
-#include "rutz/algo.h"
 #include "rutz/error.h"
+
+#include <cmath>
+#include <cstdlib>
 
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
@@ -155,8 +157,8 @@ namespace geom
     /// Set four corners from x-left/y-bottom/x-width/y-height values.
     rect<V>& set_lbwh(V x, V y, V w, V h)
     {
-      xx = span<V>(x, x+rutz::abs(w));
-      yy = span<V>(y, y+rutz::abs(h));
+      xx = span<V>(x, x+std::abs(w));
+      yy = span<V>(y, y+std::abs(h));
       return *this;
     }
 

@@ -41,7 +41,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "rutz/algo.h"
+#include <utility>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -305,7 +305,7 @@ GVX_TRACE("House::grGetBoundingBox");
   const double main_width = itsStoryAspectRatio;
   const double main_height = itsNumStories + itsRoofHeight;
 
-  using rutz::max;
+  using std::max;
 
   const double max_dim = max(main_height, main_width);
 

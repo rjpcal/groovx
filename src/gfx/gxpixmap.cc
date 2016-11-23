@@ -458,7 +458,7 @@ void GxPixmap::zoomTo(geom::vec2<size_t> sz)
 GVX_TRACE("GxPixmap::zoomTo");
   const double x_ratio = double(sz.x()) / rep->fetchData().width();
   const double y_ratio = double(sz.y()) / rep->fetchData().height();
-  const double ratio = rutz::min(x_ratio, y_ratio);
+  const double ratio = std::min(x_ratio, y_ratio);
   setUsingZoom(true);
   setZoom(geom::vec2<double>(ratio, ratio));
 }

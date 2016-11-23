@@ -32,7 +32,6 @@
 
 #include "fstring.h"
 
-#include "rutz/algo.h"
 #include "rutz/freelist.h"
 #include "rutz/mutex.h"
 
@@ -41,6 +40,7 @@
 #include <cstring>
 #include <istream>
 #include <ostream>
+#include <utility>
 
 #ifndef GVX_NO_PROF
 #define GVX_NO_PROF
@@ -78,7 +78,7 @@ void rutz::string_rep::operator delete(void* space)
 rutz::string_rep::string_rep(std::size_t len, const char* txt,
                              std::size_t capac) :
   m_refcount(0),
-  m_capacity(rutz::max(len+1, capac)),
+  m_capacity(std::max(len+1, capac)),
   m_length(0),
   m_text(new char[m_capacity])
 {
@@ -215,13 +215,13 @@ void rutz::string_rep::uniq_realloc(std::size_t capac)
 {
   GVX_PRECONDITION(m_refcount.load() <= 1);
 
-  rutz::string_rep new_rep(rutz::max(m_capacity*2 + 32, capac), 0);
+  rutz::string_rep new_rep(std::max(m_capacity*2 + 32, capac), 0);
 
   new_rep.uniq_append(this->m_length, this->m_text);
 
-  rutz::swap2(m_capacity, new_rep.m_capacity);
-  rutz::swap2(m_length, new_rep.m_length);
-  rutz::swap2(m_text, new_rep.m_text);
+  std::swap(m_capacity, new_rep.m_capacity);
+  std::swap(m_length, new_rep.m_length);
+  std::swap(m_text, new_rep.m_text);
 }
 
 //---------------------------------------------------------------------
@@ -287,7 +287,7 @@ void rutz::fstring::swap(rutz::fstring& other) noexcept
 {
 GVX_TRACE("rutz::fstring::swap");
 
-  rutz::swap2(m_rep, other.m_rep);
+  std::swap(m_rep, other.m_rep);
 }
 
 rutz::fstring& rutz::fstring::operator=(const char* text)

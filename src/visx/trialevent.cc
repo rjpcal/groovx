@@ -44,7 +44,6 @@
 #include "tcl/eventloop.h"
 #include "tcl/timerscheduler.h"
 
-#include "rutz/algo.h"
 #include "rutz/error.h"
 #include "rutz/iter.h"
 #include "rutz/sfmt.h"
@@ -53,6 +52,7 @@
 
 #include <fstream>
 #include <memory>
+#include <utility>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -126,7 +126,7 @@ GVX_TRACE("TrialEvent::schedule");
 
   if (itsRequestedDelay > 0)
     actual_request =
-      rutz::max(itsRequestedDelay + (unsigned int)(itsEstimatedOffset),
+      std::max(itsRequestedDelay + (unsigned int)(itsEstimatedOffset),
                 minimum_msec);
 
   itsTimer.set_delay_msec(actual_request);
@@ -162,7 +162,7 @@ GVX_TRACE("TrialEvent::invokeTemplate");
   // Negative error: we expect the event to occur later than requested
   // (round towards negative infinity)
   const double moving_average_ratio =
-    1.0 / rutz::min(10, itsInvokeCount);
+    1.0 / std::min(10, itsInvokeCount);
 
   itsEstimatedOffset =
     (1.0 - moving_average_ratio) * itsEstimatedOffset +

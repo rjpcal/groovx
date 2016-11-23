@@ -33,7 +33,6 @@
 
 #include "geom/vec2.h"
 
-#include "rutz/algo.h"
 #include "rutz/error.h"
 #include "rutz/rand.h"
 #include "rutz/sfmt.h"
@@ -41,6 +40,7 @@
 #include <algorithm>
 #include <cstring>              // for memcpy
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "rutz/trace.h"
@@ -277,14 +277,14 @@ void media::bmap_data::clear()
 GVX_TRACE("media::bmap_data::clear");
 
   media::bmap_data empty;
-  swap(empty);
+  this->swap(empty);
 }
 
 void media::bmap_data::swap(media::bmap_data& other)
 {
 GVX_TRACE("media::bmap_data::swap");
 
-  rutz::swap2(rep, other.rep);
+  std::swap(rep, other.rep);
 }
 
 void media::bmap_data::set_row_order(row_order order) const

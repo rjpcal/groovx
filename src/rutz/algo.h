@@ -33,40 +33,14 @@
 #ifndef GROOVX_RUTZ_ALGO_H_UTC20050626084020_DEFINED
 #define GROOVX_RUTZ_ALGO_H_UTC20050626084020_DEFINED
 
+#include <algorithm>
+
 namespace rutz
 {
   template <class T>
-  inline const T& min(const T& a, const T& b)
-  {
-    /* return (a < b) ? a : b; */ // This triggers warnings in some compilers :(
-    if (a < b) return a; return b;
-  }
-
-  template <class T>
-  inline const T& max(const T& a, const T& b)
-  {
-    /* return (a > b) ? a : b; */ // This triggers warnings in some compilers :(
-    if (a > b) return a; return b;
-  }
-
-  template <class T>
-  inline T abs(const T& val)
-  {
-    return (val < 0) ? -val : val;
-  }
-
-  template <class T>
   inline T clamp(const T& val, const T& lower, const T& upper)
   {
-    return rutz::max(lower, rutz::min(upper, val));
-  }
-
-  template <class T>
-  inline void swap2(T& t1, T& t2)
-  {
-    T t2_copy = t2;
-    t2 = t1;
-    t1 = t2_copy;
+    return std::max(lower, std::min(upper, val));
   }
 }
 

@@ -38,8 +38,9 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "rutz/algo.h"
 #include "rutz/fstring.h"
+
+#include <utility>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -239,7 +240,7 @@ GVX_TRACE("Face::grRender");
     const vec3d pupil_scale(pupil_scale_abs/eyeball_scale);
 
     // Calculate the x position for the eyes
-    const double eye_x = rutz::abs(itsEyeDistance)/2.0;
+    const double eye_x = std::abs(itsEyeDistance)/2.0;
 
     // Parameters for the circles for the eyeballs and the pupils.
     const int num_slices = 20;
@@ -279,7 +280,7 @@ GVX_TRACE("Face::grRender");
     // Calculate the positions for the top and bottom of the nose
     // bottom y always <= 0.0
     // top y always >= 0.0
-    const vec2d nose_bottom(theirNose_x, -rutz::abs(itsNoseLength)/2.0);
+    const vec2d nose_bottom(theirNose_x, -std::abs(itsNoseLength)/2.0);
     const vec2d nose_top(theirNose_x, -nose_bottom.y());
 
     {

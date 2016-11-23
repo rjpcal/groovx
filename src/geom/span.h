@@ -32,8 +32,9 @@
 #ifndef GROOVX_GEOM_SPAN_H_UTC20050626084023_DEFINED
 #define GROOVX_GEOM_SPAN_H_UTC20050626084023_DEFINED
 
-#include "rutz/algo.h"
 #include "rutz/error.h"
+
+#include <algorithm>
 
 #include "rutz/debug.h"
 
@@ -61,7 +62,7 @@ namespace geom
 
     static span<V> from_any(V v1, V v2)
     {
-      return span<V>(rutz::min(v1, v2), rutz::max(v1, v2));
+      return span<V>(std::min(v1, v2), std::max(v1, v2));
     }
 
     span<V>& operator=(const span<V>& i)
@@ -113,8 +114,8 @@ namespace geom
     {
       if (other.is_void()) return *this;
       if (this->is_void()) return other;
-      return span<V>(rutz::min(this->lo, other.lo),
-                     rutz::max(this->hi, other.hi));
+      return span<V>(std::min(this->lo, other.lo),
+                     std::max(this->hi, other.hi));
     }
 
     span<V> including(V val) const

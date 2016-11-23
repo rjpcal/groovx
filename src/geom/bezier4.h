@@ -104,8 +104,8 @@ inline void geom::bezier4::compute_min_max()
 {
   double b2_4ac = m_c1[1]*m_c1[1] - 4*m_c1[0]*m_c1[2];
 
-  using rutz::max;
-  using rutz::min;
+  using std::max;
+  using std::min;
 
   m_val_min = min(eval(0.0), eval(1.0));
   m_val_max = max(eval(0.0), eval(1.0));

@@ -32,9 +32,8 @@
 #ifndef GROOVX_GEOM_BEZIER_H_UTC20050626084023_DEFINED
 #define GROOVX_GEOM_BEZIER_H_UTC20050626084023_DEFINED
 
-#include "rutz/algo.h"
-
 #include <cmath>
+#include <utility>
 #include <vector>
 
 namespace geom

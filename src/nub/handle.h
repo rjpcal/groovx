@@ -34,10 +34,10 @@
 
 #include "nub/types.h"
 
-#include "rutz/algo.h"         // for rutz::swap2()
 #include "rutz/fileposition.h" // for SRC_POS macro
 
 #include <typeinfo>
+#include <utility>             // for std::swap()
 
 namespace nub
 {
@@ -95,7 +95,7 @@ public:
 private:
   void swap(handle& other) noexcept
   {
-    rutz::swap2(m_master, other.m_master);
+    std::swap(m_master, other.m_master);
   }
 
   T* m_master;

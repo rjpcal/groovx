@@ -42,8 +42,9 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "rutz/algo.h"
 #include "rutz/error.h"
+
+#include <utility>
 
 #include "rutz/trace.h"
 
@@ -192,7 +193,7 @@ GVX_TRACE("GxScaler::scaledHeight");
 double GxScaler::scaledMaxDim() const
 {
 GVX_TRACE("GxScaler::scaledMaxDim");
-  return rutz::max(scaledWidth(), scaledHeight());
+  return std::max(scaledWidth(), scaledHeight());
 }
 
 void GxScaler::read_from(io::reader& reader)

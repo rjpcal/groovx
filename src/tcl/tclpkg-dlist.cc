@@ -38,7 +38,6 @@
 #include "tcl/list.h"
 #include "tcl/pkg.h"
 
-#include "rutz/algo.h"
 #include "rutz/error.h"
 #include "rutz/rand.h"
 
@@ -48,6 +47,7 @@ GVX_DBG_REGISTER
 
 #include <algorithm> // for std::random_shuffle
 #include <cmath>
+#include <utility>
 #include <vector>
 
 // Helper functions
@@ -367,7 +367,7 @@ namespace
 
             if (newdist > origdist)
               {
-                rutz::swap2(slots[i], slots[j]);
+                std::swap(slots[i], slots[j]);
                 dist += (newdist-origdist)/double(N);
               }
           }
@@ -498,7 +498,7 @@ namespace
   tcl::list dlist_repeat(tcl::list source_list, tcl::list times_list)
   {
     // find the minimum of the two lists' lengths
-    unsigned int min_len = rutz::min(source_list.length(), times_list.length());
+    unsigned int min_len = std::min(source_list.length(), times_list.length());
 
     tcl::list result;
 

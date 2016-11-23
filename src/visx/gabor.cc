@@ -45,10 +45,10 @@
 #include "media/bmapdata.h"
 #include "media/imgfile.h"
 
-#include "rutz/algo.h"
 #include "rutz/rand.h"
 
 #include <cmath>
+#include <utility>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"

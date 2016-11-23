@@ -36,8 +36,6 @@
 #include "geom/vec3.h"
 #include "geom/rect.h"
 
-#include "rutz/algo.h"
-
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 

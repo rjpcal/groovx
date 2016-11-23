@@ -44,7 +44,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "rutz/algo.h"
+#include <utility>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -331,7 +331,7 @@ GVX_TRACE("MorphyFace::grRender");
       canvas.scale(vec3d(left_right*1.0, 1.0, 1.0));
 
       // Move to the eye position
-      canvas.translate(vec3d(rutz::abs(itsEyeDistance)/2.0,
+      canvas.translate(vec3d(std::abs(itsEyeDistance)/2.0,
                              itsEyeYpos, 0.0));
 
       // Draw eye outline
@@ -400,7 +400,7 @@ GVX_TRACE("MorphyFace::grRender");
         static const int num_slices = 20;
         static const int num_loops = 1;
 
-        canvas.drawCircle(radius*rutz::abs(itsPupilDilation), radius, true,
+        canvas.drawCircle(radius*std::abs(itsPupilDilation), radius, true,
                           num_slices, num_loops);
       }
     }
@@ -439,8 +439,8 @@ GVX_TRACE("MorphyFace::grRender");
 
     canvas.translate(vec3d(itsNoseXpos, itsNoseYpos, 0.0));
 
-    const vec2d s(rutz::abs(itsNoseWidth)/2.0,
-                  rutz::abs(itsNoseLength));
+    const vec2d s(std::abs(itsNoseWidth)/2.0,
+                  std::abs(itsNoseLength));
 
     ls.begin(canvas, 0.01*itsStrokeWidth);
     ls.vertex(s*vec2d(-0.75, 0.5));
@@ -514,7 +514,7 @@ GVX_TRACE("MorphyFace::grGetBoundingBox");
 
   dbg_eval(3, top_width);   dbg_eval_nl(3, bottom_width);
 
-  double max_width = rutz::max(1.0, rutz::max(top_width, bottom_width));
+  double max_width = std::max(1.0, std::max(top_width, bottom_width));
 
   dbg_eval_nl(3, max_width);
 

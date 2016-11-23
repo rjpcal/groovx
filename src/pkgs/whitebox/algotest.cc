@@ -35,37 +35,41 @@
 
 #include "tcl/pkg.h"
 
+#include <algorithm>
+#include <cmath>
+#include <utility>
+
 #include "rutz/trace.h"
 
 namespace
 {
   void testAlgoMinMax()
   {
-    TEST_REQUIRE_EQ(rutz::min(false, true), false);
-    TEST_REQUIRE_EQ(rutz::max(false, true), true);
+    TEST_REQUIRE_EQ(std::min(false, true), false);
+    TEST_REQUIRE_EQ(std::max(false, true), true);
 
-    TEST_REQUIRE_EQ(rutz::min(0, 0), 0);
-    TEST_REQUIRE_EQ(rutz::min(-12345, 67890), -12345);
+    TEST_REQUIRE_EQ(std::min(0, 0), 0);
+    TEST_REQUIRE_EQ(std::min(-12345, 67890), -12345);
 
-    TEST_REQUIRE_EQ(rutz::max(9876, 9876), 9876);
-    TEST_REQUIRE_EQ(rutz::max(-67890, 12345), 12345);
+    TEST_REQUIRE_EQ(std::max(9876, 9876), 9876);
+    TEST_REQUIRE_EQ(std::max(-67890, 12345), 12345);
 
-    TEST_REQUIRE_EQ(rutz::min(0.0, 0.0), 0.0);
-    TEST_REQUIRE_EQ(rutz::min(-1e-32, -1e-33), -1e-32);
+    TEST_REQUIRE_EQ(std::min(0.0, 0.0), 0.0);
+    TEST_REQUIRE_EQ(std::min(-1e-32, -1e-33), -1e-32);
 
-    TEST_REQUIRE_EQ(rutz::max(1e16, 1e16), 1e16);
-    TEST_REQUIRE_EQ(rutz::max(1e31, 1e32), 1e32);
+    TEST_REQUIRE_EQ(std::max(1e16, 1e16), 1e16);
+    TEST_REQUIRE_EQ(std::max(1e31, 1e32), 1e32);
   }
 
   void testAlgoAbs()
   {
-    TEST_REQUIRE_EQ(rutz::abs(-1), 1);
-    TEST_REQUIRE_EQ(rutz::abs(0), 0);
-    TEST_REQUIRE_EQ(rutz::abs(1), 1);
+    TEST_REQUIRE_EQ(std::abs(-1), 1);
+    TEST_REQUIRE_EQ(std::abs(0), 0);
+    TEST_REQUIRE_EQ(std::abs(1), 1);
 
-    TEST_REQUIRE_EQ(rutz::abs(-1e23), 1e23);
-    TEST_REQUIRE_EQ(rutz::abs(0.0), 0.0);
-    TEST_REQUIRE_EQ(rutz::abs(1e-3), 1e-3);
+    TEST_REQUIRE_EQ(std::abs(-1e23), 1e23);
+    TEST_REQUIRE_EQ(std::abs(0.0), 0.0);
+    TEST_REQUIRE_EQ(std::abs(1e-3), 1e-3);
   }
 
   void testAlgoClamp()
@@ -80,7 +84,7 @@ namespace
   {
     int a = 3;
     int b = 5;
-    rutz::swap2(a, b);
+    std::swap(a, b);
 
     TEST_REQUIRE_EQ(a, 5);
     TEST_REQUIRE_EQ(b, 3);
@@ -91,7 +95,7 @@ namespace
     TEST_REQUIRE_EQ(*pa, 5);
     TEST_REQUIRE_EQ(*pb, 3);
 
-    rutz::swap2(pa, pb);
+    std::swap(pa, pb);
 
     TEST_REQUIRE_EQ(*pa, 3);
     TEST_REQUIRE_EQ(*pb, 5);
