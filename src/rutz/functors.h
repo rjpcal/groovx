@@ -321,6 +321,20 @@ namespace rutz
 
     mem_functor_base(mem_func f) : m_held_func(f) {}
 
+#if 0
+    template<class ptr, class Tuple, std::size_t ...I>
+    R call_func(ptr obj, Tuple args, std::index_sequence<I...>)
+    {
+      return ((*obj).*m_held_func)(std::get<I>(args)...);
+    }
+
+    template <class ptr, typename... Args>
+    R operator()(ptr obj, std::tuple<Args...> args)
+    {
+      return call_func(obj, args, std::index_sequence_for<Args...>{});
+    }
+#endif
+
     /// Function-call operator for object + 0 args.
     template <class ptr>
     R operator()(ptr obj)
@@ -578,6 +592,20 @@ namespace rutz
     typedef typename traits::arg6_t   arg6_t;
     typedef typename traits::arg7_t   arg7_t;
     typedef typename traits::arg8_t   arg8_t;
+
+#if 0
+    template<class Tuple, std::size_t ...I>
+    retn_t call_func(Tuple args, std::index_sequence<I...>)
+    {
+      return m_held_func(m_bound, std::get<I>(args)...);
+    }
+
+    template <typename... Args>
+    retn_t operator()(std::tuple<Args...> args)
+    {
+      return call_func(args, std::index_sequence_for<Args...>{});
+    }
+#endif
 
     //
     // All versions of operator() are provided, but only the one that

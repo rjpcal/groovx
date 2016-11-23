@@ -340,14 +340,8 @@ namespace tcl
   template <class R, class func_wrapper>
   class generic_function : public tcl::function
   {
-  protected:
-    generic_function<R, func_wrapper>(func_wrapper f) : m_held_func(f) {}
-
   public:
-    static std::unique_ptr<tcl::function> make(func_wrapper f)
-    {
-      return std::unique_ptr<tcl::function>(new generic_function(f));
-    }
+    generic_function<R, func_wrapper>(func_wrapper f) : m_held_func(f) {}
 
     virtual ~generic_function() noexcept {}
 
@@ -367,14 +361,8 @@ namespace tcl
   template <class func_wrapper>
   class generic_function<void, func_wrapper> : public tcl::function
   {
-  protected:
-    generic_function<void, func_wrapper>(func_wrapper f) : m_held_func(f) {}
-
   public:
-    static std::unique_ptr<tcl::function> make(func_wrapper f)
-    {
-      return std::unique_ptr<tcl::function>(new generic_function(f));
-    }
+    generic_function<void, func_wrapper>(func_wrapper f) : m_held_func(f) {}
 
     virtual ~generic_function() noexcept {}
 
@@ -403,8 +391,8 @@ namespace tcl
   {
     typedef typename rutz::func_traits<func_wrapper>::retn_t retn_t;
     tcl::command_group::make(interp,
-                       generic_function<retn_t, func_wrapper>::make(f),
-                       cmd_name, usage, spec, src_pos);
+                             std::make_unique<generic_function<retn_t, func_wrapper>>(f),
+                             cmd_name, usage, spec, src_pos);
   }
 
 
@@ -424,8 +412,8 @@ namespace tcl
     typedef typename rutz::func_traits<func_wrapper>::retn_t retn_t;
     std::shared_ptr<tcl::command> cmd =
       tcl::command_group::make(interp,
-                         generic_function<retn_t, func_wrapper>::make(f),
-                         cmd_name, usage, spec, src_pos);
+                               std::make_unique<generic_function<retn_t, func_wrapper>>(f),
+                               cmd_name, usage, spec, src_pos);
     tcl::use_vec_dispatch(*cmd, keyarg);
   }
 

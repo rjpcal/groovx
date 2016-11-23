@@ -58,6 +58,7 @@ namespace tcl
 }
 
 /// Abstract interface for the core function to be embedded in a tcl::command.
+/** TODO replace with std::function<void(tcl::call_context&)> */
 class tcl::function
 {
 public:
