@@ -335,55 +335,11 @@ namespace rutz
     }
 #endif
 
-    /// Function-call operator for object + 0 args.
-    template <class ptr>
-    R operator()(ptr obj)
+    /// Function-call operator for object + any # args.
+    template <class ptr, class... Args>
+    R operator()(ptr obj, Args... args)
     {
-      return ((*obj).*m_held_func)();
-    }
-
-    /// Function-call operator for object + 1 arg.
-    template <class ptr, class P1>
-    R operator()(ptr obj, P1 p1)
-    {
-      return ((*obj).*m_held_func)(p1);
-    }
-
-    /// Function-call operator for object + 2 args.
-    template <class ptr, class P1, class P2>
-    R operator()(ptr obj, P1 p1, P2 p2)
-    {
-      return ((*obj).*m_held_func)(p1, p2);
-    }
-
-    /// Function-call operator for object + 3 args.
-    template <class ptr, class P1, class P2, class P3>
-    R operator()(ptr obj, P1 p1, P2 p2, P3 p3)
-    {
-      return ((*obj).*m_held_func)(p1, p2, p3);
-    }
-
-    /// Function-call operator for object + 4 args.
-    template <class ptr, class P1, class P2, class P3, class P4>
-    R operator()(ptr obj, P1 p1, P2 p2, P3 p3, P4 p4)
-    {
-      return ((*obj).*m_held_func)(p1, p2, p3, p4);
-    }
-
-    /// Function-call operator for object + 5 args.
-    template <class ptr, class P1, class P2, class P3, class P4,
-              class P5>
-    R operator()(ptr obj, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
-    {
-      return ((*obj).*m_held_func)(p1, p2, p3, p4, p5);
-    }
-
-    /// Function-call operator for object + 6 args.
-    template <class ptr, class P1, class P2, class P3, class P4,
-              class P5, class P6>
-    R operator()(ptr obj, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)
-    {
-      return ((*obj).*m_held_func)(p1, p2, p3, p4, p5, p6);
+      return ((*obj).*m_held_func)(args...);
     }
   };
 
@@ -584,14 +540,6 @@ namespace rutz
 
     typedef func_traits<bound_first<base_functor, bound_t> > traits;
     typedef typename traits::retn_t   retn_t;
-    typedef typename traits::arg1_t   arg1_t;
-    typedef typename traits::arg2_t   arg2_t;
-    typedef typename traits::arg3_t   arg3_t;
-    typedef typename traits::arg4_t   arg4_t;
-    typedef typename traits::arg5_t   arg5_t;
-    typedef typename traits::arg6_t   arg6_t;
-    typedef typename traits::arg7_t   arg7_t;
-    typedef typename traits::arg8_t   arg8_t;
 
 #if 0
     template<class Tuple, std::size_t ...I>
@@ -607,46 +555,10 @@ namespace rutz
     }
 #endif
 
-    //
-    // All versions of operator() are provided, but only the one that
-    // involves the correct call to m_held_func() will compile
-    // successfully
-    //
-
-    retn_t operator()()
+    template <class... Args>
+    retn_t operator()(Args... args)
     {
-      return m_held_func(m_bound);
-    }
-    retn_t operator()(arg1_t p1)
-    {
-      return m_held_func(m_bound, p1);
-    }
-    retn_t operator()(arg1_t p1, arg2_t p2)
-    {
-      return m_held_func(m_bound, p1, p2);
-    }
-    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3)
-    {
-      return m_held_func(m_bound, p1, p2, p3);
-    }
-    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4)
-    {
-      return m_held_func(m_bound, p1, p2, p3, p4);
-    }
-    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4,
-                      arg5_t p5)
-    {
-      return m_held_func(m_bound, p1, p2, p3, p4, p5);
-    }
-    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4,
-                      arg5_t p5, arg6_t p6)
-    {
-      return m_held_func(m_bound, p1, p2, p3, p4, p5, p6);
-    }
-    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4,
-                      arg5_t p5, arg6_t p6, arg7_t p7)
-    {
-      return m_held_func(m_bound, p1, p2, p3, p4, p5, p6, p7);
+      return m_held_func(m_bound, args...);
     }
 
   private:
@@ -711,55 +623,11 @@ namespace rutz
 
     typedef func_traits<bound_last<base_functor, bound_t> > traits;
     typedef typename traits::retn_t   retn_t;
-    typedef typename traits::arg1_t   arg1_t;
-    typedef typename traits::arg2_t   arg2_t;
-    typedef typename traits::arg3_t   arg3_t;
-    typedef typename traits::arg4_t   arg4_t;
-    typedef typename traits::arg5_t   arg5_t;
-    typedef typename traits::arg6_t   arg6_t;
-    typedef typename traits::arg7_t   arg7_t;
-    typedef typename traits::arg8_t   arg8_t;
 
-    //
-    // Multiple versions of operator() are provided, but only the one
-    // that involves the correct call to m_held_func() will compile
-    // successfully
-    //
-
-    retn_t operator()()
+    template <class... Args>
+    retn_t operator()(Args... args)
     {
-      return m_held_func(m_bound);
-    }
-    retn_t operator()(arg1_t p1)
-    {
-      return m_held_func(p1, m_bound);
-    }
-    retn_t operator()(arg1_t p1, arg2_t p2)
-    {
-      return m_held_func(p1, p2, m_bound);
-    }
-    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3)
-    {
-      return m_held_func(p1, p2, p3, m_bound);
-    }
-    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4)
-    {
-      return m_held_func(p1, p2, p3, p4, m_bound);
-    }
-    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4,
-                      arg5_t p5)
-    {
-      return m_held_func(p1, p2, p3, p4, p5, m_bound);
-    }
-    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4,
-                      arg5_t p5, arg6_t p6)
-    {
-      return m_held_func(p1, p2, p3, p4, p5, p6, m_bound);
-    }
-    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4,
-                      arg5_t p5, arg6_t p6, arg7_t p7)
-    {
-      return m_held_func(p1, p2, p3, p4, p5, p6, p7, m_bound);
+      return m_held_func(args..., m_bound);
     }
 
   private:
