@@ -364,7 +364,7 @@ GVX_TRACE("tcl::command_group::make");
 
   GVX_ASSERT(group != nullptr);
 
-  shared_ptr<tcl::command> cmd(new tcl::command(callback, usage, spec));
+  shared_ptr<tcl::command> cmd(std::make_shared<tcl::command>(callback, usage, spec));
 
   // We don't want to have to keep 'group' as a member of tcl::command
   // since it involves circular references -- tcl::command_group keeps

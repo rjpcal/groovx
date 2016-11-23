@@ -79,7 +79,7 @@ void output_file::set_filename(rutz::fstring fname)
       return;
     }
 
-  shared_ptr<std::ostream> s(new std::ofstream(fname.c_str()));
+  shared_ptr<std::ostream> s(std::make_shared<std::ofstream>(fname.c_str()));
 
   if (s->fail())
     throw rutz::error(rutz::sfmt("couldn't open '%s' for writing",

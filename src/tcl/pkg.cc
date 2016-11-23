@@ -426,7 +426,7 @@ GVX_TRACE("tcl::pkg::link_var double");
 void tcl::pkg::link_var_copy(const char* var_name, int var)
 {
 GVX_TRACE("tcl::pkg::link_var_copy int");
-  shared_ptr<int> copy(new int(var));
+  shared_ptr<int> copy(std::make_shared<int>(var));
   rep->owned_ints.push_back(copy);
   rep->interp.link_int(var_name, copy.get(), true);
 }
@@ -434,7 +434,7 @@ GVX_TRACE("tcl::pkg::link_var_copy int");
 void tcl::pkg::link_var_copy(const char* var_name, double var)
 {
 GVX_TRACE("tcl::pkg::link_var_copy double");
-  shared_ptr<double> copy(new double(var));
+  shared_ptr<double> copy(std::make_shared<double>(var));
   rep->owned_doubles.push_back(copy);
   rep->interp.link_double(var_name, copy.get(), true);
 }

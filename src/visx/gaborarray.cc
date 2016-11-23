@@ -246,7 +246,7 @@ GVX_TRACE("GaborArray::saveContourOnlyImage");
     }
 
   shared_ptr<media::bmap_data> result
-    (new media::bmap_data(vec2st(itsSizeX, itsSizeY), 8, 1));
+    (std::make_shared<media::bmap_data>(vec2st(itsSizeX, itsSizeY), 8, 1));
 
   unsigned char* bytes = result->bytes_ptr();
 
@@ -472,7 +472,7 @@ GVX_TRACE("GaborArray::generateBmap");
     }
 
   shared_ptr<media::bmap_data> result
-    (new media::bmap_data(vec2st(itsSizeX, itsSizeY), 8, 1));
+    (std::make_shared<media::bmap_data>(vec2st(itsSizeX, itsSizeY), 8, 1));
 
   unsigned char* bytes = result->bytes_ptr();
 

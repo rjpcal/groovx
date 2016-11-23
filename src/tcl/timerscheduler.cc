@@ -133,6 +133,5 @@ GVX_TRACE("tcl::timer_scheduler::schedule");
       return std::shared_ptr<nub::timer_token>();
     }
 
-  return std::shared_ptr<nub::timer_token>
-    (new tcl::timer_scheduler_token(msec, callback, clientdata));
+  return std::make_shared<tcl::timer_scheduler_token>(msec, callback, clientdata);
 }

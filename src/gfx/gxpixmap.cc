@@ -158,10 +158,10 @@ public:
   void queueImage(const char* filename)
   {
     std::shared_ptr<media::bmap_data::update_func> updater
-      (new ImageUpdater(filename,
-                        itsFilename,
-                        itsContrastFlip,
-                        itsVerticalFlip));
+      (std::make_shared<ImageUpdater>(filename,
+                                      itsFilename,
+                                      itsContrastFlip,
+                                      itsVerticalFlip));
 
     itsData.queue_update(updater);
   }
@@ -529,7 +529,7 @@ void GxPixmap::scramble(unsigned int numsubcols, unsigned int numsubrows,
 {
 GVX_TRACE("GxPixmap::scramble");
 
-  std::shared_ptr<media::bmap_data> newdata =
+  std::unique_ptr<media::bmap_data> newdata =
     rep->itsData.make_scrambled(numsubcols, numsubrows, seed,
                                 allowMoveSubparts,
                                 allowFlipLeftRight,

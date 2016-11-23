@@ -429,7 +429,7 @@ namespace
     //
     // (1) read the object's attributes from the stream...
     //
-    shared_ptr<attrib_map> attribs( new attrib_map(obj_tag) );
+    shared_ptr<attrib_map> attribs( std::make_shared<attrib_map>(obj_tag) );
 
     // Skip all whitespace
     buf >> std::ws;

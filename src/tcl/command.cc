@@ -81,7 +81,7 @@ namespace
   };
 
   shared_ptr<default_dispatcher>
-    g_default_dispatcher(new default_dispatcher);
+    g_default_dispatcher(std::make_shared<default_dispatcher>());
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -173,15 +173,13 @@ shared_ptr<std::ostream> tcl::ochanopen(Tcl_Interp* interp,
                                         const char* channame,
                                         std::ios::openmode flags)
 {
-  return shared_ptr<std::ostream>
-    (new tcl_stream(interp, channame, std::ios::out|flags));
+  return std::make_shared<tcl_stream>(interp, channame, std::ios::out|flags);
 }
 
 shared_ptr<std::istream> tcl::ichanopen(Tcl_Interp* interp,
                                         const char* channame,
                                         std::ios::openmode flags)
 {
-  return shared_ptr<std::iostream>
-    (new tcl_stream(interp, channame, std::ios::in|flags));
+  return std::make_shared<tcl_stream>(interp, channame, std::ios::in|flags);
 }
 

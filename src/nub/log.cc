@@ -149,7 +149,7 @@ void nub::logging::set_log_filename(const fstring& filename)
 GVX_TRACE("nub::logging::set_log_filename");
 
   std::shared_ptr<std::ofstream> newfile
-    (new std::ofstream(filename.c_str(), std::ios::out | std::ios::app));
+    (std::make_shared<std::ofstream>(filename.c_str(), std::ios::out | std::ios::app));
 
   if (newfile->is_open() && newfile->good())
     s_log_fstream.swap(newfile);

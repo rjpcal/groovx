@@ -198,7 +198,7 @@ namespace media
     void specify_row_order(row_order order) const;
 
     /// Generate a new image from scrambled subparts of the current image.
-    std::shared_ptr<bmap_data>
+    std::unique_ptr<bmap_data>
     make_scrambled(unsigned int numsubcols, unsigned int numsubrows,
                    unsigned long seed,
                    bool allow_move_subparts = true,

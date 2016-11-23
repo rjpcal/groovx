@@ -99,7 +99,7 @@ namespace tcl
   template <class C>
   void def_basic_type_cmds(pkg* pkg, const rutz::file_pos& src_pos)
   {
-    std::shared_ptr<obj_caster> caster(new cobj_caster<C>);
+    std::shared_ptr<obj_caster> caster(std::make_shared<cobj_caster<C>>());
     def_basic_type_cmds(pkg, caster, src_pos);
   }
 

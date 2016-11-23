@@ -178,7 +178,7 @@ public:
   static std::shared_ptr<FieldImpl>
   make(T C::* memptr)
   {
-    return std::shared_ptr<FieldImpl> (new DataMemberFieldImpl(memptr));
+    return std::make_shared<DataMemberFieldImpl>(memptr);
   }
 
   /// Read the value of the given object's pointed-to data member.
@@ -232,8 +232,7 @@ public:
   static std::shared_ptr<FieldImpl>
   make(T C::* memptr, const deref_t& min, const deref_t& max)
   {
-    return std::shared_ptr<FieldImpl>
-      (new CheckedDataMemberFieldImpl(memptr, min, max));
+    return std::make_shared<CheckedDataMemberFieldImpl>(memptr, min, max);
   }
 
   /// Read the value of the given object's pointed-to data member.

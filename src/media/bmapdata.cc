@@ -351,7 +351,7 @@ void media::bmap_data::specify_row_order(row_order order) const
   rep->m_row_order = order;
 }
 
-shared_ptr<media::bmap_data>
+std::unique_ptr<media::bmap_data>
 media::bmap_data::make_scrambled(unsigned int nsubimg_x,
                                  unsigned int nsubimg_y,
                                  unsigned long seed,
@@ -373,10 +373,10 @@ GVX_TRACE("media::bmap_data::make_scrambled");
       throw rutz::error("not an evenly divisible width", SRC_POS);
     }
 
-  shared_ptr<media::bmap_data> result
-    (new media::bmap_data(this->size(),
-                          this->bits_per_pixel(),
-                          this->byte_alignment()));
+  std::unique_ptr<media::bmap_data> result
+    (std::make_unique<media::bmap_data>(this->size(),
+                                        this->bits_per_pixel(),
+                                        this->byte_alignment()));
 
   const unsigned int npos = nsubimg_x * nsubimg_y;
 
