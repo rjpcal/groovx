@@ -45,21 +45,15 @@ namespace rutz
   struct null_t;
 
   /// Holds typedefs for the types of a function's arguments and return value.
-  template <class R = void,
-            class A1 = null_t, class A2 = null_t, class A3 = null_t,
-            class A4 = null_t, class A5 = null_t, class A6 = null_t,
-            class A7 = null_t, class A8 = null_t>
+  template <class R = void, class... Args>
   struct func_args
   {
     typedef R  retn_t;
-    typedef A1 arg1_t;
-    typedef A2 arg2_t;
-    typedef A3 arg3_t;
-    typedef A4 arg4_t;
-    typedef A5 arg5_t;
-    typedef A6 arg6_t;
-    typedef A7 arg7_t;
-    typedef A8 arg8_t;
+    template <size_t N>
+    struct arg
+    {
+      typedef typename std::tuple_element<N-1, std::tuple<Args...>>::type type;
+    };
   };
 
   /// A traits class for holding information about functions/functors.
@@ -75,68 +69,13 @@ namespace rutz
   //
   //  =======================================================
 
-  /// Specialization for free functions with no arguments.
-  template <class R>
-  struct func_traits<R (*)()>
+  /// Specialization for free functions with any # arguments.
+  template <class R, class... Args>
+  struct func_traits<R (*)(Args...)>
     :
-    public func_args<R>
+    public func_args<R, Args...>
   {
-    static constexpr int num_args = 0;
-  };
-
-  /// Specialization for free functions with 1 argument.
-  template <class R, class P1>
-  struct func_traits<R (*)(P1)>
-    :
-    public func_args<R, P1>
-  {
-    static constexpr int num_args = 1;
-  };
-
-  /// Specialization for free functions with 2 arguments.
-  template <class R, class P1, class P2>
-  struct func_traits<R (*)(P1, P2)>
-    :
-    public func_args<R, P1, P2>
-  {
-    static constexpr int num_args = 2;
-  };
-
-  /// Specialization for free functions with 3 arguments.
-  template <class R, class P1, class P2, class P3>
-  struct func_traits<R (*)(P1, P2, P3)>
-    :
-    public func_args<R, P1, P2, P3>
-  {
-    static constexpr int num_args = 3;
-  };
-
-  /// Specialization for free functions with 4 arguments.
-  template <class R, class P1, class P2, class P3, class P4>
-  struct func_traits<R (*)(P1, P2, P3, P4)>
-    :
-    public func_args<R, P1, P2, P3, P4>
-  {
-    static constexpr int num_args = 4;
-  };
-
-  /// Specialization for free functions with 5 arguments.
-  template <class R, class P1, class P2, class P3, class P4, class P5>
-  struct func_traits<R (*)(P1, P2, P3, P4, P5)>
-    :
-    public func_args<R, P1, P2, P3, P4, P5>
-  {
-    static constexpr int num_args = 5;
-  };
-
-  /// Specialization for free functions with 6 arguments.
-  template <class R, class P1, class P2, class P3, class P4, class P5,
-            class P6>
-  struct func_traits<R (*)(P1, P2, P3, P4, P5, P6)>
-    :
-    public func_args<R, P1, P2, P3, P3, P4, P5, P6>
-  {
-    static constexpr int num_args = 6;
+    static constexpr int num_args = sizeof...(Args);
   };
 
   //  =======================================================
@@ -148,147 +87,23 @@ namespace rutz
   //
   //  =======================================================
 
-  /// Specialization for member functions with "this" plus 0 arguments.
-  template <class R, class C>
-  struct func_traits<R (C::*)()>
+  /// Specialization for non-const member functions with "this" plus any # arguments.
+  template <class R, class C, class... Args>
+  struct func_traits<R (C::*)(Args...)>
     :
-    public func_args<R, null_t>
+    public func_args<R, null_t, Args...>
   {
-    static constexpr int num_args = 1;
+    static constexpr int num_args = sizeof...(Args) + 1;
     typedef C class_t;
   };
 
-  /// Specialization for member functions with "this" plus 0 arguments.
-  template <class R, class C>
-  struct func_traits<R (C::*)() const>
+  /// Specialization for const member functions with "this" plus any # arguments.
+  template <class R, class C, class... Args>
+  struct func_traits<R (C::*)(Args...) const>
     :
-    public func_args<R, null_t>
+    public func_args<R, null_t, Args...>
   {
-    static constexpr int num_args = 1;
-    typedef C class_t;
-  };
-
-  /// Specialization for member functions with "this" plus 1 argument.
-  template <class R, class C, class P1>
-  struct func_traits<R (C::*)(P1)>
-    :
-    public func_args<R, null_t, P1>
-  {
-    static constexpr int num_args = 2;
-    typedef C class_t;
-  };
-
-  /// Specialization for member functions with "this" plus 1 argument.
-  template <class R, class C, class P1>
-  struct func_traits<R (C::*)(P1) const>
-    :
-    public func_args<R, null_t, P1>
-  {
-    static constexpr int num_args = 2;
-    typedef C class_t;
-  };
-
-  /// Specialization for member functions with "this" plus 2 arguments.
-  template <class R, class C, class P1, class P2>
-  struct func_traits<R (C::*)(P1, P2)>
-    :
-    public func_args<R, null_t, P1, P2>
-  {
-    static constexpr int num_args = 3;
-    typedef C class_t;
-  };
-
-  /// Specialization for member functions with "this" plus 2 arguments.
-  template <class R, class C, class P1, class P2>
-  struct func_traits<R (C::*)(P1, P2) const>
-    :
-    public func_args<R, null_t, P1, P2>
-  {
-    static constexpr int num_args = 3;
-    typedef C class_t;
-  };
-
-  /// Specialization for member functions with "this" plus 3 arguments.
-  template <class R, class C, class P1, class P2, class P3>
-  struct func_traits<R (C::*)(P1, P2, P3)>
-    :
-    public func_args<R, null_t, P1, P2, P3>
-  {
-    static constexpr int num_args = 4;
-    typedef C class_t;
-  };
-
-  /// Specialization for member functions with "this" plus 3 arguments.
-  template <class R, class C, class P1, class P2, class P3>
-  struct func_traits<R (C::*)(P1, P2, P3) const>
-    :
-    public func_args<R, null_t, P1, P2, P3>
-  {
-    static constexpr int num_args = 4;
-    typedef C class_t;
-  };
-
-  /// Specialization for member functions with "this" plus 4 arguments.
-  template <class R, class C, class P1, class P2, class P3, class P4>
-  struct func_traits<R (C::*)(P1, P2, P3, P4)>
-    :
-    public func_args<R, null_t, P1, P2, P3, P4>
-  {
-    static constexpr int num_args = 5;
-    typedef C class_t;
-  };
-
-  /// Specialization for member functions with "this" plus 4 arguments.
-  template <class R, class C, class P1, class P2, class P3, class P4>
-  struct func_traits<R (C::*)(P1, P2, P3, P4) const>
-    :
-    public func_args<R, null_t, P1, P2, P3, P4>
-  {
-    static constexpr int num_args = 5;
-    typedef C class_t;
-  };
-
-  /// Specialization for member functions with "this" plus 5 arguments.
-  template <class R, class C, class P1, class P2, class P3, class P4,
-            class P5>
-  struct func_traits<R (C::*)(P1, P2, P3, P4, P5)>
-    :
-    public func_args<R, null_t, P1, P2, P3, P4, P5>
-  {
-    static constexpr int num_args = 6;
-    typedef C class_t;
-  };
-
-  /// Specialization for member functions with "this" plus 5 arguments.
-  template <class R, class C, class P1, class P2, class P3, class P4,
-            class P5>
-  struct func_traits<R (C::*)(P1, P2, P3, P4, P5) const>
-    :
-    public func_args<R, null_t, P1, P2, P3, P4, P5>
-  {
-    static constexpr int num_args = 6;
-    typedef C class_t;
-  };
-
-  /// Specialization for member functions with "this" plus 6 arguments.
-  template <class R, class C, class P1, class P2, class P3, class P4,
-            class P5, class P6>
-  struct func_traits<R (C::*)(P1, P2, P3, P4, P5, P6)>
-    :
-    public func_args<R, null_t, P1, P2, P3, P4, P5, P6>
-  {
-    static constexpr int num_args = 7;
-    typedef C class_t;
-  };
-
-  /// Specialization for member functions with "this" plus 6 arguments.
-  template <class R, class C, class P1, class P2, class P3, class P4,
-            class P5, class P6>
-  struct func_traits<R (C::*)(P1, P2, P3, P4, P5, P6) const>
-    :
-    public func_args<R, null_t, P1, P2, P3, P4, P5, P6>
-  {
-    static constexpr int num_args = 7;
+    static constexpr int num_args = sizeof...(Args) + 1;
     typedef C class_t;
   };
 
@@ -376,108 +191,19 @@ namespace rutz
     typedef fptr type;
   };
 
-  /// Specialization for zero-arg mem func.
-  template <class R, class C>
-  struct functor_of< R (C::*)() >
+  /// Specialization for any-#-arg non-const mem func.
+  template <class R, class C, class... Args>
+  struct functor_of< R (C::*)(Args...) >
   {
-    typedef rutz::mem_functor<R (C::*)()> type;
+    typedef rutz::mem_functor<R (C::*)(Args...)> type;
   };
 
-  /// Specialization for zero-arg const mem func.
-  template <class R, class C>
-  struct functor_of< R (C::*)() const >
+  /// Specialization for any-#-arg const mem func.
+  template <class R, class C, class... Args>
+  struct functor_of< R (C::*)(Args...) const >
   {
-    typedef rutz::mem_functor<R (C::*)() const> type;
+    typedef rutz::mem_functor<R (C::*)(Args...) const> type;
   };
-
-  /// Specialization for one-arg mem func.
-  template <class R, class C, class P1>
-  struct functor_of< R (C::*)(P1) >
-  {
-    typedef rutz::mem_functor<R (C::*)(P1)> type;
-  };
-
-  /// Specialization for one-arg const mem func.
-  template <class R, class C, class P1>
-  struct functor_of< R (C::*)(P1) const >
-  {
-    typedef rutz::mem_functor<R (C::*)(P1) const> type;
-  };
-
-  /// Specialization for two-arg mem func.
-  template <class R, class C, class P1, class P2>
-  struct functor_of< R (C::*)(P1, P2) >
-  {
-    typedef rutz::mem_functor<R (C::*)(P1, P2)> type;
-  };
-
-  /// Specialization for two-arg const mem func.
-  template <class R, class C, class P1, class P2>
-  struct functor_of< R (C::*)(P1, P2) const >
-  {
-    typedef rutz::mem_functor<R (C::*)(P1, P2) const> type;
-  };
-
-  /// Specialization for three-arg mem func.
-  template <class R, class C, class P1, class P2, class P3>
-  struct functor_of< R (C::*)(P1, P2, P3) >
-  {
-    typedef rutz::mem_functor<R (C::*)(P1, P2, P3)> type;
-  };
-
-  /// Specialization for three-arg const mem func.
-  template <class R, class C, class P1, class P2, class P3>
-  struct functor_of< R (C::*)(P1, P2, P3) const >
-  {
-    typedef rutz::mem_functor<R (C::*)(P1, P2, P3) const> type;
-  };
-
-  /// Specialization for four-arg mem func.
-  template <class R, class C, class P1, class P2, class P3, class P4>
-  struct functor_of< R (C::*)(P1, P2, P3, P4) >
-  {
-    typedef rutz::mem_functor<R (C::*)(P1, P2, P3, P4)> type;
-  };
-
-  /// Specialization for four-arg const mem func.
-  template <class R, class C, class P1, class P2, class P3, class P4>
-  struct functor_of< R (C::*)(P1, P2, P3, P4) const >
-  {
-    typedef rutz::mem_functor<R (C::*)(P1, P2, P3, P4) const> type;
-  };
-
-  /// Specialization for 5-arg mem func.
-  template <class R, class C, class P1, class P2, class P3, class P4,
-            class P5>
-  struct functor_of< R (C::*)(P1, P2, P3, P4, P5) >
-  {
-    typedef rutz::mem_functor<R (C::*)(P1, P2, P3, P4, P5)> type;
-  };
-
-  /// Specialization for 5-arg const mem func.
-  template <class R, class C, class P1, class P2, class P3, class P4,
-            class P5>
-  struct functor_of< R (C::*)(P1, P2, P3, P4, P5) const >
-  {
-    typedef rutz::mem_functor<R (C::*)(P1, P2, P3, P4, P5) const> type;
-  };
-
-  /// Specialization for 6-arg mem func.
-  template <class R, class C, class P1, class P2, class P3, class P4,
-            class P5, class P6>
-  struct functor_of< R (C::*)(P1, P2, P3, P4, P5, P6) >
-  {
-    typedef rutz::mem_functor<R (C::*)(P1, P2, P3, P4, P5, P6)> type;
-  };
-
-  /// Specialization for 6-arg const mem func.
-  template <class R, class C, class P1, class P2, class P3, class P4,
-            class P5, class P6>
-  struct functor_of< R (C::*)(P1, P2, P3, P4, P5, P6) const >
-  {
-    typedef rutz::mem_functor<R (C::*)(P1, P2, P3, P4, P5, P6) const> type;
-  };
-
 
   // ########################################################
   //  =======================================================
@@ -504,14 +230,11 @@ namespace rutz
     static constexpr int num_args = func_traits<base_functor>::num_args-1;
 
     typedef typename func_traits<base_functor>::retn_t   retn_t;
-    typedef typename func_traits<base_functor>::arg2_t   arg1_t;
-    typedef typename func_traits<base_functor>::arg3_t   arg2_t;
-    typedef typename func_traits<base_functor>::arg4_t   arg3_t;
-    typedef typename func_traits<base_functor>::arg5_t   arg4_t;
-    typedef typename func_traits<base_functor>::arg6_t   arg5_t;
-    typedef typename func_traits<base_functor>::arg7_t   arg6_t;
-    typedef typename func_traits<base_functor>::arg8_t   arg7_t;
-    typedef                                     null_t   arg8_t;
+    template <size_t N>
+    struct arg
+    {
+      typedef typename func_traits<base_functor>::template arg<N+1>::type type;
+    };
   };
 
   /// bound_first wraps another functor type with a fixed first argument.
@@ -587,14 +310,11 @@ namespace rutz
     static constexpr int num_args = func_traits<base_functor>::num_args-1;
 
     typedef typename func_traits<base_functor>::retn_t   retn_t;
-    typedef typename func_traits<base_functor>::arg1_t   arg1_t;
-    typedef typename func_traits<base_functor>::arg2_t   arg2_t;
-    typedef typename func_traits<base_functor>::arg3_t   arg3_t;
-    typedef typename func_traits<base_functor>::arg4_t   arg4_t;
-    typedef typename func_traits<base_functor>::arg5_t   arg5_t;
-    typedef typename func_traits<base_functor>::arg6_t   arg6_t;
-    typedef typename func_traits<base_functor>::arg7_t   arg7_t;
-    typedef typename func_traits<base_functor>::arg8_t   arg8_t;
+    template <size_t N>
+    struct arg
+    {
+      typedef typename func_traits<base_functor>::template arg<N>::type type;
+    };
   };
 
   /// bound_last wraps another functor type with a fixed last argument.

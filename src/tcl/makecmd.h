@@ -50,11 +50,27 @@ namespace rutz
 {
   struct file_pos;
 
+  template <class MF, size_t N>
+  struct mf_arg_helper
+  {
+    typedef typename func_traits<MF>::template arg<N>::type type;
+  };
+
+  template <class MF>
+  struct mf_arg_helper<MF, 1>
+  {
+    typedef nub::soft_ref<typename mem_functor<MF>::C> type;
+  };
+
   /// Specialization of func_traits for mem_functor.
   template <class MF>
   struct func_traits<mem_functor<MF> > : public func_traits<MF>
   {
-    typedef nub::soft_ref<typename mem_functor<MF>::C> arg1_t;
+    template <size_t N>
+    struct arg
+    {
+      typedef typename mf_arg_helper<MF, N>::type type;
+    };
   };
 }
 
@@ -113,8 +129,8 @@ namespace tcl
 #endif
 
 #define EXTRACT_PARAM(N) \
-  typename rutz::func_traits<Func>::arg##N##_t p##N = \
-  ctx.template get_arg<typename rutz::func_traits<Func>::arg##N##_t>(N);
+  typename rutz::func_traits<Func>::template arg<N>::type p##N =                 \
+    ctx.template get_arg<typename rutz::func_traits<Func>::template arg<N>::type>(N);
 
   /// Generic tcl::func_wrapper definition.
   template <unsigned int N, class R, class Func>
