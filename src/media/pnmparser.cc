@@ -218,15 +218,15 @@ GVX_TRACE("media::save_pnm");
              ssize_t(data.bytes_per_row()));
 }
 
-void media::load_pnm(const char* filename, media::bmap_data& data)
+media::bmap_data media::load_pnm(const char* filename)
 {
   std::unique_ptr<std::istream> is
     (rutz::igzopen(filename, std::ios::binary));
 
-  load_pnm(*is, data);
+  return load_pnm(*is);
 }
 
-void media::load_pnm(std::istream& is, media::bmap_data& data)
+media::bmap_data media::load_pnm(std::istream& is)
 {
 GVX_TRACE("media::load_pnm");
   if (is.fail())
@@ -295,15 +295,15 @@ GVX_TRACE("media::load_pnm");
                         SRC_POS);
     }
 
-  media::bmap_data new_data(extent, bit_depth, 1);
+  media::bmap_data result(extent, bit_depth, 1);
 
   switch (mode)
     {
-    case 1:                 parse_pbm_mode_1(is, new_data); break;
-    case 2: case 3:         parse_pbm_mode_23(is, new_data, max_grey); break;
-    case 4: case 5: case 6: parse_pbm_mode_456(is, new_data, max_grey, mode); break;
+    case 1:                 parse_pbm_mode_1(is, result); break;
+    case 2: case 3:         parse_pbm_mode_23(is, result, max_grey); break;
+    case 4: case 5: case 6: parse_pbm_mode_456(is, result, max_grey, mode); break;
     default: GVX_ASSERT(false); break;
     }
 
-  data.swap(new_data);
+  return result;
 }

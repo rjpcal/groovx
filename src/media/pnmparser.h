@@ -39,10 +39,10 @@ namespace media
   class bmap_data;
 
   /// Load \a data in PBM format from the file \a filename.
-  void load_pnm(const char* filename, media::bmap_data& data);
+  bmap_data load_pnm(const char* filename);
 
   /// Load \a data in PBM format from the \c std::ostream \a os.
-  void load_pnm(std::istream& is, media::bmap_data& data);
+  bmap_data load_pnm(std::istream& is);
 
   /// Save \a data in PBM format to the file \a filename.
   void save_pnm(const char* filename, const media::bmap_data& data);

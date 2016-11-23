@@ -97,7 +97,7 @@ public:
       }
   }
 
-  virtual void update(media::bmap_data& update_me);
+  virtual media::bmap_data update();
 
 private:
   fstring itsFilename;
@@ -106,13 +106,16 @@ private:
   bool itsFlipVertical;
 };
 
-void ImageUpdater::update(media::bmap_data& update_me)
+media::bmap_data ImageUpdater::update()
 {
 GVX_TRACE("ImageUpdater::update");
 
   try
     {
-      media::load_image(itsFilename.c_str(), update_me);
+      media::bmap_data result = media::load_image(itsFilename.c_str());
+      if (itsFlipContrast) { result.flip_contrast(); }
+      if (itsFlipVertical) { result.flip_vertical(); }
+      return result;
     }
   // If there was an error while reading the file, it means we should
   // forget about itsOwnerFilename
@@ -122,8 +125,6 @@ GVX_TRACE("ImageUpdater::update");
       throw;
     }
 
-  if (itsFlipContrast) { update_me.flip_contrast(); }
-  if (itsFlipVertical) { update_me.flip_vertical(); }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -305,7 +306,7 @@ void GxPixmap::loadImage(const char* filename)
 {
 GVX_TRACE("GxPixmap::loadImage");
 
-  media::load_image(filename, rep->itsData);
+  rep->itsData = media::load_image(filename);
 
   rep->itsFilename = filename;
 
@@ -316,7 +317,7 @@ void GxPixmap::loadImageStream(std::istream& ist)
 {
 GVX_TRACE("GxPixmap::loadImageStream");
 
-  media::load_pnm(ist, rep->itsData);
+  rep->itsData = media::load_pnm(ist);
   rep->itsFilename = "";
   this->sigNodeChanged.emit();
 }
@@ -325,7 +326,7 @@ void GxPixmap::reload()
 {
 GVX_TRACE("GxPixmap::reload");
 
-  media::load_image(rep->itsFilename.c_str(), rep->itsData);
+  rep->itsData = media::load_image(rep->itsFilename.c_str());
 
   this->sigNodeChanged.emit();
 }

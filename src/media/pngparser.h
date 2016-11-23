@@ -37,7 +37,7 @@ namespace media
   class bmap_data;
 
   /// Load \a data in PNG format from the file \a filename.
-  void load_png(const char* filename, media::bmap_data& data);
+  media::bmap_data load_png(const char* filename);
 
   /// Write \a data in PNG format to the file \a filename.
   void save_png(const char* filename, const media::bmap_data& data);

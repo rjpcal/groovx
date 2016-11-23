@@ -31,6 +31,7 @@
 
 #include "imgfile.h"
 
+#include "media/bmapdata.h"
 #include "media/jpegparser.h"
 #include "media/pngparser.h"
 #include "media/pnmparser.h"
@@ -112,8 +113,7 @@ namespace
 
   // A fallback function to try to read an image by filtering it
   // through a pipe that will convert it to PNM format.
-  void pipe_load(const char* progname,
-                 const char* filename, media::bmap_data& data)
+  media::bmap_data pipe_load(const char* progname, const char* filename)
   {
   GVX_TRACE("<imgfile.cc>::pipe_load");
 
@@ -129,31 +129,34 @@ namespace
 
     rutz::exec_pipe p("r", argv);
 
-    media::load_pnm(p.stream(), data);
+    media::bmap_data result = media::load_pnm(p.stream());
 
     if (p.exit_status() != 0)
       throw rutz::error("child process exited abnormally", SRC_POS);
+
+    return result;
   }
 
 #endif
 
 }
 
-void media::load_image(const char* filename, media::bmap_data& data)
+media::bmap_data media::load_image(const char* filename)
 {
 GVX_TRACE("media::load_image");
 
+  media::bmap_data result;
   switch (get_image_file_type(filename))
     {
-    case image_file_type::PNM:  media::load_pnm(filename, data); break;
-    case image_file_type::PNG:  media::load_png(filename, data); break;
+    case image_file_type::PNM:  result = media::load_pnm(filename); break;
+    case image_file_type::PNG:  result = media::load_png(filename); break;
 #ifdef HAVE_LIBJPEG
-    case image_file_type::JPEG: media::load_jpeg(filename, data); break;
+    case image_file_type::JPEG: result = media::load_jpeg(filename); break;
 #else
     case image_file_type::JPEG: // fall through
 #endif
 #ifdef GVX_GIFTOPNM_PROG
-    case image_file_type::GIF:  pipe_load(GVX_GIFTOPNM_PROG, filename, data); break;
+    case image_file_type::GIF:  result = pipe_load(GVX_GIFTOPNM_PROG, filename); break;
 #else
     case image_file_type::GIF:  // fall through
 #endif
@@ -164,7 +167,7 @@ GVX_TRACE("media::load_image");
       // that the program "anytopnm" is installed on the host
       // machine. In that case, we can process the image file with
       // anytopnm, and pipe the output via a stream into a pnm parser.
-      pipe_load(GVX_ANYTOPNM_PROG, filename, data);
+      result = pipe_load(GVX_ANYTOPNM_PROG, filename);
       break;
 #else
       throw rutz::error(rutz::sfmt("unknown image file format: %s",
@@ -173,6 +176,8 @@ GVX_TRACE("media::load_image");
     }
 
   nub::log(rutz::sfmt("loaded image file %s", filename));
+
+  return result;
 }
 
 void media::save_image(const char* filename,

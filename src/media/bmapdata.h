@@ -70,7 +70,7 @@ namespace media
 
       /** To be overridden by subclasses to provide a way to update the
           \c bmap_data. */
-      virtual void update(bmap_data& update_me) = 0;
+      virtual bmap_data update() = 0;
     };
 
     /// Specifies the order in which the rows are physically arranged in memory.

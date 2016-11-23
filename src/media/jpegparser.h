@@ -38,7 +38,7 @@ namespace media
 
 #ifdef HAVE_LIBJPEG
   /// Load \a data in JPEG format from the file \a filename.
-  void load_jpeg(const char* filename, media::bmap_data& data);
+  media::bmap_data load_jpeg(const char* filename);
 #endif
 }
 

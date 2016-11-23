@@ -35,13 +35,13 @@
 
 #include "rutz/error.h"
 
-void media::load_png(const char* /*filename*/, media::bmap_data& /*data*/)
+media::bmap_data media::load_png(const char* /*filename*/)
 {
   throw rutz::error("png image files are not supported in this build",
                     SRC_POS);
 }
 
-void media::save_png(const char* /*filename*/, const media::bmap_data& /*data*/)
+media::bmap_data media::save_png(const char* /*filename*/)
 {
   throw rutz::error("png image files are not supported in this build",
                     SRC_POS);
@@ -84,7 +84,7 @@ namespace
 
     void close();
 
-    void parse(const char* filename, media::bmap_data& data);
+    media::bmap_data parse(const char* filename);
 
   private:
     png_parser(const png_parser&);
@@ -113,7 +113,7 @@ namespace
       }
   }
 
-  void png_parser::parse(const char* filename, media::bmap_data& data)
+  media::bmap_data png_parser::parse(const char* filename)
   {
     GVX_TRACE("png_parser::parse");
     m_file = fopen(filename, "rb");
@@ -219,7 +219,7 @@ namespace
 
     GVX_ASSERT(row_bytes == size_t(width*nchannels));
 
-    media::bmap_data new_data(geom::vec2<size_t>(width, height),
+    media::bmap_data result(geom::vec2<size_t>(width, height),
                               nchannels*8, // bits_per_pixel
                               1); // byte_alignment
 
@@ -227,16 +227,16 @@ namespace
 
     for (png_uint_32 i = 0; i < height; ++i)
       {
-        row_pointers[i] = (png_bytep) (new_data.row_ptr(i));
+        row_pointers[i] = (png_bytep) (result.row_ptr(i));
       }
 
     png_read_image(m_png_ptr, &row_pointers[0]);
 
     png_read_end(m_png_ptr, m_end_ptr);
 
-    data.swap(new_data);
-
     this->close();
+
+    return result;
   }
 
   class png_writer
@@ -349,12 +349,12 @@ namespace
 
 } // end anonymous namespace
 
-void media::load_png(const char* filename, media::bmap_data& data)
+media::bmap_data media::load_png(const char* filename)
 {
 GVX_TRACE("media::load_png");
   png_parser parser;
 
-  parser.parse(filename, data);
+  return parser.parse(filename);
 }
 
 void media::save_png(const char* filename, const media::bmap_data& data)

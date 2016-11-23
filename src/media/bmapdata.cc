@@ -320,14 +320,8 @@ void media::bmap_data::update_if_needed() const
 GVX_TRACE("media::bmap_data::update_if_needed");
   if (rep->m_updater.get() != nullptr)
     {
-      shared_ptr<update_func> tmp_updater(rep->m_updater);
-
-      // We release rep->m_updater before doing the update, so that we
-      // avoid endless recursion if update_if_needed is called again
-      // during the updating.
-      rep->m_updater.reset();
-
-      tmp_updater->update(const_cast<media::bmap_data&>(*this));
+      bmap_data result = rep->m_updater->update();
+      const_cast<media::bmap_data*>(this)->swap(result);
     }
 }
 

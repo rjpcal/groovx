@@ -37,7 +37,7 @@ namespace media
   class bmap_data;
 
   /// Load \a data from \a filename, which must be in a supported format.
-  void load_image(const char* filename, media::bmap_data& data);
+  bmap_data load_image(const char* filename);
 
   /// Save \a data to \a filename (file format is inferred from the filename).
   void save_image(const char* filename, const media::bmap_data& data);

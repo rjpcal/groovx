@@ -94,7 +94,7 @@ do {                                                     \
     }                                                    \
 } while (0)
 
-void media::load_jpeg(const char* filename, media::bmap_data& data)
+media::bmap_data media::load_jpeg(const char* filename)
 {
 GVX_TRACE("media::load_jpeg");
 
@@ -146,14 +146,14 @@ GVX_TRACE("media::load_jpeg");
   // cinfo.output_components
 
   // 6. Read scanlines
-  media::bmap_data new_data(geom::vec2<size_t>(cinfo.output_width,
-                                               cinfo.output_height),
-                            (unsigned int)(cinfo.output_components*BITS_IN_JSAMPLE),
-                            1);
+  media::bmap_data result(geom::vec2<size_t>(cinfo.output_width,
+                                             cinfo.output_height),
+                          (unsigned int)(cinfo.output_components*BITS_IN_JSAMPLE),
+                          1);
 
   while (cinfo.output_scanline < cinfo.output_height)
     {
-      JSAMPLE* dest = new_data.row_ptr(cinfo.output_scanline);
+      JSAMPLE* dest = result.row_ptr(cinfo.output_scanline);
 
       SETJMP_TRY(jpeg_read_scanlines(&cinfo,
                                      &dest,
@@ -166,7 +166,7 @@ GVX_TRACE("media::load_jpeg");
   // 8. cleanup
   cleanup(&cinfo);
 
-  data.swap(new_data);
+  return result;
 }
 
 #pragma clang diagnostic pop
