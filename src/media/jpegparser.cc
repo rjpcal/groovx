@@ -48,6 +48,10 @@ extern "C"
 }
 #include "rutz/trace.h"
 
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+
 namespace
 {
   struct jpeg_aux
@@ -66,7 +70,7 @@ namespace
     jpeg_destroy_decompress(cinfo);
   }
 
-  void jpeg_error_exit(j_common_ptr cinfo)
+  [[noreturn]] void jpeg_error_exit(j_common_ptr cinfo)
   {
     // Since we longjmp out of here, DON'T use any C++ objects that need to
     // have destructors run!
@@ -142,9 +146,9 @@ GVX_TRACE("media::load_jpeg");
   // cinfo.output_components
 
   // 6. Read scanlines
-  media::bmap_data new_data(geom::vec2<int>(cinfo.output_width,
-                                            cinfo.output_height),
-                            cinfo.output_components*BITS_IN_JSAMPLE,
+  media::bmap_data new_data(geom::vec2<size_t>(cinfo.output_width,
+                                               cinfo.output_height),
+                            (unsigned int)(cinfo.output_components*BITS_IN_JSAMPLE),
                             1);
 
   while (cinfo.output_scanline < cinfo.output_height)
@@ -164,5 +168,7 @@ GVX_TRACE("media::load_jpeg");
 
   data.swap(new_data);
 }
+
+#pragma clang diagnostic pop
 
 #endif // HAVE_LIBJPEG
