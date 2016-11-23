@@ -65,14 +65,14 @@ using geom::vec3d;
 
 using media::bmap_data;
 
-using std::shared_ptr;
+using std::unique_ptr;
 
 using Gfx::Bbox;
 using Gfx::Canvas;
 
 namespace
 {
-  void dumpFrame(shared_ptr<media::bmap_data> bmap)
+  void dumpFrame(const media::bmap_data& bmap)
   {
     GVX_TRACE("<gaborarray.cc>::dumpFrame");
 
@@ -81,7 +81,7 @@ namespace
     char fname[256];
     snprintf(fname, 256, "frame_%06d.png", framecount++);
 
-    media::save_image(fname, *bmap);
+    media::save_image(fname, bmap);
   }
 
   const int GABORARRAY_SVID = 0;
@@ -245,8 +245,8 @@ GVX_TRACE("GaborArray::saveContourOnlyImage");
         }
     }
 
-  shared_ptr<media::bmap_data> result
-    (std::make_shared<media::bmap_data>(vec2st(itsSizeX, itsSizeY), 8, 1));
+  unique_ptr<media::bmap_data> result
+    (std::make_unique<media::bmap_data>(vec2st(itsSizeX, itsSizeY), 8, 1));
 
   unsigned char* bytes = result->bytes_ptr();
 
@@ -401,7 +401,7 @@ GVX_TRACE("GaborArray::updateBackg");
   itsThetaSeed.touch(); // to force a redo in updateBmap()
 }
 
-shared_ptr<media::bmap_data> GaborArray::generateBmap(bool doTagLast) const
+unique_ptr<media::bmap_data> GaborArray::generateBmap(bool doTagLast) const
 {
 GVX_TRACE("GaborArray::generateBmap");
 
@@ -471,8 +471,8 @@ GVX_TRACE("GaborArray::generateBmap");
         }
     }
 
-  shared_ptr<media::bmap_data> result
-    (std::make_shared<media::bmap_data>(vec2st(itsSizeX, itsSizeY), 8, 1));
+  unique_ptr<media::bmap_data> result
+    (std::make_unique<media::bmap_data>(vec2st(itsSizeX, itsSizeY), 8, 1));
 
   unsigned char* bytes = result->bytes_ptr();
 
@@ -542,10 +542,10 @@ bool GaborArray::tryPush(const GaborArrayElement& e) const
   // quite so quickly in the resulting movie
   if (itsDumpingFrames)
     {
-      shared_ptr<media::bmap_data> bmap = generateBmap(true);
+      unique_ptr<media::bmap_data> bmap = generateBmap(true);
 
-      dumpFrame(bmap);
-      dumpFrame(bmap);
+      dumpFrame(*bmap);
+      dumpFrame(*bmap);
     }
 
   return true;
@@ -651,8 +651,8 @@ GVX_TRACE("GaborArray::backgJitter");
       if (itsDumpingFrames &&
           niter % itsFrameDumpPeriod == 0)
         {
-          shared_ptr<media::bmap_data> bmap = generateBmap(true);
-          dumpFrame(bmap);
+          unique_ptr<media::bmap_data> bmap = generateBmap(true);
+          dumpFrame(*bmap);
         }
     }
 }

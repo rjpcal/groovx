@@ -80,12 +80,12 @@ namespace tcl
 
 namespace tcl
 {
-  std::shared_ptr<std::ostream>
+  std::unique_ptr<std::ostream>
   ochanopen(Tcl_Interp* interp,
             const char* channame,
             std::ios::openmode flags = std::ios::openmode(0));
 
-  std::shared_ptr<std::istream>
+  std::unique_ptr<std::istream>
   ichanopen(Tcl_Interp* interp,
             const char* channame,
             std::ios::openmode flags = std::ios::openmode(0));

@@ -296,7 +296,7 @@ public:
 
   const T& operator*() const
   {
-    m_current.reset(new T(tcl::convert_to<T>(current())));
+    m_current = std::make_shared<T>(tcl::convert_to<T>(current()));
     return *m_current;
   }
 };

@@ -421,7 +421,7 @@ namespace
     nub::ref<GxPixmap> pixmap = ctx.get_arg<nub::ref<GxPixmap> >(1);
     const char* channame = ctx.get_arg<const char*>(2);
     Tcl_Interp* interp = ctx.interp().intp();
-    shared_ptr<std::istream> ist(tcl::ichanopen(interp, channame));
+    std::unique_ptr<std::istream> ist(tcl::ichanopen(interp, channame));
     pixmap->loadImageStream(*ist);
   }
 }

@@ -72,7 +72,7 @@ public:
 
 private:
   rutz::fstring m_filename;
-  std::shared_ptr<std::ostream> m_stream;
+  std::unique_ptr<std::ostream> m_stream;
 };
 
 #endif // !GROOVX_IO_OUTPUTFILE_H_UTC20050626084021_DEFINED

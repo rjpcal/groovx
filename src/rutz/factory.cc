@@ -35,34 +35,6 @@
 
 #include "rutz/trace.h"
 
-namespace
-{
-  class function_fallback : public rutz::factory_fallback
-  {
-  public:
-    typedef rutz::factory_base::fallback_t fallback_t;
-
-    function_fallback(fallback_t* f) noexcept : m_func(f) {}
-
-    virtual ~function_fallback() noexcept {}
-
-    virtual void try_fallback(const rutz::fstring& key) const
-    {
-      if (m_func != nullptr)
-        (*m_func)(key);
-    }
-
-  private:
-    fallback_t* m_func;
-  };
-}
-
-rutz::factory_fallback::factory_fallback() noexcept
-{}
-
-rutz::factory_fallback::~factory_fallback() noexcept
-{}
-
 rutz::factory_base::factory_base() noexcept
   :
   m_fallback()
@@ -75,23 +47,16 @@ rutz::factory_base::~factory_base() noexcept
 GVX_TRACE("rutz::factory_base::~factory_base");
 }
 
-void rutz::factory_base::set_fallback(std::shared_ptr<factory_fallback> f)
-{
-GVX_TRACE("rutz::factory_base::set_fallback(object)");
-
-  m_fallback = f;
-}
-
 void rutz::factory_base::set_fallback(fallback_t* fptr)
 {
 GVX_TRACE("rutz::factory_base::set_fallback");
-  m_fallback = std::make_shared<function_fallback>(fptr);
+  m_fallback = fptr;
 }
 
 void rutz::factory_base::try_fallback(const rutz::fstring& key) const
 {
 GVX_TRACE("rutz::factory_base::try_fallback");
 
-  if (m_fallback.get() != nullptr)
-    m_fallback->try_fallback(key);
+  if (m_fallback)
+    m_fallback(key);
 }

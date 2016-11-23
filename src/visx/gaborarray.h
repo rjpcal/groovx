@@ -113,7 +113,7 @@ private:
   GaborArray(const GaborArray&);
   GaborArray& operator=(const GaborArray&);
 
-  std::shared_ptr<media::bmap_data> generateBmap(bool doTagLast = false) const;
+  std::unique_ptr<media::bmap_data> generateBmap(bool doTagLast = false) const;
 
   void updateForeg() const;
   void updateBackg() const;
@@ -147,7 +147,7 @@ private:
   Cached<double> itsContrastJitter;
 
   mutable std::vector<GaborArrayElement> itsArray;
-  mutable std::shared_ptr<media::bmap_data> itsBmap;
+  mutable std::unique_ptr<media::bmap_data> itsBmap;
 
   bool itsDumpingFrames;
   unsigned int itsFrameDumpPeriod;

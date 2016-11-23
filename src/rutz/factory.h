@@ -40,6 +40,7 @@
 #include "rutz/mutex.h"
 #include "rutz/traits.h"
 
+#include <functional>
 #include <memory>
 #include <typeinfo>
 
@@ -104,20 +105,6 @@ namespace rutz
   };
 
 
-  /// Abstract class for a fallback strategy when factory lookup fails.
-  class factory_fallback
-  {
-  public:
-    /// Default constructor.
-    factory_fallback() noexcept;
-
-    /// Virtual no-throw destructor for proper inheritance.
-    virtual ~factory_fallback() noexcept;
-
-    /// This will be called with the key whose lookup failed in the factory.
-    virtual void try_fallback(const rutz::fstring& key) const = 0;
-  };
-
   /// Non-template helper class for rutz::factory.
   class factory_base
   {
@@ -130,9 +117,6 @@ namespace rutz
     /// Virtual no-throw destructor for proper inheritance.
     virtual ~factory_base() noexcept;
 
-    /// Change the fallback object.
-    void set_fallback(std::shared_ptr<factory_fallback> f);
-
     /// Change the fallback function.
     void set_fallback(fallback_t* fptr);
 
@@ -140,7 +124,7 @@ namespace rutz
     void try_fallback(const rutz::fstring& key) const;
 
   private:
-    std::shared_ptr<factory_fallback> m_fallback;
+    std::function<void(const rutz::fstring&)> m_fallback;
   };
 
 
@@ -312,14 +296,6 @@ namespace rutz
         }
 
       return creator->create();
-    }
-
-    /// Change the fallback object.
-    void set_fallback(std::shared_ptr<factory_fallback> f)
-    {
-      GVX_MUTEX_LOCK(m_mutex);
-
-      m_base.set_fallback(f);
     }
 
     /// Change the fallback function.

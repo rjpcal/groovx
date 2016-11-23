@@ -43,7 +43,7 @@
 
 #include "rutz/trace.h"
 
-using std::shared_ptr;
+using std::unique_ptr;
 
 output_file::output_file() :
   m_filename(""),
@@ -79,7 +79,7 @@ void output_file::set_filename(rutz::fstring fname)
       return;
     }
 
-  shared_ptr<std::ostream> s(std::make_shared<std::ofstream>(fname.c_str()));
+  unique_ptr<std::ostream> s(std::make_unique<std::ofstream>(fname.c_str()));
 
   if (s->fail())
     throw rutz::error(rutz::sfmt("couldn't open '%s' for writing",
