@@ -160,9 +160,6 @@ public:
   // manipulators //
   //////////////////
 
-  /// Mutable access to internal bitmap data representation.
-  media::bmap_data& data();
-
   /// Change the (x,y) factor by which the bitmap will be scaled.
   void setZoom(geom::vec2<double> zoom);
 
