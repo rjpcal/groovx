@@ -39,12 +39,12 @@
 
 #include "tcl-io/tclprocwrapper.h"
 
+#include <memory>
 #include <vector>
 
 namespace rutz
 {
   template <class T> class fwd_iter;
-  template <class T> class shared_ptr;
 }
 
 namespace nub
@@ -106,7 +106,7 @@ public:
       specifies a minimum delay time; this may be used to ensure that
       proper relative ordering of TrialEvent's is maintained, even if
       the event loop is getting slowed down overall.  */
-  unsigned int schedule(rutz::shared_ptr<nub::scheduler> s,
+  unsigned int schedule(std::shared_ptr<nub::scheduler> s,
                         Trial& trial,
                         unsigned int minimum_msec = 0);
 

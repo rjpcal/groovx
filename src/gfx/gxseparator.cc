@@ -52,7 +52,7 @@
 
 #include "rutz/trace.h"
 
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 class GxSeparator::Impl : public nub::volatile_object
 {

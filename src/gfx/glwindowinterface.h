@@ -33,12 +33,9 @@
 #ifndef GROOVX_GFX_GLWINDOWINTERFACE_H_UTC20050626084024_DEFINED
 #define GROOVX_GFX_GLWINDOWINTERFACE_H_UTC20050626084024_DEFINED
 
-struct GlxOpts;
+#include <memory>
 
-namespace rutz
-{
-  template <class T> class shared_ptr;
-}
+struct GlxOpts;
 
 /// Abstract base class that wraps the interface between OpenGL and a particular windowing system.
 class GlWindowInterface

@@ -38,10 +38,10 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 
 #include <cstring> // for strncpy()
 #include <esd.h>
+#include <memory>
 #include <unistd.h> // for write(), close()
 
 #include "rutz/trace.h"

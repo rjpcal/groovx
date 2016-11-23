@@ -34,14 +34,10 @@
 #define GROOVX_TCL_CHANNELBUF_H_UTC20050628162420_DEFINED
 
 #include <iostream>
+#include <memory>
 #include <ostream>
 #include <streambuf>
 #include <tcl.h>
-
-namespace rutz
-{
-  template <class T> class shared_ptr;
-}
 
 namespace tcl
 {
@@ -84,12 +80,12 @@ namespace tcl
 
 namespace tcl
 {
-  rutz::shared_ptr<std::ostream>
+  std::shared_ptr<std::ostream>
   ochanopen(Tcl_Interp* interp,
             const char* channame,
             std::ios::openmode flags = std::ios::openmode(0));
 
-  rutz::shared_ptr<std::istream>
+  std::shared_ptr<std::istream>
   ichanopen(Tcl_Interp* interp,
             const char* channame,
             std::ios::openmode flags = std::ios::openmode(0));

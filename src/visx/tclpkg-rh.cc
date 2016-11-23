@@ -41,7 +41,6 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
-#include "rutz/shared_ptr.h"
 #include "rutz/serialport.h"
 
 #include "visx/eventresponsehdlr.h"
@@ -49,6 +48,7 @@
 #include "visx/kbdresponsehdlr.h"
 #include "visx/nullresponsehdlr.h"
 
+#include <memory>
 #include <tk.h>
 
 #include "rutz/trace.h"
@@ -134,7 +134,7 @@ namespace
     SerialEventSource& operator=(const SerialEventSource&);
   };
 
-  rutz::shared_ptr<SerialEventSource> theEventSource;
+  std::shared_ptr<SerialEventSource> theEventSource;
 
   void startSerial(Tcl_Interp* interp, const char* device)
   {

@@ -43,7 +43,7 @@
 
 #include "rutz/trace.h"
 
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 output_file::output_file() :
   m_filename(""),

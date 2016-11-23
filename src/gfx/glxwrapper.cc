@@ -36,7 +36,8 @@
 #include "gfx/glxopts.h"
 
 #include "rutz/error.h"
-#include "rutz/shared_ptr.h"
+
+#include <memory>
 
 #include "rutz/debug.h"
 GVX_DBG_REGISTER

@@ -33,8 +33,7 @@
 #include "tcl/eventloop.h"
 #include "tcl/interp.h"
 
-#include "rutz/shared_ptr.h"
-
+#include <memory>
 #include <tcl.h>
 
 #include "rutz/trace.h"
@@ -116,7 +115,7 @@ tcl::timer_scheduler::~timer_scheduler() noexcept
 GVX_TRACE("tcl::timer_scheduler::~timer_scheduler");
 }
 
-rutz::shared_ptr<nub::timer_token>
+std::shared_ptr<nub::timer_token>
 tcl::timer_scheduler::schedule(int msec,
                               void (*callback)(void*),
                               void* clientdata)
@@ -131,9 +130,9 @@ GVX_TRACE("tcl::timer_scheduler::schedule");
 
       // Return a null pointer, representing the fact that there is no
       // pending callback in this case.
-      return rutz::shared_ptr<nub::timer_token>();
+      return std::shared_ptr<nub::timer_token>();
     }
 
-  return rutz::shared_ptr<nub::timer_token>
+  return std::shared_ptr<nub::timer_token>
     (new tcl::timer_scheduler_token(msec, callback, clientdata));
 }

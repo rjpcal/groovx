@@ -37,8 +37,7 @@
 
 #include "gfx/gbvec.h"
 
-#include "rutz/shared_ptr.h"
-
+#include <memory>
 #include <vector>
 
 struct GaborArrayElement;
@@ -114,7 +113,7 @@ private:
   GaborArray(const GaborArray&);
   GaborArray& operator=(const GaborArray&);
 
-  rutz::shared_ptr<media::bmap_data> generateBmap(bool doTagLast = false) const;
+  std::shared_ptr<media::bmap_data> generateBmap(bool doTagLast = false) const;
 
   void updateForeg() const;
   void updateBackg() const;
@@ -148,7 +147,7 @@ private:
   Cached<double> itsContrastJitter;
 
   mutable std::vector<GaborArrayElement> itsArray;
-  mutable rutz::shared_ptr<media::bmap_data> itsBmap;
+  mutable std::shared_ptr<media::bmap_data> itsBmap;
 
   bool itsDumpingFrames;
   unsigned int itsFrameDumpPeriod;

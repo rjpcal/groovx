@@ -38,9 +38,9 @@
 #include "rutz/fileposition.h"
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 
 #include <list>
+#include <memory>
 #include <sstream>
 #include <tcl.h>
 #ifdef HAVE_TCLINT_H
@@ -52,7 +52,7 @@
 GVX_DBG_REGISTER
 
 using rutz::fstring;
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 namespace
 {
@@ -339,7 +339,7 @@ GVX_TRACE("tcl::command_group::lookup_original");
 
 shared_ptr<tcl::command>
 tcl::command_group::make(tcl::interpreter& interp,
-                         shared_ptr<tcl::function> callback,
+                         std::shared_ptr<tcl::function> callback,
                          const char* cmd_name,
                          const char* usage,
                          const arg_spec& spec,

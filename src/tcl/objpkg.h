@@ -35,7 +35,7 @@
 
 #include "nub/objfactory.h"
 
-#include "rutz/shared_ptr.h"
+#include <memory>
 
 namespace rutz
 {
@@ -93,13 +93,13 @@ namespace tcl
     }
   };
 
-  void def_basic_type_cmds(pkg* pkg, rutz::shared_ptr<obj_caster> caster,
+  void def_basic_type_cmds(pkg* pkg, std::shared_ptr<obj_caster> caster,
                            const rutz::file_pos& src_pos);
 
   template <class C>
   void def_basic_type_cmds(pkg* pkg, const rutz::file_pos& src_pos)
   {
-    rutz::shared_ptr<obj_caster> caster(new cobj_caster<C>);
+    std::shared_ptr<obj_caster> caster(new cobj_caster<C>);
     def_basic_type_cmds(pkg, caster, src_pos);
   }
 

@@ -37,17 +37,17 @@
 #include "rutz/error.h"
 #include "rutz/rand.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 
 #include <algorithm>
 #include <cstring>              // for memcpy
+#include <memory>
 #include <vector>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -37,9 +37,9 @@
 #include "io/io.h"
 
 #include "rutz/fstring.h"
-#include "rutz/shared_ptr.h"
 
 #include <iosfwd>
+#include <memory>
 
 /// Wraps a std::ofstream in an serializable.
 /** This allows a named file to be serialized across program runs, as
@@ -72,7 +72,7 @@ public:
 
 private:
   rutz::fstring m_filename;
-  rutz::shared_ptr<std::ostream> m_stream;
+  std::shared_ptr<std::ostream> m_stream;
 };
 
 #endif // !GROOVX_IO_OUTPUTFILE_H_UTC20050626084021_DEFINED

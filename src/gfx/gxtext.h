@@ -35,7 +35,8 @@
 #include "gfx/gxshapekit.h"
 
 #include "rutz/fstring.h"
-#include "rutz/shared_ptr.h"
+
+#include <memory>
 
 class GxFont;
 
@@ -92,7 +93,7 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const override;
 
 private:
-  rutz::shared_ptr<GxFont> itsFont;
+  std::shared_ptr<GxFont> itsFont;
   rutz::fstring itsText;
   int itsStrokeWidth;
 };

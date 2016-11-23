@@ -383,7 +383,7 @@ namespace rutz
   template <class mem_func>
   struct mem_functor : public mem_functor_base<mem_func>
   {
-    mem_functor(mem_func f) : mem_functor_base<mem_func>(f) {}
+    explicit mem_functor(mem_func f) : mem_functor_base<mem_func>(f) {}
 
     // operator()'s inherited from mem_functor_base
   };
@@ -392,7 +392,7 @@ namespace rutz
   template <class MF>
   inline mem_functor<MF> mem_func(MF mf)
   {
-    return mf;
+    return mem_functor<MF>(mf);
   }
 
 

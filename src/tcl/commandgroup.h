@@ -33,6 +33,8 @@
 #ifndef GROOVX_TCL_COMMANDGROUP_H_UTC20050628162421_DEFINED
 #define GROOVX_TCL_COMMANDGROUP_H_UTC20050628162421_DEFINED
 
+#include <memory>
+
 typedef struct Tcl_Obj Tcl_Obj;
 struct Tcl_Interp;
 
@@ -40,7 +42,6 @@ namespace rutz
 {
   struct file_pos;
   class fstring;
-  template <class T> class shared_ptr;
 }
 
 namespace tcl
@@ -75,16 +76,16 @@ public:
       then the new tcl::command will be hooked into that
       tcl::command_group as an overload. Otherwise, a brand new
       tcl::command_group will be created. */
-  static rutz::shared_ptr<tcl::command>
+  static std::shared_ptr<tcl::command>
   make(tcl::interpreter& interp,
-       rutz::shared_ptr<tcl::function> callback,
+       std::shared_ptr<tcl::function> callback,
        const char* cmd_name,
        const char* usage,
        const tcl::arg_spec& spec,
        const rutz::file_pos& src_pos);
 
   /// Add the given tcl::command to this group's overload list.
-  void add(rutz::shared_ptr<tcl::command> p);
+  void add(std::shared_ptr<tcl::command> p);
 
   /// Get this group's fully namespace-qualified command name.
   rutz::fstring resolved_name() const;

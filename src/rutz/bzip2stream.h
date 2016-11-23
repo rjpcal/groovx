@@ -33,36 +33,35 @@
 
 #include <ios>
 #include <iosfwd>
+#include <memory>
 
 namespace rutz
 {
   class fstring;
 
-  template <class T> class shared_ptr;
-
   /** Opens a file for writing. An exception will be thrown if the
       specified file cannot be opened. The output file will be
       bzip2-compressed if the filename ends with ".bz2". */
-  shared_ptr<std::ostream> obzip2open(const rutz::fstring& filename,
-                                      std::ios::openmode flags =
-                                      std::ios::openmode(0));
+  std::unique_ptr<std::ostream> obzip2open(const rutz::fstring& filename,
+                                           std::ios::openmode flags =
+                                           std::ios::openmode(0));
 
   /// Overload.
-  shared_ptr<std::ostream> obzip2open(const char* filename,
-                                      std::ios::openmode flags =
-                                      std::ios::openmode(0));
+  std::unique_ptr<std::ostream> obzip2open(const char* filename,
+                                           std::ios::openmode flags =
+                                           std::ios::openmode(0));
 
   /** Opens a file for reading. An exception will be thrown if the
       specified file cannot be opened. The input file will be
       bzip2-decompressed if the filename ends with ".bz2". */
-  shared_ptr<std::istream> ibzip2open(const rutz::fstring& filename,
-                                      std::ios::openmode flags =
-                                      std::ios::openmode(0));
+  std::unique_ptr<std::istream> ibzip2open(const rutz::fstring& filename,
+                                           std::ios::openmode flags =
+                                           std::ios::openmode(0));
 
   /// Overload.
-  shared_ptr<std::istream> ibzip2open(const char* filename,
-                                      std::ios::openmode flags =
-                                      std::ios::openmode(0));
+  std::unique_ptr<std::istream> ibzip2open(const char* filename,
+                                           std::ios::openmode flags =
+                                           std::ios::openmode(0));
 }
 
 #endif // !GROOVX_RUTZ_BZIP2STREAM_H_UTC20060614220054DEFINED

@@ -42,12 +42,12 @@
 
 #include "rutz/error.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 #include "rutz/stopwatch.h"
 
 #include "visx/trialevent.h"
 
 #include <algorithm>
+#include <memory>
 #include <vector>
 
 #include "rutz/trace.h"
@@ -79,7 +79,7 @@ private:
 
 public:
   Impl() :
-    scheduler(rutz::make_shared(new tcl::timer_scheduler)),
+    scheduler(std::make_shared<tcl::timer_scheduler>()),
     immediateEvents(),
     startEvents(),
     responseEvents(),
@@ -88,7 +88,7 @@ public:
     trial(nullptr)
     {}
 
-  rutz::shared_ptr<nub::scheduler> scheduler;
+  std::shared_ptr<nub::scheduler> scheduler;
 
   typedef std::vector<nub::ref<TrialEvent> > EventGroup;
 
@@ -117,7 +117,7 @@ public:
   Trial* trial;
 
   static void scheduleAll(EventGroup& events,
-                          rutz::shared_ptr<nub::scheduler> s,
+                          std::shared_ptr<nub::scheduler> s,
                           Trial* trial);
   static void cancelAll(EventGroup& events);
 };
@@ -266,7 +266,7 @@ namespace
 }
 
 void TimingHdlr::Impl::scheduleAll(EventGroup& events,
-                                   rutz::shared_ptr<nub::scheduler> s,
+                                   std::shared_ptr<nub::scheduler> s,
                                    Trial* trial)
 {
 GVX_TRACE("TimingHdlr::Impl::scheduleAll");

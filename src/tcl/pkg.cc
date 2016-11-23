@@ -39,7 +39,6 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 
 #include <tcl.h>
 #ifdef HAVE_TCLINT_H
@@ -47,6 +46,7 @@
 #endif
 #include <cctype>
 #include <iostream>
+#include <memory>
 #include <typeinfo>
 #include <string>
 #include <vector>
@@ -63,7 +63,7 @@ GVX_DBG_REGISTER
 
 using std::string;
 using std::vector;
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 namespace
 {

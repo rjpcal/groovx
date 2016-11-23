@@ -42,9 +42,9 @@
 #include "rutz/cstrstream.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
-#include "rutz/shared_ptr.h"
 
 #include <iostream>
+#include <memory>
 #include <sstream>
 
 #include "rutz/trace.h"
@@ -52,7 +52,7 @@
 GVX_DBG_REGISTER
 
 using rutz::fstring;
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 fstring io::write_lgx(nub::ref<io::serializable> obj)
 {

@@ -32,24 +32,21 @@
 #ifndef GROOVX_GFX_GXFACTORY_H_UTC20050706224701_DEFINED
 #define GROOVX_GFX_GXFACTORY_H_UTC20050706224701_DEFINED
 
+#include <memory>
+
 class GxFont;
 class GxRasterFont;
-
-namespace rutz
-{
-  template <class T> class shared_ptr;
-}
 
 /// Provides factory functions to create platform-specific objects.
 class GxFactory
 {
 public:
   /// Construct a platform-appropriate raster font from the given X11 font specification.
-  static rutz::shared_ptr<GxRasterFont>
+  static std::shared_ptr<GxRasterFont>
   makeRasterFont(const char* fontname);
 
   /// Create a platform-appropriate raster or vector font.
-  static rutz::shared_ptr<GxFont> makeFont(const char* name);
+  static std::shared_ptr<GxFont> makeFont(const char* name);
 };
 
 #endif // !GROOVX_GFX_GXFACTORY_H_UTC20050706224701DEFINED

@@ -42,7 +42,7 @@
 
 #include "rutz/trace.h"
 
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 class GxNodeIter : public rutz::fwd_iter_ifx<const nub::ref<GxNode> >
 {

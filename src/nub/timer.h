@@ -35,8 +35,9 @@
 #include "nub/scheduler.h"
 #include "nub/signal.h"
 
-#include "rutz/shared_ptr.h"
 #include "rutz/stopwatch.h"
+
+#include <memory>
 
 namespace nub
 {
@@ -53,7 +54,7 @@ public:
 
   nub::signal0 sig_timeout;
 
-  void schedule(rutz::shared_ptr<nub::scheduler> s);
+  void schedule(std::shared_ptr<nub::scheduler> s);
   void cancel();
 
   unsigned int delay_msec() const { return m_msec_delay; }
@@ -72,8 +73,8 @@ private:
   timer(const timer&);
   timer& operator=(const timer&);
 
-  rutz::shared_ptr<nub::scheduler>   m_scheduler;
-  rutz::shared_ptr<nub::timer_token> m_token;
+  std::shared_ptr<nub::scheduler>   m_scheduler;
+  std::shared_ptr<nub::timer_token> m_token;
   unsigned int                       m_msec_delay;
   bool                               m_is_repeating;
 

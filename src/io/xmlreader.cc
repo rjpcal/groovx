@@ -43,7 +43,6 @@
 #include "rutz/fstring.h"
 #include "rutz/gzstreambuf.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 #include "rutz/value.h"
 
 #include <cstdio>            // for sscanf()
@@ -51,6 +50,7 @@
 #include <iostream>          // for cout in xml_debug()
 #include <istream>           // for tree_builder constructor
 #include <map>               // for group_element
+#include <memory>            // for shared_ptr
 #include <ostream>           // for xml_element::trace()
 #include <string>            // for string_element implementation
 #include <typeinfo>          // for error reporting and xml_element::trace()
@@ -61,7 +61,8 @@
 GVX_DBG_REGISTER
 
 using rutz::fstring;
-using rutz::shared_ptr;
+using std::shared_ptr;
+using std::unique_ptr;
 
 using nub::ref;
 using nub::soft_ref;
@@ -584,7 +585,7 @@ namespace
 nub::ref<io::serializable> io::load_gvx(const char* filename)
 {
 GVX_TRACE("io::load_gvx");
-  shared_ptr<std::istream> ifs(rutz::igzopen(filename));
+  unique_ptr<std::istream> ifs(rutz::igzopen(filename));
   tree_builder x(*ifs);
   x.parse();
 
@@ -595,7 +596,7 @@ GVX_TRACE("io::load_gvx");
 void io::xml_debug(const char* filename)
 {
 GVX_TRACE("io::xml_debug");
-  shared_ptr<std::istream> ifs(rutz::igzopen(filename));
+  unique_ptr<std::istream> ifs(rutz::igzopen(filename));
   tree_builder x(*ifs);
   x.parse();
 

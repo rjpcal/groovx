@@ -43,7 +43,8 @@
 #include "tcl/vecdispatch.h"
 
 #include "rutz/functors.h"
-#include "rutz/shared_ptr.h"
+
+#include <memory>
 
 namespace rutz
 {
@@ -343,9 +344,9 @@ namespace tcl
     generic_function<R, func_wrapper>(func_wrapper f) : m_held_func(f) {}
 
   public:
-    static rutz::shared_ptr<tcl::function> make(func_wrapper f)
+    static std::unique_ptr<tcl::function> make(func_wrapper f)
     {
-      return rutz::shared_ptr<tcl::function>(new generic_function(f));
+      return std::unique_ptr<tcl::function>(new generic_function(f));
     }
 
     virtual ~generic_function() noexcept {}
@@ -370,9 +371,9 @@ namespace tcl
     generic_function<void, func_wrapper>(func_wrapper f) : m_held_func(f) {}
 
   public:
-    static rutz::shared_ptr<tcl::function> make(func_wrapper f)
+    static std::unique_ptr<tcl::function> make(func_wrapper f)
     {
-      return rutz::shared_ptr<tcl::function>(new generic_function(f));
+      return std::unique_ptr<tcl::function>(new generic_function(f));
     }
 
     virtual ~generic_function() noexcept {}
@@ -421,7 +422,7 @@ namespace tcl
                            const rutz::file_pos& src_pos)
   {
     typedef typename rutz::func_traits<func_wrapper>::retn_t retn_t;
-    rutz::shared_ptr<tcl::command> cmd =
+    std::shared_ptr<tcl::command> cmd =
       tcl::command_group::make(interp,
                          generic_function<retn_t, func_wrapper>::make(f),
                          cmd_name, usage, spec, src_pos);

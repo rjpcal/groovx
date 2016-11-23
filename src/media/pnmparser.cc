@@ -39,11 +39,11 @@
 #include "rutz/fstring.h"
 #include "rutz/gzstreambuf.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 
 #include <cctype>
 #include <cstdio>
 #include <iostream>
+#include <memory>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -189,7 +189,7 @@ namespace
 
 void media::save_pnm(const char* filename, const media::bmap_data& data)
 {
-  rutz::shared_ptr<std::ostream> os
+  std::unique_ptr<std::ostream> os
     (rutz::ogzopen(filename, std::ios::binary));
 
   save_pnm(*os, data);
@@ -220,7 +220,7 @@ GVX_TRACE("media::save_pnm");
 
 void media::load_pnm(const char* filename, media::bmap_data& data)
 {
-  rutz::shared_ptr<std::istream> is
+  std::unique_ptr<std::istream> is
     (rutz::igzopen(filename, std::ios::binary));
 
   load_pnm(*is, data);

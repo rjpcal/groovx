@@ -75,7 +75,7 @@ rutz::factory_base::~factory_base() noexcept
 GVX_TRACE("rutz::factory_base::~factory_base");
 }
 
-void rutz::factory_base::set_fallback(rutz::shared_ptr<factory_fallback> f)
+void rutz::factory_base::set_fallback(std::shared_ptr<factory_fallback> f)
 {
 GVX_TRACE("rutz::factory_base::set_fallback(object)");
 
@@ -85,7 +85,7 @@ GVX_TRACE("rutz::factory_base::set_fallback(object)");
 void rutz::factory_base::set_fallback(fallback_t* fptr)
 {
 GVX_TRACE("rutz::factory_base::set_fallback");
-  m_fallback = rutz::make_shared(new function_fallback(fptr));
+  m_fallback = std::make_shared<function_fallback>(fptr);
 }
 
 void rutz::factory_base::try_fallback(const rutz::fstring& key) const

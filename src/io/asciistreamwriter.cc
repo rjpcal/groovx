@@ -52,7 +52,8 @@
 GVX_DBG_REGISTER
 
 using rutz::fstring;
-using rutz::shared_ptr;
+using std::shared_ptr;
+using std::unique_ptr;
 
 using nub::ref;
 using nub::soft_ref;
@@ -130,7 +131,7 @@ namespace
     virtual void write_cstring(const char* name, const char* val) override;
 
   private:
-    shared_ptr<std::ostream>                           m_owned_stream;
+    unique_ptr<std::ostream>                           m_owned_stream;
     std::ostream&                                      m_buf;
     mutable vector<soft_ref<const io::serializable> >  m_pending_objs;
     set<soft_ref<const io::serializable> >             m_written_objs;
@@ -351,12 +352,12 @@ namespace
   }
 }
 
-shared_ptr<io::writer> io::make_asw_writer(std::ostream& os)
+unique_ptr<io::writer> io::make_asw_writer(std::ostream& os)
 {
-  return rutz::make_shared(new asw_writer(os));
+  return std::make_unique<asw_writer>(os);
 }
 
-shared_ptr<io::writer> io::make_asw_writer(const char* filename)
+unique_ptr<io::writer> io::make_asw_writer(const char* filename)
 {
-  return rutz::make_shared(new asw_writer(filename));
+  return std::make_unique<asw_writer>(filename);
 }

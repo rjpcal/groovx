@@ -37,26 +37,23 @@
 
 #include "nub/volatileobject.h"
 
+#include <memory>
+
 struct GlxOpts;
 class GlWindowInterface;
-
-namespace rutz
-{
-  template <class T> class shared_ptr;
-}
 
 /// GLCanvas implements Gfx::Canvas using OpenGL.
 class GLCanvas : public Gfx::Canvas, public virtual nub::volatile_object
 {
 protected:
   /// Construct from windowsystem options and a windowsystem wrapper.
-  GLCanvas(rutz::shared_ptr<GlxOpts> opts,
-           rutz::shared_ptr<GlWindowInterface> glx);
+  GLCanvas(std::shared_ptr<GlxOpts> opts,
+           std::shared_ptr<GlWindowInterface> glx);
 
 public:
   /// Factory function.
-  static GLCanvas* make(rutz::shared_ptr<GlxOpts> opts,
-                        rutz::shared_ptr<GlWindowInterface> glx);
+  static GLCanvas* make(std::shared_ptr<GlxOpts> opts,
+                        std::shared_ptr<GlWindowInterface> glx);
 
   virtual ~GLCanvas() noexcept;
 

@@ -42,7 +42,7 @@
 #include "nub/timer.h"
 #include "nub/volatileobject.h"
 
-#include "rutz/shared_ptr.h"
+#include <memory>
 
 namespace nub
 {
@@ -55,7 +55,7 @@ class GxScene : public nub::volatile_object
 public:
   /// Construct with a canvas in which to draw.
   GxScene(nub::soft_ref<Gfx::Canvas> canvas,
-          rutz::shared_ptr<nub::scheduler> sched);
+          std::shared_ptr<nub::scheduler> sched);
 
   /// Virtual no-throw destructor.
   virtual ~GxScene() noexcept;
@@ -133,7 +133,7 @@ private:
   bool isItRefreshing;
   bool isItRefreshed;
 
-  const rutz::shared_ptr<nub::scheduler> itsScheduler;
+  const std::shared_ptr<nub::scheduler> itsScheduler;
   nub::timer itsTimer;
 
   nub::ref<nub::slot0> slotNodeChanged;

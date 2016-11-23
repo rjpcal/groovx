@@ -46,25 +46,25 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 
 #include <map>
+#include <memory>
 
 #include "rutz/trace.h"
 
 namespace
 {
-  typedef std::map<rutz::fstring, rutz::shared_ptr<GxFont> > MapType;
+  typedef std::map<rutz::fstring, std::shared_ptr<GxFont> > MapType;
   MapType theFontMap;
 }
 
-rutz::shared_ptr<GxRasterFont>
+std::shared_ptr<GxRasterFont>
 GxFactory::makeRasterFont(const char* fontname)
 {
 GVX_TRACE("GxFactory::makeRasterFont");
 
 #if defined(GVX_GL_PLATFORM_GLX)
-  return rutz::make_shared(new GlxRasterFont(fontname));
+  return std::make_shared<GlxRasterFont>(fontname);
 #elif defined(GVX_GL_PLATFORM_AGL)
 //   return rutz::make_shared(new AglRasterFont(fontname));
   throw rutz::error(rutz::sfmt("couldn't create font %s: AglRasterFont not supported",
@@ -72,7 +72,7 @@ GVX_TRACE("GxFactory::makeRasterFont");
 #endif
 }
 
-rutz::shared_ptr<GxFont> GxFactory::makeFont(const char* name_cstr)
+std::shared_ptr<GxFont> GxFactory::makeFont(const char* name_cstr)
 {
   rutz::fstring name(name_cstr);
 
@@ -83,12 +83,12 @@ rutz::shared_ptr<GxFont> GxFactory::makeFont(const char* name_cstr)
 
   if (name == "vector")
     {
-      rutz::shared_ptr<GxFont> font(new GxVectorFont);
+      std::shared_ptr<GxFont> font(new GxVectorFont);
       theFontMap.insert(MapType::value_type(name, font));
       return font;
     }
 
-  rutz::shared_ptr<GxFont> font(GxFactory::makeRasterFont(name_cstr));
+  std::shared_ptr<GxFont> font(GxFactory::makeRasterFont(name_cstr));
   theFontMap.insert(MapType::value_type(name, font));
   return font;
 }

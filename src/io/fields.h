@@ -41,12 +41,12 @@
 #include "rutz/algo.h"
 #include "rutz/fileposition.h"
 #include "rutz/fstring.h"
-#include "rutz/shared_ptr.h"
 #include "rutz/stderror.h"
 #include "rutz/traits.h"
 #include "rutz/value.h"
 
 #include <limits>
+#include <memory>
 
 namespace rutz
 {
@@ -175,10 +175,10 @@ public:
   /// Construct with a pointer-to-data-member.
   DataMemberFieldImpl(T C::* memptr) : itsDataMember(memptr) {}
 
-  static rutz::shared_ptr<FieldImpl>
+  static std::shared_ptr<FieldImpl>
   make(T C::* memptr)
   {
-    return rutz::shared_ptr<FieldImpl> (new DataMemberFieldImpl(memptr));
+    return std::shared_ptr<FieldImpl> (new DataMemberFieldImpl(memptr));
   }
 
   /// Read the value of the given object's pointed-to data member.
@@ -229,10 +229,10 @@ public:
     itsMax(max)
   {}
 
-  static rutz::shared_ptr<FieldImpl>
+  static std::shared_ptr<FieldImpl>
   make(T C::* memptr, const deref_t& min, const deref_t& max)
   {
-    return rutz::shared_ptr<FieldImpl>
+    return std::shared_ptr<FieldImpl>
       (new CheckedDataMemberFieldImpl(memptr, min, max));
   }
 
@@ -365,7 +365,7 @@ class Field
 {
 private:
   const rutz::fstring               itsName;
-  const rutz::shared_ptr<FieldImpl> itsFieldImpl;
+  const std::shared_ptr<FieldImpl> itsFieldImpl;
   const rutz::fstring               itsDefaultValue;
   const rutz::fstring               itsMin;
   const rutz::fstring               itsMax;

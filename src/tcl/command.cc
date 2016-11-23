@@ -33,15 +33,16 @@
 
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 
 #include "tcl/interp.h"
+
+#include <memory>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 ///////////////////////////////////////////////////////////////////////
 //

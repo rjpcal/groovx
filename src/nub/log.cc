@@ -35,7 +35,6 @@
 
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 #include "rutz/stopwatch.h"
 #include "rutz/time.h"
 #include "rutz/timeformat.h"
@@ -45,6 +44,7 @@
 #include <functional>
 #include <iomanip>
 #include <iostream>
+#include <memory>
 #include <vector>
 
 #include "rutz/trace.h"
@@ -73,7 +73,7 @@ namespace
   };
 
   std::vector<scope_info> scopes;
-  rutz::shared_ptr<std::ofstream> s_log_fstream;
+  std::shared_ptr<std::ofstream> s_log_fstream;
   bool s_copy_to_stdout = true;
 
   template <class str>
@@ -148,7 +148,7 @@ void nub::logging::set_log_filename(const fstring& filename)
 {
 GVX_TRACE("nub::logging::set_log_filename");
 
-  rutz::shared_ptr<std::ofstream> newfile
+  std::shared_ptr<std::ofstream> newfile
     (new std::ofstream(filename.c_str(), std::ios::out | std::ios::app));
 
   if (newfile->is_open() && newfile->good())

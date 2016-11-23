@@ -48,7 +48,8 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-using rutz::shared_ptr;
+using std::shared_ptr;
+using std::unique_ptr;
 
 using nub::ref;
 using nub::soft_ref;
@@ -118,7 +119,7 @@ private:
 
   void write_escaped(const char* text);
 
-  shared_ptr<std::ostream>  m_owned_stream;
+  unique_ptr<std::ostream>  m_owned_stream;
   std::ostream&             m_buf;
   std::set<nub::uid>        m_written_objs;
   int                       m_nest_level;
@@ -314,12 +315,12 @@ GVX_TRACE("xml_writer::write_escaped");
 }
 
 
-shared_ptr<io::writer> io::make_xml_writer(std::ostream& os)
+unique_ptr<io::writer> io::make_xml_writer(std::ostream& os)
 {
-  return rutz::make_shared(new xml_writer(os));
+  return std::make_unique<xml_writer>(os);
 }
 
-shared_ptr<io::writer> io::make_xml_writer(const char* filename)
+unique_ptr<io::writer> io::make_xml_writer(const char* filename)
 {
-  return rutz::make_shared(new xml_writer(filename));
+  return std::make_unique<xml_writer>(filename);
 }

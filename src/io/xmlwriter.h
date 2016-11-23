@@ -33,19 +33,18 @@
 #ifndef GROOVX_IO_XMLWRITER_H_UTC20050626084021_DEFINED
 #define GROOVX_IO_XMLWRITER_H_UTC20050626084021_DEFINED
 
-#include "rutz/shared_ptr.h"
-
 #include <iosfwd>
+#include <memory>
 
 namespace io
 {
   class writer;
 
   /// Make an XML writer that writes to \c std::ostream.
-  rutz::shared_ptr<io::writer> make_xml_writer(std::ostream& os);
+  std::unique_ptr<io::writer> make_xml_writer(std::ostream& os);
 
   /// Make an XML writer that writes to the file named \a filename.
-  rutz::shared_ptr<io::writer> make_xml_writer(const char* filename);
+  std::unique_ptr<io::writer> make_xml_writer(const char* filename);
 }
 
 #endif // !GROOVX_IO_XMLWRITER_H_UTC20050626084021_DEFINED

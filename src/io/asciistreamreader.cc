@@ -44,11 +44,11 @@
 #include "rutz/fstring.h"
 #include "rutz/gzstreambuf.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 #include "rutz/value.h"
 
 #include <cstdio>
 #include <istream>
+#include <memory>
 #include <vector>
 
 #include "rutz/trace.h"
@@ -56,7 +56,8 @@
 GVX_DBG_REGISTER
 
 using rutz::fstring;
-using rutz::shared_ptr;
+using std::shared_ptr;
+using std::unique_ptr;
 
 using nub::ref;
 using nub::soft_ref;
@@ -167,7 +168,7 @@ namespace
     virtual fstring read_string_impl(const fstring& name) override;
 
   private:
-    shared_ptr<std::istream>              m_owned_stream;
+    unique_ptr<std::istream>              m_owned_stream;
     std::istream&                         m_buf;
     io::object_map                        m_objects;
     std::vector<shared_ptr<attrib_map> >  m_attribs;
@@ -500,12 +501,12 @@ namespace
   }
 }
 
-shared_ptr<io::reader> io::make_asw_reader(std::istream& os)
+unique_ptr<io::reader> io::make_asw_reader(std::istream& os)
 {
-  return rutz::make_shared( new asw_reader(os) );
+  return std::make_unique<asw_reader>(os);
 }
 
-shared_ptr<io::reader> io::make_asw_reader(const char* filename)
+unique_ptr<io::reader> io::make_asw_reader(const char* filename)
 {
-  return rutz::make_shared( new asw_reader(filename) );
+  return std::make_unique<asw_reader>(filename);
 }

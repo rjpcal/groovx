@@ -34,11 +34,7 @@
 #define GROOVX_MEDIA_BMAPDATA_H_UTC20050626084018_DEFINED
 
 #include <cstddef> // size_t
-
-namespace rutz
-{
-  template <class T> class shared_ptr;
-}
+#include <memory>
 
 namespace geom
 {
@@ -185,7 +181,7 @@ namespace media
     /// Queues the update given by \a updater.
     /** The \c update() function will be called only when the bitmap
         data must be accessed. */
-    void queue_update(rutz::shared_ptr<update_func> updater) const;
+    void queue_update(std::shared_ptr<update_func> updater) const;
 
     /// Forces any pending update to be called.
     void update_if_needed() const;
@@ -202,7 +198,7 @@ namespace media
     void specify_row_order(row_order order) const;
 
     /// Generate a new image from scrambled subparts of the current image.
-    rutz::shared_ptr<bmap_data>
+    std::shared_ptr<bmap_data>
     make_scrambled(unsigned int numsubcols, unsigned int numsubrows,
                    unsigned long seed,
                    bool allow_move_subparts = true,

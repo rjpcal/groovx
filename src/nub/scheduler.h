@@ -32,10 +32,7 @@
 #ifndef GROOVX_NUB_SCHEDULER_H_UTC20050626084019_DEFINED
 #define GROOVX_NUB_SCHEDULER_H_UTC20050626084019_DEFINED
 
-namespace rutz
-{
-  template <class T> class shared_ptr;
-}
+#include <memory>
 
 namespace nub
 {
@@ -61,7 +58,7 @@ class nub::scheduler
 public:
   virtual ~scheduler() noexcept;
 
-  virtual rutz::shared_ptr<nub::timer_token>
+  virtual std::shared_ptr<nub::timer_token>
   schedule(int msec,
            void (*callback)(void*),
            void* clientdata) = 0;

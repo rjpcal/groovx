@@ -50,7 +50,8 @@
 #include "rutz/cstrstream.h"
 #include "rutz/fstring.h"
 #include "rutz/mappedfile.h"
-#include "rutz/shared_ptr.h"
+
+#include <memory>
 
 #include "rutz/trace.h"
 
@@ -156,7 +157,7 @@ public:
 
   void queueImage(const char* filename)
   {
-    rutz::shared_ptr<media::bmap_data::update_func> updater
+    std::shared_ptr<media::bmap_data::update_func> updater
       (new ImageUpdater(filename,
                         itsFilename,
                         itsContrastFlip,
@@ -528,7 +529,7 @@ void GxPixmap::scramble(unsigned int numsubcols, unsigned int numsubrows,
 {
 GVX_TRACE("GxPixmap::scramble");
 
-  rutz::shared_ptr<media::bmap_data> newdata =
+  std::shared_ptr<media::bmap_data> newdata =
     rep->itsData.make_scrambled(numsubcols, numsubrows, seed,
                                 allowMoveSubparts,
                                 allowFlipLeftRight,

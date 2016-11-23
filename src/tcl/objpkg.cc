@@ -41,7 +41,7 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 //---------------------------------------------------------------------
 //

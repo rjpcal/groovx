@@ -45,7 +45,7 @@ public:
   timer_scheduler();
   virtual ~timer_scheduler() noexcept;
 
-  virtual rutz::shared_ptr<nub::timer_token>
+  virtual std::shared_ptr<nub::timer_token>
   schedule(int msec,
            void (*callback)(void*),
            void* clientdata) override;

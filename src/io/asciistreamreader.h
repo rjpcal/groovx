@@ -33,9 +33,8 @@
 #ifndef GROOVX_IO_ASCIISTREAMREADER_H_UTC20050626084021_DEFINED
 #define GROOVX_IO_ASCIISTREAMREADER_H_UTC20050626084021_DEFINED
 
-#include "rutz/shared_ptr.h"
-
 #include <iosfwd>
+#include <memory>
 
 namespace io
 {
@@ -46,10 +45,10 @@ namespace io
       stream containing ASW-formatted data, which is a human-readable
       text format. With this data format, objects may read and write
       their attributes in any order. */
-  rutz::shared_ptr<io::reader> make_asw_reader(std::istream& os);
+  std::unique_ptr<io::reader> make_asw_reader(std::istream& os);
 
   /// Make an ASW reader that reads from the named file.
-  rutz::shared_ptr<io::reader> make_asw_reader(const char* filename);
+  std::unique_ptr<io::reader> make_asw_reader(const char* filename);
 }
 
 #endif // !GROOVX_IO_ASCIISTREAMREADER_H_UTC20050626084021_DEFINED

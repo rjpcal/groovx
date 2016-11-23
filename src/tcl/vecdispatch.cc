@@ -35,8 +35,8 @@
 #include "tcl/list.h"
 
 #include "rutz/error.h"
-#include "rutz/shared_ptr.h"
 
+#include <memory>
 #include <vector>
 
 #include "rutz/trace.h"
@@ -183,5 +183,5 @@ GVX_TRACE("tcl::vec_dispatcher::dispatch");
 
 void tcl::use_vec_dispatch(tcl::command& cmd, unsigned int key_argn)
 {
-  cmd.set_dispatcher(rutz::make_shared(new vec_dispatcher(key_argn)));
+  cmd.set_dispatcher(std::make_shared<vec_dispatcher>(key_argn));
 }

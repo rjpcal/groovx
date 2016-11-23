@@ -48,11 +48,11 @@
 #include "rutz/error.h"
 #include "rutz/iter.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 
 #include "visx/trial.h"
 
 #include <fstream>
+#include <memory>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -108,7 +108,7 @@ GVX_TRACE("TrialEvent::write_to");
   writer.write_value("requestedDelay", itsRequestedDelay);
 }
 
-unsigned int TrialEvent::schedule(rutz::shared_ptr<nub::scheduler> s,
+unsigned int TrialEvent::schedule(std::shared_ptr<nub::scheduler> s,
                                   Trial& trial,
                                   unsigned int minimum_msec)
 {

@@ -46,7 +46,6 @@
 
 #include "rutz/fileposition.h"
 #include "rutz/fstring.h"
-#include "rutz/shared_ptr.h"
 #include "rutz/sfmt.h"
 
 #include "visx/feedbackmap.h"

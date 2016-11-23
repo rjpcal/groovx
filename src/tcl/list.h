@@ -37,9 +37,8 @@
 #include "tcl/conversions.h"
 #include "tcl/obj.h"
 
-#include "rutz/shared_ptr.h"
-
 #include <iterator>
+#include <memory>
 
 namespace tcl
 {
@@ -281,7 +280,7 @@ class tcl::list::iterator : public tcl::list::iterator_base
 {
   // Keep a copy of the current value here so that operator*() can
   // return a reference rather than by value.
-  mutable rutz::shared_ptr<const T> m_current;
+  mutable std::shared_ptr<const T> m_current;
 
 public:
   iterator(const list& owner, position start_pos = position::BEGIN) :

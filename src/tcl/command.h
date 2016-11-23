@@ -37,7 +37,7 @@
 #include "tcl/conversions.h"
 #include "tcl/obj.h"
 
-#include "rutz/shared_ptr.h"
+#include <memory>
 
 typedef struct Tcl_Obj Tcl_Obj;
 
@@ -45,7 +45,6 @@ namespace rutz
 {
   struct file_pos;
   class fstring;
-  template <class T> class shared_ptr;
 }
 
 namespace tcl
@@ -108,7 +107,7 @@ public:
       tcl::command needs to be hooked into a tcl::command_group, and
       the way to do that is by creating it through
       tcl::command_group::make(). */
-  command(rutz::shared_ptr<tcl::function> callback,
+  command(std::shared_ptr<tcl::function> callback,
           const char* usage, const arg_spec& spec);
 
   /// Non-virtual destructor since this class is not for use as a base class.
@@ -128,10 +127,10 @@ public:
             unsigned int objc, Tcl_Obj* const objv[]);
 
   /// Get the current tcl::arg_dispatcher for this command.
-  rutz::shared_ptr<arg_dispatcher> get_dispatcher() const;
+  std::shared_ptr<arg_dispatcher> get_dispatcher() const;
 
   /// Change the tcl::arg_dispatcher for this command.
-  void set_dispatcher(rutz::shared_ptr<arg_dispatcher> dpx);
+  void set_dispatcher(std::shared_ptr<arg_dispatcher> dpx);
 
 private:
   command(const command&); // not implemented

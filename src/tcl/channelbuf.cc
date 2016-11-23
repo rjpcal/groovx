@@ -34,7 +34,8 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
+
+#include <memory>
 
 #include "rutz/trace.h"
 
@@ -166,7 +167,7 @@ namespace
   };
 }
 
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 shared_ptr<std::ostream> tcl::ochanopen(Tcl_Interp* interp,
                                         const char* channame,

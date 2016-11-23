@@ -38,9 +38,9 @@
 #include "rutz/demangle.h"
 #include "rutz/fileposition.h"
 #include "rutz/mutex.h"
-#include "rutz/shared_ptr.h"
 #include "rutz/traits.h"
 
+#include <memory>
 #include <typeinfo>
 
 namespace rutz
@@ -131,7 +131,7 @@ namespace rutz
     virtual ~factory_base() noexcept;
 
     /// Change the fallback object.
-    void set_fallback(rutz::shared_ptr<factory_fallback> f);
+    void set_fallback(std::shared_ptr<factory_fallback> f);
 
     /// Change the fallback function.
     void set_fallback(fallback_t* fptr);
@@ -140,7 +140,7 @@ namespace rutz
     void try_fallback(const rutz::fstring& key) const;
 
   private:
-    rutz::shared_ptr<factory_fallback> m_fallback;
+    std::shared_ptr<factory_fallback> m_fallback;
   };
 
 
@@ -315,7 +315,7 @@ namespace rutz
     }
 
     /// Change the fallback object.
-    void set_fallback(rutz::shared_ptr<factory_fallback> f)
+    void set_fallback(std::shared_ptr<factory_fallback> f)
     {
       GVX_MUTEX_LOCK(m_mutex);
 

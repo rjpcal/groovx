@@ -35,10 +35,10 @@
 #include "tcl/pkg.h"
 #include "tcl/timerscheduler.h"
 
-#include "rutz/shared_ptr.h"
 #include "rutz/unittest.h"
 
 #include <cstdlib> // for abs()
+#include <memory>
 #include <tcl.h>
 #include <unistd.h> // for usleep()
 
@@ -76,8 +76,8 @@ namespace
     v1 = 0;
     v2 = 0;
 
-    rutz::shared_ptr<tcl::timer_scheduler> s
-      (rutz::make_shared(new tcl::timer_scheduler));
+    std::shared_ptr<tcl::timer_scheduler> s
+      (std::make_shared<tcl::timer_scheduler>());
 
     nub::timer t0(20, false);
     nub::timer t1(5,  true);
@@ -130,8 +130,8 @@ namespace
   {
     v0 = 0;
 
-    rutz::shared_ptr<tcl::timer_scheduler> s
-      (rutz::make_shared(new tcl::timer_scheduler));
+    std::shared_ptr<tcl::timer_scheduler> s
+      (std::make_shared<tcl::timer_scheduler>());
 
     nub::timer t0(10, false);
 
@@ -159,8 +159,8 @@ namespace
   // Make sure that we don't let ourselves get into an infinite loop
   void testTimerNoInfiniteLoop()
   {
-    rutz::shared_ptr<tcl::timer_scheduler> s
-      (rutz::make_shared(new tcl::timer_scheduler));
+    std::shared_ptr<tcl::timer_scheduler> s
+      (std::make_shared<tcl::timer_scheduler>());
 
     nub::timer t(0, true);
 

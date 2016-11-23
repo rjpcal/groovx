@@ -52,8 +52,8 @@
 
 #include "rutz/error.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 
+#include <memory>
 #include <vector>
 
 #if defined(GVX_GL_PLATFORM_GLX)
@@ -77,7 +77,7 @@ using geom::vec2d;
 using geom::vec3i;
 using geom::vec3d;
 
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 namespace
 {

@@ -33,7 +33,7 @@
 
 #include "nub/scheduler.h"
 
-#include "rutz/shared_ptr.h"
+#include <memory>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"
@@ -46,7 +46,7 @@ GVX_DBG_REGISTER
 ///////////////////////////////////////////////////////////////////////
 
 GxScene::GxScene(nub::soft_ref<Gfx::Canvas> canvas,
-                 rutz::shared_ptr<nub::scheduler> sched) :
+                 std::shared_ptr<nub::scheduler> sched) :
   itsCanvas(canvas),
   itsDrawNode(GxEmptyNode::make()),
   itsUndrawNode(GxEmptyNode::make()),

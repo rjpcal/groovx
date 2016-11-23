@@ -34,6 +34,7 @@
 #define GROOVX_RUTZ_GZSTREAMBUF_H_UTC20050626084020_DEFINED
 
 #include <istream>
+#include <memory>
 #include <ostream>
 #include <streambuf>
 #include <zlib.h>
@@ -41,8 +42,6 @@
 namespace rutz
 {
   class fstring;
-
-  template <class T> class shared_ptr;
 
   /// A std::streambuf implementation that handles gzip-encoded data.
   class gzstreambuf : public std::streambuf
@@ -81,27 +80,27 @@ namespace rutz
   /** Opens a file for writing. An exception will be thrown if the
       specified file cannot be opened. The output file will be
       gz-compressed if the filename ends with ".gz". */
-  shared_ptr<std::ostream> ogzopen(const rutz::fstring& filename,
-                                   std::ios::openmode flags =
-                                   std::ios::openmode(0));
+  std::unique_ptr<std::ostream> ogzopen(const rutz::fstring& filename,
+                                        std::ios::openmode flags =
+                                        std::ios::openmode(0));
 
   /// Overload.
-  shared_ptr<std::ostream> ogzopen(const char* filename,
-                                   std::ios::openmode flags =
-                                   std::ios::openmode(0));
+  std::unique_ptr<std::ostream> ogzopen(const char* filename,
+                                        std::ios::openmode flags =
+                                        std::ios::openmode(0));
 
   /** Opens a file for reading. An exception will be thrown if the
       specified file cannot be opened. If the file is gz-compressed,
       this will be automagically detected regardless of the filename
       extension. */
-  shared_ptr<std::istream> igzopen(const rutz::fstring& filename,
-                                   std::ios::openmode flags =
-                                   std::ios::openmode(0));
+  std::unique_ptr<std::istream> igzopen(const rutz::fstring& filename,
+                                        std::ios::openmode flags =
+                                        std::ios::openmode(0));
 
   /// Overload.
-  shared_ptr<std::istream> igzopen(const char* filename,
-                                   std::ios::openmode flags =
-                                   std::ios::openmode(0));
+  std::unique_ptr<std::istream> igzopen(const char* filename,
+                                        std::ios::openmode flags =
+                                        std::ios::openmode(0));
 }
 
 #endif // !GROOVX_RUTZ_GZSTREAMBUF_H_UTC20050626084020_DEFINED

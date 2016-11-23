@@ -65,7 +65,7 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 namespace
 {
@@ -126,7 +126,7 @@ Toglet::Impl::Impl(Toglet* p) :
   glx(AglWrapper::make(*opts)),
 #endif
   canvas(GLCanvas::make(opts, glx)),
-  scene(new GxScene(canvas, rutz::make_shared(new tcl::timer_scheduler)))
+  scene(new GxScene(canvas, std::make_shared<tcl::timer_scheduler>()))
 {
 GVX_TRACE("Toglet::Impl::Impl");
 }

@@ -34,14 +34,14 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
-#include "rutz/shared_ptr.h"
 
 #include <fstream>
+#include <memory>
 
 #include "rutz/trace.h"
 
 using rutz::fstring;
-using rutz::shared_ptr;
+using std::unique_ptr;
 
 rutz::gzstreambuf::gzstreambuf(const char* name, unsigned int om,
                                bool throw_exception)
@@ -217,20 +217,20 @@ namespace
   };
 }
 
-shared_ptr<std::ostream> rutz::ogzopen(const fstring& filename,
+unique_ptr<std::ostream> rutz::ogzopen(const fstring& filename,
                                        std::ios::openmode flags)
 {
   static fstring gz_ext(".gz");
 
   if (filename.ends_with(gz_ext))
     {
-      return shared_ptr<std::ostream>
+      return unique_ptr<std::ostream>
         (new gzstream(filename.c_str(), std::ios::out|flags, true));
     }
   else
     {
-      shared_ptr<std::ostream> result =
-        make_shared(new std::ofstream(filename.c_str(), flags));
+      unique_ptr<std::ostream> result =
+        std::make_unique<std::ofstream>(filename.c_str(), flags);
       if (result->fail())
         throw rutz::error(rutz::sfmt("couldn't open file '%s' "
                                      "for writing", filename.c_str()),
@@ -240,20 +240,20 @@ shared_ptr<std::ostream> rutz::ogzopen(const fstring& filename,
     }
 }
 
-shared_ptr<std::ostream> rutz::ogzopen(const char* filename,
+unique_ptr<std::ostream> rutz::ogzopen(const char* filename,
                                        std::ios::openmode flags)
 {
   return ogzopen(fstring(filename), flags);
 }
 
-shared_ptr<std::istream> rutz::igzopen(const char* filename,
+unique_ptr<std::istream> rutz::igzopen(const char* filename,
                                        std::ios::openmode flags)
 {
-  return shared_ptr<std::iostream>
+  return unique_ptr<std::iostream>
     (new gzstream(filename, std::ios::in|flags, true));
 }
 
-shared_ptr<std::istream> rutz::igzopen(const fstring& filename,
+unique_ptr<std::istream> rutz::igzopen(const fstring& filename,
                                        std::ios::openmode flags)
 {
   return igzopen(filename.c_str(), flags);

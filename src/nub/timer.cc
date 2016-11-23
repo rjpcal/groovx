@@ -36,7 +36,7 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 nub::timer::timer(unsigned int msec, bool repeat)
   :
@@ -53,7 +53,7 @@ nub::timer::~timer()
   cancel();
 }
 
-void nub::timer::schedule(rutz::shared_ptr<nub::scheduler> scheduler)
+void nub::timer::schedule(std::shared_ptr<nub::scheduler> scheduler)
 {
 GVX_TRACE("nub::timer::schedule");
 
@@ -87,7 +87,7 @@ void nub::timer::cancel()
 {
 GVX_TRACE("nub::timer::cancel");
 
-  m_token.reset(nullptr);
+  m_token.reset();
 }
 
 void nub::timer::dummy_callback(void* clientdata)
@@ -97,7 +97,7 @@ GVX_TRACE("nub::timer::dummy_callback");
 
   GVX_ASSERT(timer != nullptr);
 
-  timer->m_token.reset(nullptr);
+  timer->m_token.reset();
 
   dbg_eval_nl(3, timer->m_stopwatch.elapsed().msec());
 

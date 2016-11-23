@@ -417,7 +417,7 @@ namespace
 
   void loadImageStream(tcl::call_context& ctx)
   {
-    using rutz::shared_ptr;
+    using std::shared_ptr;
     nub::ref<GxPixmap> pixmap = ctx.get_arg<nub::ref<GxPixmap> >(1);
     const char* channame = ctx.get_arg<const char*>(2);
     Tcl_Interp* interp = ctx.interp().intp();

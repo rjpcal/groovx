@@ -46,7 +46,7 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 nub::invalid_uid_error::invalid_uid_error(nub::uid id,
                                     const rutz::file_pos& pos)

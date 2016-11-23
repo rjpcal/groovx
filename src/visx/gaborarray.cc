@@ -65,7 +65,7 @@ using geom::vec3d;
 
 using media::bmap_data;
 
-using rutz::shared_ptr;
+using std::shared_ptr;
 
 using Gfx::Bbox;
 using Gfx::Canvas;

@@ -35,7 +35,8 @@
 #include "io/io.h"
 
 #include "rutz/fstring.h"
-#include "rutz/shared_ptr.h"
+
+#include <memory>
 
 namespace media
 {
@@ -90,7 +91,7 @@ public:
 
 private:
   rutz::fstring itsFilename;
-  rutz::shared_ptr<media::sound_rep> itsRep;
+  std::shared_ptr<media::sound_rep> itsRep;
 };
 
 #endif // !GROOVX_VISX_SOUND_H_UTC20050626084016_DEFINED
