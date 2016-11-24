@@ -43,6 +43,7 @@
 GVX_DBG_REGISTER
 
 using std::shared_ptr;
+using std::unique_ptr;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -97,10 +98,10 @@ private:
   impl& operator=(const impl&);
 
 public:
-  impl(shared_ptr<tcl::function> cback,
+  impl(unique_ptr<tcl::function>&& cback,
        const char* usg, const arg_spec& spec)
     :
-    callback(cback),
+    callback(std::move(cback)),
     dispatcher(g_default_dispatcher),
     usage(usg ? usg : ""),
     argspec(spec)
@@ -109,7 +110,7 @@ public:
   ~impl() noexcept {}
 
   // These are set once per command object
-  shared_ptr<tcl::function>             callback;
+  unique_ptr<tcl::function>             callback;
   shared_ptr<tcl::arg_dispatcher>       dispatcher;
   rutz::fstring                   const usage;
   arg_spec                        const argspec;
@@ -121,10 +122,10 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-tcl::command::command(shared_ptr<tcl::function> callback,
+tcl::command::command(unique_ptr<tcl::function>&& callback,
                       const char* usage, const arg_spec& spec)
   :
-  rep(new impl(callback, usage, spec))
+  rep(new impl(std::move(callback), usage, spec))
 {
 GVX_TRACE("tcl::command::command");
 }

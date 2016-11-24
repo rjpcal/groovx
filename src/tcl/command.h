@@ -108,11 +108,32 @@ public:
       tcl::command needs to be hooked into a tcl::command_group, and
       the way to do that is by creating it through
       tcl::command_group::make(). */
-  command(std::shared_ptr<tcl::function> callback,
+  command(std::unique_ptr<tcl::function>&& callback,
           const char* usage, const arg_spec& spec);
 
   /// Non-virtual destructor since this class is not for use as a base class.
   ~command() noexcept;
+
+  /// No copy construct
+  command(const command&) = delete;
+
+  /// No copy assign
+  command& operator=(const command&) = delete;
+
+  /// Move construct allowed
+  command(command&& that)
+    :
+    rep(that.rep)
+  {
+    const_cast<impl*&>(that.rep) = nullptr;
+  }
+
+  /// Move assign allowed
+  command& operator=(command&& that)
+  {
+    std::swap(const_cast<impl*&>(that.rep), const_cast<impl*&>(this->rep));
+    return *this;
+  }
 
   /// Returns a string describing the arguments expected by this command.
   rutz::fstring usage_string() const;
@@ -134,8 +155,6 @@ public:
   void set_dispatcher(std::shared_ptr<arg_dispatcher> dpx);
 
 private:
-  command(const command&); // not implemented
-  command& operator=(const command&); // not implemented
 
   class impl;
   impl* const rep;

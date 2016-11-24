@@ -78,7 +78,7 @@ public:
       tcl::command_group as an overload. Otherwise, a brand new
       tcl::command_group will be created. */
   static void make(tcl::interpreter& interp,
-                   std::shared_ptr<tcl::function> callback,
+                   std::unique_ptr<tcl::function> callback,
                    const char* cmd_name,
                    const char* usage,
                    const tcl::arg_spec& spec,
@@ -86,7 +86,7 @@ public:
                    std::unique_ptr<tcl::arg_dispatcher> dispatcher = std::unique_ptr<tcl::arg_dispatcher>());
 
   /// Add the given tcl::command to this group's overload list.
-  void add(std::unique_ptr<tcl::command> p);
+  void add(tcl::command&& p);
 
   /// Get this group's fully namespace-qualified command name.
   rutz::fstring resolved_name() const;

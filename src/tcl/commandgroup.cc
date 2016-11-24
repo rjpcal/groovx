@@ -52,7 +52,6 @@
 GVX_DBG_REGISTER
 
 using rutz::fstring;
-using std::shared_ptr;
 using std::unique_ptr;
 
 namespace
@@ -103,12 +102,10 @@ public:
 
   ~impl() noexcept {}
 
-  typedef std::list<unique_ptr<tcl::command> > cmd_list_type;
-
   tcl::interpreter       interp;
   Tcl_Command      const cmd_token;
   fstring          const initial_cmd_name;
-  cmd_list_type          cmd_list;
+  std::list<tcl::command> cmd_list;
   fstring          const prof_name;
   rutz::prof             prof;
 
@@ -142,20 +139,16 @@ GVX_TRACE("tcl::command_group::usage_warning");
   if (cmd_list.size() == 1)
     {
       warning << "\"" << argv0;
-      append_usage(warning, cmd_list.front()->usage_string());
+      append_usage(warning, cmd_list.front().usage_string());
       warning << "\"";
     }
   else
     {
       warning << "one of:";
-      for (impl::cmd_list_type::const_iterator
-             itr = cmd_list.begin(),
-             end = cmd_list.end();
-           itr != end;
-           ++itr)
+      for (const auto& cmd: cmd_list)
         {
           warning << "\n\t\"" << argv0;
-          append_usage(warning, (*itr)->usage_string());
+          append_usage(warning, cmd.usage_string());
           warning << "\"";
         }
     }
@@ -339,7 +332,7 @@ GVX_TRACE("tcl::command_group::lookup_original");
 }
 
 void tcl::command_group::make(tcl::interpreter& interp,
-                              std::shared_ptr<tcl::function> callback,
+                              std::unique_ptr<tcl::function> callback,
                               const char* cmd_name,
                               const char* usage,
                               const arg_spec& spec,
@@ -365,10 +358,10 @@ GVX_TRACE("tcl::command_group::make");
 
   GVX_ASSERT(group != nullptr);
 
-  unique_ptr<tcl::command> cmd(std::make_unique<tcl::command>(callback, usage, spec));
+  tcl::command cmd(std::move(callback), usage, spec);
 
   if (dispatcher)
-    cmd->set_dispatcher(std::move(dispatcher));
+    cmd.set_dispatcher(std::move(dispatcher));
 
   // We don't want to have to keep 'group' as a member of tcl::command
   // since it involves circular references -- tcl::command_group keeps
@@ -381,7 +374,7 @@ GVX_TRACE("tcl::command_group::make");
   group->add(std::move(cmd));
 }
 
-void tcl::command_group::add(unique_ptr<tcl::command> p)
+void tcl::command_group::add(tcl::command&& p)
 {
 GVX_TRACE("tcl::command_group::add");
   rep->cmd_list.push_back(std::move(p));
@@ -402,17 +395,11 @@ GVX_TRACE("tcl::command_group::usage");
 
   std::ostringstream result;
 
-  impl::cmd_list_type::const_iterator
-    itr = rep->cmd_list.begin(),
-    end = rep->cmd_list.end();
-
-  while (true)
+  for (const auto& cmd: rep->cmd_list)
     {
       result << "\t" << resolved_name();
-      append_usage(result, (*itr)->usage_string());
+      append_usage(result, cmd.usage_string());
       result << "\n";
-      if (++itr == end)
-        break;
     }
 
   result << "\t(defined at "
@@ -452,17 +439,13 @@ GVX_TRACE("tcl::command_group::invoke_raw");
   // catch all possible exceptions since this is a callback from C
   try
     {
-      for (impl::cmd_list_type::const_iterator
-             itr = rep->cmd_list.begin(),
-             end = rep->cmd_list.end();
-           itr != end;
-           ++itr)
+      for (auto& cmd: rep->cmd_list)
         {
-          if ((*itr)->rejects_argc(objc))
+          if (cmd.rejects_argc(objc))
             continue;
 
           // Found a matching overload, so try it:
-          (*itr)->call(rep->interp, objc, objv);
+          cmd.call(rep->interp, objc, objv);
 
           if (GVX_DBG_LEVEL() > 1)
             {
