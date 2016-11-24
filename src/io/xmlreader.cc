@@ -315,14 +315,8 @@ namespace
     {
       for (int i = 0; i < depth; ++i) os << "  ";
       os << name << "(object:" << m_type << "):\n";
-      for (map_type::const_iterator
-             itr = m_elems.begin(),
-             stop = m_elems.end();
-           itr != stop;
-           ++itr)
-        {
-          (*itr).second->trace(os, depth+1, (*itr).first.c_str());
-        }
+      for (const auto& elem: m_elems)
+        elem.second->trace(os, depth+1, elem.first.c_str());
     }
 
     virtual io::version_id input_version_id() override

@@ -104,16 +104,12 @@ get_known_keys(const char* sep) const
 
   bool first = true;
 
-  for (impl::map_t::iterator ii = rep->values.begin();
-       ii != rep->values.end();
-       ++ii)
+  for (const auto& val: rep->values)
     {
-      if (ii->second != nullptr)
+      if (val.second != nullptr)
         {
           if (!first) result << sep;
-
-          result << ii->first;
-
+          result << val.first;
           first = false;
         }
     }
@@ -140,12 +136,10 @@ throw_for_key(const rutz::fstring& key, const rutz::file_pos& pos) const
 void rutz::assoc_array_base::clear()
 {
 GVX_TRACE("rutz::assoc_array_base::clear");
-  for (impl::map_t::iterator ii = rep->values.begin();
-       ii != rep->values.end();
-       ++ii)
+  for (auto& val: rep->values)
     {
-      if (rep->kill_func != nullptr) rep->kill_func(ii->second);
-      ii->second = nullptr;
+      if (rep->kill_func != nullptr) rep->kill_func(val.second);
+      val.second = nullptr;
     }
 
   delete rep;

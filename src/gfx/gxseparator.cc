@@ -74,14 +74,9 @@ public:
     {
       if (owner == other) return true;
 
-      for(VecType::const_iterator
-            itr = children.begin(),
-            end = children.end();
-          itr != end;
-          ++itr)
-        {
-          if ((*itr)->contains(other)) return true;
-        }
+      for (const auto& noderef: children)
+        if (noderef->contains(other))
+          return true;
 
       return false;
     }
@@ -124,21 +119,15 @@ void GxSeparator::read_from(io::reader& reader)
 {
 GVX_TRACE("GxSeparator::read_from");
 
-  for(unsigned int i = 0; i < rep->children.size(); ++i)
-    {
-      rep->children[i]->sigNodeChanged
-        .disconnect(this->sigNodeChanged.slot());
-    }
+ for (const auto& noderef: rep->children)
+   noderef->sigNodeChanged.disconnect(this->sigNodeChanged.slot());
 
   rep->children.clear();
   io::read_utils::read_object_seq<GxNode>(
           reader, "children", std::back_inserter(rep->children));
 
-  for(unsigned int i = 0; i < rep->children.size(); ++i)
-    {
-      rep->children[i]->sigNodeChanged
-        .connect(this->sigNodeChanged.slot());
-    }
+  for (const auto& noderef: rep->children)
+    noderef->sigNodeChanged.connect(this->sigNodeChanged.slot());
 
   this->sigNodeChanged.emit();
 }
@@ -307,14 +296,8 @@ GVX_TRACE("GxSeparator::getBoundingCube");
     {
       bbox.push();
 
-      for(Impl::VecType::iterator
-            itr = rep->children.begin(),
-            end = rep->children.end();
-          itr != end;
-          ++itr)
-        {
-          (*itr)->getBoundingCube(bbox);
-        }
+      for (const auto& noderef: rep->children)
+        noderef->getBoundingCube(bbox);
 
       bbox.pop();
     }
@@ -354,13 +337,7 @@ GVX_TRACE("GxSeparator::draw");
       Gfx::MatrixSaver state(canvas);
       Gfx::AttribSaver attribs(canvas);
 
-      for(Impl::VecType::iterator
-            itr = rep->children.begin(),
-            end = rep->children.end();
-          itr != end;
-          ++itr)
-        {
-          (*itr)->draw(canvas);
-        }
+      for (const auto& noderef: rep->children)
+        noderef->draw(canvas);
     }
 }
