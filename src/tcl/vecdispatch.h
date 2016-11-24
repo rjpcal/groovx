@@ -1,5 +1,4 @@
-/** @file tcl/vecdispatch.h apply vectorized dispatching to a
-    tcl::command */
+/** @file tcl/vecdispatch.h get vectorized arg dispatcher for tcl::command */
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -33,11 +32,13 @@
 #ifndef GROOVX_TCL_VECDISPATCH_H_UTC20050628162421_DEFINED
 #define GROOVX_TCL_VECDISPATCH_H_UTC20050628162421_DEFINED
 
+#include <memory>
+
 namespace tcl
 {
-  class command;
+  class arg_dispatcher;
 
-  void use_vec_dispatch(tcl::command& cmd, unsigned int key_argn);
+  std::unique_ptr<arg_dispatcher> get_vec_dispatcher(unsigned int key_argn);
 }
 
 #endif // !GROOVX_TCL_VECDISPATCH_H_UTC20050628162421_DEFINED

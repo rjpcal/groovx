@@ -46,6 +46,7 @@ namespace rutz
 
 namespace tcl
 {
+  class arg_dispatcher;
   class arg_spec;
   class command;
   class command_group;
@@ -76,16 +77,16 @@ public:
       then the new tcl::command will be hooked into that
       tcl::command_group as an overload. Otherwise, a brand new
       tcl::command_group will be created. */
-  static std::shared_ptr<tcl::command>
-  make(tcl::interpreter& interp,
-       std::shared_ptr<tcl::function> callback,
-       const char* cmd_name,
-       const char* usage,
-       const tcl::arg_spec& spec,
-       const rutz::file_pos& src_pos);
+  static void make(tcl::interpreter& interp,
+                   std::shared_ptr<tcl::function> callback,
+                   const char* cmd_name,
+                   const char* usage,
+                   const tcl::arg_spec& spec,
+                   const rutz::file_pos& src_pos,
+                   std::unique_ptr<tcl::arg_dispatcher> dispatcher = std::unique_ptr<tcl::arg_dispatcher>());
 
   /// Add the given tcl::command to this group's overload list.
-  void add(std::shared_ptr<tcl::command> p);
+  void add(std::unique_ptr<tcl::command> p);
 
   /// Get this group's fully namespace-qualified command name.
   rutz::fstring resolved_name() const;

@@ -53,6 +53,7 @@ GVX_DBG_REGISTER
 
 using rutz::fstring;
 using std::shared_ptr;
+using std::unique_ptr;
 
 namespace
 {
@@ -102,7 +103,7 @@ public:
 
   ~impl() noexcept {}
 
-  typedef std::list<shared_ptr<tcl::command> > cmd_list_type;
+  typedef std::list<unique_ptr<tcl::command> > cmd_list_type;
 
   tcl::interpreter       interp;
   Tcl_Command      const cmd_token;
@@ -337,13 +338,13 @@ GVX_TRACE("tcl::command_group::lookup_original");
   return impl::lookup_helper(interp, original.c_str());
 }
 
-shared_ptr<tcl::command>
-tcl::command_group::make(tcl::interpreter& interp,
-                         std::shared_ptr<tcl::function> callback,
-                         const char* cmd_name,
-                         const char* usage,
-                         const arg_spec& spec,
-                         const rutz::file_pos& src_pos)
+void tcl::command_group::make(tcl::interpreter& interp,
+                              std::shared_ptr<tcl::function> callback,
+                              const char* cmd_name,
+                              const char* usage,
+                              const arg_spec& spec,
+                              const rutz::file_pos& src_pos,
+                              std::unique_ptr<tcl::arg_dispatcher> dispatcher)
 {
 GVX_TRACE("tcl::command_group::make");
 
@@ -364,7 +365,10 @@ GVX_TRACE("tcl::command_group::make");
 
   GVX_ASSERT(group != nullptr);
 
-  shared_ptr<tcl::command> cmd(std::make_shared<tcl::command>(callback, usage, spec));
+  unique_ptr<tcl::command> cmd(std::make_unique<tcl::command>(callback, usage, spec));
+
+  if (dispatcher)
+    cmd->set_dispatcher(std::move(dispatcher));
 
   // We don't want to have to keep 'group' as a member of tcl::command
   // since it involves circular references -- tcl::command_group keeps
@@ -374,15 +378,13 @@ GVX_TRACE("tcl::command_group::make");
   // for tcl::command_group to notify its tcl::command list that it is
   // destructing, so that the tcl::command objects can "forget" their
   // back-reference.
-  group->add(cmd);
-
-  return cmd;
+  group->add(std::move(cmd));
 }
 
-void tcl::command_group::add(shared_ptr<tcl::command> p)
+void tcl::command_group::add(unique_ptr<tcl::command> p)
 {
 GVX_TRACE("tcl::command_group::add");
-  rep->cmd_list.push_back(p);
+  rep->cmd_list.push_back(std::move(p));
 }
 
 fstring tcl::command_group::resolved_name() const

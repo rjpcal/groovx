@@ -246,11 +246,10 @@ namespace tcl
                            const rutz::file_pos& src_pos)
   {
     typedef typename rutz::func_traits<func_wrapper>::retn_t retn_t;
-    std::shared_ptr<tcl::command> cmd =
-      tcl::command_group::make(interp,
-                               std::make_unique<generic_function<retn_t, func_wrapper>>(f),
-                               cmd_name, usage, spec, src_pos);
-    tcl::use_vec_dispatch(*cmd, keyarg);
+    tcl::command_group::make(interp,
+                             std::make_unique<generic_function<retn_t, func_wrapper>>(f),
+                             cmd_name, usage, spec, src_pos,
+                             tcl::get_vec_dispatcher(keyarg));
   }
 
 ///////////////////////////////////////////////////////////////////////
