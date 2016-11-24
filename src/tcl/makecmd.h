@@ -111,31 +111,50 @@ namespace tcl
   };
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// func_wrapper<> template definitions. Each specialization takes a
-// C++-style functor (could be a free function, or struct with
-// operator()), and transforms it into a functor with an
-// operator()(tcl::call_context&) which can be called from a
-// tcl::command. This transformation requires extracting the
-// appropriate parameters from the tcl::call_context, passing them to
-// the C++ functor, and returning the result back to the
-// tcl::call_context.
-//
-///////////////////////////////////////////////////////////////////////
+  template <class Func, size_t N>
+  struct arg_helper
+  {
+    typedef typename rutz::func_traits<Func>::template arg<N>::type type;
 
-#ifdef EXTRACT_PARAM
-#  error EXTRACT_PARAM macro already defined
-#endif
-
-#define EXTRACT_PARAM(N) \
-  typename rutz::func_traits<Func>::template arg<N>::type p##N =                 \
-    ctx.template get_arg<typename rutz::func_traits<Func>::template arg<N>::type>(N);
+    static typename returnable<type>::type extract(tcl::call_context& ctx)
+    {
+      return ctx.template get_arg<type>(N);
+    }
+  };
 
   /// Generic tcl::func_wrapper definition.
+  /** Takes a C++-style functor (could be a free function, or struct
+      with operator()), and transforms it into a functor with an
+      operator()(tcl::call_context&) which can be called from a
+      tcl::command. This transformation requires extracting the
+      appropriate parameters from the tcl::call_context, passing them
+      to the C++ functor, and returning the result back to the
+      tcl::call_context.
+  */
+
   template <unsigned int N, class R, class Func>
   class func_wrapper
-  {};
+  {
+  private:
+    Func m_held_func;
+
+  public:
+    func_wrapper<N, R, Func>(Func f) : m_held_func(f) {}
+
+    typedef R retn_t;
+    typedef std::make_index_sequence<N> Indices;
+
+    template <std::size_t... I>
+    R helper(tcl::call_context& ctx, std::index_sequence<I...>)
+    {
+      return m_held_func(arg_helper<Func,I+1>::extract(ctx)...);
+    }
+
+    R operator()(tcl::call_context& ctx)
+    {
+      return helper(ctx, Indices());
+    }
+  };
 }
 
 namespace rutz
@@ -150,192 +169,6 @@ namespace rutz
 
 namespace tcl
 {
-
-
-// ########################################################
-/// tcl::func_wrapper<0> -- zero arguments
-
-  template <class R, class Func>
-  struct func_wrapper<0, R, Func>
-  {
-  private:
-    Func m_held_func;
-
-  public:
-    func_wrapper<0, R, Func>(Func f) : m_held_func(f) {}
-
-    R operator()(tcl::call_context& /*ctx*/)
-    {
-      return m_held_func();
-    }
-  };
-
-
-// ########################################################
-/// tcl::func_wrapper<1> -- one argument
-
-  template <class R, class Func>
-  struct func_wrapper<1, R, Func>
-  {
-  private:
-    Func m_held_func;
-
-  public:
-    func_wrapper<1, R, Func>(Func f) : m_held_func(f) {}
-
-    R operator()(tcl::call_context& ctx)
-    {
-      EXTRACT_PARAM(1);
-      return m_held_func(p1);
-    }
-  };
-
-
-// ########################################################
-/// tcl::func_wrapper<2> -- two arguments
-
-  template <class R, class Func>
-  struct func_wrapper<2, R, Func>
-  {
-  private:
-    Func m_held_func;
-
-  public:
-    func_wrapper<2, R, Func>(Func f) : m_held_func(f) {}
-
-    R operator()(tcl::call_context& ctx)
-    {
-      EXTRACT_PARAM(1); EXTRACT_PARAM(2);
-      return m_held_func(p1, p2);
-    }
-  };
-
-
-// ########################################################
-/// tcl::func_wrapper<3> -- three arguments
-
-  template <class R, class Func>
-  struct func_wrapper<3, R, Func>
-  {
-  private:
-    Func m_held_func;
-
-  public:
-    func_wrapper<3, R, Func>(Func f) : m_held_func(f) {}
-
-    R operator()(tcl::call_context& ctx)
-    {
-      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      return m_held_func(p1, p2, p3);
-    }
-  };
-
-
-// ########################################################
-/// tcl::func_wrapper<4> -- four arguments
-
-  template <class R, class Func>
-  struct func_wrapper<4, R, Func>
-  {
-  private:
-    Func m_held_func;
-
-  public:
-    func_wrapper<4, R, Func>(Func f) : m_held_func(f) {}
-
-    R operator()(tcl::call_context& ctx)
-    {
-      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      EXTRACT_PARAM(4);
-      return m_held_func(p1, p2, p3, p4);
-    }
-  };
-
-
-// ########################################################
-/// tcl::func_wrapper<5> -- five arguments
-
-  template <class R, class Func>
-  struct func_wrapper<5, R, Func>
-  {
-  private:
-    Func m_held_func;
-
-  public:
-    func_wrapper<5, R, Func>(Func f) : m_held_func(f) {}
-
-    R operator()(tcl::call_context& ctx)
-    {
-      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      EXTRACT_PARAM(4); EXTRACT_PARAM(5);
-      return m_held_func(p1, p2, p3, p4, p5);
-    }
-  };
-
-
-// ########################################################
-/// tcl::func_wrapper<6> -- six arguments
-
-  template <class R, class Func>
-  struct func_wrapper<6, R, Func>
-  {
-  private:
-    Func m_held_func;
-
-  public:
-    func_wrapper<6, R, Func>(Func f) : m_held_func(f) {}
-
-    R operator()(tcl::call_context& ctx)
-    {
-      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
-      return m_held_func(p1, p2, p3, p4, p5, p6);
-    }
-  };
-
-// ########################################################
-/// tcl::func_wrapper<7> -- seven arguments
-
-  template <class R, class Func>
-  struct func_wrapper<7, R, Func>
-  {
-  private:
-    Func m_held_func;
-
-  public:
-    func_wrapper<7, R, Func>(Func f) : m_held_func(f) {}
-
-    R operator()(tcl::call_context& ctx)
-    {
-      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
-      EXTRACT_PARAM(7);
-      return m_held_func(p1, p2, p3, p4, p5, p6, p7);
-    }
-  };
-
-// ########################################################
-/// tcl::func_wrapper<8> -- eight arguments
-
-  template <class R, class Func>
-  struct func_wrapper<8, R, Func>
-  {
-  private:
-    Func m_held_func;
-
-  public:
-    func_wrapper<8, R, Func>(Func f) : m_held_func(f) {}
-
-    R operator()(tcl::call_context& ctx)
-    {
-      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
-      EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
-      EXTRACT_PARAM(7); EXTRACT_PARAM(8);
-      return m_held_func(p1, p2, p3, p4, p5, p6, p7, p8);
-    }
-  };
-
-#undef EXTRACT_PARAM
 
 // ########################################################
 /// Factory function to make tcl::func_wrapper's from any functor or function ptr.
