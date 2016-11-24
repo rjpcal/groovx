@@ -54,8 +54,9 @@ namespace rutz
     template <size_t N>
     struct arg
     {
-      typedef typename std::tuple_element<N-1, std::tuple<Args...>>::type type;
+      typedef typename std::tuple_element<N, std::tuple<Args...>>::type type;
     };
+    static constexpr size_t num_args = sizeof...(Args);
   };
 
   /// A traits class for holding information about functions/functors.
@@ -76,9 +77,7 @@ namespace rutz
   struct func_traits<R (*)(Args...)>
     :
     public func_args<R, Args...>
-  {
-    static constexpr int num_args = sizeof...(Args);
-  };
+  {};
 
   //  =======================================================
   //
@@ -94,18 +93,14 @@ namespace rutz
   struct func_traits<R (C::*)(Args...)>
     :
     public func_args<R, this_pointer<C>, Args...>
-  {
-    static constexpr int num_args = sizeof...(Args) + 1;
-  };
+  {};
 
   /// Specialization for const member functions with "this" plus any # arguments.
   template <class R, class C, class... Args>
   struct func_traits<R (C::*)(Args...) const>
     :
     public func_args<R, this_pointer<C>, Args...>
-  {
-    static constexpr int num_args = sizeof...(Args) + 1;
-  };
+  {};
 
   //  #######################################################
   //  =======================================================
@@ -197,7 +192,7 @@ namespace rutz
   template <class base_functor, class bound_t>
   struct func_traits<bound_first<base_functor, bound_t> >
   {
-    static constexpr int num_args = func_traits<base_functor>::num_args-1;
+    static constexpr size_t num_args = func_traits<base_functor>::num_args-1;
 
     typedef typename func_traits<base_functor>::retn_t   retn_t;
     template <size_t N>
@@ -263,7 +258,7 @@ namespace rutz
   template <class base_functor, class bound_t>
   struct func_traits<bound_last<base_functor, bound_t> >
   {
-    static constexpr int num_args = func_traits<base_functor>::num_args-1;
+    static constexpr size_t num_args = func_traits<base_functor>::num_args-1;
 
     typedef typename func_traits<base_functor>::retn_t   retn_t;
     template <size_t N>

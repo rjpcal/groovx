@@ -105,7 +105,7 @@ namespace tcl
 
     static auto extract(tcl::call_context& ctx)
     {
-      return ctx.template get_arg<type>(N);
+      return ctx.template get_arg<type>(N+1);
     }
   };
 
@@ -119,7 +119,7 @@ namespace tcl
       tcl::call_context.
   */
 
-  template <unsigned int N, class R, class Func>
+  template <size_t N, class R, class Func>
   class func_wrapper
   {
   private:
@@ -134,7 +134,7 @@ namespace tcl
     template <std::size_t... I>
     R helper(tcl::call_context& ctx, std::index_sequence<I...>)
     {
-      return m_held_func(arg_helper<Func,I+1>::extract(ctx)...);
+      return m_held_func(arg_helper<Func,I>::extract(ctx)...);
     }
 
     R operator()(tcl::call_context& ctx)
