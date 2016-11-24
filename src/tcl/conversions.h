@@ -99,7 +99,7 @@ namespace tcl
   /// Convert a tcl::obj to a native c++ object.
   /** Will select a matching help_convert<T> specialization. */
   template <class T>
-  inline typename returnable<T>::type convert_to( const tcl::obj& obj )
+  inline auto convert_to( const tcl::obj& obj )
   {
     return help_convert<typename returnable<T>::type>::from_tcl(obj.get());
   }
@@ -107,7 +107,7 @@ namespace tcl
   /// Convert a tcl::obj to a native c++ object.
   /** Will select a matching help_convert<T> specialization. */
   template <class T>
-  inline typename returnable<T>::type convert_to( Tcl_Obj* obj )
+  inline auto convert_to( Tcl_Obj* obj )
   {
     return help_convert<typename returnable<T>::type>::from_tcl(obj);
   }

@@ -49,29 +49,6 @@
 namespace rutz
 {
   struct file_pos;
-
-  template <class MF, size_t N>
-  struct mf_arg_helper
-  {
-    typedef typename func_traits<MF>::template arg<N>::type type;
-  };
-
-  template <class MF>
-  struct mf_arg_helper<MF, 1>
-  {
-    typedef nub::soft_ref<typename mem_functor<MF>::C> type;
-  };
-
-  /// Specialization of func_traits for mem_functor.
-  template <class MF>
-  struct func_traits<mem_functor<MF> > : public func_traits<MF>
-  {
-    template <size_t N>
-    struct arg
-    {
-      typedef typename mf_arg_helper<MF, N>::type type;
-    };
-  };
 }
 
 namespace tcl
@@ -110,13 +87,23 @@ namespace tcl
     }
   };
 
+  template <class T>
+  struct help_convert<rutz::this_pointer<T>>
+  {
+    static nub::soft_ref<T> from_tcl(Tcl_Obj* obj)
+    {
+      nub::uid uid = tcl::convert_to<nub::uid>(obj);
+      return nub::soft_ref<T>(uid);
+    }
+  };
+
 
   template <class Func, size_t N>
   struct arg_helper
   {
     typedef typename rutz::func_traits<Func>::template arg<N>::type type;
 
-    static typename returnable<type>::type extract(tcl::call_context& ctx)
+    static auto extract(tcl::call_context& ctx)
     {
       return ctx.template get_arg<type>(N);
     }

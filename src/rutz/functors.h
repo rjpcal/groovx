@@ -42,7 +42,9 @@ namespace rutz
   //
   //  =======================================================
 
-  struct null_t;
+  template <class T>
+  struct this_pointer
+  {};
 
   /// Holds typedefs for the types of a function's arguments and return value.
   template <class R = void, class... Args>
@@ -91,64 +93,47 @@ namespace rutz
   template <class R, class C, class... Args>
   struct func_traits<R (C::*)(Args...)>
     :
-    public func_args<R, null_t, Args...>
+    public func_args<R, this_pointer<C>, Args...>
   {
     static constexpr int num_args = sizeof...(Args) + 1;
-    typedef C class_t;
   };
 
   /// Specialization for const member functions with "this" plus any # arguments.
   template <class R, class C, class... Args>
   struct func_traits<R (C::*)(Args...) const>
     :
-    public func_args<R, null_t, Args...>
+    public func_args<R, this_pointer<C>, Args...>
   {
     static constexpr int num_args = sizeof...(Args) + 1;
-    typedef C class_t;
   };
 
   //  #######################################################
   //  =======================================================
 
   template <class F>
-  class mem_functor_base;
+  class mem_functor;
 
-  /// func_traits specialization for mem_functor_base.
+  /// func_traits specialization for mem_functor.
   template <class MF>
-  struct func_traits<mem_functor_base<MF> > : public func_traits<MF>
+  struct func_traits<mem_functor<MF> > : public func_traits<MF>
   {};
 
-  /// mem_functor_base adapts a member function to an ordinary operator().
+  /// mem_functor adapts a member function to an ordinary operator().
   /** The "this" pointer is passed through the first argument of the
       operator() call, via a raw pointer or a smart pointer. */
 
   template <class mem_func>
-  class mem_functor_base
+  class mem_functor
     :
-    public func_traits<mem_functor_base<mem_func> >
+    public func_traits<mem_functor<mem_func> >
   {
   private:
     mem_func m_held_func;
 
   public:
     typedef typename func_traits<mem_func>::retn_t R;
-    typedef typename func_traits<mem_func>::class_t C;
 
-    mem_functor_base(mem_func f) : m_held_func(f) {}
-
-#if 0
-    template<class ptr, class Tuple, std::size_t ...I>
-    R call_func(ptr obj, Tuple args, std::index_sequence<I...>)
-    {
-      return ((*obj).*m_held_func)(std::get<I>(args)...);
-    }
-
-    template <class ptr, typename... Args>
-    R operator()(ptr obj, std::tuple<Args...> args)
-    {
-      return call_func(obj, args, std::index_sequence_for<Args...>{});
-    }
-#endif
+    mem_functor(mem_func f) : m_held_func(f) {}
 
     /// Function-call operator for object + any # args.
     template <class ptr, class... Args>
@@ -156,21 +141,6 @@ namespace rutz
     {
       return ((*obj).*m_held_func)(args...);
     }
-  };
-
-  //  #######################################################
-  //  =======================================================
-
-  /// mem_functor extends mem_functor_base smart pointers for "this".
-
-  //  =======================================================
-
-  template <class mem_func>
-  struct mem_functor : public mem_functor_base<mem_func>
-  {
-    explicit mem_functor(mem_func f) : mem_functor_base<mem_func>(f) {}
-
-    // operator()'s inherited from mem_functor_base
   };
 
   /// Factory function to make a mem_functor from any member function.
@@ -263,20 +233,6 @@ namespace rutz
 
     typedef func_traits<bound_first<base_functor, bound_t> > traits;
     typedef typename traits::retn_t   retn_t;
-
-#if 0
-    template<class Tuple, std::size_t ...I>
-    retn_t call_func(Tuple args, std::index_sequence<I...>)
-    {
-      return m_held_func(m_bound, std::get<I>(args)...);
-    }
-
-    template <typename... Args>
-    retn_t operator()(std::tuple<Args...> args)
-    {
-      return call_func(args, std::index_sequence_for<Args...>{});
-    }
-#endif
 
     template <class... Args>
     retn_t operator()(Args... args)
