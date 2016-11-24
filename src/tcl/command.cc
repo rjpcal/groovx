@@ -47,14 +47,6 @@ using std::unique_ptr;
 
 ///////////////////////////////////////////////////////////////////////
 //
-// tcl::function
-//
-///////////////////////////////////////////////////////////////////////
-
-tcl::function::~function() noexcept {}
-
-///////////////////////////////////////////////////////////////////////
-//
 // tcl::arg_dispatcher
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,10 +66,10 @@ namespace
   public:
     virtual void dispatch(tcl::interpreter& interp,
                           unsigned int objc, Tcl_Obj* const objv[],
-                          tcl::function& callback)
+                          const std::function<void(tcl::call_context&)>& callback)
     {
       tcl::call_context ctx(interp, objc, objv);
-      callback.invoke(ctx);
+      callback(ctx);
     }
   };
 
@@ -98,7 +90,7 @@ private:
   impl& operator=(const impl&);
 
 public:
-  impl(unique_ptr<tcl::function>&& cback,
+  impl(std::function<void(tcl::call_context&)>&& cback,
        const char* usg, const arg_spec& spec)
     :
     callback(std::move(cback)),
@@ -110,7 +102,7 @@ public:
   ~impl() noexcept {}
 
   // These are set once per command object
-  unique_ptr<tcl::function>             callback;
+  std::function<void(tcl::call_context&)> callback;
   shared_ptr<tcl::arg_dispatcher>       dispatcher;
   rutz::fstring                   const usage;
   arg_spec                        const argspec;
@@ -122,7 +114,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-tcl::command::command(unique_ptr<tcl::function>&& callback,
+tcl::command::command(std::function<void(tcl::call_context&)>&& callback,
                       const char* usage, const arg_spec& spec)
   :
   rep(new impl(std::move(callback), usage, spec))
@@ -165,7 +157,7 @@ GVX_TRACE("tcl::command::usage_string");
 void tcl::command::call(tcl::interpreter& interp,
                         unsigned int objc, Tcl_Obj* const objv[])
 {
-  rep->dispatcher->dispatch(interp, objc, objv, *rep->callback);
+  rep->dispatcher->dispatch(interp, objc, objv, rep->callback);
 }
 
 shared_ptr<tcl::arg_dispatcher> tcl::command::get_dispatcher() const

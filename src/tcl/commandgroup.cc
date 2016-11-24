@@ -332,7 +332,7 @@ GVX_TRACE("tcl::command_group::lookup_original");
 }
 
 void tcl::command_group::make(tcl::interpreter& interp,
-                              std::unique_ptr<tcl::function> callback,
+                              std::function<void(tcl::call_context&)>&& callback,
                               const char* cmd_name,
                               const char* usage,
                               const arg_spec& spec,

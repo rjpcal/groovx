@@ -67,7 +67,7 @@ namespace
     return rutz::format(bt);
   }
 
-  rutz::fstring cmdUsage(tcl::call_context& ctx)
+  void cmdUsage(tcl::call_context& ctx)
   {
     const char* name = ctx.get_arg<const char*>(1);
     tcl::command_group* cmd =
@@ -76,9 +76,9 @@ namespace
     if (cmd == nullptr)
       throw rutz::error("no such tcl::command_group", SRC_POS);
 
-    return rutz::sfmt("%s resolves to %s\n%s",
-                      name, cmd->resolved_name().c_str(),
-                      cmd->usage().c_str());
+    ctx.set_result( rutz::sfmt("%s resolves to %s\n%s",
+                               name, cmd->resolved_name().c_str(),
+                               cmd->usage().c_str()) );
   }
 
   unsigned long get_default_seed() { return rutz::default_rand_seed; }

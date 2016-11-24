@@ -33,6 +33,7 @@
 #ifndef GROOVX_TCL_COMMANDGROUP_H_UTC20050628162421_DEFINED
 #define GROOVX_TCL_COMMANDGROUP_H_UTC20050628162421_DEFINED
 
+#include <functional>
 #include <memory>
 
 typedef struct Tcl_Obj Tcl_Obj;
@@ -48,9 +49,9 @@ namespace tcl
 {
   class arg_dispatcher;
   class arg_spec;
+  class call_context;
   class command;
   class command_group;
-  class function;
   class interpreter;
 }
 
@@ -78,7 +79,7 @@ public:
       tcl::command_group as an overload. Otherwise, a brand new
       tcl::command_group will be created. */
   static void make(tcl::interpreter& interp,
-                   std::unique_ptr<tcl::function> callback,
+                   std::function<void(tcl::call_context&)>&& callback,
                    const char* cmd_name,
                    const char* usage,
                    const tcl::arg_spec& spec,

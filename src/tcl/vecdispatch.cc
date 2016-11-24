@@ -139,7 +139,7 @@ public:
 
   virtual void dispatch(tcl::interpreter& interp,
                         unsigned int objc, Tcl_Obj* const objv[],
-                        tcl::function& callback);
+                        const std::function<void(tcl::call_context&)>& callback);
 
 private:
   unsigned int m_key_argn;
@@ -149,7 +149,7 @@ private:
 void tcl::vec_dispatcher::dispatch(tcl::interpreter& interp,
                                    unsigned int objc,
                                    Tcl_Obj* const objv[],
-                                   tcl::function& callback)
+                                   const std::function<void(tcl::call_context&)>& callback)
 {
 GVX_TRACE("tcl::vec_dispatcher::dispatch");
 
@@ -162,7 +162,7 @@ GVX_TRACE("tcl::vec_dispatcher::dispatch");
 
       for (unsigned int c = 0; c < ncalls; ++c)
         {
-          callback.invoke(cx);
+          callback(cx);
           cx.next();
         }
 
@@ -171,7 +171,7 @@ GVX_TRACE("tcl::vec_dispatcher::dispatch");
   else if (ncalls == 1)
     {
       tcl::call_context cx(interp, objc, objv);
-      callback.invoke(cx);
+      callback(cx);
     }
   else // (ncalls == 0)
     {

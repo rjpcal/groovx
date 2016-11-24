@@ -97,19 +97,49 @@ namespace tcl
     }
   };
 
+// ########################################################
+/// Factory function for tcl::command's from void(tcl::call_context&) callables.
 
-  /// Generic tcl::func_wrapper definition.
-  /** Takes a C++-style functor (could be a free function, or struct
-      with operator()), and transforms it into a functor with an
-      operator()(tcl::call_context&) which can be called from a
-      tcl::command. This transformation requires extracting the
-      appropriate parameters from the tcl::call_context, passing them
-      to the C++ functor, and returning the result back to the
-      tcl::call_context.
-  */
+  template <class tcl_callable> // tcl_callable = callable void(tcl::call_context&)
+  inline void
+  make_generic_command(tcl::interpreter& interp,
+                       tcl_callable f,
+                       const char* cmd_name,
+                       const char* usage,
+                       const arg_spec& spec,
+                       const rutz::file_pos& src_pos)
+  {
+    tcl::command_group::make(interp, f,
+                             cmd_name, usage, spec, src_pos);
+  }
+
+
+// ########################################################
+/// Factory function for vectorized tcl::command's from void(tcl::call_context&) callables.
+
+  template <class tcl_callable> // tcl_callable = callable void(tcl::call_context&)
+  inline void
+  make_generic_vec_command(tcl::interpreter& interp,
+                           tcl_callable f,
+                           const char* cmd_name,
+                           const char* usage,
+                           const arg_spec& spec,
+                           unsigned int keyarg,
+                           const rutz::file_pos& src_pos)
+  {
+    tcl::command_group::make(interp, f,
+                             cmd_name, usage, spec, src_pos,
+                             tcl::get_vec_dispatcher(keyarg));
+  }
+
+///////////////////////////////////////////////////////////////////////
+//
+// Classes to transform callable with C++ params/return into void(tcl::call_context&)
+//
+///////////////////////////////////////////////////////////////////////
 
   template <size_t N, class R, class Func>
-  class func_wrapper
+  class tcl_callable_base
   {
   private:
     Func m_held_func;
@@ -121,6 +151,7 @@ namespace tcl
       return ctx.template get_arg<type>(I+1);
     }
 
+  protected:
     template <std::size_t... I>
     R helper(tcl::call_context& ctx, std::index_sequence<I...>)
     {
@@ -128,125 +159,45 @@ namespace tcl
     }
 
   public:
-    func_wrapper<N, R, Func>(Func f) : m_held_func(f) {}
+    tcl_callable_base<N, R, Func>(Func f) : m_held_func(f) {}
 
     typedef R retn_t;
-    typedef std::make_index_sequence<N> Indices;
-
-    R operator()(tcl::call_context& ctx)
-    {
-      return helper(ctx, Indices());
-    }
   };
-}
 
-namespace rutz
-{
-  /// Specialization of func_traits for tcl::func_wrapper.
-  template <unsigned int N, class F, class Func>
-  struct func_traits<tcl::func_wrapper<N, F, Func> >
-  {
-    typedef typename rutz::func_traits<Func>::retn_t retn_t;
-  };
-}
+  /// Generic tcl::tcl_callable definition.
+  /** Takes a C++-style functor (could be a free function, or struct
+      with operator()), and transforms it into a functor with an
+      operator()(tcl::call_context&) which can be called from a
+      tcl::command. This transformation requires extracting the
+      appropriate parameters from the tcl::call_context, passing them
+      to the C++ functor, and returning the result back to the
+      tcl::call_context.
+  */
 
-namespace tcl
-{
-
-// ########################################################
-/// Factory function to make tcl::func_wrapper's from any functor or function ptr.
-
-  template <class Fptr>
-  inline func_wrapper<rutz::func_traits<Fptr>::num_args,
-                      typename rutz::func_traits<Fptr>::retn_t,
-                      typename rutz::functor_of<Fptr>::type>
-  build_func_wrapper(Fptr f)
-  {
-    return rutz::build_functor(f);
-  }
-
-
-// ########################################################
-/// generic_function implements tcl::command using a held functor.
-
-  template <class R, class func_wrapper>
-  class generic_function : public tcl::function
+  template <size_t N, class R, class Func>
+  class tcl_callable : public tcl_callable_base<N,R,Func>
   {
   public:
-    generic_function<R, func_wrapper>(func_wrapper f) : m_held_func(f) {}
+    tcl_callable(Func f) : tcl_callable_base<N,R,Func>(f) {}
 
-    virtual ~generic_function() noexcept {}
-
-  protected:
-    virtual void invoke(tcl::call_context& ctx)
+    void operator()(tcl::call_context& ctx)
     {
-      R res(m_held_func(ctx)); ctx.set_result(std::move(res));
+      R res(this->helper(ctx, std::make_index_sequence<N>()));
+      ctx.set_result(std::move(res));
     }
-
-  private:
-    func_wrapper m_held_func;
   };
 
-// ########################################################
-/// Specialization for functors with void return types.
-
-  template <class func_wrapper>
-  class generic_function<void, func_wrapper> : public tcl::function
+  template <size_t N, class Func>
+  class tcl_callable<N,void,Func> : public tcl_callable_base<N,void,Func>
   {
   public:
-    generic_function<void, func_wrapper>(func_wrapper f) : m_held_func(f) {}
+    tcl_callable(Func f) : tcl_callable_base<N,void,Func>(f) {}
 
-    virtual ~generic_function() noexcept {}
-
-  protected:
-    virtual void invoke(tcl::call_context& ctx)
+    void operator()(tcl::call_context& ctx)
     {
-      m_held_func(ctx);
+      this->helper(ctx, std::make_index_sequence<N>());
     }
-
-  private:
-    func_wrapper m_held_func;
   };
-
-
-// ########################################################
-/// Factory function for tcl::command's from functors.
-
-  template <class func_wrapper>
-  inline void
-  make_generic_command(tcl::interpreter& interp,
-                       func_wrapper f,
-                       const char* cmd_name,
-                       const char* usage,
-                       const arg_spec& spec,
-                       const rutz::file_pos& src_pos)
-  {
-    typedef typename rutz::func_traits<func_wrapper>::retn_t retn_t;
-    tcl::command_group::make(interp,
-                             std::make_unique<generic_function<retn_t, func_wrapper>>(f),
-                             cmd_name, usage, spec, src_pos);
-  }
-
-
-// ########################################################
-/// Factory function for vectorized tcl::command's from functors.
-
-  template <class func_wrapper>
-  inline void
-  make_generic_vec_command(tcl::interpreter& interp,
-                           func_wrapper f,
-                           const char* cmd_name,
-                           const char* usage,
-                           const arg_spec& spec,
-                           unsigned int keyarg,
-                           const rutz::file_pos& src_pos)
-  {
-    typedef typename rutz::func_traits<func_wrapper>::retn_t retn_t;
-    tcl::command_group::make(interp,
-                             std::make_unique<generic_function<retn_t, func_wrapper>>(f),
-                             cmd_name, usage, spec, src_pos,
-                             tcl::get_vec_dispatcher(keyarg));
-  }
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -255,18 +206,31 @@ namespace tcl
 ///////////////////////////////////////////////////////////////////////
 
 // ########################################################
+/// Factory function to make tcl::tcl_callable's from any functor or function ptr.
+
+  template <class Fptr>
+  inline tcl_callable<rutz::func_traits<Fptr>::num_args,
+                      typename rutz::func_traits<Fptr>::retn_t,
+                      typename rutz::functor_of<Fptr>::type>
+  build_tcl_callable(Fptr f)
+  {
+    return rutz::build_functor(f);
+  }
+
+
+// ########################################################
 /// Factory function for tcl::command's from function pointers.
 
   template <class Func>
   inline void
   make_command(tcl::interpreter& interp,
-          Func f,
-          const char* cmd_name,
-          const char* usage,
-          const rutz::file_pos& src_pos)
+               Func f,
+               const char* cmd_name,
+               const char* usage,
+               const rutz::file_pos& src_pos)
   {
     make_generic_command
-      (interp, build_func_wrapper(f), cmd_name, usage,
+      (interp, build_tcl_callable(f), cmd_name, usage,
        arg_spec(rutz::func_traits<Func>::num_args + 1, -1, true),
        src_pos);
   }
@@ -284,7 +248,7 @@ namespace tcl
                    const rutz::file_pos& src_pos)
   {
     make_generic_vec_command
-      (interp, build_func_wrapper(f), cmd_name, usage,
+      (interp, build_tcl_callable(f), cmd_name, usage,
        arg_spec(rutz::func_traits<Func>::num_args + 1, -1, true),
        keyarg, src_pos);
   }

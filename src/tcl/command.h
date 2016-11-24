@@ -37,6 +37,7 @@
 #include "tcl/conversions.h"
 #include "tcl/obj.h"
 
+#include <functional>
 #include <memory>
 
 typedef struct Tcl_Obj Tcl_Obj;
@@ -50,26 +51,11 @@ namespace rutz
 namespace tcl
 {
   class arg_spec;
-  class function;
   class command;
   class call_context;
   class arg_dispatcher;
   class interpreter;
 }
-
-/// Abstract interface for the core function to be embedded in a tcl::command.
-/** TODO replace with std::function<void(tcl::call_context&)> */
-class tcl::function
-{
-public:
-  virtual ~function() noexcept;
-
-  /// Abstract function performs this command's specific functionality.
-  /** The \c tcl::call_context& argument allows Tcl command arguments
-      to be retrieved, and allows the interpreter's result to be
-      set.*/
-  virtual void invoke(tcl::call_context& ctx) = 0;
-};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -108,7 +94,7 @@ public:
       tcl::command needs to be hooked into a tcl::command_group, and
       the way to do that is by creating it through
       tcl::command_group::make(). */
-  command(std::unique_ptr<tcl::function>&& callback,
+  command(std::function<void(tcl::call_context&)>&& callback,
           const char* usage, const arg_spec& spec);
 
   /// Non-virtual destructor since this class is not for use as a base class.
@@ -185,7 +171,7 @@ public:
       context. */
   virtual void dispatch(tcl::interpreter& interp,
                         unsigned int objc, Tcl_Obj* const objv[],
-                        tcl::function& callback) = 0;
+                        const std::function<void(tcl::call_context&)>& callback) = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
