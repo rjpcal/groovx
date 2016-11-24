@@ -153,7 +153,7 @@ namespace tcl
 
   protected:
     template <std::size_t... I>
-    R helper(tcl::call_context& ctx, std::index_sequence<I...>)
+    auto helper(tcl::call_context& ctx, std::index_sequence<I...>)
     {
       return m_held_func(extract<I>(ctx)...);
     }

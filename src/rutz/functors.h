@@ -119,20 +119,16 @@ namespace rutz
 
   template <class mem_func>
   class mem_functor
-    :
-    public func_traits<mem_functor<mem_func> >
   {
   private:
     mem_func m_held_func;
 
   public:
-    typedef typename func_traits<mem_func>::retn_t R;
-
     mem_functor(mem_func f) : m_held_func(f) {}
 
     /// Function-call operator for object + any # args.
     template <class ptr, class... Args>
-    R operator()(ptr obj, Args... args)
+    auto operator()(ptr obj, Args... args)
     {
       return ((*obj).*m_held_func)(args...);
     }
@@ -208,8 +204,6 @@ namespace rutz
 
   template <class base_functor, class bound_t>
   class bound_first
-    :
-    public func_traits<bound_first<base_functor, bound_t> >
   {
   private:
     base_functor m_held_func;
@@ -221,22 +215,11 @@ namespace rutz
       m_bound(bound)
     {}
 
-    bound_first(const bound_first& other) :
-      m_held_func(other.m_held_func),
-      m_bound(other.m_bound)
-    {}
-
-    typedef func_traits<bound_first<base_functor, bound_t> > traits;
-    typedef typename traits::retn_t   retn_t;
-
     template <class... Args>
-    retn_t operator()(Args... args)
+    auto operator()(Args... args)
     {
       return m_held_func(m_bound, args...);
     }
-
-  private:
-    bound_first& operator=(const bound_first&);
   };
 
   /// Factory function for creating bound_first functors.
@@ -274,8 +257,6 @@ namespace rutz
 
   template <class base_functor, class bound_t>
   class bound_last
-    :
-    public func_traits<bound_last<base_functor, bound_t> >
   {
   private:
     base_functor m_held_func;
@@ -287,22 +268,11 @@ namespace rutz
       m_bound(bound)
     {}
 
-    bound_last(const bound_last& other) :
-      m_held_func(other.m_held_func),
-      m_bound(other.m_bound)
-    {}
-
-    typedef func_traits<bound_last<base_functor, bound_t> > traits;
-    typedef typename traits::retn_t   retn_t;
-
     template <class... Args>
-    retn_t operator()(Args... args)
+    auto operator()(Args... args)
     {
       return m_held_func(args..., m_bound);
     }
-
-  private:
-    bound_last& operator=(const bound_last&);
   };
 
   /// Factory function for creating bound_last functors.
