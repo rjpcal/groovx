@@ -98,17 +98,6 @@ namespace tcl
   };
 
 
-  template <class Func, size_t N>
-  struct arg_helper
-  {
-    typedef typename rutz::func_traits<Func>::template arg<N>::type type;
-
-    static auto extract(tcl::call_context& ctx)
-    {
-      return ctx.template get_arg<type>(N+1);
-    }
-  };
-
   /// Generic tcl::func_wrapper definition.
   /** Takes a C++-style functor (could be a free function, or struct
       with operator()), and transforms it into a functor with an
@@ -125,17 +114,24 @@ namespace tcl
   private:
     Func m_held_func;
 
+    template <size_t I>
+    static auto extract(tcl::call_context& ctx)
+    {
+      typedef typename rutz::func_traits<Func>::template arg<I>::type type;
+      return ctx.template get_arg<type>(I+1);
+    }
+
+    template <std::size_t... I>
+    R helper(tcl::call_context& ctx, std::index_sequence<I...>)
+    {
+      return m_held_func(extract<I>(ctx)...);
+    }
+
   public:
     func_wrapper<N, R, Func>(Func f) : m_held_func(f) {}
 
     typedef R retn_t;
     typedef std::make_index_sequence<N> Indices;
-
-    template <std::size_t... I>
-    R helper(tcl::call_context& ctx, std::index_sequence<I...>)
-    {
-      return m_held_func(arg_helper<Func,I>::extract(ctx)...);
-    }
 
     R operator()(tcl::call_context& ctx)
     {
