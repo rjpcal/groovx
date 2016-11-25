@@ -524,6 +524,11 @@ AC_CHECK_LIB_CXX(jpeg,
 AC_CHECK_LIB_CXX(z, [#include <zlib.h>], [gzopen(0,0)],
 		 [LIBS="-lz $LIBS"], [AC_MSG_ERROR(libz check failed)])
 
+AC_CHECK_LIB_CXX(bz2, [#include <bzlib.h>], [BZ2_bzWriteOpen((int*)0,(FILE*)0,9,0,300)],
+		 [LIBS="-lbz2 $LIBS"
+		  AC_DEFINE(HAVE_LIBBZ2,1,[libbz2 present and working?])],
+		 [AC_LATE_WARN(libbz2 check failed)])
+
 case $windowsystem in
    x11)
       AC_CHECK_LIB_CXX(X11, [#include <X11/Xlib.h>], [XQueryColor(0,0,0)],

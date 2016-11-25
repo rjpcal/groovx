@@ -34,9 +34,6 @@
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
 
-#ifdef HAVE_BZLIB_H
-#include <bzlib.h>
-#endif
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -48,7 +45,7 @@ using rutz::error;
 using rutz::fstring;
 using std::unique_ptr;
 
-#ifndef HAVE_BZLIB_H
+#ifndef HAVE_LIBBZ2
 
 unique_ptr<std::ostream> rutz::obzip2open(const fstring& filename,
                                           std::ios::openmode flags)
@@ -98,13 +95,15 @@ unique_ptr<std::istream> rutz::ibzip2open(const fstring& filename,
 
 #else
 
+#include <bzlib.h>
+
 namespace
 {
   class bzip2streambuf : public std::streambuf
   {
   private:
     bool m_opened;
-    int m_mode;
+    unsigned int m_mode;
     FILE* m_file;
     BZFILE* m_bzfile;
 
@@ -118,12 +117,8 @@ namespace
     int flushoutput();
 
   public:
-    bzip2streambuf(const char* name, int om);
+    bzip2streambuf(const char* name, unsigned int om);
     ~bzip2streambuf() { close(); }
-
-    bool is_open() { return m_opened; }
-
-    void ensure_open();
 
     void close();
 
@@ -149,7 +144,7 @@ namespace
     }
   };
 
-  bzip2streambuf::bzip2streambuf(const char* name, int om)
+  bzip2streambuf::bzip2streambuf(const char* name, unsigned int om)
     :
     m_opened(false),
     m_mode(0),
@@ -263,7 +258,7 @@ namespace
     if (gptr() < egptr())
       return *gptr();
 
-    int numPutback = 0;
+    off_t numPutback = 0;
     if (s_pback_size > 0)
       {
         // process size of putback area
@@ -273,10 +268,12 @@ namespace
         if (numPutback > 4)
           numPutback = 4;
 
+        GVX_ASSERT(numPutback >= 0);
+
         // copy up to four characters previously read into the putback
         // buffer (area of first four characters)
         std::memcpy (m_buf+(4-numPutback), gptr()-numPutback,
-                     numPutback);
+                     size_t(numPutback));
       }
 
     // read new characters
@@ -316,7 +313,7 @@ namespace
     if (c != EOF)
       {
         // insert the character into the buffer
-        *pptr() = c;
+        *pptr() = char(c);
         pbump(1);
       }
 
@@ -341,7 +338,8 @@ namespace
   {
     if (!(m_mode & std::ios::out) || !m_opened) return EOF;
 
-    const int num = pptr()-pbase();
+    GVX_ASSERT(pptr()-pbase() <= std::numeric_limits<int>::max());
+    const int num = int(pptr()-pbase());
     int bzerror = BZ_OK;
     BZ2_bzWrite(&bzerror, m_bzfile, pbase(), num);
 
@@ -361,7 +359,7 @@ unique_ptr<std::ostream> rutz::obzip2open(const fstring& filename,
   if (filename.ends_with(bzip2_ext))
     {
       return std::make_unique<bzip2stream>
-        (filename.c_str(), std::ios::out|flags));
+        (filename.c_str(), std::ios::out|flags);
     }
   else
     {
@@ -383,7 +381,7 @@ unique_ptr<std::istream> rutz::ibzip2open(const fstring& filename,
   if (filename.ends_with(bzip2_ext))
     {
       return std::make_unique<bzip2stream>
-        (filename.c_str(), std::ios::in|flags));
+        (filename.c_str(), std::ios::in|flags);
     }
   else
     {

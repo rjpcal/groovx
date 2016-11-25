@@ -128,6 +128,8 @@ GVX_TRACE("rutz::gzstreambuf::underflow");
       if (numPutback > 4)
         numPutback = 4;
 
+      GVX_ASSERT(numPutback >= 0);
+
       // copy up to four characters previously read into the putback
       // buffer (area of first four characters)
       std::memcpy (m_buf+(4-numPutback), gptr()-numPutback,
@@ -187,7 +189,8 @@ int rutz::gzstreambuf::flushoutput()
 {
   if (!(m_mode & std::ios::out) || !m_opened) return EOF;
 
-  int num = int(pptr()-pbase());
+  GVX_ASSERT(pptr()-pbase() <= std::numeric_limits<int>::max());
+  const int num = int(pptr()-pbase());
   GVX_ASSERT(num >= 0);
   if ( gzwrite(m_gzfile, pbase(), (unsigned int) num) != num )
     {

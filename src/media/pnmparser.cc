@@ -37,6 +37,7 @@
 
 #include "rutz/error.h"
 #include "rutz/fstring.h"
+#include "rutz/bzip2stream.h"
 #include "rutz/gzstreambuf.h"
 #include "rutz/sfmt.h"
 
@@ -220,8 +221,10 @@ GVX_TRACE("media::save_pnm");
 
 media::bmap_data media::load_pnm(const char* filename)
 {
-  std::unique_ptr<std::istream> is
-    (rutz::igzopen(filename, std::ios::binary));
+  std::unique_ptr<std::istream> is =
+    rutz::fstring(filename).ends_with(".bz2")
+    ? rutz::ibzip2open(filename)
+    : rutz::igzopen(filename, std::ios::binary);
 
   return load_pnm(*is);
 }

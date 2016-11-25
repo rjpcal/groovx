@@ -6,6 +6,8 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (25-Nov-2016) Standardize bzip2/gzip interfaces and use for image parsing and serialization
+
 * (23-Nov-2016) Make concrete_iter work with normal iterator pair semantics
 
 * (02-Nov-2016) Use std::chrono
