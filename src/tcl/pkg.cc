@@ -426,17 +426,15 @@ GVX_TRACE("tcl::pkg::link_var double");
 void tcl::pkg::link_var_copy(const char* var_name, int var)
 {
 GVX_TRACE("tcl::pkg::link_var_copy int");
-  unique_ptr<int> copy(std::make_unique<int>(var));
-  rep->owned_ints.push_back(std::move(copy));
-  rep->interp.link_int(var_name, copy.get(), true);
+  rep->owned_ints.emplace_back(new int(var));
+  rep->interp.link_int(var_name, rep->owned_ints.back().get(), true);
 }
 
 void tcl::pkg::link_var_copy(const char* var_name, double var)
 {
 GVX_TRACE("tcl::pkg::link_var_copy double");
-  unique_ptr<double> copy(std::make_unique<double>(var));
-  rep->owned_doubles.push_back(std::move(copy));
-  rep->interp.link_double(var_name, copy.get(), true);
+  rep->owned_doubles.emplace_back(new double(var));
+  rep->interp.link_double(var_name, rep->owned_doubles.back().get(), true);
 }
 
 void tcl::pkg::link_var_const(const char* var_name, int& var)
