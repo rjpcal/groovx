@@ -46,9 +46,7 @@ public:
   virtual ~timer_scheduler() noexcept;
 
   virtual std::shared_ptr<nub::timer_token>
-  schedule(int msec,
-           void (*callback)(void*),
-           void* clientdata) override;
+  schedule(int msec, std::function<void(void)>&& callback) override;
 };
 
 #endif // !GROOVX_TCL_TIMERSCHEDULER_H_UTC20050628162421_DEFINED

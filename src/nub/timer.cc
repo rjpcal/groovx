@@ -79,8 +79,7 @@ GVX_TRACE("nub::timer::schedule");
   // another (e.g. if the scheduler decides to run the callback
   // immediately rather than scheduling a deferred callback).
   m_token = m_scheduler->schedule(int(m_msec_delay),
-                                  dummy_callback,
-                                  static_cast<void*>(this));
+                                  std::bind(&nub::timer::callback, this));
 }
 
 void nub::timer::cancel()
@@ -90,31 +89,28 @@ GVX_TRACE("nub::timer::cancel");
   m_token.reset();
 }
 
-void nub::timer::dummy_callback(void* clientdata)
+void nub::timer::callback()
 {
 GVX_TRACE("nub::timer::dummy_callback");
-  nub::timer* timer = static_cast<nub::timer*>(clientdata);
 
-  GVX_ASSERT(timer != nullptr);
+  m_token.reset();
 
-  timer->m_token.reset();
-
-  dbg_eval_nl(3, timer->m_stopwatch.elapsed().msec());
+  dbg_eval_nl(3, m_stopwatch.elapsed().msec());
 
   // NOTE: make sure we re-schedule a repeating event BEFORE we
   // emit the signal and trigger the callbacks; this way, it's
-  // possible for code inside the callback to cancel() this timer
+  // possible for code inside the callback to cancel() this this
   // callback and end the repeating.
-  if (timer->m_is_repeating)
+  if (m_is_repeating)
     {
       // can't allow a timer callback that is both repeating and
       // immediate (delay == 0), otherwise we fall into an
       // infinite loop
-      GVX_ASSERT(timer->m_msec_delay != 0);
+      GVX_ASSERT(m_msec_delay != 0);
 
-      if (timer->m_scheduler.get() != nullptr)
-        timer->schedule(timer->m_scheduler);
+      if (m_scheduler.get() != nullptr)
+        schedule(m_scheduler);
     }
 
-  timer->sig_timeout.emit();
+  sig_timeout.emit();
 }

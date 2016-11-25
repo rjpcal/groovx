@@ -32,6 +32,7 @@
 #ifndef GROOVX_NUB_SCHEDULER_H_UTC20050626084019_DEFINED
 #define GROOVX_NUB_SCHEDULER_H_UTC20050626084019_DEFINED
 
+#include <functional>
 #include <memory>
 
 namespace nub
@@ -59,9 +60,7 @@ public:
   virtual ~scheduler() noexcept;
 
   virtual std::shared_ptr<nub::timer_token>
-  schedule(int msec,
-           void (*callback)(void*),
-           void* clientdata) = 0;
+  schedule(int msec, std::function<void(void)>&& callback) = 0;
 };
 
 #endif // !GROOVX_NUB_SCHEDULER_H_UTC20050626084019_DEFINED

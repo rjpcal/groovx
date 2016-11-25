@@ -48,31 +48,23 @@ namespace tcl
 class tcl::timer_scheduler_token : public nub::timer_token
 {
 public:
-  timer_scheduler_token(int msec,
-                        void (*callback)(void*),
-                        void* clientdata);
+  timer_scheduler_token(int msec, std::function<void(void)>&& callback);
   virtual ~timer_scheduler_token() noexcept;
 
 private:
   static void c_callback(void* token) noexcept;
 
-  typedef void (Callback)(void*);
-
-  Tcl_TimerToken       m_token;
-  Callback*      const m_callback;
-  void*          const m_clientdata;
+  Tcl_TimerToken                  m_token;
+  std::function<void(void)> const m_callback;
 };
 
 tcl::timer_scheduler_token::
-timer_scheduler_token(int msec,
-                      void (*callback)(void*),
-                      void* clientdata)
+timer_scheduler_token(int msec, std::function<void(void)>&& callback)
   :
   m_token(Tcl_CreateTimerHandler(msec,
                                  c_callback,
                                  static_cast<void*>(this))),
-  m_callback(callback),
-  m_clientdata(clientdata)
+  m_callback(std::move(callback))
 {
 GVX_TRACE("tcl::timer_scheduler_token::timer_scheduler_token");
 }
@@ -95,7 +87,7 @@ void tcl::timer_scheduler_token::c_callback(void* token) noexcept
       // the TimerScheduleToken object being destroyed. So, if we need
       // access to any of the token's member variables, we need to
       // make a local copy of them before calling the callback.
-      (*tok->m_callback)(tok->m_clientdata);
+      tok->m_callback();
     }
   catch(...)
     {
@@ -116,9 +108,7 @@ GVX_TRACE("tcl::timer_scheduler::~timer_scheduler");
 }
 
 std::shared_ptr<nub::timer_token>
-tcl::timer_scheduler::schedule(int msec,
-                              void (*callback)(void*),
-                              void* clientdata)
+tcl::timer_scheduler::schedule(int msec, std::function<void(void)>&& callback)
 {
 GVX_TRACE("tcl::timer_scheduler::schedule");
   // If the requested delay is zero -- i.e., immediate -- then don't
@@ -126,12 +116,12 @@ GVX_TRACE("tcl::timer_scheduler::schedule");
   // invocation; this saves a trip into the event loop and back.
   if (msec == 0)
     {
-      (*callback)(clientdata);
+      callback();
 
       // Return a null pointer, representing the fact that there is no
       // pending callback in this case.
       return std::shared_ptr<nub::timer_token>();
     }
 
-  return std::make_shared<tcl::timer_scheduler_token>(msec, callback, clientdata);
+  return std::make_shared<tcl::timer_scheduler_token>(msec, std::move(callback));
 }

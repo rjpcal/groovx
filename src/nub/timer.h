@@ -68,7 +68,7 @@ public:
   double elapsed_msec() const { return m_stopwatch.elapsed().msec(); }
 
 private:
-  static void dummy_callback(void* clientdata);
+  void callback();
 
   timer(const timer&);
   timer& operator=(const timer&);
