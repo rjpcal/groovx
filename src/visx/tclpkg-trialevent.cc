@@ -62,15 +62,8 @@ namespace
 
   void addEvents(nub::ref<MultiEvent> multi, tcl::list event_ids)
   {
-    tcl::list::iterator<nub::ref<TrialEvent> >
-      itr = event_ids.begin<nub::ref<TrialEvent> >(),
-      end = event_ids.end<nub::ref<TrialEvent> >();
-
-    while (itr != end)
-      {
-        multi->addEvent(*itr);
-        ++itr;
-      }
+    for (const auto& evref: event_ids.view_of<nub::ref<TrialEvent>>())
+      multi->addEvent(evref);
   }
 }
 

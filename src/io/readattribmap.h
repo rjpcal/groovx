@@ -113,16 +113,13 @@ void io::attrib_map::set_version_id(io::version_id id)
 inline
 io::attrib_map::attrib io::attrib_map::get(const rutz::fstring& attr_name)
 {
-  list_type::iterator itr = m_attribs.begin(), end = m_attribs.end();
-  while (itr != end)
+  auto itr = std::find_if(m_attribs.begin(), m_attribs.end(),
+                          [&](auto x){ return x.first == attr_name; });
+  if (itr != m_attribs.end())
     {
-      if ((*itr).first == attr_name)
-        {
-          attrib result = (*itr).second;
-          m_attribs.erase(itr);
-          return result;
-        }
-      ++itr;
+      attrib result = (*itr).second;
+      m_attribs.erase(itr);
+      return result;
     }
 
   const rutz::fstring msg =
@@ -135,12 +132,8 @@ io::attrib_map::attrib io::attrib_map::get(const rutz::fstring& attr_name)
 
   buf << msg;
 
-  itr = m_attribs.begin();
-  while (itr != end)
-    {
-      buf << '\t' << (*itr).first << '\n';
-      ++itr;
-    }
+  for (const auto& x: m_attribs)
+    buf << '\t' << x.first << '\n';
 
   throw rutz::error(rutz::fstring(buf.str().c_str()), SRC_POS);
 }

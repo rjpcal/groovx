@@ -89,15 +89,8 @@ namespace
 
   void gxtcl_addChildren(nub::ref<GxSeparator> sep, tcl::list objs)
   {
-    tcl::list::iterator<nub::ref<GxNode> >
-      itr = objs.begin<nub::ref<GxNode> >(),
-      end = objs.end<nub::ref<GxNode> >();
-
-    while (itr != end)
-      {
-        sep->addChild(*itr);
-        ++itr;
-      }
+    for (const auto& noderef: objs.view_of<nub::ref<GxNode>>())
+      sep->addChild(noderef);
   }
 
   void gxtcl_removeAllChildren(nub::ref<GxSeparator> sep)

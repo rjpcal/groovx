@@ -126,17 +126,13 @@ public:
 
       int num_removed = 0;
 
-      for (map_type::iterator
-             itr = m_obj_map.begin(),
-             end = m_obj_map.end();
-           itr != end;
-           ++itr)
+      for (const auto& x: m_obj_map)
         {
           // If the object is shared, we'll be saving the object, so
-          // copy it into the new_map,
-          if ( is_valid_itr(itr) && (*itr).second.get()->is_shared() )
+          // copy it into the new_map
+          if ( x.second.is_valid() && x.second.get()->is_shared() )
             {
-              new_map.insert(*itr);
+              new_map.insert(x);
             }
           else
             {

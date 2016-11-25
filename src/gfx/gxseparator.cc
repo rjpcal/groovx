@@ -190,19 +190,14 @@ GVX_TRACE("GxSeparator::removeChild");
 
   const nub::uid target = item.id();
 
-  for(Impl::VecType::iterator
-        itr = rep->children.begin(),
-        end = rep->children.end();
-      itr != end;
-      ++itr)
+  auto itr = std::find_if(rep->children.begin(), rep->children.end(),
+                          [=](auto node){ return node->id() == target; });
+
+  if (itr != rep->children.end())
     {
-      if ( (*itr)->id() == target )
-        {
-          (*itr)->sigNodeChanged.disconnect(this->sigNodeChanged.slot());
-          rep->children.erase(itr);
-          this->sigNodeChanged.emit();
-          break;
-        }
+      (*itr)->sigNodeChanged.disconnect(this->sigNodeChanged.slot());
+      rep->children.erase(itr);
+      this->sigNodeChanged.emit();
     }
 }
 

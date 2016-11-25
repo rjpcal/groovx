@@ -97,14 +97,8 @@ namespace
 
   void objDelete(tcl::list objrefs)
   {
-    tcl::list::iterator<nub::uid>
-      itr = objrefs.begin<nub::uid>(),
-      stop = objrefs.end<nub::uid>();
-    while (itr != stop)
-      {
-        nub::objectdb::instance().remove(*itr);
-        ++itr;
-      }
+    for (auto id: objrefs.view_of<nub::uid>())
+      nub::objectdb::instance().remove(id);
   }
 
   void arrowDispatch(tcl::call_context& ctx)
