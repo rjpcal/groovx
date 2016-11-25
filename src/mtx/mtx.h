@@ -276,7 +276,7 @@ public:
 
   // No copy; move OK
   slice(const slice&) = delete;
-  slice(slice&&) = default;
+  slice(slice&&) noexcept = default;
 
   // No "default" assignment operator, since that would be assignment
   // of reference; instead we have an operator=() that does assignment
@@ -662,22 +662,22 @@ public:
 template <class Data>
 class mtx_base : public mtx_specs
 {
-private:
-  mtx_base& operator=(const mtx_base& other); // not allowed
-
 protected:
   Data m_data;
 
   void swap(mtx_base& other);
 
   mtx_base(const mtx_base& other);
-  mtx_base(mtx_base&& other);
+  mtx_base(mtx_base&& other) noexcept;
 
   mtx_base(size_t mrows, size_t ncols, const Data& data);
 
   mtx_base(const mtx_specs& specs, const Data& data);
 
   ~mtx_base();
+
+  // No copy assign
+  mtx_base& operator=(const mtx_base& other) = delete;
 
   size_t offset_from_storage(size_t r, size_t c) const
   { return RCR_leq(mtx_specs::offset_from_storage(r, c), m_data.storage_length()); }
@@ -822,7 +822,7 @@ public:
 
   sub_mtx_ref (const sub_mtx_ref& other) = delete;
 
-  sub_mtx_ref (sub_mtx_ref&& other) : Base(other) {}
+  sub_mtx_ref (sub_mtx_ref&& other) noexcept : Base(std::move(other)) {}
 
   sub_mtx_ref& operator=(const sub_mtx_ref& other);
   sub_mtx_ref& operator=(const mtx& other);

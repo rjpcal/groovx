@@ -148,6 +148,9 @@ public:
   /// Copy constructor.
   data_holder(const data_holder& other);
 
+  /// Move constructor.
+  data_holder(data_holder&& other) noexcept;
+
   /// Destructor.
   ~data_holder();
 

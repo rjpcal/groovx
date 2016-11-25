@@ -448,9 +448,9 @@ mtx_base<Data>::mtx_base(const mtx_base& other) :
 {}
 
 template <class Data>
-mtx_base<Data>::mtx_base(mtx_base&& other) :
+mtx_base<Data>::mtx_base(mtx_base&& other) noexcept :
   mtx_specs(other),
-  m_data(other.m_data)
+  m_data(std::move(other.m_data))
 {}
 
 template <class Data>

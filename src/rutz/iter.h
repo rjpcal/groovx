@@ -79,10 +79,10 @@ namespace rutz
 
   public:
     concrete_iter(const concrete_iter&) = delete;
-    concrete_iter(concrete_iter&&) = default;
+    concrete_iter(concrete_iter&&) noexcept = default;
 
     concrete_iter& operator=(const concrete_iter&) = delete;
-    concrete_iter& operator=(concrete_iter&&) = default;
+    concrete_iter& operator=(concrete_iter&&) noexcept = default;
 
     concrete_iter(std::unique_ptr<ifx_t>&& impl)      : rep(std::move(impl)) {}
 

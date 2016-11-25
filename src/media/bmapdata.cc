@@ -280,10 +280,8 @@ GVX_TRACE("media::bmap_data::clear");
   this->swap(empty);
 }
 
-void media::bmap_data::swap(media::bmap_data& other)
+void media::bmap_data::swap(media::bmap_data& other) noexcept
 {
-GVX_TRACE("media::bmap_data::swap");
-
   std::swap(rep, other.rep);
 }
 

@@ -273,6 +273,12 @@ data_holder::data_holder(const data_holder& other) :
   m_data->incr_refcount();
 }
 
+data_holder::data_holder(data_holder&& other) noexcept :
+  m_data(other.m_data)
+{
+  other.m_data = nullptr;
+}
+
 data_holder::~data_holder()
 {
   m_data->decr_refcount();

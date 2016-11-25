@@ -85,7 +85,7 @@ namespace media
     bmap_data& operator=(const bmap_data& that) = delete;
 
     /// Move constructor
-    bmap_data(bmap_data&& that)
+    bmap_data(bmap_data&& that) noexcept
       :
       rep(that.rep)
     {
@@ -93,7 +93,7 @@ namespace media
     }
 
     /// Move assignment operator
-    bmap_data& operator=(bmap_data&& that)
+    bmap_data& operator=(bmap_data&& that) noexcept
     {
       this->swap(that);
       return *this;
@@ -170,7 +170,7 @@ namespace media
     void clear();
 
     /// Swaps the internal representation with that of \a other.
-    void swap(bmap_data& other);
+    void swap(bmap_data& other) noexcept;
 
     /// Set the row order, swapping rows around in memory if necessary.
     /** This is a logical "const" operation since the image being

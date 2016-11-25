@@ -107,7 +107,7 @@ public:
   command& operator=(const command&) = delete;
 
   /// Move construct allowed
-  command(command&& that)
+  command(command&& that) noexcept
     :
     rep(that.rep)
   {
@@ -115,7 +115,7 @@ public:
   }
 
   /// Move assign allowed
-  command& operator=(command&& that)
+  command& operator=(command&& that) noexcept
   {
     std::swap(const_cast<impl*&>(that.rep), const_cast<impl*&>(this->rep));
     return *this;
