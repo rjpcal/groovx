@@ -360,13 +360,13 @@ unique_ptr<std::ostream> rutz::obzip2open(const fstring& filename,
 
   if (filename.ends_with(bzip2_ext))
     {
-      return unique_ptr<std::ostream>
-        (new bzip2stream(filename.c_str(), std::ios::out|flags));
+      return std::make_unique<bzip2stream>
+        (filename.c_str(), std::ios::out|flags));
     }
   else
     {
       unique_ptr<std::ostream> result =
-        make_unique(new std::ofstream(filename.c_str(), flags));
+        std::make_unique<std::ofstream>(filename.c_str(), flags);
       if (result->fail())
         throw error(sfmt("couldn't open file '%s' for writing",
                          filename.c_str()), SRC_POS);
@@ -382,13 +382,13 @@ unique_ptr<std::istream> rutz::ibzip2open(const fstring& filename,
 
   if (filename.ends_with(bzip2_ext))
     {
-      return unique_ptr<std::istream>
-        (new bzip2stream(filename.c_str(), std::ios::in|flags));
+      return std::make_unique<bzip2stream>
+        (filename.c_str(), std::ios::in|flags));
     }
   else
     {
       unique_ptr<std::istream> result =
-        make_unique(new std::ifstream(filename.c_str(), flags));
+        std::make_unique<std::ifstream>(filename.c_str(), flags);
       if (result->fail())
         throw error(sfmt("couldn't open file '%s' for reading",
                          filename.c_str()), SRC_POS);

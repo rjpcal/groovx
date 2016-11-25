@@ -224,8 +224,8 @@ unique_ptr<std::ostream> rutz::ogzopen(const fstring& filename,
 
   if (filename.ends_with(gz_ext))
     {
-      return unique_ptr<std::ostream>
-        (new gzstream(filename.c_str(), std::ios::out|flags, true));
+      return std::make_unique<gzstream>
+        (filename.c_str(), std::ios::out|flags, true);
     }
   else
     {
@@ -249,8 +249,7 @@ unique_ptr<std::ostream> rutz::ogzopen(const char* filename,
 unique_ptr<std::istream> rutz::igzopen(const char* filename,
                                        std::ios::openmode flags)
 {
-  return unique_ptr<std::iostream>
-    (new gzstream(filename, std::ios::in|flags, true));
+  return std::make_unique<gzstream>(filename, std::ios::in|flags, true);
 }
 
 unique_ptr<std::istream> rutz::igzopen(const fstring& filename,
