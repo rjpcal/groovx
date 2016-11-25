@@ -122,7 +122,7 @@ public:
     GVX_ASSERT(s_event_loop_impl == nullptr);
 
     s_event_loop_impl = new event_loop_impl(argc, argv, nowindow);
-    Tcl_CreateExitHandler(c_exit_handler, static_cast<void*>(0));
+    Tcl_CreateExitHandler(c_exit_handler, nullptr);
   }
 
   static event_loop_impl* get()
@@ -408,9 +408,7 @@ GVX_TRACE("tcl::event_loop_impl::handle_line");
             }
           else
             {
-              Tcl_DeleteChannelHandler(m_stdin_chan,
-                                       &c_stdin_proc,
-                                       static_cast<void*>(0));
+              Tcl_DeleteChannelHandler(m_stdin_chan, &c_stdin_proc, nullptr);
             }
         }
       return;
@@ -458,8 +456,7 @@ GVX_TRACE("tcl::event_loop_impl::eval_command");
   // finished.  Among other things, this will trash the text of the
   // command being evaluated.
 
-  Tcl_CreateChannelHandler(m_stdin_chan, 0, &c_stdin_proc,
-                           static_cast<void*>(0));
+  Tcl_CreateChannelHandler(m_stdin_chan, 0, &c_stdin_proc, nullptr);
 
   bool should_display_result = false;
 
@@ -559,8 +556,7 @@ GVX_TRACE("tcl::event_loop_impl::eval_command");
   if (m_stdin_chan)
     {
       Tcl_CreateChannelHandler(m_stdin_chan, TCL_READABLE,
-                               &c_stdin_proc,
-                               static_cast<void*>(0));
+                               &c_stdin_proc, nullptr);
     }
 
   m_command.clear();
@@ -629,8 +625,7 @@ GVX_TRACE("tcl::event_loop_impl::run");
       if (m_stdin_chan)
         {
           Tcl_CreateChannelHandler(m_stdin_chan, TCL_READABLE,
-                                   &event_loop_impl::c_stdin_proc,
-                                   static_cast<void*>(0));
+                                   &event_loop_impl::c_stdin_proc, nullptr);
         }
       if (m_is_interactive)
         {
