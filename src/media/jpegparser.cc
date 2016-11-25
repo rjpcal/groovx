@@ -49,8 +49,10 @@ extern "C"
 #include "rutz/trace.h"
 
 
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+#endif
 
 namespace
 {
@@ -169,6 +171,8 @@ GVX_TRACE("media::load_jpeg");
   return result;
 }
 
+#ifdef __clang__
 #pragma clang diagnostic pop
+#endif
 
 #endif // HAVE_LIBJPEG

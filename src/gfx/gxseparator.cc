@@ -191,7 +191,7 @@ GVX_TRACE("GxSeparator::removeChild");
   const nub::uid target = item.id();
 
   auto itr = std::find_if(rep->children.begin(), rep->children.end(),
-                          [=](auto node){ return node->id() == target; });
+                          [target](const auto& node){ return node->id() == target; });
 
   if (itr != rep->children.end())
     {

@@ -36,6 +36,7 @@
 #include "tcl/obj.h"
 
 #include <type_traits>
+#include <utility> // std::forward
 
 typedef struct Tcl_Obj Tcl_Obj;
 

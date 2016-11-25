@@ -32,6 +32,8 @@
 
 #include "rutz/fstring.h"
 
+#include <time.h>
+
 rutz::fstring rutz::format_time(const timeval& tval,
                                 const char* formatcode)
 {

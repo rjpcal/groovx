@@ -37,6 +37,7 @@
 
 #include <cstdio> // for EOF
 #include <istream>
+#include <limits>
 
 #include "rutz/trace.h"
 #include "rutz/debug.h"

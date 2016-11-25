@@ -38,6 +38,7 @@
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
 
+#include <algorithm>
 #include <utility>
 #include <sstream>
 #include <vector>

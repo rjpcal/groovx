@@ -35,6 +35,7 @@
 #include "geom/geom.h"
 
 #include <cmath>
+#include <cstddef> // size_t
 
 struct GaborSpec
 {

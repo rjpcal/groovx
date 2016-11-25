@@ -65,14 +65,9 @@ public:
     m_bytes(),
     m_row_order(row_order::TOP_FIRST)
   {
-    GVX_PRECONDITION(m_size.x() >= 0);
-    GVX_PRECONDITION(m_size.y() >= 0);
-
-    // If m_size.x() is 0, this is still OK, since -1/8 --> -1, so the
+    // If m_size.x() is 0, this is still OK, since 7/8 --> 0, so the
     // whole thing goes to 0
     const size_t bytes_per_row = (m_size.x()*bits_per_pixel + 7)/8;
-
-    GVX_ASSERT(bytes_per_row >= 0);
 
     const size_t num_bytes = bytes_per_row * m_size.y();
 
