@@ -63,7 +63,7 @@ GVX_DBG_REGISTER
 
 using std::string;
 using std::vector;
-using std::shared_ptr;
+using std::unique_ptr;
 
 namespace
 {
@@ -167,8 +167,8 @@ public:
   string                         const pkg_name;
   string                         const version;
   int                                  init_status;
-  std::vector<shared_ptr<int> >        owned_ints;
-  std::vector<shared_ptr<double> >     owned_doubles;
+  std::vector<unique_ptr<int> >        owned_ints;
+  std::vector<unique_ptr<double> >     owned_doubles;
   exit_callback*                       on_exit;
 
   static void c_exit_handler(void* clientdata)
@@ -426,16 +426,16 @@ GVX_TRACE("tcl::pkg::link_var double");
 void tcl::pkg::link_var_copy(const char* var_name, int var)
 {
 GVX_TRACE("tcl::pkg::link_var_copy int");
-  shared_ptr<int> copy(std::make_shared<int>(var));
-  rep->owned_ints.push_back(copy);
+  unique_ptr<int> copy(std::make_unique<int>(var));
+  rep->owned_ints.push_back(std::move(copy));
   rep->interp.link_int(var_name, copy.get(), true);
 }
 
 void tcl::pkg::link_var_copy(const char* var_name, double var)
 {
 GVX_TRACE("tcl::pkg::link_var_copy double");
-  shared_ptr<double> copy(std::make_shared<double>(var));
-  rep->owned_doubles.push_back(copy);
+  unique_ptr<double> copy(std::make_unique<double>(var));
+  rep->owned_doubles.push_back(std::move(copy));
   rep->interp.link_double(var_name, copy.get(), true);
 }
 

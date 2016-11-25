@@ -73,7 +73,7 @@ namespace
   };
 
   std::vector<scope_info> scopes;
-  std::shared_ptr<std::ofstream> s_log_fstream;
+  std::unique_ptr<std::ofstream> s_log_fstream;
   bool s_copy_to_stdout = true;
 
   template <class str>
@@ -148,8 +148,8 @@ void nub::logging::set_log_filename(const fstring& filename)
 {
 GVX_TRACE("nub::logging::set_log_filename");
 
-  std::shared_ptr<std::ofstream> newfile
-    (std::make_shared<std::ofstream>(filename.c_str(), std::ios::out | std::ios::app));
+  std::unique_ptr<std::ofstream> newfile
+    (std::make_unique<std::ofstream>(filename.c_str(), std::ios::out | std::ios::app));
 
   if (newfile->is_open() && newfile->good())
     s_log_fstream.swap(newfile);
