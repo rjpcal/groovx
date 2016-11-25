@@ -41,6 +41,7 @@
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
 
+#include <cstring> // strrchr
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -315,10 +316,12 @@ GVX_TRACE("tcl::event_loop_impl::prompt");
     }
   else
     {
+      const char* slash = strrchr(m_argv0, '/');
+      const char* cmdname = (slash != nullptr && slash[1] != '\0') ? slash+1 : m_argv0;
 #ifdef GVX_WITH_READLINE
-      const rutz::fstring text = rutz::sfmt("%s %d>>> ", m_argv0, history_next());
+      const rutz::fstring text = rutz::sfmt("%s %d>>> ", cmdname, history_next());
 #else
-      const rutz::fstring text = rutz::sfmt("%s %d> ", m_argv0, history_next());
+      const rutz::fstring text = rutz::sfmt("%s %d> ", cmdname, history_next());
 #endif
 
       do_prompt(text.c_str(), text.length());
