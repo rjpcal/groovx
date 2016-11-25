@@ -466,7 +466,7 @@ GVX_TRACE("tcl::event_loop_impl::eval_command");
     history_expand(const_cast<char*>(m_command.c_str()), &expansion);
 #else
   const char* expansion = m_command.data();
-  const int status = nullptr;
+  const int status = 0;
 #endif
 
   dbg_eval_nl(3, m_command.c_str());
