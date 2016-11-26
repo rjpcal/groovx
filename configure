@@ -4324,12 +4324,12 @@ fi
 
 
 
-ac_fn_cxx_check_header_preproc "$LINENO" "QuickTime/Movies.h" "ac_cv_header_QuickTime_Movies_h"
-if test "x$ac_cv_header_QuickTime_Movies_h" = xyes; then :
+ac_fn_cxx_check_header_preproc "$LINENO" "AudioToolbox/AudioToolbox.h" "ac_cv_header_AudioToolbox_AudioToolbox_h"
+if test "x$ac_cv_header_AudioToolbox_AudioToolbox_h" = xyes; then :
 
-$as_echo "#define HAVE_QUICKTIME_MOVIES_H 1" >>confdefs.h
+$as_echo "#define HAVE_AUDIOTOOLBOX 1" >>confdefs.h
 
-		 LIBS="$LIBS -framework QuickTime -framework Carbon"
+		 LIBS="$LIBS -framework AudioToolbox -framework CoreFoundation"
 fi
 
 

@@ -10,7 +10,7 @@
 if { [info exists TEST_TCL_DEFINED] } { return }
 set TEST_TCL_DEFINED 1
 
-set START_CLICKS [clock clicks]
+set START_MSECS [clock milliseconds]
 
 if { ![info exists ::VERBOSE] } { set ::VERBOSE 0 }
 if { ![info exists ::TEST_DIR] } {
@@ -87,9 +87,8 @@ proc test {package_name test_name script expected_result_regexp {flags 1}} {
 }
 
 proc finish {} {
-    set clicks_per_ms 1000
-    set ::END_CLICKS [clock clicks]
-    set elapsed_ms [expr ($::END_CLICKS-$::START_CLICKS) / $clicks_per_ms]
+    set ::END_MSECS [clock milliseconds]
+    set elapsed_ms [expr ($::END_MSECS-$::START_MSECS)]
     set per_test [expr $::num_tests ? ($elapsed_ms/$::num_tests) : 0]
     set msg ""
     if { $::num_success < $::num_tests || [llength $::BAD_TESTFILES] > 0 } {

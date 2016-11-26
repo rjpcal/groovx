@@ -61,6 +61,9 @@
 /* have Alib.h? */
 #undef HAVE_ALIB_H
 
+/* have AudioToolbox/AudioToolbox.h? */
+#undef HAVE_AUDIOTOOLBOX
+
 /* Define to 1 if you have the <cxxabi.h> header file. */
 #undef HAVE_CXXABI_H
 
@@ -120,9 +123,6 @@
 
 /* Define to 1 if you have the <png.h> header file. */
 #undef HAVE_PNG_H
-
-/* have QuickTime/Movies.h? */
-#undef HAVE_QUICKTIME_MOVIES_H
 
 /* Define to 1 if you have the <readline/history.h> header file. */
 #undef HAVE_READLINE_HISTORY_H

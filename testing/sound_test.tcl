@@ -52,7 +52,7 @@ test "Sound::forceLoad" "error on bad filename" {
     catch {-> $s forceLoad} result
     delete $s
     return $result
-} {forceLoad: }
+} {error while evaluating Sound::forceLoad }
 
 test "Sound::forceLoad" "error on junk text file" {
     set s [new Sound]
@@ -60,7 +60,7 @@ test "Sound::forceLoad" "error on junk text file" {
     catch {-> $s forceLoad} result
     delete $s
     return $result
-} {forceLoad: }
+} {error while evaluating Sound::forceLoad }
 
 test "Sound::forceLoad" "error on junk binary file" {
     set s [new Sound]
@@ -68,7 +68,7 @@ test "Sound::forceLoad" "error on junk binary file" {
     catch {-> $s forceLoad} result
     delete $s
     return $result
-} {forceLoad: }
+} {error while evaluating Sound::forceLoad }
 
 ### Sound::playCmd ###
 
