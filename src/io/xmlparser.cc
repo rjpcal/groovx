@@ -169,8 +169,8 @@ public:
   virtual ~Outliner() {}
 
 protected:
-  virtual void element_start(const char* el, const char** attr);
-  virtual void element_end(const char* el);
+  virtual void element_start(const char* el, const char** attr) override;
+  virtual void element_end(const char* el) override;
 
 private:
   int m_depth;

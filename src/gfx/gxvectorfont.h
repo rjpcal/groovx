@@ -42,13 +42,13 @@ public:
 
   virtual ~GxVectorFont() noexcept;
 
-  virtual const char* fontName() const;
+  virtual const char* fontName() const override;
 
-  virtual unsigned int listBase() const;
+  virtual unsigned int listBase() const override;
 
-  virtual void bboxOf(const char* text, Gfx::Bbox& bbox) const;
+  virtual void bboxOf(const char* text, Gfx::Bbox& bbox) const override;
 
-  virtual void drawText(const char* text, Gfx::Canvas& canvas) const;
+  virtual void drawText(const char* text, Gfx::Canvas& canvas) const override;
 
   /// Return the vector height of the font, in world coords.
   double vectorHeight() const;

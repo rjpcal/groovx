@@ -253,14 +253,14 @@ public:
 
   typedef const nub::ref<GxNode> ValType;
 
-  virtual rutz::fwd_iter_ifx<ValType>* clone() const
+  virtual rutz::fwd_iter_ifx<ValType>* clone() const override
   {
     return new GxSepIter(*this);
   }
 
-  virtual bool     at_end() const { return itsNodes.empty(); }
-  virtual ValType&   get()  const { return itsNodes.front(); }
-  virtual void      next()        { if (!at_end()) itsNodes.pop_front(); }
+  virtual bool     at_end() const override { return itsNodes.empty(); }
+  virtual ValType&   get()  const override { return itsNodes.front(); }
+  virtual void      next()        override { if (!at_end()) itsNodes.pop_front(); }
 
 private:
   // Want to use a list instead of a vector-type container here since

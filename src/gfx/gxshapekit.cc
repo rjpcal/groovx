@@ -65,13 +65,13 @@ public:
 
   virtual ~GxShapeKitNode() noexcept {}
 
-  virtual void read_from(io::reader& /*reader*/) {}
-  virtual void write_to(io::writer& /*writer*/) const {}
+  virtual void read_from(io::reader& /*reader*/) override {}
+  virtual void write_to(io::writer& /*writer*/) const override {}
 
-  virtual void draw(Gfx::Canvas& canvas) const
+  virtual void draw(Gfx::Canvas& canvas) const override
   { itsObj->grRender(canvas); }
 
-  virtual void getBoundingCube(Gfx::Bbox& bbox) const
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const override
   {
     itsObj->grGetBoundingBox(bbox);
     dbg_dump(2, bbox.cube());

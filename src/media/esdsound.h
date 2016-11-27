@@ -61,7 +61,7 @@ namespace media
     virtual ~esd_sound_rep() noexcept;
 
     /// Play the sound (in this case using the ESD daemon).
-    virtual void play();
+    virtual void play() override;
 
   private:
     rutz::fstring m_filename;

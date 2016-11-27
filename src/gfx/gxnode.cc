@@ -55,14 +55,14 @@ public:
 
   typedef const nub::ref<GxNode> ValType;
 
-  virtual rutz::fwd_iter_ifx<ValType>* clone() const
+  virtual rutz::fwd_iter_ifx<ValType>* clone() const override
   {
     return new GxNodeIter(*this);
   }
 
-  virtual bool     at_end() const { return !isItValid; }
-  virtual ValType&    get() const { return itsNode; }
-  virtual void       next()       { isItValid = false; }
+  virtual bool     at_end() const override { return !isItValid; }
+  virtual ValType&    get() const override { return itsNode; }
+  virtual void       next()       override { isItValid = false; }
 };
 
 GxNode::GxNode() : sigNodeChanged()

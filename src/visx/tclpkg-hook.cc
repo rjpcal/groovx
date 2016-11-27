@@ -221,12 +221,12 @@ public:
     dbg_eval_nl(3, MyObj::counter);
   }
 
-  virtual MyObj* clone() const
+  virtual MyObj* clone() const override
   {
     return new MyObj(value);
   }
 
-  virtual char* asString() const
+  virtual char* asString() const override
   {
     char* space = stringAlloc(32);
 

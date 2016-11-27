@@ -63,25 +63,25 @@ public:
   virtual ~GlxWrapper();
 
   /// Query whether rendering context has direct access to the hardware.
-  virtual bool isDirect() const
+  virtual bool isDirect() const override
   {
     return glXIsDirect(itsDisplay, itsContext) == True ? true : false;
   }
 
   /// Query whether the rendering context is double-buffered.
-  virtual bool isDoubleBuffered() const;
+  virtual bool isDoubleBuffered() const override;
 
   /// Get the bit depth of the draw buffer(s).
-  virtual unsigned int bitsPerPixel() const;
+  virtual unsigned int bitsPerPixel() const override;
 
   /// Make our rendering context the current active one.
-  virtual void makeCurrent();
+  virtual void makeCurrent() override;
 
   /// Should be called when the corresponding window's geometry is changed.
-  virtual void onReshape(int width, int height);
+  virtual void onReshape(int width, int height) override;
 
   /// Swaps buffers if in double-buffering mode.
-  virtual void swapBuffers() const;
+  virtual void swapBuffers() const override;
 
   // GLX-specific functions:
 

@@ -87,10 +87,10 @@ public:
   void makeCurrent() const;
 
   /// Overridden from tcl::TkWidget.
-  virtual void displayCallback();
+  virtual void displayCallback() override;
 
   /// Overridden from tcl::TkWidget.
-  virtual void reshapeCallback(int width, int height);
+  virtual void reshapeCallback(int width, int height) override;
 
   /// Swap buffers in a double-buffered GL context.
   void swapBuffers();

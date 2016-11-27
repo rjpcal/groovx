@@ -110,7 +110,7 @@ namespace nub
     virtual void call() = 0;
 
     /// Unpacks any parameters and then calls the implementation.
-    virtual void do_call(void* /*params*/) { call(); }
+    virtual void do_call(void* /*params*/) override { call(); }
   };
 
 
@@ -134,9 +134,9 @@ namespace nub
     static slot_adapter_mem_func0<C, MF>* make(C* obj, MF mf)
     { return new slot_adapter_mem_func0<C, MF>(obj, mf); }
 
-    virtual bool exists() const { return m_object.is_valid(); }
+    virtual bool exists() const override { return m_object.is_valid(); }
 
-    virtual void call()
+    virtual void call() override
     {
       if (m_object.is_valid())
         (m_object.get()->*m_mem_func)();
@@ -172,7 +172,7 @@ namespace nub
   public:
     static slot_adapter_free_func0* make(free_func* f);
 
-    virtual void call();
+    virtual void call() override;
   };
 
   //  #######################################################
@@ -211,7 +211,7 @@ namespace nub
     virtual void call(P1 p1) = 0;
 
     /// Unpacks any parameters and then calls the implementation.
-    virtual void do_call(void* params)
+    virtual void do_call(void* params) override
     {
       call_data1<P1>* data = static_cast<call_data1<P1>*>(params);
       call(data->p1);
@@ -238,9 +238,9 @@ namespace nub
     static slot_adapter_mem_func1<P1, C, MF>* make(C* obj, MF mf)
     { return new slot_adapter_mem_func1<P1, C, MF>(obj, mf); }
 
-    virtual bool exists() const { return m_object.is_valid(); }
+    virtual bool exists() const override { return m_object.is_valid(); }
 
-    virtual void call(P1 p1)
+    virtual void call(P1 p1) override
     {
       if (m_object.is_valid())
         (m_object.get()->*m_mem_func)(p1);
@@ -276,7 +276,7 @@ namespace nub
     static slot_adapter_free_func1<P1, FF>* make(FF f)
     { return new slot_adapter_free_func1<P1, FF>(f); }
 
-    virtual void call(P1 p1)
+    virtual void call(P1 p1) override
     {
       (*m_free_func)(p1);
     }

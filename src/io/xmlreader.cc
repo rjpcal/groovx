@@ -149,7 +149,7 @@ namespace
     virtual ~basic_element() {}
 
     virtual void trace(std::ostream& os,
-                       int depth, const char* name) const
+                       int depth, const char* name) const override
     {
       for (int i = 0; i < depth; ++i) os << "  ";
       os << name << "(" << typeid(T).name() << ") value=" << m_value << "\n";
@@ -225,7 +225,7 @@ namespace
     virtual ~value_element() {}
 
     virtual void trace(std::ostream& os,
-                       int depth, const char* name) const
+                       int depth, const char* name) const override
     {
       for (int i = 0; i < depth; ++i) os << "  ";
       os << name << "(valobj) value=" << m_value << "\n";
@@ -266,7 +266,7 @@ namespace
     virtual ~objref_element() {}
 
     virtual void trace(std::ostream& os,
-                       int depth, const char* name) const
+                       int depth, const char* name) const override
     {
       for (int i = 0; i < depth; ++i) os << "  ";
       os << name << "(objref:" << m_type << ") id=" << m_id << "\n";
@@ -420,7 +420,7 @@ namespace
 
     soft_ref<io::serializable> m_object;
 
-    virtual void finish()
+    virtual void finish() override
     {
       if (m_object.is_valid())
         inflate(*m_object);

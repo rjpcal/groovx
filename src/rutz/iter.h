@@ -166,10 +166,10 @@ namespace rutz
       :
       base_t(), m_iter(iter), m_end(end) {}
 
-    virtual base_t* clone() const { return new fwd_iter_adapter(*this); }
-    virtual void     next()       { ++m_iter; }
-    virtual T&        get() const { return getref(*m_iter); }
-    virtual bool   at_end() const { return m_iter == m_end; }
+    virtual base_t* clone() const override { return new fwd_iter_adapter(*this); }
+    virtual void     next()       override { ++m_iter; }
+    virtual T&        get() const override { return getref(*m_iter); }
+    virtual bool   at_end() const override { return m_iter == m_end; }
   };
 
 
@@ -242,11 +242,11 @@ namespace rutz
       :
       base_t(), m_iter(iter), m_end(end) {}
 
-    virtual base_t* clone() const { return new bidir_iter_adapter(*this); }
-    virtual void     next()       { ++m_iter; }
-    virtual void     prev()       { --m_iter; }
-    virtual T&        get() const { return getref(*m_iter); }
-    virtual bool   at_end() const { return m_iter == m_end; }
+    virtual base_t* clone() const override { return new bidir_iter_adapter(*this); }
+    virtual void     next()       override { ++m_iter; }
+    virtual void     prev()       override { --m_iter; }
+    virtual T&        get() const override { return getref(*m_iter); }
+    virtual bool   at_end() const override { return m_iter == m_end; }
   };
 
 
@@ -322,15 +322,15 @@ namespace rutz
       :
       base_t(), m_iter(iter), m_end(end) {}
 
-    virtual base_t* clone()      const { return new rxs_iter_adapter(*this); }
-    virtual void     next()            { ++m_iter; }
-    virtual void     prev()            { --m_iter; }
-    virtual void     step(int n)       { m_iter += n; }
-    virtual T&        get()      const { return getref(*m_iter); }
-    virtual bool   at_end()      const { return m_iter == m_end; }
-    virtual int  from_end()      const { return m_end - m_iter; }
+    virtual base_t* clone()      const override { return new rxs_iter_adapter(*this); }
+    virtual void     next()            override { ++m_iter; }
+    virtual void     prev()            override { --m_iter; }
+    virtual void     step(int n)       override { m_iter += n; }
+    virtual T&        get()      const override { return getref(*m_iter); }
+    virtual bool   at_end()      const override { return m_iter == m_end; }
+    virtual int  from_end()      const override { return m_end - m_iter; }
 
-    virtual int minus(const rxs_iter_ifx<T>& other_) const
+    virtual int minus(const rxs_iter_ifx<T>& other_) const override
     {
       rxs_iter_adapter<real_iter_t, T>& other =
         dynamic_cast<const rxs_iter_adapter<real_iter_t, T>& >(other_);

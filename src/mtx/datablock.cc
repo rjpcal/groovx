@@ -57,7 +57,7 @@ namespace
     shared_data_block(size_t length);
     virtual ~shared_data_block();
 
-    virtual bool is_unique() const { return refcount() <= 1; }
+    virtual bool is_unique() const override { return refcount() <= 1; }
   };
 
   shared_data_block::shared_data_block(size_t length) :
@@ -85,7 +85,7 @@ namespace
     { /* don't delete the data, since they are 'borrowed' */ }
 
     // Since the data are borrowed, we always return false here.
-    virtual bool is_unique() const { return false; }
+    virtual bool is_unique() const override { return false; }
   };
 
   class referred_data_block : public data_block
@@ -98,7 +98,7 @@ namespace
     virtual ~referred_data_block()
     { /* don't delete the data, since they are 'borrowed' */ }
 
-    virtual bool is_unique() const { return refcount() <= 1; }
+    virtual bool is_unique() const override { return refcount() <= 1; }
   };
 }
 

@@ -87,14 +87,14 @@ public:
 
   /// Get more data from the underlying file descriptor.
   /** Called when the streambuf's buffer has run out of data. */
-  virtual int underflow();
+  virtual int underflow() override;
 
   /// Send more data to the underlying file descriptor.
   /** Called when the streambuf's buffer has become full. */
-  virtual int overflow(int c);
+  virtual int overflow(int c) override;
 
   /// Flush the current buffer contents to the underlying file.
-  virtual int sync();
+  virtual int sync() override;
 };
 
 class rutz::stdiostream : public std::iostream

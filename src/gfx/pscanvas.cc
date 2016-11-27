@@ -168,19 +168,19 @@ public:
 
     virtual ~Primitive() {}
 
-    virtual void begin(PS* ps)
+    void begin(PS* ps)
     {
       itsVcount = 0;
       onBegin(ps);
     }
 
-    virtual void vertex(PS* ps, const vec3d& v)
+    void vertex(PS* ps, const vec3d& v)
     {
       onVertex(ps, v);
       ++itsVcount;
     }
 
-    virtual void end(PS* ps)
+    void end(PS* ps)
     {
       onEnd(ps);
     }
@@ -197,23 +197,23 @@ public:
 
   struct PointsPrim : public Primitive
   {
-    virtual void onBegin(PS*) {}
+    virtual void onBegin(PS*) override {}
 
-    virtual void onVertex(PS* ps, const vec3d& v)
+    virtual void onVertex(PS* ps, const vec3d& v) override
     {
       ps->newpath(); ps->moveto(v); ps->stroke();
     }
 
-    virtual void onEnd(PS*) {}
+    virtual void onEnd(PS*) override {}
   };
 
   struct LinesPrim : public Primitive
   {
-    virtual void onBegin(PS* ps)
+    virtual void onBegin(PS* ps) override
     {
       ps->newpath();
     }
-    virtual void onVertex(PS* ps, const vec3d& v)
+    virtual void onVertex(PS* ps, const vec3d& v) override
     {
       if (vcount() % 2)
         {
@@ -224,16 +224,16 @@ public:
           ps->moveto(v);
         }
     }
-    virtual void onEnd(PS*) {}
+    virtual void onEnd(PS*) override {}
   };
 
   struct LineStripPrim : public Primitive
   {
-    virtual void onBegin(PS* ps)
+    virtual void onBegin(PS* ps) override
     {
       ps->newpath();
     }
-    virtual void onVertex(PS* ps, const vec3d& v)
+    virtual void onVertex(PS* ps, const vec3d& v) override
     {
       if (vcount() == 0)
         {
@@ -244,7 +244,7 @@ public:
           ps->lineto(v);
         }
     }
-    virtual void onEnd(PS* ps)
+    virtual void onEnd(PS* ps) override
     {
       ps->stroke();
     }
@@ -252,8 +252,8 @@ public:
 
   struct LineLoopPrim : public Primitive
   {
-    virtual void onBegin(PS*) {}
-    virtual void onVertex(PS* ps, const vec3d& v)
+    virtual void onBegin(PS*) override {}
+    virtual void onVertex(PS* ps, const vec3d& v) override
     {
       if (vcount() == 0)
         {
@@ -264,7 +264,7 @@ public:
           ps->lineto(v);
         }
     }
-    virtual void onEnd(PS* ps)
+    virtual void onEnd(PS* ps) override
     {
       ps->closepath(); ps->stroke();
     }
@@ -272,11 +272,11 @@ public:
 
   struct TrianglesPrim : public Primitive
   {
-    virtual void onBegin(PS* ps)
+    virtual void onBegin(PS* ps) override
     {
       ps->newpath();
     }
-    virtual void onVertex(PS* ps, const vec3d& v)
+    virtual void onVertex(PS* ps, const vec3d& v) override
     {
       switch(vcount() % 3)
         {
@@ -291,28 +291,28 @@ public:
           break;
         }
     }
-    virtual void onEnd(PS*) {}
+    virtual void onEnd(PS*) override {}
   };
 
   struct TriangleStripPrim : public Primitive
   {
-    virtual void onBegin(PS*) { /* FIXME */ }
-    virtual void onVertex(PS*, const vec3d&) { /* FIXME */ }
-    virtual void onEnd(PS*) { /* FIXME */ }
+    virtual void onBegin(PS*) override { /* FIXME */ }
+    virtual void onVertex(PS*, const vec3d&) override { /* FIXME */ }
+    virtual void onEnd(PS*) override { /* FIXME */ }
   };
 
   struct TriangleFanPrim : public Primitive
   {
-    virtual void onBegin(PS*) { /* FIXME */ }
-    virtual void onVertex(PS*, const vec3d&) { /* FIXME */ }
-    virtual void onEnd(PS*) { /* FIXME */ }
+    virtual void onBegin(PS*) override { /* FIXME */ }
+    virtual void onVertex(PS*, const vec3d&) override { /* FIXME */ }
+    virtual void onEnd(PS*) override { /* FIXME */ }
   };
 
   struct QuadsPrim : public Primitive
   {
-    virtual void onBegin(PS*) {}
+    virtual void onBegin(PS*) override {}
 
-    virtual void onVertex(PS* ps, const vec3d& v)
+    virtual void onVertex(PS* ps, const vec3d& v) override
     {
       switch(vcount() % 4)
         {
@@ -328,7 +328,7 @@ public:
           break;
         }
     }
-    virtual void onEnd(PS*) {}
+    virtual void onEnd(PS*) override {}
   };
 
   struct QuadStripPrim : public Primitive
@@ -338,13 +338,13 @@ public:
 
     QuadStripPrim() : itsEvenPts(), itsOddPts() {}
 
-    virtual void onBegin(PS*)
+    virtual void onBegin(PS*) override
     {
       itsEvenPts.clear();
       itsOddPts.clear();
     }
 
-    virtual void onVertex(PS*, const vec3d& v)
+    virtual void onVertex(PS*, const vec3d& v) override
     {
       if ((vcount() % 2) == 0)
         itsEvenPts.push_back(v);
@@ -352,7 +352,7 @@ public:
         itsOddPts.push_front(v);
     }
 
-    virtual void onEnd(PS* ps)
+    virtual void onEnd(PS* ps) override
     {
       ps->newpath();
 
@@ -378,7 +378,7 @@ public:
 
   struct PolygonPrim : public LineLoopPrim
   {
-    virtual void onEnd(PS* ps)
+    virtual void onEnd(PS* ps) override
     {
       ps->closepath(); ps->renderpolygon();
     }

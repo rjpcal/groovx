@@ -245,12 +245,12 @@ namespace
     nub::object* m_obj;
     const map_type::iterator m_end;
 
-    virtual ifx_t* clone() const
+    virtual ifx_t* clone() const override
     {
       return new iter_impl(m_map, m_iter);
     }
 
-    virtual void next()
+    virtual void next() override
     {
       if (!at_end())
         {
@@ -259,13 +259,13 @@ namespace
         }
     }
 
-    virtual value_t& get() const
+    virtual value_t& get() const override
     {
       GVX_ASSERT(m_iter == m_end || (*m_iter).second.get_weak() == m_obj);
       return m_obj;
     }
 
-    virtual bool at_end() const
+    virtual bool at_end() const override
     {
       return (m_iter == m_end);
     }

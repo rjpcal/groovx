@@ -46,12 +46,12 @@ private:
 public:
   virtual ~GxEmptyNode() noexcept;
 
-  virtual void read_from(io::reader&);
-  virtual void write_to(io::writer&) const;
+  virtual void read_from(io::reader&) override;
+  virtual void write_to(io::writer&) const override;
 
-  virtual void getBoundingCube(Gfx::Bbox&) const;
+  virtual void getBoundingCube(Gfx::Bbox&) const override;
 
-  virtual void draw(Gfx::Canvas&) const;
+  virtual void draw(Gfx::Canvas&) const override;
 
   /// Factory function.
   static GxEmptyNode* make();

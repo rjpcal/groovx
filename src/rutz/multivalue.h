@@ -44,8 +44,8 @@ namespace rutz
   public:
     multi_value(int num);
 
-    virtual void print_to(std::ostream& os) const;
-    virtual void scan_from(std::istream& is);
+    virtual void print_to(std::ostream& os) const override;
+    virtual void scan_from(std::istream& is) override;
 
   protected:
     /// Returns a const pointer to the start of the underlying storage.

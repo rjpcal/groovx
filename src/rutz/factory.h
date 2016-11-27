@@ -94,11 +94,11 @@ namespace rutz
       rutz::creator_base<base_t>(), m_creator_func(func) {}
 
     /// Clone operator.
-    virtual rutz::creator_base<base_t>* clone() const
+    virtual rutz::creator_base<base_t>* clone() const override
     { return new creator_from_func<base_t, derived_t>(*this); }
 
     /// Create an object using the creator function.
-    virtual base_t create() { return base_t(m_creator_func()); }
+    virtual base_t create() override { return base_t(m_creator_func()); }
 
   private:
     creator_func_t m_creator_func;

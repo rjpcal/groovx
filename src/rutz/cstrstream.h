@@ -69,7 +69,7 @@ public:
   /// Underflow operation.
   /** Since there's no "external data source", if we've come to the
       end of our current buffer, then we're just plain out of data. */
-  virtual int underflow();
+  virtual int underflow() override;
 };
 
 /// An input stream class based on imembuf.

@@ -46,7 +46,7 @@ namespace media
     dummy_sound_rep(const char* filename = 0);
 
     /// Play the sound (but this is a no-op for DummySound).
-    virtual void play();
+    virtual void play() override;
   };
 }
 

@@ -56,7 +56,7 @@ namespace media
     hp_audio_sound_rep(const char* filename = 0);
     virtual ~hp_audio_sound_rep() noexcept;
 
-    virtual void play();
+    virtual void play() override;
 
   private:
     SBucket* m_sbucket;

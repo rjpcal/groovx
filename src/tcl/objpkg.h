@@ -82,12 +82,12 @@ namespace tcl
   class cobj_caster : public obj_caster
   {
   public:
-    virtual unsigned int get_sizeof() const
+    virtual unsigned int get_sizeof() const override
     {
       return sizeof(C);
     }
 
-    virtual bool is_my_type(const nub::object* obj) const
+    virtual bool is_my_type(const nub::object* obj) const override
     {
       return (obj != nullptr && dynamic_cast<const C*>(obj) != nullptr);
     }

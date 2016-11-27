@@ -66,7 +66,7 @@ namespace
   public:
     virtual void dispatch(tcl::interpreter& interp,
                           unsigned int objc, Tcl_Obj* const objv[],
-                          const std::function<void(tcl::call_context&)>& callback)
+                          const std::function<void(tcl::call_context&)>& callback) override
     {
       tcl::call_context ctx(interp, objc, objv);
       callback(ctx);

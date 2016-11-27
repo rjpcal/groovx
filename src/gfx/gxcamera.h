@@ -66,7 +66,7 @@ public:
   int height() const { return itsHeight; }
 
   /// Overridden from GxNode.
-  virtual void getBoundingCube(Gfx::Bbox& /*bbox*/) const {}
+  virtual void getBoundingCube(Gfx::Bbox& /*bbox*/) const override {}
 
 private:
   int itsWidth;
@@ -115,8 +115,8 @@ public:
   /// Virtual no-throw destructor.
   virtual ~GxFixedRectCamera() noexcept;
 
-  virtual void read_from(io::reader& /*reader*/) {}
-  virtual void write_to(io::writer& /*writer*/) const {}
+  virtual void read_from(io::reader& /*reader*/) override {}
+  virtual void write_to(io::writer& /*writer*/) const override {}
 
   /// Change the viewable rect area.
   void setRect(const geom::rect<double>& rect) { itsRect = rect; }
@@ -124,7 +124,7 @@ public:
   /// Get the viewable rect area.
   const geom::rect<double>& getRect() const { return itsRect; }
 
-  virtual void draw(Gfx::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const override;
 
 private:
   geom::rect<double> itsRect;
@@ -143,8 +143,8 @@ public:
   /// Virtual no-throw destructor.
   virtual ~GxMinRectCamera() noexcept;
 
-  virtual void read_from(io::reader& /*reader*/) {}
-  virtual void write_to(io::writer& /*writer*/) const {}
+  virtual void read_from(io::reader& /*reader*/) override {}
+  virtual void write_to(io::writer& /*writer*/) const override {}
 
   /// Change the minimally-visible rect
   void setRect(const geom::rect<double>& rect) { itsRect = rect; }
@@ -152,7 +152,7 @@ public:
   /// Get the minimally-visible rect
   const geom::rect<double>& getRect() const { return itsRect; }
 
-  virtual void draw(Gfx::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const override;
 
 private:
   geom::rect<double> itsRect;

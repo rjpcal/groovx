@@ -158,7 +158,7 @@ protected:
   /// Virtual destructor.
   virtual ~NullTrialEvent() noexcept;
 
-  virtual void invoke(Trial&);
+  virtual void invoke(Trial&) override;
 
 public:
   /// Default creator.

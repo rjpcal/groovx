@@ -66,7 +66,7 @@ public:
   virtual ~error() noexcept;
 
   /// Get the decorated error message as a C-style string.
-  virtual const char* what() const noexcept;
+  virtual const char* what() const noexcept override;
 
   /// Get the source file position where the error was generated.
   const rutz::file_pos& src_pos() const noexcept { return m_file_pos; }

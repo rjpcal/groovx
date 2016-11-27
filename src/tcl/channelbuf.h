@@ -70,11 +70,11 @@ namespace tcl
 
     void close();
 
-    virtual int underflow();
+    virtual int underflow() override;
 
-    virtual int overflow(int c);
+    virtual int overflow(int c) override;
 
-    virtual int sync();
+    virtual int sync() override;
   };
 }
 
