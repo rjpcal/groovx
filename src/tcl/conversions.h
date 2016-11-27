@@ -153,10 +153,8 @@ namespace tcl
   template <class T>
   inline tcl::obj convert_from(T&& val)
   {
-    return help_convert<
-      typename std::remove_cv<
-        typename std::remove_reference<T>::type>::type
-      >::to_tcl(std::forward<T>(val));
+    return help_convert<std::remove_cv_t<std::remove_reference_t<T>>>
+      ::to_tcl(std::forward<T>(val));
   }
 }
 
