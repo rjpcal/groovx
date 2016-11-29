@@ -38,7 +38,6 @@
 #include "rutz/demangle.h"
 #include "rutz/fileposition.h"
 #include "rutz/mutex.h"
-#include "rutz/traits.h"
 
 #include <functional>
 #include <memory>

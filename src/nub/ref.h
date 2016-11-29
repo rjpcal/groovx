@@ -39,7 +39,6 @@
 
 #include "rutz/fileposition.h" // for SRC_POS macro
 #include "rutz/stderror.h"     // for rutz::throw_bad_cast()
-#include "rutz/traits.h"
 
 #include <typeinfo>
 

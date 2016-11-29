@@ -32,7 +32,6 @@
 #ifndef GROOVX_TCL_CONVERSIONS_H_UTC20050628162420_DEFINED
 #define GROOVX_TCL_CONVERSIONS_H_UTC20050628162420_DEFINED
 
-#include "rutz/traits.h"
 #include "tcl/obj.h"
 
 #include <type_traits>
@@ -57,39 +56,6 @@ namespace tcl
 {
   class obj;
 
-  /// Trait class for extracting an appropriate return-type from T.
-  template <class T>
-  struct returnable
-  {
-    // This machinery is simple to set up the rule that we want to
-    // convert all rutz::value subclasses via strings. All other types
-    // are converted directly.
-    typedef typename rutz::select_if<
-      rutz::is_sub_super<T, rutz::value>::result,
-      rutz::fstring, T>::result_t
-    type;
-  };
-
-  /// Specialization of tcl::returnable for const T.
-  template <class T>
-  struct returnable<const T>
-  {
-    typedef typename rutz::select_if<
-      rutz::is_sub_super<T, rutz::value>::result,
-      rutz::fstring, T>::result_t
-    type;
-  };
-
-  /// Specialization of tcl::returnable for const T&.
-  template <class T>
-  struct returnable<const T&>
-  {
-    typedef typename rutz::select_if<
-      rutz::is_sub_super<T, rutz::value>::result,
-      rutz::fstring, T>::result_t
-    type;
-  };
-
   //
   // Functions for converting from Tcl objects to C++ types.
   //
@@ -102,7 +68,7 @@ namespace tcl
   template <class T>
   inline auto convert_to( const tcl::obj& obj )
   {
-    return help_convert<typename returnable<T>::type>::from_tcl(obj.get());
+    return help_convert<std::decay_t<T>>::from_tcl(obj.get());
   }
 
   /// Convert a tcl::obj to a native c++ object.
@@ -110,7 +76,7 @@ namespace tcl
   template <class T>
   inline auto convert_to( Tcl_Obj* obj )
   {
-    return help_convert<typename returnable<T>::type>::from_tcl(obj);
+    return help_convert<std::decay_t<T>>::from_tcl(obj);
   }
 
   template <> struct help_convert<int          > { static int           from_tcl(Tcl_Obj* obj); static tcl::obj to_tcl(int val); };
@@ -153,8 +119,7 @@ namespace tcl
   template <class T>
   inline tcl::obj convert_from(T&& val)
   {
-    return help_convert<std::remove_cv_t<std::remove_reference_t<T>>>
-      ::to_tcl(std::forward<T>(val));
+    return help_convert<std::decay_t<T>>::to_tcl(std::forward<T>(val));
   }
 }
 

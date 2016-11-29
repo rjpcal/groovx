@@ -42,7 +42,6 @@
 #include "rutz/fileposition.h"
 #include "rutz/fstring.h"
 #include "rutz/stderror.h"
-#include "rutz/traits.h"
 #include "rutz/value.h"
 
 #include <limits>
