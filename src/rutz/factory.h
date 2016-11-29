@@ -42,6 +42,7 @@
 
 #include <functional>
 #include <memory>
+#include <type_traits>
 #include <typeinfo>
 
 namespace rutz
@@ -225,13 +226,13 @@ namespace rutz
         actual key that was paired with the creation function.*/
     template <class derived_t>
     const char* register_creator(derived_t (*func) (),
-                                 const char* key = 0)
+                                 const char* key = nullptr)
     {
       GVX_MUTEX_LOCK(m_mutex);
 
       if (key == nullptr)
         key = rutz::demangled_name
-          (typeid(typename rutz::type_traits<derived_t>::pointee_t));
+          (typeid(std::remove_reference_t<decltype(*(func()))>));
 
       m_map.set_ptr_for_key
         (key, new rutz::creator_from_func<base_t, derived_t>(func));

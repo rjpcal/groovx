@@ -47,6 +47,7 @@
 
 #include <limits>
 #include <memory>
+#include <type_traits>
 
 namespace rutz
 {
@@ -161,16 +162,13 @@ namespace
 
 
 /// DataMemberFieldImpl.
-template <class PM>
+template <class ValType, class PM>
 class DataMemberFieldImpl : public FieldImpl
 {
 public:
   // PM is a pointer-to-member-type of the form "T C::*"
   typedef typename PmTraits<PM>::ClassType C;
   typedef typename PmTraits<PM>::MemType T;
-
-  /// Type returned when the field is dereferenced.
-  typedef typename rutz::type_traits<T>::deref_t deref_t;
 
   /// Construct with a pointer-to-data-member.
   DataMemberFieldImpl(T C::* memptr) : itsDataMember(memptr) {}
@@ -209,7 +207,7 @@ private:
 };
 
 /// CheckedDataMemberFieldImpl.
-template <class PM>
+template <class ValType, class PM>
 class CheckedDataMemberFieldImpl : public FieldImpl
 {
 public:
@@ -217,20 +215,17 @@ public:
   typedef typename PmTraits<PM>::ClassType C;
   typedef typename PmTraits<PM>::MemType T;
 
-  /// Type returned when the field is dereferenced.
-  typedef typename rutz::type_traits<T>::deref_t deref_t;
-
   /// Construct with a pointer-to-data-member and a bounds checker.
   CheckedDataMemberFieldImpl(T C::* memptr,
-                             const deref_t& min,
-                             const deref_t& max) :
+                             const ValType& min,
+                             const ValType& max) :
     itsDataMember(memptr),
     itsMin(min),
     itsMax(max)
   {}
 
   static std::shared_ptr<FieldImpl>
-  make(T C::* memptr, const deref_t& min, const deref_t& max)
+  make(T C::* memptr, const ValType& min, const ValType& max)
   {
     return std::make_shared<CheckedDataMemberFieldImpl>(memptr, min, max);
   }
@@ -242,7 +237,7 @@ public:
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
-    deref_t temp;
+    ValType temp;
 
     reader.read_value(name, temp);
 
@@ -263,14 +258,14 @@ private:
   CheckedDataMemberFieldImpl(const CheckedDataMemberFieldImpl&);
   CheckedDataMemberFieldImpl& operator=(const CheckedDataMemberFieldImpl&);
 
-  deref_t limit(const deref_t& raw) const
+  ValType limit(const ValType& raw) const
   {
     return rutz::clamp(raw, itsMin, itsMax);
   }
 
   T C::* itsDataMember;
-  const deref_t itsMin;
-  const deref_t itsMax;
+  const ValType itsMin;
+  const ValType itsMax;
 };
 
 /// ValueFieldImpl
@@ -331,9 +326,7 @@ public:
 
     C& cobj = FieldAux::cast<C>(*obj);
 
-    typedef typename rutz::type_traits<T>::stack_t stack_t;
-
-    stack_t temp;
+    std::decay_t<T> temp;
     reader.read_value(name, temp);
     (cobj.*itsSetter)(temp);
   }
@@ -455,8 +448,8 @@ public:
         unsigned int flags=0) :
     itsName(name),
     itsFieldImpl((flags & CHECKED)
-                 ? CheckedDataMemberFieldImpl<PM>::make(memptr, min, max)
-                 : DataMemberFieldImpl<PM>::make(memptr)
+                 ? CheckedDataMemberFieldImpl<T, PM>::make(memptr, min, max)
+                 : DataMemberFieldImpl<T, PM>::make(memptr)
                  ),
     itsDefaultValue(rutz::sconvert(def)),
     itsMin(rutz::sconvert(min)),

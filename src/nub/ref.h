@@ -94,25 +94,6 @@ namespace nub
 
 } // end namespace nub
 
-namespace rutz
-{
-  /// type_traits specialization for nub::ref smart pointer
-  template <class T>
-  struct type_traits<nub::ref<T> >
-  {
-    typedef T pointee_t;
-  };
-
-  /// type_traits specialization for soft_ref smart pointer.
-  template <class T>
-  struct type_traits<nub::soft_ref<T> >
-  {
-    typedef T pointee_t;
-  };
-}
-
-
-
 
 ///////////////////////////////////////////////////////////
 /**

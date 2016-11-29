@@ -67,13 +67,6 @@ public:
   mutable bool changed;
 };
 
-namespace rutz
-{
-  template <class T>
-  struct type_traits<Cached<T> > : public type_traits<T>
-  {};
-}
-
 /// GaborArray represents an 2-D spatial array of gabor patches.
 /** The array has manipulable spacing properties. */
 class GaborArray : public GxShapeKit

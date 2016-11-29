@@ -37,36 +37,6 @@
 
 namespace rutz
 {
-  /// Basic type traits class.
-  template <class T>
-  struct type_traits
-  {
-    typedef T deref_t;
-    typedef T stack_t;
-  };
-
-  /// Specialization of type traits for pointers.
-  template <class T>
-  struct type_traits<T*>
-  {
-    typedef T pointee_t;
-    typedef T deref_t;
-  };
-
-  /// Specialization of type traits for references.
-  template <class T>
-  struct type_traits<T&>
-  {
-    typedef T stack_t;
-  };
-
-  /// Specialization of type traits for const references.
-  template <class T>
-  struct type_traits<const T&>
-  {
-    typedef T stack_t;
-  };
-
   /// Select between two types based on a compile-time constant boolean expression.
   template <bool test, class if_true, class if_false>
   struct select_if
