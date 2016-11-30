@@ -128,9 +128,9 @@ namespace rutz
 
     /// Function-call operator for object + any # args.
     template <class ptr, class... Args>
-    auto operator()(ptr obj, Args... args)
+    auto operator()(ptr obj, Args&&... args)
     {
-      return ((*obj).*m_held_func)(args...);
+      return ((*obj).*m_held_func)(std::forward<Args>(args)...);
     }
   };
 
@@ -216,9 +216,9 @@ namespace rutz
     {}
 
     template <class... Args>
-    auto operator()(Args... args)
+    auto operator()(Args&&... args)
     {
-      return m_held_func(m_bound, args...);
+      return m_held_func(m_bound, std::forward<Args>(args)...);
     }
   };
 
@@ -269,9 +269,9 @@ namespace rutz
     {}
 
     template <class... Args>
-    auto operator()(Args... args)
+    auto operator()(Args&&... args)
     {
-      return m_held_func(args..., m_bound);
+      return m_held_func(std::forward<Args>(args)..., m_bound);
     }
   };
 
