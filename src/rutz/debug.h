@@ -47,7 +47,7 @@ namespace rutz {namespace debug
   void eval (const char* what, int level, const char* where, int line_no, bool nl, float expr) noexcept;
   void eval (const char* what, int level, const char* where, int line_no, bool nl, double expr) noexcept;
   void eval (const char* what, int level, const char* where, int line_no, bool nl, const char* expr) noexcept;
-  void eval (const char* what, int level, const char* where, int line_no, bool nl, void* expr) noexcept;
+  void eval (const char* what, int level, const char* where, int line_no, bool nl, const void* expr) noexcept;
 
   void dump (const char* what, int level, const char* where, int line_no) noexcept;
 

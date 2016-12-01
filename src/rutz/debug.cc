@@ -104,7 +104,7 @@ EVAL_IMPL(unsigned long)
 EVAL_IMPL(float)
 EVAL_IMPL(double)
 EVAL_IMPL(const char*)
-EVAL_IMPL(void*)
+EVAL_IMPL(const void*)
 
 void rutz::debug::dump(const char* what, int level, const char* where, int line_no) noexcept
 {

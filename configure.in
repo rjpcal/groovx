@@ -592,7 +592,11 @@ case $windowsystem in
       # tcl.h, tk.h, etc. in with_tcltk rather than in the standard system
       # location
 
-      CPPFLAGS="-isystem ${with_tcltk}/include $CPPFLAGS"
+      # don't produce "-isystem /usr/include" else we run into this:
+      # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70129
+      if test "x${with_tcltk}" != "x/usr"; then
+         CPPFLAGS="-isystem ${with_tcltk}/include $CPPFLAGS"
+      fi
 
       if test $need_rpath = yes; then
          LDFLAGS="$LDFLAGS -Wl,-rpath,${with_tcltk}/lib"

@@ -36,6 +36,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <memory>
 
 #include "rutz/trace.h"
