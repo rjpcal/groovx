@@ -35,6 +35,8 @@
 
 #include "rutz/demangle.h"
 
+#include <algorithm>
+#include <forward_list>
 #include <list>
 #include <typeinfo>
 
@@ -56,12 +58,6 @@ GVX_TRACE("nub::slot_base::slot_base");
 nub::slot_base::~slot_base() noexcept
 {
 GVX_TRACE("nub::slot_base::~slot_base");
-}
-
-bool nub::slot_base::exists() const
-{
-GVX_TRACE("nub::slot_base::exists");
-  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -113,6 +109,17 @@ void nub::slot_adapter_free_func0::call()
 namespace
 {
   typedef nub::ref<nub::slot_base> slot_ref;
+
+  struct slot_info
+  {
+    slot_ref sref;
+    std::forward_list<nub::soft_ref<nub::object>> tracked;
+    bool all_valid() const
+    {
+      return std::all_of(tracked.begin(), tracked.end(),
+                         [](const auto& it){return it.is_valid();});
+    }
+  };
 }
 
 class nub::signal_base::impl
@@ -125,7 +132,7 @@ public:
 
   virtual ~impl() {}
 
-  typedef std::list<slot_ref> list_type;
+  typedef std::list<slot_info> list_type;
 
   list_type slots;
   bool is_emitting;
@@ -177,14 +184,14 @@ GVX_TRACE("nub::signal_base::do_emit");
         {
           if (GVX_DBG_LEVEL() >= 3)
             {
-              const nub::slot_base& thing = **ii;
+              const nub::slot_base& thing = *(ii->sref);
               dbg_eval(3, typeid(thing).name());
-              dbg_eval_nl(3, (*ii)->dbg_ref_count());
-              dbg_eval_nl(3, (*ii)->exists());
+              dbg_eval_nl(3, ii->sref->dbg_ref_count());
+              dbg_eval_nl(3, ii->all_valid());
             }
-          if ((*ii)->exists())
+          if (ii->all_valid())
             {
-              (*ii)->do_call(params);
+              ii->sref->do_call(params);
               ++ii;
             }
           else
@@ -202,18 +209,20 @@ void nub::signal_base::do_disconnect(nub::soft_ref<nub::slot_base> slot)
 GVX_TRACE("nub::signal_base::do_disconnect");
   if (!slot.is_valid()) return;
 
-  rep->slots.remove(slot_ref(slot.get(), nub::ref_vis::PRIVATE));
+  rep->slots.remove_if([id=slot.id()](const slot_info& si){ return si.sref.id() == id; });
 
   dbg_eval_nl(3, rep->slots.size());
 }
 
-void nub::signal_base::do_connect(nub::soft_ref<nub::slot_base> slot)
+void nub::signal_base::do_connect(nub::soft_ref<nub::slot_base> slot,
+                                  nub::soft_ref<nub::object> trackme)
 {
 GVX_TRACE("nub::signal_base::do_connect");
   if (!slot.is_valid()) return;
 
-  rep->slots.push_back(slot_ref(slot.get(), nub::ref_vis::PRIVATE));
-
+  rep->slots.push_back(slot_info({slot_ref(slot.get(), nub::ref_vis::PRIVATE), {}}));
+  if (trackme.is_valid())
+    rep->slots.back().tracked.push_front(std::move(trackme));
   dbg_eval_nl(3, rep->slots.size());
 }
 

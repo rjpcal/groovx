@@ -78,12 +78,6 @@ namespace nub
     /// Virtual destructor.
     virtual ~slot_base() noexcept;
 
-    /// Answers whether the components of this slot still exist.
-    /** This allows a slot adapter, for example, to indicate if its
-        target object has disappeared. Default implementation returns
-        true always. */
-    virtual bool exists() const;
-
     /// Call the slot with the given arguments
     virtual void do_call(void* params) = 0;
   };
@@ -133,8 +127,6 @@ namespace nub
   public:
     static slot_adapter_mem_func0<C, MF>* make(C* obj, MF mf)
     { return new slot_adapter_mem_func0<C, MF>(obj, mf); }
-
-    virtual bool exists() const override { return m_object.is_valid(); }
 
     virtual void call() override
     {
@@ -238,8 +230,6 @@ namespace nub
     static slot_adapter_mem_func1<P1, C, MF>* make(C* obj, MF mf)
     { return new slot_adapter_mem_func1<P1, C, MF>(obj, mf); }
 
-    virtual bool exists() const override { return m_object.is_valid(); }
-
     virtual void call(P1 p1) override
     {
       if (m_object.is_valid())
@@ -313,7 +303,8 @@ namespace nub
     void do_emit(void* params) const;
 
     /// Add a slot to the list of those watching this Signal.
-    void do_connect(nub::soft_ref<slot_base> slot);
+    void do_connect(nub::soft_ref<slot_base> slot,
+                    nub::soft_ref<nub::object> trackme);
 
     /// Remove a slot from the list of those watching this Signal.
     void do_disconnect(nub::soft_ref<slot_base> slot);
@@ -342,8 +333,9 @@ namespace nub
     virtual ~signal0() noexcept;
 
     /// Add a slot to the list of those watching this Signal.
-    nub::soft_ref<slot0> connect(nub::soft_ref<slot0> slot)
-    { signal_base::do_connect(slot); return slot; }
+    nub::soft_ref<slot0> connect(nub::soft_ref<slot0> slot,
+                                 nub::soft_ref<nub::object> trackme = nub::soft_ref<nub::object>())
+    { signal_base::do_connect(slot, std::move(trackme)); return slot; }
 
     /// Connect a free function to this signal0.
     nub::soft_ref<slot0> connect(void (*free_func)())
@@ -355,7 +347,11 @@ namespace nub
         the connection object that is created. */
     template <class C, class MF>
     nub::soft_ref<slot0> connect(C* obj, MF mem_func)
-    { return connect(slot0::make(obj, mem_func)); }
+    {
+      return connect(slot0::make(obj, mem_func),
+                     nub::soft_ref<nub::object>
+                     (obj, nub::ref_type::WEAK, nub::ref_vis::PRIVATE));
+    }
 
     /// Remove a slot from the list of those watching this signal0.
     void disconnect(nub::soft_ref<slot0> slot)
@@ -388,15 +384,20 @@ namespace nub
 
     virtual ~Signal1() noexcept {}
 
-    nub::soft_ref<slot1<P1> > connect(nub::soft_ref<slot1<P1> > slot)
-    { signal_base::do_connect(slot); return slot; }
+    nub::soft_ref<slot1<P1> > connect(nub::soft_ref<slot1<P1> > slot,
+                                      nub::soft_ref<nub::object> trackme = nub::soft_ref<nub::object>())
+    { signal_base::do_connect(slot, std::move(trackme)); return slot; }
 
     nub::soft_ref<slot1<P1> > connect(void (*free_func)(P1))
     { return connect(slot1<P1>::make(free_func)); }
 
     template <class C, class MF>
     nub::soft_ref<slot1<P1> > connect(C* obj, MF mem_func)
-    { return connect(slot1<P1>::make(obj, mem_func)); }
+    {
+      return connect(slot1<P1>::make(obj, mem_func),
+                     nub::soft_ref<nub::object>
+                     (obj, nub::ref_type::WEAK, nub::ref_vis::PRIVATE));
+    }
 
     void disconnect(nub::soft_ref<slot1<P1> > slot)
     { signal_base::do_disconnect(slot); }
