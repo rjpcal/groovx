@@ -6,7 +6,7 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (04-Dec-2016) Get rid of ref_vis::DEFAULT, make it always PUBLIC
+* (04-Dec-2016) Turn ref_vis into type tags rather than an enum
 
 * (04-Dec-2016) Avoid insert_item() call when ref_vis::PRIVATE; otherwise we can't have a safe ref-to-const
 

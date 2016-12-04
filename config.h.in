@@ -9,10 +9,6 @@
 /* broken OpenGL display lists? */
 #undef GVX_BROKEN_GL_DISPLAY_LISTS
 
-/* initial default RefVis to use when Nub::Ref and Nub::SoftRef objects are
-   constructed? */
-#undef GVX_DEFAULT_REFVIS
-
 /* make operator new+delete protected to force factory functions? */
 #undef GVX_ENFORCE_FACTORY_FUNCTIONS
 

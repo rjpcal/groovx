@@ -291,7 +291,6 @@ void tcl::script_app::run()
   tcl::interpreter& interp = tclmain.interp();
 
   nub::obj_factory::instance().set_fallback(&factory_pkg_loader);
-  nub::set_default_ref_vis(nub::ref_vis::PUBLIC);
 
   const rutz::time ru1 = rutz::time::user_rusage();
   const rutz::time rs1 = rutz::time::sys_rusage();

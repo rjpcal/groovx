@@ -48,12 +48,6 @@ namespace nub
   template <class T> class soft_ref;
   template <class T> class floating_ref;
 
-  //! Get the current default visibility (will control ref_vis DEFAULT).
-  ref_vis get_default_ref_vis();
-
-  //! Set the current default visibility (will control ref_vis DEFAULT).
-  void set_default_ref_vis(ref_vis vis);
-
   namespace detail
   {
     bool is_valid_uid(nub::uid id) noexcept;
@@ -124,7 +118,7 @@ public:
   explicit ref(nub::uid i)
     : m_handle(detail::get_casted_item<T>(i)) {}
 
-  explicit ref(T* ptr, ref_vis vis = ref_vis::DEFAULT) :
+  explicit ref(T* ptr, ref_vis vis = ref_vis::PUBLIC) :
     m_handle(ptr)
   {
     detail::insert_item(ptr, vis);
@@ -222,7 +216,7 @@ public:
   {}
 
   explicit soft_ref(T* master,
-                    ref_type tp = ref_type::STRONG, ref_vis vis = ref_vis::DEFAULT)
+                    ref_type tp = ref_type::STRONG, ref_vis vis = ref_vis::PUBLIC)
     :
     m_handle(master,tp)
   {

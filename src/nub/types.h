@@ -37,7 +37,6 @@ namespace nub
 
   enum class ref_vis
     {
-      DEFAULT,   //! equivalent to result of get_default_ref_vis()
       PRIVATE,   //! nub::objectdb gets no reference to the object
       PROTECTED, //! nub::objectdb gets a weak reference to the object
       PUBLIC     //! nub::objectdb gets a strong reference to the object

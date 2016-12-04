@@ -119,8 +119,6 @@ LDFLAGS="$LDFLAGS -L${BUILD}/compat/lib"
 
 AC_DEFINE(GVX_ENFORCE_FACTORY_FUNCTIONS,1,
 	  [make operator new+delete protected to force factory functions?])
-AC_DEFINE(GVX_DEFAULT_REFVIS,[PUBLIC],
-	  [initial default RefVis to use when Nub::Ref and Nub::SoftRef objects are constructed?])
 
 case ${CXX}-${OS} in
    *g++*)
