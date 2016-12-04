@@ -43,6 +43,6 @@ void GxBin::setChild(const nub::ref<GxNode>& child)
 {
   itsChild->sigNodeChanged.disconnect(this->sigNodeChanged.slot());
   itsChild = child;
-  itsChild->sigNodeChanged.connect(this->sigNodeChanged.slot());
+  itsChild->sigNodeChanged.connect(this->sigNodeChanged.slot(), this);
   this->sigNodeChanged.emit();
 }

@@ -6,6 +6,12 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (04-Dec-2016) Get rid of ref_vis::DEFAULT, make it always PUBLIC
+
+* (04-Dec-2016) Avoid insert_item() call when ref_vis::PRIVATE; otherwise we can't have a safe ref-to-const
+
+* (04-Dec-2016) Make signal's tracked list hold CONST nub::object refs
+
 * (25-Nov-2016) Standardize bzip2/gzip interfaces and use for image parsing and serialization
 
 * (23-Nov-2016) Make concrete_iter work with normal iterator pair semantics

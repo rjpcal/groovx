@@ -308,7 +308,9 @@ namespace nub
 
     /// Add a slot to the list of those watching this Signal.
     void do_connect(nub::soft_ref<slot_base> slot,
-                    nub::soft_ref<nub::object> trackme);
+                    const nub::object* trackme);
+
+    void do_connect(nub::soft_ref<slot_base> slot);
 
     /// Remove a slot from the list of those watching this Signal.
     void do_disconnect(nub::soft_ref<slot_base> slot);
@@ -368,12 +370,12 @@ namespace nub
 
     /// Add a slot to the list of those watching this Signal.
     nub::soft_ref<slot0> connect(nub::soft_ref<slot0> slot,
-                                 nub::soft_ref<nub::object> trackme = nub::soft_ref<nub::object>())
-    { signal_base::do_connect(slot, std::move(trackme)); return slot; }
+                                 const nub::object* trackme)
+    { signal_base::do_connect(slot, trackme); return slot; }
 
     /// Connect a free function to this signal0.
     nub::soft_ref<slot0> connect(void (*free_func)())
-    { return connect(slot0::make(free_func)); }
+    { nub::soft_ref<slot0> s(slot0::make(free_func)); signal_base::do_connect(s); return s; }
 
     /// Connect an object to this signal0.
     /** After connection, when the signal is triggered, \a mem_func
@@ -381,11 +383,7 @@ namespace nub
         the connection object that is created. */
     template <class C, class MF>
     nub::soft_ref<slot0> connect(C* obj, MF mem_func)
-    {
-      return connect(slot0::make(obj, mem_func),
-                     nub::soft_ref<nub::object>
-                     (obj, nub::ref_type::WEAK, nub::ref_vis::PRIVATE));
-    }
+    { return connect(slot0::make(obj, mem_func), obj); }
 
     /// Remove a slot from the list of those watching this signal0.
     void disconnect(nub::soft_ref<slot0> slot)
@@ -419,19 +417,15 @@ namespace nub
     virtual ~Signal1() noexcept {}
 
     nub::soft_ref<slot1<P1> > connect(nub::soft_ref<slot1<P1> > slot,
-                                      nub::soft_ref<nub::object> trackme = nub::soft_ref<nub::object>())
-    { signal_base::do_connect(slot, std::move(trackme)); return slot; }
+                                      const nub::object* trackme)
+    { signal_base::do_connect(slot, trackme); return slot; }
 
     nub::soft_ref<slot1<P1> > connect(void (*free_func)(P1))
-    { return connect(slot1<P1>::make(free_func)); }
+    { nub::soft_ref<slot1<P1>> s(slot1<P1>::make(free_func)); signal_base::do_connect(s); return s; }
 
     template <class C, class MF>
     nub::soft_ref<slot1<P1> > connect(C* obj, MF mem_func)
-    {
-      return connect(slot1<P1>::make(obj, mem_func),
-                     nub::soft_ref<nub::object>
-                     (obj, nub::ref_type::WEAK, nub::ref_vis::PRIVATE));
-    }
+    { return connect(slot1<P1>::make(obj, mem_func), obj); }
 
     void disconnect(nub::soft_ref<slot1<P1> > slot)
     { signal_base::do_disconnect(slot); }

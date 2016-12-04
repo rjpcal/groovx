@@ -98,13 +98,13 @@ namespace
     sig2.emit(); TEST_REQUIRE_EQ(v0, 0);
     sig3.emit(); TEST_REQUIRE_EQ(v0, 1);
 
-    sig2.connect(sig3.slot()); // sig2 --> sig3 --> v0_callback0
+    sig2.connect(sig3.slot(), &sig3); // sig2 --> sig3 --> v0_callback0
 
     sig1.emit(); TEST_REQUIRE_EQ(v0, 1);
     sig2.emit(); TEST_REQUIRE_EQ(v0, 2);
     sig3.emit(); TEST_REQUIRE_EQ(v0, 3);
 
-    sig1.connect(sig2.slot()); // sig1 --> sig2 --> sig3 --> v0_callback0
+    sig1.connect(sig2.slot(), &sig2); // sig1 --> sig2 --> sig3 --> v0_callback0
 
     sig1.emit(); TEST_REQUIRE_EQ(v0, 4);
     sig2.emit(); TEST_REQUIRE_EQ(v0, 5);
@@ -130,14 +130,14 @@ namespace
     nub::signal0 sig2;
     nub::signal0 sig3;
 
-    sig3.connect(&v0_callback0); // sig3 --> v0_callback0
-    sig2.connect(sig3.slot()); // sig2 --> sig3 --> v0_callback0
-    sig1.connect(sig2.slot()); // sig1 --> sig2 --> sig3 --> v0_callback0
+    sig3.connect(&v0_callback0);      // sig3 --> v0_callback0
+    sig2.connect(sig3.slot(), &sig3); // sig2 --> sig3 --> v0_callback0
+    sig1.connect(sig2.slot(), &sig2); // sig1 --> sig2 --> sig3 --> v0_callback0
 
-    sig3.connect(sig1.slot()); // sig1 --> sig2 --> sig3 --> v0_callback0
-                               //  ^                 |
-                               //  |                 |
-                               //  +-----------------+
+    sig3.connect(sig1.slot(), &sig1); // sig1 --> sig2 --> sig3 --> v0_callback0
+                                      //  ^                 |
+                                      //  |                 |
+                                      //  +-----------------+
 
     v0 = 0;
     TEST_REQUIRE_EQ(v0, 0);

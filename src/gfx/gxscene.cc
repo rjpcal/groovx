@@ -63,7 +63,7 @@ GxScene::GxScene(nub::soft_ref<Gfx::Canvas> canvas,
 {
 GVX_TRACE("GxScene::GxScene");
   itsTimer.sig_timeout.connect(this, &GxScene::fullRender);
-  itsCamera->sigNodeChanged.connect(slotNodeChanged);
+  itsCamera->sigNodeChanged.connect(slotNodeChanged, this);
 }
 
 GxScene::~GxScene() noexcept
@@ -156,7 +156,7 @@ GVX_TRACE("GxScene::setCamera");
 
   itsCamera->reshape(*itsCanvas, itsWidth, itsHeight);
 
-  itsCamera->sigNodeChanged.connect(slotNodeChanged);
+  itsCamera->sigNodeChanged.connect(slotNodeChanged, this);
 
   fullRender();
 }
@@ -168,7 +168,7 @@ GVX_TRACE("GxScene::setDrawable");
 
   itsDrawNode = node;
 
-  itsDrawNode->sigNodeChanged.connect(slotNodeChanged);
+  itsDrawNode->sigNodeChanged.connect(slotNodeChanged, this);
 }
 
 void GxScene::flushChanges()
