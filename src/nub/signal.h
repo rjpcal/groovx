@@ -37,6 +37,10 @@
 #include "nub/ref.h"
 #include "nub/volatileobject.h"
 
+#include <algorithm>
+#include <forward_list>
+#include <list>
+
 namespace nub
 {
 #if 0
@@ -313,8 +317,38 @@ namespace nub
     signal_base(const signal_base&);
     signal_base& operator=(const signal_base&);
 
-    class impl;
-    impl* rep;
+    typedef nub::ref<nub::slot_base> slot_ref;
+
+    struct slot_info
+    {
+      slot_ref sref;
+      std::forward_list<nub::soft_ref<nub::object>> tracked;
+      bool all_valid() const
+      {
+        return std::all_of(tracked.begin(), tracked.end(),
+                           [](const auto& it){return it.is_valid();});
+      }
+    };
+
+    typedef std::list<slot_info> list_type;
+
+    mutable list_type slots;
+    mutable bool is_emitting;
+
+    class locker
+    {
+      locker(const locker&);
+      locker& operator=(const locker&);
+
+      const signal_base* m_target;
+
+    public:
+      locker(const signal_base* impl) : m_target(impl)
+      { m_target->is_emitting = true; }
+
+      ~locker()
+      { m_target->is_emitting = false; }
+    };
   };
 
 

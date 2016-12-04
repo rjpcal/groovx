@@ -35,9 +35,6 @@
 
 #include "rutz/demangle.h"
 
-#include <algorithm>
-#include <forward_list>
-#include <list>
 #include <typeinfo>
 
 #include "rutz/trace.h"
@@ -106,79 +103,24 @@ void nub::slot_adapter_free_func0::call()
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace
-{
-  typedef nub::ref<nub::slot_base> slot_ref;
-
-  struct slot_info
-  {
-    slot_ref sref;
-    std::forward_list<nub::soft_ref<nub::object>> tracked;
-    bool all_valid() const
-    {
-      return std::all_of(tracked.begin(), tracked.end(),
-                         [](const auto& it){return it.is_valid();});
-    }
-  };
-}
-
-class nub::signal_base::impl
-{
-public:
-  impl() :
-    slots(),
-    is_emitting(false)
-  {}
-
-  virtual ~impl() {}
-
-  typedef std::list<slot_info> list_type;
-
-  list_type slots;
-  bool is_emitting;
-
-  class locker
-  {
-    locker(const locker&);
-    locker& operator=(const locker&);
-
-    impl* m_target;
-
-  public:
-    locker(impl* impl) :
-      m_target(impl)
-    {
-      GVX_ASSERT(m_target->is_emitting == false);
-      m_target->is_emitting = true;
-    }
-
-    ~locker()
-    {
-      GVX_ASSERT(m_target->is_emitting == true);
-      m_target->is_emitting = false;
-    }
-  };
-};
-
 nub::signal_base::signal_base() :
   nub::volatile_object(),
-  rep(new impl)
+  slots(),
+  is_emitting(false)
 {}
 
 nub::signal_base::~signal_base() noexcept
-{
-  delete rep;
-}
+{}
 
 void nub::signal_base::do_emit(void* params) const
 {
 GVX_TRACE("nub::signal_base::do_emit");
-  if (!rep->is_emitting)
+  if (!this->is_emitting)
     {
-      impl::locker lock(rep);
+      locker lock(this);
 
-      for (impl::list_type::iterator
-             ii = rep->slots.begin(), end = rep->slots.end();
+      for (list_type::iterator
+             ii = this->slots.begin(), end = this->slots.end();
            ii != end;
            /* incr in loop */)
         {
@@ -196,9 +138,9 @@ GVX_TRACE("nub::signal_base::do_emit");
             }
           else
             {
-              impl::list_type::iterator erase_me = ii;
+              list_type::iterator erase_me = ii;
               ++ii;
-              rep->slots.erase(erase_me);
+              this->slots.erase(erase_me);
             }
         }
     }
@@ -209,9 +151,9 @@ void nub::signal_base::do_disconnect(nub::soft_ref<nub::slot_base> slot)
 GVX_TRACE("nub::signal_base::do_disconnect");
   if (!slot.is_valid()) return;
 
-  rep->slots.remove_if([id=slot.id()](const slot_info& si){ return si.sref.id() == id; });
+  this->slots.remove_if([id=slot.id()](const slot_info& si){ return si.sref.id() == id; });
 
-  dbg_eval_nl(3, rep->slots.size());
+  dbg_eval_nl(3, this->slots.size());
 }
 
 void nub::signal_base::do_connect(nub::soft_ref<nub::slot_base> slot,
@@ -220,10 +162,10 @@ void nub::signal_base::do_connect(nub::soft_ref<nub::slot_base> slot,
 GVX_TRACE("nub::signal_base::do_connect");
   if (!slot.is_valid()) return;
 
-  rep->slots.push_back(slot_info({slot_ref(slot.get(), nub::ref_vis::PRIVATE), {}}));
+  this->slots.push_back(slot_info({slot_ref(slot.get(), nub::ref_vis::PRIVATE), {}}));
   if (trackme.is_valid())
-    rep->slots.back().tracked.push_front(std::move(trackme));
-  dbg_eval_nl(3, rep->slots.size());
+    this->slots.back().tracked.push_front(std::move(trackme));
+  dbg_eval_nl(3, this->slots.size());
 }
 
 ///////////////////////////////////////////////////////////////////////
