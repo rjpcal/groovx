@@ -306,12 +306,14 @@ namespace nub
 
     void do_emit(void* params) const;
 
-    /// Add a slot to the list of those watching this Signal.
-    void do_connect(nub::soft_ref<slot_base> slot,
-                    const nub::object* trackme);
+  public:
+    /// Add a slot to the list of those watching this Signal, and bind that slot's lifetime to a tracked object's lifetime
+    void connect(nub::soft_ref<slot_base> slot, const nub::object* trackme);
 
-    void do_connect(nub::soft_ref<slot_base> slot);
+    /// Add a slot to the list of those watching this Signal
+    void connect(nub::soft_ref<slot_base> slot);
 
+  protected:
     /// Remove a slot from the list of those watching this Signal.
     void do_disconnect(nub::soft_ref<slot_base> slot);
 
@@ -368,22 +370,19 @@ namespace nub
     /// Virtual destructor.
     virtual ~signal0() noexcept;
 
-    /// Add a slot to the list of those watching this Signal.
-    nub::soft_ref<slot0> connect(nub::soft_ref<slot0> slot,
-                                 const nub::object* trackme)
-    { signal_base::do_connect(slot, trackme); return slot; }
+    using signal_base::connect;
 
     /// Connect a free function to this signal0.
-    nub::soft_ref<slot0> connect(void (*free_func)())
-    { nub::soft_ref<slot0> s(slot0::make(free_func)); signal_base::do_connect(s); return s; }
+    void connect(void (*free_func)())
+    { signal_base::connect(slot0::make(free_func)); }
 
     /// Connect an object to this signal0.
     /** After connection, when the signal is triggered, \a mem_func
         will be called on \a obj. \c connect() returns the nub::uid of
         the connection object that is created. */
     template <class C, class MF>
-    nub::soft_ref<slot0> connect(C* obj, MF mem_func)
-    { return connect(slot0::make(obj, mem_func), obj); }
+    void connect(C* obj, MF mem_func)
+    { signal_base::connect(slot0::make(obj, mem_func), obj); }
 
     /// Remove a slot from the list of those watching this signal0.
     void disconnect(nub::soft_ref<slot0> slot)
@@ -416,16 +415,14 @@ namespace nub
 
     virtual ~Signal1() noexcept {}
 
-    nub::soft_ref<slot1<P1> > connect(nub::soft_ref<slot1<P1> > slot,
-                                      const nub::object* trackme)
-    { signal_base::do_connect(slot, trackme); return slot; }
+    using signal_base::connect;
 
-    nub::soft_ref<slot1<P1> > connect(void (*free_func)(P1))
-    { nub::soft_ref<slot1<P1>> s(slot1<P1>::make(free_func)); signal_base::do_connect(s); return s; }
+    void connect(void (*free_func)(P1))
+    { signal_base::connect(slot1<P1>::make(free_func)); }
 
     template <class C, class MF>
-    nub::soft_ref<slot1<P1> > connect(C* obj, MF mem_func)
-    { return connect(slot1<P1>::make(obj, mem_func), obj); }
+    void connect(C* obj, MF mem_func)
+    { signal_base::connect(slot1<P1>::make(obj, mem_func), obj); }
 
     void disconnect(nub::soft_ref<slot1<P1> > slot)
     { signal_base::do_disconnect(slot); }

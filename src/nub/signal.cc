@@ -156,10 +156,10 @@ GVX_TRACE("nub::signal_base::do_disconnect");
   dbg_eval_nl(3, this->slots.size());
 }
 
-void nub::signal_base::do_connect(nub::soft_ref<nub::slot_base> slot,
-                                  const nub::object* trackme)
+void nub::signal_base::connect(nub::soft_ref<nub::slot_base> slot,
+                               const nub::object* trackme)
 {
-GVX_TRACE("nub::signal_base::do_connect");
+GVX_TRACE("nub::signal_base::connect");
   if (!slot.is_valid()) return;
 
   this->slots.push_back(slot_info({slot_ref(slot.get(), nub::ref_vis::PRIVATE),
@@ -167,9 +167,9 @@ GVX_TRACE("nub::signal_base::do_connect");
   dbg_eval_nl(3, this->slots.size());
 }
 
-void nub::signal_base::do_connect(nub::soft_ref<nub::slot_base> slot)
+void nub::signal_base::connect(nub::soft_ref<nub::slot_base> slot)
 {
-GVX_TRACE("nub::signal_base::do_connect");
+GVX_TRACE("nub::signal_base::connect");
   if (!slot.is_valid()) return;
 
   this->slots.push_back(slot_info({slot_ref(slot.get(), nub::ref_vis::PRIVATE), {}}));

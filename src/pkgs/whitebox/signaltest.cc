@@ -62,12 +62,14 @@ namespace
     TEST_REQUIRE_EQ(v0, 0);
     TEST_REQUIRE_EQ(v1, 0);
 
-    nub::soft_ref<nub::slot0> s0 = sig0.connect(&v0_callback0);
+    nub::soft_ref<nub::slot0> s0(nub::slot0::make(&v0_callback0));
+    sig0.connect(s0);
     sig0.emit();
     TEST_REQUIRE_EQ(v0, 1);
     TEST_REQUIRE_EQ(v1, 0);
 
-    nub::soft_ref<nub::slot0> s1 = sig0.connect(&v1_callback0);
+    nub::soft_ref<nub::slot0> s1(nub::slot0::make(&v1_callback0));
+    sig0.connect(s1);
     sig0.emit();
     TEST_REQUIRE_EQ(v0, 2);
     TEST_REQUIRE_EQ(v1, -1);
@@ -160,12 +162,14 @@ namespace
     TEST_REQUIRE_EQ(v0, 0);
     TEST_REQUIRE_EQ(v1, 0);
 
-    nub::soft_ref<nub::slot1<int> > s0 = sig1.connect(&v0_callback1);
+    nub::soft_ref<nub::slot1<int> > s0(nub::slot1<int>::make(&v0_callback1));
+    sig1.connect(s0);
     sig1.emit(2);
     TEST_REQUIRE_EQ(v0, 2);
     TEST_REQUIRE_EQ(v1, 0);
 
-    nub::soft_ref<nub::slot1<int> > s1 = sig1.connect(&v1_callback1);
+    nub::soft_ref<nub::slot1<int> > s1(nub::slot1<int>::make(&v1_callback1));
+    sig1.connect(s1);
     sig1.emit(3);
     TEST_REQUIRE_EQ(v0, 5);
     TEST_REQUIRE_EQ(v1, -3);
