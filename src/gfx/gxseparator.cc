@@ -120,7 +120,7 @@ void GxSeparator::read_from(io::reader& reader)
 GVX_TRACE("GxSeparator::read_from");
 
  for (const auto& noderef: rep->children)
-   noderef->sigNodeChanged.disconnect(this->sigNodeChanged.slot());
+   noderef->sigNodeChanged.disconnect(this);
 
   rep->children.clear();
   io::read_utils::read_object_seq<GxNode>(
@@ -176,8 +176,7 @@ void GxSeparator::removeChildAt(ChildId index)
 GVX_TRACE("GxSeparator::removeChildAt");
   if (index < rep->children.size())
     {
-      rep->children[index]->sigNodeChanged
-        .disconnect(this->sigNodeChanged.slot());
+      rep->children[index]->sigNodeChanged.disconnect(this);
       rep->children.erase(rep->children.begin()+long(index));
 
       this->sigNodeChanged.emit();
@@ -195,7 +194,7 @@ GVX_TRACE("GxSeparator::removeChild");
 
   if (itr != rep->children.end())
     {
-      (*itr)->sigNodeChanged.disconnect(this->sigNodeChanged.slot());
+      (*itr)->sigNodeChanged.disconnect(this);
       rep->children.erase(itr);
       this->sigNodeChanged.emit();
     }

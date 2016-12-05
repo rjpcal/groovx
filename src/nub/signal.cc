@@ -146,34 +146,48 @@ GVX_TRACE("nub::signal_base::do_emit");
     }
 }
 
-void nub::signal_base::do_disconnect(nub::soft_ref<nub::slot_base> slot)
+void nub::signal_base::disconnect(connection c)
 {
-GVX_TRACE("nub::signal_base::do_disconnect");
-  if (!slot.is_valid()) return;
+GVX_TRACE("nub::signal_base::disconnect(connection)");
+  if (!c.info) return;
 
-  this->slots.remove_if([id=slot.id()](const slot_info& si){ return si.sref.id() == id; });
+  this->slots.remove_if([t=c.info](const slot_info& si){ return &si == t; });
 
   dbg_eval_nl(3, this->slots.size());
 }
 
-void nub::signal_base::connect(nub::soft_ref<nub::slot_base> slot,
-                               const nub::object* trackme)
+void nub::signal_base::disconnect(const nub::object* tracked)
+{
+GVX_TRACE("nub::signal_base::disconnect(tracked)");
+  if (!tracked) return;
+
+  this->slots.remove_if([t=tracked](const slot_info& si){ return si.is_tracking(t); });
+
+  dbg_eval_nl(3, this->slots.size());
+}
+
+nub::signal_base::connection
+nub::signal_base::connect(nub::soft_ref<nub::slot_base> slot,
+                          const nub::object* trackme)
 {
 GVX_TRACE("nub::signal_base::connect");
-  if (!slot.is_valid()) return;
+  if (!slot.is_valid()) return connection{nullptr};
 
   this->slots.push_back(slot_info({slot_ref(slot.get(), nub::ref_vis_private()),
           {nub::soft_ref<const nub::object>(trackme, nub::ref_type::WEAK, nub::ref_vis_private())}}));
   dbg_eval_nl(3, this->slots.size());
+  return connection{&(this->slots.back())};
 }
 
-void nub::signal_base::connect(nub::soft_ref<nub::slot_base> slot)
+nub::signal_base::connection
+nub::signal_base::connect(nub::soft_ref<nub::slot_base> slot)
 {
 GVX_TRACE("nub::signal_base::connect");
-  if (!slot.is_valid()) return;
+  if (!slot.is_valid()) return connection{nullptr};
 
   this->slots.push_back(slot_info({slot_ref(slot.get(), nub::ref_vis_private()), {}}));
   dbg_eval_nl(3, this->slots.size());
+  return connection{&(this->slots.back())};
 }
 
 ///////////////////////////////////////////////////////////////////////

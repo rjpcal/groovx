@@ -300,33 +300,18 @@ namespace nub
 
   class signal_base : public nub::volatile_object
   {
-  protected:
-    signal_base();
-    virtual ~signal_base() noexcept;
-
-    void do_emit(void* params) const;
-
-  public:
-    /// Add a slot to the list of those watching this Signal, and bind that slot's lifetime to a tracked object's lifetime
-    void connect(nub::soft_ref<slot_base> slot, const nub::object* trackme);
-
-    /// Add a slot to the list of those watching this Signal
-    void connect(nub::soft_ref<slot_base> slot);
-
-  protected:
-    /// Remove a slot from the list of those watching this Signal.
-    void do_disconnect(nub::soft_ref<slot_base> slot);
-
   private:
-    signal_base(const signal_base&);
-    signal_base& operator=(const signal_base&);
-
     typedef nub::ref<nub::slot_base> slot_ref;
 
     struct slot_info
     {
       slot_ref sref;
       std::forward_list<nub::soft_ref<const nub::object>> tracked;
+      bool is_tracking(const nub::object* t) const
+      {
+        return std::any_of(tracked.begin(), tracked.end(),
+                           [t](const auto& it){return it.get_weak() == t;});
+      }
       bool all_valid() const
       {
         return std::all_of(tracked.begin(), tracked.end(),
@@ -338,6 +323,36 @@ namespace nub
 
     mutable list_type slots;
     mutable bool is_emitting;
+
+  protected:
+    signal_base();
+    virtual ~signal_base() noexcept;
+
+    void do_emit(void* params) const;
+
+  public:
+
+    struct connection
+    {
+      connection(const slot_info* i = nullptr) : info(i) {}
+      const slot_info* info;
+    };
+
+    /// Add a slot to the list of those watching this Signal, and bind that slot's lifetime to a tracked object's lifetime
+    connection connect(nub::soft_ref<slot_base> slot, const nub::object* trackme);
+
+    /// Add a slot to the list of those watching this Signal
+    connection connect(nub::soft_ref<slot_base> slot);
+
+    /// Remove a slot from the list of those watching this Signal.
+    void disconnect(connection c);
+
+    /// Remove slots w/ given tracked object from the list of those watching this Signal.
+    void disconnect(const nub::object* tracked);
+
+  private:
+    signal_base(const signal_base&);
+    signal_base& operator=(const signal_base&);
 
     class locker
     {
@@ -371,22 +386,19 @@ namespace nub
     virtual ~signal0() noexcept;
 
     using signal_base::connect;
+    using signal_base::connection;
 
     /// Connect a free function to this signal0.
-    void connect(void (*free_func)())
-    { signal_base::connect(slot0::make(free_func)); }
+    connection connect(void (*free_func)())
+    { return signal_base::connect(slot0::make(free_func)); }
 
     /// Connect an object to this signal0.
     /** After connection, when the signal is triggered, \a mem_func
         will be called on \a obj. \c connect() returns the nub::uid of
         the connection object that is created. */
     template <class C, class MF>
-    void connect(C* obj, MF mem_func)
-    { signal_base::connect(slot0::make(obj, mem_func), obj); }
-
-    /// Remove a slot from the list of those watching this signal0.
-    void disconnect(nub::soft_ref<slot0> slot)
-    { signal_base::do_disconnect(slot); }
+    connection connect(C* obj, MF mem_func)
+    { return signal_base::connect(slot0::make(obj, mem_func), obj); }
 
     /// Trigger all of this object's slots.
     void emit() const { signal_base::do_emit(nullptr); }
@@ -416,16 +428,14 @@ namespace nub
     virtual ~Signal1() noexcept {}
 
     using signal_base::connect;
+    using signal_base::connection;
 
-    void connect(void (*free_func)(P1))
-    { signal_base::connect(slot1<P1>::make(free_func)); }
+    connection connect(void (*free_func)(P1))
+    { return signal_base::connect(slot1<P1>::make(free_func)); }
 
     template <class C, class MF>
-    void connect(C* obj, MF mem_func)
-    { signal_base::connect(slot1<P1>::make(obj, mem_func), obj); }
-
-    void disconnect(nub::soft_ref<slot1<P1> > slot)
-    { signal_base::do_disconnect(slot); }
+    connection connect(C* obj, MF mem_func)
+    { return signal_base::connect(slot1<P1>::make(obj, mem_func), obj); }
 
     void emit(P1 p1) const
     {

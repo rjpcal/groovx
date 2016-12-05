@@ -150,7 +150,7 @@ GVX_TRACE("GxScene::setVisibility");
 void GxScene::setCamera(const nub::ref<GxCamera>& cam)
 {
 GVX_TRACE("GxScene::setCamera");
-  itsCamera->sigNodeChanged.disconnect(slotNodeChanged);
+  itsCamera->sigNodeChanged.disconnect(this);
 
   itsCamera = cam;
 
@@ -164,7 +164,7 @@ GVX_TRACE("GxScene::setCamera");
 void GxScene::setDrawable(const nub::ref<GxNode>& node)
 {
 GVX_TRACE("GxScene::setDrawable");
-  itsDrawNode->sigNodeChanged.disconnect(slotNodeChanged);
+  itsDrawNode->sigNodeChanged.disconnect(this);
 
   itsDrawNode = node;
 
