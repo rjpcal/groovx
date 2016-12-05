@@ -163,7 +163,7 @@ GVX_TRACE("nub::signal_base::connect");
   if (!slot.is_valid()) return;
 
   this->slots.push_back(slot_info({slot_ref(slot.get(), nub::ref_vis_private()),
-          {nub::soft_ref<nub::object>(const_cast<nub::object*>(trackme), nub::ref_type::WEAK, nub::ref_vis_private())}}));
+          {nub::soft_ref<const nub::object>(trackme, nub::ref_type::WEAK, nub::ref_vis_private())}}));
   dbg_eval_nl(3, this->slots.size());
 }
 

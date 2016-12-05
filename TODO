@@ -6,7 +6,7 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (04-Dec-2016) Make signal's tracked list hold CONST nub::object refs
+* (04-Dec-2016) Make opaque type for referring to signal/slot connections, for later disconnect() call
 
 * (25-Nov-2016) Standardize bzip2/gzip interfaces and use for image parsing and serialization
 

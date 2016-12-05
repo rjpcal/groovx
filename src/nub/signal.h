@@ -326,7 +326,7 @@ namespace nub
     struct slot_info
     {
       slot_ref sref;
-      std::forward_list<nub::soft_ref<nub::object>> tracked;
+      std::forward_list<nub::soft_ref<const nub::object>> tracked;
       bool all_valid() const
       {
         return std::all_of(tracked.begin(), tracked.end(),
