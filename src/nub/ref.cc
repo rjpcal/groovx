@@ -50,14 +50,12 @@ nub::object* nub::detail::get_checked_item(nub::uid id)
   return nub::objectdb::instance().get_checked_obj(id);
 }
 
-void nub::detail::insert_item(nub::object* obj, ref_vis vis)
+void nub::detail::insert_item_public(nub::object* obj)
 {
-  switch (vis)
-    {
-    case ref_vis::PUBLIC:    nub::objectdb::instance().insert_obj(obj); break;
-    case ref_vis::PROTECTED: nub::objectdb::instance().insert_obj_weak(obj); break;
-    case ref_vis::PRIVATE:   /* nothing */ break;
-    default:
-      GVX_PANIC("unknown ref_vis enum value");
-    }
+  nub::objectdb::instance().insert_obj(obj);
+}
+
+void nub::detail::insert_item_protected(nub::object* obj)
+{
+  nub::objectdb::instance().insert_obj_weak(obj);
 }

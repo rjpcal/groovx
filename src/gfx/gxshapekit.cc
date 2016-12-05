@@ -117,11 +117,11 @@ public:
 
   GxShapeKitImpl(GxShapeKit* obj) :
     category(-1),
-    nativeNode(new GxShapeKitNode(obj), nub::ref_vis::PRIVATE),
-    boundsOutline(new GxBounds(nativeNode), nub::ref_vis::PRIVATE),
-    cache(new GxCache(boundsOutline), nub::ref_vis::PRIVATE),
-    aligner(new GxAligner(cache), nub::ref_vis::PRIVATE),
-    scaler(new GxScaler(aligner), nub::ref_vis::PRIVATE),
+    nativeNode(new GxShapeKitNode(obj), nub::ref_vis_private()),
+    boundsOutline(new GxBounds(nativeNode), nub::ref_vis_private()),
+    cache(new GxCache(boundsOutline), nub::ref_vis_private()),
+    aligner(new GxAligner(cache), nub::ref_vis_private()),
+    scaler(new GxScaler(aligner), nub::ref_vis_private()),
     topNode(scaler)
   {
     GVX_TRACE("GxShapeKitImpl::GxShapeKitImpl");

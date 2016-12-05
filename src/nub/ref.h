@@ -53,7 +53,8 @@ namespace nub
     bool is_valid_uid(nub::uid id) noexcept;
     nub::object* get_checked_item(nub::uid id);
 
-    void insert_item(nub::object* obj, ref_vis vis);
+    void insert_item_public(nub::object* obj);
+    void insert_item_protected(nub::object* obj);
 
     template <class T>
     inline T* get_casted_item(nub::uid id)
@@ -118,11 +119,21 @@ public:
   explicit ref(nub::uid i)
     : m_handle(detail::get_casted_item<T>(i)) {}
 
-  explicit ref(T* ptr, ref_vis vis = ref_vis::PUBLIC) :
-    m_handle(ptr)
-  {
-    detail::insert_item(ptr, vis);
-  }
+  explicit ref(T* ptr) // default vis = public
+    : m_handle(ptr)
+  { detail::insert_item_public(ptr); }
+
+  explicit ref(T* ptr, ref_vis_public)
+    : m_handle(ptr)
+  { detail::insert_item_public(ptr); }
+
+  explicit ref(T* ptr, ref_vis_protected)
+    : m_handle(ptr)
+  { detail::insert_item_protected(ptr); }
+
+  explicit ref(T* ptr, ref_vis_private)
+    : m_handle(ptr)
+  { /* private - not inserted into objdb */ }
 
   template <class U>
   ref(const ref<U>& other) : m_handle(other.get()) {}
@@ -215,16 +226,25 @@ public:
              tp)
   {}
 
-  explicit soft_ref(T* master,
-                    ref_type tp = ref_type::STRONG, ref_vis vis = ref_vis::PUBLIC)
+  explicit soft_ref(T* master, ref_type tp = ref_type::STRONG) // default vis = public
     :
     m_handle(master,tp)
-  {
-    if (m_handle.is_valid())
-      {
-        detail::insert_item(m_handle.get(), vis);
-      }
-  }
+  { if (m_handle.is_valid()) detail::insert_item_public(m_handle.get()); }
+
+  explicit soft_ref(T* master, ref_type tp, ref_vis_public)
+    :
+    m_handle(master,tp)
+  { if (m_handle.is_valid()) detail::insert_item_public(m_handle.get()); }
+
+  explicit soft_ref(T* master, ref_type tp, ref_vis_protected)
+    :
+    m_handle(master,tp)
+  { if (m_handle.is_valid()) detail::insert_item_protected(m_handle.get()); }
+
+  explicit soft_ref(T* master, ref_type tp, ref_vis_private)
+    :
+    m_handle(master,tp)
+  { /* private - no insert into objdb */ }
 
   template <class U>
   soft_ref(const soft_ref<U>& other) :

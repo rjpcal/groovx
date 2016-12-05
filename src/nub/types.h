@@ -35,12 +35,10 @@ namespace nub
 {
   enum class ref_type { WEAK, STRONG };
 
-  enum class ref_vis
-    {
-      PRIVATE,   //! nub::objectdb gets no reference to the object
-      PROTECTED, //! nub::objectdb gets a weak reference to the object
-      PUBLIC     //! nub::objectdb gets a strong reference to the object
-    };
+  // type tags
+  struct ref_vis_private {};   //! nub::objectdb gets no reference to the object
+  struct ref_vis_protected {}; //! nub::objectdb gets a weak reference to the object
+  struct ref_vis_public {};    //! nub::objectdb gets a strong reference to the object
 }
 
 #endif // !GROOVX_NUB_TYPES_H_UTC20051116165740DEFINED

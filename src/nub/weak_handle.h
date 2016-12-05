@@ -100,7 +100,7 @@ public:
   }
 
   T* get()      const         { this->ensure_valid(); return m_master; }
-  T* get_weak() const noexcept { return this->is_valid() ? m_master : 0; }
+  T* get_weak() const noexcept { return this->is_valid() ? m_master : nullptr; }
 
   ref_type get_ref_type() const noexcept
   {

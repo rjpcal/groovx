@@ -638,5 +638,5 @@ GVX_TRACE("io::legacy_writer::write_root");
   rep->flatten_object
     ("root_object", soft_ref<io::serializable>(const_cast<io::serializable*>(root),
                                                nub::ref_type::STRONG,
-                                               nub::ref_vis::PRIVATE));
+                                               nub::ref_vis_private()));
 }

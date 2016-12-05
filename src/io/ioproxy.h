@@ -65,7 +65,7 @@ protected:
 
 public:
   static nub::ref<serializable> make(C* ref)
-    { return nub::ref<serializable>( new proxy(ref), nub::ref_vis::PRIVATE ); }
+    { return nub::ref<serializable>( new proxy(ref), nub::ref_vis_private() ); }
 
   virtual void read_from(io::reader& reader) override
     { m_referand->C::read_from(reader); }
@@ -105,7 +105,7 @@ protected:
 
 public:
   static nub::ref<const serializable> make(const C* ref)
-    { return nub::ref<serializable>( new const_proxy(ref), nub::ref_vis::PRIVATE ); }
+    { return nub::ref<serializable>( new const_proxy(ref), nub::ref_vis_private() ); }
 
   virtual void read_from(io::reader& reader) override
     { m_referand->C::read_from(reader); }
