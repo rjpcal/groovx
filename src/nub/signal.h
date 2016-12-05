@@ -325,10 +325,39 @@ namespace nub
     mutable bool is_emitting;
 
   protected:
-    signal_base();
-    virtual ~signal_base() noexcept;
+    signal_base() :
+      nub::volatile_object(),
+      slots(),
+      is_emitting(false)
+    {}
 
-    void do_emit(void* params) const;
+    virtual ~signal_base() noexcept = default;
+
+    void do_emit(void* params) const
+    {
+      if (this->is_emitting)
+        return;
+
+      locker lock(this);
+
+      for (list_type::iterator
+             ii = this->slots.begin(), end = this->slots.end();
+           ii != end;
+           /* incr in loop */)
+        {
+          if (ii->all_valid())
+            {
+              ii->sref->do_call(params);
+              ++ii;
+            }
+          else
+            {
+              list_type::iterator erase_me = ii;
+              ++ii;
+              this->slots.erase(erase_me);
+            }
+        }
+    }
 
   public:
 
@@ -340,17 +369,39 @@ namespace nub
 
   protected:
     /// Add a slot to the list of those watching this Signal, and bind that slot's lifetime to a tracked object's lifetime
-    connection connect(nub::soft_ref<slot_base> slot, const nub::object* trackme);
+    connection connect(nub::soft_ref<slot_base> slot, const nub::object* trackme)
+    {
+      if (!slot.is_valid()) return connection{nullptr};
+
+      this->slots.push_back(slot_info({slot_ref(slot.get(), nub::ref_vis_private()),
+              {nub::soft_ref<const nub::object>(trackme, nub::ref_type::WEAK, nub::ref_vis_private())}}));
+
+      return connection{&(this->slots.back())};
+    }
 
     /// Add a slot to the list of those watching this Signal
-    connection connect(nub::soft_ref<slot_base> slot);
+    connection connect(nub::soft_ref<slot_base> slot)
+    {
+      if (!slot.is_valid()) return connection{nullptr};
+
+      this->slots.push_back(slot_info({slot_ref(slot.get(), nub::ref_vis_private()), {}}));
+      return connection{&(this->slots.back())};
+    }
 
   public:
     /// Remove a slot from the list of those watching this Signal.
-    void disconnect(connection c);
+    void disconnect(connection c)
+    {
+      if (c.info)
+        this->slots.remove_if([t=c.info](const slot_info& si){ return &si == t; });
+    }
 
     /// Remove slots w/ given tracked object from the list of those watching this Signal.
-    void disconnect(const nub::object* tracked);
+    void disconnect(const nub::object* tracked)
+    {
+      if (tracked)
+        this->slots.remove_if([t=tracked](const slot_info& si){ return si.is_tracking(t); });
+    }
 
   private:
     signal_base(const signal_base&);
