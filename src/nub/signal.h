@@ -39,6 +39,7 @@
 
 #include <algorithm>
 #include <forward_list>
+#include <functional>
 #include <list>
 
 namespace nub
@@ -64,228 +65,6 @@ namespace nub
   };
 #endif
 
-  //  #######################################################
-  //  =======================================================
-
-  /// The base class for all slot classes.
-
-  /** Slots can be triggered from a Signal by calling connect() on
-      that Signal. Thereafter, the slot will be called whenever that
-      signal emits a message. */
-
-  class slot_base : public virtual nub::object
-  {
-  public:
-    /// Default constructor.
-    slot_base();
-
-    /// Virtual destructor.
-    virtual ~slot_base() noexcept;
-
-    /// Call the slot with the given arguments
-    virtual void do_call(void* params) = 0;
-  };
-
-  //  #######################################################
-  //  =======================================================
-
-  /// A zero-argument slot class.
-
-  class slot0 : public slot_base
-  {
-  public:
-    /// Default constructor.
-    slot0();
-
-    /// Virtual destructor.
-    virtual ~slot0() noexcept;
-
-    template <class C, class MF>
-    static nub::soft_ref<slot0> make(C* obj, MF mf);
-
-    static nub::soft_ref<slot0> make(void (*free_func)());
-
-    virtual void call() = 0;
-
-    /// Unpacks any parameters and then calls the implementation.
-    virtual void do_call(void* /*params*/) override { call(); }
-  };
-
-
-  //  #######################################################
-  //  =======================================================
-
-  /// A mem-func adapter for zero-argument slots.
-
-  template <class C, class MF>
-  class slot_adapter_mem_func0 : public slot0
-  {
-    nub::soft_ref<C> m_object;
-    MF m_mem_func;
-
-    slot_adapter_mem_func0(C* obj, MF mf) :
-      m_object(obj, nub::ref_type::WEAK, nub::ref_vis_private()), m_mem_func(mf) {}
-
-    virtual ~slot_adapter_mem_func0() noexcept {}
-
-  public:
-    static slot_adapter_mem_func0<C, MF>* make(C* obj, MF mf)
-    { return new slot_adapter_mem_func0<C, MF>(obj, mf); }
-
-    virtual void call() override
-    {
-      if (m_object.is_valid())
-        (m_object.get()->*m_mem_func)();
-    }
-  };
-
-  template <class C, class MF>
-  inline nub::soft_ref<slot0> slot0::make(C* obj, MF mf)
-  {
-    return nub::soft_ref<slot0>
-      (slot_adapter_mem_func0<C, MF>::make(obj, mf),
-       nub::ref_type::STRONG,
-       nub::ref_vis_private());
-  }
-
-  //  #######################################################
-  //  =======================================================
-
-  /// A mem-func adapter for zero-argument slots.
-
-  class slot_adapter_free_func0 : public slot0
-  {
-  public:
-    typedef void (free_func)();
-
-  private:
-    free_func* m_free_func;
-
-    slot_adapter_free_func0(free_func* f);
-
-    virtual ~slot_adapter_free_func0() noexcept;
-
-  public:
-    static slot_adapter_free_func0* make(free_func* f);
-
-    virtual void call() override;
-  };
-
-  //  #######################################################
-  //  =======================================================
-
-  /// A one-argument call data wrapper.
-
-  template <class P1>
-  struct call_data1
-  {
-    call_data1(P1 i1) : p1(i1) {}
-    P1 p1;
-  };
-
-  //  #######################################################
-  //  =======================================================
-
-  /// A slot with one argument.
-
-  template <class P1>
-  class slot1 : public slot_base
-  {
-  public:
-    /// Default constructor.
-    slot1() {}
-
-    /// Virtual destructor.
-    virtual ~slot1() noexcept {}
-
-    template <class C, class MF>
-    static nub::soft_ref<slot1<P1> > make(C* obj, MF mf);
-
-    template <class FF>
-    static nub::soft_ref<slot1<P1> > make(FF f);
-
-    virtual void call(P1 p1) = 0;
-
-    /// Unpacks any parameters and then calls the implementation.
-    virtual void do_call(void* params) override
-    {
-      call_data1<P1>* data = static_cast<call_data1<P1>*>(params);
-      call(data->p1);
-    }
-  };
-
-  //  #######################################################
-  //  =======================================================
-
-  /// A mem-func adapter for slots with one argument.
-
-  template <class P1, class C, class MF>
-  class slot_adapter_mem_func1 : public slot1<P1>
-  {
-    nub::soft_ref<C> m_object;
-    MF m_mem_func;
-
-    slot_adapter_mem_func1(C* obj, MF mf) :
-      m_object(obj, nub::ref_type::WEAK, nub::ref_vis_private()), m_mem_func(mf) {}
-
-    virtual ~slot_adapter_mem_func1() noexcept {}
-
-  public:
-    static slot_adapter_mem_func1<P1, C, MF>* make(C* obj, MF mf)
-    { return new slot_adapter_mem_func1<P1, C, MF>(obj, mf); }
-
-    virtual void call(P1 p1) override
-    {
-      if (m_object.is_valid())
-        (m_object.get()->*m_mem_func)(p1);
-    }
-  };
-
-  template <class P1>
-  template <class C, class MF>
-  inline nub::soft_ref<slot1<P1> > slot1<P1>::make(C* obj, MF mf)
-  {
-    return nub::soft_ref<slot1<P1> >
-      (slot_adapter_mem_func1<P1, C, MF>::make(obj, mf),
-       nub::ref_type::STRONG,
-       nub::ref_vis_private());
-  }
-
-
-  //  #######################################################
-  //  =======================================================
-
-  /// A free-func adapter for slots with one argument.
-
-  template <class P1, class FF>
-  class slot_adapter_free_func1 : public slot1<P1>
-  {
-    FF m_free_func;
-
-    slot_adapter_free_func1(FF f) : m_free_func(f) {}
-
-    virtual ~slot_adapter_free_func1() noexcept {}
-
-  public:
-    static slot_adapter_free_func1<P1, FF>* make(FF f)
-    { return new slot_adapter_free_func1<P1, FF>(f); }
-
-    virtual void call(P1 p1) override
-    {
-      (*m_free_func)(p1);
-    }
-  };
-
-  template <class P1>
-  template <class FF>
-  inline nub::soft_ref<slot1<P1> > slot1<P1>::make(FF f)
-  {
-    return nub::soft_ref<slot1<P1> >
-      (slot_adapter_free_func1<P1, FF>::make(f),
-       nub::ref_type::STRONG,
-       nub::ref_vis_private());
-  }
-
 
   //  #######################################################
   //  =======================================================
@@ -295,17 +74,20 @@ namespace nub
   /** Classes that need to notify others of changes should hold an
       appropriate signal object by value, and call emit() when it is
       necessary to notify observers of the change. In turn, emit()
-      will \c call all of the slot's that are observing this
+      will \c call all of the slots that are observing this
       Signal. */
 
+  template <class... Args>
   class signal_base : public nub::volatile_object
   {
+  public:
+    typedef std::function<void(Args...)> func_type;
+
   private:
-    typedef nub::ref<nub::slot_base> slot_ref;
 
     struct slot_info
     {
-      slot_ref sref;
+      func_type func;
       std::forward_list<nub::soft_ref<const nub::object>> tracked;
       bool is_tracking(const nub::object* t) const
       {
@@ -333,26 +115,26 @@ namespace nub
 
     virtual ~signal_base() noexcept = default;
 
-    void do_emit(void* params) const
+    void do_emit(Args... args) const
     {
       if (this->is_emitting)
         return;
 
       locker lock(this);
 
-      for (list_type::iterator
+      for (typename list_type::iterator
              ii = this->slots.begin(), end = this->slots.end();
            ii != end;
            /* incr in loop */)
         {
           if (ii->all_valid())
             {
-              ii->sref->do_call(params);
+              ii->func(std::forward<Args>(args)...);
               ++ii;
             }
           else
             {
-              list_type::iterator erase_me = ii;
+              typename list_type::iterator erase_me = ii;
               ++ii;
               this->slots.erase(erase_me);
             }
@@ -369,22 +151,22 @@ namespace nub
 
   protected:
     /// Add a slot to the list of those watching this Signal, and bind that slot's lifetime to a tracked object's lifetime
-    connection connect(nub::soft_ref<slot_base> slot, const nub::object* trackme)
+    connection connect(func_type func, const nub::object* trackme)
     {
-      if (!slot.is_valid()) return connection{nullptr};
+      if (!func) return connection{nullptr};
 
-      this->slots.push_back(slot_info({slot_ref(slot.get(), nub::ref_vis_private()),
+      this->slots.push_back(slot_info({func,
               {nub::soft_ref<const nub::object>(trackme, nub::ref_type::WEAK, nub::ref_vis_private())}}));
 
       return connection{&(this->slots.back())};
     }
 
     /// Add a slot to the list of those watching this Signal
-    connection connect(nub::soft_ref<slot_base> slot)
+    connection connect(func_type func)
     {
-      if (!slot.is_valid()) return connection{nullptr};
+      if (!func) return connection{nullptr};
 
-      this->slots.push_back(slot_info({slot_ref(slot.get(), nub::ref_vis_private()), {}}));
+      this->slots.push_back(slot_info({func, {}}));
       return connection{&(this->slots.back())};
     }
 
@@ -429,20 +211,21 @@ namespace nub
 
   /// A zero-argument signal.
 
-  class signal0 : public signal_base
+  class signal0 : public signal_base<>
   {
   public:
     /// Default constructor.
-    signal0();
+    signal0() = default;
 
     /// Virtual destructor.
-    virtual ~signal0() noexcept;
+    virtual ~signal0() noexcept = default;
 
-    using signal_base::connection;
+    using typename signal_base<>::func_type;
+    using typename signal_base<>::connection;
 
     /// Connect a free function to this signal0.
     connection connect(void (*free_func)())
-    { return signal_base::connect(slot0::make(free_func)); }
+    { return signal_base<>::connect(func_type(free_func)); }
 
     /// Connect an object to this signal0.
     /** After connection, when the signal is triggered, \a mem_func
@@ -450,13 +233,13 @@ namespace nub
         the connection object that is created. */
     template <class C, class MF>
     connection connect(C* obj, MF mem_func)
-    { return signal_base::connect(slot0::make(obj, mem_func), obj); }
+    { return signal_base<>::connect(func_type([obj,mem_func](){((*obj).*mem_func)();}), obj); }
 
     connection connect(signal0* other)
     { return connect(other, &signal0::emit); }
 
     /// Trigger all of this object's slots.
-    void emit() const { signal_base::do_emit(nullptr); }
+    void emit() const { signal_base<>::do_emit(); }
 
   private:
     signal0(const signal0&);
@@ -470,26 +253,26 @@ namespace nub
   /// A one-argument signal.
 
   template <class P1>
-  class Signal1 : public signal_base
+  class Signal1 : public signal_base<P1>
   {
   public:
     Signal1() {}
 
     virtual ~Signal1() noexcept {}
 
-    using signal_base::connection;
+    using typename signal_base<P1>::connection;
+    using typename signal_base<P1>::func_type;
 
     connection connect(void (*free_func)(P1))
-    { return signal_base::connect(slot1<P1>::make(free_func)); }
+    { return signal_base<P1>::connect(func_type(free_func)); }
 
     template <class C, class MF>
     connection connect(C* obj, MF mem_func)
-    { return signal_base::connect(slot1<P1>::make(obj, mem_func), obj); }
+    { return signal_base<P1>::connect(func_type([obj,mem_func](P1 p1){((*obj).*mem_func)(p1);}), obj); }
 
     void emit(P1 p1) const
     {
-      call_data1<P1> dat( p1 );
-      signal_base::do_emit(static_cast<void*>(&dat));
+      signal_base<P1>::do_emit(p1);
     }
 
   private:

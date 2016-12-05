@@ -6,7 +6,7 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (05-Dec-2016) Eliminate slot classes & replace with std::function
+* (05-Dec-2016) Collapse signal_base/signal0/signal1 into a single signal<Args...> template
 
 * (25-Nov-2016) Standardize bzip2/gzip interfaces and use for image parsing and serialization
 

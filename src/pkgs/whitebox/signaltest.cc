@@ -62,12 +62,12 @@ namespace
     TEST_REQUIRE_EQ(v0, 0);
     TEST_REQUIRE_EQ(v1, 0);
 
-    nub::signal_base::connection c0 = sig0.connect(&v0_callback0);
+    auto c0 = sig0.connect(&v0_callback0);
     sig0.emit();
     TEST_REQUIRE_EQ(v0, 1);
     TEST_REQUIRE_EQ(v1, 0);
 
-    nub::signal_base::connection c1 = sig0.connect(&v1_callback0);
+    auto c1 = sig0.connect(&v1_callback0);
     sig0.emit();
     TEST_REQUIRE_EQ(v0, 2);
     TEST_REQUIRE_EQ(v1, -1);
@@ -160,12 +160,12 @@ namespace
     TEST_REQUIRE_EQ(v0, 0);
     TEST_REQUIRE_EQ(v1, 0);
 
-    nub::signal_base::connection c0 = sig1.connect(&v0_callback1);
+    auto c0 = sig1.connect(&v0_callback1);
     sig1.emit(2);
     TEST_REQUIRE_EQ(v0, 2);
     TEST_REQUIRE_EQ(v1, 0);
 
-    nub::signal_base::connection c1 = sig1.connect(&v1_callback1);
+    auto c1 = sig1.connect(&v1_callback1);
     sig1.emit(3);
     TEST_REQUIRE_EQ(v0, 5);
     TEST_REQUIRE_EQ(v1, -3);
