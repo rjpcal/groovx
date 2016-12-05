@@ -197,8 +197,7 @@ GVX_TRACE("nub::signal_base::connect");
 ///////////////////////////////////////////////////////////////////////
 
 nub::signal0::signal0() :
-  signal_base(),
-  slot_emit_self(slot0::make(this, &nub::signal0::emit))
+  signal_base()
 {
 GVX_TRACE("nub::signal0::signal0");
 }

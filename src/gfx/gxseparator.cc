@@ -120,14 +120,14 @@ void GxSeparator::read_from(io::reader& reader)
 GVX_TRACE("GxSeparator::read_from");
 
  for (const auto& noderef: rep->children)
-   noderef->sigNodeChanged.disconnect(this);
+   noderef->sigNodeChanged.disconnect(&this->sigNodeChanged);
 
   rep->children.clear();
   io::read_utils::read_object_seq<GxNode>(
           reader, "children", std::back_inserter(rep->children));
 
   for (const auto& noderef: rep->children)
-    noderef->sigNodeChanged.connect(this->sigNodeChanged.slot(), this);
+    noderef->sigNodeChanged.connect(&this->sigNodeChanged);
 
   this->sigNodeChanged.emit();
 }
@@ -148,7 +148,7 @@ GVX_TRACE("GxSeparator::addChild");
 
   rep->children.push_back(item);
 
-  item->sigNodeChanged.connect(this->sigNodeChanged.slot(), this);
+  item->sigNodeChanged.connect(&this->sigNodeChanged);
 
   this->sigNodeChanged.emit();
 
@@ -166,7 +166,7 @@ GVX_TRACE("GxSeparator::insertChild");
 
   rep->children.insert(rep->children.begin()+long(at_index), item);
 
-  item->sigNodeChanged.connect(this->sigNodeChanged.slot(), this);
+  item->sigNodeChanged.connect(&this->sigNodeChanged);
 
   this->sigNodeChanged.emit();
 }
@@ -176,7 +176,7 @@ void GxSeparator::removeChildAt(ChildId index)
 GVX_TRACE("GxSeparator::removeChildAt");
   if (index < rep->children.size())
     {
-      rep->children[index]->sigNodeChanged.disconnect(this);
+      rep->children[index]->sigNodeChanged.disconnect(&this->sigNodeChanged);
       rep->children.erase(rep->children.begin()+long(index));
 
       this->sigNodeChanged.emit();
@@ -194,7 +194,7 @@ GVX_TRACE("GxSeparator::removeChild");
 
   if (itr != rep->children.end())
     {
-      (*itr)->sigNodeChanged.disconnect(this);
+      (*itr)->sigNodeChanged.disconnect(&this->sigNodeChanged);
       rep->children.erase(itr);
       this->sigNodeChanged.emit();
     }

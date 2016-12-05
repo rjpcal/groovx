@@ -6,7 +6,7 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (05-Dec-2016) Eliminate explicit use of slot classes in connect() calls - just connect directly using free/mem func adapters
+* (05-Dec-2016) Eliminate slot classes & replace with std::function
 
 * (25-Nov-2016) Standardize bzip2/gzip interfaces and use for image parsing and serialization
 

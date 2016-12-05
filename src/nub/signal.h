@@ -338,12 +338,14 @@ namespace nub
       const slot_info* info;
     };
 
+  protected:
     /// Add a slot to the list of those watching this Signal, and bind that slot's lifetime to a tracked object's lifetime
     connection connect(nub::soft_ref<slot_base> slot, const nub::object* trackme);
 
     /// Add a slot to the list of those watching this Signal
     connection connect(nub::soft_ref<slot_base> slot);
 
+  public:
     /// Remove a slot from the list of those watching this Signal.
     void disconnect(connection c);
 
@@ -385,7 +387,6 @@ namespace nub
     /// Virtual destructor.
     virtual ~signal0() noexcept;
 
-    using signal_base::connect;
     using signal_base::connection;
 
     /// Connect a free function to this signal0.
@@ -400,17 +401,15 @@ namespace nub
     connection connect(C* obj, MF mem_func)
     { return signal_base::connect(slot0::make(obj, mem_func), obj); }
 
+    connection connect(signal0* other)
+    { return connect(other, &signal0::emit); }
+
     /// Trigger all of this object's slots.
     void emit() const { signal_base::do_emit(nullptr); }
-
-    /// Returns a slot which when called will cause this signal to emit().
-    nub::soft_ref<slot0> slot() const { return slot_emit_self; }
 
   private:
     signal0(const signal0&);
     signal0& operator=(const signal0&);
-
-    nub::ref<nub::slot0> slot_emit_self;
   };
 
 
@@ -427,7 +426,6 @@ namespace nub
 
     virtual ~Signal1() noexcept {}
 
-    using signal_base::connect;
     using signal_base::connection;
 
     connection connect(void (*free_func)(P1))

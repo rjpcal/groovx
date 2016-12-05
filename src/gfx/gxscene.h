@@ -135,8 +135,6 @@ private:
 
   const std::shared_ptr<nub::scheduler> itsScheduler;
   nub::timer itsTimer;
-
-  nub::ref<nub::slot0> slotNodeChanged;
 };
 
 #endif // !GROOVX_GFX_GXSCENE_H_UTC20050626084024_DEFINED

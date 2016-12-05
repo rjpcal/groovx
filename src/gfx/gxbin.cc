@@ -41,8 +41,8 @@ GxBin::~GxBin() noexcept {}
 
 void GxBin::setChild(const nub::ref<GxNode>& child)
 {
-  itsChild->sigNodeChanged.disconnect(this);
+  itsChild->sigNodeChanged.disconnect(&this->sigNodeChanged);
   itsChild = child;
-  itsChild->sigNodeChanged.connect(this->sigNodeChanged.slot(), this);
+  itsChild->sigNodeChanged.connect(&this->sigNodeChanged);
   this->sigNodeChanged.emit();
 }
