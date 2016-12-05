@@ -69,26 +69,48 @@ namespace nub
   //  #######################################################
   //  =======================================================
 
-  /// signal_base provides basic implementation for Signal.
+  /// signal - generic implementation of the observer pattern
 
   /** Classes that need to notify others of changes should hold an
       appropriate signal object by value, and call emit() when it is
       necessary to notify observers of the change. In turn, emit()
-      will \c call all of the slots that are observing this
-      Signal. */
+      will \c call all of the callbacks that are observing this
+      signal. */
 
   template <class... Args>
-  class signal_base : public nub::volatile_object
+  class signal : public nub::volatile_object
   {
   public:
     typedef std::function<void(Args...)> func_type;
 
   private:
 
+    class emit_locker
+    {
+      const signal* m_target;
+
+    public:
+      emit_locker(const signal* impl) : m_target(impl)
+      { m_target->is_emitting = true; }
+
+      ~emit_locker()
+      { m_target->is_emitting = false; }
+
+      emit_locker(const emit_locker&) = delete;
+      emit_locker& operator=(const emit_locker&) = delete;
+    };
+
     struct slot_info
     {
       func_type func;
       std::forward_list<nub::soft_ref<const nub::object>> tracked;
+
+      slot_info(func_type func_, const nub::object* trackme)
+        : func(std::move(func_))
+      {
+        if (trackme)
+          tracked.emplace_front(trackme, nub::ref_type::WEAK, nub::ref_vis_private());
+      }
       bool is_tracking(const nub::object* t) const
       {
         return std::any_of(tracked.begin(), tracked.end(),
@@ -106,21 +128,24 @@ namespace nub
     mutable list_type slots;
     mutable bool is_emitting;
 
-  protected:
-    signal_base() :
+  public:
+    signal() :
       nub::volatile_object(),
       slots(),
       is_emitting(false)
     {}
 
-    virtual ~signal_base() noexcept = default;
+    virtual ~signal() noexcept = default;
 
-    void do_emit(Args... args) const
+    signal(const signal&) = delete;
+    signal& operator=(const signal&) = delete;
+
+    void emit(Args... args) const
     {
       if (this->is_emitting)
         return;
 
-      locker lock(this);
+      emit_locker lock(this);
 
       for (typename list_type::iterator
              ii = this->slots.begin(), end = this->slots.end();
@@ -141,143 +166,55 @@ namespace nub
         }
     }
 
-  public:
-
+    /// Opaque handle type returned by connect() functions; can be passed later to disconnect().
     struct connection
     {
       connection(const slot_info* i = nullptr) : info(i) {}
       const slot_info* info;
     };
 
-  protected:
-    /// Add a slot to the list of those watching this Signal, and bind that slot's lifetime to a tracked object's lifetime
-    connection connect(func_type func, const nub::object* trackme)
+    /// Add a function callback to the list of observers
+    /** If trackme is set, then also bind that callback's lifetime to
+        trackme's lifetime */
+    connection connect(func_type func, const nub::object* trackme = nullptr)
     {
       if (!func) return connection{nullptr};
 
-      this->slots.push_back(slot_info({func,
-              {nub::soft_ref<const nub::object>(trackme, nub::ref_type::WEAK, nub::ref_vis_private())}}));
+      this->slots.emplace_back(std::move(func), trackme);
 
       return connection{&(this->slots.back())};
     }
 
-    /// Add a slot to the list of those watching this Signal
-    connection connect(func_type func)
+    /// Connect an object to this signal.
+    /** After connection, when the signal is triggered, \a mem_func
+        will be called on \a obj. */
+    template <class C, class MF>
+    connection connect(C* obj, MF mem_func)
     {
-      if (!func) return connection{nullptr};
-
-      this->slots.push_back(slot_info({func, {}}));
-      return connection{&(this->slots.back())};
+      return this->connect(func_type([obj,mem_func](Args... args){
+            ((*obj).*mem_func)(std::forward<Args>(args)...);
+          }), obj);
     }
 
-  public:
-    /// Remove a slot from the list of those watching this Signal.
+    /// Connect another signal to this.
+    /** When this signal emit()s, other's emit() will also be triggered. */
+    connection connect(signal* other)
+    { return connect(other, &signal::emit); }
+
+    /// Remove a slot from the list of observers
     void disconnect(connection c)
     {
       if (c.info)
         this->slots.remove_if([t=c.info](const slot_info& si){ return &si == t; });
     }
 
-    /// Remove slots w/ given tracked object from the list of those watching this Signal.
+    /// Remove slots w/ given tracked object from the list of observers
     void disconnect(const nub::object* tracked)
     {
       if (tracked)
         this->slots.remove_if([t=tracked](const slot_info& si){ return si.is_tracking(t); });
     }
 
-  private:
-    signal_base(const signal_base&);
-    signal_base& operator=(const signal_base&);
-
-    class locker
-    {
-      locker(const locker&);
-      locker& operator=(const locker&);
-
-      const signal_base* m_target;
-
-    public:
-      locker(const signal_base* impl) : m_target(impl)
-      { m_target->is_emitting = true; }
-
-      ~locker()
-      { m_target->is_emitting = false; }
-    };
-  };
-
-
-  //  #######################################################
-  //  =======================================================
-
-  /// A zero-argument signal.
-
-  class signal0 : public signal_base<>
-  {
-  public:
-    /// Default constructor.
-    signal0() = default;
-
-    /// Virtual destructor.
-    virtual ~signal0() noexcept = default;
-
-    using typename signal_base<>::func_type;
-    using typename signal_base<>::connection;
-
-    /// Connect a free function to this signal0.
-    connection connect(void (*free_func)())
-    { return signal_base<>::connect(func_type(free_func)); }
-
-    /// Connect an object to this signal0.
-    /** After connection, when the signal is triggered, \a mem_func
-        will be called on \a obj. \c connect() returns the nub::uid of
-        the connection object that is created. */
-    template <class C, class MF>
-    connection connect(C* obj, MF mem_func)
-    { return signal_base<>::connect(func_type([obj,mem_func](){((*obj).*mem_func)();}), obj); }
-
-    connection connect(signal0* other)
-    { return connect(other, &signal0::emit); }
-
-    /// Trigger all of this object's slots.
-    void emit() const { signal_base<>::do_emit(); }
-
-  private:
-    signal0(const signal0&);
-    signal0& operator=(const signal0&);
-  };
-
-
-  //  #######################################################
-  //  =======================================================
-
-  /// A one-argument signal.
-
-  template <class P1>
-  class Signal1 : public signal_base<P1>
-  {
-  public:
-    Signal1() {}
-
-    virtual ~Signal1() noexcept {}
-
-    using typename signal_base<P1>::connection;
-    using typename signal_base<P1>::func_type;
-
-    connection connect(void (*free_func)(P1))
-    { return signal_base<P1>::connect(func_type(free_func)); }
-
-    template <class C, class MF>
-    connection connect(C* obj, MF mem_func)
-    { return signal_base<P1>::connect(func_type([obj,mem_func](P1 p1){((*obj).*mem_func)(p1);}), obj); }
-
-    void emit(P1 p1) const
-    {
-      signal_base<P1>::do_emit(p1);
-    }
-
-  private:
-    Signal1(const Signal1&);
-    Signal1& operator=(const Signal1&);
   };
 
 } // end namespace nub

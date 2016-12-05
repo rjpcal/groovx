@@ -61,7 +61,7 @@ namespace io
 
 namespace nub
 {
-  class signal0;
+  template <class... Args> class signal;
 }
 
 class FieldContainer;
@@ -607,14 +607,14 @@ class FieldContainer : public virtual nub::object
 private:
   const FieldMap* itsFieldMap;
 public:
-  nub::signal0* itsSignal;
+  nub::signal<>* itsSignal;
 private:
   FieldContainer(const FieldContainer&);
   FieldContainer& operator=(const FieldContainer&);
 
 public:
   /// Construct with an optional signal to be triggered when a field changes.
-  FieldContainer(nub::signal0* sig);
+  FieldContainer(nub::signal<>* sig);
 
   /// Virtual destructor.
   virtual ~FieldContainer() noexcept;

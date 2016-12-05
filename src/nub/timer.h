@@ -52,7 +52,7 @@ public:
 
   virtual ~timer();
 
-  nub::signal0 sig_timeout;
+  nub::signal<> sig_timeout;
 
   void schedule(std::shared_ptr<nub::scheduler> s);
   void cancel();

@@ -156,7 +156,7 @@ FieldMap::Iterator FieldMap::ioFields() const
 //
 ///////////////////////////////////////////////////////////////////////
 
-FieldContainer::FieldContainer(nub::signal0* sig) :
+FieldContainer::FieldContainer(nub::signal<>* sig) :
   itsFieldMap(FieldMap::emptyFieldMap()),
   itsSignal(sig)
 {}

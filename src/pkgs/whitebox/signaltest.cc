@@ -1,5 +1,5 @@
-/** @file pkgs/whitebox/signaltest.cc tcl interface package for testing
-    nub::signal0 and related signal/slot classes */
+/** @file pkgs/whitebox/signaltest.cc tcl interface package for
+    testing nub::signal and related signal/slot classes */
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2004-2007 University of Southern California
@@ -51,7 +51,7 @@ namespace
 
   void testSlotAdapterFreeFunc0()
   {
-    nub::signal0 sig0;
+    nub::signal<> sig0;
 
     v0 = 0;
     v1 = 0;
@@ -85,9 +85,9 @@ namespace
 
   void testSignalSlotChain()
   {
-    nub::signal0 sig1;
-    nub::signal0 sig2;
-    nub::signal0 sig3;
+    nub::signal<> sig1;
+    nub::signal<> sig2;
+    nub::signal<> sig3;
 
     sig3.connect(&v0_callback0); // sig3 --> v0_callback0
 
@@ -122,13 +122,12 @@ namespace
     // This test is to make sure that we don't let ourselves get into
     // infinite loops even if there are cyclic patterns of connections
     // between signals and slots. This is implemented with
-    // nub::signal_base::Impl::isItEmitting, which is locked by
-    // nub::signal_base::Impl::Lock on entry to
-    // nub::signal_base::do_emit().
+    // nub::signal::Impl::isItEmitting, which is locked by
+    // nub::signal::Impl::Lock on entry to nub::signal::do_emit().
 
-    nub::signal0 sig1;
-    nub::signal0 sig2;
-    nub::signal0 sig3;
+    nub::signal<> sig1;
+    nub::signal<> sig2;
+    nub::signal<> sig3;
 
     sig3.connect(&v0_callback0);      // sig3 --> v0_callback0
     sig2.connect(&sig3); // sig2 --> sig3 --> v0_callback0
@@ -149,7 +148,7 @@ namespace
 
   void testSlotAdapterFreeFunc1()
   {
-    nub::Signal1<int> sig1;
+    nub::signal<int> sig1;
 
     v0 = 0;
     v1 = 0;

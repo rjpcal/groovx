@@ -158,8 +158,8 @@ public:
 
   void hook();
 
-  nub::Signal1<const tcl::ButtonPressEvent&> sigButtonPressed;
-  nub::Signal1<const tcl::KeyPressEvent&> sigKeyPressed;
+  nub::signal<const tcl::ButtonPressEvent&> sigButtonPressed;
+  nub::signal<const tcl::KeyPressEvent&> sigKeyPressed;
 
 private:
   TkWidget(const TkWidget&);

@@ -81,7 +81,7 @@ public:
   virtual ~GxNode() noexcept;
 
   /// Signal that will be triggered whenever the node changes state.
-  nub::signal0 sigNodeChanged;
+  nub::signal<> sigNodeChanged;
 
   /** Returns true if \a other is contained within this node in the
       scene graph. The default implementation (for leaf nodes) returns
