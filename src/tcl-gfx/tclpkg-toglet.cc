@@ -84,42 +84,43 @@ GVX_TRACE("Toglet_Init");
   if (Tcl_PkgRequire(interp, "Tk", 0, 0) == 0)
     return 1;
 
-  GVX_PKG_CREATE(pkg, interp, "Toglet", "4.$Revision$");
+  return tcl::pkg::init
+    (interp, "Toglet", "4.$Revision$",
+     [](tcl::pkg* pkg) {
 
-  pkg->on_exit( &clear_on_exit );
+      pkg->on_exit( &clear_on_exit );
 
-  pkg->inherit_pkg("TkWidget");
-  tcl::def_basic_type_cmds<Toglet>(pkg, SRC_POS);
+      pkg->inherit_pkg("TkWidget");
+      tcl::def_basic_type_cmds<Toglet>(pkg, SRC_POS);
 
-  nub::obj_factory::instance().register_creator( &Toglet::make );
-  nub::obj_factory::instance().register_creator( &Toglet::makeToplevel,
-                                              "TopToglet" );
+      nub::obj_factory::instance().register_creator( &Toglet::make );
+      nub::obj_factory::instance().register_creator( &Toglet::makeToplevel,
+                                                     "TopToglet" );
 
-  pkg->def( "::tog", 0, &Toglet::getCurrent, SRC_POS );
-  pkg->def( "::cv", 0, &GLCanvas::getCurrent, SRC_POS );
+      pkg->def( "::tog", 0, &Toglet::getCurrent, SRC_POS );
+      pkg->def( "::cv", 0, &GLCanvas::getCurrent, SRC_POS );
 
-  pkg->def( "current", "toglet_id", &Toglet::setCurrent, SRC_POS );
-  pkg->def( "current", 0, &Toglet::getCurrent, SRC_POS );
-  pkg->def( "defaultParent", "parent", &Toglet::defaultParent, SRC_POS );
-  pkg->def( "see", "gxnode_id", &see, SRC_POS );
+      pkg->def( "current", "toglet_id", &Toglet::setCurrent, SRC_POS );
+      pkg->def( "current", 0, &Toglet::getCurrent, SRC_POS );
+      pkg->def( "defaultParent", "parent", &Toglet::defaultParent, SRC_POS );
+      pkg->def( "see", "gxnode_id", &see, SRC_POS );
 
-  pkg->def_setter("allowRefresh", &Toglet::allowRefresh, SRC_POS);
-  pkg->def("animate", "objref(s) frames_per_second", &Toglet::animate, SRC_POS);
-  pkg->def_get_set("camera", &Toglet::getCamera, &Toglet::setCamera, SRC_POS);
-  pkg->def_getter("canvas", &Toglet::getCanvas, SRC_POS);
-  pkg->def_action("clearscreen", &Toglet::fullClearscreen, SRC_POS);
-  pkg->def("hold", "objref(s) hold_on", &Toglet::setHold, SRC_POS);
-  pkg->def("setVisible", "objref(s) visibility", &Toglet::setVisibility, SRC_POS);
-  pkg->def_get_set("size", &Toglet::size, &Toglet::setSize, SRC_POS);
-  pkg->def_action("swapBuffers", &Toglet::swapBuffers, SRC_POS);
-  pkg->def_action("undraw", &Toglet::undraw, SRC_POS);
+      pkg->def_setter("allowRefresh", &Toglet::allowRefresh, SRC_POS);
+      pkg->def("animate", "objref(s) frames_per_second", &Toglet::animate, SRC_POS);
+      pkg->def_get_set("camera", &Toglet::getCamera, &Toglet::setCamera, SRC_POS);
+      pkg->def_getter("canvas", &Toglet::getCanvas, SRC_POS);
+      pkg->def_action("clearscreen", &Toglet::fullClearscreen, SRC_POS);
+      pkg->def("hold", "objref(s) hold_on", &Toglet::setHold, SRC_POS);
+      pkg->def("setVisible", "objref(s) visibility", &Toglet::setVisibility, SRC_POS);
+      pkg->def_get_set("size", &Toglet::size, &Toglet::setSize, SRC_POS);
+      pkg->def_action("swapBuffers", &Toglet::swapBuffers, SRC_POS);
+      pkg->def_action("undraw", &Toglet::undraw, SRC_POS);
 
-  Toglet::make();
+      Toglet::make();
 
-  pkg->eval("proc ::clearscreen {} { Toglet::clearscreen [Toglet::current] }\n"
-            "proc ::see {id} { Toglet::see [Toglet::current] $id }\n"
-            "proc ::undraw {} { Toglet::undraw [Toglet::current] }\n"
-            );
-
-  GVX_PKG_RETURN(pkg);
+      pkg->eval("proc ::clearscreen {} { Toglet::clearscreen [Toglet::current] }\n"
+                "proc ::see {id} { Toglet::see [Toglet::current] $id }\n"
+                "proc ::undraw {} { Toglet::undraw [Toglet::current] }\n"
+                );
+    });
 }

@@ -255,25 +255,25 @@ int Fstringtest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Fstringtest_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Fstringtest", "4.$Revision$");
-
-  DEF_TEST(pkg, testDefaultConstruct);
-  DEF_TEST(pkg, testConstruct1);
-  DEF_TEST(pkg, testConstruct2);
-  DEF_TEST(pkg, testConstructNum);
-  DEF_TEST(pkg, testConstructCharRange);
-  DEF_TEST(pkg, testSwap);
-  DEF_TEST(pkg, testAssign1);
-  DEF_TEST(pkg, testAssign2);
-  DEF_TEST(pkg, testAssignEmptyString);
-  DEF_TEST(pkg, testAssignNullString);
-  DEF_TEST(pkg, testLessThan);
-  DEF_TEST(pkg, testGreaterThan);
-  DEF_TEST(pkg, testRead);
-  DEF_TEST(pkg, testReadsome);
-  DEF_TEST(pkg, testReadline1);
-  DEF_TEST(pkg, testReadline2);
-  DEF_TEST(pkg, testWrite);
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "Fstringtest", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      DEF_TEST(pkg, testDefaultConstruct);
+      DEF_TEST(pkg, testConstruct1);
+      DEF_TEST(pkg, testConstruct2);
+      DEF_TEST(pkg, testConstructNum);
+      DEF_TEST(pkg, testConstructCharRange);
+      DEF_TEST(pkg, testSwap);
+      DEF_TEST(pkg, testAssign1);
+      DEF_TEST(pkg, testAssign2);
+      DEF_TEST(pkg, testAssignEmptyString);
+      DEF_TEST(pkg, testAssignNullString);
+      DEF_TEST(pkg, testLessThan);
+      DEF_TEST(pkg, testGreaterThan);
+      DEF_TEST(pkg, testRead);
+      DEF_TEST(pkg, testReadsome);
+      DEF_TEST(pkg, testReadline1);
+      DEF_TEST(pkg, testReadline2);
+      DEF_TEST(pkg, testWrite);
+    });
 }

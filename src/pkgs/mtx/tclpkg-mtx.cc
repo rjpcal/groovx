@@ -45,22 +45,24 @@ int Mtx_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Mtx_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "mtx", "4.$Revision$");
-  pkg->inherit_pkg("Obj");
-  tcl::def_basic_type_cmds<MtxObj>(pkg, SRC_POS);
+  return tcl::pkg::init
+    (interp, "mtx", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("Obj");
+      tcl::def_basic_type_cmds<MtxObj>(pkg, SRC_POS);
 
-  pkg->def_getter<MtxObj, rutz::fstring>("print", &mtx::as_string,
-                                         SRC_POS);
+      pkg->def_getter<MtxObj, rutz::fstring>("print", &mtx::as_string,
+                                             SRC_POS);
 
-  pkg->def_setter<MtxObj, const char*>("scan", &MtxObj::scan_string,
-                                       SRC_POS);
+      pkg->def_setter<MtxObj, const char*>("scan", &MtxObj::scan_string,
+                                           SRC_POS);
 
-  pkg->def_getter<MtxObj, size_t>("mrows", &mtx::mrows, SRC_POS);
-  pkg->def_getter<MtxObj, size_t>("ncols", &mtx::ncols, SRC_POS);
-  pkg->def_getter<MtxObj, size_t>("nelems", &mtx::nelems, SRC_POS);
+      pkg->def_getter<MtxObj, size_t>("mrows", &mtx::mrows, SRC_POS);
+      pkg->def_getter<MtxObj, size_t>("ncols", &mtx::ncols, SRC_POS);
+      pkg->def_getter<MtxObj, size_t>("nelems", &mtx::nelems, SRC_POS);
 
-  nub::obj_factory::instance().register_creator(&MtxObj::make);
-  nub::obj_factory::instance().register_alias("MtxObj", "mtx");
-
-  GVX_PKG_RETURN(pkg);
+      nub::obj_factory::instance().register_creator(&MtxObj::make);
+      nub::obj_factory::instance().register_alias("MtxObj", "mtx");
+    });
 }
+

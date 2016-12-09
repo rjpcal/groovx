@@ -45,35 +45,36 @@ int Tlist_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Tlist_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Tlist", "4.$Revision$");
-  pkg->def( "createPreview", "objids viewport num_cols_hint use_text_labels",
-            &TlistUtils::createPreview,
-            SRC_POS );
-  pkg->def( "createPreview", "objids viewport",
-            rutz::bind_last(rutz::bind_last(&TlistUtils::createPreview,
-                                            true), -1),
-            SRC_POS );
+  return tcl::pkg::init
+    (interp, "Tlist", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->def( "createPreview", "objids viewport num_cols_hint use_text_labels",
+                &TlistUtils::createPreview,
+                SRC_POS );
+      pkg->def( "createPreview", "objids viewport",
+                rutz::bind_last(rutz::bind_last(&TlistUtils::createPreview,
+                                                true), -1),
+                SRC_POS );
 
-  pkg->def( "dealSingles", "objid(s) posid",
-            &TlistUtils::dealSingles,
-            SRC_POS );
-  pkg->def( "dealPairs", "objids1 objids2 posid1 posid2",
-            &TlistUtils::dealPairs,
-            SRC_POS );
-  pkg->def( "dealTriads", "objids posid1 posid2 posid3",
-            &TlistUtils::dealTriads,
-            SRC_POS );
+      pkg->def( "dealSingles", "objid(s) posid",
+                &TlistUtils::dealSingles,
+                SRC_POS );
+      pkg->def( "dealPairs", "objids1 objids2 posid1 posid2",
+                &TlistUtils::dealPairs,
+                SRC_POS );
+      pkg->def( "dealTriads", "objids posid1 posid2 posid3",
+                &TlistUtils::dealTriads,
+                SRC_POS );
 
-  pkg->def( "loadObjidFile", "objid_file objids posids num_lines=-1",
-            &TlistUtils::loadObjidFile,
-            SRC_POS );
-  pkg->def( "loadObjidFile", "objid_file objids posids",
-            rutz::bind_last(&TlistUtils::loadObjidFile, -1),
-            SRC_POS );
+      pkg->def( "loadObjidFile", "objid_file objids posids num_lines=-1",
+                &TlistUtils::loadObjidFile,
+                SRC_POS );
+      pkg->def( "loadObjidFile", "objid_file objids posids",
+                rutz::bind_last(&TlistUtils::loadObjidFile, -1),
+                SRC_POS );
 
-  pkg->def( "write_responses", "filename", &TlistUtils::writeResponses, SRC_POS );
-  pkg->def( "writeIncidenceMatrix", "filename", &TlistUtils::writeIncidenceMatrix, SRC_POS );
-  pkg->def( "writeMatlab", "filename", &TlistUtils::writeMatlab, SRC_POS );
-
-  GVX_PKG_RETURN(pkg);
+      pkg->def( "write_responses", "filename", &TlistUtils::writeResponses, SRC_POS );
+      pkg->def( "writeIncidenceMatrix", "filename", &TlistUtils::writeIncidenceMatrix, SRC_POS );
+      pkg->def( "writeMatlab", "filename", &TlistUtils::writeMatlab, SRC_POS );
+    });
 }

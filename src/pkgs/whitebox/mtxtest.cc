@@ -61,9 +61,9 @@ int Mtxtest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Mtxtest_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Mtxtest", "4.$Revision$");
-
-  DEF_TEST(pkg, testPrint);
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "Mtxtest", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      DEF_TEST(pkg, testPrint);
+    });
 }

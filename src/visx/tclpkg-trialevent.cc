@@ -107,11 +107,12 @@ int Nulltrialevent_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Nulltrialevent_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "NullTrialEvent", "4.$Revision$");
-  pkg->inherit_pkg("TrialEvent");
-  tcl::def_creator<NullTrialEvent>(pkg);
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "NullTrialEvent", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("TrialEvent");
+      tcl::def_creator<NullTrialEvent>(pkg);
+    });
 }
 
 extern "C"
@@ -119,20 +120,21 @@ int Filewriteevent_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Filewriteevent_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "FileWriteEvent", "4.$Revision$");
-  pkg->inherit_pkg("TrialEvent");
-  tcl::def_creator<FileWriteEvent>(pkg);
+  return tcl::pkg::init
+    (interp, "FileWriteEvent", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("TrialEvent");
+      tcl::def_creator<FileWriteEvent>(pkg);
 
-  pkg->def_get_set("file",
-                   &FileWriteEvent::getFile,
-                   &FileWriteEvent::setFile,
-                   SRC_POS);
-  pkg->def_get_set("byte",
-                   &FileWriteEvent::getByte,
-                   &FileWriteEvent::setByte,
-                   SRC_POS);
-
-  GVX_PKG_RETURN(pkg);
+      pkg->def_get_set("file",
+                       &FileWriteEvent::getFile,
+                       &FileWriteEvent::setFile,
+                       SRC_POS);
+      pkg->def_get_set("byte",
+                       &FileWriteEvent::getByte,
+                       &FileWriteEvent::setByte,
+                       SRC_POS);
+    });
 }
 
 extern "C"
@@ -140,14 +142,15 @@ int Genericevent_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Genericevent_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "GenericEvent", "4.$Revision$");
-  pkg->inherit_pkg("TrialEvent");
-  tcl::def_creator<GenericEvent>(pkg);
+  return tcl::pkg::init
+    (interp, "GenericEvent", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("TrialEvent");
+      tcl::def_creator<GenericEvent>(pkg);
 
-  pkg->def_getter("callback", &GenericEvent::getCallback, SRC_POS);
-  pkg->def_setter("callback", &GenericEvent::setCallback, SRC_POS);
-
-  GVX_PKG_RETURN(pkg);
+      pkg->def_getter("callback", &GenericEvent::getCallback, SRC_POS);
+      pkg->def_setter("callback", &GenericEvent::setCallback, SRC_POS);
+    });
 }
 
 extern "C"
@@ -155,15 +158,16 @@ int Multievent_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Multievent_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "MultiEvent", "4.$Revision$");
-  pkg->inherit_pkg("TrialEvent");
-  tcl::def_creator<MultiEvent>(pkg);
+  return tcl::pkg::init
+    (interp, "MultiEvent", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("TrialEvent");
+      tcl::def_creator<MultiEvent>(pkg);
 
-  pkg->def_getter("events", &MultiEvent::getEvents, SRC_POS);
-  pkg->def("addEvent", "<this> event_id", &MultiEvent::addEvent, SRC_POS);
-  pkg->def("addEvents", "<this> event_id(s)", &addEvents, SRC_POS);
-  pkg->def("eraseEventAt", "<this> index", &MultiEvent::eraseEventAt, SRC_POS);
-  pkg->def("clearEvents", "<this>", &MultiEvent::clearEvents, SRC_POS);
-
-  GVX_PKG_RETURN(pkg);
+      pkg->def_getter("events", &MultiEvent::getEvents, SRC_POS);
+      pkg->def("addEvent", "<this> event_id", &MultiEvent::addEvent, SRC_POS);
+      pkg->def("addEvents", "<this> event_id(s)", &addEvents, SRC_POS);
+      pkg->def("eraseEventAt", "<this> index", &MultiEvent::eraseEventAt, SRC_POS);
+      pkg->def("clearEvents", "<this>", &MultiEvent::clearEvents, SRC_POS);
+    });
 }

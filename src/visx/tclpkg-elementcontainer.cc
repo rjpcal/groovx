@@ -59,28 +59,29 @@ int Elementcontainer_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Elementcontainer_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "ElementContainer", "4.$Revision$");
-  pkg->inherit_pkg("Element");
-  tcl::def_basic_type_cmds<Element>(pkg, SRC_POS);
+  return tcl::pkg::init
+    (interp, "ElementContainer", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("Element");
+      tcl::def_basic_type_cmds<Element>(pkg, SRC_POS);
 
-  pkg->def("addElement", "objref element_id",
-           rutz::bind_last(rutz::mem_func
-                           (&ElementContainer::addElement), 1u),
-           SRC_POS);
+      pkg->def("addElement", "objref element_id",
+               rutz::bind_last(rutz::mem_func
+                               (&ElementContainer::addElement), 1u),
+               SRC_POS);
 
-  pkg->def("addElements", "objref element_id(s)",
-           rutz::bind_last(&addElementIds, 1u), SRC_POS);
+      pkg->def("addElements", "objref element_id(s)",
+               rutz::bind_last(&addElementIds, 1u), SRC_POS);
 
-  pkg->def("addElements", "objref element_id(s) repeat=1",
-           &addElementIds, SRC_POS);
+      pkg->def("addElements", "objref element_id(s) repeat=1",
+               &addElementIds, SRC_POS);
 
-  pkg->def_getter("currentElement", &ElementContainer::currentElement, SRC_POS);
-  pkg->def_getter("isComplete", &ElementContainer::isComplete, SRC_POS);
-  pkg->def_getter("numCompleted", &ElementContainer::numCompleted, SRC_POS);
-  pkg->def_getter("numElements", &ElementContainer::numElements, SRC_POS);
-  pkg->def_action("clearElements", &ElementContainer::clearElements, SRC_POS);
-  pkg->def_vec("shuffle", "objref(s) rand_seed", &ElementContainer::shuffle, 1, SRC_POS);
-  pkg->def_getter("elements", &ElementContainer::getElements, SRC_POS);
-
-  GVX_PKG_RETURN(pkg);
+      pkg->def_getter("currentElement", &ElementContainer::currentElement, SRC_POS);
+      pkg->def_getter("isComplete", &ElementContainer::isComplete, SRC_POS);
+      pkg->def_getter("numCompleted", &ElementContainer::numCompleted, SRC_POS);
+      pkg->def_getter("numElements", &ElementContainer::numElements, SRC_POS);
+      pkg->def_action("clearElements", &ElementContainer::clearElements, SRC_POS);
+      pkg->def_vec("shuffle", "objref(s) rand_seed", &ElementContainer::shuffle, 1, SRC_POS);
+      pkg->def_getter("elements", &ElementContainer::getElements, SRC_POS);
+    });
 }

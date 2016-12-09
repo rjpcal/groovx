@@ -155,15 +155,14 @@ int Objectdb_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Objectdb_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "objectdb", "4.$Revision$");
-
-  pkg->on_exit( &dbClearOnExit );
-
-  pkg->def( "clear", 0, &dbClear, SRC_POS );
-  pkg->def( "purge", 0, &dbPurge, SRC_POS );
-  pkg->def( "release", 0, &dbRelease, SRC_POS );
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "objectdb", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->on_exit( &dbClearOnExit );
+      pkg->def( "clear", 0, &dbClear, SRC_POS );
+      pkg->def( "purge", 0, &dbPurge, SRC_POS );
+      pkg->def( "release", 0, &dbRelease, SRC_POS );
+    });
 }
 
 extern "C"

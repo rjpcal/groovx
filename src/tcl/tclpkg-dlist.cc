@@ -699,33 +699,33 @@ int Dlist_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Dlist_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "dlist", "4.$Revision$");
-
-  pkg->def( "choose", "source_list index_list", &dlist_choose, SRC_POS );
-  pkg->def( "cycle_left", "list n", &dlist_cycle_left, SRC_POS );
-  pkg->def( "cycle_right", "list n", &dlist_cycle_right, SRC_POS );
-  pkg->def( "index", "list index", &dlist_index, SRC_POS );
-  pkg->def( "not", "list", &dlist_not, SRC_POS );
-  pkg->def( "ones", "num_ones", &dlist_ones, SRC_POS );
-  pkg->def( "linspace", "begin end npts", &dlist_linspace, SRC_POS );
-  pkg->def( "perm_distance", "list", &dlist_perm_distance, SRC_POS );
-  pkg->def( "perm_distance2", "list power", &dlist_perm_distance2, SRC_POS );
-  pkg->def( "permute_maximal", "N", &dlist_permute_maximal, SRC_POS );
-  pkg->def( "permute_moveall", "N", &dlist_permute_moveall, SRC_POS );
-  pkg->def( "pickone", "list", &dlist_pickone, SRC_POS );
-  pkg->def( "rand", "min max N", &dlist_rand, SRC_POS );
-  pkg->def( "range", "begin end ?step=1?", &dlist_range, SRC_POS );
-  pkg->def( "range", "begin end", rutz::bind_last(&dlist_range, 1), SRC_POS );
-  pkg->def( "repeat", "source_list times_list", &dlist_repeat, SRC_POS );
-  pkg->def( "reverse", "list", &dlist_reverse, SRC_POS );
-  pkg->def( "select", "source_list flags_list", &dlist_select, SRC_POS );
-  pkg->def( "shuffle", "list ?seed=0?", &dlist_shuffle, SRC_POS );
-  pkg->def( "shuffle", "list", rutz::bind_last(&dlist_shuffle, 0u), SRC_POS );
-  pkg->def( "shuffle_maximal", "list", &dlist_shuffle_maximal, SRC_POS );
-  pkg->def( "shuffle_moveall", "list", &dlist_shuffle_moveall, SRC_POS );
-  pkg->def( "slice", "list n", &dlist_slice, SRC_POS );
-  pkg->def( "sum", "list", &dlist_sum, SRC_POS );
-  pkg->def( "zeros", "num_zeros", &dlist_zeros, SRC_POS );
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "dlist", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->def( "choose", "source_list index_list", &dlist_choose, SRC_POS );
+      pkg->def( "cycle_left", "list n", &dlist_cycle_left, SRC_POS );
+      pkg->def( "cycle_right", "list n", &dlist_cycle_right, SRC_POS );
+      pkg->def( "index", "list index", &dlist_index, SRC_POS );
+      pkg->def( "not", "list", &dlist_not, SRC_POS );
+      pkg->def( "ones", "num_ones", &dlist_ones, SRC_POS );
+      pkg->def( "linspace", "begin end npts", &dlist_linspace, SRC_POS );
+      pkg->def( "perm_distance", "list", &dlist_perm_distance, SRC_POS );
+      pkg->def( "perm_distance2", "list power", &dlist_perm_distance2, SRC_POS );
+      pkg->def( "permute_maximal", "N", &dlist_permute_maximal, SRC_POS );
+      pkg->def( "permute_moveall", "N", &dlist_permute_moveall, SRC_POS );
+      pkg->def( "pickone", "list", &dlist_pickone, SRC_POS );
+      pkg->def( "rand", "min max N", &dlist_rand, SRC_POS );
+      pkg->def( "range", "begin end ?step=1?", &dlist_range, SRC_POS );
+      pkg->def( "range", "begin end", rutz::bind_last(&dlist_range, 1), SRC_POS );
+      pkg->def( "repeat", "source_list times_list", &dlist_repeat, SRC_POS );
+      pkg->def( "reverse", "list", &dlist_reverse, SRC_POS );
+      pkg->def( "select", "source_list flags_list", &dlist_select, SRC_POS );
+      pkg->def( "shuffle", "list ?seed=0?", &dlist_shuffle, SRC_POS );
+      pkg->def( "shuffle", "list", rutz::bind_last(&dlist_shuffle, 0u), SRC_POS );
+      pkg->def( "shuffle_maximal", "list", &dlist_shuffle_maximal, SRC_POS );
+      pkg->def( "shuffle_moveall", "list", &dlist_shuffle_moveall, SRC_POS );
+      pkg->def( "slice", "list n", &dlist_slice, SRC_POS );
+      pkg->def( "sum", "list", &dlist_sum, SRC_POS );
+      pkg->def( "zeros", "num_zeros", &dlist_zeros, SRC_POS );
+    });
 }

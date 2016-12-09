@@ -120,34 +120,35 @@ int Io_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Io_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "io", "4.$Revision$");
-  pkg->inherit_pkg("Obj");
-  tcl::def_basic_type_cmds<io::serializable>(pkg, SRC_POS);
+  return tcl::pkg::init
+    (interp, "io", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("Obj");
+      tcl::def_basic_type_cmds<io::serializable>(pkg, SRC_POS);
 
-  pkg->def( "loadObjects", "filename num_to_read=-1", &loadObjects, SRC_POS );
-  pkg->def( "loadObjects", "filename", rutz::bind_last(&loadObjects, ALL), SRC_POS );
-  pkg->def( "saveObjects", "objids filename use_bases=yes", &saveObjects, SRC_POS );
-  pkg->def( "saveObjects", "objids filename",
-            rutz::bind_last(&saveObjects, true), SRC_POS );
+      pkg->def( "loadObjects", "filename num_to_read=-1", &loadObjects, SRC_POS );
+      pkg->def( "loadObjects", "filename", rutz::bind_last(&loadObjects, ALL), SRC_POS );
+      pkg->def( "saveObjects", "objids filename use_bases=yes", &saveObjects, SRC_POS );
+      pkg->def( "saveObjects", "objids filename",
+                rutz::bind_last(&saveObjects, true), SRC_POS );
 
-  const unsigned int keyarg = 1;
+      const unsigned int keyarg = 1;
 
-  pkg->def_vec( "write_lgx", "objref(s)", io::write_lgx, keyarg, SRC_POS );
-  pkg->def_vec( "read_lgx", "objref(s) string(s)", io::read_lgx, keyarg, SRC_POS );
+      pkg->def_vec( "write_lgx", "objref(s)", io::write_lgx, keyarg, SRC_POS );
+      pkg->def_vec( "read_lgx", "objref(s) string(s)", io::read_lgx, keyarg, SRC_POS );
 
-  pkg->def_vec( "write_asw", "objref(s)", io::write_asw, keyarg, SRC_POS );
-  pkg->def_vec( "read_asw", "objref(s) string(s)", io::read_asw, keyarg, SRC_POS );
-  pkg->def( "save_asw", "objref filename", io::save_asw, SRC_POS );
-  pkg->def( "load_asw", "objref filename", io::load_asw, SRC_POS );
-  pkg->def( "retrieve_asw", "filename", io::retrieve_asw, SRC_POS );
+      pkg->def_vec( "write_asw", "objref(s)", io::write_asw, keyarg, SRC_POS );
+      pkg->def_vec( "read_asw", "objref(s) string(s)", io::read_asw, keyarg, SRC_POS );
+      pkg->def( "save_asw", "objref filename", io::save_asw, SRC_POS );
+      pkg->def( "load_asw", "objref filename", io::load_asw, SRC_POS );
+      pkg->def( "retrieve_asw", "filename", io::retrieve_asw, SRC_POS );
 
-  pkg->def_vec( "write_gvx", "objref(s)", io::write_gvx, keyarg, SRC_POS );
-  pkg->def( "save_gvx", "objref filename", io::save_gvx, SRC_POS );
-  pkg->def( "load_gvx", "filename", io::load_gvx, SRC_POS );
+      pkg->def_vec( "write_gvx", "objref(s)", io::write_gvx, keyarg, SRC_POS );
+      pkg->def( "save_gvx", "objref filename", io::save_gvx, SRC_POS );
+      pkg->def( "load_gvx", "filename", io::load_gvx, SRC_POS );
 
-  pkg->def( "xml_debug", "filename", io::xml_debug, SRC_POS );
-
-  GVX_PKG_RETURN(pkg);
+      pkg->def( "xml_debug", "filename", io::xml_debug, SRC_POS );
+    });
 }
 
 extern "C"
@@ -155,15 +156,16 @@ int Outputfile_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Outputfile_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "output_file", "4.$Revision$");
-  pkg->inherit_pkg("io");
-  tcl::def_creator<output_file>(pkg);
-  tcl::def_basic_type_cmds<io::serializable>(pkg, SRC_POS);
+  return tcl::pkg::init
+    (interp, "output_file", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("io");
+      tcl::def_creator<output_file>(pkg);
+      tcl::def_basic_type_cmds<io::serializable>(pkg, SRC_POS);
 
-  pkg->def_get_set("filename",
-                   &output_file::get_filename,
-                   &output_file::set_filename,
-                   SRC_POS);
-
-  GVX_PKG_RETURN(pkg);
+      pkg->def_get_set("filename",
+                       &output_file::get_filename,
+                       &output_file::set_filename,
+                       SRC_POS);
+    });
 }

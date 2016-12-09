@@ -191,13 +191,14 @@ int Basesixfourtest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Basesixfourtest_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Basesixfourtest", "4.$Revision$");
+  return tcl::pkg::init
+    (interp, "Basesixfourtest", "4.$Revision$",
+     [](tcl::pkg* pkg) {
 
-  DEF_TEST(pkg, testBase64EncodeDecode1);
-  DEF_TEST(pkg, testBase64EncodeDecode2);
-  DEF_TEST(pkg, testBase64EncodeDecode3);
-  DEF_TEST(pkg, testBase64EncodeDecode4);
-  DEF_TEST(pkg, testBase64EncodeDecode5);
-
-  GVX_PKG_RETURN(pkg);
+      DEF_TEST(pkg, testBase64EncodeDecode1);
+      DEF_TEST(pkg, testBase64EncodeDecode2);
+      DEF_TEST(pkg, testBase64EncodeDecode3);
+      DEF_TEST(pkg, testBase64EncodeDecode4);
+      DEF_TEST(pkg, testBase64EncodeDecode5);
+    });
 }

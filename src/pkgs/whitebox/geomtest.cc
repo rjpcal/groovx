@@ -86,9 +86,9 @@ int Geomtest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Geomtest_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Geomtest", "4.$Revision$");
-
-  DEF_TEST(pkg, testInvert);
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "Geomtest", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      DEF_TEST(pkg, testInvert);
+    });
 }

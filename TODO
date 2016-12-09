@@ -6,7 +6,9 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (08-Dec-2016) Replace GVX_PKG_CREATE with a function taking a lambda callback
+* (08-Dec-2016) Get rid of rutz::bind_* calls in pkg->def() - use lambdas
+
+* (08-Dec-2016) Remove $Revision$ tags from pkg::init calls
 
 * (08-Dec-2016) Add mtx unittest coverage; then, replace arithfunctor.h stuff with lambda functions
 

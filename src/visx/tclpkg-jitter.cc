@@ -45,15 +45,15 @@ int Jitter_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Jitter_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Jitter", "4.$Revision$");
-  pkg->inherit_pkg("GxTransform");
-  tcl::def_basic_type_cmds<Jitter>(pkg, SRC_POS);
+  return tcl::pkg::init
+    (interp, "Jitter", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("GxTransform");
+      tcl::def_basic_type_cmds<Jitter>(pkg, SRC_POS);
 
-  pkg->def_vec( "setJitter", "posid x_jitter y_jitter r_jitter",
-                &Jitter::setJitter, 1,
-                SRC_POS );
-
-  nub::obj_factory::instance().register_creator(&Jitter::make);
-
-  GVX_PKG_RETURN(pkg);
+      pkg->def_vec( "setJitter", "posid x_jitter y_jitter r_jitter",
+                    &Jitter::setJitter, 1,
+                    SRC_POS );
+      tcl::def_creator<Jitter>(pkg);
+    });
 }

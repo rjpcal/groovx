@@ -154,12 +154,13 @@ int Responsehandler_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Responsehandler_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "ResponseHandler", "4.$Revision$");
-  pkg->inherit_pkg("io");
-  tcl::def_basic_type_cmds<ResponseHandler>(pkg, SRC_POS);
-  pkg->namesp_alias("Rh");
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "ResponseHandler", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("io");
+      tcl::def_basic_type_cmds<ResponseHandler>(pkg, SRC_POS);
+      pkg->namesp_alias("Rh");
+    });
 }
 
 extern "C"
@@ -167,48 +168,49 @@ int Eventresponsehdlr_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Eventresponsehdlr_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "EventResponseHdlr", "4.$Revision$");
-  tcl::def_creator<EventResponseHdlr>(pkg);
-  pkg->inherit_pkg("ResponseHandler");
-  tcl::def_tracing(pkg, EventResponseHdlr::tracer);
+  return tcl::pkg::init
+    (interp, "EventResponseHdlr", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      tcl::def_creator<EventResponseHdlr>(pkg);
+      pkg->inherit_pkg("ResponseHandler");
+      tcl::def_tracing(pkg, EventResponseHdlr::tracer);
 
-  tcl::def_basic_type_cmds<EventResponseHdlr>(pkg, SRC_POS);
+      tcl::def_basic_type_cmds<EventResponseHdlr>(pkg, SRC_POS);
 
-  pkg->def_action("abortInvalidResponses",
-                  &EventResponseHdlr::abortInvalidResponses,
-                  SRC_POS);
-  pkg->def_action("ignoreInvalidResponses",
-                  &EventResponseHdlr::ignoreInvalidResponses,
-                  SRC_POS);
-  pkg->def_get_set("useFeedback",
-                   &EventResponseHdlr::getUseFeedback,
-                   &EventResponseHdlr::setUseFeedback,
-                   SRC_POS);
-  pkg->def_setter("inputResponseMap",
-                  &EventResponseHdlr::setInputResponseMap,
-                  SRC_POS);
-  pkg->def_get_set("feedbackMap",
-                   &EventResponseHdlr::getFeedbackMap,
-                   &EventResponseHdlr::setFeedbackMap,
-                   SRC_POS);
-  pkg->def_get_set("eventSequence",
-                   &EventResponseHdlr::getEventSequence,
-                   &EventResponseHdlr::setEventSequence,
-                   SRC_POS);
-  pkg->def_get_set("bindingSubstitution",
-                   &EventResponseHdlr::getBindingSubstitution,
-                   &EventResponseHdlr::setBindingSubstitution,
-                   SRC_POS);
-  pkg->def("responseProc", "", &EventResponseHdlr::getResponseProc, SRC_POS);
-  pkg->def("responseProc", "args body", &EventResponseHdlr::setResponseProc, SRC_POS);
-  pkg->def_get_set("maxResponses",
-                   &EventResponseHdlr::getMaxResponses,
-                   &EventResponseHdlr::setMaxResponses,
-                   SRC_POS);
+      pkg->def_action("abortInvalidResponses",
+                      &EventResponseHdlr::abortInvalidResponses,
+                      SRC_POS);
+      pkg->def_action("ignoreInvalidResponses",
+                      &EventResponseHdlr::ignoreInvalidResponses,
+                      SRC_POS);
+      pkg->def_get_set("useFeedback",
+                       &EventResponseHdlr::getUseFeedback,
+                       &EventResponseHdlr::setUseFeedback,
+                       SRC_POS);
+      pkg->def_setter("inputResponseMap",
+                      &EventResponseHdlr::setInputResponseMap,
+                      SRC_POS);
+      pkg->def_get_set("feedbackMap",
+                       &EventResponseHdlr::getFeedbackMap,
+                       &EventResponseHdlr::setFeedbackMap,
+                       SRC_POS);
+      pkg->def_get_set("eventSequence",
+                       &EventResponseHdlr::getEventSequence,
+                       &EventResponseHdlr::setEventSequence,
+                       SRC_POS);
+      pkg->def_get_set("bindingSubstitution",
+                       &EventResponseHdlr::getBindingSubstitution,
+                       &EventResponseHdlr::setBindingSubstitution,
+                       SRC_POS);
+      pkg->def("responseProc", "", &EventResponseHdlr::getResponseProc, SRC_POS);
+      pkg->def("responseProc", "args body", &EventResponseHdlr::setResponseProc, SRC_POS);
+      pkg->def_get_set("maxResponses",
+                       &EventResponseHdlr::getMaxResponses,
+                       &EventResponseHdlr::setMaxResponses,
+                       SRC_POS);
 
-  pkg->namesp_alias("EventRh");
-
-  GVX_PKG_RETURN(pkg);
+      pkg->namesp_alias("EventRh");
+    });
 }
 
 extern "C"
@@ -216,14 +218,15 @@ int Kbdresponsehdlr_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Kbdresponsehdlr_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "KbdResponseHdlr", "4.$Revision$");
-  tcl::def_creator<KbdResponseHdlr>(pkg);
-  pkg->inherit_pkg("EventResponseHdlr");
-  tcl::def_basic_type_cmds<KbdResponseHdlr>(pkg, SRC_POS);
+  return tcl::pkg::init
+    (interp, "KbdResponseHdlr", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      tcl::def_creator<KbdResponseHdlr>(pkg);
+      pkg->inherit_pkg("EventResponseHdlr");
+      tcl::def_basic_type_cmds<KbdResponseHdlr>(pkg, SRC_POS);
 
-  pkg->namesp_alias("KbdRh");
-
-  GVX_PKG_RETURN(pkg);
+      pkg->namesp_alias("KbdRh");
+    });
 }
 
 extern "C"
@@ -231,13 +234,14 @@ int Nullresponsehdlr_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Nullresponsehdlr_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "NullResponseHdlr", "4.$Revision$");
-  tcl::def_creator<NullResponseHdlr>(pkg);
-  pkg->inherit_pkg("ResponseHandler");
-  tcl::def_basic_type_cmds<NullResponseHdlr>(pkg, SRC_POS);
-  pkg->namesp_alias("NullRh");
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "NullResponseHdlr", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      tcl::def_creator<NullResponseHdlr>(pkg);
+      pkg->inherit_pkg("ResponseHandler");
+      tcl::def_basic_type_cmds<NullResponseHdlr>(pkg, SRC_POS);
+      pkg->namesp_alias("NullRh");
+    });
 }
 
 extern "C"

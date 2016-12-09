@@ -186,12 +186,12 @@ int Signaltest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Signaltest_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Signaltest", "4.$Revision$");
-
-  DEF_TEST(pkg, testSlotAdapterFreeFunc0);
-  DEF_TEST(pkg, testSignalSlotChain);
-  DEF_TEST(pkg, testCyclicSignalSlotChain);
-  DEF_TEST(pkg, testSlotAdapterFreeFunc1);
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "Signaltest", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      DEF_TEST(pkg, testSlotAdapterFreeFunc0);
+      DEF_TEST(pkg, testSignalSlotChain);
+      DEF_TEST(pkg, testCyclicSignalSlotChain);
+      DEF_TEST(pkg, testSlotAdapterFreeFunc1);
+    });
 }

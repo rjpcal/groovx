@@ -121,14 +121,14 @@ GVX_TRACE("Vectwotest_Init");
 
   // Package can't be named "vec2test" because Tcl doesn't like numerals in
   // package names
-  GVX_PKG_CREATE(pkg, interp, "Vectwotest", "4.$Revision$");
-
-  DEF_TEST(pkg, testAbs);
-  DEF_TEST(pkg, testLength);
-  DEF_TEST(pkg, testSetLength);
-  DEF_TEST(pkg, testSetPolarRad);
-  DEF_TEST(pkg, testThetaDeg);
-  DEF_TEST(pkg, testSetThetaDeg);
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "Vectwotest", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      DEF_TEST(pkg, testAbs);
+      DEF_TEST(pkg, testLength);
+      DEF_TEST(pkg, testSetLength);
+      DEF_TEST(pkg, testSetPolarRad);
+      DEF_TEST(pkg, testThetaDeg);
+      DEF_TEST(pkg, testSetThetaDeg);
+    });
 }

@@ -147,16 +147,17 @@ int Matlabengine_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Matlabengine_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "MatlabEngine", "4.$Revision$");
-  tcl::def_basic_type_cmds<MatlabEngine>(pkg, SRC_POS);
+  return tcl::pkg::init
+    (interp, "MatlabEngine", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      tcl::def_basic_type_cmds<MatlabEngine>(pkg, SRC_POS);
 
-  pkg->def( "eval", "engine_id command", &MatlabEngine::evalString, SRC_POS );
-  pkg->def( "get", "engine_id mtx_name", &MatlabEngine::getMtx, SRC_POS );
+      pkg->def( "eval", "engine_id command", &MatlabEngine::evalString, SRC_POS );
+      pkg->def( "get", "engine_id mtx_name", &MatlabEngine::getMtx, SRC_POS );
 
-  pkg->eval("proc meval {args} { return [eval MatlabEngine::eval $args] }");
-  pkg->eval("proc getMtx {args} { return [eval MatlabEngine::get $args] }");
+      pkg->eval("proc meval {args} { return [eval MatlabEngine::eval $args] }");
+      pkg->eval("proc getMtx {args} { return [eval MatlabEngine::get $args] }");
 
-  nub::obj_factory::instance().register_creator(&MatlabEngine::make);
-
-  GVX_PKG_RETURN(pkg);
+      tcl::def_creator<MatlabEngine>(pkg);
+    });
 }

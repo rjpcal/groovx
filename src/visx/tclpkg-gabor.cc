@@ -43,13 +43,14 @@ int Gabor_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Gabor_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Gabor", "4.$Revision$");
-  pkg->inherit_pkg("GxShapeKit");
-  tcl::defFieldContainer<Gabor>(pkg, SRC_POS);
-  tcl::def_creator<Gabor>(pkg);
-  pkg->def("saveImage", "objref filename", &Gabor::saveImage, SRC_POS);
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "Gabor", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("GxShapeKit");
+      tcl::defFieldContainer<Gabor>(pkg, SRC_POS);
+      tcl::def_creator<Gabor>(pkg);
+      pkg->def("saveImage", "objref filename", &Gabor::saveImage, SRC_POS);
+    });
 }
 
 extern "C"
@@ -57,14 +58,15 @@ int Gaborarray_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Gaborarray_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "GaborArray", "4.$Revision$");
-  pkg->inherit_pkg("GxShapeKit");
-  tcl::defFieldContainer<GaborArray>(pkg, SRC_POS);
-  tcl::def_creator<GaborArray>(pkg);
-  pkg->def("saveImage", "objref filename", &GaborArray::saveImage, SRC_POS);
-  pkg->def("saveContourOnlyImage", "objref filename",
-           &GaborArray::saveContourOnlyImage,
-           SRC_POS);
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "GaborArray", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("GxShapeKit");
+      tcl::defFieldContainer<GaborArray>(pkg, SRC_POS);
+      tcl::def_creator<GaborArray>(pkg);
+      pkg->def("saveImage", "objref filename", &GaborArray::saveImage, SRC_POS);
+      pkg->def("saveContourOnlyImage", "objref filename",
+               &GaborArray::saveContourOnlyImage,
+               SRC_POS);
+    });
 }

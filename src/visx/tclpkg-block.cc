@@ -46,12 +46,13 @@ int Block_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Block_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Block", "4.$Revision$");
-  pkg->inherit_pkg("ElementContainer");
-  tcl::def_basic_type_cmds<Block>(pkg, SRC_POS);
-  tcl::def_creator<Block>(pkg);
+  return tcl::pkg::init
+    (interp, "Block", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("ElementContainer");
+      tcl::def_basic_type_cmds<Block>(pkg, SRC_POS);
+      tcl::def_creator<Block>(pkg);
 
-  tcl::def_tracing(pkg, Block::tracer);
-
-  GVX_PKG_RETURN(pkg);
+      tcl::def_tracing(pkg, Block::tracer);
+    });
 }

@@ -56,44 +56,45 @@ int Timinghdlr_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Timinghdlr_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "TimingHdlr", "4.$Revision$");
-  tcl::def_creator<TimingHdlr>(pkg);
-  pkg->inherit_pkg("io");
-  tcl::def_basic_type_cmds<TimingHdlr>(pkg, SRC_POS);
+  return tcl::pkg::init
+    (interp, "TimingHdlr", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      tcl::def_creator<TimingHdlr>(pkg);
+      pkg->inherit_pkg("io");
+      tcl::def_basic_type_cmds<TimingHdlr>(pkg, SRC_POS);
 
-  pkg->def( "addImmediateEvent", "th_id event_type msec_delay",
-            rutz::bind_last(&addNewEvent, TimingHdlr::IMMEDIATE),
-            SRC_POS );
-  pkg->def( "addStartEvent", "th_id event_type msec_delay",
-            rutz::bind_last(&addNewEvent, TimingHdlr::FROM_START),
-            SRC_POS );
-  pkg->def( "addResponseEvent", "th_id event_type msec_delay",
-            rutz::bind_last(&addNewEvent, TimingHdlr::FROM_RESPONSE),
-            SRC_POS );
-  pkg->def( "addAbortEvent", "th_id event_type msec_delay",
-            rutz::bind_last(&addNewEvent, TimingHdlr::FROM_ABORT),
-            SRC_POS );
+      pkg->def( "addImmediateEvent", "th_id event_type msec_delay",
+                rutz::bind_last(&addNewEvent, TimingHdlr::IMMEDIATE),
+                SRC_POS );
+      pkg->def( "addStartEvent", "th_id event_type msec_delay",
+                rutz::bind_last(&addNewEvent, TimingHdlr::FROM_START),
+                SRC_POS );
+      pkg->def( "addResponseEvent", "th_id event_type msec_delay",
+                rutz::bind_last(&addNewEvent, TimingHdlr::FROM_RESPONSE),
+                SRC_POS );
+      pkg->def( "addAbortEvent", "th_id event_type msec_delay",
+                rutz::bind_last(&addNewEvent, TimingHdlr::FROM_ABORT),
+                SRC_POS );
 
-  pkg->def( "addImmediateEvent", "th_id event_id",
-            rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
-                            TimingHdlr::IMMEDIATE),
-            SRC_POS );
-  pkg->def( "addStartEvent", "th_id event_id",
-            rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
-                            TimingHdlr::FROM_START),
-            SRC_POS );
-  pkg->def( "addResponseEvent", "th_id event_id",
-            rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
-                            TimingHdlr::FROM_RESPONSE),
-            SRC_POS );
-  pkg->def( "addAbortEvent", "th_id event_id",
-            rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
-                            TimingHdlr::FROM_ABORT),
-            SRC_POS );
+      pkg->def( "addImmediateEvent", "th_id event_id",
+                rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
+                                TimingHdlr::IMMEDIATE),
+                SRC_POS );
+      pkg->def( "addStartEvent", "th_id event_id",
+                rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
+                                TimingHdlr::FROM_START),
+                SRC_POS );
+      pkg->def( "addResponseEvent", "th_id event_id",
+                rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
+                                TimingHdlr::FROM_RESPONSE),
+                SRC_POS );
+      pkg->def( "addAbortEvent", "th_id event_id",
+                rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
+                                TimingHdlr::FROM_ABORT),
+                SRC_POS );
 
-  pkg->namesp_alias("Th");
-
-  GVX_PKG_RETURN(pkg);
+      pkg->namesp_alias("Th");
+    });
 }
 
 extern "C"
@@ -101,29 +102,30 @@ int Timinghandler_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Timinghandler_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "TimingHandler", "4.$Revision$");
-  tcl::def_creator<TimingHandler>(pkg);
-  pkg->inherit_pkg("io");
-  tcl::def_basic_type_cmds<TimingHandler>(pkg, SRC_POS);
+  return tcl::pkg::init
+    (interp, "TimingHandler", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      tcl::def_creator<TimingHandler>(pkg);
+      pkg->inherit_pkg("io");
+      tcl::def_basic_type_cmds<TimingHandler>(pkg, SRC_POS);
 
-  pkg->def_get_set("abortWait",
-                   &TimingHandler::getAbortWait,
-                   &TimingHandler::setAbortWait,
-                   SRC_POS);
-  pkg->def_get_set("interTrialInterval",
-                   &TimingHandler::getInterTrialInterval,
-                   &TimingHandler::setInterTrialInterval,
-                   SRC_POS);
-  pkg->def_get_set("stimDur",
-                   &TimingHandler::getStimDur,
-                   &TimingHandler::setStimDur,
-                   SRC_POS);
-  pkg->def_get_set("timeout",
-                   &TimingHandler::getTimeout,
-                   &TimingHandler::setTimeout,
-                   SRC_POS);
+      pkg->def_get_set("abortWait",
+                       &TimingHandler::getAbortWait,
+                       &TimingHandler::setAbortWait,
+                       SRC_POS);
+      pkg->def_get_set("interTrialInterval",
+                       &TimingHandler::getInterTrialInterval,
+                       &TimingHandler::setInterTrialInterval,
+                       SRC_POS);
+      pkg->def_get_set("stimDur",
+                       &TimingHandler::getStimDur,
+                       &TimingHandler::setStimDur,
+                       SRC_POS);
+      pkg->def_get_set("timeout",
+                       &TimingHandler::getTimeout,
+                       &TimingHandler::setTimeout,
+                       SRC_POS);
 
-  pkg->namesp_alias("SimpleTh");
-
-  GVX_PKG_RETURN(pkg);
+      pkg->namesp_alias("SimpleTh");
+    });
 }

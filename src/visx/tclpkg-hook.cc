@@ -323,27 +323,28 @@ namespace
 extern "C"
 int Hook_Init(Tcl_Interp* interp)
 {
-  GVX_PKG_CREATE(pkg, interp, "Hook", "4.$Revision$");
+  return tcl::pkg::init
+    (interp, "Hook", "4.$Revision$",
+     [](tcl::pkg* pkg) {
 
-  pkg->def( "::bug", "", &bug, SRC_POS );
+      pkg->def( "::bug", "", &bug, SRC_POS );
 
-  pkg->def( "::memUsage", 0, HookTcl::memUsage, SRC_POS );
+      pkg->def( "::memUsage", 0, HookTcl::memUsage, SRC_POS );
 
-  Tcl_RegisterObjType(&genericObjType);
+      Tcl_RegisterObjType(&genericObjType);
 
-  pkg->def( "::myobj", "val", MyObj::make, SRC_POS );
-  pkg->def( "::myinfo", "obj", MyObj::info, SRC_POS );
+      pkg->def( "::myobj", "val", MyObj::make, SRC_POS );
+      pkg->def( "::myinfo", "obj", MyObj::info, SRC_POS );
 
 #if 0
-  pkg->def( "::getData", 0, getData, SRC_POS );
-  pkg->def( "::setData", "list", setData, SRC_POS );
+      pkg->def( "::getData", 0, getData, SRC_POS );
+      pkg->def( "::setData", "list", setData, SRC_POS );
 
-  pkg->def( "::getArray", 0, getArray, SRC_POS );
-  pkg->def( "::getArraySize", 0, getArraySize, SRC_POS );
-  pkg->def( "::setArray", "list", setArray, SRC_POS );
+      pkg->def( "::getArray", 0, getArray, SRC_POS );
+      pkg->def( "::getArraySize", 0, getArraySize, SRC_POS );
+      pkg->def( "::setArray", "list", setArray, SRC_POS );
 #endif
 
-  pkg->def( "::dictGet", "dict key", dictGet, SRC_POS );
-
-  GVX_PKG_RETURN(pkg);
+      pkg->def( "::dictGet", "dict key", dictGet, SRC_POS );
+    });
 }

@@ -96,12 +96,14 @@ public:
   pkg(const pkg&) = delete;
   pkg& operator=(const pkg&) = delete;
 
-  /// Suitable for calling from a extern "C" Pkg_Init(Tcl_Interp*) function
-  /** Internally creates a new tcl::pkg object, calls your setup()
-      function on it. If the package's status is OK, then this does
-      the relevant Tcl_PkgProvide and returns TCL_OK. Otherwise, it
-      returns TCL_ERROR. You can directly return the status code from
-      your Pkg_init() function. */
+  /// Call from within a extern "C" Pkg_Init(Tcl_Interp*) function
+  /** Internally creates a new tcl::pkg object from a package name and
+      version. The version string should be in the form MM.mm where MM
+      is major version, and mm is minor version. Then calls your
+      setup() function on it. If the package's status is OK, then this
+      does the relevant Tcl_PkgProvide and returns TCL_OK. Otherwise,
+      it returns TCL_ERROR. You can directly return the status code
+      from your Pkg_init() function. */
   static int init(Tcl_Interp* interp, const char* name, const char* version,
                   const std::function<void(tcl::pkg*)>& setup);
 
@@ -294,34 +296,5 @@ private:
   friend struct impl;
   impl* rep;
 };
-
-#include "rutz/debug.h"
-GVX_DBG_REGISTER
-
-/*
-  These macros make it slightly more convenient to make sure that
-  *_Init() package initialization functions don't leak any exceptions
-  (as they are called directly from C code within the Tcl core).
- */
-
-/// This macro should go at the top of each *_Init() function.
-/** Constructs a \c tcl::pkg with a Tcl interpreter, package name, and
-    package version. The version string should be in the form MM.mm
-    where MM is major version, and mm is minor version. This
-    constructor can also correctly parse a version string such as
-    given by the RCS revision tag. If you're using svn, the suggested
-    form is to choose a fixed major version number, and let the svn
-    revision be the minor number, so you would pass a version string
-    such as "4.$Revision$". */
-#define GVX_PKG_CREATE(pkg, interp, pkgname, pkgversion)        \
-return tcl::pkg::init                                           \
-  (interp, pkgname, pkgversion,                                 \
-   [](tcl::pkg* pkg) {
-
-
-/// This macro should go at the end of each *_Init() function.
-#define GVX_PKG_RETURN(pkg)                     \
-  });
-
 
 #endif // !GROOVX_TCL_PKG_H_UTC20050628162421_DEFINED

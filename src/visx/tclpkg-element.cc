@@ -47,17 +47,18 @@ int Element_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Element_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Element", "4.$Revision$");
-  pkg->inherit_pkg("io");
-  tcl::def_basic_type_cmds<Element>(pkg, SRC_POS);
+  return tcl::pkg::init
+    (interp, "Element", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("io");
+      tcl::def_basic_type_cmds<Element>(pkg, SRC_POS);
 
-  pkg->def_getter("widget", &Element::getWidget, SRC_POS);
-  pkg->def_getter("trialType", &Element::trialType, SRC_POS);
-  pkg->def_getter("lastResponse", &Element::lastResponse, SRC_POS);
-  pkg->def_getter("info", &Element::vxInfo, SRC_POS);
-  pkg->def_action("halt", &Element::vxHalt, SRC_POS);
-  pkg->def_action("undo", &Element::vxUndo, SRC_POS);
-  pkg->def_action("reset", &Element::vxReset, SRC_POS);
-
-  GVX_PKG_RETURN(pkg);
+      pkg->def_getter("widget", &Element::getWidget, SRC_POS);
+      pkg->def_getter("trialType", &Element::trialType, SRC_POS);
+      pkg->def_getter("lastResponse", &Element::lastResponse, SRC_POS);
+      pkg->def_getter("info", &Element::vxInfo, SRC_POS);
+      pkg->def_action("halt", &Element::vxHalt, SRC_POS);
+      pkg->def_action("undo", &Element::vxUndo, SRC_POS);
+      pkg->def_action("reset", &Element::vxReset, SRC_POS);
+    });
 }

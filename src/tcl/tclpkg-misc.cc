@@ -110,46 +110,50 @@ GVX_TRACE("Misc_Init");
 
   using namespace rutz;
 
-  GVX_PKG_CREATE(pkg, interp, "Misc", "4.$Revision$");
+  return tcl::pkg::init
+    (interp, "Misc", "4.$Revision$",
+     [](tcl::pkg* pkg) {
 
-  pkg->def( "::rand", "min max", &rand_draw, SRC_POS);
-  pkg->def( "::rand", "min max ?n=1?", &rand_draw_n, SRC_POS);
-  pkg->def( "::srand", "seed",
-            bind_first(mem_func(&rutz::urand::seed), &generator),
-            SRC_POS );
+      pkg->def( "::rand", "min max", &rand_draw, SRC_POS);
+      pkg->def( "::rand", "min max ?n=1?", &rand_draw_n, SRC_POS);
+      pkg->def( "::srand", "seed",
+                bind_first(mem_func(&rutz::urand::seed), &generator),
+                SRC_POS );
 
-  // use the standard library sleep() to sleep a specified # of seconds
-  //
-  // performance: performance is pretty good, considering that we're on
-  // a seconds timescale with this command. It seems to use an extra
-  // 9msec more than the specified delay
-  pkg->def( "::sleep", "secs", &::sleep, SRC_POS );
+      // use the standard library sleep() to sleep a specified # of
+      // seconds
+      //
+      // performance: performance is pretty good, considering that we're on
+      // a seconds timescale with this command. It seems to use an extra
+      // 9msec more than the specified delay
+      pkg->def( "::sleep", "secs", &::sleep, SRC_POS );
 
-  // use the standard library usleep() to sleep a specified # of microseconds
-  //
-  // performance: in a real Tcl script, this command chews up an
-  // additional 9000usec more than the specified delay, unless the
-  // specified number is < 10000, in which case this command invariably
-  // takes ~19000 us (ugh)
-  pkg->def( "::usleep", "usecs", &::usleep, SRC_POS );
+      // use the standard library usleep() to sleep a specified # of
+      // microseconds
+      //
+      // performance: in a real Tcl script, this command chews up an
+      // additional 9000usec more than the specified delay, unless the
+      // specified number is < 10000, in which case this command
+      // invariably takes ~19000 us (ugh)
+      pkg->def( "::usleep", "usecs", &::usleep, SRC_POS );
 
-  // use the standard library usleep() to repeatedly sleep a specified #
-  // of microseconds
-  //
-  // performance: as with usleepCmd, there is some significant overhead
-  // here. It is typically an extra 10000usec per loop iteration, but
-  // again, as in usleepCmd, there seemse to be a minimum of ~20000usec
-  // per iteration, even if the specified delay is 1.
-  pkg->def( "::usleepr", "usecs reps", &usleepr, SRC_POS );
+      // use the standard library usleep() to repeatedly sleep a
+      // specified # of microseconds
+      //
+      // performance: as with usleepCmd, there is some significant
+      // overhead here. It is typically an extra 10000usec per loop
+      // iteration, but again, as in usleepCmd, there seemse to be a
+      // minimum of ~20000usec per iteration, even if the specified
+      // delay is 1.
+      pkg->def( "::usleepr", "usecs reps", &usleepr, SRC_POS );
 
-  pkg->def( "::bt", "", &backTrace, SRC_POS );
+      pkg->def( "::bt", "", &backTrace, SRC_POS );
 
-  pkg->def( "::default_rand_seed", "", &get_default_seed, SRC_POS );
-  pkg->def( "::default_rand_seed", "seed", &set_default_seed, SRC_POS );
+      pkg->def( "::default_rand_seed", "", &get_default_seed, SRC_POS );
+      pkg->def( "::default_rand_seed", "seed", &set_default_seed, SRC_POS );
 
-  pkg->def( "::tcl_valuetype", "value", &tcl_valuetype, SRC_POS );
+      pkg->def( "::tcl_valuetype", "value", &tcl_valuetype, SRC_POS );
 
-  pkg->def_raw( "::?", tcl::arg_spec(2), "cmd_name", &cmdUsage, SRC_POS );
-
-  GVX_PKG_RETURN(pkg);
+      pkg->def_raw( "::?", tcl::arg_spec(2), "cmd_name", &cmdUsage, SRC_POS );
+    });
 }

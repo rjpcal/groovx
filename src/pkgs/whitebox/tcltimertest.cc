@@ -190,12 +190,12 @@ int Tcltimertest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Tcltimertest_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Tcltimertest", "4.$Revision$");
-
-  DEF_TEST(pkg, testTimer1);
-  DEF_TEST(pkg, testTimerCancel);
-  DEF_TEST(pkg, testTimerNoInfiniteLoop);
-  DEF_TEST(pkg, testTimerCallbackError);
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "Tcltimertest", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      DEF_TEST(pkg, testTimer1);
+      DEF_TEST(pkg, testTimerCancel);
+      DEF_TEST(pkg, testTimerNoInfiniteLoop);
+      DEF_TEST(pkg, testTimerCallbackError);
+    });
 }

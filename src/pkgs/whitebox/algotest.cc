@@ -110,12 +110,13 @@ int Algotest_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Algotest_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Algotest", "4.$Revision$");
+  return tcl::pkg::init
+    (interp, "Algotest", "4.$Revision$",
+     [](tcl::pkg* pkg) {
 
-  DEF_TEST(pkg, testAlgoMinMax);
-  DEF_TEST(pkg, testAlgoAbs);
-  DEF_TEST(pkg, testAlgoClamp);
-  DEF_TEST(pkg, testAlgoSwap2);
-
-  GVX_PKG_RETURN(pkg);
+      DEF_TEST(pkg, testAlgoMinMax);
+      DEF_TEST(pkg, testAlgoAbs);
+      DEF_TEST(pkg, testAlgoClamp);
+      DEF_TEST(pkg, testAlgoSwap2);
+    });
 }
