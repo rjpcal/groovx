@@ -43,13 +43,13 @@ int Face_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Face_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Face", "4.$Revision$");
-
-  pkg->inherit_pkg("GxShapeKit");
-  tcl::defFieldContainer<Face>(pkg, SRC_POS);
-  tcl::def_creator<Face>(pkg);
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "Face", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("GxShapeKit");
+      tcl::defFieldContainer<Face>(pkg, SRC_POS);
+      tcl::def_creator<Face>(pkg);
+    });
 }
 
 extern "C"
@@ -57,10 +57,11 @@ int Cloneface_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Cloneface_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "CloneFace", "4.$Revision$");
-  pkg->inherit_pkg("Face");
-  tcl::defFieldContainer<CloneFace>(pkg, SRC_POS);
-  tcl::def_creator<CloneFace>(pkg);
-
-  GVX_PKG_RETURN(pkg);
+  return tcl::pkg::init
+    (interp, "CloneFace", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("Face");
+      tcl::defFieldContainer<CloneFace>(pkg, SRC_POS);
+      tcl::def_creator<CloneFace>(pkg);
+    });
 }

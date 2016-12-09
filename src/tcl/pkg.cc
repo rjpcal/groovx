@@ -55,12 +55,6 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-#if (TCL_MAJOR_VERSION > 8) || (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION >= 5)
-#  define HAVE_TCL_NAMESPACE_API
-#else
-#  undef  HAVE_TCL_NAMESPACE_API
-#endif
-
 using std::string;
 using std::vector;
 using std::unique_ptr;
@@ -128,18 +122,6 @@ namespace
 
     interp.eval(cmd);
   }
-
-#ifndef HAVE_TCL_NAMESPACE_API
-  tcl::list get_command_list(tcl::interpreter& interp, const char* namesp)
-  {
-    tcl::obj saveresult = interp.get_result<tcl::obj>();
-    rutz::fstring cmd = rutz::sfmt("info commands ::%s::*", namesp);
-    interp.eval(cmd);
-    tcl::list cmdlist = interp.get_result<tcl::list>();
-    interp.set_result(saveresult);
-    return cmdlist;
-  }
-#endif
 }
 
 const int tcl::pkg::STATUS_OK = TCL_OK;
@@ -219,31 +201,35 @@ GVX_TRACE("tcl::pkg::~pkg");
   // To avoid double-deletion:
   Tcl_DeleteExitHandler(&impl::c_exit_handler, static_cast<void*>(this));
 
-  try
-    {
-#ifndef HAVE_TCL_NAMESPACE_API
-      tcl::list cmdnames = get_command_list(rep->interp,
-                                            rep->namesp_name.c_str());
-
-      for (unsigned int i = 0; i < cmdnames.length(); ++i)
-        {
-          Tcl_DeleteCommand(rep->interp.intp(),
-                            cmdnames.get<const char*>(i));
-        }
-#else
-      Tcl_Namespace* namesp =
-        Tcl_FindNamespace(rep->interp.intp(), rep->namesp_name.c_str(),
-                          0, TCL_GLOBAL_ONLY);
-      if (namesp != nullptr)
-        Tcl_DeleteNamespace(namesp);
-#endif
-    }
-  catch (...)
-    {
-      rep->interp.handle_live_exception("tcl::pkg::~pkg", SRC_POS);
-    }
+  Tcl_Namespace* namesp =
+    Tcl_FindNamespace(rep->interp.intp(), rep->namesp_name.c_str(),
+                      0, TCL_GLOBAL_ONLY);
+  if (namesp != nullptr)
+    Tcl_DeleteNamespace(namesp);
 
   delete rep;
+}
+
+int tcl::pkg::init(Tcl_Interp* interp, const char* name, const char* version,
+                   std::function<void(tcl::pkg*)> setup)
+{
+  tcl::pkg* pkg = 0;
+
+  try
+    { pkg = tcl::pkg::create_in_macro(interp, name, version); }
+  catch (...)
+    { return 1; }
+
+  try
+    {
+      setup(pkg);
+    }
+  catch(...)
+    {
+      pkg->handle_live_exception(SRC_POS);
+    }
+
+  return pkg->finish_init();
 }
 
 void tcl::pkg::on_exit(exit_callback* callback)

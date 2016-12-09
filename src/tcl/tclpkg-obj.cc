@@ -171,31 +171,33 @@ int Obj_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Obj_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "Obj", "4.$Revision$");
-  tcl::def_basic_type_cmds<object>(pkg, SRC_POS);
+  return tcl::pkg::init
+    (interp, "Obj", "4.$Revision$",
+     [interp](tcl::pkg* pkg) {
 
-  pkg->def_getter("refCount", &object::dbg_ref_count, SRC_POS);
-  pkg->def_getter("weakRefCount", &object::dbg_weak_ref_count, SRC_POS);
-  pkg->def_action("incr_ref_count", &object::incr_ref_count, SRC_POS);
-  pkg->def_action("decr_ref_count", &object::decr_ref_count, SRC_POS);
+      tcl::def_basic_type_cmds<object>(pkg, SRC_POS);
 
-  pkg->def_getter( "type", &object::obj_typename, SRC_POS );
-  pkg->def_getter( "realType", &object::real_typename, SRC_POS );
+      pkg->def_getter("refCount", &object::dbg_ref_count, SRC_POS);
+      pkg->def_getter("weakRefCount", &object::dbg_weak_ref_count, SRC_POS);
+      pkg->def_action("incr_ref_count", &object::incr_ref_count, SRC_POS);
+      pkg->def_action("decr_ref_count", &object::decr_ref_count, SRC_POS);
 
-  pkg->def( "new", "typename", &objNew, SRC_POS );
-  pkg->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",
-            rutz::bind_last(&objNewArgs, tcl::interpreter(interp)),
-            SRC_POS );
-  pkg->def( "newarr", "typename array_size=1", &objNewArr, SRC_POS );
-  pkg->def( "delete", "objref(s)", &objDelete, SRC_POS );
+      pkg->def_getter( "type", &object::obj_typename, SRC_POS );
+      pkg->def_getter( "realType", &object::real_typename, SRC_POS );
 
-  pkg->def_raw( "::->", tcl::arg_spec(3).nolimit(),
-                "objref(s) cmdname ?arg1 arg2 ...?",
-                &arrowDispatch, SRC_POS );
+      pkg->def( "new", "typename", &objNew, SRC_POS );
+      pkg->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",
+                rutz::bind_last(&objNewArgs, tcl::interpreter(interp)),
+                SRC_POS );
+      pkg->def( "newarr", "typename array_size=1", &objNewArr, SRC_POS );
+      pkg->def( "delete", "objref(s)", &objDelete, SRC_POS );
 
-  pkg->namesp_alias("::", "new");
-  pkg->namesp_alias("::", "newarr");
-  pkg->namesp_alias("::", "delete");
+      pkg->def_raw( "::->", tcl::arg_spec(3).nolimit(),
+                    "objref(s) cmdname ?arg1 arg2 ...?",
+                    &arrowDispatch, SRC_POS );
 
-  GVX_PKG_RETURN(pkg);
+      pkg->namesp_alias("::", "new");
+      pkg->namesp_alias("::", "newarr");
+      pkg->namesp_alias("::", "delete");
+    });
 }

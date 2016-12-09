@@ -6,6 +6,12 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (08-Dec-2016) Replace GVX_PKG_CREATE with a function taking a lambda callback
+
+* (08-Dec-2016) Add mtx unittest coverage; then, replace arithfunctor.h stuff with lambda functions
+
+* (05-Dec-2016) Make signal not have to derive from nub::volatile_object
+
 * (25-Nov-2016) Standardize bzip2/gzip interfaces and use for image parsing and serialization
 
 * (23-Nov-2016) Make concrete_iter work with normal iterator pair semantics

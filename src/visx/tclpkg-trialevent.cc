@@ -41,6 +41,7 @@
 
 #include "visx/trialevent.h"
 
+#include <tcl.h> // need TCL_OK / TCL_ERROR
 #include <typeinfo>
 
 #include "rutz/trace.h"
@@ -49,15 +50,18 @@ namespace
 {
   typedef TrialEvent* (CreatorFunc)();
 
+  /// return 1 if error, 0 if ok
   int addEventType(Tcl_Interp* interp,
                    CreatorFunc* func,
                    const char* name) noexcept
   {
-    GVX_PKG_CREATE(pkg, interp, name, "4.$Revision$");
     nub::obj_factory::instance().register_creator(func, name);
-    pkg->inherit_pkg("TrialEvent");
-
-    GVX_PKG_RETURN(pkg);
+    return TCL_OK == tcl::pkg::init
+      (interp, name, "4.$Revision$",
+       [](tcl::pkg* pkg) {
+        pkg->inherit_pkg("TrialEvent");
+      })
+      ? 0 : 1;
   }
 
   void addEvents(nub::ref<MultiEvent> multi, tcl::list event_ids)
@@ -72,29 +76,31 @@ int Trialevent_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Trialevent_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "TrialEvent", "4.$Revision$");
-  pkg->inherit_pkg("io");
-  tcl::def_basic_type_cmds<TrialEvent>(pkg, SRC_POS);
+  int errors = 0;
+  errors += TCL_OK != tcl::pkg::init
+    (interp, "TrialEvent", "4.$Revision$",
+     [](tcl::pkg* pkg) {
+      pkg->inherit_pkg("io");
+      tcl::def_basic_type_cmds<TrialEvent>(pkg, SRC_POS);
 
-  pkg->def_get_set("delay", &TrialEvent::getDelay, &TrialEvent::setDelay, SRC_POS);
+      pkg->def_get_set("delay", &TrialEvent::getDelay, &TrialEvent::setDelay, SRC_POS);
+    });
 
-  GVX_PKG_FINISH(pkg);
+  errors += addEventType(interp, &makeAbortTrialEvent, "AbortTrialEvent");
+  errors += addEventType(interp, &makeDrawEvent, "DrawEvent");
+  errors += addEventType(interp, &makeRenderEvent, "RenderEvent");
+  errors += addEventType(interp, &makeUndrawEvent, "UndrawEvent");
+  errors += addEventType(interp, &makeEndTrialEvent, "EndTrialEvent");
+  errors += addEventType(interp, &makeNextNodeEvent, "NextNodeEvent");
+  errors += addEventType(interp, &makeAllowResponsesEvent, "AllowResponsesEvent");
+  errors += addEventType(interp, &makeDenyResponsesEvent, "DenyResponsesEvent");
+  errors += addEventType(interp, &makeSwapBuffersEvent, "SwapBuffersEvent");
+  errors += addEventType(interp, &makeRenderBackEvent, "RenderBackEvent");
+  errors += addEventType(interp, &makeRenderFrontEvent, "RenderFrontEvent");
+  errors += addEventType(interp, &makeClearBufferEvent, "ClearBufferEvent");
+  errors += addEventType(interp, &makeFinishDrawingEvent, "FinishDrawingEvent");
 
-  addEventType(interp, &makeAbortTrialEvent, "AbortTrialEvent");
-  addEventType(interp, &makeDrawEvent, "DrawEvent");
-  addEventType(interp, &makeRenderEvent, "RenderEvent");
-  addEventType(interp, &makeUndrawEvent, "UndrawEvent");
-  addEventType(interp, &makeEndTrialEvent, "EndTrialEvent");
-  addEventType(interp, &makeNextNodeEvent, "NextNodeEvent");
-  addEventType(interp, &makeAllowResponsesEvent, "AllowResponsesEvent");
-  addEventType(interp, &makeDenyResponsesEvent, "DenyResponsesEvent");
-  addEventType(interp, &makeSwapBuffersEvent, "SwapBuffersEvent");
-  addEventType(interp, &makeRenderBackEvent, "RenderBackEvent");
-  addEventType(interp, &makeRenderFrontEvent, "RenderFrontEvent");
-  addEventType(interp, &makeClearBufferEvent, "ClearBufferEvent");
-  addEventType(interp, &makeFinishDrawingEvent, "FinishDrawingEvent");
-
-  return GVX_PKG_STATUS;
+  return errors ? TCL_ERROR : TCL_OK;
 }
 
 extern "C"

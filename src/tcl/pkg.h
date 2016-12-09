@@ -37,6 +37,8 @@
 
 #include "rutz/fileposition.h"
 
+#include <functional>
+
 struct Tcl_Interp;
 
 namespace rutz
@@ -97,6 +99,13 @@ public:
   {
     return new pkg(interp, name, version);
   }
+
+  /// Suitable for calling from a extern "C" Pkg_Init(Tcl_Interp*) function
+  /** Internally creates a new tcl::pkg object, calls your setup()
+      function on it, and then returns the status that you can return
+      directly from your Pkg_Init(). */
+  static int init(Tcl_Interp* interp, const char* name, const char* version,
+                  std::function<void(tcl::pkg*)> setup);
 
   typedef void (exit_callback)();
 
@@ -324,47 +333,15 @@ GVX_DBG_REGISTER
     form is to choose a fixed major version number, and let the svn
     revision be the minor number, so you would pass a version string
     such as "4.$Revision$". */
-#define GVX_PKG_CREATE(pkg, interp, pkgname, pkgversion)              \
-                                                                      \
-int GVX_PKG_STATUS = tcl::pkg::STATUS_ERR;                            \
-{                                                                     \
-  tcl::pkg* pkg = 0;                                                  \
-                                                                      \
-  try                                                                 \
-    { pkg = tcl::pkg::create_in_macro(interp, pkgname, pkgversion); } \
-  catch (...)                                                         \
-    { return 1; }                                                     \
-                                                                      \
-  static bool recursive_initialization = false;                       \
-  GVX_ASSERT(!recursive_initialization);                              \
-  recursive_initialization = true;                                    \
-                                                                      \
-  try                                                                 \
-  {
+#define GVX_PKG_CREATE(pkg, interp, pkgname, pkgversion)        \
+return tcl::pkg::init                                           \
+  (interp, pkgname, pkgversion,                                 \
+   [](tcl::pkg* pkg) {
 
 
 /// This macro should go at the end of each *_Init() function.
 #define GVX_PKG_RETURN(pkg)                     \
-  }                                             \
-  catch(...)                                    \
-  {                                             \
-    pkg->handle_live_exception(SRC_POS);        \
-  }                                             \
-  recursive_initialization = false;             \
-  GVX_PKG_STATUS = pkg->finish_init();          \
-}                                               \
-return GVX_PKG_STATUS;
-
-/// Use this instead of GVX_PKG_RETURN(pkg) if more work needs to be done after the package is initialized.
-#define GVX_PKG_FINISH(pkg)                     \
-  }                                             \
-  catch(...)                                    \
-  {                                             \
-    pkg->handle_live_exception(SRC_POS);        \
-  }                                             \
-  recursive_initialization = false;             \
-  GVX_PKG_STATUS = pkg->finish_init();          \
-}
+  });
 
 
 #endif // !GROOVX_TCL_PKG_H_UTC20050628162421_DEFINED

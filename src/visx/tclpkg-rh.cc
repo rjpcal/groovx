@@ -245,14 +245,17 @@ int Serialrh_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Serialrh_Init");
 
-  GVX_PKG_CREATE(pkg, interp, "SerialRh", "4.$Revision$");
-  pkg->def( "SerialRh::SerialRh", "device=/dev/tty0p0",
-            rutz::bind_first(&startSerial, interp),
-            SRC_POS );
-  pkg->def( "SerialRh::SerialRh", "",
-            rutz::bind_last(rutz::bind_first(&startSerial, interp),
-                            "/dev/tty0p0"),
-            SRC_POS );
+  return tcl::pkg::init
+    (interp, "SerialRh", "4.$Revision$",
+     [interp](tcl::pkg* pkg) {
 
-  GVX_PKG_RETURN(pkg);
+      pkg->def( "SerialRh::SerialRh", "device=/dev/tty0p0",
+                rutz::bind_first(&startSerial, interp),
+                SRC_POS );
+      pkg->def( "SerialRh::SerialRh", "",
+                rutz::bind_last(rutz::bind_first(&startSerial, interp),
+                                "/dev/tty0p0"),
+                SRC_POS );
+
+    });
 }
