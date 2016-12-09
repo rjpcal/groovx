@@ -83,7 +83,7 @@ class tcl::pkg
 {
 private:
   /// Private constructor.
-  /** Clients should use the PKG_CREATE macro instead. */
+  /** Clients should use init() instead. */
   pkg(Tcl_Interp* interp, const char* name, const char* version);
 
   /// Destructor destroys all \c tcl::command's owned by the package.
@@ -93,19 +93,17 @@ public:
   static const int STATUS_OK;
   static const int STATUS_ERR;
 
-  /// Don't call this directly! Use the PKG_CREATE macro instead.
-  static pkg* create_in_macro(Tcl_Interp* interp,
-                              const char* name, const char* version)
-  {
-    return new pkg(interp, name, version);
-  }
+  pkg(const pkg&) = delete;
+  pkg& operator=(const pkg&) = delete;
 
   /// Suitable for calling from a extern "C" Pkg_Init(Tcl_Interp*) function
   /** Internally creates a new tcl::pkg object, calls your setup()
-      function on it, and then returns the status that you can return
-      directly from your Pkg_Init(). */
+      function on it. If the package's status is OK, then this does
+      the relevant Tcl_PkgProvide and returns TCL_OK. Otherwise, it
+      returns TCL_ERROR. You can directly return the status code from
+      your Pkg_init() function. */
   static int init(Tcl_Interp* interp, const char* name, const char* version,
-                  std::function<void(tcl::pkg*)> setup);
+                  const std::function<void(tcl::pkg*)>& setup);
 
   typedef void (exit_callback)();
 
@@ -132,18 +130,8 @@ public:
   static pkg* lookup(tcl::interpreter& interp,
                      const char* name, const char* version = 0) noexcept;
 
-  /** Returns a Tcl status code indicating whether the package
-      initialization was successful. */
-  int init_status() const noexcept;
-
-  /// Mark the package as having failed its initialization.
-  void set_init_status_error() noexcept;
-
   /// Returns the Tcl interpreter that was passed to the constructor.
   tcl::interpreter& interp() noexcept;
-
-  /// Trap a live exception, and leave a message in the Tcl_Interp's result.
-  void handle_live_exception(const rutz::file_pos& pos) noexcept;
 
   /// Returns the package's "namespace name".
   /** Note that the "namespace name" will be the same as the "package
@@ -288,15 +276,7 @@ public:
   /// Control whether packages should be verbose as they start up.
   static void verbose_init(bool verbose) noexcept;
 
-  /// Called just prior to returning from the *_Init function.
-  /** If the package's status is OK, then this does the relevant
-      Tcl_PkgProvide and returns TCL_OK. Otherwise, it returns
-      TCL_ERROR. */
-  int finish_init() noexcept;
-
 private:
-  pkg(const pkg&); // not implemented
-  pkg& operator=(const pkg&); // not implemented
 
   /** Returns a namespace'd command name in the form of
       pkg_name::cmd_name. The result of this function is valid only

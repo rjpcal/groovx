@@ -41,7 +41,6 @@
 
 #include "visx/trialevent.h"
 
-#include <tcl.h> // need TCL_OK / TCL_ERROR
 #include <typeinfo>
 
 #include "rutz/trace.h"
@@ -56,7 +55,7 @@ namespace
                    const char* name) noexcept
   {
     nub::obj_factory::instance().register_creator(func, name);
-    return TCL_OK == tcl::pkg::init
+    return tcl::pkg::STATUS_OK == tcl::pkg::init
       (interp, name, "4.$Revision$",
        [](tcl::pkg* pkg) {
         pkg->inherit_pkg("TrialEvent");
@@ -77,7 +76,7 @@ int Trialevent_Init(Tcl_Interp* interp)
 GVX_TRACE("Trialevent_Init");
 
   int errors = 0;
-  errors += TCL_OK != tcl::pkg::init
+  errors += tcl::pkg::STATUS_OK != tcl::pkg::init
     (interp, "TrialEvent", "4.$Revision$",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("io");
@@ -100,7 +99,7 @@ GVX_TRACE("Trialevent_Init");
   errors += addEventType(interp, &makeClearBufferEvent, "ClearBufferEvent");
   errors += addEventType(interp, &makeFinishDrawingEvent, "FinishDrawingEvent");
 
-  return errors ? TCL_ERROR : TCL_OK;
+  return errors ? tcl::pkg::STATUS_ERR : tcl::pkg::STATUS_OK;
 }
 
 extern "C"
