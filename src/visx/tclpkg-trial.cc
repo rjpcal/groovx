@@ -59,7 +59,7 @@ int Trial_Init(Tcl_Interp* interp)
 GVX_TRACE("Trial_Init");
 
   return tcl::pkg::init
-    (interp, "Trial", "4.$Revision$",
+    (interp, "Trial", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("Element");
       tcl::def_tracing(pkg, Trial::tracer);

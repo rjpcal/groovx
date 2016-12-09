@@ -8,8 +8,6 @@
 
 * (08-Dec-2016) Get rid of rutz::bind_* calls in pkg->def() - use lambdas
 
-* (08-Dec-2016) Remove $Revision$ tags from pkg::init calls
-
 * (08-Dec-2016) Add mtx unittest coverage; then, replace arithfunctor.h stuff with lambda functions
 
 * (05-Dec-2016) Make signal not have to derive from nub::volatile_object

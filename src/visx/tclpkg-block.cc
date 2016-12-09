@@ -47,7 +47,7 @@ int Block_Init(Tcl_Interp* interp)
 GVX_TRACE("Block_Init");
 
   return tcl::pkg::init
-    (interp, "Block", "4.$Revision$",
+    (interp, "Block", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("ElementContainer");
       tcl::def_basic_type_cmds<Block>(pkg, SRC_POS);

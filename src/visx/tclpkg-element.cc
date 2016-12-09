@@ -48,7 +48,7 @@ int Element_Init(Tcl_Interp* interp)
 GVX_TRACE("Element_Init");
 
   return tcl::pkg::init
-    (interp, "Element", "4.$Revision$",
+    (interp, "Element", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("io");
       tcl::def_basic_type_cmds<Element>(pkg, SRC_POS);

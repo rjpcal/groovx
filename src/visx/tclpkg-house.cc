@@ -44,7 +44,7 @@ int House_Init(Tcl_Interp* interp)
 GVX_TRACE("House_Init");
 
   return tcl::pkg::init
-    (interp, "House", "4.$Revision$",
+    (interp, "House", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("GxShapeKit");
       tcl::defFieldContainer<House>(pkg, SRC_POS);

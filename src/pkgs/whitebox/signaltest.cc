@@ -187,7 +187,7 @@ int Signaltest_Init(Tcl_Interp* interp)
 GVX_TRACE("Signaltest_Init");
 
   return tcl::pkg::init
-    (interp, "Signaltest", "4.$Revision$",
+    (interp, "Signaltest", "4.0",
      [](tcl::pkg* pkg) {
       DEF_TEST(pkg, testSlotAdapterFreeFunc0);
       DEF_TEST(pkg, testSignalSlotChain);

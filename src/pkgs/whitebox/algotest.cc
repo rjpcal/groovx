@@ -111,7 +111,7 @@ int Algotest_Init(Tcl_Interp* interp)
 GVX_TRACE("Algotest_Init");
 
   return tcl::pkg::init
-    (interp, "Algotest", "4.$Revision$",
+    (interp, "Algotest", "4.0",
      [](tcl::pkg* pkg) {
 
       DEF_TEST(pkg, testAlgoMinMax);

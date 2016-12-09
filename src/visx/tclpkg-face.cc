@@ -44,7 +44,7 @@ int Face_Init(Tcl_Interp* interp)
 GVX_TRACE("Face_Init");
 
   return tcl::pkg::init
-    (interp, "Face", "4.$Revision$",
+    (interp, "Face", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("GxShapeKit");
       tcl::defFieldContainer<Face>(pkg, SRC_POS);
@@ -58,7 +58,7 @@ int Cloneface_Init(Tcl_Interp* interp)
 GVX_TRACE("Cloneface_Init");
 
   return tcl::pkg::init
-    (interp, "CloneFace", "4.$Revision$",
+    (interp, "CloneFace", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("Face");
       tcl::defFieldContainer<CloneFace>(pkg, SRC_POS);

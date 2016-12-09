@@ -57,7 +57,7 @@ int Timinghdlr_Init(Tcl_Interp* interp)
 GVX_TRACE("Timinghdlr_Init");
 
   return tcl::pkg::init
-    (interp, "TimingHdlr", "4.$Revision$",
+    (interp, "TimingHdlr", "4.0",
      [](tcl::pkg* pkg) {
       tcl::def_creator<TimingHdlr>(pkg);
       pkg->inherit_pkg("io");
@@ -103,7 +103,7 @@ int Timinghandler_Init(Tcl_Interp* interp)
 GVX_TRACE("Timinghandler_Init");
 
   return tcl::pkg::init
-    (interp, "TimingHandler", "4.$Revision$",
+    (interp, "TimingHandler", "4.0",
      [](tcl::pkg* pkg) {
       tcl::def_creator<TimingHandler>(pkg);
       pkg->inherit_pkg("io");

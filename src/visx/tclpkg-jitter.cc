@@ -46,7 +46,7 @@ int Jitter_Init(Tcl_Interp* interp)
 GVX_TRACE("Jitter_Init");
 
   return tcl::pkg::init
-    (interp, "Jitter", "4.$Revision$",
+    (interp, "Jitter", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("GxTransform");
       tcl::def_basic_type_cmds<Jitter>(pkg, SRC_POS);

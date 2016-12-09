@@ -112,7 +112,7 @@ int Numtest_Init(Tcl_Interp* interp)
 GVX_TRACE("Numtest_Init");
 
   return tcl::pkg::init
-    (interp, "Numtest", "4.$Revision$",
+    (interp, "Numtest", "4.0",
      [](tcl::pkg* pkg) {
       DEF_TEST(pkg, testErfc);
       DEF_TEST(pkg, testGammaln);

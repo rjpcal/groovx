@@ -85,7 +85,7 @@ GVX_TRACE("Toglet_Init");
     return 1;
 
   return tcl::pkg::init
-    (interp, "Toglet", "4.$Revision$",
+    (interp, "Toglet", "4.0",
      [](tcl::pkg* pkg) {
 
       pkg->on_exit( &clear_on_exit );

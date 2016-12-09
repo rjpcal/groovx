@@ -155,7 +155,7 @@ int Responsehandler_Init(Tcl_Interp* interp)
 GVX_TRACE("Responsehandler_Init");
 
   return tcl::pkg::init
-    (interp, "ResponseHandler", "4.$Revision$",
+    (interp, "ResponseHandler", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("io");
       tcl::def_basic_type_cmds<ResponseHandler>(pkg, SRC_POS);
@@ -169,7 +169,7 @@ int Eventresponsehdlr_Init(Tcl_Interp* interp)
 GVX_TRACE("Eventresponsehdlr_Init");
 
   return tcl::pkg::init
-    (interp, "EventResponseHdlr", "4.$Revision$",
+    (interp, "EventResponseHdlr", "4.0",
      [](tcl::pkg* pkg) {
       tcl::def_creator<EventResponseHdlr>(pkg);
       pkg->inherit_pkg("ResponseHandler");
@@ -219,7 +219,7 @@ int Kbdresponsehdlr_Init(Tcl_Interp* interp)
 GVX_TRACE("Kbdresponsehdlr_Init");
 
   return tcl::pkg::init
-    (interp, "KbdResponseHdlr", "4.$Revision$",
+    (interp, "KbdResponseHdlr", "4.0",
      [](tcl::pkg* pkg) {
       tcl::def_creator<KbdResponseHdlr>(pkg);
       pkg->inherit_pkg("EventResponseHdlr");
@@ -235,7 +235,7 @@ int Nullresponsehdlr_Init(Tcl_Interp* interp)
 GVX_TRACE("Nullresponsehdlr_Init");
 
   return tcl::pkg::init
-    (interp, "NullResponseHdlr", "4.$Revision$",
+    (interp, "NullResponseHdlr", "4.0",
      [](tcl::pkg* pkg) {
       tcl::def_creator<NullResponseHdlr>(pkg);
       pkg->inherit_pkg("ResponseHandler");
@@ -250,7 +250,7 @@ int Serialrh_Init(Tcl_Interp* interp)
 GVX_TRACE("Serialrh_Init");
 
   return tcl::pkg::init
-    (interp, "SerialRh", "4.$Revision$",
+    (interp, "SerialRh", "4.0",
      [interp](tcl::pkg* pkg) {
 
       pkg->def( "SerialRh::SerialRh", "device=/dev/tty0p0",

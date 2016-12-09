@@ -191,7 +191,7 @@ int Tcltimertest_Init(Tcl_Interp* interp)
 GVX_TRACE("Tcltimertest_Init");
 
   return tcl::pkg::init
-    (interp, "Tcltimertest", "4.$Revision$",
+    (interp, "Tcltimertest", "4.0",
      [](tcl::pkg* pkg) {
       DEF_TEST(pkg, testTimer1);
       DEF_TEST(pkg, testTimerCancel);

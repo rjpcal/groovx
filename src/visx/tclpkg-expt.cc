@@ -120,7 +120,7 @@ int Exptdriver_Init(Tcl_Interp* interp)
 GVX_TRACE("Exptdriver_Init");
 
   return tcl::pkg::init
-    (interp, "ExptDriver", "4.$Revision$",
+    (interp, "ExptDriver", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("ElementContainer");
       tcl::def_creator<ExptDriver>(pkg);

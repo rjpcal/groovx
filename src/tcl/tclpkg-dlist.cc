@@ -700,7 +700,7 @@ int Dlist_Init(Tcl_Interp* interp)
 GVX_TRACE("Dlist_Init");
 
   return tcl::pkg::init
-    (interp, "dlist", "4.$Revision$",
+    (interp, "dlist", "4.0",
      [](tcl::pkg* pkg) {
       pkg->def( "choose", "source_list index_list", &dlist_choose, SRC_POS );
       pkg->def( "cycle_left", "list n", &dlist_cycle_left, SRC_POS );

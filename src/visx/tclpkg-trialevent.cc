@@ -56,7 +56,7 @@ namespace
   {
     nub::obj_factory::instance().register_creator(func, name);
     return tcl::pkg::STATUS_OK == tcl::pkg::init
-      (interp, name, "4.$Revision$",
+      (interp, name, "4.0",
        [](tcl::pkg* pkg) {
         pkg->inherit_pkg("TrialEvent");
       })
@@ -77,7 +77,7 @@ GVX_TRACE("Trialevent_Init");
 
   int errors = 0;
   errors += tcl::pkg::STATUS_OK != tcl::pkg::init
-    (interp, "TrialEvent", "4.$Revision$",
+    (interp, "TrialEvent", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("io");
       tcl::def_basic_type_cmds<TrialEvent>(pkg, SRC_POS);
@@ -108,7 +108,7 @@ int Nulltrialevent_Init(Tcl_Interp* interp)
 GVX_TRACE("Nulltrialevent_Init");
 
   return tcl::pkg::init
-    (interp, "NullTrialEvent", "4.$Revision$",
+    (interp, "NullTrialEvent", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("TrialEvent");
       tcl::def_creator<NullTrialEvent>(pkg);
@@ -121,7 +121,7 @@ int Filewriteevent_Init(Tcl_Interp* interp)
 GVX_TRACE("Filewriteevent_Init");
 
   return tcl::pkg::init
-    (interp, "FileWriteEvent", "4.$Revision$",
+    (interp, "FileWriteEvent", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("TrialEvent");
       tcl::def_creator<FileWriteEvent>(pkg);
@@ -143,7 +143,7 @@ int Genericevent_Init(Tcl_Interp* interp)
 GVX_TRACE("Genericevent_Init");
 
   return tcl::pkg::init
-    (interp, "GenericEvent", "4.$Revision$",
+    (interp, "GenericEvent", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("TrialEvent");
       tcl::def_creator<GenericEvent>(pkg);
@@ -159,7 +159,7 @@ int Multievent_Init(Tcl_Interp* interp)
 GVX_TRACE("Multievent_Init");
 
   return tcl::pkg::init
-    (interp, "MultiEvent", "4.$Revision$",
+    (interp, "MultiEvent", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("TrialEvent");
       tcl::def_creator<MultiEvent>(pkg);

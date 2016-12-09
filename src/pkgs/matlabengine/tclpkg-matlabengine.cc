@@ -148,7 +148,7 @@ int Matlabengine_Init(Tcl_Interp* interp)
 GVX_TRACE("Matlabengine_Init");
 
   return tcl::pkg::init
-    (interp, "MatlabEngine", "4.$Revision$",
+    (interp, "MatlabEngine", "4.0",
      [](tcl::pkg* pkg) {
       tcl::def_basic_type_cmds<MatlabEngine>(pkg, SRC_POS);
 

@@ -81,7 +81,7 @@ int Gtrace_Init(Tcl_Interp* interp)
 GVX_TRACE("Gtrace_Init");
 
   return tcl::pkg::init
-    (interp, "Gtrace", "4.$Revision$",
+    (interp, "Gtrace", "4.0",
      [](tcl::pkg* pkg) {
       pkg->def("::gtrace", "on_off", &rutz::trace::set_global_trace, SRC_POS);
       pkg->def("::gtrace", "", &rutz::trace::get_global_trace, SRC_POS);
@@ -100,7 +100,7 @@ int Prof_Init(Tcl_Interp* interp)
 GVX_TRACE("Prof_Init");
 
   return tcl::pkg::init
-    (interp, "Prof", "4.$Revision$",
+    (interp, "Prof", "4.0",
      [](tcl::pkg* pkg) {
       pkg->def("summary", "", &profSummary, SRC_POS);
       pkg->def("reset", "", &rutz::prof::reset_all_prof_data, SRC_POS);

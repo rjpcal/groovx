@@ -156,7 +156,7 @@ int Objectdb_Init(Tcl_Interp* interp)
 GVX_TRACE("Objectdb_Init");
 
   return tcl::pkg::init
-    (interp, "objectdb", "4.$Revision$",
+    (interp, "objectdb", "4.0",
      [](tcl::pkg* pkg) {
       pkg->on_exit( &dbClearOnExit );
       pkg->def( "clear", 0, &dbClear, SRC_POS );
@@ -171,7 +171,7 @@ int Obj_Init(Tcl_Interp* interp)
 GVX_TRACE("Obj_Init");
 
   return tcl::pkg::init
-    (interp, "Obj", "4.$Revision$",
+    (interp, "Obj", "4.0",
      [interp](tcl::pkg* pkg) {
 
       tcl::def_basic_type_cmds<object>(pkg, SRC_POS);

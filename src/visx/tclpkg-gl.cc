@@ -462,7 +462,7 @@ int Gl_Init(Tcl_Interp* interp)
 GVX_TRACE("Gl_Init");
 
   return tcl::pkg::init
-    (interp, "GL", "4.$Revision$",
+    (interp, "GL", "4.0",
      [](tcl::pkg* pkg) {
       GLTcl::loadGet(pkg);
       GLTcl::loadEnums(pkg);

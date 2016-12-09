@@ -324,7 +324,7 @@ extern "C"
 int Hook_Init(Tcl_Interp* interp)
 {
   return tcl::pkg::init
-    (interp, "Hook", "4.$Revision$",
+    (interp, "Hook", "4.0",
      [](tcl::pkg* pkg) {
 
       pkg->def( "::bug", "", &bug, SRC_POS );

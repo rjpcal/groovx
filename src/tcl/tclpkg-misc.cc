@@ -111,7 +111,7 @@ GVX_TRACE("Misc_Init");
   using namespace rutz;
 
   return tcl::pkg::init
-    (interp, "Misc", "4.$Revision$",
+    (interp, "Misc", "4.0",
      [](tcl::pkg* pkg) {
 
       pkg->def( "::rand", "min max", &rand_draw, SRC_POS);

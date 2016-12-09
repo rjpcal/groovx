@@ -93,7 +93,7 @@ int Canvas_Init(Tcl_Interp* interp)
 GVX_TRACE("Canvas_Init");
 
   return tcl::pkg::init
-    (interp, "Canvas", "4.$Revision$",
+    (interp, "Canvas", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("Obj");
       tcl::def_basic_type_cmds<Gfx::Canvas>(pkg, SRC_POS);
@@ -116,7 +116,7 @@ int Glcanvas_Init(Tcl_Interp* interp)
 GVX_TRACE("Glcanvas_Init");
 
   return tcl::pkg::init
-    (interp, "GLCanvas", "4.$Revision$",
+    (interp, "GLCanvas", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("Canvas");
       tcl::def_basic_type_cmds<GLCanvas>(pkg, SRC_POS);

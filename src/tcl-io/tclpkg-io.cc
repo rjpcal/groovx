@@ -121,7 +121,7 @@ int Io_Init(Tcl_Interp* interp)
 GVX_TRACE("Io_Init");
 
   return tcl::pkg::init
-    (interp, "io", "4.$Revision$",
+    (interp, "io", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("Obj");
       tcl::def_basic_type_cmds<io::serializable>(pkg, SRC_POS);
@@ -157,7 +157,7 @@ int Outputfile_Init(Tcl_Interp* interp)
 GVX_TRACE("Outputfile_Init");
 
   return tcl::pkg::init
-    (interp, "output_file", "4.$Revision$",
+    (interp, "output_file", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("io");
       tcl::def_creator<output_file>(pkg);

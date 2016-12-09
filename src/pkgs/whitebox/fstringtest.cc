@@ -256,7 +256,7 @@ int Fstringtest_Init(Tcl_Interp* interp)
 GVX_TRACE("Fstringtest_Init");
 
   return tcl::pkg::init
-    (interp, "Fstringtest", "4.$Revision$",
+    (interp, "Fstringtest", "4.0",
      [](tcl::pkg* pkg) {
       DEF_TEST(pkg, testDefaultConstruct);
       DEF_TEST(pkg, testConstruct1);

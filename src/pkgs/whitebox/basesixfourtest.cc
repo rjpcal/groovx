@@ -192,7 +192,7 @@ int Basesixfourtest_Init(Tcl_Interp* interp)
 GVX_TRACE("Basesixfourtest_Init");
 
   return tcl::pkg::init
-    (interp, "Basesixfourtest", "4.$Revision$",
+    (interp, "Basesixfourtest", "4.0",
      [](tcl::pkg* pkg) {
 
       DEF_TEST(pkg, testBase64EncodeDecode1);

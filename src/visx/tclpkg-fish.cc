@@ -58,7 +58,7 @@ int Fish_Init(Tcl_Interp* interp)
 GVX_TRACE("Fish_Init");
 
   return tcl::pkg::init
-    (interp, "Fish", "4.$Revision$",
+    (interp, "Fish", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("GxShapeKit");
 

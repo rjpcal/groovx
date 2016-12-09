@@ -47,7 +47,7 @@ int Log_Init(Tcl_Interp* interp)
 GVX_TRACE("Log_Init");
 
   return tcl::pkg::init
-    (interp, "log", "4.$Revision$",
+    (interp, "log", "4.0",
      [](tcl::pkg* pkg) {
       pkg->def("reset", "", &nub::logging::reset, SRC_POS);
       pkg->def("add_scope", "scopename", &::nub::logging::add_scope, SRC_POS);

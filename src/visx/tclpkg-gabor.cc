@@ -44,7 +44,7 @@ int Gabor_Init(Tcl_Interp* interp)
 GVX_TRACE("Gabor_Init");
 
   return tcl::pkg::init
-    (interp, "Gabor", "4.$Revision$",
+    (interp, "Gabor", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("GxShapeKit");
       tcl::defFieldContainer<Gabor>(pkg, SRC_POS);
@@ -59,7 +59,7 @@ int Gaborarray_Init(Tcl_Interp* interp)
 GVX_TRACE("Gaborarray_Init");
 
   return tcl::pkg::init
-    (interp, "GaborArray", "4.$Revision$",
+    (interp, "GaborArray", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("GxShapeKit");
       tcl::defFieldContainer<GaborArray>(pkg, SRC_POS);

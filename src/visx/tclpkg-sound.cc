@@ -54,7 +54,7 @@ GVX_TRACE("Sound_Init");
 
   tcl::interpreter intp(interp);
   return tcl::pkg::init
-    (interp, "Sound", "4.$Revision$",
+    (interp, "Sound", "4.0",
      [](tcl::pkg* pkg) {
 
       pkg->inherit_pkg("io");

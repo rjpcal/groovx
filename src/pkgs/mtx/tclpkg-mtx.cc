@@ -46,7 +46,7 @@ int Mtx_Init(Tcl_Interp* interp)
 GVX_TRACE("Mtx_Init");
 
   return tcl::pkg::init
-    (interp, "mtx", "4.$Revision$",
+    (interp, "mtx", "4.0",
      [](tcl::pkg* pkg) {
       pkg->inherit_pkg("Obj");
       tcl::def_basic_type_cmds<MtxObj>(pkg, SRC_POS);

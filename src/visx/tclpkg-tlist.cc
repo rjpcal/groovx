@@ -46,7 +46,7 @@ int Tlist_Init(Tcl_Interp* interp)
 GVX_TRACE("Tlist_Init");
 
   return tcl::pkg::init
-    (interp, "Tlist", "4.$Revision$",
+    (interp, "Tlist", "4.0",
      [](tcl::pkg* pkg) {
       pkg->def( "createPreview", "objids viewport num_cols_hint use_text_labels",
                 &TlistUtils::createPreview,

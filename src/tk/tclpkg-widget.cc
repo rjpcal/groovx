@@ -45,7 +45,7 @@ int Tkwidget_Init(Tcl_Interp* interp)
 GVX_TRACE("Tkwidget_Init");
 
   return tcl::pkg::init
-    (interp, "TkWidget", "4.$Revision$",
+    (interp, "TkWidget", "4.0",
      [](tcl::pkg* pkg) {
 
       pkg->inherit_pkg("Obj");
