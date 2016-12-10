@@ -172,13 +172,13 @@ private:
 
   void update() const
     {
-      if (m_elements== nullptr)
+      if (m_elements == nullptr)
         split();
     }
 
   void split() const;
 
-  void invalidate() { m_elements = 0; m_length = 0; }
+  void invalidate() { m_elements = nullptr; m_length = 0; }
 
   mutable tcl::obj      m_list_obj;
   mutable Tcl_Obj**     m_elements;
