@@ -44,10 +44,17 @@
 
 namespace
 {
-  size_t addNewEvent(nub::ref<TimingHdlr> th, const char* event_type,
-                     unsigned int msec, TimingHdlr::TimePoint time_point)
+  template <TimingHdlr::TimePoint time_point>
+  size_t addEventByName(nub::ref<TimingHdlr> th, const char* event_type,
+                        unsigned int msec)
   {
     return th->addEventByName(event_type, time_point, msec);
+  }
+
+  template <TimingHdlr::TimePoint time_point>
+  size_t addEvent(nub::ref<TimingHdlr> th, nub::ref<TrialEvent> event)
+  {
+    return th->addEvent(event, time_point);
   }
 }
 
@@ -64,34 +71,22 @@ GVX_TRACE("Timinghdlr_Init");
       tcl::def_basic_type_cmds<TimingHdlr>(pkg, SRC_POS);
 
       pkg->def( "addImmediateEvent", "th_id event_type msec_delay",
-                rutz::bind_last(&addNewEvent, TimingHdlr::IMMEDIATE),
-                SRC_POS );
+                &addEventByName<TimingHdlr::IMMEDIATE>, SRC_POS );
       pkg->def( "addStartEvent", "th_id event_type msec_delay",
-                rutz::bind_last(&addNewEvent, TimingHdlr::FROM_START),
-                SRC_POS );
+                &addEventByName<TimingHdlr::FROM_START>, SRC_POS );
       pkg->def( "addResponseEvent", "th_id event_type msec_delay",
-                rutz::bind_last(&addNewEvent, TimingHdlr::FROM_RESPONSE),
-                SRC_POS );
+                &addEventByName<TimingHdlr::FROM_RESPONSE>, SRC_POS );
       pkg->def( "addAbortEvent", "th_id event_type msec_delay",
-                rutz::bind_last(&addNewEvent, TimingHdlr::FROM_ABORT),
-                SRC_POS );
+                &addEventByName<TimingHdlr::FROM_ABORT>, SRC_POS );
 
       pkg->def( "addImmediateEvent", "th_id event_id",
-                rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
-                                TimingHdlr::IMMEDIATE),
-                SRC_POS );
+                &addEvent<TimingHdlr::IMMEDIATE>, SRC_POS );
       pkg->def( "addStartEvent", "th_id event_id",
-                rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
-                                TimingHdlr::FROM_START),
-                SRC_POS );
+                &addEvent<TimingHdlr::FROM_START>, SRC_POS );
       pkg->def( "addResponseEvent", "th_id event_id",
-                rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
-                                TimingHdlr::FROM_RESPONSE),
-                SRC_POS );
+                &addEvent<TimingHdlr::FROM_RESPONSE>, SRC_POS );
       pkg->def( "addAbortEvent", "th_id event_id",
-                rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
-                                TimingHdlr::FROM_ABORT),
-                SRC_POS );
+                &addEvent<TimingHdlr::FROM_ABORT>, SRC_POS );
 
       pkg->namesp_alias("Th");
     });

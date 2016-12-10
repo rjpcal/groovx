@@ -52,9 +52,9 @@ GVX_TRACE("Tlist_Init");
                 &TlistUtils::createPreview,
                 SRC_POS );
       pkg->def( "createPreview", "objids viewport",
-                rutz::bind_last(rutz::bind_last(&TlistUtils::createPreview,
-                                                true), -1),
-                SRC_POS );
+                [](tcl::list ids, const geom::rect<double>& world_vp){
+                  return TlistUtils::createPreview(ids, world_vp, -1, true);
+                }, SRC_POS );
 
       pkg->def( "dealSingles", "objid(s) posid",
                 &TlistUtils::dealSingles,
@@ -70,8 +70,9 @@ GVX_TRACE("Tlist_Init");
                 &TlistUtils::loadObjidFile,
                 SRC_POS );
       pkg->def( "loadObjidFile", "objid_file objids posids",
-                rutz::bind_last(&TlistUtils::loadObjidFile, -1),
-                SRC_POS );
+                [](const char* f, tcl::list objids, tcl::list posids){
+                  return TlistUtils::loadObjidFile(f, objids, posids, -1);
+                }, SRC_POS );
 
       pkg->def( "write_responses", "filename", &TlistUtils::writeResponses, SRC_POS );
       pkg->def( "writeIncidenceMatrix", "filename", &TlistUtils::writeIncidenceMatrix, SRC_POS );

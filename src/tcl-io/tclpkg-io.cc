@@ -127,10 +127,11 @@ GVX_TRACE("Io_Init");
       tcl::def_basic_type_cmds<io::serializable>(pkg, SRC_POS);
 
       pkg->def( "loadObjects", "filename num_to_read=-1", &loadObjects, SRC_POS );
-      pkg->def( "loadObjects", "filename", rutz::bind_last(&loadObjects, ALL), SRC_POS );
+      pkg->def( "loadObjects", "filename",
+                [](const char* f){return loadObjects(f, ALL);}, SRC_POS );
       pkg->def( "saveObjects", "objids filename use_bases=yes", &saveObjects, SRC_POS );
       pkg->def( "saveObjects", "objids filename",
-                rutz::bind_last(&saveObjects, true), SRC_POS );
+                [](tcl::list ids, const char* f){saveObjects(ids, f, true);}, SRC_POS );
 
       const unsigned int keyarg = 1;
 

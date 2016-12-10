@@ -6,7 +6,9 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (08-Dec-2016) Get rid of rutz::bind_* calls in pkg->def() - use lambdas
+* (09-Dec-2016) Add move ops for tcl::list, tcl::obj, remove some/all copy usage (so they become value types rather than reference types)
+
+* (09-Dec-2016) Better way to handle default args to tcl commands? Can hold inside the command rather than creating all these stub lambdas / bound functors?
 
 * (08-Dec-2016) Add mtx unittest coverage; then, replace arithfunctor.h stuff with lambda functions
 

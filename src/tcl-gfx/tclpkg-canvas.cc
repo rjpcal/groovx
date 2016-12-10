@@ -98,15 +98,11 @@ GVX_TRACE("Canvas_Init");
       pkg->inherit_pkg("Obj");
       tcl::def_basic_type_cmds<Gfx::Canvas>(pkg, SRC_POS);
 
-      using rutz::bind_last;
-      using rutz::mem_func;
-
       pkg->def_getter("viewport", &Gfx::Canvas::getScreenViewport, SRC_POS);
       pkg->def("topLeft", "canvas", &topLeft, SRC_POS);
 
       pkg->def("throwIfError", "",
-               bind_last(bind_last(mem_func(&Gfx::Canvas::throwIfError), SRC_POS), ""),
-               SRC_POS);
+               [](nub::ref<Gfx::Canvas> c){c->throwIfError("", SRC_POS);}, SRC_POS);
     });
 }
 

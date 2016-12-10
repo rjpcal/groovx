@@ -37,10 +37,8 @@
 
 void tcl::def_tracing(tcl::pkg* pkg, rutz::tracer& t)
 {
-  using namespace rutz;
-
-  pkg->def( "traceOn",     "", bind_first(mem_func(&tracer::on), &t), SRC_POS );
-  pkg->def( "traceOff",    "", bind_first(mem_func(&tracer::off), &t), SRC_POS );
-  pkg->def( "traceToggle", "", bind_first(mem_func(&tracer::toggle), &t), SRC_POS );
-  pkg->def( "traceStatus", "", bind_first(mem_func(&tracer::status), &t), SRC_POS );
+  pkg->def( "traceOn",     "", [&t](){t.on();}, SRC_POS );
+  pkg->def( "traceOff",    "", [&t](){t.off();}, SRC_POS );
+  pkg->def( "traceToggle", "", [&t](){t.toggle();}, SRC_POS );
+  pkg->def( "traceStatus", "", [&t](){t.status();}, SRC_POS );
 }

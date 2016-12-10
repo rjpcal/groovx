@@ -48,22 +48,6 @@ GVX_DBG_REGISTER
 
 namespace
 {
-  tcl::obj getField(const Field& field,
-                    nub::ref<FieldContainer> item)
-  {
-    tcl::obj_writer w;
-    field.writeValueTo(item.get(), w);
-    return w.get_obj();
-  }
-
-  void setField(const Field& field, nub::ref<FieldContainer> item,
-                const tcl::obj& newValue)
-  {
-    tcl::obj_reader r(newValue);
-    field.readValueFrom(item.get(), r);
-    item->touch(); // emit a signal saying that the object has changed
-  }
-
   struct FieldsLister
   {
     const FieldMap& itsFields;
@@ -141,9 +125,17 @@ GVX_TRACE("tcl::defField");
   const unsigned int keyarg = 1;
 
   pkg->def_vec( field.name().c_str(), "objref(s)",
-                rutz::bind_first(getField, field), keyarg, src_pos );
+                [&field](nub::ref<FieldContainer> item){
+                  tcl::obj_writer w;
+                  field.writeValueTo(item.get(), w);
+                  return w.get_obj();
+                }, keyarg, src_pos );
   pkg->def_vec( field.name().c_str(), "objref(s) new_val(s)",
-                rutz::bind_first(setField, field), keyarg, src_pos );
+                [&field](nub::ref<FieldContainer> item, const tcl::obj& newVal){
+                  tcl::obj_reader r(newVal);
+                  field.readValueFrom(item.get(), r);
+                  item->touch(); // emit a signal saying that the object has changed
+                }, keyarg, src_pos );
 }
 
 void tcl::defAllFields(tcl::pkg* pkg, const FieldMap& fieldmap,

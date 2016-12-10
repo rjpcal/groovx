@@ -135,11 +135,6 @@ namespace
   };
 
   std::shared_ptr<SerialEventSource> theEventSource;
-
-  void startSerial(Tcl_Interp* interp, const char* device)
-  {
-    theEventSource.reset(new SerialEventSource(interp, device));
-  }
 }
 
 
@@ -254,12 +249,13 @@ GVX_TRACE("Serialrh_Init");
      [interp](tcl::pkg* pkg) {
 
       pkg->def( "SerialRh::SerialRh", "device=/dev/tty0p0",
-                rutz::bind_first(&startSerial, interp),
-                SRC_POS );
+                [interp](const char* device){
+                  theEventSource.reset(new SerialEventSource(interp, device));
+                }, SRC_POS );
       pkg->def( "SerialRh::SerialRh", "",
-                rutz::bind_last(rutz::bind_first(&startSerial, interp),
-                                "/dev/tty0p0"),
-                SRC_POS );
+                [interp](){
+                  theEventSource.reset(new SerialEventSource(interp, "/dev/tty0p0"));
+                }, SRC_POS );
 
     });
 }

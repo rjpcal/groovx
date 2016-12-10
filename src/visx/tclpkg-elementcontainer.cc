@@ -66,12 +66,14 @@ GVX_TRACE("Elementcontainer_Init");
       tcl::def_basic_type_cmds<Element>(pkg, SRC_POS);
 
       pkg->def("addElement", "objref element_id",
-               rutz::bind_last(rutz::mem_func
-                               (&ElementContainer::addElement), 1u),
-               SRC_POS);
+               [](nub::ref<ElementContainer> c, nub::ref<Element> el){
+                 c->addElement(el, 1);
+               }, SRC_POS);
 
       pkg->def("addElements", "objref element_id(s)",
-               rutz::bind_last(&addElementIds, 1u), SRC_POS);
+               [](nub::ref<ElementContainer> c, tcl::list trial_ids){
+                 addElementIds(c, trial_ids, 1);
+               }, SRC_POS);
 
       pkg->def("addElements", "objref element_id(s) repeat=1",
                &addElementIds, SRC_POS);

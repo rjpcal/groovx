@@ -110,16 +110,6 @@ namespace
           }
       }
   }
-
-  bool is_my_type(shared_ptr<tcl::obj_caster> caster, nub::uid id)
-  {
-    return caster->is_id_my_type(id);
-  }
-
-  unsigned int get_sizeof(shared_ptr<tcl::obj_caster> caster)
-  {
-    return caster->get_sizeof();
-  }
 }
 
 void tcl::def_basic_type_cmds(tcl::pkg* pkg,
@@ -131,13 +121,14 @@ GVX_TRACE("tcl::def_basic_type_cmds");
   const int flags = tcl::NO_EXPORT;
 
   pkg->def_vec( "is", "objref(s)",
-                rutz::bind_first(is_my_type, caster), 1, src_pos, flags );
+                [caster](nub::uid id){return caster->is_id_my_type(id);},
+                1, src_pos, flags );
   pkg->def( "count_all", "",
-            rutz::bind_first(count_all, caster), src_pos, flags );
+            [caster](){return count_all(caster);}, src_pos, flags );
   pkg->def( "find_all", "",
-            rutz::bind_first(find_all, caster), src_pos, flags );
+            [caster](){return find_all(caster);}, src_pos, flags );
   pkg->def( "remove_all", "",
-            rutz::bind_first(remove_all, caster), src_pos, flags );
+            [caster](){return remove_all(caster);}, src_pos, flags );
   pkg->def( "sizeof", "",
-            rutz::bind_first(get_sizeof, caster), src_pos, flags );
+            [caster](){return caster->get_sizeof();}, src_pos, flags );
 }

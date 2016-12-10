@@ -108,8 +108,6 @@ int Misc_Init(Tcl_Interp* interp)
 {
 GVX_TRACE("Misc_Init");
 
-  using namespace rutz;
-
   return tcl::pkg::init
     (interp, "Misc", "4.0",
      [](tcl::pkg* pkg) {
@@ -117,8 +115,7 @@ GVX_TRACE("Misc_Init");
       pkg->def( "::rand", "min max", &rand_draw, SRC_POS);
       pkg->def( "::rand", "min max ?n=1?", &rand_draw_n, SRC_POS);
       pkg->def( "::srand", "seed",
-                bind_first(mem_func(&rutz::urand::seed), &generator),
-                SRC_POS );
+                [](unsigned long s){generator.seed(s);}, SRC_POS );
 
       // use the standard library sleep() to sleep a specified # of
       // seconds

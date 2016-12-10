@@ -42,6 +42,7 @@ namespace rutz
   //
   //  =======================================================
 
+  /// Placeholder arg type for the this pointer in member functions
   template <class T>
   struct this_pointer
   {};
@@ -59,43 +60,50 @@ namespace rutz
     static constexpr size_t num_args = sizeof...(Args);
   };
 
+  /// Deduce return type and argument types from operator()s
+  template <class Func>
+  struct operator_paren_args;
+
+  template <class R, class... Args>
+  struct operator_paren_args<R (*)(Args...)>
+    :
+    public func_args<R, Args...>
+  {};
+
+  template <class R, class C, class... Args>
+  struct operator_paren_args<R (C::*)(Args...)>
+    :
+    public func_args<R, Args...>
+  {};
+
+  template <class R, class C, class... Args>
+  struct operator_paren_args<R (C::*)(Args...) const>
+    :
+    public func_args<R, Args...>
+  {};
+
   /// A traits class for holding information about functions/functors.
   template <class func>
   struct func_traits
-  {
-    typedef typename func::retn_t retn_t;
-  };
+    :
+    public operator_paren_args<decltype(&func::operator())>
+  {};
 
-  //  =======================================================
-  //
-  //  func_traits specializations for free functions
-  //
-  //  =======================================================
-
-  /// Specialization for free functions with any # arguments.
+  /// func_traits specialization for free functions with any # arguments.
   template <class R, class... Args>
   struct func_traits<R (*)(Args...)>
     :
     public func_args<R, Args...>
   {};
 
-  //  =======================================================
-  //
-  //  func_traits specializations for member functions
-  //
-  //  We treat the "this" pointer as an implicit first-argument to the
-  //  function.
-  //
-  //  =======================================================
-
-  /// Specialization for non-const member functions with "this" plus any # arguments.
+  /// func_traits specialization for non-const member functions with "this" plus any # arguments.
   template <class R, class C, class... Args>
   struct func_traits<R (C::*)(Args...)>
     :
     public func_args<R, this_pointer<C>, Args...>
   {};
 
-  /// Specialization for const member functions with "this" plus any # arguments.
+  /// func_traits specialization for const member functions with "this" plus any # arguments.
   template <class R, class C, class... Args>
   struct func_traits<R (C::*)(Args...) const>
     :
@@ -134,13 +142,6 @@ namespace rutz
     }
   };
 
-  /// Factory function to make a mem_functor from any member function.
-  template <class MF>
-  inline mem_functor<MF> mem_func(MF mf)
-  {
-    return mem_functor<MF>(mf);
-  }
-
 
   //  #######################################################
   //  =======================================================
@@ -176,111 +177,6 @@ namespace rutz
   {
     typedef typename functor_of<fptr>::type functor_t;
     return functor_t(f);
-  }
-
-  //  #######################################################
-  //  =======================================================
-
-  template <class base_functor, class bound_t>
-  class bound_first;
-
-  /// func_traits specialization for bound_first.
-  template <class base_functor, class bound_t>
-  struct func_traits<bound_first<base_functor, bound_t> >
-  {
-    static constexpr size_t num_args = func_traits<base_functor>::num_args-1;
-
-    typedef typename func_traits<base_functor>::retn_t   retn_t;
-    template <size_t N>
-    struct arg
-    {
-      typedef typename func_traits<base_functor>::template arg<N+1>::type type;
-    };
-  };
-
-  /// bound_first wraps another functor type with a fixed first argument.
-  /** bound_first's can be constructed with the factory function
-      bind_first(). */
-
-  template <class base_functor, class bound_t>
-  class bound_first
-  {
-  private:
-    base_functor m_held_func;
-    bound_t m_bound;
-
-  public:
-    bound_first(base_functor base, bound_t bound) :
-      m_held_func(base),
-      m_bound(bound)
-    {}
-
-    template <class... Args>
-    auto operator()(Args&&... args)
-    {
-      return m_held_func(m_bound, std::forward<Args>(args)...);
-    }
-  };
-
-  /// Factory function for creating bound_first functors.
-  template <class base_functor, class bound_t>
-  bound_first<base_functor, bound_t> bind_first(base_functor base,
-                                                bound_t bound)
-  {
-    return bound_first<base_functor, bound_t>(base, bound);
-  }
-
-
-  //  #######################################################
-  //  =======================================================
-
-  template <class base_functor, class bound_t>
-  class bound_last;
-
-  /// func_traits specialization for bound_last.
-  template <class base_functor, class bound_t>
-  struct func_traits<bound_last<base_functor, bound_t> >
-  {
-    static constexpr size_t num_args = func_traits<base_functor>::num_args-1;
-
-    typedef typename func_traits<base_functor>::retn_t   retn_t;
-    template <size_t N>
-    struct arg
-    {
-      typedef typename func_traits<base_functor>::template arg<N>::type type;
-    };
-  };
-
-  /// bound_last wraps another functor type with a fixed last argument.
-  /** bound_last objects can be constructed with the factory function
-      bind_last(). */
-
-  template <class base_functor, class bound_t>
-  class bound_last
-  {
-  private:
-    base_functor m_held_func;
-    bound_t m_bound;
-
-  public:
-    bound_last(base_functor base, bound_t bound) :
-      m_held_func(base),
-      m_bound(bound)
-    {}
-
-    template <class... Args>
-    auto operator()(Args&&... args)
-    {
-      return m_held_func(std::forward<Args>(args)..., m_bound);
-    }
-  };
-
-  /// Factory function for creating bound_last functors.
-  template <class base_functor, class bound_t>
-  bound_last<base_functor, bound_t> bind_last(base_functor base,
-                                              bound_t bound)
-  {
-    return bound_last<base_functor, bound_t>(base, bound);
   }
 
 } // end namespace rutz

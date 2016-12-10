@@ -186,8 +186,9 @@ GVX_TRACE("Obj_Init");
 
       pkg->def( "new", "typename", &objNew, SRC_POS );
       pkg->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",
-                rutz::bind_last(&objNewArgs, tcl::interpreter(interp)),
-                SRC_POS );
+                [intp=tcl::interpreter(interp)](const char* type, tcl::list args){
+                  return objNewArgs(type, args, intp);
+                }, SRC_POS);
       pkg->def( "newarr", "typename array_size=1", &objNewArr, SRC_POS );
       pkg->def( "delete", "objref(s)", &objDelete, SRC_POS );
 
