@@ -210,11 +210,6 @@ public:
     m_index(start_pos == position::BEGIN ? 0 : owner.length())
   {}
 
-  iterator_base(Tcl_Obj* x, position start_pos = position::BEGIN) :
-    m_list_obj(x),
-    m_index(start_pos == position::BEGIN ? 0 : m_list_obj.length())
-  {}
-
   // default copy-constructor, assignment operator OK
   iterator_base(const iterator_base&) = default;
   iterator_base& operator=(const iterator_base&) = default;
@@ -285,9 +280,6 @@ class tcl::list::iterator : public tcl::list::iterator_base
 public:
   iterator(const list& owner, position start_pos = position::BEGIN) :
     iterator_base(owner, start_pos), m_current() {}
-
-  iterator(Tcl_Obj* x, position start_pos = position::BEGIN) :
-    iterator_base(x, start_pos), m_current() {}
 
   typedef T value_type;
   typedef const T* pointer;
