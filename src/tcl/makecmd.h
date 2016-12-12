@@ -219,12 +219,6 @@ namespace tcl
     }
   };
 
-///////////////////////////////////////////////////////////////////////
-//
-// And finally... make_command
-//
-///////////////////////////////////////////////////////////////////////
-
 // ########################################################
 /// Factory function to make tcl::tcl_callable's from any functor or function ptr.
 
@@ -238,6 +232,12 @@ namespace tcl
                         DefaultArgs...>
       (rutz::build_functor(f), std::forward<DefaultArgs>(args)...);
   }
+
+///////////////////////////////////////////////////////////////////////
+//
+// And finally... make_command
+//
+///////////////////////////////////////////////////////////////////////
 
 
 // ########################################################
@@ -256,7 +256,7 @@ namespace tcl
       (interp, build_tcl_callable(f, std::forward<DefaultArgs>(args)...),
        cmd_name, usage,
        arg_spec(rutz::func_traits<Func>::num_args + 1 - sizeof...(DefaultArgs),
-                rutz::func_traits<Func>::num_args + 1, true),
+                rutz::func_traits<Func>::num_args + 1, false),
        src_pos);
   }
 
@@ -277,7 +277,7 @@ namespace tcl
       (interp, build_tcl_callable(f, std::forward<DefaultArgs>(args)...),
        cmd_name, usage,
        arg_spec(rutz::func_traits<Func>::num_args + 1 - sizeof...(DefaultArgs),
-                rutz::func_traits<Func>::num_args + 1, true),
+                rutz::func_traits<Func>::num_args + 1, false),
        keyarg, src_pos);
   }
 

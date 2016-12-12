@@ -101,6 +101,15 @@ namespace
       result.append(rand_draw(min, max));
     return result;
   }
+
+  tcl::list test_echo_with_defaults(int a, int b, int c)
+  {
+    tcl::list result;
+    result.append(a);
+    result.append(b);
+    result.append(c);
+    return result;
+  }
 }
 
 extern "C"
@@ -152,5 +161,8 @@ GVX_TRACE("Misc_Init");
       pkg->def( "::tcl_valuetype", "value", &tcl_valuetype, SRC_POS );
 
       pkg->def_raw( "::?", tcl::arg_spec(2), "cmd_name", &cmdUsage, SRC_POS );
+
+      pkg->def( "::test_echo_with_defaults", "a=1 b=2 c=3",
+                &test_echo_with_defaults, SRC_POS, 1, 2, 3 );
     });
 }

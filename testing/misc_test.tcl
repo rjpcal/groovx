@@ -93,3 +93,20 @@ test "::usleepr" "normal use" {
 test "::usleepr" "error from negative input" {
     usleepr -1 -1
 } {expected.*but got}
+
+### test_echo_with_defaults ###
+test "::test_echo_with_defaults" "0 args" {
+    test_echo_with_defaults
+} {^1 2 3$}
+test "::test_echo_with_defaults" "1 args" {
+    test_echo_with_defaults 10
+} {^10 2 3$}
+test "::test_echo_with_defaults" "2 args" {
+    test_echo_with_defaults 100 200
+} {^100 200 3$}
+test "::test_echo_with_defaults" "3 args" {
+    test_echo_with_defaults 1001 2002 3003
+} {^1001 2002 3003$}
+test "::test_echo_with_defaults" "4 args" {
+    test_echo_with_defaults 30 60 90 120
+} {^wrong # args:}
