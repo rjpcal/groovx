@@ -126,12 +126,8 @@ GVX_TRACE("Io_Init");
       pkg->inherit_pkg("Obj");
       tcl::def_basic_type_cmds<io::serializable>(pkg, SRC_POS);
 
-      pkg->def( "loadObjects", "filename num_to_read=-1", &loadObjects, SRC_POS );
-      pkg->def( "loadObjects", "filename",
-                [](const char* f){return loadObjects(f, ALL);}, SRC_POS );
-      pkg->def( "saveObjects", "objids filename use_bases=yes", &saveObjects, SRC_POS );
-      pkg->def( "saveObjects", "objids filename",
-                [](const tcl::list& ids, const char* f){saveObjects(ids, f, true);}, SRC_POS );
+      pkg->def( "loadObjects", "filename num_to_read=-1", &loadObjects, SRC_POS, ALL );
+      pkg->def( "saveObjects", "objids filename use_bases=yes", &saveObjects, SRC_POS, true );
 
       const unsigned int keyarg = 1;
 

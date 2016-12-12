@@ -48,31 +48,19 @@ GVX_TRACE("Tlist_Init");
   return tcl::pkg::init
     (interp, "Tlist", "4.0",
      [](tcl::pkg* pkg) {
-      pkg->def( "createPreview", "objids viewport num_cols_hint use_text_labels",
+      pkg->def( "createPreview", "objids viewport num_cols_hint=-1 use_text_labels=true",
                 &TlistUtils::createPreview,
-                SRC_POS );
-      pkg->def( "createPreview", "objids viewport",
-                [](const tcl::list& ids, const geom::rect<double>& world_vp){
-                  return TlistUtils::createPreview(ids, world_vp, -1, true);
-                }, SRC_POS );
+                SRC_POS, -1, true );
 
       pkg->def( "dealSingles", "objid(s) posid",
-                &TlistUtils::dealSingles,
-                SRC_POS );
+                &TlistUtils::dealSingles, SRC_POS );
       pkg->def( "dealPairs", "objids1 objids2 posid1 posid2",
-                &TlistUtils::dealPairs,
-                SRC_POS );
+                &TlistUtils::dealPairs, SRC_POS );
       pkg->def( "dealTriads", "objids posid1 posid2 posid3",
-                &TlistUtils::dealTriads,
-                SRC_POS );
+                &TlistUtils::dealTriads, SRC_POS );
 
       pkg->def( "loadObjidFile", "objid_file objids posids num_lines=-1",
-                &TlistUtils::loadObjidFile,
-                SRC_POS );
-      pkg->def( "loadObjidFile", "objid_file objids posids",
-                [](const char* f, const tcl::list& objids, const tcl::list& posids){
-                  return TlistUtils::loadObjidFile(f, objids, posids, -1);
-                }, SRC_POS );
+                &TlistUtils::loadObjidFile, SRC_POS, -1 );
 
       pkg->def( "write_responses", "filename", &TlistUtils::writeResponses, SRC_POS );
       pkg->def( "writeIncidenceMatrix", "filename", &TlistUtils::writeIncidenceMatrix, SRC_POS );

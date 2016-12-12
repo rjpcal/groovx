@@ -65,18 +65,11 @@ GVX_TRACE("Elementcontainer_Init");
       pkg->inherit_pkg("Element");
       tcl::def_basic_type_cmds<Element>(pkg, SRC_POS);
 
-      pkg->def("addElement", "objref element_id",
-               [](nub::ref<ElementContainer> c, nub::ref<Element> el){
-                 c->addElement(el, 1);
-               }, SRC_POS);
-
-      pkg->def("addElements", "objref element_id(s)",
-               [](nub::ref<ElementContainer> c, const tcl::list& trial_ids){
-                 addElementIds(c, trial_ids, 1);
-               }, SRC_POS);
+      pkg->def("addElement", "objref element_id repeat=1",
+               &ElementContainer::addElement, SRC_POS, 1u);
 
       pkg->def("addElements", "objref element_id(s) repeat=1",
-               &addElementIds, SRC_POS);
+               &addElementIds, SRC_POS, 1u);
 
       pkg->def_getter("currentElement", &ElementContainer::currentElement, SRC_POS);
       pkg->def_getter("isComplete", &ElementContainer::isComplete, SRC_POS);

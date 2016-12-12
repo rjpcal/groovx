@@ -6,8 +6,6 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (09-Dec-2016) Better way to handle default args to tcl commands? Can hold inside the command rather than creating all these stub lambdas / bound functors?
-
 * (08-Dec-2016) Add mtx unittest coverage; then, replace arithfunctor.h stuff with lambda functions
 
 * (05-Dec-2016) Make signal not have to derive from nub::volatile_object
