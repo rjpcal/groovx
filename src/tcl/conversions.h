@@ -111,7 +111,7 @@ namespace tcl
   template <> struct help_convert<tcl::obj>
   {
     static tcl::obj from_tcl(Tcl_Obj* obj) { return tcl::obj(obj); }
-    static tcl::obj to_tcl(tcl::obj val) { return val; }
+    static tcl::obj to_tcl(const tcl::obj& val) { return val; }
   };
 
   /// Convert a native c++ object to a tcl::obj.

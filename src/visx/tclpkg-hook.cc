@@ -275,7 +275,7 @@ namespace
   }
 #endif
 
-  tcl::obj dictGet(tcl::dict dict, const char* key)
+  tcl::obj dictGet(const tcl::dict& dict, const char* key)
   {
     return dict.get<tcl::obj>(key);
   }

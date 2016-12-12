@@ -45,7 +45,7 @@
 namespace
 {
   void addElementIds(nub::ref<ElementContainer> container,
-                     tcl::list trial_ids, unsigned int repeat)
+                     const tcl::list& trial_ids, unsigned int repeat)
   {
     for (const nub::uid objid: trial_ids.view_of<nub::uid>())
       {
@@ -71,7 +71,7 @@ GVX_TRACE("Elementcontainer_Init");
                }, SRC_POS);
 
       pkg->def("addElements", "objref element_id(s)",
-               [](nub::ref<ElementContainer> c, tcl::list trial_ids){
+               [](nub::ref<ElementContainer> c, const tcl::list& trial_ids){
                  addElementIds(c, trial_ids, 1);
                }, SRC_POS);
 

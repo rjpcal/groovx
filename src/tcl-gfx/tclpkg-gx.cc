@@ -87,7 +87,7 @@ namespace
     item->draw(canvas);
   }
 
-  void gxtcl_addChildren(nub::ref<GxSeparator> sep, tcl::list objs)
+  void gxtcl_addChildren(nub::ref<GxSeparator> sep, const tcl::list& objs)
   {
     for (const auto& noderef: objs.view_of<nub::ref<GxNode>>())
       sep->addChild(noderef);

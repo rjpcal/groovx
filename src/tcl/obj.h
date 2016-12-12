@@ -54,33 +54,47 @@ namespace tcl
 class tcl::obj
 {
 public:
-  /// Default constructor with a shared and empty Tcl_Obj*.
+  /// Default constructor with a shared and empty Tcl_Obj*
   obj();
 
-  /// Construct with a Tcl_Obj*.
+  /// Construct with a Tcl_Obj*
   obj(Tcl_Obj* obj) : m_obj(obj) { incr_ref(m_obj); }
 
-  /// Destructor.
+  /// Destructor
   ~obj() { decr_ref(m_obj); }
 
-  /// Copy constructor.
+  /// Copy constructor
   obj(const obj& x) :
     m_obj(x.m_obj)
     {
       incr_ref(m_obj);
     }
 
-  /// Assignment operator from obj.
+  /// Copy assignment operator
   obj& operator=(const obj& x)
     {
       assign(x.m_obj); return *this;
     }
 
-  /// Assignment operator from Tcl_Obj*.
+  /// Assignment operator from Tcl_Obj*
   obj& operator=(Tcl_Obj* x)
     {
       assign(x); return *this;
     }
+
+  /// Move constructor
+  obj(obj&& x) :
+    m_obj(x.m_obj)
+  {
+    x.m_obj = nullptr;
+  }
+
+  /// Move assignment operator
+  obj& operator=(obj&& x)
+  {
+    if (&x != this) { decr_ref(m_obj); m_obj = x.m_obj; x.m_obj = nullptr; }
+    return *this;
+  }
 
   Tcl_Obj* get() const { return m_obj; }
 

@@ -64,7 +64,7 @@ namespace
   }
 
   soft_ref<object> objNewArgs(const char* type,
-                             tcl::list init_args,
+                             const tcl::list& init_args,
                              tcl::interpreter interp)
   {
     soft_ref<object> obj(nub::obj_mgr::new_obj(type));
@@ -95,7 +95,7 @@ namespace
     return result;
   }
 
-  void objDelete(tcl::list objrefs)
+  void objDelete(const tcl::list& objrefs)
   {
     for (auto id: objrefs.view_of<nub::uid>())
       nub::objectdb::instance().remove(id);
@@ -186,7 +186,7 @@ GVX_TRACE("Obj_Init");
 
       pkg->def( "new", "typename", &objNew, SRC_POS );
       pkg->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",
-                [intp=tcl::interpreter(interp)](const char* type, tcl::list args){
+                [intp=tcl::interpreter(interp)](const char* type, const tcl::list& args){
                   return objNewArgs(type, args, intp);
                 }, SRC_POS);
       pkg->def( "newarr", "typename array_size=1", &objNewArr, SRC_POS );

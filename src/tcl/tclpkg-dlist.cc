@@ -96,7 +96,7 @@ namespace
   //
   //---------------------------------------------------------
 
-  tcl::list dlist_choose(tcl::list source_list, tcl::list index_list)
+  tcl::list dlist_choose(const tcl::list& source_list, const tcl::list& index_list)
   {
     tcl::list result;
 
@@ -163,7 +163,7 @@ namespace
   //
   //---------------------------------------------------------
 
-  tcl::obj dlist_index(tcl::list source_list, unsigned int n)
+  tcl::obj dlist_index(const tcl::list& source_list, unsigned int n)
   {
     return source_list.at(n);
   }
@@ -176,7 +176,7 @@ namespace
   //
   //---------------------------------------------------------
 
-  tcl::list dlist_not(tcl::list source_list)
+  tcl::list dlist_not(const tcl::list& source_list)
   {
     const tcl::obj one = tcl::convert_from<int>(1);
     const tcl::obj zero = tcl::convert_from<int>(0);
@@ -217,7 +217,7 @@ namespace
   //
   //---------------------------------------------------------
 
-  tcl::obj dlist_pickone(tcl::list source_list)
+  tcl::obj dlist_pickone(const tcl::list& source_list)
   {
     if (source_list.length() == 0)
       {
@@ -294,13 +294,13 @@ namespace
     return result;
   }
 
-  double dlist_perm_distance(tcl::list src)
+  double dlist_perm_distance(const tcl::list& src)
   {
     return perm_distance_aux(src.begin<unsigned int>(),
                              src.end<unsigned int>());
   }
 
-  double dlist_perm_distance2(tcl::list src, double power)
+  double dlist_perm_distance2(const tcl::list& src, double power)
   {
     return perm_distance2_aux(src.begin<unsigned int>(),
                               src.end<unsigned int>(),
@@ -537,7 +537,7 @@ namespace
   //
   //---------------------------------------------------------
 
-  tcl::list dlist_select(tcl::list source_list, tcl::list flags_list)
+  tcl::list dlist_select(const tcl::list& source_list, const tcl::list& flags_list)
   {
     unsigned int src_len = source_list.length();
     unsigned int flg_len = flags_list.length();
@@ -569,7 +569,7 @@ namespace
   //
   //---------------------------------------------------------
 
-  tcl::list dlist_shuffle(tcl::list src, unsigned long seed)
+  tcl::list dlist_shuffle(const tcl::list& src, unsigned long seed)
   {
     std::vector<tcl::obj> objs(src.begin<tcl::obj>(), src.end<tcl::obj>());
 
@@ -594,7 +594,7 @@ namespace
   //
   //---------------------------------------------------------
 
-  tcl::list dlist_shuffle_moveall(tcl::list src)
+  tcl::list dlist_shuffle_moveall(const tcl::list& src)
   {
     tcl::list permutation = dlist_permute_moveall(src.length());
     return dlist_choose(src, permutation);
@@ -606,7 +606,7 @@ namespace
   //
   //---------------------------------------------------------
 
-  tcl::list dlist_shuffle_maximal(tcl::list src)
+  tcl::list dlist_shuffle_maximal(const tcl::list& src)
   {
     tcl::list permutation = dlist_permute_maximal(src.length());
     return dlist_choose(src, permutation);
@@ -618,7 +618,7 @@ namespace
   //
   //---------------------------------------------------------
 
-  tcl::list dlist_slice(tcl::list src, unsigned int slice)
+  tcl::list dlist_slice(const tcl::list& src, unsigned int slice)
   {
     tcl::list result;
 
@@ -641,7 +641,7 @@ namespace
   //
   //---------------------------------------------------------
 
-  tcl::obj dlist_sum(tcl::list source_list)
+  tcl::obj dlist_sum(const tcl::list& source_list)
   {
     int isum=0;
     double dsum=0.0;
@@ -721,7 +721,7 @@ GVX_TRACE("Dlist_Init");
       pkg->def( "reverse", "list", &dlist_reverse, SRC_POS );
       pkg->def( "select", "source_list flags_list", &dlist_select, SRC_POS );
       pkg->def( "shuffle", "list ?seed=0?", &dlist_shuffle, SRC_POS );
-      pkg->def( "shuffle", "list", [](tcl::list l){return dlist_shuffle(l, 0u);}, SRC_POS );
+      pkg->def( "shuffle", "list", [](const tcl::list& l){return dlist_shuffle(l, 0u);}, SRC_POS );
       pkg->def( "shuffle_maximal", "list", &dlist_shuffle_maximal, SRC_POS );
       pkg->def( "shuffle_moveall", "list", &dlist_shuffle_moveall, SRC_POS );
       pkg->def( "slice", "list n", &dlist_slice, SRC_POS );

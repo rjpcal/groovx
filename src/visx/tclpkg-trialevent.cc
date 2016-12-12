@@ -63,7 +63,7 @@ namespace
       ? 0 : 1;
   }
 
-  void addEvents(nub::ref<MultiEvent> multi, tcl::list event_ids)
+  void addEvents(nub::ref<MultiEvent> multi, const tcl::list& event_ids)
   {
     for (const auto& evref: event_ids.view_of<nub::ref<TrialEvent>>())
       multi->addEvent(evref);

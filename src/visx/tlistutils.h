@@ -63,21 +63,21 @@ namespace TlistUtils
       the average response given to that Trial. */
   void writeMatlab(const char* filename);
 
-  nub::uid createPreview(tcl::list objid_list,
+  nub::uid createPreview(const tcl::list& objid_list,
                          const geom::rect<double>& world_viewport,
                          int num_cols_hint,
                          bool use_text_labels);
 
-  tcl::list dealSingles(tcl::list objids, nub::uid posid);
+  tcl::list dealSingles(const tcl::list& objids, nub::uid posid);
 
-  tcl::list dealPairs(tcl::list objids1, tcl::list objids2,
+  tcl::list dealPairs(const tcl::list& objids1, const tcl::list& objids2,
                       nub::uid posid1, nub::uid posid2);
 
-  tcl::list dealTriads(tcl::list objids, nub::uid posid1,
+  tcl::list dealTriads(const tcl::list& objids, nub::uid posid1,
                        nub::uid posid2, nub::uid posid3);
 
-  tcl::list loadObjidFile(const char* objid_file, tcl::list objids,
-                          tcl::list posids, int num_lines);
+  tcl::list loadObjidFile(const char* objid_file, const tcl::list& objids,
+                          const tcl::list& posids, int num_lines);
 }
 
 #endif // !GROOVX_VISX_TLISTUTILS_H_UTC20050626084017_DEFINED

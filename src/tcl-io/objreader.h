@@ -44,7 +44,7 @@ class tcl::obj_reader : public io::reader
 public:
 
   /// Construct with a tcl::obj to read from.
-  obj_reader(tcl::obj x);
+  obj_reader(const tcl::obj& x);
 
   /// Virtual destructor allows correct destruction of subclasses.
   virtual ~obj_reader() noexcept;

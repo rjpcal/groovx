@@ -95,7 +95,7 @@ namespace
     return result;
   }
 
-  void saveObjects(tcl::list objids, const char* filename,
+  void saveObjects(const tcl::list& objids, const char* filename,
                    bool use_bases)
   {
     std::ofstream ofs(filename);
@@ -131,7 +131,7 @@ GVX_TRACE("Io_Init");
                 [](const char* f){return loadObjects(f, ALL);}, SRC_POS );
       pkg->def( "saveObjects", "objids filename use_bases=yes", &saveObjects, SRC_POS );
       pkg->def( "saveObjects", "objids filename",
-                [](tcl::list ids, const char* f){saveObjects(ids, f, true);}, SRC_POS );
+                [](const tcl::list& ids, const char* f){saveObjects(ids, f, true);}, SRC_POS );
 
       const unsigned int keyarg = 1;
 

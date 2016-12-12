@@ -38,7 +38,7 @@
 #include "rutz/value.h"
 #include "tcl/conversions.h"
 
-tcl::obj_reader::obj_reader(tcl::obj x)
+tcl::obj_reader::obj_reader(const tcl::obj& x)
   :
   m_obj(x)
 {

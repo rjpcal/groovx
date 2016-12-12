@@ -52,7 +52,7 @@ GVX_TRACE("Tlist_Init");
                 &TlistUtils::createPreview,
                 SRC_POS );
       pkg->def( "createPreview", "objids viewport",
-                [](tcl::list ids, const geom::rect<double>& world_vp){
+                [](const tcl::list& ids, const geom::rect<double>& world_vp){
                   return TlistUtils::createPreview(ids, world_vp, -1, true);
                 }, SRC_POS );
 
@@ -70,7 +70,7 @@ GVX_TRACE("Tlist_Init");
                 &TlistUtils::loadObjidFile,
                 SRC_POS );
       pkg->def( "loadObjidFile", "objid_file objids posids",
-                [](const char* f, tcl::list objids, tcl::list posids){
+                [](const char* f, const tcl::list& objids, const tcl::list& posids){
                   return TlistUtils::loadObjidFile(f, objids, posids, -1);
                 }, SRC_POS );
 

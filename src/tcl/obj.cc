@@ -69,5 +69,5 @@ void tcl::obj::incr_ref(Tcl_Obj* obj)
 
 void tcl::obj::decr_ref(Tcl_Obj* obj)
 {
-  Tcl_DecrRefCount(obj);
+  if (obj) Tcl_DecrRefCount(obj);
 }

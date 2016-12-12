@@ -48,7 +48,7 @@ GVX_TRACE("tcl::help_convert<tcl::list>::from_tcl");
   return tcl::list(obj);
 }
 
-tcl::obj tcl::help_convert<tcl::list>::to_tcl(tcl::list list_value)
+tcl::obj tcl::help_convert<tcl::list>::to_tcl(const tcl::list& list_value)
 {
 GVX_TRACE("tcl::help_convert<tcl::list>::to_tcl");
 

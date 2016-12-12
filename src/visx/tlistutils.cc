@@ -318,7 +318,7 @@ GVX_TRACE("TlistUtils::writeMatlab");
 //
 //---------------------------------------------------------------------
 
-nub::uid TlistUtils::createPreview(tcl::list objid_list,
+nub::uid TlistUtils::createPreview(const tcl::list& objid_list,
                                    const geom::rect<double>& world_viewport,
                                    int num_cols_hint = -1,
                                    bool text_labels = true)
@@ -340,7 +340,7 @@ nub::uid TlistUtils::createPreview(tcl::list objid_list,
 //
 //--------------------------------------------------------------------
 
-tcl::list TlistUtils::dealSingles(tcl::list objids, nub::uid posid)
+tcl::list TlistUtils::dealSingles(const tcl::list& objids, nub::uid posid)
 {
   tcl::list result;
 
@@ -369,7 +369,8 @@ tcl::list TlistUtils::dealSingles(tcl::list objids, nub::uid posid)
 //
 //--------------------------------------------------------------------
 
-tcl::list TlistUtils::dealPairs(tcl::list objids1, tcl::list objids2,
+tcl::list TlistUtils::dealPairs(const tcl::list& objids1,
+                                const tcl::list& objids2,
                                 nub::uid posid1, nub::uid posid2)
 {
   tcl::list result;
@@ -403,7 +404,8 @@ tcl::list TlistUtils::dealPairs(tcl::list objids1, tcl::list objids2,
 //
 //--------------------------------------------------------------------
 
-tcl::list TlistUtils::dealTriads(tcl::list objid_list, nub::uid posid1,
+tcl::list TlistUtils::dealTriads(const tcl::list& objid_list,
+                                 nub::uid posid1,
                                  nub::uid posid2, nub::uid posid3)
 {
   static const int permutations[][3] =
@@ -482,8 +484,9 @@ tcl::list TlistUtils::dealTriads(tcl::list objid_list, nub::uid posid1,
 //--------------------------------------------------------------------
 
 tcl::list TlistUtils::loadObjidFile(const char* objid_file,
-                                    tcl::list objid_list,
-                                    tcl::list posid_list, int num_lines)
+                                    const tcl::list& objid_list,
+                                    const tcl::list& posid_list,
+                                    int num_lines)
 {
   // Determine whether we will read to the end of the input stream, or
   // whether we will read only num_lines lines from the stream.

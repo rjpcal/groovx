@@ -44,7 +44,7 @@ namespace tcl
   struct help_convert<tcl::dict>
   {
     static tcl::dict from_tcl(Tcl_Obj* obj);
-    static tcl::obj to_tcl(tcl::dict dict_value);
+    static tcl::obj to_tcl(const tcl::dict& dict_value);
   };
 }
 
@@ -66,15 +66,11 @@ public:
     m_obj(d)
   {}
 
-  dict(const dict& other) :
-    m_obj(other.m_obj)
-  {}
+  dict(const dict&) = default;
+  dict& operator=(const dict&) = default;
 
-  dict& operator=(const dict& other)
-  {
-    m_obj = other.m_obj;
-    return *this;
-  }
+  dict(dict&&) = default;
+  dict& operator=(dict&&) = default;
 
   template <class T>
   void put(const char* key, const T& val)
@@ -83,7 +79,7 @@ public:
   }
 
   template <class T>
-  T get(const char* key, T* /*dummy*/=0) const
+  T get(const char* key) const
   {
     return tcl::convert_to<T>(do_get(key).get());
   }
@@ -91,7 +87,7 @@ public:
   tcl::obj as_obj() const { return m_obj; }
 
 private:
-  void do_put(const char* key, tcl::obj val);
+  void do_put(const char* key, const tcl::obj& val);
   tcl::obj do_get(const char* key) const;
 
   tcl::obj m_obj;

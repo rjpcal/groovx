@@ -48,7 +48,7 @@ namespace tcl
   struct help_convert<tcl::list>
   {
     static tcl::list from_tcl(Tcl_Obj* obj);
-    static tcl::obj to_tcl(tcl::list list_value);
+    static tcl::obj to_tcl(const tcl::list& list_value);
   };
 }
 
@@ -81,6 +81,9 @@ public:
     m_length = other.m_length;
     return *this;
   }
+
+  list(list&&) = default;
+  list& operator=(list&&) = default;
 
   tcl::obj as_obj() const { return m_list_obj; }
 
@@ -135,16 +138,16 @@ public:
   template <class T>
   class view
   {
-    tcl::list& m_self;
+    const tcl::list& m_self;
   public:
-    view(tcl::list& s) : m_self(s) {}
+    view(const tcl::list& s) : m_self(s) {}
 
     iterator<T> begin() const;
     iterator<T> end() const;
   };
 
   template <class T>
-  view<T> view_of() { return view<T>(*this); }
+  view<T> view_of() const { return view<T>(*this); }
 
   /// A back-insert iterator for tcl::list.
   class appender

@@ -41,14 +41,6 @@
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 
-#if ((TCL_MAJOR_VERSION == 8) \
-      && (TCL_MINOR_VERSION >= 5)) \
-    || (TCL_MAJOR_VERSION > 8)
-#  define HAVE_TCL_DICT
-#else
-#  undef HAVE_TCL_DICT
-#endif
-
 tcl::dict tcl::help_convert<tcl::dict>::from_tcl(Tcl_Obj* obj)
 {
 GVX_TRACE("tcl::help_convert<tcl::dict>::from_tcl");
@@ -56,38 +48,14 @@ GVX_TRACE("tcl::help_convert<tcl::dict>::from_tcl");
   return tcl::dict(obj);
 }
 
-tcl::obj tcl::help_convert<tcl::dict>::to_tcl(tcl::dict dict_value)
+tcl::obj tcl::help_convert<tcl::dict>::to_tcl(const tcl::dict& dict_value)
 {
 GVX_TRACE("tcl::help_convert<tcl::dict>::to_tcl");
 
   return dict_value.as_obj();
 }
 
-#ifndef HAVE_TCL_DICT
-namespace
-{
-  void error_no_dict_support()
-  {
-    throw rutz::error("tcl::dict requires Tcl version >= 8.5", SRC_POS);
-  }
-}
-
-void tcl::dict::do_put(const char*, tcl::obj)
-{
-  error_no_dict_support();
-  GVX_ASSERT(0);
-}
-
-tcl::obj tcl::dict::do_get(const char*) const
-{
-  error_no_dict_support();
-  GVX_ASSERT(0);
-  return tcl::obj(); // can't happen, but placate compiler
-}
-
-#else
-
-void tcl::dict::do_put(const char* key, tcl::obj val)
+void tcl::dict::do_put(const char* key, const tcl::obj& val)
 {
 GVX_TRACE("tcl::dict::do_put");
 
@@ -116,5 +84,3 @@ GVX_TRACE("tcl::dict::do_get");
   throw rutz::error(rutz::sfmt("couldn't get value from dict "
                                "with key: %s", key), SRC_POS);
 }
-
-#endif // defined(HAVE_TCL_DICT)

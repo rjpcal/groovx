@@ -74,8 +74,8 @@
 
 namespace GLTcl
 {
-  void loadMatrix(nub::soft_ref<GLCanvas> canvas, tcl::list entries);
-  void lookAt(tcl::list args);
+  void loadMatrix(nub::soft_ref<GLCanvas> canvas, const tcl::list& entries);
+  void lookAt(const tcl::list& args);
   void antialias(bool on_off);
   void drawOneLine(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2);
   void drawThickLine(GLdouble x1, GLdouble y1,
@@ -144,7 +144,7 @@ namespace GLTcl
 //
 //---------------------------------------------------------------------
 
-void GLTcl::loadMatrix(nub::soft_ref<GLCanvas> canvas, tcl::list entries)
+void GLTcl::loadMatrix(nub::soft_ref<GLCanvas> canvas, const tcl::list& entries)
 {
   std::vector<GLdouble> matrix(entries.begin<GLdouble>(),
                                entries.end<GLdouble>());
@@ -166,7 +166,7 @@ void GLTcl::loadMatrix(nub::soft_ref<GLCanvas> canvas, tcl::list entries)
 //
 //---------------------------------------------------------------------
 
-void GLTcl::lookAt(tcl::list args)
+void GLTcl::lookAt(const tcl::list& args)
 {
   gluLookAt(args.get<GLdouble>(0),
             args.get<GLdouble>(1),

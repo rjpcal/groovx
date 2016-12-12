@@ -310,7 +310,7 @@ GVX_TRACE("tcl::pkg::lookup");
       return result;
     }
 
-  return 0;
+  return nullptr;
 }
 
 tcl::interpreter& tcl::pkg::interp() noexcept
