@@ -211,21 +211,21 @@ public:
 
   static cmd_name_init no_export(const char* n) { return cmd_name_init(n, NO_EXPORT); }
 
-  template <class Func>
+  template <class Func, class... DefaultArgs>
   inline void def(cmd_name_init cmd_name, const char* usage, Func f,
-                  const rutz::file_pos& src_pos)
+                  const rutz::file_pos& src_pos, DefaultArgs&&... args)
   {
     make_command(interp(), f, make_pkg_cmd_name(cmd_name),
-                 usage, src_pos);
+                 usage, src_pos, std::forward<DefaultArgs>(args)...);
   }
 
-  template <class Func>
+  template <class Func, class... DefaultArgs>
   inline void def_vec(cmd_name_init cmd_name, const char* usage, Func f,
                       unsigned int keyarg /*default is 1*/,
-                      const rutz::file_pos& src_pos)
+                      const rutz::file_pos& src_pos, DefaultArgs&&... args)
   {
     make_vec_command(interp(), f, make_pkg_cmd_name(cmd_name),
-                     usage, keyarg, src_pos);
+                     usage, keyarg, src_pos, std::forward<DefaultArgs>(args)...);
   }
 
   template <class Func>

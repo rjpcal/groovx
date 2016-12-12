@@ -138,28 +138,44 @@ namespace tcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-  template <size_t N, class R, class Func>
+  template <size_t N, class R, class Func, class... DefaultArgs>
   class tcl_callable_base
   {
   private:
     Func m_held_func;
+    std::tuple<std::decay_t<DefaultArgs>...> m_default_args;
 
+    /// Extract parameter from given arguments
     template <size_t I>
-    static auto extract(tcl::call_context& ctx)
+    auto extract(tcl::call_context& ctx, std::true_type)
     {
       typedef typename rutz::func_traits<Func>::template arg<I>::type type;
       return ctx.template get_arg<type>(I+1);
+    }
+
+    /// Extract parameter from given arguments OR stored default args, depending on objc
+    template <size_t I>
+    auto extract(tcl::call_context& ctx, std::false_type)
+    {
+      if (I+1 >= ctx.objc())
+        return std::get<I - (N - sizeof...(DefaultArgs))>(m_default_args);
+      else
+        return extract<I>(ctx, std::true_type());
     }
 
   protected:
     template <std::size_t... I>
     auto helper(tcl::call_context& ctx, std::index_sequence<I...>)
     {
-      return m_held_func(extract<I>(ctx)...);
+      return m_held_func(extract<I>(ctx,
+                                    std::conditional_t<(I < N - sizeof...(DefaultArgs)),
+                                    std::true_type, std::false_type>())...);
     }
 
   public:
-    tcl_callable_base<N, R, Func>(Func f) : m_held_func(f) {}
+    tcl_callable_base(Func f, DefaultArgs&&... args)
+      : m_held_func(f), m_default_args(args...)
+    {}
 
     typedef R retn_t;
   };
@@ -174,11 +190,13 @@ namespace tcl
       tcl::call_context.
   */
 
-  template <size_t N, class R, class Func>
-  class tcl_callable : public tcl_callable_base<N,R,Func>
+  template <size_t N, class R, class Func, class... DefaultArgs>
+  class tcl_callable : public tcl_callable_base<N,R,Func,DefaultArgs...>
   {
   public:
-    tcl_callable(Func f) : tcl_callable_base<N,R,Func>(f) {}
+    tcl_callable(Func f, DefaultArgs&&... args)
+      : tcl_callable_base<N,R,Func,DefaultArgs...>(f, std::forward<DefaultArgs>(args)...)
+    {}
 
     void operator()(tcl::call_context& ctx)
     {
@@ -187,11 +205,13 @@ namespace tcl
     }
   };
 
-  template <size_t N, class Func>
-  class tcl_callable<N,void,Func> : public tcl_callable_base<N,void,Func>
+  template <size_t N, class Func, class... DefaultArgs>
+  class tcl_callable<N,void,Func,DefaultArgs...> : public tcl_callable_base<N,void,Func,DefaultArgs...>
   {
   public:
-    tcl_callable(Func f) : tcl_callable_base<N,void,Func>(f) {}
+    tcl_callable(Func f, DefaultArgs&&... args)
+      : tcl_callable_base<N,void,Func,DefaultArgs...>(f, std::forward<DefaultArgs>(args)...)
+    {}
 
     void operator()(tcl::call_context& ctx)
     {
@@ -208,48 +228,56 @@ namespace tcl
 // ########################################################
 /// Factory function to make tcl::tcl_callable's from any functor or function ptr.
 
-  template <class Fptr>
-  inline tcl_callable<rutz::func_traits<Fptr>::num_args,
-                      typename rutz::func_traits<Fptr>::retn_t,
-                      typename rutz::functor_of<Fptr>::type>
-  build_tcl_callable(Fptr f)
+  template <class Fptr, class... DefaultArgs>
+  inline auto
+  build_tcl_callable(Fptr f, DefaultArgs&&... args)
   {
-    return rutz::build_functor(f);
+    return tcl_callable<rutz::func_traits<Fptr>::num_args,
+                        typename rutz::func_traits<Fptr>::retn_t,
+                        typename rutz::functor_of<Fptr>::type,
+                        DefaultArgs...>
+      (rutz::build_functor(f), std::forward<DefaultArgs>(args)...);
   }
 
 
 // ########################################################
 /// Factory function for tcl::command's from function pointers.
 
-  template <class Func>
+  template <class Func, class... DefaultArgs>
   inline void
   make_command(tcl::interpreter& interp,
                Func f,
                const char* cmd_name,
                const char* usage,
-               const rutz::file_pos& src_pos)
+               const rutz::file_pos& src_pos,
+               DefaultArgs&&... args)
   {
     make_generic_command
-      (interp, build_tcl_callable(f), cmd_name, usage,
-       arg_spec(rutz::func_traits<Func>::num_args + 1, -1, true),
+      (interp, build_tcl_callable(f, std::forward<DefaultArgs>(args)...),
+       cmd_name, usage,
+       arg_spec(rutz::func_traits<Func>::num_args + 1 - sizeof...(DefaultArgs),
+                rutz::func_traits<Func>::num_args + 1, true),
        src_pos);
   }
 
 // ########################################################
 /// Factory function for vectorized tcl::command's from function pointers.
 
-  template <class Func>
+  template <class Func, class... DefaultArgs>
   inline void
   make_vec_command(tcl::interpreter& interp,
                    Func f,
                    const char* cmd_name,
                    const char* usage,
                    unsigned int keyarg /*default is 1*/,
-                   const rutz::file_pos& src_pos)
+                   const rutz::file_pos& src_pos,
+                   DefaultArgs&&... args)
   {
     make_generic_vec_command
-      (interp, build_tcl_callable(f), cmd_name, usage,
-       arg_spec(rutz::func_traits<Func>::num_args + 1, -1, true),
+      (interp, build_tcl_callable(f, std::forward<DefaultArgs>(args)...),
+       cmd_name, usage,
+       arg_spec(rutz::func_traits<Func>::num_args + 1 - sizeof...(DefaultArgs),
+                rutz::func_traits<Func>::num_args + 1, true),
        keyarg, src_pos);
   }
 
