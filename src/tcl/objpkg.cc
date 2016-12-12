@@ -118,17 +118,15 @@ void tcl::def_basic_type_cmds(tcl::pkg* pkg,
 {
 GVX_TRACE("tcl::def_basic_type_cmds");
 
-  const int flags = tcl::NO_EXPORT;
-
-  pkg->def_vec( "is", "objref(s)",
+  pkg->def_vec( tcl::pkg::no_export("is"), "objref(s)",
                 [caster](nub::uid id){return caster->is_id_my_type(id);},
-                1, src_pos, flags );
-  pkg->def( "count_all", "",
-            [caster](){return count_all(caster);}, src_pos, flags );
-  pkg->def( "find_all", "",
-            [caster](){return find_all(caster);}, src_pos, flags );
-  pkg->def( "remove_all", "",
-            [caster](){return remove_all(caster);}, src_pos, flags );
-  pkg->def( "sizeof", "",
-            [caster](){return caster->get_sizeof();}, src_pos, flags );
+                1, src_pos );
+  pkg->def( tcl::pkg::no_export("count_all"), "",
+            [caster](){return count_all(caster);}, src_pos );
+  pkg->def( tcl::pkg::no_export("find_all"), "",
+            [caster](){return find_all(caster);}, src_pos );
+  pkg->def( tcl::pkg::no_export("remove_all"), "",
+            [caster](){return remove_all(caster);}, src_pos );
+  pkg->def( tcl::pkg::no_export("sizeof"), "",
+            [caster](){return caster->get_sizeof();}, src_pos );
 }

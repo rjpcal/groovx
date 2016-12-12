@@ -200,79 +200,89 @@ public:
   /** The Tcl variable will be read_only. */
   void link_var_const(const char* var_name, double& var);
 
+  class cmd_name_init
+  {
+  public:
+    const char* name;
+    int flags;
+
+    cmd_name_init(const char* n, int f = 0) : name(n), flags(f) {}
+  };
+
+  static cmd_name_init no_export(const char* n) { return cmd_name_init(n, NO_EXPORT); }
 
   template <class Func>
-  inline void def(const char* cmd_name, const char* usage, Func f,
-                  const rutz::file_pos& src_pos, int flags = 0)
+  inline void def(cmd_name_init cmd_name, const char* usage, Func f,
+                  const rutz::file_pos& src_pos)
   {
-    make_command(interp(), f, make_pkg_cmd_name(cmd_name, flags),
+    make_command(interp(), f, make_pkg_cmd_name(cmd_name),
                  usage, src_pos);
   }
 
   template <class Func>
-  inline void def_vec(const char* cmd_name, const char* usage, Func f,
+  inline void def_vec(cmd_name_init cmd_name, const char* usage, Func f,
                       unsigned int keyarg /*default is 1*/,
-                      const rutz::file_pos& src_pos, int flags = 0)
+                      const rutz::file_pos& src_pos)
   {
-    make_vec_command(interp(), f, make_pkg_cmd_name(cmd_name, flags),
+    make_vec_command(interp(), f, make_pkg_cmd_name(cmd_name),
                      usage, keyarg, src_pos);
   }
 
   template <class Func>
-  inline void def_raw(const char* cmd_name, const arg_spec& spec,
+  inline void def_raw(cmd_name_init cmd_name, const arg_spec& spec,
                       const char* usage, Func f,
-                      const rutz::file_pos& src_pos, int flags = 0)
+                      const rutz::file_pos& src_pos)
   {
-    make_generic_command(interp(), f, make_pkg_cmd_name(cmd_name, flags),
+    make_generic_command(interp(), f, make_pkg_cmd_name(cmd_name),
                          usage, spec, src_pos);
   }
 
   template <class Func>
-  inline void def_vec_raw(const char* cmd_name, const arg_spec& spec,
+  inline void def_vec_raw(cmd_name_init cmd_name, const arg_spec& spec,
                           const char* usage, Func f,
                           unsigned int keyarg /*default is 1*/,
-                          const rutz::file_pos& src_pos, int flags = 0)
+                          const rutz::file_pos& src_pos)
   {
-    make_generic_vec_command(interp(), f, make_pkg_cmd_name(cmd_name, flags),
+    make_generic_vec_command(interp(), f, make_pkg_cmd_name(cmd_name),
                              usage, spec, keyarg, src_pos);
   }
 
   template <class C>
-  void def_action(const char* cmd_name, void (C::* action_func) (),
-                  const rutz::file_pos& src_pos, int flags = 0)
+  void def_action(cmd_name_init cmd_name, void (C::* action_func) (),
+                  const rutz::file_pos& src_pos)
   {
-    def_vec( cmd_name, action_usage, action_func, 1, src_pos, flags );
+    def_vec( cmd_name, action_usage, action_func, 1, src_pos );
   }
 
   template <class C>
-  void def_action(const char* cmd_name, void (C::* action_func) () const,
-                  const rutz::file_pos& src_pos, int flags = 0)
+  void def_action(cmd_name_init cmd_name, void (C::* action_func) () const,
+                  const rutz::file_pos& src_pos)
   {
-    def_vec( cmd_name, action_usage, action_func, 1, src_pos, flags );
+    def_vec( cmd_name, action_usage, action_func, 1, src_pos );
   }
 
   template <class C, class T>
-  void def_getter(const char* cmd_name, T (C::* getter_func) () const,
-                  const rutz::file_pos& src_pos, int flags = 0)
+  void def_getter(cmd_name_init cmd_name, T (C::* getter_func) () const,
+                  const rutz::file_pos& src_pos)
   {
-    def_vec( cmd_name, getter_usage, getter_func, 1, src_pos, flags );
+    def_vec( cmd_name, getter_usage, getter_func, 1, src_pos );
   }
 
   template <class C, class T>
-  void def_setter(const char* cmd_name, void (C::* setter_func) (T),
-                  const rutz::file_pos& src_pos, int flags = 0)
+  void def_setter(cmd_name_init cmd_name, void (C::* setter_func) (T),
+                  const rutz::file_pos& src_pos)
   {
-    def_vec( cmd_name, setter_usage, setter_func, 1, src_pos, flags );
+    def_vec( cmd_name, setter_usage, setter_func, 1, src_pos );
   }
 
   template <class C, class T>
-  void def_get_set(const char* cmd_name,
+  void def_get_set(cmd_name_init cmd_name,
                    T (C::* getter_func) () const,
                    void (C::* setter_func) (T),
-                   const rutz::file_pos& src_pos, int flags = 0)
+                   const rutz::file_pos& src_pos)
   {
-    def_getter( cmd_name, getter_func, src_pos, flags );
-    def_setter( cmd_name, setter_func, src_pos, flags );
+    def_getter( cmd_name, getter_func, src_pos );
+    def_setter( cmd_name, setter_func, src_pos );
   }
 
   /// Control whether packages should be verbose as they start up.
@@ -286,7 +296,7 @@ private:
       of the result. This function also has the side effect of setting
       up a Tcl namespace export pattern for the named command, if
       flags doesn't include NO_EXPORT. */
-  const char* make_pkg_cmd_name(const char* cmd_name, int flags);
+  const char* make_pkg_cmd_name(cmd_name_init cmd_name);
 
   static const char* const action_usage;
   static const char* const getter_usage;

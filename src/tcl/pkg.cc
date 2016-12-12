@@ -375,33 +375,32 @@ const char* tcl::pkg::version() const noexcept
   return rep->version.c_str();
 }
 
-const char* tcl::pkg::make_pkg_cmd_name(const char* cmd_name_cstr,
-                                        int flags)
+const char* tcl::pkg::make_pkg_cmd_name(cmd_name_init cmd_name)
 {
 GVX_TRACE("tcl::pkg::make_pkg_cmd_name");
-  string cmd_name(cmd_name_cstr);
+  string cmd_name_str(cmd_name.name);
 
   // Look for a namespace qualifier "::" -- if there is already one,
   // then we assume the caller has something special in mind -- if
   // there is not one, then we do the default thing and prepend the
   // package name as a namespace qualifier.
-  if (cmd_name.find("::") != string::npos)
+  if (cmd_name_str.find("::") != string::npos)
     {
-      return cmd_name_cstr;
+      return cmd_name.name;
     }
   else
     {
-      if (!(flags & NO_EXPORT))
+      if (!(cmd_name.flags & NO_EXPORT))
         {
           const tcl::namesp ns(rep->interp, rep->namesp_name.c_str());
 
-          ns.export_cmd(rep->interp, cmd_name_cstr);
+          ns.export_cmd(rep->interp, cmd_name.name);
         }
 
       static string name;
       name = namesp_name();
       name += "::";
-      name += cmd_name;
+      name += cmd_name_str;
       return name.c_str();
     }
 }
