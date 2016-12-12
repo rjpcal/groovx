@@ -99,7 +99,7 @@ public:
     }
 
   template <class T>
-  inline T get(unsigned int index, T* /*dummy*/=0) const;
+  inline T get(unsigned int index) const;
 
   unsigned int size() const { update(); return m_length; }
   unsigned int length() const { update(); return m_length; }
@@ -127,10 +127,10 @@ public:
   template <class T> class iterator;
 
   template <class T>
-  iterator<T> begin(T* /*dummy*/=0);
+  iterator<T> begin() const;
 
   template <class T>
-  iterator<T> end(T* /*dummy*/=0);
+  iterator<T> end() const;
 
   template <class T>
   class view
@@ -139,8 +139,8 @@ public:
   public:
     view(tcl::list& s) : m_self(s) {}
 
-    iterator<T> begin();
-    iterator<T> end();
+    iterator<T> begin() const;
+    iterator<T> end() const;
   };
 
   template <class T>
@@ -303,30 +303,31 @@ public:
 #include "tcl/conversions.h"
 
 template <class T>
-inline T tcl::list::get(unsigned int index, T* /*dummy*/) const
+inline T tcl::list::get(unsigned int index) const
 {
   return tcl::convert_to<T>(at(index));
 }
 
 template <class T>
-inline tcl::list::iterator<T> tcl::list::begin(T* /*dummy*/)
+inline tcl::list::iterator<T> tcl::list::begin() const
 {
   return iterator<T>(*this, iterator_base::position::BEGIN);
 }
 
 template <class T>
-inline tcl::list::iterator<T> tcl::list::end(T* /*dummy*/)
+inline tcl::list::iterator<T> tcl::list::end() const
 {
   return iterator<T>(*this, iterator_base::position::END);
 }
 
 template <class T>
-inline tcl::list::iterator<T> tcl::list::view<T>::begin()
+inline tcl::list::iterator<T> tcl::list::view<T>::begin() const
 {
   return iterator<T>(m_self, iterator_base::position::BEGIN);
 }
+
 template <class T>
-inline tcl::list::iterator<T> tcl::list::view<T>::end()
+inline tcl::list::iterator<T> tcl::list::view<T>::end() const
 {
   return iterator<T>(m_self, iterator_base::position::END);
 }
