@@ -424,12 +424,21 @@ namespace
 
   void loadImageStream(tcl::call_context& ctx)
   {
-    using std::shared_ptr;
     nub::ref<GxPixmap> pixmap = ctx.get_arg<nub::ref<GxPixmap> >(1);
     const char* channame = ctx.get_arg<const char*>(2);
     Tcl_Interp* interp = ctx.interp().intp();
     std::unique_ptr<std::istream> ist(tcl::ichanopen(interp, channame));
     pixmap->loadImageStream(*ist);
+  }
+
+  void saveImageStream(tcl::call_context& ctx)
+  {
+    nub::ref<GxPixmap> pixmap = ctx.get_arg<nub::ref<GxPixmap> >(1);
+    const char* channame = ctx.get_arg<const char*>(2);
+    Tcl_Interp* interp = ctx.interp().intp();
+    std::unique_ptr<std::ostream> ost(tcl::ochanopen(interp, channame));
+    pixmap->saveImageStream(*ost);
+    // ost->flush();
   }
 }
 
@@ -447,6 +456,7 @@ GVX_TRACE("Gxpixmap_Init");
 
       pkg->def_get_set("asBitmap", &GxPixmap::getAsBitmap, &GxPixmap::setAsBitmap, SRC_POS);
       pkg->def_getter("checkSum", &GxPixmap::checkSum, SRC_POS);
+      pkg->def_getter("bkdrHash", &GxPixmap::bkdrHash, SRC_POS);
       pkg->def_getter("filename", &GxPixmap::filename, SRC_POS );
       pkg->def_action("flipContrast", &GxPixmap::flipContrast, SRC_POS);
       pkg->def_action("flipVertical", &GxPixmap::flipVertical, SRC_POS);
@@ -464,6 +474,8 @@ GVX_TRACE("Gxpixmap_Init");
       pkg->def_vec("queueImage", "objref(s) filename(s)", &GxPixmap::queueImage, 1, SRC_POS );
       pkg->def_action("reload", &GxPixmap::reload, SRC_POS);
       pkg->def_vec("saveImage", "objref(s) filename(s)", &GxPixmap::saveImage, 1, SRC_POS );
+      pkg->def_raw("saveImageStream", tcl::arg_spec(3),
+                   "objref channame", &saveImageStream, SRC_POS);
       pkg->def_vec("scramble", "numcols numrows", &scramble1, 1, SRC_POS);
       pkg->def_vec("scramble", "numcols numrows ?seed?", &scramble2, 1, SRC_POS);
       pkg->def_vec("scramble", "numcols numrows ?seed moveParts flipLR flipTB?",

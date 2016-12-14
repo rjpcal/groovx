@@ -34,6 +34,7 @@
 #define GROOVX_MEDIA_BMAPDATA_H_UTC20050626084018_DEFINED
 
 #include <cstddef> // size_t
+#include <cstdint> // uint32_t
 #include <memory>
 
 namespace geom
@@ -118,6 +119,9 @@ namespace media
 
     /// Returns a checksum of all the bytes in the image data.
     long int bytes_sum() const;
+
+    /// Compute the BKDR hash across all the bytes in the image data.
+    uint32_t bkdr_hash() const;
 
     /// Returns the bitmap's width in pixels.
     size_t width() const;

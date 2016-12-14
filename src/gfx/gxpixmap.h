@@ -34,6 +34,7 @@
 
 #include "gfx/gxshapekit.h"
 
+#include <cstdint>
 #include <iosfwd>
 
 namespace geom
@@ -101,6 +102,9 @@ public:
   /** The image file format is inferred from the given filename. */
   void saveImage(const char* filename) const;
 
+  /// Writes PNM data to the given output stream.
+  void saveImageStream(std::ostream& ost) const;
+
   /// Grabs pixels from a rectangular area of the screen buffer.
   /** The pixels are loaded into the GxPixmap's pixel array. The
       rectangle is specified in screen coordinates. */
@@ -155,6 +159,9 @@ public:
 
   /// Get a checksum of all the bytes in the image data.
   long int checkSum() const;
+
+  /// Calculate BKDR hash across all the bytes in the image data.
+  uint32_t bkdrHash() const;
 
   //////////////////
   // manipulators //

@@ -11,6 +11,7 @@ package require Tlist
 package require Toglet
 
 set IMGFILE $TEST_DIR/pbmfile.PPM
+set IMGFILE_BKDR 2771054518
 
 set ::PIXMAP [Obj::new GxPixmap]
 GxPixmap::loadImage $::PIXMAP $::IMGFILE
@@ -36,9 +37,11 @@ test "GxPixmap::loadImage" "too many args" {
 } {^wrong \# args: should be}
 test "GxPixmap::loadImage" "normal use" {
     GxPixmap::loadImage $::PIXMAP $::IMGFILE
+    set sum [-> $::PIXMAP bkdrHash]
     GxPixmap::flipContrast $::PIXMAP
     GxShapeKit::alignmentMode $::PIXMAP $GxShapeKit::CENTER_ON_CENTER
-} {^$}
+    return $sum
+} "^$::IMGFILE_BKDR\$"
 test "GxPixmap::loadImage" "error on non-existent file" {
     exec rm -rf $::TEST_DIR/nonexistent_file.ppm
     GxPixmap::loadImage $::PIXMAP $::TEST_DIR/nonexistent_file.ppm
@@ -56,6 +59,14 @@ test "GxPixmap::loadImage" "error on junk binary file" {
     return $result
 } "bad magic number while reading pnm file.*$"
 
+### GxPixmap::loadImageStream ###
+test "GxPixmap::loadImageStream" "normal use" {
+    set f [open $::IMGFILE]
+    GxPixmap::loadImageStream $::PIXMAP $f
+    close $f
+    return [-> $::PIXMAP bkdrHash]
+} "^$::IMGFILE_BKDR\$"
+
 ### GxPixmap::saveImage ###
 test "GxPixmap::saveImage" "read/write comparison" {
     set tmpname $::TEST_DIR/tmp-[pid]-GxPixmap-saveImage-1.pbm
@@ -63,6 +74,21 @@ test "GxPixmap::saveImage" "read/write comparison" {
     -> $p loadImage $::TEST_DIR/pbmfile.PPM
     file delete -force $tmpname
     -> $p saveImage $tmpname
+    delete $p
+    set code [catch {exec diff $::TEST_DIR/pbmfile.PPM $tmpname} result]
+    file delete -force $tmpname
+    return "$code $result"
+} {^0 $}
+
+### GxPixmap::saveImageStream ###
+test "GxPixmap::saveImageStream" "read/write comparison" {
+    set tmpname $::TEST_DIR/tmp-[pid]-GxPixmap-saveImage-2.pbm
+    set p [new GxPixmap]
+    -> $p loadImage $::TEST_DIR/pbmfile.PPM
+    file delete -force $tmpname
+    set f [open $tmpname "w"]
+    -> $p saveImageStream $f
+    close $f
     delete $p
     set code [catch {exec diff $::TEST_DIR/pbmfile.PPM $tmpname} result]
     file delete -force $tmpname

@@ -324,6 +324,13 @@ GVX_TRACE("GxPixmap::saveImage");
   media::save_image(filename, rep->fetchData());
 }
 
+void GxPixmap::saveImageStream(std::ostream& ost) const
+{
+GVX_TRACE("GxPixmap::saveImageStream");
+
+  media::save_pnm(ost, rep->fetchData());
+}
+
 void GxPixmap::grabScreenRect(nub::soft_ref<Gfx::Canvas> canvas,
                               const recti& rect)
 {
@@ -442,6 +449,9 @@ GVX_TRACE("GxPixmap::getAsBitmap");
 
 long int GxPixmap::checkSum() const
   { return rep->fetchData().bytes_sum(); }
+
+uint32_t GxPixmap::bkdrHash() const
+  { return rep->fetchData().bkdr_hash(); }
 
 //////////////////
 // manipulators //

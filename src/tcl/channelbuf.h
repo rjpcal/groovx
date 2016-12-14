@@ -33,50 +33,9 @@
 #ifndef GROOVX_TCL_CHANNELBUF_H_UTC20050628162420_DEFINED
 #define GROOVX_TCL_CHANNELBUF_H_UTC20050628162420_DEFINED
 
-#include <iostream>
-#include <memory>
+#include <istream>
 #include <ostream>
-#include <streambuf>
 #include <tcl.h>
-
-namespace tcl
-{
-  /// A std::streambuf implementation that wraps a tcl channel.
-  class channel_buf : public std::streambuf
-  {
-  private:
-    bool opened;
-    bool owned;
-    unsigned int mode;
-    Tcl_Interp* m_interp;
-    Tcl_Channel chan;
-
-    channel_buf(const channel_buf&);
-    channel_buf& operator=(const channel_buf&);
-
-    static const int s_buf_size = 4092;
-    static const int s_pback_size = 4;
-    char m_buffer[s_buf_size];
-
-    int flushoutput();
-
-  public:
-    channel_buf(Tcl_Interp* interp, const char* channame, unsigned int om);
-    ~channel_buf() { close(); }
-
-    bool is_open() { return opened; }
-
-    void ensure_open();
-
-    void close();
-
-    virtual int underflow() override;
-
-    virtual int overflow(int c) override;
-
-    virtual int sync() override;
-  };
-}
 
 namespace tcl
 {

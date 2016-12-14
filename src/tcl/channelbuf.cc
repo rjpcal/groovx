@@ -34,14 +34,39 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
+#include "rutz/stream_buffer.h"
 
 #include <memory>
 
 #include "rutz/trace.h"
 
-tcl::channel_buf::channel_buf(Tcl_Interp* interp,
-                            const char* channame, unsigned int /*om*/) :
-  opened(false), owned(false), mode(0), m_interp(interp), chan(0)
+namespace tcl
+{
+  /// A std::streambuf implementation that wraps a tcl channel.
+  class channel_buf : public rutz::stream_buffer
+  {
+  private:
+    bool owned;
+    Tcl_Interp* m_interp;
+    Tcl_Channel chan;
+
+  public:
+    channel_buf(Tcl_Interp* interp, const char* channame, std::ios::openmode om);
+    ~channel_buf();
+
+    channel_buf(const channel_buf&) = delete;
+    channel_buf& operator=(const channel_buf&) = delete;
+
+    virtual int do_read(char* mem, size_t n) override;
+    virtual int do_write(const char* mem, int n) override;
+  };
+}
+
+tcl::channel_buf::channel_buf(Tcl_Interp* interp, const char* channame,
+                              std::ios::openmode om)
+  :
+  rutz::stream_buffer(om),
+  owned(false), m_interp(interp), chan(nullptr)
 {
   int origmode = 0;
   chan = Tcl_GetChannel(interp, channame, &origmode);
@@ -50,103 +75,40 @@ tcl::channel_buf::channel_buf(Tcl_Interp* interp,
       throw rutz::error(rutz::sfmt("no channel named '%s'",
                                    channame), SRC_POS);
     }
-  opened = true;
+
+  if (om & std::ios::in)
+    if (!(origmode & TCL_READABLE))
+      throw rutz::error(rutz::sfmt("tcl channel '%s' is not readable",
+                                   channame), SRC_POS);
+  if (om & std::ios::out)
+    if (!(origmode & TCL_WRITABLE))
+      throw rutz::error(rutz::sfmt("tcl channel '%s' is not writable",
+                                   channame), SRC_POS);
 }
 
-void tcl::channel_buf::close()
+tcl::channel_buf::~channel_buf()
 {
-  if (opened && owned)
-    {
-      opened = false;
-      Tcl_Close(m_interp, chan);
-    }
+  this->sync();
+  if (owned)
+    Tcl_Close(m_interp, chan);
 }
 
-int tcl::channel_buf::underflow() // with help from Josuttis, p. 678
+int tcl::channel_buf::do_read(char* mem, size_t n)
 {
-GVX_TRACE("tcl::channel_buf::underflow");
-  // is read position before end of buffer?
-  if (gptr() < egptr())
-    return *gptr();
-
-  off_t num_putback = 0;
-  if (s_pback_size > 0)
-    {
-      // process size of putback area
-      // -use number of characters read
-      // -but at most four
-      num_putback = gptr() - eback();
-      if (num_putback > 4)
-        num_putback = 4;
-
-      // copy up to four characters previously read into the putback
-      // buffer (area of first four characters)
-      std::memcpy (m_buffer+(4-num_putback), gptr()-num_putback,
-                   size_t(num_putback));
-    }
-
-  // read new characters
-  const int num = Tcl_Read(chan,
-                           m_buffer+s_pback_size,
-                           s_buf_size-s_pback_size);
-
-  if (num <= 0) // error (0) or end-of-file (-1)
-    return EOF;
-
-  // reset buffer pointers
-  setg (m_buffer+(s_pback_size-num_putback),
-        m_buffer+s_pback_size,
-        m_buffer+s_pback_size+num);
-
-  // return next character Hrmph. We have to cast to unsigned char to avoid
-  // problems with eof. Problem is, -1 is a valid char value to
-  // return. However, without a cast, char(-1) (0xff) gets converted to
-  // int(-1), which is 0xffffffff, which is EOF! What we want is
-  // int(0x000000ff), which we have to get by int(unsigned char(-1)).
-  return static_cast<unsigned char>(*gptr());
+GVX_TRACE("tcl::channel_buf::do_read");
+  GVX_ASSERT(n < std::numeric_limits<int>::max());
+  return Tcl_Read(chan, mem, int(n));
 }
 
-int tcl::channel_buf::overflow(int c)
+int tcl::channel_buf::do_write(const char* mem, int n)
 {
-GVX_TRACE("tcl::channel_buf::overflow");
-  if (!(mode & std::ios::out) || !opened) return EOF;
+GVX_TRACE("tcl::channel_buf::do_write");
 
-  if (c != EOF)
-    {
-      // insert the character into the buffer
-      *pptr() = char(c);
-      pbump(1);
-    }
-
-  if (flushoutput() == EOF)
-    {
-      return -1; // ERROR
-    }
-
-  return c;
-}
-
-int tcl::channel_buf::sync()
-{
-  if (flushoutput() == EOF)
-    {
-      return -1; // ERROR
-    }
-  return 0;
-}
-
-int tcl::channel_buf::flushoutput()
-{
-  if (!(mode & std::ios::out) || !opened) return EOF;
-
-  int num = int(pptr() - pbase());
-  if ( Tcl_Write(chan, pbase(), num) != num )
+  if ( Tcl_Write(chan, mem, int(n)) != int(n) )
     {
       return EOF;
     }
-
-  pbump(-num);
-  return num;
+  return int(n);
 }
 
 namespace

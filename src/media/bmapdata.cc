@@ -153,14 +153,24 @@ GVX_TRACE("media::bmap_data::bytes_sum");
 
   long int sum = 0;
   size_t c = byte_count();
-  unsigned char* m_bytes = rep->bytes_ptr();
+  const unsigned char* const bytes = rep->bytes_ptr();
   while (c > 0)
     {
-      sum += m_bytes[--c];
+      sum += bytes[--c];
     }
   return sum;
 }
 
+uint32_t media::bmap_data::bkdr_hash() const {
+  uint32_t seed = 131;
+  uint32_t result = 0;
+  const unsigned char* const bytes = rep->bytes_ptr();
+
+  for (size_t i = 0, n = byte_count(); i < n; ++i)
+    result = (result * seed) + bytes[i];
+
+  return result;
+}
 size_t media::bmap_data::width() const
 {
 GVX_TRACE("media::bmap_data::width");

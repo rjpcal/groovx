@@ -16,8 +16,19 @@
 
 * (02-Nov-2016) Use std::chrono
 
-* (18-Oct-2016) Get rid of all the duplicated overflow() and underflow() code
-  For instance ingzstreambuf, channel_buf, ...
+* (18-Oct-2016) Get rid of all the duplicated overflow() and underflow()
+  or use boost.iostreams
+
+  bzip2streambuf::underflow()
+  rutz::gzstreambuf::underflow()
+  rutz::stdiobuf::underflow()
+  tcl::channel_buf::underflow()
+  rutz::imembuf::underflow() - this one is simple since no external data source
+
+  bzip2streambuf::overflow(int c)
+  rutz::gzstreambuf::overflow(int c)
+  rutz::stdiobuf::overflow(int c)
+  tcl::channel_buf::overflow(int c)
 
 * (21-Nov-2002) Need a better way to pass enums to/from Tcl
 
