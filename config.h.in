@@ -1,8 +1,5 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
-/* full path to anytopnm program */
-#undef GVX_ANYTOPNM_PROG
-
 /* use Mac OS X aqua port of Tk */
 #undef GVX_AQUA_TK
 
@@ -14,9 +11,6 @@
 
 /* Darwin esd workaround */
 #undef GVX_ESD_WORKAROUND
-
-/* full path to giftopnm program */
-#undef GVX_GIFTOPNM_PROG
 
 /* use Apple OpenGL windowsystem interface (agl) */
 #undef GVX_GL_PLATFORM_AGL

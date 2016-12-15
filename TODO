@@ -10,8 +10,6 @@
 
 * (05-Dec-2016) Make signal not have to derive from nub::volatile_object
 
-* (14-Dec-2016) Make nicer error messages in imgfile.cc when pnm-related programs are missing (i.e. check for program's existence before we try to pipe/fork/execv it)
-
 * (23-Nov-2016) Make concrete_iter work with normal iterator pair semantics
 
 * (02-Nov-2016) Use std::chrono

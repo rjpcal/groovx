@@ -118,7 +118,25 @@ namespace
     return image_file_type::UNKNOWN;
   }
 
-#if defined(GVX_GIFTOPNM_PROG) || defined(GVX_ANYTOPNM_PROG)
+  rutz::fstring exec_search(const char* progname)
+  {
+    if (progname[0] == '/') return progname;
+
+    const char* path = getenv("PATH");
+    if (!path) path = "/bin:/usr/bin";
+    const char* cur = path;
+    while (true)
+      {
+        const char* end = strchr(cur, ':');
+        if (!end) end = cur + strlen(cur);
+        rutz::fstring p = rutz::sfmt("%.*s/%s", int(end-cur), cur, progname);
+        if (access(p.c_str(), R_OK|X_OK) == 0)
+          return p;
+        if (*end == '\0') break;
+        cur = end + 1;
+      }
+    throw rutz::error(rutz::sfmt("couldn't find %s in PATH=%s", progname, path), SRC_POS);
+  }
 
   // A fallback function to try to read an image by filtering it
   // through a pipe that will convert it to PNM format.
@@ -126,7 +144,9 @@ namespace
   {
   GVX_TRACE("<imgfile.cc>::pipe_load");
 
-    if (access(progname, R_OK|X_OK) != 0)
+    rutz::fstring fullprogname = exec_search(progname);
+
+    if (access(fullprogname.c_str(), R_OK|X_OK) != 0)
       throw rutz::error(rutz::sfmt("couldn't access program '%s'", progname), SRC_POS);
     if (access(filename, R_OK)      != 0)
       throw rutz::error(rutz::sfmt("couldn't read file '%s'", filename), SRC_POS);
@@ -134,7 +154,7 @@ namespace
     std::vector<char> nm_copy;
     std::copy(filename, filename+strlen(filename)+1,
               std::back_inserter(nm_copy));
-    char* const argv[] = { (char*) progname, &nm_copy[0], (char*) 0 };
+    char* const argv[] = { (char*) fullprogname.c_str(), &nm_copy[0], (char*) 0 };
 
     rutz::exec_pipe p("r", argv);
 
@@ -145,8 +165,6 @@ namespace
 
     return result;
   }
-
-#endif
 
   class io_redirector
   {
@@ -194,8 +212,9 @@ namespace
   void pipe_save(const char* progname, const char* filename,
                  const media::bmap_data& bmap)
   {
+    rutz::fstring fullpath = exec_search(progname);
 
-    char* const argv[] = { (char*) progname, (char*) 0 };
+    char* const argv[] = { (char*) fullpath.c_str(), (char*) 0 };
 
     io_redirector rr(STDOUT_FILENO, filename, O_WRONLY | O_CREAT);
     rutz::exec_pipe p("w", argv);
@@ -221,26 +240,17 @@ GVX_TRACE("media::load_image");
 #ifdef HAVE_LIBJPEG
     case image_file_type::JPEG: result = media::load_jpeg(filename); break;
 #else
-    case image_file_type::JPEG: // fall through
+    case image_file_type::JPEG: result = pipe_load("jpegtopnm", filename); break;
 #endif
-#ifdef GVX_GIFTOPNM_PROG
-    case image_file_type::GIF:  result = pipe_load(GVX_GIFTOPNM_PROG, filename); break;
-#else
-    case image_file_type::GIF:  // fall through
-#endif
+    case image_file_type::GIF:  result = pipe_load("giftopnm", filename); break;
     case image_file_type::UNKNOWN: // fall through
     default:
-#ifdef GVX_ANYTOPNM_PROG
       // A fallback to try to read just about any image type, given
       // that the program "anytopnm" is installed on the host
       // machine. In that case, we can process the image file with
       // anytopnm, and pipe the output via a stream into a pnm parser.
-      result = pipe_load(GVX_ANYTOPNM_PROG, filename);
+      result = pipe_load("anytopnm", filename);
       break;
-#else
-      throw rutz::error(rutz::sfmt("unknown image file format: %s",
-                                   filename), SRC_POS);
-#endif
     }
 
   nub::log(rutz::sfmt("loaded image file %s", filename));
@@ -256,7 +266,7 @@ void media::save_image(const char* filename,
     case image_file_type::PNM:  media::save_pnm(filename, data); break;
     case image_file_type::PNG:  media::save_png(filename, data); break;
     case image_file_type::JPEG: pipe_save("pnmtojpeg", filename, data); break;
-    case image_file_type::GIF: pipe_save("pamtogif", filename, data); break;
+    case image_file_type::GIF:  pipe_save("pamtogif", filename, data); break;
     case image_file_type::UNKNOWN: // fall through
     default:
       throw rutz::error(rutz::sfmt("unknown file format: %s", filename),

@@ -283,18 +283,6 @@ AC_SUBST(STATLIB_EXT)
 ##########################################################################
 ### Check for programs other than compiler+linker.
 
-AC_PATH_PROG([GVX_ANYTOPNM_PROG], [anytopnm], [])
-if test "$GVX_ANYTOPNM_PROG" != ""; then
-   AC_DEFINE_UNQUOTED(GVX_ANYTOPNM_PROG,"$GVX_ANYTOPNM_PROG",
-                      [full path to anytopnm program])
-fi
-
-AC_PATH_PROG([GVX_GIFTOPNM_PROG], [giftopnm], [])
-if test "$GVX_GIFTOPNM_PROG" != ""; then
-   AC_DEFINE_UNQUOTED(GVX_GIFTOPNM_PROG,"$GVX_GIFTOPNM_PROG",
-                      [full path to giftopnm program])
-fi
-
 AC_PATH_PROGS([DOXYGEN_PROG], [doxygen], [doxygen])
 AC_SUBST(DOXYGEN_PROG)
 

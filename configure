@@ -635,8 +635,6 @@ X_CFLAGS
 XMKMF
 have_prog_cxxfilt
 DOXYGEN_PROG
-GVX_GIFTOPNM_PROG
-GVX_ANYTOPNM_PROG
 STATLIB_EXT
 SHLIB_EXT
 STATLIB_CMD
@@ -3089,102 +3087,6 @@ fi
 
 ##########################################################################
 ### Check for programs other than compiler+linker.
-
-# Extract the first word of "anytopnm", so it can be a program name with args.
-set dummy anytopnm; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_GVX_ANYTOPNM_PROG+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $GVX_ANYTOPNM_PROG in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_GVX_ANYTOPNM_PROG="$GVX_ANYTOPNM_PROG" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_path_GVX_ANYTOPNM_PROG="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-GVX_ANYTOPNM_PROG=$ac_cv_path_GVX_ANYTOPNM_PROG
-if test -n "$GVX_ANYTOPNM_PROG"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GVX_ANYTOPNM_PROG" >&5
-$as_echo "$GVX_ANYTOPNM_PROG" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-if test "$GVX_ANYTOPNM_PROG" != ""; then
-
-cat >>confdefs.h <<_ACEOF
-#define GVX_ANYTOPNM_PROG "$GVX_ANYTOPNM_PROG"
-_ACEOF
-
-fi
-
-# Extract the first word of "giftopnm", so it can be a program name with args.
-set dummy giftopnm; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_GVX_GIFTOPNM_PROG+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $GVX_GIFTOPNM_PROG in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_GVX_GIFTOPNM_PROG="$GVX_GIFTOPNM_PROG" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_path_GVX_GIFTOPNM_PROG="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-GVX_GIFTOPNM_PROG=$ac_cv_path_GVX_GIFTOPNM_PROG
-if test -n "$GVX_GIFTOPNM_PROG"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GVX_GIFTOPNM_PROG" >&5
-$as_echo "$GVX_GIFTOPNM_PROG" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-if test "$GVX_GIFTOPNM_PROG" != ""; then
-
-cat >>confdefs.h <<_ACEOF
-#define GVX_GIFTOPNM_PROG "$GVX_GIFTOPNM_PROG"
-_ACEOF
-
-fi
 
 for ac_prog in doxygen
 do
