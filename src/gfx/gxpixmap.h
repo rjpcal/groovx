@@ -85,7 +85,7 @@ public:
   void loadImage(const char* filename);
 
   /// Loads PNM data from the given input stream.
-  void loadImageStream(std::istream& ist);
+  void loadPnmStream(std::istream& ist);
 
   /// Reload bitmap data from the image file most recently loaded.
   /** This has the effect of reverting any changes that might have
@@ -103,7 +103,7 @@ public:
   void saveImage(const char* filename) const;
 
   /// Writes PNM data to the given output stream.
-  void saveImageStream(std::ostream& ost) const;
+  void savePnmStream(std::ostream& ost) const;
 
   /// Grabs pixels from a rectangular area of the screen buffer.
   /** The pixels are loaded into the GxPixmap's pixel array. The

@@ -68,10 +68,10 @@ test "GxPixmap::loadImage-anytopnm" "normal use" {
     return $result
 } "^$::IMGFILE_BKDR\$"
 
-### GxPixmap::loadImageStream ###
-test "GxPixmap::loadImageStream" "normal use" {
+### GxPixmap::loadPnmStream ###
+test "GxPixmap::loadPnmStream" "normal use" {
     set f [open $::IMGFILE]
-    GxPixmap::loadImageStream $::PIXMAP $f
+    GxPixmap::loadPnmStream $::PIXMAP $f
     close $f
     return [-> $::PIXMAP bkdrHash]
 } "^$::IMGFILE_BKDR\$"
@@ -89,14 +89,14 @@ test "GxPixmap::saveImage" "read/write comparison" {
     return "$code $result"
 } {^0 $}
 
-### GxPixmap::saveImageStream ###
-test "GxPixmap::saveImageStream" "read/write comparison" {
+### GxPixmap::savePnmStream ###
+test "GxPixmap::savePnmStream" "read/write comparison" {
     set tmpname $::TEST_DIR/tmp-[pid]-GxPixmap-saveImage-2.pbm
     set p [new GxPixmap]
     -> $p loadImage $::TEST_DIR/pbmfile.PPM
     file delete -force $tmpname
     set f [open $tmpname "w"]
-    -> $p saveImageStream $f
+    -> $p savePnmStream $f
     close $f
     delete $p
     set code [catch {exec diff $::TEST_DIR/pbmfile.PPM $tmpname} result]
@@ -116,6 +116,23 @@ test "GxPixmap::saveImage-gif" "read/write comparison" {
     set p2 [new GxPixmap]
     -> $p2 loadImage $tmpname
     file delete -force $tmpname
+    set result [-> $p2 bkdrHash]
+    delete $p2
+    return $result
+} "^$::IMGFILE_BKDR\$"
+
+### GxPixmap::saveImage as gz ###
+test "GxPixmap::saveImage-gz" "read/write comparison" {
+    set tmpname $::TEST_DIR/tmp-[pid]-GxPixmap-saveImage-4.pbm.gz
+    set p [new GxPixmap]
+    -> $p loadImage $::TEST_DIR/pbmfile.PPM
+    file delete -force $tmpname
+    -> $p saveImage $tmpname
+    delete $p
+
+    set p2 [new GxPixmap]
+    set f [open "|gzip -dc $tmpname" "r"]
+    -> $p2 loadPnmStream $f
     set result [-> $p2 bkdrHash]
     delete $p2
     return $result

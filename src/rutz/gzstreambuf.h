@@ -43,40 +43,6 @@ namespace rutz
 {
   class fstring;
 
-  /// A std::streambuf implementation that handles gzip-encoded data.
-  class gzstreambuf : public std::streambuf
-  {
-  private:
-    bool m_opened;
-    unsigned int m_mode;
-    gzFile m_gzfile;
-
-    gzstreambuf(const gzstreambuf&);
-    gzstreambuf& operator=(const gzstreambuf&);
-
-    static const int s_buf_size = 4092;
-    static const int s_pback_size = 4;
-    char m_buf[s_buf_size];
-
-    int flushoutput();
-
-  public:
-    gzstreambuf(const char* name, unsigned int om, bool throw_exception=false);
-    ~gzstreambuf() { close(); }
-
-    bool is_open() { return m_opened; }
-
-    void ensure_open();
-
-    void close();
-
-    virtual int underflow() override;
-
-    virtual int overflow(int c) override;
-
-    virtual int sync() override;
-  };
-
   /** Opens a file for writing. An exception will be thrown if the
       specified file cannot be opened. The output file will be
       gz-compressed if the filename ends with ".gz". */

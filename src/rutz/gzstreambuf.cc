@@ -34,6 +34,7 @@
 #include "rutz/error.h"
 #include "rutz/fstring.h"
 #include "rutz/sfmt.h"
+#include "rutz/stream_buffer.h"
 
 #include <fstream>
 #include <limits>
@@ -44,11 +45,42 @@
 using rutz::fstring;
 using std::unique_ptr;
 
-rutz::gzstreambuf::gzstreambuf(const char* name, unsigned int om,
+namespace rutz
+{
+  class gzstreambuf;
+}
+
+/// A std::streambuf implementation that handles gzip-encoded data.
+class rutz::gzstreambuf : public rutz::stream_buffer
+{
+private:
+  gzFile m_gzfile;
+
+  gzstreambuf(const gzstreambuf&);
+  gzstreambuf& operator=(const gzstreambuf&);
+
+  static const int s_buf_size = 4092;
+  static const int s_pback_size = 4;
+  char m_buf[s_buf_size];
+
+  int flushoutput();
+
+public:
+  gzstreambuf(const char* name, std::ios::openmode om, bool throw_exception=false);
+  ~gzstreambuf() { close(); }
+
+  bool is_open() { return m_gzfile != nullptr; }
+
+  void close();
+
+  virtual ssize_t do_read(char* mem, size_t n) override;
+  virtual ssize_t do_write(const char* mem, size_t n) override;
+};
+
+rutz::gzstreambuf::gzstreambuf(const char* name, std::ios::openmode om,
                                bool throw_exception)
   :
-  m_opened(false),
-  m_mode(0),
+  rutz::stream_buffer(om),
   m_gzfile(nullptr)
 {
   // no append nor read/write mode
@@ -79,15 +111,9 @@ rutz::gzstreambuf::gzstreambuf(const char* name, unsigned int om,
       *fmodeptr = '\0';
 
       m_gzfile = gzopen(name,fmode);
-
-      if (m_gzfile != nullptr)
-        {
-          m_opened = true;
-          m_mode = om;
-        }
     }
 
-  if (throw_exception && !m_opened)
+  if (throw_exception && !m_gzfile)
     {
       if (om & std::ios::in)
         {
@@ -104,102 +130,28 @@ rutz::gzstreambuf::gzstreambuf(const char* name, unsigned int om,
 
 void rutz::gzstreambuf::close()
 {
-  if (m_opened)
+  if (m_gzfile)
     {
       sync();
-      m_opened = false;
       gzclose(m_gzfile);
+      m_gzfile = nullptr;
     }
 }
 
-int rutz::gzstreambuf::underflow() // with help from Josuttis, p. 678
+ssize_t rutz::gzstreambuf::do_read(char* mem, size_t n)
 {
-GVX_TRACE("rutz::gzstreambuf::underflow");
-  // is read position before end of buffer?
-  if (gptr() < egptr())
-    return *gptr();
-
-  off_t numPutback = 0;
-  if (s_pback_size > 0 && gptr() > eback())
-    {
-      // process size of putback area
-      // -use number of characters read
-      // -but at most four
-      numPutback = gptr() - eback();
-      if (numPutback > 4)
-        numPutback = 4;
-
-      GVX_ASSERT(numPutback >= 0);
-
-      // copy up to four characters previously read into the putback
-      // buffer (area of first four characters)
-      std::memcpy (m_buf+(4-numPutback), gptr()-numPutback,
-                   size_t(numPutback));
-    }
-
-  // read new characters
-  const int num =
-    gzread(m_gzfile, m_buf+s_pback_size, s_buf_size-s_pback_size);
-
-  if (num <= 0) // error (0) or end-of-file (-1)
-    return EOF;
-
-  // reset buffer pointers
-  setg (m_buf+s_pback_size-numPutback,
-        m_buf+s_pback_size,
-        m_buf+s_pback_size+num);
-
-  // return next character Hrmph. We have to cast to unsigned char to
-  // avoid problems with eof. Problem is, -1 is a valid char value to
-  // return. However, without a cast, char(-1) (0xff) gets converted
-  // to int(-1), which is 0xffffffff, which is EOF! What we want is
-  // int(0x000000ff), which we have to get by int(unsigned char(-1)).
-  return static_cast<unsigned char>(*gptr());
+GVX_TRACE("rutz::gzstreambuf::do_read");
+  if (!m_gzfile) return EOF;
+  GVX_ASSERT(n < std::numeric_limits<unsigned int>::max());
+  return gzread(m_gzfile, mem, (unsigned int)(n));
 }
 
-int rutz::gzstreambuf::overflow(int c)
+ssize_t rutz::gzstreambuf::do_write(const char* mem, size_t n)
 {
-GVX_TRACE("rutz::gzstreambuf::overflow");
-  if (!(m_mode & std::ios::out) || !m_opened) return EOF;
-
-  if (c != EOF)
-    {
-      // insert the character into the buffer
-      *pptr() = char(c);
-      pbump(1);
-    }
-
-  if (flushoutput() == EOF)
-    {
-      return -1; // ERROR
-    }
-
-  return c;
-}
-
-int rutz::gzstreambuf::sync()
-{
-  if (flushoutput() == EOF)
-    {
-      return -1; // ERROR
-    }
-  return 0;
-}
-
-int rutz::gzstreambuf::flushoutput()
-{
-  if (!(m_mode & std::ios::out) || !m_opened) return EOF;
-
-  GVX_ASSERT(pptr()-pbase() <= std::numeric_limits<int>::max());
-  const int num = int(pptr()-pbase());
-  GVX_ASSERT(num >= 0);
-  if ( gzwrite(m_gzfile, pbase(), (unsigned int) num) != num )
-    {
-      return EOF;
-    }
-
-  pbump(-num);
-  return num;
+GVX_TRACE("rutz::gzstreambuf::do_write");
+  if (!m_gzfile) return EOF;
+  GVX_ASSERT(n < std::numeric_limits<unsigned int>::max());
+  return gzwrite(m_gzfile, mem, (unsigned int)(n));
 }
 
 namespace

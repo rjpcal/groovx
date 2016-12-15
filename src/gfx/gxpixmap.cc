@@ -290,9 +290,9 @@ GVX_TRACE("GxPixmap::loadImage");
   this->sigNodeChanged.emit();
 }
 
-void GxPixmap::loadImageStream(std::istream& ist)
+void GxPixmap::loadPnmStream(std::istream& ist)
 {
-GVX_TRACE("GxPixmap::loadImageStream");
+GVX_TRACE("GxPixmap::loadPnmStream");
 
   rep->setData(media::load_pnm(ist));
   rep->itsFilename = "";
@@ -324,9 +324,9 @@ GVX_TRACE("GxPixmap::saveImage");
   media::save_image(filename, rep->fetchData());
 }
 
-void GxPixmap::saveImageStream(std::ostream& ost) const
+void GxPixmap::savePnmStream(std::ostream& ost) const
 {
-GVX_TRACE("GxPixmap::saveImageStream");
+GVX_TRACE("GxPixmap::savePnmStream");
 
   media::save_pnm(ost, rep->fetchData());
 }

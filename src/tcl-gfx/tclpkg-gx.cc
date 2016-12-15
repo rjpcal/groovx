@@ -422,22 +422,22 @@ namespace
     pixmap->scramble(numsubcols, numsubrows, seed);
   }
 
-  void loadImageStream(tcl::call_context& ctx)
+  void loadPnmStream(tcl::call_context& ctx)
   {
     nub::ref<GxPixmap> pixmap = ctx.get_arg<nub::ref<GxPixmap> >(1);
     const char* channame = ctx.get_arg<const char*>(2);
     Tcl_Interp* interp = ctx.interp().intp();
     std::unique_ptr<std::istream> ist(tcl::ichanopen(interp, channame));
-    pixmap->loadImageStream(*ist);
+    pixmap->loadPnmStream(*ist);
   }
 
-  void saveImageStream(tcl::call_context& ctx)
+  void savePnmStream(tcl::call_context& ctx)
   {
     nub::ref<GxPixmap> pixmap = ctx.get_arg<nub::ref<GxPixmap> >(1);
     const char* channame = ctx.get_arg<const char*>(2);
     Tcl_Interp* interp = ctx.interp().intp();
     std::unique_ptr<std::ostream> ost(tcl::ochanopen(interp, channame));
-    pixmap->saveImageStream(*ost);
+    pixmap->savePnmStream(*ost);
     // ost->flush();
   }
 }
@@ -467,15 +467,15 @@ GVX_TRACE("Gxpixmap_Init");
       pkg->def_vec("grabWorldRect", "objref(s) canvas {left top right bottom}",
                    &GxPixmap::grabWorldRect, 1,
                    SRC_POS );
-      pkg->def_raw("loadImageStream", tcl::arg_spec(3),
-                   "objref channame", &loadImageStream, SRC_POS);
+      pkg->def_raw("loadPnmStream", tcl::arg_spec(3),
+                   "objref channame", &loadPnmStream, SRC_POS);
       pkg->def_vec("loadImage", "objref(s) filename(s)", &GxPixmap::loadImage, 1, SRC_POS );
       pkg->def_get_set("purgeable", &GxPixmap::isPurgeable, &GxPixmap::setPurgeable, SRC_POS);
       pkg->def_vec("queueImage", "objref(s) filename(s)", &GxPixmap::queueImage, 1, SRC_POS );
       pkg->def_action("reload", &GxPixmap::reload, SRC_POS);
       pkg->def_vec("saveImage", "objref(s) filename(s)", &GxPixmap::saveImage, 1, SRC_POS );
-      pkg->def_raw("saveImageStream", tcl::arg_spec(3),
-                   "objref channame", &saveImageStream, SRC_POS);
+      pkg->def_raw("savePnmStream", tcl::arg_spec(3),
+                   "objref channame", &savePnmStream, SRC_POS);
       pkg->def_vec("scramble", "numcols numrows", &scramble1, 1, SRC_POS);
       pkg->def_vec("scramble", "numcols numrows ?seed?", &scramble2, 1, SRC_POS);
       pkg->def_vec("scramble", "numcols numrows ?seed moveParts flipLR flipTB?",
