@@ -51,47 +51,17 @@ using std::unique_ptr;
 unique_ptr<std::ostream> rutz::obzip2open(const fstring& filename,
                                           std::ios::openmode flags)
 {
-  fstring bzip2_ext(".bz2");
-
-  if (filename.ends_with(bzip2_ext))
-    {
-      throw error(sfmt("couldn't open file '%s' for writing: "
-                       "bzip2 libraries must be installed",
-                       filename.c_str()), SRC_POS);
-    }
-  else
-    {
-      unique_ptr<std::ostream> result =
-        std::make_unique<std::ofstream>(filename.c_str(), flags);
-      if (result->fail())
-        throw error(sfmt("couldn't open file '%s' for writing",
-                         filename.c_str()), SRC_POS);
-
-      return result;
-    }
+  throw error(sfmt("couldn't open file '%s' for bzip2-writing: "
+                   "bzip2 libraries must be installed",
+                   filename.c_str()), SRC_POS);
 }
 
 unique_ptr<std::istream> rutz::ibzip2open(const fstring& filename,
                                           std::ios::openmode flags)
 {
-  fstring bzip2_ext(".bz2");
-
-  if (filename.ends_with(bzip2_ext))
-    {
-      throw error(sfmt("couldn't open file '%s' for reading: "
-                       "bzip2 libraries must be installed",
-                       filename.c_str()), SRC_POS);
-    }
-  else
-    {
-      unique_ptr<std::istream> result =
-        std::make_unique<std::ifstream>(filename.c_str(), flags);
-      if (result->fail())
-        throw error(sfmt("couldn't open file '%s' for reading",
-                         filename.c_str()), SRC_POS);
-
-      return result;
-    }
+  throw error(sfmt("couldn't open file '%s' for bzip2-reading: "
+                   "bzip2 libraries must be installed",
+                   filename.c_str()), SRC_POS);
 }
 
 #else
@@ -355,57 +325,13 @@ namespace
 unique_ptr<std::ostream> rutz::obzip2open(const fstring& filename,
                                           std::ios::openmode flags)
 {
-  fstring bzip2_ext(".bz2");
-
-  if (filename.ends_with(bzip2_ext))
-    {
-      return std::make_unique<bzip2stream>
-        (filename.c_str(), std::ios::out|flags);
-    }
-  else
-    {
-      unique_ptr<std::ostream> result =
-        std::make_unique<std::ofstream>(filename.c_str(), flags);
-      if (result->fail())
-        throw error(sfmt("couldn't open file '%s' for writing",
-                         filename.c_str()), SRC_POS);
-
-      return result;
-    }
+  return std::make_unique<bzip2stream>(filename.c_str(), std::ios::out|flags);
 }
 
 unique_ptr<std::istream> rutz::ibzip2open(const fstring& filename,
                                           std::ios::openmode flags)
 {
-  fstring bzip2_ext(".bz2");
-
-  if (filename.ends_with(bzip2_ext))
-    {
-      return std::make_unique<bzip2stream>
-        (filename.c_str(), std::ios::in|flags);
-    }
-  else
-    {
-      unique_ptr<std::istream> result =
-        std::make_unique<std::ifstream>(filename.c_str(), flags);
-      if (result->fail())
-        throw error(sfmt("couldn't open file '%s' for reading",
-                         filename.c_str()), SRC_POS);
-
-      return result;
-    }
+  return std::make_unique<bzip2stream>(filename.c_str(), std::ios::in|flags);
 }
 
 #endif // defined(HAVE_BZLIB_H)
-
-unique_ptr<std::ostream> rutz::obzip2open(const char* filename,
-                                       std::ios::openmode flags)
-{
-  return obzip2open(fstring(filename), flags);
-}
-
-unique_ptr<std::istream> rutz::ibzip2open(const char* filename,
-                                          std::ios::openmode flags)
-{
-  return ibzip2open(fstring(filename), flags);
-}

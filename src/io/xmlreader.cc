@@ -38,10 +38,10 @@
 #include "nub/ref.h"
 
 #include "rutz/bytearray.h"
+#include "rutz/compressstream.h"
 #include "rutz/demangle.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
-#include "rutz/gzstreambuf.h"
 #include "rutz/sfmt.h"
 #include "rutz/value.h"
 
@@ -579,7 +579,7 @@ namespace
 nub::ref<io::serializable> io::load_gvx(const char* filename)
 {
 GVX_TRACE("io::load_gvx");
-  unique_ptr<std::istream> ifs(rutz::igzopen(filename));
+  unique_ptr<std::istream> ifs(rutz::icompressopen(filename));
   tree_builder x(*ifs);
   x.parse();
 
@@ -590,7 +590,7 @@ GVX_TRACE("io::load_gvx");
 void io::xml_debug(const char* filename)
 {
 GVX_TRACE("io::xml_debug");
-  unique_ptr<std::istream> ifs(rutz::igzopen(filename));
+  unique_ptr<std::istream> ifs(rutz::icompressopen(filename));
   tree_builder x(*ifs);
   x.parse();
 

@@ -10,11 +10,13 @@ package require Gl
 package require Tlist
 package require Toglet
 
-set IMGFILE $TEST_DIR/pbmfile.PPM
-set IMGFILE_BKDR 2771054518
+set PBMFILE $TEST_DIR/pbmfile.PPM
+set PBMFILE_BKDR 2771054518
+
+set COLORIMG_BKDR 1896158289
 
 set ::PIXMAP [Obj::new GxPixmap]
-GxPixmap::loadImage $::PIXMAP $::IMGFILE
+GxPixmap::loadImage $::PIXMAP $::PBMFILE
 
 source ${::TEST_DIR}/io_test.tcl
 
@@ -33,15 +35,15 @@ test "GxPixmap::loadImage" "too few args" {
     GxPixmap::loadImage
 } {^wrong \# args: should be}
 test "GxPixmap::loadImage" "too many args" {
-    GxPixmap::loadImage $::PIXMAP $::IMGFILE junk
+    GxPixmap::loadImage $::PIXMAP $::PBMFILE junk
 } {^wrong \# args: should be}
 test "GxPixmap::loadImage" "normal use" {
-    GxPixmap::loadImage $::PIXMAP $::IMGFILE
+    GxPixmap::loadImage $::PIXMAP $::PBMFILE
     set sum [-> $::PIXMAP bkdrHash]
     GxPixmap::flipContrast $::PIXMAP
     GxShapeKit::alignmentMode $::PIXMAP $GxShapeKit::CENTER_ON_CENTER
     return $sum
-} "^$::IMGFILE_BKDR\$"
+} "^$::PBMFILE_BKDR\$"
 test "GxPixmap::loadImage" "error on non-existent file" {
     exec rm -rf $::TEST_DIR/nonexistent_file.ppm
     GxPixmap::loadImage $::PIXMAP $::TEST_DIR/nonexistent_file.ppm
@@ -66,15 +68,33 @@ test "GxPixmap::loadImage-anytopnm" "normal use" {
     set result [-> $p bkdrHash]
     delete $p
     return $result
-} "^$::IMGFILE_BKDR\$"
+} "^$::PBMFILE_BKDR\$"
 
 ### GxPixmap::loadPnmStream ###
 test "GxPixmap::loadPnmStream" "normal use" {
-    set f [open $::IMGFILE]
+    set f [open $::PBMFILE]
     GxPixmap::loadPnmStream $::PIXMAP $f
     close $f
     return [-> $::PIXMAP bkdrHash]
-} "^$::IMGFILE_BKDR\$"
+} "^$::PBMFILE_BKDR\$"
+
+### GxPixmap::loadImage-png ###
+test "GxPixmap::loadImage-png" "normal use" {
+    set p [new GxPixmap]
+    -> $p loadImage $::TEST_DIR/color_pngfile.png
+    set result [-> $p bkdrHash]
+    delete $p
+    return $result
+} "^$::COLORIMG_BKDR\$"
+
+### GxPixmap::loadImage-ppm-bz2 ###
+test "GxPixmap::loadImage-ppm-bz2" "normal use" {
+    set p [new GxPixmap]
+    -> $p loadImage $::TEST_DIR/color_pngfile.ppm.bz2
+    set result [-> $p bkdrHash]
+    delete $p
+    return $result
+} "^$::COLORIMG_BKDR\$"
 
 ### GxPixmap::saveImage ###
 test "GxPixmap::saveImage" "read/write comparison" {
@@ -108,7 +128,7 @@ test "GxPixmap::savePnmStream" "read/write comparison" {
 test "GxPixmap::saveImage-gif" "read/write comparison" {
     set tmpname $::TEST_DIR/tmp-[pid]-GxPixmap-saveImage-3.gif
     set p [new GxPixmap]
-    -> $p loadImage $::IMGFILE
+    -> $p loadImage $::PBMFILE
     file delete -force $tmpname
     -> $p saveImage $tmpname
     delete $p
@@ -119,7 +139,7 @@ test "GxPixmap::saveImage-gif" "read/write comparison" {
     set result [-> $p2 bkdrHash]
     delete $p2
     return $result
-} "^$::IMGFILE_BKDR\$"
+} "^$::PBMFILE_BKDR\$"
 
 ### GxPixmap::saveImage as gz ###
 test "GxPixmap::saveImage-gz" "read/write comparison" {
@@ -136,7 +156,24 @@ test "GxPixmap::saveImage-gz" "read/write comparison" {
     set result [-> $p2 bkdrHash]
     delete $p2
     return $result
-} "^$::IMGFILE_BKDR\$"
+} "^$::PBMFILE_BKDR\$"
+
+### GxPixmap::saveImage as bz2 ###
+test "GxPixmap::saveImage-bz2" "read/write comparison" {
+    set tmpname $::TEST_DIR/tmp-[pid]-GxPixmap-saveImage-5.pbm.bz2
+    set p [new GxPixmap]
+    -> $p loadImage $::TEST_DIR/pbmfile.PPM
+    file delete -force $tmpname
+    -> $p saveImage $tmpname
+    delete $p
+
+    set p2 [new GxPixmap]
+    set f [open "|bzip2 -dc $tmpname" "r"]
+    -> $p2 loadPnmStream $f
+    set result [-> $p2 bkdrHash]
+    delete $p2
+    return $result
+} "^$::PBMFILE_BKDR\$"
 
 ### GxPixmap rendering ###
 test "rendering" "normal render" {

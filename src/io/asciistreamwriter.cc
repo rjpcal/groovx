@@ -38,8 +38,8 @@
 
 #include "nub/ref.h"
 
+#include "rutz/compressstream.h"
 #include "rutz/fstring.h"
-#include "rutz/gzstreambuf.h"
 #include "rutz/value.h"
 
 #include <ostream>
@@ -195,7 +195,7 @@ namespace
   }
 
   asw_writer::asw_writer(const char* filename) :
-    m_owned_stream(rutz::ogzopen(filename)),
+    m_owned_stream(rutz::ocompressopen(filename)),
     m_buf(*m_owned_stream),
     m_pending_objs(),
     m_written_objs()

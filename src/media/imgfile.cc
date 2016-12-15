@@ -93,7 +93,11 @@ namespace
         || lowername.ends_with(".pbm.gz")
         || lowername.ends_with(".pgm.gz")
         || lowername.ends_with(".ppm.gz")
-        || lowername.ends_with(".pnm.gz"))
+        || lowername.ends_with(".pnm.gz")
+        || lowername.ends_with(".pbm.bz2")
+        || lowername.ends_with(".pgm.bz2")
+        || lowername.ends_with(".ppm.bz2")
+        || lowername.ends_with(".pnm.bz2"))
       {
         return image_file_type::PNM;
       }

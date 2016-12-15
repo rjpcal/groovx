@@ -39,10 +39,10 @@
 #include "nub/ref.h"
 
 #include "rutz/bytearray.h"
+#include "rutz/compressstream.h"
 #include "rutz/cstrstream.h"
 #include "rutz/error.h"
 #include "rutz/fstring.h"
-#include "rutz/gzstreambuf.h"
 #include "rutz/sfmt.h"
 #include "rutz/value.h"
 
@@ -220,7 +220,7 @@ namespace
   }
 
   asw_reader::asw_reader(const char* filename) :
-    m_owned_stream(rutz::igzopen(filename)),
+    m_owned_stream(rutz::icompressopen(filename)),
     m_buf(*m_owned_stream),
     m_objects(),
     m_attribs()

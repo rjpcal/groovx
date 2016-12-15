@@ -46,20 +46,10 @@ namespace rutz
                                            std::ios::openmode flags =
                                            std::ios::openmode(0));
 
-  /// Overload.
-  std::unique_ptr<std::ostream> obzip2open(const char* filename,
-                                           std::ios::openmode flags =
-                                           std::ios::openmode(0));
-
   /** Opens a file for reading. An exception will be thrown if the
       specified file cannot be opened. The input file will be
       bzip2-decompressed if the filename ends with ".bz2". */
   std::unique_ptr<std::istream> ibzip2open(const rutz::fstring& filename,
-                                           std::ios::openmode flags =
-                                           std::ios::openmode(0));
-
-  /// Overload.
-  std::unique_ptr<std::istream> ibzip2open(const char* filename,
                                            std::ios::openmode flags =
                                            std::ios::openmode(0));
 }

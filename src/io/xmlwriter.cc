@@ -37,8 +37,8 @@
 
 #include "nub/ref.h"
 
+#include "rutz/compressstream.h"
 #include "rutz/fstring.h"
-#include "rutz/gzstreambuf.h"
 #include "rutz/value.h"
 
 #include <ostream>
@@ -142,7 +142,7 @@ GVX_TRACE("xml_writer::xml_writer");
 }
 
 xml_writer::xml_writer(const char* filename) :
-  m_owned_stream(rutz::ogzopen(filename)),
+  m_owned_stream(rutz::ocompressopen(filename)),
   m_buf(*m_owned_stream),
   m_written_objs(),
   m_nest_level(0)

@@ -176,42 +176,13 @@ namespace
 unique_ptr<std::ostream> rutz::ogzopen(const fstring& filename,
                                        std::ios::openmode flags)
 {
-  static fstring gz_ext(".gz");
-
-  if (filename.ends_with(gz_ext))
-    {
-      return std::make_unique<gzstream>
-        (filename.c_str(), std::ios::out|flags, true);
-    }
-  else
-    {
-      unique_ptr<std::ostream> result =
-        std::make_unique<std::ofstream>(filename.c_str(), flags);
-      if (result->fail())
-        throw rutz::error(rutz::sfmt("couldn't open file '%s' "
-                                     "for writing", filename.c_str()),
-                          SRC_POS);
-
-      return result;
-    }
-}
-
-unique_ptr<std::ostream> rutz::ogzopen(const char* filename,
-                                       std::ios::openmode flags)
-{
-  return ogzopen(fstring(filename), flags);
-}
-
-unique_ptr<std::istream> rutz::igzopen(const char* filename,
-                                       std::ios::openmode flags)
-{
-  return std::make_unique<gzstream>(filename, std::ios::in|flags, true);
+  return std::make_unique<gzstream>(filename.c_str(), std::ios::out|flags, true);
 }
 
 unique_ptr<std::istream> rutz::igzopen(const fstring& filename,
                                        std::ios::openmode flags)
 {
-  return igzopen(filename.c_str(), flags);
+  return std::make_unique<gzstream>(filename.c_str(), std::ios::in|flags, true);
 }
 
 // sample test code

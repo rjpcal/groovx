@@ -50,21 +50,11 @@ namespace rutz
                                         std::ios::openmode flags =
                                         std::ios::openmode(0));
 
-  /// Overload.
-  std::unique_ptr<std::ostream> ogzopen(const char* filename,
-                                        std::ios::openmode flags =
-                                        std::ios::openmode(0));
-
   /** Opens a file for reading. An exception will be thrown if the
       specified file cannot be opened. If the file is gz-compressed,
       this will be automagically detected regardless of the filename
       extension. */
   std::unique_ptr<std::istream> igzopen(const rutz::fstring& filename,
-                                        std::ios::openmode flags =
-                                        std::ios::openmode(0));
-
-  /// Overload.
-  std::unique_ptr<std::istream> igzopen(const char* filename,
                                         std::ios::openmode flags =
                                         std::ios::openmode(0));
 }
