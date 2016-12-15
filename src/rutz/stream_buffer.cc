@@ -63,6 +63,8 @@ GVX_TRACE("rutz::stream_buffer::underflow");
       if (num_putback > 4)
         num_putback = 4;
 
+      GVX_ASSERT(num_putback >= 0);
+
       // copy up to four characters previously read into the putback
       // buffer (area of first four characters)
       std::memcpy (m_buffer+(4-num_putback), gptr()-num_putback,

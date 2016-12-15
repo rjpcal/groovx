@@ -67,6 +67,8 @@ private:
 protected:
   stream_buffer(std::ios::openmode om);
 
+  std::ios::openmode openmode() const { return m_mode; }
+
   virtual int sync() override final;
 
   virtual ssize_t do_read(char* mem, size_t n) = 0;
