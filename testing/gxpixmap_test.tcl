@@ -59,6 +59,15 @@ test "GxPixmap::loadImage" "error on junk binary file" {
     return $result
 } "bad magic number while reading pnm file.*$"
 
+### GxPixmap::loadImage with no ext (forcing anytopnm) ###
+test "GxPixmap::loadImage-anytopnm" "normal use" {
+    set p [new GxPixmap]
+    -> $p loadImage $::TEST_DIR/pbmfile-no-ext
+    set result [-> $p bkdrHash]
+    delete $p
+    return $result
+} "^$::IMGFILE_BKDR\$"
+
 ### GxPixmap::loadImageStream ###
 test "GxPixmap::loadImageStream" "normal use" {
     set f [open $::IMGFILE]
@@ -94,6 +103,23 @@ test "GxPixmap::saveImageStream" "read/write comparison" {
     file delete -force $tmpname
     return "$code $result"
 } {^0 $}
+
+### GxPixmap::saveImage as gif ###
+test "GxPixmap::saveImage-gif" "read/write comparison" {
+    set tmpname $::TEST_DIR/tmp-[pid]-GxPixmap-saveImage-3.gif
+    set p [new GxPixmap]
+    -> $p loadImage $::IMGFILE
+    file delete -force $tmpname
+    -> $p saveImage $tmpname
+    delete $p
+
+    set p2 [new GxPixmap]
+    -> $p2 loadImage $tmpname
+    file delete -force $tmpname
+    set result [-> $p2 bkdrHash]
+    delete $p2
+    return $result
+} "^$::IMGFILE_BKDR\$"
 
 ### GxPixmap rendering ###
 test "rendering" "normal render" {
@@ -206,6 +232,8 @@ test "GxPixmap::write_lgx" "write_lgx, read_lgx, compare" {
     set b2 [Obj::new GxPixmap]
     io::read_lgx $b2 $str1
     set str2 [io::write_lgx $b2]
+
+    Obj::delete $b2
 
     return "[string equal $str1 $str2] $str1 $str2"
 } {^1 }

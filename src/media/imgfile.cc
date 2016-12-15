@@ -44,9 +44,14 @@
 
 #include <cctype>
 #include <iterator>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <vector>
 
 #include "rutz/trace.h"
+#include "rutz/debug.h"
+GVX_DBG_REGISTER
 
 using rutz::fstring;
 
@@ -139,6 +144,65 @@ namespace
 
 #endif
 
+  class io_redirector
+  {
+    int target_fd;
+    int orig_target_fd;
+    int file_fd;
+  public:
+    io_redirector(int target_fd_, const char* filename, int mode)
+      :
+      target_fd(target_fd_)
+    {
+      file_fd = open(filename, mode, 0666);
+      if (file_fd < 0)
+        throw rutz::error(rutz::sfmt("couldn't open file '%s'", filename), SRC_POS);
+      orig_target_fd = dup(target_fd);
+      if (orig_target_fd < 0)
+        {
+          close(file_fd);
+          throw rutz::error(rutz::sfmt("couldn't dup(%d)", target_fd), SRC_POS);
+        }
+      if (dup2(file_fd, target_fd) < 0)
+        {
+          close(orig_target_fd);
+          close(file_fd);
+          throw rutz::error(rutz::sfmt("couldn't dup2(%d,%d)", file_fd, target_fd), SRC_POS);
+        }
+    }
+
+    ~io_redirector() { dismiss(); }
+
+    io_redirector(const io_redirector&) = delete;
+    io_redirector& operator=(const io_redirector&) = delete;
+
+    void dismiss()
+    {
+      if (file_fd > 0)
+        {
+          close(file_fd); file_fd = -1;
+          dup2(orig_target_fd, target_fd); target_fd = -1;
+          close(orig_target_fd); orig_target_fd = -1;
+        }
+    }
+  };
+
+  void pipe_save(const char* progname, const char* filename,
+                 const media::bmap_data& bmap)
+  {
+
+    char* const argv[] = { (char*) progname, (char*) 0 };
+
+    io_redirector rr(STDOUT_FILENO, filename, O_WRONLY | O_CREAT);
+    rutz::exec_pipe p("w", argv);
+    rr.dismiss();
+
+    media::save_pnm(p.stream(), bmap);
+    p.close();
+
+    if (p.exit_status() != 0)
+      throw rutz::error(rutz::sfmt("error while running %s", progname), SRC_POS);
+  }
 }
 
 media::bmap_data media::load_image(const char* filename)
@@ -187,8 +251,8 @@ void media::save_image(const char* filename,
     {
     case image_file_type::PNM:  media::save_pnm(filename, data); break;
     case image_file_type::PNG:  media::save_png(filename, data); break;
-    case image_file_type::JPEG: // fall through
-    case image_file_type::GIF: // fall through
+    case image_file_type::JPEG: pipe_save("pnmtojpeg", filename, data); break;
+    case image_file_type::GIF: pipe_save("pamtogif", filename, data); break;
     case image_file_type::UNKNOWN: // fall through
     default:
       throw rutz::error(rutz::sfmt("unknown file format: %s", filename),

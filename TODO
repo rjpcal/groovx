@@ -10,6 +10,8 @@
 
 * (05-Dec-2016) Make signal not have to derive from nub::volatile_object
 
+* (14-Dec-2016) Make nicer error messages in imgfile.cc when pnm-related programs are missing (i.e. check for program's existence before we try to pipe/fork/execv it)
+
 * (25-Nov-2016) Standardize bzip2/gzip interfaces and use for image parsing and serialization
 
 * (23-Nov-2016) Make concrete_iter work with normal iterator pair semantics
@@ -22,13 +24,10 @@
   bzip2streambuf::underflow()
   rutz::gzstreambuf::underflow()
   rutz::stdiobuf::underflow()
-  tcl::channel_buf::underflow()
-  rutz::imembuf::underflow() - this one is simple since no external data source
 
   bzip2streambuf::overflow(int c)
   rutz::gzstreambuf::overflow(int c)
   rutz::stdiobuf::overflow(int c)
-  tcl::channel_buf::overflow(int c)
 
 * (21-Nov-2002) Need a better way to pass enums to/from Tcl
 

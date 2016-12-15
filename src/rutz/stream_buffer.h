@@ -53,10 +53,15 @@ private:
   char m_buffer[s_buf_size];
   const std::ios::openmode m_mode;
 
+  /// Get more data from the underlying data source by calling do_read().
+  /** Called when the streambuf's buffer has run out of data. */
   virtual int underflow() override final;
 
+  /// Send more data to the underlying buffer.
+  /** Called when the streambuf's buffer has become full. */
   virtual int overflow(int c) override final;
 
+  /// Flush the current buffer contents to the underlying data sink by calling do_write().
   bool flushoutput();
 
 protected:

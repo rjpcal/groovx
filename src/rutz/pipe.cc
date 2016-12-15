@@ -209,9 +209,9 @@ void rutz::exec_pipe::init(char* const* argv)
             }
         }
 
-      execv(argv[0], argv);
+      execvp(argv[0], argv);
 
-      fprintf(stderr, "execv failed in child process (%s)\n", argv[0]);
+      fprintf(stderr, "execvp failed in child process (%s)\n", argv[0]);
       fprintf(stderr, "%s\n", strerror(errno));
       exit(-1);
     }
@@ -384,9 +384,9 @@ void rutz::bidir_pipe::init(char* const* argv)
 
       errno = 0;
 
-      execv(argv[0], argv);
+      execvp(argv[0], argv);
 
-      fprintf(stderr, "execv failed in child process (%s):\n", argv[0]);
+      fprintf(stderr, "execvp failed in child process (%s):\n", argv[0]);
       fprintf(stderr, "%s\n", strerror(errno));
       exit(-1);
     }
