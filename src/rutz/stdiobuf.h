@@ -32,7 +32,8 @@
 #ifndef GROOVX_RUTZ_STDIOBUF_H_UTC20050626084019_DEFINED
 #define GROOVX_RUTZ_STDIOBUF_H_UTC20050626084019_DEFINED
 
-#include <cstdio>
+#include "rutz/stream_buffer.h"
+
 #include <streambuf>
 #include <istream>
 
@@ -43,38 +44,24 @@ namespace rutz
 }
 
 /// A C++ streambuf that wraps a standard posix file descriptor.
-class rutz::stdiobuf : public std::streambuf
+class rutz::stdiobuf : public rutz::stream_buffer
 {
 private:
-  unsigned int m_mode;
   int m_filedes;
 
-  stdiobuf(const stdiobuf&);
-  stdiobuf& operator=(const stdiobuf&);
-
-  static const int s_buf_size = 4092;
-  static const int s_pback_size = 4;
-  char buffer[s_buf_size];
-
-  void init(int fd, unsigned int om, bool throw_exception);
-
-  int flushoutput();
-
 public:
-  /// Create with a reference to a FILE object.
-  /** The stdiobuf will NOT close the FILE on destruction, that is
-      left up to the caller (since the caller must also have been the
-      one to open the FILE object). */
-  stdiobuf(FILE* f, unsigned int om, bool throw_exception=false);
 
   /// Create with a reference to a file descriptor.
   /** The stdiobuf will NOT close the descriptor on destruction, that
       is left up to the caller (since the caller must also have been
       the one to open the file descriptor). */
-  stdiobuf(int fd, unsigned int om, bool throw_exception=false);
+  stdiobuf(int fd, std::ios::openmode om, bool throw_exception=false);
 
   /// Destructor flushes buffer, but DOES NOT CLOSE the file descriptor.
   ~stdiobuf() { close(); }
+
+  stdiobuf(const stdiobuf&) = delete;
+  stdiobuf& operator=(const stdiobuf&) = delete;
 
   /// Check whether we have an open file descriptor.
   bool is_open() const { return m_filedes >= 0; }
@@ -85,16 +72,11 @@ public:
       file descriptor. */
   void close();
 
-  /// Get more data from the underlying file descriptor.
-  /** Called when the streambuf's buffer has run out of data. */
-  virtual int underflow() override;
+  /// Read from the underlying file descriptor
+  virtual ssize_t do_read(char* mem, size_t n) override;
 
-  /// Send more data to the underlying file descriptor.
-  /** Called when the streambuf's buffer has become full. */
-  virtual int overflow(int c) override;
-
-  /// Flush the current buffer contents to the underlying file.
-  virtual int sync() override;
+  /// Write to the underlying file descriptor
+  virtual ssize_t do_write(const char* mem, size_t n) override;
 };
 
 class rutz::stdiostream : public std::iostream
@@ -103,23 +85,12 @@ private:
   rutz::stdiobuf m_buf;
 
 public:
-  /// Create with a reference to a FILE object.
-  /** The stdiobuf will NOT close the FILE on destruction, that is
-      left up to the caller (since the caller must also have been the
-      one to open the FILE object). */
-  stdiostream(FILE* f, unsigned int om, bool throw_exception=false) :
-    std::iostream(0),
-    m_buf(f, om, throw_exception)
-  {
-    rdbuf(&m_buf);
-  }
-
   /// Create with a reference to a file descriptor.
   /** The stdiobuf will NOT close the descriptor on destruction, that
       is left up to the caller (since the caller must also have been
       the one to open the file descriptor). */
   stdiostream(int fd, unsigned int om, bool throw_exception=false) :
-    std::iostream(0),
+    std::iostream(nullptr),
     m_buf(fd, om, throw_exception)
   {
     rdbuf(&m_buf);

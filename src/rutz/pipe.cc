@@ -88,7 +88,7 @@ namespace
 
 rutz::shell_pipe::shell_pipe(const char* command, const char* mode) :
   m_file(popen(command, mode)),
-  m_stream(m_file, std::ios::in|std::ios::out),
+  m_stream(fileno(m_file), std::ios::in|std::ios::out),
   m_exit_status(0)
 {}
 
@@ -99,7 +99,7 @@ int rutz::shell_pipe::close()
 {
   if ( !is_closed() )
     {
-      m_stream.close();
+      m_stream.flush();
       m_exit_status = pclose(m_file);
       m_file = nullptr;
     }
@@ -258,7 +258,7 @@ void rutz::exec_pipe::close()
 {
   if (m_stream != nullptr)
     {
-      m_stream->close();
+      m_stream->flush();
       m_fds.close_reader();
       m_fds.close_writer();
     }
@@ -421,7 +421,7 @@ void rutz::bidir_pipe::close_in()
 {
   if (m_in_stream != nullptr)
     {
-      m_in_stream->close();
+      m_in_stream->flush();
     }
 
   m_in_pipe.close_reader();
@@ -432,7 +432,7 @@ void rutz::bidir_pipe::close_out()
 {
   if (m_out_stream != nullptr)
     {
-      m_out_stream->close();
+      m_out_stream->flush();
     }
 
   m_out_pipe.close_reader();

@@ -57,8 +57,8 @@ namespace tcl
     channel_buf(const channel_buf&) = delete;
     channel_buf& operator=(const channel_buf&) = delete;
 
-    virtual int do_read(char* mem, size_t n) override;
-    virtual int do_write(const char* mem, int n) override;
+    virtual ssize_t do_read(char* mem, size_t n) override;
+    virtual ssize_t do_write(const char* mem, size_t n) override;
   };
 }
 
@@ -93,22 +93,25 @@ tcl::channel_buf::~channel_buf()
     Tcl_Close(m_interp, chan);
 }
 
-int tcl::channel_buf::do_read(char* mem, size_t n)
+ssize_t tcl::channel_buf::do_read(char* mem, size_t n)
 {
 GVX_TRACE("tcl::channel_buf::do_read");
+
   GVX_ASSERT(n < std::numeric_limits<int>::max());
   return Tcl_Read(chan, mem, int(n));
 }
 
-int tcl::channel_buf::do_write(const char* mem, int n)
+ssize_t tcl::channel_buf::do_write(const char* mem, size_t n)
 {
 GVX_TRACE("tcl::channel_buf::do_write");
+
+  GVX_ASSERT(n < std::numeric_limits<int>::max());
 
   if ( Tcl_Write(chan, mem, int(n)) != int(n) )
     {
       return EOF;
     }
-  return int(n);
+  return ssize_t(n);
 }
 
 namespace

@@ -69,8 +69,8 @@ protected:
 
   virtual int sync() override final;
 
-  virtual int do_read(char* mem, size_t n) = 0;
-  virtual int do_write(const char* mem, int n) = 0;
+  virtual ssize_t do_read(char* mem, size_t n) = 0;
+  virtual ssize_t do_write(const char* mem, size_t n) = 0;
 };
 
 #endif // !GROOVX_RUTZ_STREAM_BUFFER_H_UTC20161214230731DEFINED

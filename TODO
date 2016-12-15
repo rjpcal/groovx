@@ -23,11 +23,9 @@
 
   bzip2streambuf::underflow()
   rutz::gzstreambuf::underflow()
-  rutz::stdiobuf::underflow()
 
   bzip2streambuf::overflow(int c)
   rutz::gzstreambuf::overflow(int c)
-  rutz::stdiobuf::overflow(int c)
 
 * (21-Nov-2002) Need a better way to pass enums to/from Tcl
 

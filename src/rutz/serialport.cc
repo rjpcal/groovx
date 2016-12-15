@@ -49,7 +49,6 @@ GVX_DBG_REGISTER
 
 rutz::serial_port::serial_port(const char* serial_device) :
   m_filedes(::open(serial_device, O_RDONLY|O_NOCTTY|O_NONBLOCK)),
-  m_filebuf(nullptr),
   m_stream(nullptr),
   m_exit_status(0)
 {
@@ -88,13 +87,7 @@ GVX_TRACE("rutz::serial_port::serial_port");
       if ( tcsetattr( filedes(), TCSANOW, &ti) == -1 )
         { close(); return; }
 
-#ifdef HAVE_EXT_STDIO_FILEBUF_H
-      typedef __gnu_cxx::stdio_filebuf<char> filebuf_t;
-      m_filebuf = new filebuf_t(fdopen(m_filedes, "r"), std::ios::in);
-#else
-      m_filebuf = new rutz::stdiobuf(m_filedes, std::ios::in, true);
-#endif
-      m_stream = new std::iostream(m_filebuf);
+      m_stream = new rutz::stdiostream(m_filedes, std::ios::in, true);
     }
 }
 
@@ -114,9 +107,6 @@ GVX_TRACE("rutz::serial_port::close");
     {
       delete m_stream;
       m_stream = nullptr;
-
-      delete m_filebuf;
-      m_filebuf = nullptr;
 
       m_exit_status = ::close(m_filedes);
     }

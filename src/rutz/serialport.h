@@ -66,7 +66,6 @@ private:
   serial_port& operator=(const serial_port&);
 
   int                m_filedes;
-  std::streambuf*    m_filebuf;
   std::iostream*     m_stream;
   int                m_exit_status;
 };

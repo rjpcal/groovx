@@ -31,6 +31,7 @@
 #include "rutz/stream_buffer.h"
 
 #include "rutz/trace.h"
+#include "rutz/debug.h"
 
 rutz::stream_buffer::stream_buffer(std::ios::openmode om)
   :
@@ -41,7 +42,8 @@ rutz::stream_buffer::stream_buffer(std::ios::openmode om)
          m_buffer+s_pback_size,
          m_buffer+s_pback_size);
   else if (om & std::ios::out)
-    setp(m_buffer, m_buffer+(s_buf_size-1));
+    setp(m_buffer,
+         m_buffer+(s_buf_size-1));
 }
 
 int rutz::stream_buffer::underflow()
@@ -52,7 +54,7 @@ GVX_TRACE("rutz::stream_buffer::underflow");
     return *gptr();
 
   off_t num_putback = 0;
-  if (s_pback_size > 0)
+  if (s_pback_size > 0 && gptr() > eback())
     {
       // process size of putback area
       // -use number of characters read
@@ -68,8 +70,8 @@ GVX_TRACE("rutz::stream_buffer::underflow");
     }
 
   // read new characters
-  const int num = this->do_read(m_buffer+s_pback_size,
-                                s_buf_size-s_pback_size);
+  const ssize_t num = this->do_read(m_buffer+s_pback_size,
+                                    s_buf_size-s_pback_size);
 
   if (num <= 0) // error (0) or end-of-file (-1)
     return EOF;
@@ -114,11 +116,13 @@ bool rutz::stream_buffer::flushoutput()
 {
   if (!(m_mode & std::ios::out)) return EOF;
 
-  int num = int(pptr() - pbase());
-  int ret = this->do_write(pbase(), num);
-  if (ret == EOF)
+  ssize_t num = pptr() - pbase();
+  GVX_ASSERT(num >= 0);
+  ssize_t ret = this->do_write(pbase(), size_t(num));
+  if (ret < 0)
     return false;
 
-  pbump(-ret);
+  GVX_ASSERT(ret < std::numeric_limits<int>::max());
+  pbump(-int(ret));
   return true;
 }
