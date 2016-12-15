@@ -157,16 +157,7 @@
   figure out how to use boost
 
     boost::format -- 34KLOC
-    boost::function -- 26KLOC (to replace or complement util/functors.h and tcl/tclfunctor.h)
-    boost::shared_ptr -- 15KLOC (to replace util/pointers.h)
-                      -- compile time up ~20% from 5:15 to 6:16
-
-    std::valarray -- 30KLOC
-
-    std::auto_ptr -- 10KLOC
-    boost::type_traits -- 5.5KLOC (to replace util/traits.h)
-    boost::signal -- 55KLOC
-    libsigc++ -- 25KLOC
+    boost::iostreams -- could replace rutz::stream_buffer
 
   more consistent logging+debugging
 
@@ -318,8 +309,6 @@
   -- Start simple: let's get a script to build the LIBDEEP... targets
      and dependencies for us. The only thing that the rest of the
      Makefile will depend on is the $(PROJECT_LIBS) variable.
-
-* (4-Sep-2001) A Connection class to manage Signal/slot connections
 
 * (24-Aug-2001) How to get animation working?
 
