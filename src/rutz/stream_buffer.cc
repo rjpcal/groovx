@@ -3,14 +3,14 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2016-2016 Rob Peters
-// Rob Peters <rjpeters at gmail dot com>
+// Rob Peters <https://github.com/rjpcal/>
 //
 // created: Wed Dec 14 15:08:17 2016
 //
 // --------------------------------------------------------------------
 //
 // This file is part of GroovX.
-//   [http://www.klab.caltech.edu/rjpeters/groovx/]
+//   [https://github.com/rjpcal/groovx]
 //
 // GroovX is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by

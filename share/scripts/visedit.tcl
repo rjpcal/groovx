@@ -20,7 +20,7 @@
     export GROOVX_BINDIR=`dirname $0`; exec ${GROOVX_BINDIR}/groovx "$0" "$@"
 
 
-# Copyright (c) 2004-2005 Rob Peters <rjpeters at klab dot caltech dot edu>
+# Copyright (c) 2004-2005 Rob Peters <https://github.com/rjpcal/>
 
 # A wrapper script to run the code in editor.tcl using the neighboring
 # groovx executable. (This way, for example, there can be multiple

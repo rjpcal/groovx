@@ -3,14 +3,14 @@
 ///////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2005-2007 University of Southern California
-// Rob Peters <rjpeters at usc dot edu>
+// Rob Peters <https://github.com/rjpcal/>
 //
 // created: Tue Nov  8 15:38:56 2005
 //
 // --------------------------------------------------------------------
 //
 // This file is part of GroovX.
-//   [http://www.klab.caltech.edu/rjpeters/groovx/]
+//   [https://github.com/rjpcal/groovx]
 //
 // GroovX is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by

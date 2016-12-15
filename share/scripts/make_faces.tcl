@@ -5,7 +5,7 @@
 # into a GxPixmap object, which in turn is used to save the image to a
 # portable bitmap (PBM) file.
 
-# Rob Peters <rjpeters at klab dot caltech dot edu>
+# Rob Peters <https://github.com/rjpcal/>
 
 Togl::width 128
 Togl::height 128

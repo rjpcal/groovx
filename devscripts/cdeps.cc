@@ -3,14 +3,14 @@
 // cppdeps.cc
 //
 // Copyright (c) 2003-2005
-// Rob Peters <rjpeters at klab dot caltech dot edu>
+// Rob Peters <https://github.com/rjpcal/>
 //
 // created: Wed Jul 16 15:47:10 2003
 //
 // --------------------------------------------------------------------
 //
 // This file is part of GroovX.
-//   [http://www.klab.caltech.edu/rjpeters/groovx/]
+//   [https://github.com/rjpcal/groovx]
 //
 // GroovX is free software; you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free

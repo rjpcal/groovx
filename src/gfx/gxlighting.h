@@ -5,14 +5,14 @@
 //
 // Copyright (c) 2002-2004 California Institute of Technology
 // Copyright (c) 2004-2007 University of Southern California
-// Rob Peters <rjpeters at usc dot edu>
+// Rob Peters <https://github.com/rjpcal/>
 //
 // created: Fri Jul  5 15:15:40 2002
 //
 // --------------------------------------------------------------------
 //
 // This file is part of GroovX.
-//   [http://ilab.usc.edu/rjpeters/groovx/]
+//   [https://github.com/rjpcal/groovx]
 //
 // GroovX is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by

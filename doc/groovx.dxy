@@ -2,7 +2,7 @@
 
 \mainpage The GroovX framework
 
-\author Rob Peters rjpeters at klab dot caltech dot edu
+\author Rob Peters <https://github.com/rjpcal/>
 
 This project is an experimental application framework for designing
 visual psychological experiments. It is based on a model that
@@ -42,6 +42,6 @@ physical structure of code
 
 </ul>
 
-A recent snapshot of the source code should be available <a href="http://ilab.usc.edu/rjpeters/code/">here</a>.
+Source code available <a href="https://github.com/rjpcal/groovx">here</a>.
 
 **/

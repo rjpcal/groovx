@@ -3,14 +3,14 @@
 // tcldebugscheduler.h
 //
 // Copyright (c) 2004-2005
-// Rob Peters <rjpeters at klab dot caltech dot edu>
+// Rob Peters <https://github.com/rjpcal/>
 //
 // created: Fri Oct 15 17:55:41 2004
 //
 // --------------------------------------------------------------------
 //
 // This file is part of GroovX.
-//   [http://www.klab.caltech.edu/rjpeters/groovx/]
+//   [https://github.com/rjpcal/groovx]
 //
 // GroovX is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by

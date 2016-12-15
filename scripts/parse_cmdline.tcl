@@ -1,7 +1,7 @@
 # Tcl functions for parsing command-line options
 #
 # Copyright (c) 2002-2005
-# Rob Peters rjpeters at klab dot caltech dot edu
+# Rob Peters <https://github.com/rjpcal/>
 #
 # $Revision$
 

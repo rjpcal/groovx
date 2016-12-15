@@ -5,7 +5,7 @@
 //
 // Copyright (c) 1998-2004 California Institute of Technology
 // Copyright (c) 2004-2007 University of Southern California
-// Rob Peters <rjpeters at usc dot edu>
+// Rob Peters <https://github.com/rjpcal/>
 //
 // created: Mon Nov  2 08:00:00 1998
 //
@@ -15,7 +15,7 @@
 // --------------------------------------------------------------------
 //
 // This file is part of GroovX.
-//   [http://ilab.usc.edu/rjpeters/groovx/]
+//   [https://github.com/rjpcal/groovx]
 //
 // GroovX is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by
@@ -161,8 +161,9 @@ int main(int argc, char** argv)
   app.splash(PACKAGE_STRING " (" __DATE__ ")\n"
              "\n"
              "Copyright (c) 1998-2004 California Institute of Technology\n"
-             "Copyright (c) 2004-2007 University of Southern California\n"
-             "<http://ilab.usc.edu/rjpeters/groovx/>\n"
+             "Copyright (c) 2004-2008 University of Southern California\n"
+             "Copyright (c) 2016-2016 Robert J. Peters\n"
+             "<https://github.com/rjpcal/groovx>\n"
              PACKAGE_NAME " is free software, covered by "
              "the GNU General Public License, and you are "
              "welcome to change it and/or distribute copies "

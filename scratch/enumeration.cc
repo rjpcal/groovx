@@ -3,7 +3,7 @@
 // enumeration.cc
 //
 // Copyright (c) 2004-2005
-// Rob Peters rjpeters at klab dot caltech dot edu
+// Rob Peters <https://github.com/rjpcal/>
 //
 // created: Mon May 31 14:22:48 2004
 //
