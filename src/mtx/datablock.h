@@ -38,11 +38,13 @@
 
 //  #######################################################
 //  =======================================================
-/// Aggregation of initialization and storage policy enums.
+//  initialization type tags:
 
-enum class init_policy { ZEROS, NO_INIT };
-enum class storage_policy { COPY, BORROW, REFER };
-
+struct init_policy_zeros {};
+struct init_policy_no_init {};
+struct storage_policy_copy {};
+struct storage_policy_borrow {};
+struct storage_policy_refer {};
 
 /// Base class for holding ref-counted arrays of floating-point data.
 /** Serves as the implementation for higher-level matrix classes, etc. */
@@ -98,13 +100,6 @@ public:
       possible to write to the data through the data_block. */
   static data_block* make_referred(double* data, size_t data_length);
 
-  static data_block* make(double* data,
-                          size_t mrows, size_t ncols,
-                          storage_policy s);
-
-  static data_block* make(size_t mrows, size_t ncols,
-                          init_policy p);
-
   /// Make the given data_block have a unique copy of its data, copying if needed.
   static void make_unique(data_block*& rep);
 
@@ -136,11 +131,20 @@ public:
 class data_holder
 {
 public:
-  /// Construct with a data array, dimensions, and storage policy.
-  data_holder(double* data, size_t mrows, size_t ncols, storage_policy s);
+  /// Construct with copy of a data array, dimensions.
+  data_holder(const double* data, size_t mrows, size_t ncols, storage_policy_copy);
 
-  /// Construct empty with dimensions and an init policy.
-  data_holder(size_t mrows, size_t ncols, init_policy p);
+  /// Construct with borrow of a data array, dimensions.
+  data_holder(double* data, size_t mrows, size_t ncols, storage_policy_borrow);
+
+  /// Construct with reference to a data array, dimensions.
+  data_holder(double* data, size_t mrows, size_t ncols, storage_policy_refer);
+
+  /// Construct full of zeros with given dimensions.
+  data_holder(size_t mrows, size_t ncols, init_policy_zeros);
+
+  /// Construct with unintialized values with given dimensions.
+  data_holder(size_t mrows, size_t ncols, init_policy_no_init);
 
   /// Generic construction from a data_block.
   data_holder(data_block* d);

@@ -6,8 +6,6 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (16-Dec-2016) Make data_holder ctor take storage_policy as template param, so we don't have to const_cast when using COPY
-
 * (05-Dec-2016) Make signal not have to derive from nub::volatile_object
 
 * (23-Nov-2016) Make concrete_iter work with normal iterator pair semantics

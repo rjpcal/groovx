@@ -194,35 +194,6 @@ GVX_TRACE("data_block::make_referred");
   return new referred_data_block(data, data_length);
 }
 
-data_block* data_block::make(double* data,
-                             size_t mrows, size_t ncols,
-                             storage_policy s)
-{
-  switch (s)
-    {
-    case storage_policy::BORROW:
-      return data_block::make_borrowed(data, mrows*ncols);
-
-    case storage_policy::REFER:
-      return data_block::make_referred(data, mrows*ncols);
-
-    case storage_policy::COPY:
-    default:
-      break;
-    }
-
-  return data_block::make_data_copy(data, mrows*ncols);
-}
-
-data_block* data_block::make(size_t mrows, size_t ncols,
-                             init_policy p)
-{
-  if (p == init_policy::ZEROS)
-    return data_block::make_zeros(mrows*ncols);
-  // else...
-  return data_block::make_uninitialized(mrows*ncols);
-}
-
 void data_block::make_unique(data_block*& rep)
 {
   if (rep->is_unique()) return;
@@ -249,14 +220,32 @@ void data_block::make_unique(data_block*& rep)
 //
 ///////////////////////////////////////////////////////////////////////
 
-data_holder::data_holder(double* data, size_t mrows, size_t ncols, storage_policy s) :
-  m_data(data_block::make(data, mrows, ncols, s))
+data_holder::data_holder(const double* data, size_t mrows, size_t ncols, storage_policy_copy) :
+  m_data(data_block::make_data_copy(data, mrows*ncols))
 {
   m_data->incr_refcount();
 }
 
-data_holder::data_holder(size_t mrows, size_t ncols, init_policy p) :
-  m_data(data_block::make(mrows, ncols, p))
+data_holder::data_holder(double* data, size_t mrows, size_t ncols, storage_policy_borrow) :
+  m_data(data_block::make_borrowed(data, mrows*ncols))
+{
+  m_data->incr_refcount();
+}
+
+data_holder::data_holder(double* data, size_t mrows, size_t ncols, storage_policy_refer) :
+  m_data(data_block::make_referred(data, mrows*ncols))
+{
+  m_data->incr_refcount();
+}
+
+data_holder::data_holder(size_t mrows, size_t ncols, init_policy_zeros) :
+  m_data(data_block::make_zeros(mrows*ncols))
+{
+  m_data->incr_refcount();
+}
+
+data_holder::data_holder(size_t mrows, size_t ncols, init_policy_no_init) :
+  m_data(data_block::make_uninitialized(mrows*ncols))
 {
   m_data->incr_refcount();
 }
