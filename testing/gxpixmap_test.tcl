@@ -153,6 +153,7 @@ test "GxPixmap::saveImage-gz" "read/write comparison" {
     set p2 [new GxPixmap]
     set f [open "|gzip -dc $tmpname" "r"]
     -> $p2 loadPnmStream $f
+    file delete -force $tmpname
     set result [-> $p2 bkdrHash]
     delete $p2
     return $result
@@ -170,6 +171,7 @@ test "GxPixmap::saveImage-bz2" "read/write comparison" {
     set p2 [new GxPixmap]
     set f [open "|bzip2 -dc $tmpname" "r"]
     -> $p2 loadPnmStream $f
+    file delete -force $tmpname
     set result [-> $p2 bkdrHash]
     delete $p2
     return $result
