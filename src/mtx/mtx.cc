@@ -510,9 +510,24 @@ GVX_TRACE("sub_mtx_ref::operator=(const mtx&)");
 //
 ///////////////////////////////////////////////////////////////////////
 
+mtx mtx::rowmaj_copy_of(std::initializer_list<double> data, size_t mrows, size_t ncols)
+{
+GVX_TRACE("mtx::rowmaj_copy_of(std::initializer_list<double>)");
+
+  if (data.size() != mrows * ncols)
+    throw rutz::error(rutz::sfmt("mtx::colmaj_copy_of called with "
+                                 "data.size()==%zu but mrows*ncols=%zu*%zu=%zu",
+                                 data.size(), mrows, ncols, mrows*ncols),
+                      SRC_POS);
+
+  mtx result = mtx::uninitialized(mtx_shape(mrows, ncols));
+  std::copy(data.begin(), data.end(), result.rowmaj_begin_nc());
+  return result;
+}
+
 mtx mtx::colmaj_copy_of(const double* data, size_t mrows, size_t ncols)
 {
-GVX_TRACE("mtx::colmaj_copy_of");
+GVX_TRACE("mtx::colmaj_copy_of(double*)");
 
   return mtx(mtx_shape(mrows, ncols),
              data_holder(const_cast<double*>(data),
@@ -656,7 +671,8 @@ namespace
   void format_mtx(const mtx& m,
                   std::ostream& s,
                   const char* mtx_name,
-                  bool trailing_newline)
+                  bool trailing_newline,
+                  int precision)
   {
     if (mtx_name != nullptr && mtx_name[0] != '\0')
       s << '[' << mtx_name << "] ";
@@ -667,8 +683,10 @@ namespace
         s << '\n';
         for(size_t j = 0; j < m.ncols(); ++j)
           s << ' '
-            << std::setw(18)
-            << std::setprecision(17)
+            << std::setw(precision+3)
+            << std::fixed
+            << std::showpoint
+            << std::setprecision(precision)
             << m.at(i,j);
       }
 
@@ -677,30 +695,30 @@ namespace
   }
 }
 
-void mtx::print(std::ostream& s, const char* mtx_name) const
+void mtx::print(std::ostream& s, const char* mtx_name, int precision) const
 {
 GVX_TRACE("mtx::print");
-  format_mtx(*this, s, mtx_name, true);
+  format_mtx(*this, s, mtx_name, true, precision);
 }
 
-void mtx::print_stdout() const
+void mtx::print_stdout(int precision) const
 {
 GVX_TRACE("mtx::print_stdout");
-  format_mtx(*this, std::cout, 0, true);
+  format_mtx(*this, std::cout, 0, true, precision);
 }
 
-void mtx::print_stdout_named(const char* mtx_name) const
+void mtx::print_stdout_named(const char* mtx_name, int precision) const
 {
 GVX_TRACE("mtx::print_stdout_named");
-  format_mtx(*this, std::cout, mtx_name, true);
+  format_mtx(*this, std::cout, mtx_name, true, precision);
 }
 
-rutz::fstring mtx::as_string() const
+rutz::fstring mtx::as_string(int precision) const
 {
 GVX_TRACE("mtx::as_string");
   std::ostringstream oss;
 
-  format_mtx(*this, oss, 0, false);
+  format_mtx(*this, oss, 0, false, precision);
 
   return rutz::fstring(oss.str().c_str());
 }
@@ -1007,11 +1025,11 @@ GVX_TRACE("arr_div(mtx, mtx)");
 mtx min(const mtx& m1, const mtx& m2)
 {
 GVX_TRACE("min(mtx, mtx)");
-  return binary_op(m1, m2, dash::min());
+  return binary_op(m1, m2, [](double a, double b){return std::min(a,b);});
 }
 
 mtx max(const mtx& m1, const mtx& m2)
 {
 GVX_TRACE("max(mtx, mtx)");
-  return binary_op(m1, m2, dash::max());
+  return binary_op(m1, m2, [](double a, double b){return std::max(a,b);});
 }

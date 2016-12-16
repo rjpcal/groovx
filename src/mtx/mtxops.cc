@@ -31,7 +31,6 @@
 
 #include "mtxops.h"
 
-#include "mtx/arithfunctor.h"
 #include "mtx/mtx.h"
 
 #include "rutz/error.h"
@@ -65,7 +64,7 @@ GVX_TRACE("squared");
 
   mtx result(src);
   // FIXME would be better if mtx_base had a transform() template
-  result.apply(dash::square());
+  result.apply([](double d){return d*d;});
 
   return result;
 }

@@ -35,8 +35,6 @@
 
 #include "datablock.h"
 
-#include "arithfunctor.h"
-
 #include <iosfwd>
 #include <iterator>
 
@@ -354,11 +352,11 @@ public:
   // Reorders the slice by applying *this[i] = *this[index[i]]
   void reorder(const mtx& index);
 
-  void operator+=(double val) { apply(dash::add(val)); }
-  void operator-=(double val) { apply(dash::sub(val)); }
+  void operator+=(double val) { apply([val](double d){return d+val;}); }
+  void operator-=(double val) { apply([val](double d){return d-val;}); }
 
-  void operator*=(double factor) { apply(dash::mul(factor)); }
-  void operator/=(double div) { apply(dash::div(div)); }
+  void operator*=(double factor) { apply([factor](double d){return d*factor;}); }
+  void operator/=(double div) { apply([div](double d){return d/div;}); }
 
   slice& operator+=(const slice& other);
   slice& operator-=(const slice& other);
@@ -391,6 +389,11 @@ public:
 
   size_t nelems() const { return m_mrows*m_ncols; }
 
+  bool operator==(const mtx_shape& that) const
+  { return this->m_mrows == that.m_mrows && this->m_ncols == that.m_ncols; }
+
+  bool operator!=(const mtx_shape& that) const
+  { return !(*this == that); }
 private:
   size_t m_mrows;
   size_t m_ncols;
@@ -803,7 +806,7 @@ public:
   // Functions
   //
 
-  void clear(double x = 0.0) { apply(dash::setter(x)); }
+  void clear(double x = 0.0) { apply([x](double){return x;}); }
 };
 
 
@@ -848,6 +851,9 @@ public:
   mtx(const mtx_specs& specs, const data_holder& data) :
     Base(specs, data)
   {}
+
+  /// Set up a mtx with a storage policy of COPY.
+  static mtx rowmaj_copy_of(std::initializer_list<double> data, size_t mrows, size_t ncols);
 
   /// Set up a mtx with a storage policy of COPY.
   static mtx colmaj_copy_of(const double* data, size_t mrows, size_t ncols);
@@ -905,16 +911,16 @@ public:
   //
 
   /// Print the mtx to the given ostream, including the matrix name if non-empty
-  void print(std::ostream& s, const char* mtx_name = "") const;
+  void print(std::ostream& s, const char* mtx_name = "", int precision = 17) const;
 
   /// Print the mtx to stdout
-  void print_stdout() const;
+  void print_stdout(int precision = 17) const;
 
   /// Print the mtx to stdout along with a name for the mtx
-  void print_stdout_named(const char* mtx_name) const;
+  void print_stdout_named(const char* mtx_name, int precision = 17) const;
 
   /// Convert the mtx to a string, by printing it to a string stream.
-  rutz::fstring as_string() const;
+  rutz::fstring as_string(int precision = 17) const;
 
   /// Read the mtx from the given istream
   void scan(std::istream& s);
@@ -1046,10 +1052,10 @@ public:
 
   double mean() const { return sum() / nelems(); }
 
-  mtx& operator+=(double x) { apply(dash::add(x)); return *this; }
-  mtx& operator-=(double x) { apply(dash::sub(x)); return *this; }
-  mtx& operator*=(double fac) { apply(dash::mul(fac)); return *this; }
-  mtx& operator/=(double div) { apply(dash::div(div)); return *this; }
+  mtx& operator+=(double x) { apply([x](double d){return d+x;}); return *this; }
+  mtx& operator-=(double x) { apply([x](double d){return d-x;}); return *this; }
+  mtx& operator*=(double fac) { apply([fac](double d){return d*fac;}); return *this; }
+  mtx& operator/=(double div) { apply([div](double d){return d/div;}); return *this; }
 
   mtx& operator+=(const mtx& other);
   mtx& operator-=(const mtx& other);

@@ -40,6 +40,28 @@
 
 #include "rutz/trace.h"
 
+namespace tcl
+{
+  template <>
+  struct help_convert<rutz::this_pointer<mtx>>
+  {
+    static nub::soft_ref<MtxObj> from_tcl(Tcl_Obj* obj)
+    {
+      nub::uid uid = tcl::convert_to<nub::uid>(obj);
+      return nub::soft_ref<MtxObj>(uid);
+    }
+  };
+  template <>
+  struct help_convert<rutz::this_pointer<mtx_specs>>
+  {
+    static nub::soft_ref<MtxObj> from_tcl(Tcl_Obj* obj)
+    {
+      nub::uid uid = tcl::convert_to<nub::uid>(obj);
+      return nub::soft_ref<MtxObj>(uid);
+    }
+  };
+}
+
 extern "C"
 int Mtx_Init(Tcl_Interp* interp)
 {
@@ -51,15 +73,12 @@ GVX_TRACE("Mtx_Init");
       pkg->inherit_pkg("Obj");
       tcl::def_basic_type_cmds<MtxObj>(pkg, SRC_POS);
 
-      pkg->def_getter<MtxObj, rutz::fstring>("print", &mtx::as_string,
-                                             SRC_POS);
+      pkg->def("print", "?precision=17?", &MtxObj::as_string, SRC_POS, 17);
 
-      pkg->def_setter<MtxObj, const char*>("scan", &MtxObj::scan_string,
-                                           SRC_POS);
-
-      pkg->def_getter<MtxObj, size_t>("mrows", &mtx::mrows, SRC_POS);
-      pkg->def_getter<MtxObj, size_t>("ncols", &mtx::ncols, SRC_POS);
-      pkg->def_getter<MtxObj, size_t>("nelems", &mtx::nelems, SRC_POS);
+      pkg->def_setter("scan", &MtxObj::scan_string, SRC_POS);
+      pkg->def_getter("mrows", &mtx::mrows, SRC_POS);
+      pkg->def_getter("ncols", &mtx::ncols, SRC_POS);
+      pkg->def_getter("nelems", &mtx::nelems, SRC_POS);
 
       nub::obj_factory::instance().register_creator(&MtxObj::make);
       nub::obj_factory::instance().register_alias("MtxObj", "mtx");
