@@ -1,0 +1,10 @@
+.DS_Store
+.config-h-in.stamp
+.config-h.stamp
+Makefile
+TAGS
+autom4te.cache
+build
+config.h
+config.log
+config.status

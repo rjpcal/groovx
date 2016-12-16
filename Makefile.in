@@ -475,7 +475,7 @@ neat:
 	@find . -name \*~ -exec rm -fv {} \;
 	@find . -name \#~ -exec rm -fv {} \;
 	@find . -name .\#\* -exec rm -fv {} \;
-	@rm -fv ./expt_2005*.{gvx,resp,log} \
+	@rm -fv ./expt_20*.{gvx,resp,log} \
 		prof.out \
 		tclprof.out \
 		./core*
