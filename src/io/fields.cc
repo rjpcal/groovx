@@ -212,5 +212,5 @@ GVX_TRACE("FieldContainer::writeFieldsTo");
 FieldContainer* FieldContainer::child() const
 {
 GVX_TRACE("FieldContainer::child");
-  return 0;
+  return nullptr;
 }

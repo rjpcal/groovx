@@ -638,7 +638,7 @@ public:
   /// Get the FieldMap for this object.
   const FieldMap& fields() const { return *itsFieldMap; }
 
-  /// Get this container's child, if any. Default implementation returns null.
+  /// Get this container's child, if any. Default implementation returns nullptr.
   virtual FieldContainer* child() const;
 };
 
