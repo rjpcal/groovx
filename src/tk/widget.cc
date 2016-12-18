@@ -151,14 +151,14 @@ void WindowSystem::winInfo(Tk_Window /*tkWin*/)
 {
 GVX_TRACE("WindowSystem::winInfo[agl]");
   // FIXME
-  throw rutz::error("WindowSystem::winInfo not supported", SRC_POS);
+  // throw rutz::error("WindowSystem::winInfo not supported", SRC_POS);
 }
 
 void WindowSystem::iconify(Tk_Window /*tkWin*/)
 {
 GVX_TRACE("WindowSystem::iconify[agl]");
   // FIXME
-  throw rutz::error("WindowSystem::iconify not supported", SRC_POS);
+  // throw rutz::error("WindowSystem::iconify not supported", SRC_POS);
 }
 
 void WindowSystem::grabKeyboard(Tk_Window /*tkWin*/)
@@ -612,16 +612,17 @@ GVX_TRACE("tcl::TkWidget::getCursor");
     : Tk_NameOfCursor(Tk_Display(rep->tkWin), rep->cursor);
 }
 
-void tcl::TkWidget::warpPointer(int x, int y) const
+void tcl::TkWidget::warpPointer(int, int) const
 {
 GVX_TRACE("tcl::TkWidget::warpPointer");
-
+#if 0
   // NOTE: The XWarpPointer emulation routine provided by Tk for Mac
   // OS X Aqua currently does nothing (as of Tk 8.5a1).
   XWarpPointer(Tk_Display(rep->tkWin),
                0, Tk_WindowId(rep->tkWin),
                0, 0, 0, 0,
                x, y);
+#endif
 }
 
 void tcl::TkWidget::pack()

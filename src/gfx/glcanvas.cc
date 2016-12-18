@@ -64,6 +64,7 @@
 #  include <OpenGL/glu.h>
 #endif
 
+#define GVX_TRACE_EXPR true
 #include "rutz/trace.h"
 #include "rutz/debug.h"
 GVX_DBG_REGISTER

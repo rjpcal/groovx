@@ -42,6 +42,8 @@
 
 #include "rutz/error.h"
 
+#define GVX_TRACE_EXPR true
+
 #include "rutz/debug.h"
 GVX_DBG_REGISTER
 #include "rutz/trace.h"
@@ -60,33 +62,47 @@ namespace
       data[next++] = v;
     }
 
-    void cap()
+    void pushNS(NSOpenGLPixelFormatAttribute v)
     {
-      data[next] = AGL_NONE;
+      GVX_ASSERT(nextNS < MAXSIZE);
+      dataNS[nextNS++] = v;
+    }
+
+    // void cap()
+    // {
+    //   data[next] = AGL_NONE;
+    // }
+
+    void capNS()
+    {
+      dataNS[nextNS] = 0;
     }
 
     GLint data[MAXSIZE];
     int next;
 
+    NSOpenGLPixelFormatAttribute dataNS[MAXSIZE];
+    int nextNS;
+
   public:
     /// Default constructor.
-    AttribList(const GlxOpts& opts) : next(0)
+    AttribList(const GlxOpts& opts) : next(0), nextNS(0)
     {
       if (opts.rgbaFlag)        this->rgba(opts.rgbaRed, opts.rgbaGreen, opts.rgbaBlue,
                                            opts.alphaFlag ? opts.alphaSize : -1);
 
       else                      this->colorIndex( opts.colorIndexSize );
 
-      if (opts.depthFlag)       this->depthBuffer( opts.depthSize );
+      if (opts.depthFlag)       this->depthBuffer( (unsigned int) opts.depthSize );
 
       if (opts.doubleFlag)      this->doubleBuffer();
 
-      if (opts.stencilFlag)     this->stencilBuffer( opts.stencilSize );
+      if (opts.stencilFlag)     this->stencilBuffer( (unsigned int) opts.stencilSize );
 
       if (opts.accumFlag)       this->accum(opts.accumRed, opts.accumGreen, opts.accumBlue,
                                             opts.alphaFlag ? opts.accumAlpha : -1);
 
-      if (opts.auxNumber > 0)   this->auxBuffers( opts.auxNumber );
+      if (opts.auxNumber > 0)   this->auxBuffers( (unsigned int) opts.auxNumber );
 
       if (opts.level != 0)      this->level( opts.level );
 
@@ -95,8 +111,10 @@ namespace
       if (!opts.indirect)       this->accelerated();
     }
 
-    /// Get the underlying data array to use to construct a AGLContext.
-    GLint* get() { cap(); return data; }
+    // GLint* get() { cap(); return data; }
+
+    /// Get the underlying data array to use to construct a NSOpenGLPixelFormat.
+    NSOpenGLPixelFormatAttribute* getNS() { capNS(); return dataNS; }
 
     /// Set RGBA-mode minimum bit-depths.
     void rgba(int rbits, int gbits, int bbits, int abits = -1)
@@ -108,10 +126,13 @@ namespace
       push( gbits );          dbg_eval(3, gbits);
       push( AGL_BLUE_SIZE );
       push( bbits );          dbg_eval_nl(3, bbits);
+      pushNS( NSOpenGLPFAColorSize );
+      pushNS( (unsigned int)(rbits + gbits + bbits) );
+      pushNS( NSOpenGLPFAClosestPolicy );
       if (abits > 0)
         {
-          push( AGL_ALPHA_SIZE );
-          push( abits );      dbg_eval_nl(3, abits);
+          push( AGL_ALPHA_SIZE ); pushNS( NSOpenGLPFAAlphaSize );
+          push( abits ); pushNS( (unsigned int) abits );      dbg_eval_nl(3, abits);
         }
     }
 
@@ -130,23 +151,23 @@ namespace
     }
 
     /// Specify a minimum bit-depth for the depth-buffer (i.e. z-buffer).
-    void depthBuffer(int bits)
+    void depthBuffer(unsigned int bits)
     {
-      push( AGL_DEPTH_SIZE );
-      push( bits );
+      push( AGL_DEPTH_SIZE ); pushNS( NSOpenGLPFADepthSize );
+      push( (int) bits ); pushNS( bits );
     }
 
     /// Request double-buffering mode.
     void doubleBuffer()
     {
-      push( AGL_DOUBLEBUFFER );
+      push( AGL_DOUBLEBUFFER ); pushNS( NSOpenGLPFADoubleBuffer );
     }
 
     /// Specify a minimum bit-depth for the stencil buffer.
-    void stencilBuffer(int bits)
+    void stencilBuffer(unsigned int bits)
     {
-      push( AGL_STENCIL_SIZE );
-      push( bits );
+      push( AGL_STENCIL_SIZE ); pushNS( NSOpenGLPFAStencilSize );
+      push( (int) bits ); pushNS( bits );
     }
 
     /// Specify minimum bit-depths for the accum buffer.
@@ -166,16 +187,16 @@ namespace
     }
 
     /// Request a number of aux buffers.
-    void auxBuffers(int n)
+    void auxBuffers(unsigned int n)
     {
-      push( AGL_AUX_BUFFERS );
-      push( n );
+      push( AGL_AUX_BUFFERS ); pushNS( NSOpenGLPFAAuxBuffers );
+      push( (int) n ); pushNS( n );
     }
 
     /// Request a hardware-accelarted renderer.
     void accelerated()
     {
-      push( AGL_ACCELERATED );
+      push( AGL_ACCELERATED ); pushNS( NSOpenGLPFAAccelerated );
     }
 
     /// Request transparency if available.
@@ -187,27 +208,59 @@ namespace
 }
 
 AglWrapper::AglWrapper(GlxOpts& opts) :
-  itsPixFormat(nullptr),
-  itsContext(nullptr),
-  itsDrawable(nullptr)
+  // itsPixFormat(nullptr),
+  // itsContext(nullptr),
+  // itsDrawable(nullptr),
+  itsPixFormatNS(nil),
+  itsContextNS(nil),
+  itsViewNS(nil)
 {
 GVX_TRACE("AglWrapper::AglWrapper");
 
   AttribList attribs(opts);
 
-  itsPixFormat = aglCreatePixelFormat(attribs.get());
+  // itsPixFormat = aglCreatePixelFormat(attribs.get());
 
-  if (itsPixFormat == nullptr)
-    throw rutz::error("couldn't choose Apple-OpenGL pixel format",
+  // if (itsPixFormat == nullptr)
+  //   throw rutz::error("couldn't choose Apple-OpenGL pixel format",
+  //                     SRC_POS);
+
+  NSOpenGLPixelFormatAttribute glAttributes[] = {
+        NSOpenGLPFADoubleBuffer,
+        NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
+        NSOpenGLPFAColorSize, 24,
+        NSOpenGLPFAAlphaSize, 8,
+        NSOpenGLPFADepthSize, 24,
+        NSOpenGLPFAStencilSize, 8,
+        NSOpenGLPFASampleBuffers, 0,
+        0,
+    };
+
+  // itsPixFormatNS = [[NSOpenGLPixelFormat alloc] initWithAttributes:attribs.getNS()];
+  void(attribs.getNS());
+  itsPixFormatNS = [[NSOpenGLPixelFormat alloc] initWithAttributes:glAttributes];
+
+  if (itsPixFormatNS == nullptr)
+    throw rutz::error("couldn't choose NSOpenGLPixelFormat",
                       SRC_POS);
 
-  AGLContext share = nullptr;
+  dbg_eval_nl(0, (void*)itsPixFormatNS);
 
-  itsContext = aglCreateContext(itsPixFormat, share);
+  // AGLContext share = nullptr;
 
-  if (itsContext == nullptr)
-    throw rutz::error("couldn't create Apple-OpenGL graphics context",
+  // itsContext = aglCreateContext(itsPixFormat, share);
+
+  // if (itsContext == nullptr)
+  //   throw rutz::error("couldn't create Apple-OpenGL graphics context",
+  //                     SRC_POS);
+
+  itsContextNS = [[NSOpenGLContext alloc] initWithFormat:itsPixFormatNS shareContext:nil];
+
+  if (itsContextNS == nullptr)
+    throw rutz::error("couldn't create NSOpenGLContext",
                       SRC_POS);
+
+  dbg_eval_nl(0, (void*)itsContextNS);
 }
 
 AglWrapper* AglWrapper::make(GlxOpts& opts)
@@ -220,39 +273,45 @@ AglWrapper::~AglWrapper()
 {
 GVX_TRACE("AglWrapper::~AglWrapper");
 
-  aglDestroyPixelFormat(itsPixFormat);
-  itsPixFormat = nullptr;
+  // aglDestroyPixelFormat(itsPixFormat);
+  // itsPixFormat = nullptr;
 
-  aglDestroyContext(itsContext);
-  itsContext = nullptr;
+  // aglDestroyContext(itsContext);
+  // itsContext = nullptr;
+
+  // FIXME clean up here
 }
 
 bool AglWrapper::isDirect() const
 {
 GVX_TRACE("AglWrapper::isDirect");
 
-  GLint value = 0;
-  int status = aglDescribePixelFormat(itsPixFormat, AGL_ACCELERATED, &value);
+  // GLint value = 0;
+  // int status = aglDescribePixelFormat(itsPixFormat, AGL_ACCELERATED, &value);
 
-  if (status == GL_FALSE)
-    throw rutz::error("couldn't get Apple-OpenGL accelerated attribute",
-                      SRC_POS);
+  // if (status == GL_FALSE)
+  //   throw rutz::error("couldn't get Apple-OpenGL accelerated attribute",
+  //                     SRC_POS);
 
-  return (value == GL_TRUE);
+  // return (value == GL_TRUE);
+
+  return true; // FIXME
 }
 
 bool AglWrapper::isDoubleBuffered() const
 {
 GVX_TRACE("AglWrapper::isDoubleBuffered");
 
-  GLint value = 0;
-  int status = aglDescribePixelFormat(itsPixFormat, AGL_DOUBLEBUFFER, &value);
+  // GLint value = 0;
+  // int status = aglDescribePixelFormat(itsPixFormat, AGL_DOUBLEBUFFER, &value);
 
-  if (status == GL_FALSE)
-    throw rutz::error("couldn't get Apple-OpenGL doublebuffer attribute",
-                      SRC_POS);
+  // if (status == GL_FALSE)
+  //   throw rutz::error("couldn't get Apple-OpenGL doublebuffer attribute",
+  //                     SRC_POS);
 
-  return (value == GL_TRUE);
+  // return (value == GL_TRUE);
+
+  return true; // FIXME
 }
 
 unsigned int AglWrapper::bitsPerPixel() const
@@ -260,11 +319,11 @@ unsigned int AglWrapper::bitsPerPixel() const
 GVX_TRACE("AglWrapper::bitsPerPixel");
 
   GLint value = 0;
-  int status = aglDescribePixelFormat(itsPixFormat, AGL_PIXEL_SIZE, &value);
+  // int status = aglDescribePixelFormat(itsPixFormat, AGL_PIXEL_SIZE, &value);
 
-  if (status == GL_FALSE)
-    throw rutz::error("couldn't get Apple-OpenGL pixel size attribute",
-                      SRC_POS);
+  // if (status == GL_FALSE)
+  //   throw rutz::error("couldn't get Apple-OpenGL pixel size attribute",
+  //                     SRC_POS);
 
   GVX_ASSERT(value > 0);
 
@@ -275,38 +334,55 @@ void AglWrapper::makeCurrent()
 {
 GVX_TRACE("AglWrapper::makeCurrent");
 
-  GVX_ASSERT(itsDrawable != nullptr);
+  // GVX_ASSERT(itsDrawable != nullptr);
 
-  int status1 = aglSetDrawable(itsContext, itsDrawable);
+  // int status1 = aglSetDrawable(itsContext, itsDrawable);
 
-  if (status1 == GL_FALSE)
-    throw rutz::error("couldn't set Apple-OpenGL drawable", SRC_POS);
+  // if (status1 == GL_FALSE)
+  //   throw rutz::error("couldn't set Apple-OpenGL drawable", SRC_POS);
 
-  int status2 = aglSetCurrentContext(itsContext);
+  // int status2 = aglSetCurrentContext(itsContext);
 
-  if (status2 == GL_FALSE)
-    throw rutz::error("couldn't set current Apple-OpenGL context", SRC_POS);
+  // if (status2 == GL_FALSE)
+  //   throw rutz::error("couldn't set current Apple-OpenGL context", SRC_POS);
 
-  int status3 = aglUpdateContext(itsContext);
+  [itsContextNS makeCurrentContext];
 
-  if (status3 == GL_FALSE)
-    throw rutz::error("couldn't update Apple-OpenGL context", SRC_POS);
+  GVX_ASSERT(itsViewNS != nil);
+
+  [itsContextNS setView:itsViewNS];
+
+  // int status3 = aglUpdateContext(itsContext);
+
+  // if (status3 == GL_FALSE)
+  //   throw rutz::error("couldn't update Apple-OpenGL context", SRC_POS);
+
+  [itsContextNS update];
+  dbg_print_nl(0, "makeCurrent");
+
+  [itsViewNS display];
 }
 
 void AglWrapper::onReshape(int /*width*/, int /*height*/)
 {
 GVX_TRACE("AglWrapper::onReshape");
 
-  int status = aglUpdateContext(itsContext);
+  // int status = aglUpdateContext(itsContext);
 
-  if (status == GL_FALSE)
-    throw rutz::error("couldn't update Apple-OpenGL context", SRC_POS);
+  // if (status == GL_FALSE)
+  //   throw rutz::error("couldn't update Apple-OpenGL context", SRC_POS);
+
+  dbg_print_nl(0, "reshape");
+  [itsContextNS update];
 }
 
 void AglWrapper::swapBuffers() const
 {
 GVX_TRACE("AglWrapper::swapBuffers");
-  aglSwapBuffers(itsContext);
+  // aglSwapBuffers(itsContext);
+  dbg_print_nl(0, "flush");
+
+  [itsContextNS flushBuffer];
 }
 
 #pragma clang diagnostic pop

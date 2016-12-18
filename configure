@@ -4824,11 +4824,14 @@ $as_echo "tcl ($TCL_VERSION), tk ($TK_VERSION)" >&6; }
 
 $as_echo "#define GVX_AQUA_TK 1" >>confdefs.h
 
-      CPPFLAGS="-isystem ${with_tcltk}/Tcl.framework/Headers $CPPFLAGS"
-      CPPFLAGS="-isystem ${with_tcltk}/Tcl.framework/PrivateHeaders $CPPFLAGS"
-      CPPFLAGS="-isystem ${with_tcltk}/Tk.framework/Headers $CPPFLAGS"
-      CPPFLAGS="-isystem ${with_tcltk}/Tk.framework/PrivateHeaders $CPPFLAGS"
-      LIBS="$LIBS -F${with_tcltk} -framework Tk -framework Tcl"
+#      CPPFLAGS="-isystem ${with_tcltk}/Tcl.framework/Headers $CPPFLAGS"
+#      CPPFLAGS="-isystem ${with_tcltk}/Tcl.framework/PrivateHeaders $CPPFLAGS"
+#      CPPFLAGS="-isystem ${with_tcltk}/Tk.framework/Headers $CPPFLAGS"
+#      CPPFLAGS="-isystem ${with_tcltk}/Tk.framework/PrivateHeaders $CPPFLAGS"
+
+      TCL_VERSION=8.6
+      TK_VERSION=8.6
+      LIBS="$LIBS -ltcl${TCL_VERSION} -ltk${TK_VERSION}"
       ;;
    *)
       as_fn_error $? "unknown windowing system $windowsystem" "$LINENO" 5

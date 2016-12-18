@@ -611,11 +611,14 @@ case $windowsystem in
       ;;
    aqua)
       AC_DEFINE(GVX_AQUA_TK,1,[use Mac OS X aqua port of Tk])
-      CPPFLAGS="-isystem ${with_tcltk}/Tcl.framework/Headers $CPPFLAGS"
-      CPPFLAGS="-isystem ${with_tcltk}/Tcl.framework/PrivateHeaders $CPPFLAGS"
-      CPPFLAGS="-isystem ${with_tcltk}/Tk.framework/Headers $CPPFLAGS"
-      CPPFLAGS="-isystem ${with_tcltk}/Tk.framework/PrivateHeaders $CPPFLAGS"
-      LIBS="$LIBS -F${with_tcltk} -framework Tk -framework Tcl"
+#      CPPFLAGS="-isystem ${with_tcltk}/Tcl.framework/Headers $CPPFLAGS"
+#      CPPFLAGS="-isystem ${with_tcltk}/Tcl.framework/PrivateHeaders $CPPFLAGS"
+#      CPPFLAGS="-isystem ${with_tcltk}/Tk.framework/Headers $CPPFLAGS"
+#      CPPFLAGS="-isystem ${with_tcltk}/Tk.framework/PrivateHeaders $CPPFLAGS"
+
+      TCL_VERSION=8.6
+      TK_VERSION=8.6
+      LIBS="$LIBS -ltcl${TCL_VERSION} -ltk${TK_VERSION}"
       ;;
    *)
       AC_MSG_ERROR([unknown windowing system $windowsystem])

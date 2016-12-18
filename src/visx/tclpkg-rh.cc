@@ -121,7 +121,7 @@ namespace
                   ev.xkey.send_event = True;
                   ev.xkey.display = display;
                   ev.xkey.window = Tk_WindowId(tkwin);
-                  ev.xkey.keycode = keycode;
+                  ev.xkey.keycode = (unsigned int) keycode;
                   ev.xkey.state = 0;
                   Tk_QueueWindowEvent(&ev, TCL_QUEUE_TAIL);
                 }

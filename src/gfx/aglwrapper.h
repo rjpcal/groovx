@@ -40,15 +40,21 @@
 
 #include <AGL/agl.h>
 
+#import <Cocoa/Cocoa.h>
+
 struct GlxOpts;
 
 /// Wraps the AGLContext mechanism.
 class AglWrapper : public GlWindowInterface
 {
 private:
-  AGLPixelFormat itsPixFormat;
-  AGLContext itsContext;
-  CGrafPtr itsDrawable; // AGLDrawable is a typedef for CGrafPtr
+  // AGLPixelFormat itsPixFormat;
+  // AGLContext itsContext;
+  // CGrafPtr itsDrawable; // AGLDrawable is a typedef for CGrafPtr
+
+  NSOpenGLPixelFormat* itsPixFormatNS;
+  NSOpenGLContext*     itsContextNS;
+  NSView* itsViewNS;
 
   AglWrapper(const AglWrapper&);
   AglWrapper& operator=(const AglWrapper&);
@@ -83,7 +89,7 @@ public:
 
   // AGL-specific functions
 
-  void bindDrawable(CGrafPtr drawable) { itsDrawable = drawable; }
+  void bindDrawable(NSView* v) { itsViewNS = v; }
 };
 
 #pragma clang diagnostic pop
