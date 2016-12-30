@@ -600,11 +600,6 @@ case $windowsystem in
       TCL_VERSION=`sh -c ". ${with_tcltk}/lib/tclConfig.sh ; echo \\$TCL_VERSION"`
       TK_VERSION=`sh -c ". ${with_tcltk}/lib/tkConfig.sh ; echo \\$TK_VERSION"`
 
-      TCL_SRC_DIR=`sh -c ". ${with_tcltk}/lib/tclConfig.sh ; echo \\$TCL_SRC_DIR"`
-      TK_SRC_DIR=`sh -c ". ${with_tcltk}/lib/tkConfig.sh ; echo \\$TK_SRC_DIR"`
-
-      CPPFLAGS="-isystem $TCL_SRC_DIR/generic -isystem $TK_SRC_DIR/generic $CPPFLAGS"
-
       AC_MSG_RESULT([tcl ($TCL_VERSION), tk ($TK_VERSION)])
 
       LIBS="$LIBS -ltcl${TCL_VERSION} -ltk${TK_VERSION}"

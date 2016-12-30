@@ -117,6 +117,14 @@
    seems to be elevating the implementation detail of the tcl::Interp
    to too high of a design status.
 
+   --> used in obj_mgr::new_obj() / new_typed_obj()
+       --> used in objNew(), objNewArgs(), objNewArr() tcl cmds
+       --> used io::legacy_reader::read_weak_object()
+       --> used io::object_map::fetch_object() (used by various readers)
+       --> used in TimingHdlr::addEventByName()
+   --> used in various tcl pkg init routines
+   --> used in tcl::def_creator()
+
 ** Strategy:
 
    (1) Avoid storing the result of the singleton-getters.
